@@ -15,8 +15,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
 
-# Import configuration constants
-from config import *
+# Import constants
+from config_menu import *
+from locals import *
 
 # Library imports
 from selector import Selector
@@ -24,11 +25,8 @@ import pygame
 import pygame.gfxdraw
 import types
 
-# Constants
-MENU_BACK = 0
-MENU_EXIT = 1
 
-
+# noinspection PyProtectedMember
 class Menu(object):
     """
     Menu object
@@ -132,55 +130,55 @@ class Menu(object):
         self._font_color = font_color
         self._fsize = font_size
         self._fsize_title = font_size_title
-        self.height = menu_height
-        self.option_shadow = option_shadow
-        self.opt_dy = option_margin
-        self.rectwidth = rect_width
-        self.selectedcolor = color_selected
-        self.surface = surface
-        self.width = menu_width
+        self._height = menu_height
+        self._option_shadow = option_shadow
+        self._opt_dy = option_margin
+        self._rect_width = rect_width
+        self._sel_color = color_selected
+        self._surface = surface
+        self._width = menu_width
 
         # Inner variables
-        self.actual = self  # Actual menu
-        self.opciones = []  # Option menu
-        self.index = 0  # Selected index
-        self.prev = None  # Previous menu
-        self.prevDraw = None
-        self.size = 0  # Menu total elements
+        self._actual = self  # Actual menu
+        self._option = []  # Option menu
+        self._index = 0  # Selected index
+        self._prev = None  # Previous menu
+        self._prev_draw = None
+        self._size = 0  # Menu total elements
 
         # Load fonts
-        self.font = pygame.font.Font(font, self._fsize)
-        self.fonttitle = pygame.font.Font(font, self._fsize_title)
+        self._font = pygame.font.Font(font, self._fsize)
+        self._font_title = pygame.font.Font(font, self._fsize_title)
 
         # Position of menu
-        self.posx = (window_width - self.width) / 2
-        self.posy = (window_height - self.height) / 2
-        self.bgRect = [(self.posx, self.posy),
-                       (self.posx + self.width, self.posy),
-                       (self.posx + self.width, self.posy + self.height),
-                       (self.posx, self.posy + self.height)]
-        self.drawRegionX = draw_region_x
-        self.drawRegionY = draw_region_y
+        self._posy = (window_width - self._width) / 2
+        self._posx = (window_height - self._height) / 2
+        self._bgrect = [(self._posy, self._posx),
+                        (self._posy + self._width, self._posx),
+                        (self._posy + self._width, self._posx + self._height),
+                        (self._posy, self._posx + self._height)]
+        self._draw_regionx = draw_region_x
+        self._draw_regiony = draw_region_y
 
         # Option position
         self._opt_posx = int(
-            self.width * (self.drawRegionX / 100.0)) + self.posx
+            self._width * (self._draw_regionx / 100.0)) + self._posy
         self._opt_posy = int(
-            self.height * (self.drawRegionY / 100.0)) + self.posy
+            self._height * (self._draw_regiony / 100.0)) + self._posx
 
         # Title properties
-        self.title = self.fonttitle.render(title, 1, self._font_color)
-        title_width = self.title.get_size()[0]
-        self.titleRect = [(self.posx, self.posy),
-                          (self.posx + self.width, self.posy), (
-                              self.posx + self.width,
-                              self.posy + self._fsize_title / 2),
-                          (self.posx + title_width + 25,
-                           self.posy + self._fsize_title / 2), (
-                              self.posx + title_width + 5,
-                              self.posy + self._fsize_title + 5),
-                          (self.posx, self.posy + self._fsize_title + 5)]
-        self.titlePos = (self.posx + 5, self.posy - 3)
+        self._title = self._font_title.render(title, 1, self._font_color)
+        title_width = self._title.get_size()[0]
+        self._title_rect = [(self._posy, self._posx),
+                            (self._posy + self._width, self._posx), (
+                                self._posy + self._width,
+                                self._posx + self._fsize_title / 2),
+                            (self._posy + title_width + 25,
+                             self._posx + self._fsize_title / 2), (
+                                self._posy + title_width + 5,
+                                self._posx + self._fsize_title + 5),
+                            (self._posy, self._posx + self._fsize_title + 5)]
+        self._title_pos = (self._posy + 5, self._posx - 3)
 
     def add_option(self, element_name, menu, *args):
         """
@@ -191,11 +189,11 @@ class Menu(object):
         :param args: Aditional arguments
         :return: 
         """
-        self.actual.opciones.append([element_name, menu, args])
-        self.actual.size += 1
-        if self.actual.size > 1:
-            dy = -self.actual._fsize / 2 - self.actual.opt_dy / 2
-            self.actual._opt_posy += dy
+        self._actual._option.append([element_name, menu, args])
+        self._actual._size += 1
+        if self._actual._size > 1:
+            dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
+            self._actual._opt_posy += dy
 
     def add_selector(self, title, values, event, *args):
         """
@@ -207,12 +205,12 @@ class Menu(object):
         :param args: Aditional arguments
         :return: None
         """
-        self.actual.opciones.append(
+        self._actual._option.append(
             [SELECTOR, Selector(title, values, event, *args)])
-        self.actual.size += 1
-        if self.actual.size > 1:
-            dy = -self.actual._fsize / 2 - self.actual.opt_dy / 2
-            self.actual._opt_posy += dy
+        self._actual._size += 1
+        if self._actual._size > 1:
+            dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
+            self._actual._opt_posy += dy
 
     def down(self):
         """
@@ -220,7 +218,7 @@ class Menu(object):
         
         :return: None
         """
-        self.actual.index = (self.actual.index - 1) % self.actual.size
+        self._actual._index = (self._actual._index - 1) % self._actual._size
 
     def draw(self):
         """
@@ -228,95 +226,97 @@ class Menu(object):
         :return: 
         """
         # Draw background rectangle
-        pygame.gfxdraw.filled_polygon(self.surface, self.actual.bgRect,
-                                      self.actual._bgcolor)
+        pygame.gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
+                                      self._actual._bgcolor)
         # Draw title
-        pygame.gfxdraw.filled_polygon(self.surface, self.actual.titleRect,
+        pygame.gfxdraw.filled_polygon(self._surface, self._actual._title_rect,
                                       self._bg_color_title)
-        self.surface.blit(self.actual.title, self.titlePos)
+        self._surface.blit(self._actual._title, self._title_pos)
 
         # Draw options
         dy = 0
-        for option in self.actual.opciones:
+        for option in self._actual._option:
             # Si el tipo es un selector
             if option[0] == SELECTOR:
                 # If selected index draw a rectangle
-                if dy == self.actual.index:
-                    text = self.actual.font.render(option[1].get(), 1,
-                                                   self.actual.selectedcolor)
-                    text_bg = self.actual.font.render(option[1].get(), 1,
-                                                      SHADOW)
+                if dy == self._actual._index:
+                    text = self._actual._font.render(option[1].get(), 1,
+                                                     self._actual._sel_color)
+                    text_bg = self._actual._font.render(option[1].get(), 1,
+                                                        SHADOW_COLOR)
                 else:
-                    text = self.actual.font.render(option[1].get(), 1,
-                                                   self.actual._font_color)
-                    text_bg = self.actual.font.render(option[1].get(), 1,
-                                                      SHADOW)
+                    text = self._actual._font.render(option[1].get(), 1,
+                                                     self._actual._font_color)
+                    text_bg = self._actual._font.render(option[1].get(), 1,
+                                                        SHADOW_COLOR)
             else:
                 # If selected index draw a rectangle
-                if dy == self.actual.index:
-                    text = self.actual.font.render(option[0], 1,
-                                                   self.actual.selectedcolor)
-                    text_bg = self.actual.font.render(option[0], 1, SHADOW)
+                if dy == self._actual._index:
+                    text = self._actual._font.render(option[0], 1,
+                                                     self._actual._sel_color)
+                    text_bg = self._actual._font.render(option[0], 1,
+                                                        SHADOW_COLOR)
                 else:
-                    text = self.actual.font.render(option[0], 1,
-                                                   self.actual._font_color)
-                    text_bg = self.actual.font.render(option[0], 1, SHADOW)
+                    text = self._actual._font.render(option[0], 1,
+                                                     self._actual._font_color)
+                    text_bg = self._actual._font.render(option[0], 1,
+                                                        SHADOW_COLOR)
             # Text anchor
             text_width, text_height = text.get_size()
-            text_dy = -int(text_height / 2.0)
-            if self.actual._centered_option:
+            t_dy = -int(text_height / 2.0)
+            if self._actual._centered_option:
                 text_dx = -int(text_width / 2.0)
             else:
                 text_dx = 0
             # Draw fonts
-            if self.actual.option_shadow:
-                ycoords = self.actual._opt_posy + dy * (
-                    self.actual._fsize + self.actual.opt_dy) + text_dy - 3
-                self.surface.blit(text_bg,
-                                  (self.actual._opt_posx + text_dx - 3,
-                                   ycoords))
-            ycoords = self.actual._opt_posy + dy * (
-                self.actual._fsize + self.actual.opt_dy) + text_dy
-            self.surface.blit(text, (self.actual._opt_posx + text_dx,
-                                     ycoords))
+            if self._actual._option_shadow:
+                ycoords = self._actual._opt_posy + dy * (
+                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+                self._surface.blit(text_bg,
+                                   (self._actual._opt_posx + text_dx - 3,
+                                    ycoords))
+            ycoords = self._actual._opt_posy + dy * (
+                self._actual._fsize + self._actual._opt_dy) + t_dy
+            self._surface.blit(text, (self._actual._opt_posx + text_dx,
+                                      ycoords))
             # Si se tiene la seleccionada se dibuja el rectangulo
-            if self.actual._drawselrect and (dy == self.actual.index):
-                if not self.actual._centered_option:
+            if self._actual._drawselrect and (dy == self._actual._index):
+                if not self._actual._centered_option:
                     text_dx_tl = -text_width
                 else:
                     text_dx_tl = text_dx
-                ycoords = self.actual._opt_posy + dy * (
-                    self.actual._fsize + self.actual.opt_dy) + text_dy - 2
-                pygame.draw.line(self.surface, self.actual.selectedcolor, (
-                    self.actual._opt_posx + text_dx - 10,
-                    self.actual._opt_posy + dy * (
-                        self.actual._fsize + self.actual.opt_dy) + text_dy - 2),
-                                 ((self.actual._opt_posx - text_dx_tl + 10,
-                                   ycoords)), self.actual.rectwidth)
-                ycoords = self.actual._opt_posy + dy * (
-                    self.actual._fsize + self.actual.opt_dy) - text_dy + 2
-                pygame.draw.line(self.surface, self.actual.selectedcolor, (
-                    self.actual._opt_posx + text_dx - 10,
-                    self.actual._opt_posy + dy * (
-                        self.actual._fsize + self.actual.opt_dy) - text_dy + 2),
-                                 ((self.actual._opt_posx - text_dx_tl + 10,
-                                   ycoords)), self.actual.rectwidth)
-                ycoords = self.actual._opt_posy + dy * (
-                    self.actual._fsize + self.opt_dy) - text_dy + 2
-                pygame.draw.line(self.surface, self.actual.selectedcolor, (
-                    self.actual._opt_posx + text_dx - 10,
-                    self.actual._opt_posy + dy * (
-                        self.actual._fsize + self.actual.opt_dy) + text_dy - 2),
-                                 ((self.actual._opt_posx + text_dx - 10,
-                                   ycoords)), self.actual.rectwidth)
-                ycoords = self.actual._opt_posy + dy * (
-                    self.actual._fsize + self.actual.opt_dy) - text_dy + 2
-                pygame.draw.line(self.surface, self.actual.selectedcolor, (
-                    self.actual._opt_posx - text_dx_tl + 10,
-                    self.actual._opt_posy + dy * (
-                        self.actual._fsize + self.actual.opt_dy) + text_dy - 2),
-                                 ((self.actual._opt_posx - text_dx_tl + 10,
-                                   ycoords)), self.actual.rectwidth)
+                ycoords = self._actual._opt_posy + dy * (
+                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+                pygame.draw.line(self._surface, self._actual._sel_color, (
+                    self._actual._opt_posx + text_dx - 10,
+                    self._actual._opt_posy + dy * (
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                 ((self._actual._opt_posx - text_dx_tl + 10,
+                                   ycoords)), self._actual._rect_width)
+                ycoords = self._actual._opt_posy + dy * (
+                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                pygame.draw.line(self._surface, self._actual._sel_color, (
+                    self._actual._opt_posx + text_dx - 10,
+                    self._actual._opt_posy + dy * (
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
+                                 ((self._actual._opt_posx - text_dx_tl + 10,
+                                   ycoords)), self._actual._rect_width)
+                ycoords = self._actual._opt_posy + dy * (
+                    self._actual._fsize + self._opt_dy) - t_dy + 2
+                pygame.draw.line(self._surface, self._actual._sel_color, (
+                    self._actual._opt_posx + text_dx - 10,
+                    self._actual._opt_posy + dy * (
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                 ((self._actual._opt_posx + text_dx - 10,
+                                   ycoords)), self._actual._rect_width)
+                ycoords = self._actual._opt_posy + dy * (
+                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                pygame.draw.line(self._surface, self._actual._sel_color, (
+                    self._actual._opt_posx - text_dx_tl + 10,
+                    self._actual._opt_posy + dy * (
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                 ((self._actual._opt_posx - text_dx_tl + 10,
+                                   ycoords)), self._actual._rect_width)
             dy += 1
 
     def left(self):
@@ -325,7 +325,7 @@ class Menu(object):
         
         :return: None
         """
-        opcion = self.actual.opciones[self.actual.index][1]
+        opcion = self._actual._option[self._actual._index][1]
         if isinstance(opcion, Selector):
             opcion.left()
 
@@ -336,17 +336,18 @@ class Menu(object):
         :param total: 
         :return: 
         """
+        assert isinstance(self._actual, Menu)
         # Se devuelve al menu padre
         i = 0
         while True:
-            if self.actual.prev is not None:
-                prev = self.actual.prev
-                prev_draw = self.actual.prevDraw
+            if self._actual._prev is not None:
+                prev = self._actual._prev
+                prev_draw = self._actual._prev_draw
                 self.draw = prev_draw
-                self.actual.index = 0
-                self.actual = prev
-                self.actual.prev = None
-                self.actual.prevDraw = None
+                self._actual.index = 0
+                self._actual = prev
+                self._actual._prev = None
+                self._actual._prev_draw = None
                 i += 1
                 if total != 0 and i == total:
                     break
@@ -359,7 +360,7 @@ class Menu(object):
         
         :return: None
         """
-        opcion = self.actual.opciones[self.actual.index][1]
+        opcion = self._actual._option[self._actual._index][1]
         if isinstance(opcion, Selector):
             opcion.right()
 
@@ -369,40 +370,41 @@ class Menu(object):
         Apply selected option
         :return: 
         """
-        opcion = self.actual.opciones[self.actual.index][1]
+        assert isinstance(self._actual, Menu)
+        option = self._actual._option[self._actual._index][1]
         # If element is an Menu
-        if isinstance(opcion, Menu):
+        if isinstance(option, Menu):
             actual = self
-            self.actual.actual = opcion.actual
-            self.actual.prev = actual
-            self.actual.prevDraw = self.draw
-            self.draw = opcion.draw
+            self._actual._actual = option._actual
+            self._actual._prev = actual
+            self._actual._prev_draw = self.draw
+            self.draw = option.draw
         # If option is a number (internal functions)
-        elif isinstance(opcion, types.IntType):
+        elif isinstance(option, types.IntType):
             # Back to menu
-            if opcion == MENU_BACK:
-                prev = self.actual.prev
-                prev_draw = self.actual.prevDraw
+            if option == MENU_BACK:
+                prev = self._actual._prev
+                prev_draw = self._actual._prev_draw
                 self.draw = prev_draw
-                self.actual.index = 0
-                self.actual = prev
-                self.actual.prev = None
-                self.actual.prevDraw = None
+                self._actual.index = 0
+                self._actual = prev
+                self._actual._prev = None
+                self._actual._prev_draw = None
             # Exit program
-            elif opcion == MENU_EXIT:
+            elif option == MENU_EXIT:
                 exit()
         # If element is a function
-        elif isinstance(opcion, types.FunctionType):
-            if len(self.actual.opciones[self.actual.index][2]) > 0:
-                opcion(self.actual.opciones[self.actual.index][2])
+        elif isinstance(option, types.FunctionType) or callable(option):
+            if len(self._actual._option[self._actual.index][2]) > 0:
+                option(self._actual._option[self._actual.index][2])
             else:
-                opcion()
+                option()
         # If null type
-        elif isinstance(opcion, types.NoneType):
+        elif isinstance(option, types.NoneType):
             pass
         # If element is a selector
-        elif isinstance(opcion, Selector):
-            opcion.apply()
+        elif isinstance(option, Selector):
+            option.apply()
 
     def up(self):
         """
@@ -410,4 +412,4 @@ class Menu(object):
         
         :return: None
         """
-        self.actual.index = (self.actual.index + 1) % self.actual.size
+        self._actual._index = (self._actual._index + 1) % self._actual._size

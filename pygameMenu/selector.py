@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 SELECTOR
 Selector class, manage elements and adds entries to menu.
@@ -16,6 +17,10 @@ GNU General Public License for more details.
 
 
 class Selector(object):
+    """
+    Selector object
+    """
+
     def __init__(self, title, elements, onchange=None, onreturn=None, *args):
         """
         Constructor

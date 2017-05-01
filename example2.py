@@ -11,13 +11,17 @@ from pygame.locals import *
 
 from configLoader import configLoader
 from menu import Menu, MENU_BACK, MENU_EXIT
-from textmenu import textMenu, TEXT_NEWLINE
+from textmenu import TextMenu, TEXT_NEWLINE
+from fonts import FONT_BEBAS
+
+TextMenu
 
 # constantes
 WIN_SIZE = (1000, 600)
 FPS = 60
 COLOR_BACKGROUND = (236, 237, 238)
 os.environ['SDL_VIDEO_CENTERED'] = '1'
+
 
 # Clase ventana
 class Window:
@@ -29,6 +33,7 @@ class Window:
 
     def getWindowHeight(self):
         return self.window[1]
+
 
 # MAIN ELEMENTS TEST
 font = "pygameMenu/fonts/nevis.ttf"
@@ -43,39 +48,51 @@ global options
 options = configLoader("window.ini", verbose=True)
 track = [0]
 
+
 def playTrack(index):
     track[0] = index
+
 
 def dummyconfig(element, *args):
     options.setParameter(args[0], element)
     options.export()
 
+
 # MENU TESTING
-menu_jugar = Menu(surface, window.getWindowWidth(), window.getWindowHeight(), font, "Jugar", menu_centered=False, draw_region_x=10)
-menu_jugar.add_selector("Pista", [("Adelaide rw", 0), ("El origen", 1)], playTrack, None)
+menu_jugar = Menu(surface, window.getWindowWidth(), window.getWindowHeight(),
+                  font, "Jugar", menu_centered=False, draw_region_x=10)
+menu_jugar.add_selector("Pista", [("Adelaide rw", 0), ("El origen", 1)],
+                        playTrack, None)
 menu_jugar.add_option("Volver", MENU_BACK)
 
 # Config
-menu_config = Menu(surface, window.getWindowWidth(), window.getWindowHeight(), font, "Configuraciones", menu_centered=False, draw_region_x=10)
-menu_config.add_selector("Modo ventana", [("Activado", "TRUE"), ("Desactivado", "FALSE")], dummyconfig, None, "WINDOWED")
+menu_config = Menu(surface, window.getWindowWidth(), window.getWindowHeight(),
+                   font, "Configuraciones", menu_centered=False,
+                   draw_region_x=10)
+menu_config.add_selector("Modo ventana",
+                         [("Activado", "TRUE"), ("Desactivado", "FALSE")],
+                         dummyconfig, None, "WINDOWED")
 menu_config.add_option("Volver", MENU_BACK)
 
-# Ayuda menu
-menu_ayuda = textMenu(surface, window, font, "Ayuda")
+# Ayuda
+menu_ayuda = TextMenu(surface, window.getWindowWidth(),
+                      window.getWindowHeight(), font, "Ayuda", draw_region_y=50)
 menu_ayuda.add_option("Volver", MENU_BACK)
-menu_ayuda.addText("Para acelerar pulsa la tecla W")
-menu_ayuda.addText("Para frenar pulsa la tecla W")
-menu_ayuda.addText(TEXT_NEWLINE)
+menu_ayuda.add_line("Para acelerar pulsa la tecla W")
+menu_ayuda.add_line("Para frenar pulsa la tecla W")
+menu_ayuda.add_line(TEXT_NEWLINE)
 
 # Acerca de menu
-menu_about = textMenu(surface, window, font, "Acerca de")
+menu_about = TextMenu(surface, window.getWindowWidth(),
+                      window.getWindowHeight(), font, "Acerca de")
 menu_about.add_option("Volver", MENU_BACK)
-menu_about.addText("Menu para Python")
-menu_about.addText("Autor: Pablo Pizarro")
-menu_about.addText(TEXT_NEWLINE)
+menu_about.add_line("Menu para Python")
+menu_about.add_line("Autor: Pablo Pizarro")
+menu_about.add_line(TEXT_NEWLINE)
 
 # Se arma menu
-menu = Menu(surface, window.getWindowWidth(), window.getWindowHeight(), font, "Menu principal")
+menu = Menu(surface, window.getWindowWidth(), window.getWindowHeight(), font,
+            "Menu principal")
 menu.add_option("Jugar", menu_jugar)
 menu.add_option("Configuraciones", menu_config)
 menu.add_option("Ayuda", menu_ayuda)
