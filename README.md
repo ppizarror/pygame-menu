@@ -36,9 +36,9 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 > This class creates a Menu
 >  
-```python
-pygameMenu.Menu(surface, window_width, window_height, font, title, *optional_parameters*) -> Menu object
-```
+> ```python
+> pygameMenu.Menu(surface, window_width, window_height, font, title, *optional_parameters*) -> Menu object
+> ```
 >
 Parameters are the following:
 >
@@ -82,7 +82,7 @@ pygameMenu.TextMenu(surface, window_width, window_height, font, title, *optional
 ```
 >
 > This class inherites from Menu, so the parameters are the same, except the following extra parameters:
-
+>
 >
 | Param | Description | Type |
 | :-: | :--| :--:|
