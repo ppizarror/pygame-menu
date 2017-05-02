@@ -11,10 +11,12 @@ Examples:
 <p align="center">
 <img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap1.PNG?raw=true" width="40%px" height="40%px">
 </p>
+
 ##### Text menu
 <p align="center">
 <img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap2.PNG?raw=true" width="40%px" height="40%px">
 </p>
+
 ##### Small submenu
 <p align="center">
 <img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap3.PNG?raw=true" width="40%px" height="40%px">
@@ -40,7 +42,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 > pygameMenu.Menu(surface, window_width, window_height, font, title, *optional_parameters*) -> Menu object
 > ```
 >
-Parameters are the following:
+> Parameters are the following:
 >
 > | Param | Description | Type |
 > | :-: | :--| :--:|
@@ -77,20 +79,20 @@ Parameters are the following:
 - **TextMenu**
 
 > This class creates a textual menu
-```python
-pygameMenu.TextMenu(surface, window_width, window_height, font, title, *optional_parameters*) -> TextMenu object
-```
+> ```python
+> pygameMenu.TextMenu(surface, window_width, window_height, font, title, *optional_parameters*) -> TextMenu object
+> ```
 >
 > This class inherites from Menu, so the parameters are the same, except the following extra parameters:
 >
 >
-| Param | Description | Type |
-| :-: | :--| :--:|
-|text_centered| Indicate if text is centered| bool|
-|text_color| Text color|tuple|
-|text_fontsize| Text font size| int
-|text_margin| Line margin| int
-|draw_text_region_x| X-Axis drawing region of the text| int
+> | Param | Description | Type |
+> | :-: | :--| :--:|
+> |text_centered| Indicate if text is centered| bool|
+> |text_color| Text color|tuple|
+> |text_fontsize| Text font size| int
+> |text_margin| Line margin| int
+> |draw_text_region_x| X-Axis drawing region of the text| int
 >
 
 

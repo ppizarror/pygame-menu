@@ -99,6 +99,7 @@ timer_menu = pygameMenu.Menu(surface,
                              title='Timer Menu',
                              # Adds 5px to vertical position title
                              title_offsety=5,
+                             menu_alpha=85,
                              menu_width=600,
                              menu_height=H_SIZE / 2,
                              # If this menu closes (press ESC) reset to main

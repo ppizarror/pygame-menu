@@ -34,8 +34,8 @@ class Menu(object):
     """
 
     def __init__(self, surface, window_width, window_height, font, title,
-                 bgfun=None,
                  enabled=True,
+                 bgfun=None,
                  color_selected=_cfg.MENU_SELECTEDCOLOR,
                  dopause=True,
                  draw_region_x=_cfg.MENU_DRAW_X,
@@ -66,6 +66,7 @@ class Menu(object):
         :param font: Font file direction
         :param title: Title of the menu (main title)
         :param enabled: Menu is enabled by default or not
+        :param bgfun: Background drawing function (only if menu pause app)
         :param color_selected: Color of selected item
         :param dopause: Pause game
         :param draw_region_x: Drawing position of element inside menu (x-axis)
@@ -73,9 +74,9 @@ class Menu(object):
         :param draw_select: Draw a rectangle around selected item (bool)
         :param font_color: Color of font
         :param font_size: Font size
-        :param font_size_title: Font size of title
-        :param font_title: Alternative font for title (direction)
-        :param menu_alpha: Alpha of background (0=opaque, 1=transparent)
+        :param font_size_title: Font size of the title
+        :param font_title: Alternative font of the title (file direction)
+        :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :param menu_centered: Text centered menu
         :param menu_color: Menu color
         :param menu_color_title: Background color of title
@@ -157,7 +158,7 @@ class Menu(object):
         assert dopause and bgfun is not None or not dopause and bgfun is None, \
             'If pause main execution is enabled then bgfun (Background ' \
             'function drawing) must be defined (not None)'
-        assert 0 <= menu_alpha <= 100, 'bg_alpha must be between 0 and 100'
+        assert 0 <= menu_alpha <= 100, 'menu_alpha must be between 0 and 100'
 
         # Store configuration
         self._bgfun = bgfun
@@ -547,6 +548,8 @@ class Menu(object):
                             exit()
                         elif closefun == _locals.PYGAME_MENU_DISABLE_CLOSE:
                             close = False
+                    elif isinstance(self._actual._onclose, types.FunctionType):
+                        self._actual._onclose()
                     if close:
                         self.disable()
                         return True
