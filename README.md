@@ -17,17 +17,17 @@ Python library that can create a Menu on Pygame, Supports:
 4. Button menus
 
 Examples:
-##### Normal Button menu
+#### Normal Button menu
 <p align="center">
 <img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap1.PNG?raw=true" width="40%px" height="40%px">
 </p>
 
-##### Text menu
+#### Text menu
 <p align="center">
 <img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap2.PNG?raw=true" width="40%px" height="40%px">
 </p>
 
-##### Small submenu
+#### Small submenu
 <p align="center">
 <img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap3.PNG?raw=true" width="40%px" height="40%px">
 </p>
