@@ -10,7 +10,7 @@ import pygame.gfxdraw
 from pygame.locals import *
 
 from configLoader import configLoader
-from menu import Menu, MENU_BACK, MENU_EXIT
+from menu import Menu, PYGAME_MENU_BACK, PYGAME_MENU_EXIT
 from textmenu import TextMenu, TEXT_NEWLINE
 from fonts import FONT_BEBAS
 
@@ -63,7 +63,7 @@ menu_jugar = Menu(surface, window.getWindowWidth(), window.getWindowHeight(),
                   font, "Jugar", menu_centered=False, draw_region_x=10)
 menu_jugar.add_selector("Pista", [("Adelaide rw", 0), ("El origen", 1)],
                         playTrack, None)
-menu_jugar.add_option("Volver", MENU_BACK)
+menu_jugar.add_option("Volver", PYGAME_MENU_BACK)
 
 # Config
 menu_config = Menu(surface, window.getWindowWidth(), window.getWindowHeight(),
@@ -72,12 +72,12 @@ menu_config = Menu(surface, window.getWindowWidth(), window.getWindowHeight(),
 menu_config.add_selector("Modo ventana",
                          [("Activado", "TRUE"), ("Desactivado", "FALSE")],
                          dummyconfig, None, "WINDOWED")
-menu_config.add_option("Volver", MENU_BACK)
+menu_config.add_option("Volver", PYGAME_MENU_BACK)
 
 # Ayuda
 menu_ayuda = TextMenu(surface, window.getWindowWidth(),
                       window.getWindowHeight(), font, "Ayuda", draw_region_y=50)
-menu_ayuda.add_option("Volver", MENU_BACK)
+menu_ayuda.add_option("Volver", PYGAME_MENU_BACK)
 menu_ayuda.add_line("Para acelerar pulsa la tecla W")
 menu_ayuda.add_line("Para frenar pulsa la tecla W")
 menu_ayuda.add_line(TEXT_NEWLINE)
@@ -85,7 +85,7 @@ menu_ayuda.add_line(TEXT_NEWLINE)
 # Acerca de menu
 menu_about = TextMenu(surface, window.getWindowWidth(),
                       window.getWindowHeight(), font, "Acerca de")
-menu_about.add_option("Volver", MENU_BACK)
+menu_about.add_option("Volver", PYGAME_MENU_BACK)
 menu_about.add_line("Menu para Python")
 menu_about.add_line("Autor: Pablo Pizarro")
 menu_about.add_line(TEXT_NEWLINE)
@@ -97,7 +97,7 @@ menu.add_option("Jugar", menu_jugar)
 menu.add_option("Configuraciones", menu_config)
 menu.add_option("Ayuda", menu_ayuda)
 menu.add_option("Acerca de", menu_about)
-menu.add_option("Cerrar", MENU_EXIT)
+menu.add_option("Cerrar", PYGAME_MENU_EXIT)
 
 inmenu = True
 

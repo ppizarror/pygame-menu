@@ -1,7 +1,7 @@
 # coding=utf-8
 """
-FONTS
-Menu avaiable fonts.
+CONTROLS
+Controls of Menu object.
 
 Copyright (C) 2017 Pablo Pizarro @ppizarror
 
@@ -15,15 +15,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
 
-# Get actual folder
-import os
+# Import locals
+import pygame.locals as __locals
 
-__actualpath = str(os.path.abspath(os.path.dirname(__file__))).replace('\\', '/')
-__fontdir = '{0}/fonts/{1}.ttf'
-
-# Avaiable fonts
-FONT_8BIT = __fontdir.format(__actualpath, '8bit')
-FONT_BEBAS = __fontdir.format(__actualpath, 'bebas')
-FONT_FRANCHISE = __fontdir.format(__actualpath, 'franchise')
-FONT_MUNRO = __fontdir.format(__actualpath, 'munro')
-FONT_NEVIS = __fontdir.format(__actualpath, 'nevis')
+# Controls
+MENU_CTRL_BACK = __locals.K_BACKSPACE
+MENU_CTRL_CLOSE_MENU = __locals.K_ESCAPE
+MENU_CTRL_DOWN = __locals.K_UP
+MENU_CTRL_ENTER = __locals.K_RETURN
+MENU_CTRL_LEFT = __locals.K_LEFT
+MENU_CTRL_RIGHT = __locals.K_RIGHT
+MENU_CTRL_UP = __locals.K_DOWN

@@ -29,6 +29,3 @@ TEXT_FONT_COLOR = (255, 255, 255)
 
 # Text margin (px)
 TEXT_MARGIN = 10
-
-# Text newline on TextMenu object
-TEXT_NEWLINE = ''

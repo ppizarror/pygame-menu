@@ -15,14 +15,39 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
 
+
+class _PymenuAction(object):
+    def __init__(self, action):
+        assert isinstance(action, int)
+        self._action = action
+
+    # noinspection PyProtectedMember
+    def __eq__(self, other):
+        if isinstance(other, _PymenuAction):
+            return self._action == other._action
+        return False
+
+
 # Menu back
-MENU_BACK = 0
+PYGAME_MENU_BACK = _PymenuAction(0)
 
 # Close menu
-MENU_CLOSE = 2
+PYGAME_MENU_CLOSE = _PymenuAction(1)
 
 # Menu exit program
-MENU_EXIT = 1
+PYGAME_MENU_EXIT = _PymenuAction(3)
+
+# Menu disable closing
+PYGAME_MENU_DISABLE_CLOSE = _PymenuAction(10)
+
+# Menu reset
+PYGAME_MENU_RESET = _PymenuAction(4)
+
+# Menu reset all
+PYGAME_MENU_RESET_ALL = _PymenuAction(5)
 
 # Type of selector
-SELECTOR = -1
+PYGAME_TYPE_SELECTOR = _PymenuAction(2)
+
+# Text newline on TextMenu object
+TEXT_NEWLINE = ''

@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 MENU
-Menu class
+Menu class.
 
 Copyright (C) 2017 Pablo Pizarro @ppizarror
 
@@ -16,39 +16,47 @@ GNU General Public License for more details.
 """
 
 # Import constants
-from config_menu import *
-from locals import *
+import config_controls as _ctrl
+import config_menu as _cfg
+import locals as _locals
 
 # Library imports
-from selector import Selector
-import pygame
-import pygame.gfxdraw
+from selector import Selector as _Selector
+import pygame as _pygame
+import pygame.gfxdraw as _gfxdraw
 import types
 
 
-# noinspection PyProtectedMember
+# noinspection PyProtectedMember,PyBroadException,PyUnresolvedReferences
 class Menu(object):
     """
     Menu object
     """
 
     def __init__(self, surface, window_width, window_height, font, title,
-                 bg_color=MENU_BGCOLOR,
-                 bg_color_title=MENU_TITLE_BG_COLOR,
-                 bgalpha=MENU_ALPHA,
-                 color_selected=MENU_SELECTEDCOLOR,
-                 draw_region_x=MENU_DRAW_X,
-                 draw_region_y=MENU_DRAW_Y,
-                 draw_select=MENU_SELECTED_DRAW,
-                 font_color=MENU_FONT_COLOR,
-                 font_size=MENU_FONT_SIZE,
-                 font_size_title=MENU_FONT_SIZE_TITLE,
-                 menu_centered=MENU_CENTERED_TEXT,
-                 menu_height=MENU_HEIGHT,
-                 menu_width=MENU_WIDTH,
-                 option_margin=MENU_OPTION_MARGIN,
-                 option_shadow=MENU_OPTION_SHADOW,
-                 rect_width=MENU_SELECTED_WIDTH):
+                 bgfun=None,
+                 enabled=True,
+                 color_selected=_cfg.MENU_SELECTEDCOLOR,
+                 dopause=True,
+                 draw_region_x=_cfg.MENU_DRAW_X,
+                 draw_region_y=_cfg.MENU_DRAW_Y,
+                 draw_select=_cfg.MENU_SELECTED_DRAW,
+                 font_color=_cfg.MENU_FONT_COLOR,
+                 font_size=_cfg.MENU_FONT_SIZE,
+                 font_size_title=_cfg.MENU_FONT_SIZE_TITLE,
+                 font_title=None,
+                 menu_alpha=_cfg.MENU_ALPHA,
+                 menu_centered=_cfg.MENU_CENTERED_TEXT,
+                 menu_color=_cfg.MENU_BGCOLOR,
+                 menu_color_title=_cfg.MENU_TITLE_BG_COLOR,
+                 menu_height=_cfg.MENU_HEIGHT,
+                 menu_width=_cfg.MENU_WIDTH,
+                 onclose=None,
+                 option_margin=_cfg.MENU_OPTION_MARGIN,
+                 option_shadow=_cfg.MENU_OPTION_SHADOW,
+                 rect_width=_cfg.MENU_SELECTED_WIDTH,
+                 title_offsetx=0,
+                 title_offsety=0):
         """
         Menu constructor.
         
@@ -57,74 +65,107 @@ class Menu(object):
         :param window_height: Window height size (px)
         :param font: Font file direction
         :param title: Title of the menu (main title)
-        :param bg_color: Background color
-        :param bg_color_title: Background color of title
-        :param bgalpha: Alpha of background (0=opaque, 1=transparent)
+        :param enabled: Menu is enabled by default or not
         :param color_selected: Color of selected item
+        :param dopause: Pause game
         :param draw_region_x: Drawing position of element inside menu (x-axis)
         :param draw_region_y: Drawing position of element inside menu (y-axis)
         :param draw_select: Draw a rectangle around selected item (bool)
         :param font_color: Color of font
         :param font_size: Font size
         :param font_size_title: Font size of title
+        :param font_title: Alternative font for title (direction)
+        :param menu_alpha: Alpha of background (0=opaque, 1=transparent)
         :param menu_centered: Text centered menu
+        :param menu_color: Menu color
+        :param menu_color_title: Background color of title
         :param menu_height: Height of menu (px)
         :param menu_width: Width of menu (px)
+        :param onclose: Function that applies when closing menu
         :param option_margin: Margin of each element in menu (px)
         :param option_shadow: Indicate if a shadow is drawn on each option
         :param rect_width: Border with of rectangle around selected item
+        :param title_offsetx: Offset x-position of title (px)
+        :param title_offsety: Offset y-position of title (px)
         
-        :type window_width: int
-        :type window_height: int
-        :type font: basestring
-        :type title: basestring
-        :type bg_color: tuple
-        :type bg_color_title: tuple
-        :type bgalpha: int
+        :type bgfun: function
         :type color_selected: tuple
+        :type dopause: bool
         :type draw_region_x: int
         :type draw_region_y: int
         :type draw_select: bool
+        :type font: basestring
         :type font_color: tuple
         :type font_size: int
         :type font_size_title: int
+        :type font_title: basestring
+        :type menu_alpha: int
         :type menu_centered: bool
+        :type menu_color: tuple
+        :type menu_color_title: tuple
         :type menu_height: int
         :type menu_width: int
         :type option_margin: int
         :type option_shadow: bool
         :type rect_width: int
-        
-        :return: Menu object
+        :type title: basestring
+        :type window_height: int
+        :type window_width: int
         """
-        # Assert types
-        assert isinstance(window_width, int)
-        assert isinstance(window_height, int)
-        assert isinstance(font, str)
-        assert isinstance(title, str)
-        assert isinstance(bg_color, tuple)
-        assert isinstance(bg_color_title, tuple)
-        assert isinstance(bgalpha, int)
         assert isinstance(color_selected, tuple)
+        assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
         assert isinstance(draw_select, bool)
+        assert isinstance(font, str)
         assert isinstance(font_color, tuple)
         assert isinstance(font_size, int)
         assert isinstance(font_size_title, int)
+        assert isinstance(menu_alpha, int)
         assert isinstance(menu_centered, bool)
+        assert isinstance(menu_color, tuple)
+        assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_height, int)
         assert isinstance(menu_width, int)
         assert isinstance(option_margin, int)
         assert isinstance(option_shadow, bool)
         assert isinstance(rect_width, int)
+        assert isinstance(title, str)
+        assert isinstance(window_height, int)
+        assert isinstance(window_width, int)
+
+        # Other asserts
+        if dopause:
+            assert isinstance(bgfun, types.FunctionType), \
+                'bgfun must be a function (or None if menu does not pause ' \
+                'execution of the application)'
+        else:
+            assert isinstance(bgfun, types.NoneType), \
+                'bgfun must be None if menu does not pause execution of the ' \
+                'application'
+        assert window_height > 0 and window_width > 0, \
+            'Window size must be greather than zero'
+        assert rect_width >= 0, 'rect_width must be greather or equal than zero'
+        assert option_margin >= 0, \
+            'Option margin must be greather or equal than zero'
+        assert menu_width > 0 and menu_height > 0, \
+            'Menu size must be greather than zero'
+        assert font_size > 0 and font_size_title > 0, \
+            'Font sizes must be greather than zero'
+        assert draw_region_y >= 0 and draw_region_x >= 0, \
+            'Drawing regions must be greather or equal than zero'
+        assert dopause and bgfun is not None or not dopause and bgfun is None, \
+            'If pause main execution is enabled then bgfun (Background ' \
+            'function drawing) must be defined (not None)'
+        assert 0 <= menu_alpha <= 100, 'bg_alpha must be between 0 and 100'
 
         # Store configuration
-        self._bgcolor = (bg_color[0], bg_color[1], bg_color[2],
-                         int(255 * (1 - (100 - bgalpha) / 100.0)))
+        self._bgfun = bgfun
+        self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
+                         int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._bg_color_title = (
-            bg_color_title[0], bg_color_title[1], bg_color_title[2],
-            int(255 * (1 - (100 - bgalpha) / 100.0)))
+            menu_color_title[0], menu_color_title[1], menu_color_title[2],
+            int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._centered_option = menu_centered
         self._drawselrect = draw_select
         self._font_color = font_color
@@ -140,6 +181,10 @@ class Menu(object):
 
         # Inner variables
         self._actual = self  # Actual menu
+        self._closelocked = False  # Lock close until next mainloop
+        self._dopause = dopause  # Pause or not
+        self._enabled = enabled  # Menu is enabled or not
+        self._onclose = onclose  # Function that calls after closing menu
         self._option = []  # Option menu
         self._index = 0  # Selected index
         self._prev = None  # Previous menu
@@ -147,8 +192,10 @@ class Menu(object):
         self._size = 0  # Menu total elements
 
         # Load fonts
-        self._font = pygame.font.Font(font, self._fsize)
-        self._font_title = pygame.font.Font(font, self._fsize_title)
+        self._font = _pygame.font.Font(font, self._fsize)
+        if font_title is None:
+            font_title = font
+        self._font_title = _pygame.font.Font(font_title, self._fsize_title)
 
         # Position of menu
         self._posy = (window_width - self._width) / 2
@@ -168,7 +215,10 @@ class Menu(object):
 
         # Title properties
         self._title = self._font_title.render(title, 1, self._font_color)
+        self._title_str = title
         title_width = self._title.get_size()[0]
+        title_height = self._title.get_size()[1]
+        self._fsize_title = title_height
         self._title_rect = [(self._posy, self._posx),
                             (self._posy + self._width, self._posx), (
                                 self._posy + self._width,
@@ -178,7 +228,8 @@ class Menu(object):
                                 self._posy + title_width + 5,
                                 self._posx + self._fsize_title + 5),
                             (self._posy, self._posx + self._fsize_title + 5)]
-        self._title_pos = (self._posy + 5, self._posx - 3)
+        self._title_pos = (
+            self._posy + 5 + title_offsetx, self._posx + title_offsety)
 
     def add_option(self, element_name, menu, *args):
         """
@@ -187,8 +238,11 @@ class Menu(object):
         :param element_name: Name of the element
         :param menu: Menu object
         :param args: Aditional arguments
+        :type element_name: basestring
+        :type menu: Menu, _locals._PymenuAction
         :return: 
         """
+        assert isinstance(menu, Menu) or isinstance(menu, _locals._PymenuAction)
         self._actual._option.append([element_name, menu, args])
         self._actual._size += 1
         if self._actual._size > 1:
@@ -206,11 +260,22 @@ class Menu(object):
         :return: None
         """
         self._actual._option.append(
-            [SELECTOR, Selector(title, values, event, *args)])
+            [_locals.PYGAME_TYPE_SELECTOR,
+             _Selector(title, values, event, *args)])
         self._actual._size += 1
         if self._actual._size > 1:
             dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
             self._actual._opt_posy += dy
+
+    def disable(self):
+        """
+        Disable menu
+        
+        :return: None
+        """
+        if self.is_enabled():
+            self._enabled = False
+            self._closelocked = True
 
     def down(self):
         """
@@ -218,6 +283,8 @@ class Menu(object):
         
         :return: None
         """
+        if self._actual._size == 0:
+            return
         self._actual._index = (self._actual._index - 1) % self._actual._size
 
     def draw(self):
@@ -226,41 +293,41 @@ class Menu(object):
         :return: 
         """
         # Draw background rectangle
-        pygame.gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
-                                      self._actual._bgcolor)
+        _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
+                                self._actual._bgcolor)
         # Draw title
-        pygame.gfxdraw.filled_polygon(self._surface, self._actual._title_rect,
-                                      self._bg_color_title)
+        _gfxdraw.filled_polygon(self._surface, self._actual._title_rect,
+                                self._bg_color_title)
         self._surface.blit(self._actual._title, self._title_pos)
 
         # Draw options
         dy = 0
         for option in self._actual._option:
             # Si el tipo es un selector
-            if option[0] == SELECTOR:
+            if option[0] == _locals.PYGAME_TYPE_SELECTOR:
                 # If selected index draw a rectangle
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[1].get(), 1,
                                                      self._actual._sel_color)
                     text_bg = self._actual._font.render(option[1].get(), 1,
-                                                        SHADOW_COLOR)
+                                                        _cfg.SHADOW_COLOR)
                 else:
                     text = self._actual._font.render(option[1].get(), 1,
                                                      self._actual._font_color)
                     text_bg = self._actual._font.render(option[1].get(), 1,
-                                                        SHADOW_COLOR)
+                                                        _cfg.SHADOW_COLOR)
             else:
                 # If selected index draw a rectangle
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[0], 1,
                                                      self._actual._sel_color)
                     text_bg = self._actual._font.render(option[0], 1,
-                                                        SHADOW_COLOR)
+                                                        _cfg.SHADOW_COLOR)
                 else:
                     text = self._actual._font.render(option[0], 1,
                                                      self._actual._font_color)
                     text_bg = self._actual._font.render(option[0], 1,
-                                                        SHADOW_COLOR)
+                                                        _cfg.SHADOW_COLOR)
             # Text anchor
             text_width, text_height = text.get_size()
             t_dy = -int(text_height / 2.0)
@@ -279,7 +346,7 @@ class Menu(object):
                 self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords))
-            # Si se tiene la seleccionada se dibuja el rectangulo
+            # If selected item then draw a rectangle
             if self._actual._drawselrect and (dy == self._actual._index):
                 if not self._actual._centered_option:
                     text_dx_tl = -text_width
@@ -287,37 +354,148 @@ class Menu(object):
                     text_dx_tl = text_dx
                 ycoords = self._actual._opt_posy + dy * (
                     self._actual._fsize + self._actual._opt_dy) + t_dy - 2
-                pygame.draw.line(self._surface, self._actual._sel_color, (
+                _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
                         self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                 ((self._actual._opt_posx - text_dx_tl + 10,
-                                   ycoords)), self._actual._rect_width)
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
                     self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-                pygame.draw.line(self._surface, self._actual._sel_color, (
+                _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
                         self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-                                 ((self._actual._opt_posx - text_dx_tl + 10,
-                                   ycoords)), self._actual._rect_width)
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
                     self._actual._fsize + self._opt_dy) - t_dy + 2
-                pygame.draw.line(self._surface, self._actual._sel_color, (
+                _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
                         self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                 ((self._actual._opt_posx + text_dx - 10,
-                                   ycoords)), self._actual._rect_width)
+                                  ((self._actual._opt_posx + text_dx - 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
                     self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-                pygame.draw.line(self._surface, self._actual._sel_color, (
+                _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx - text_dx_tl + 10,
                     self._actual._opt_posy + dy * (
                         self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                 ((self._actual._opt_posx - text_dx_tl + 10,
-                                   ycoords)), self._actual._rect_width)
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
             dy += 1
+
+    def enable(self):
+        """
+        Enable menu
+        
+        :return: None
+        """
+        if self.is_disabled():
+            self._enabled = True
+            self._closelocked = True
+
+    def get_title(self):
+        """
+        Return title of Menu
+        
+        :return: Title
+        :rtype: basestring
+        """
+        return self._title_str
+
+    def is_disabled(self):
+        """
+        Returns false/true if Menu is enabled or not
+        
+        :return: Boolean
+        :rtype: bool
+        """
+        return not self.is_enabled()
+
+    def is_enabled(self):
+        """
+        Returns true/false if Menu is enabled or not
+        
+        :return: Boolean
+        :rtype: bool
+        """
+        return self._enabled
+
+    def _main(self, events=None):
+        """
+        Main function of the loop.
+        
+        :param events: Pygame events
+        :return: None
+        """
+        if self._actual._dopause:  # If menu pauses game then apply function
+            self._bgfun()
+        self.draw()
+        if events is None:
+            events = _pygame.event.get()
+        for event in events:
+            if event.type == _pygame.locals.QUIT:
+                exit()
+            elif event.type == _pygame.locals.KEYDOWN:
+                if event.key == _ctrl.MENU_CTRL_DOWN:
+                    self.down()
+                elif event.key == _ctrl.MENU_CTRL_UP:
+                    self.up()
+                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                    self.select()
+                    if not self._actual._dopause:
+                        return True
+                elif event.key == _ctrl.MENU_CTRL_LEFT:
+                    self.left()
+                elif event.key == _ctrl.MENU_CTRL_RIGHT:
+                    self.right()
+                elif event.key == _ctrl.MENU_CTRL_BACK:
+                    self.reset(1)
+                elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and \
+                        not self._closelocked:
+                    closefun = self._actual._onclose
+                    close = True
+                    if isinstance(self._actual._onclose,
+                                  _locals._PymenuAction):
+                        if closefun == _locals.PYGAME_MENU_RESET_ALL:
+                            self.reset(100)
+                        elif closefun == _locals.PYGAME_MENU_RESET:
+                            self.reset(1)
+                        elif closefun == _locals.PYGAME_MENU_CLOSE:
+                            pass
+                        elif closefun == _locals.PYGAME_MENU_BACK:
+                            self.reset(1)
+                        elif closefun == _locals.PYGAME_MENU_EXIT:
+                            exit()
+                        elif closefun == _locals.PYGAME_MENU_DISABLE_CLOSE:
+                            close = False
+                    if close:
+                        self.disable()
+                        return True
+
+        _pygame.display.flip()
+        self._closelocked = False
+        return False
+
+    def mainloop(self, events):
+        """
+        Main function of Menu, draw, etc
+        
+        :param events: Eventos
+        :return: None
+        """
+        assert isinstance(self._actual, Menu)
+
+        if self.is_disabled():
+            return
+        if self._actual._dopause:
+            while True:
+                if self._main():
+                    return
+        else:
+            self._main(events)
 
     def left(self):
         """
@@ -325,19 +503,23 @@ class Menu(object):
         
         :return: None
         """
-        opcion = self._actual._option[self._actual._index][1]
-        if isinstance(opcion, Selector):
-            opcion.left()
+        try:
+            opcion = self._actual._option[self._actual._index][1]
+            if isinstance(opcion, _Selector):
+                opcion.left()
+        except:
+            pass
 
     # noinspection PyAttributeOutsideInit
     def reset(self, total=0):
         """
         Reset menu
-        :param total: 
+        
+        :param total: How many elements to reset
         :return: 
         """
         assert isinstance(self._actual, Menu)
-        # Se devuelve al menu padre
+
         i = 0
         while True:
             if self._actual._prev is not None:
@@ -360,9 +542,12 @@ class Menu(object):
         
         :return: None
         """
-        opcion = self._actual._option[self._actual._index][1]
-        if isinstance(opcion, Selector):
-            opcion.right()
+        try:
+            opcion = self._actual._option[self._actual._index][1]
+            if isinstance(opcion, _Selector):
+                opcion.right()
+        except:
+            pass
 
     # noinspection PyAttributeOutsideInit
     def select(self):
@@ -371,18 +556,23 @@ class Menu(object):
         :return: 
         """
         assert isinstance(self._actual, Menu)
-        option = self._actual._option[self._actual._index][1]
-        # If element is an Menu
+
+        try:
+            option = self._actual._option[self._actual._index][1]
+        except:
+            return
+
+        # If element is a Menu
         if isinstance(option, Menu):
             actual = self
             self._actual._actual = option._actual
             self._actual._prev = actual
             self._actual._prev_draw = self.draw
             self.draw = option.draw
-        # If option is a number (internal functions)
-        elif isinstance(option, types.IntType):
+        # If option is a PyMenuAction
+        elif isinstance(option, _locals._PymenuAction):
             # Back to menu
-            if option == MENU_BACK:
+            if option == _locals.PYGAME_MENU_BACK:
                 prev = self._actual._prev
                 prev_draw = self._actual._prev_draw
                 self.draw = prev_draw
@@ -391,7 +581,7 @@ class Menu(object):
                 self._actual._prev = None
                 self._actual._prev_draw = None
             # Exit program
-            elif option == MENU_EXIT:
+            elif option == _locals.PYGAME_MENU_EXIT:
                 exit()
         # If element is a function
         elif isinstance(option, types.FunctionType) or callable(option):
@@ -403,7 +593,7 @@ class Menu(object):
         elif isinstance(option, types.NoneType):
             pass
         # If element is a selector
-        elif isinstance(option, Selector):
+        elif isinstance(option, _Selector):
             option.apply()
 
     def up(self):
@@ -412,4 +602,6 @@ class Menu(object):
         
         :return: None
         """
+        if self._actual._size == 0:
+            return
         self._actual._index = (self._actual._index + 1) % self._actual._size
