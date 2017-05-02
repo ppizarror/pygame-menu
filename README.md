@@ -100,7 +100,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 **Menu** and **TextMenu** have the next functions:
 
-- <i>add_option(self, element_name, element, *args)</i>
+- <i>add_option(element_name, element, *args)</i>
     
     Adds an *option* to the Menu.
 
@@ -135,10 +135,10 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     menu.add_option('Exit', PYGAME_MENU_EXIT)            # Add exit function
     ```
 
-- <i>add_selector(self, title, values, onchange, onreturn, **kwargs)</i>
+- <i>add_selector(title, values, onchange, onreturn, **kwargs)</i>
 
-    - <i>add_selector_change(self, title, values, ochangen, **kwargs)</i>
-    - <i>add_selector_return(self, title, values, onreturn, **kwargs)</i>
+    - <i>add_selector_change(title, values, ochangen, **kwargs)</i>
+    - <i>add_selector_return(title, values, onreturn, **kwargs)</i>
 
     Add a *selector* to menu: several options with values and two functions that execute when changing the selector (left/right) and pressing *Return key* on the element.
 
@@ -183,6 +183,102 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
     timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
     ```
+    
+- <i>add_line(text)</i>
+
+    Adds a new line on **TextMenu** object.
+    
+    Example:
+    ```python
+    HELP = ['Press ESC to enable/disable Menu',
+            'Press ENTER to access a Sub-Menu or use an option',
+            'Press UP/DOWN to move through Menu',
+            'Press LEFT/RIGHT to move through Selectors']
+            
+    menu_help = pygameMenu.Menu(...)
+    for line in HELP:
+        menu_help.add_line(line) # Add line
+    menu_help.add_option('Return to Menu', PYGAME_MENU_BACK)
+    ```
+    
+
+- <i>mainloop(events)</i>
+
+    Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses aplication and checks Events.
+    
+    ```python
+    menu = pygameMenu.Menu(...)
+    
+    # Main aplication
+    while True:
+    
+        # Application events
+        events = pygame.event.get()
+    
+        # Menu loop (If onpause is enabled then a infinite-loop is triggered on this line)
+        menu.mainloop(events)
+    ```
+    
+- <i>disable()</i>
+   
+    Disable Menu (doest check events and draw on surface).
+    
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.disable()
+    ```
+    
+
+- <i>draw()</i>
+
+    Draw Menu on surface.
+    
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.disable()
+    ```
+    
+
+- <i>enable()</i>
+
+    Enable Menu (can check events and draw).
+    
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.enable()
+    ```
+    
+
+- <i>get_title()</i>
+
+    Enable Menu (can check events and draw).
+    
+    ```python
+    menu = pygameMenu.Menu(..., title='Menu title', ...)
+    menu.get_title() # -> 'Menu title'
+    ```
+    
+- <i>is_enabled()</i>
+
+    Check if menu is enabled.
+    
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.disable()
+    menu.is_enabled() # -> False
+    ```
+    
+- <i>is_disabled()</i>
+
+    Check if menu is disabled.
+    
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.disable()
+    menu.is_disabled() # -> True
+    ```
+    
+
 
 ### Menu events
 
