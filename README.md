@@ -1,6 +1,13 @@
 # Pygame Menu
 
-- <a href="#import">Import</a>
+* [Import](#import)
+* [Usage](#usage)
+  * [Creating menus](#creating-menus)
+  * [Add options and entries to Menus](#add-options-and-entries-to-menus)
+  * [Menu events](#menu-events)
+  * [Using fonts](#using-fonts)
+* [License](#license)
+* [Author](#author)
 
 Python library that can create a Menu on Pygame, Supports:
 
@@ -320,8 +327,8 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 |config_menu.py|Configure default parameter of Menu class|
 |config_textmenu.py|Configure default parameter of TextMenu class|
 
-## Licence
-This project is licenced under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].
+## License
+This project is licensed under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].
 
 ## Author
 Author: Pablo Pizarro, 2017.
