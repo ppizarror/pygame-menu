@@ -1,37 +1,43 @@
-## Welcome to GitHub Pages
+# Pygame Menu
+Python library that can create a Menu on Pygame, Supports:
 
-You can use the [editor on GitHub](https://github.com/ppizarror/pygame-menu/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+1. Textual menus
+2. Textual menus + buttons
+3. Lists of values (that i called **Selectors**) that can trigger functions when pressing Return or changing the value
+4. Button menus
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Examples:
+- Normal Button menu
+<p align="center">
+<img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap1.PNG?raw=true" width="50%px" height="50%px">
+</p>
+- Text menu
+<p align="center">
+<img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap2.PNG?raw=true" width="50%px" height="50%px">
+</p>
+- Small submenu
+<p align="center">
+<img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap3.PNG?raw=true" width="50%px" height="50%px">
+</p>
 
-### Markdown
+## Import
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+Import of this library is similar as pygame:
+```python
+import pygameMenu                # This imports classes and other things
+from pygameMenu.locals import *  # Import constants (like actions)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to run this.
 
-### Jekyll Themes
+## Usage
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ppizarror/pygame-menu/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## Licence
+This project is licenced under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].
+
+## Author
+Author: Pablo Pizarro, 2017.
+
+
