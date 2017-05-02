@@ -1,4 +1,7 @@
 # Pygame Menu
+
+- <a href="#import">Import</a>
+
 Python library that can create a Menu on Pygame, Supports:
 
 1. Textual menus
@@ -291,6 +294,31 @@ Supported events are the same:
 |PYGAME_MENU_EXIT | Close application
 | PYGAME_MENU_DISABLE_CLOSE | Disable close menu|
 | PYGAME_MENU_RESET | Reset menu |
+
+This events are imported on <i>from pygameMenu.locals import *</i> line.
+
+### Using fonts
+
+Also this library has some fonts to use, to load a font run this code:
+
+```python
+import pygameMenu
+
+fontdir = pygameMenu.fonts.FONT_NAME
+```
+
+Avaiable fonts (*FONT_NAME*): **8BIT**, **BEBAS**, **FRANCHISE**, **MUNRO** and **NEVIS**. 
+
+
+## Configurations
+
+Default parameters of *Menu* and *TextMenu* are stored on the following files:
+
+| File | Description |
+| :-:| :--|
+|config_controls.py|Configure default key-events of Menus|
+|config_menu.py|Configure default parameter of Menu class|
+|config_textmenu.py|Configure default parameter of TextMenu class|
 
 ## Licence
 This project is licenced under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].
