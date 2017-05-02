@@ -103,7 +103,7 @@ timer_menu = pygameMenu.Menu(surface,
                              menu_width=600,
                              menu_height=H_SIZE / 2,
                              # If this menu closes (press ESC) reset to main
-                             onclose=PYGAME_MENU_RESET_ALL,
+                             onclose=PYGAME_MENU_RESET,
                              dopause=False)
 timer_menu.add_option('Reset timer', reset_timer)
 
@@ -121,6 +121,7 @@ timer_menu.add_selector('Change bgcolor',
                         # Kwargs, optional parametrs to change_color_bg function
                         write_on_console=True)
 timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
+timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
 
 # Help menu
 help_menu = pygameMenu.TextMenu(surface,

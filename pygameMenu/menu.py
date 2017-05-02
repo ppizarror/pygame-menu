@@ -289,7 +289,7 @@ class Menu(object):
                 'First element of value list component must be a string'
 
         self._actual._option.append(
-            [_locals.PYGAME_TYPE_SELECTOR,
+            [_locals._PYGAME_TYPE_SELECTOR,
              _Selector(title, values, onchange=onchange, onreturn=onreturn,
                        **kwargs)])
         self._actual._size += 1
@@ -381,7 +381,7 @@ class Menu(object):
         dy = 0
         for option in self._actual._option:
             # Si el tipo es un selector
-            if option[0] == _locals.PYGAME_TYPE_SELECTOR:
+            if option[0] == _locals._PYGAME_TYPE_SELECTOR:
                 # If selected index draw a rectangle
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[1].get(), 1,
@@ -536,20 +536,16 @@ class Menu(object):
                     close = True
                     if isinstance(self._actual._onclose,
                                   _locals._PymenuAction):
-                        if closefun == _locals.PYGAME_MENU_RESET_ALL:
+                        if closefun == _locals.PYGAME_MENU_RESET:
                             self.reset(100)
-                        elif closefun == _locals.PYGAME_MENU_RESET:
-                            self.reset(1)
-                        elif closefun == _locals.PYGAME_MENU_CLOSE:
-                            pass
                         elif closefun == _locals.PYGAME_MENU_BACK:
                             self.reset(1)
                         elif closefun == _locals.PYGAME_MENU_EXIT:
                             exit()
                         elif closefun == _locals.PYGAME_MENU_DISABLE_CLOSE:
                             close = False
-                    elif isinstance(self._actual._onclose, types.FunctionType):
-                        self._actual._onclose()
+                    elif isinstance(onclose, types.FunctionType):
+                        onclose()
                     if close:
                         self.disable()
                         return True
@@ -662,6 +658,20 @@ class Menu(object):
                 self._actual = prev
                 self._actual._prev = None
                 self._actual._prev_draw = None
+            # Close menu
+            elif option == _locals.PYGAME_MENU_CLOSE:
+                self.disable()
+                self._closelocked = False
+                closefun = self._actual._onclose
+                if closefun is not None:
+                    if closefun == _locals.PYGAME_MENU_RESET:
+                        self.reset(100)
+                    elif closefun == _locals.PYGAME_MENU_BACK:
+                        self.reset(1)
+                    elif closefun == _locals.PYGAME_MENU_EXIT:
+                        exit()
+                    elif isinstance(onclose, types.FunctionType):
+                        closefun()
             # Exit program
             elif option == _locals.PYGAME_MENU_EXIT:
                 exit()

@@ -43,11 +43,8 @@ PYGAME_MENU_DISABLE_CLOSE = _PymenuAction(10)
 # Menu reset
 PYGAME_MENU_RESET = _PymenuAction(4)
 
-# Menu reset all
-PYGAME_MENU_RESET_ALL = _PymenuAction(5)
-
 # Type of selector
-PYGAME_TYPE_SELECTOR = _PymenuAction(2)
+_PYGAME_TYPE_SELECTOR = _PymenuAction(2)
 
 # Text newline on TextMenu object
 TEXT_NEWLINE = ''

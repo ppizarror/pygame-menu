@@ -95,8 +95,18 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 > |text_fontsize| Text font size| int
 > |text_margin| Line margin| int
 > |draw_text_region_x| X-Axis drawing region of the text| int
->
 
+### Menu events
+
+Supported events are the same:
+
+| Event | Description |
+| :-:|:--|
+|PYGAME_MENU_BACK | Go back on menu|
+| PYGAME_MENU_CLOSE | Close menu|
+|PYGAME_MENU_EXIT | Close application
+| PYGAME_MENU_DISABLE_CLOSE | Disable close menu|
+| PYGAME_MENU_RESET | Reset menu |
 
 ## Licence
 This project is licenced under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].

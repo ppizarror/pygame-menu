@@ -167,7 +167,7 @@ class TextMenu(Menu):
         dy_index = 0
         for option in self._actual._option:
             # If option is selector
-            if option[0] == _locals.PYGAME_TYPE_SELECTOR:
+            if option[0] == _locals._PYGAME_TYPE_SELECTOR:
                 # If selected index then change color
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[1].get(), 1,
