@@ -353,7 +353,7 @@ class Menu(object):
             self._enabled = False
             self._closelocked = True
 
-    def down(self):
+    def _down(self):
         """
         Move selection down
         
@@ -517,17 +517,17 @@ class Menu(object):
                 exit()
             elif event.type == _pygame.locals.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_DOWN:
-                    self.down()
+                    self._down()
                 elif event.key == _ctrl.MENU_CTRL_UP:
-                    self.up()
+                    self._up()
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
-                    self.select()
+                    self._select()
                     if not self._actual._dopause:
                         return True
                 elif event.key == _ctrl.MENU_CTRL_LEFT:
-                    self.left()
+                    self._left()
                 elif event.key == _ctrl.MENU_CTRL_RIGHT:
-                    self.right()
+                    self._right()
                 elif event.key == _ctrl.MENU_CTRL_BACK:
                     self.reset(1)
                 elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and \
@@ -572,7 +572,7 @@ class Menu(object):
         else:
             self._main(events)
 
-    def left(self):
+    def _left(self):
         """
         Move selector left
         
@@ -586,16 +586,17 @@ class Menu(object):
             pass
 
     # noinspection PyAttributeOutsideInit
-    def reset(self, total=0):
+    def reset(self, total):
         """
         Reset menu
         
-        :param total: How many elements to reset
+        :param total: How many menus to reset (1: back)
         :type total: int
         :return: 
         """
         assert isinstance(self._actual, Menu)
         assert isinstance(total, int)
+        assert total > 0, 'Total must be greather than zero'
 
         i = 0
         while True:
@@ -613,7 +614,7 @@ class Menu(object):
             else:
                 break
 
-    def right(self):
+    def _right(self):
         """
         Move selector to right
         
@@ -627,7 +628,7 @@ class Menu(object):
             pass
 
     # noinspection PyAttributeOutsideInit
-    def select(self):
+    def _select(self):
         """
         Apply selected option
         
@@ -651,13 +652,7 @@ class Menu(object):
         elif isinstance(option, _locals._PymenuAction):
             # Back to menu
             if option == _locals.PYGAME_MENU_BACK:
-                prev = self._actual._prev
-                prev_draw = self._actual._prev_draw
-                self.draw = prev_draw
-                self._actual.index = 0
-                self._actual = prev
-                self._actual._prev = None
-                self._actual._prev_draw = None
+                self.reset(1)
             # Close menu
             elif option == _locals.PYGAME_MENU_CLOSE:
                 self.disable()
@@ -688,7 +683,7 @@ class Menu(object):
         elif isinstance(option, _Selector):
             option.apply()
 
-    def up(self):
+    def _up(self):
         """
         Option up
         
