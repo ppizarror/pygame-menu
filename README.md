@@ -100,10 +100,27 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 **Menu** and **TextMenu** have the next functions:
 
-- <pre>a</pre>
- Example
+- *add_option(self, element_name, element, *args)*: Adds an *option* to the Menu
+
+| Param | Description | Type |
+| :-: | :--| :--:|
+|element_name| String on menu entry| str|
+|element_name| Menu object (Menu, function or Menu-Event) supported |_PymenuAction, function, Menu|
+|*args| Additional arguments | -|
+
+
+Example:
+```python
+help_menu = pygameMenu.TextMenu(surface,window_width=W_SIZE,window_height=H_SIZE,
+                                font=pygameMenu.fonts.FONT_FRANCHISE,
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                title='Help', dopause=False,                        
+                                menu_color_title=(120, 45, 30),
+                                menu_color=(30, 50, 107))
+help_menu.add_option('Return to Menu', PYGAME_MENU_BACK) # Add option
+```
  
-- <pre>b</pre>
+-
  Example
 
 ### Menu events
