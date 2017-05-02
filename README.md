@@ -94,7 +94,17 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 > |text_color| Text color|tuple|
 > |text_fontsize| Text font size| int
 > |text_margin| Line margin| int
-> |draw_text_region_x| X-Axis drawing region of the text| int
+> |draw_text_region_x| X-Axis drawing region of the text| int|
+
+### Add options and entries to Menus
+
+**Menu** and **TextMenu** have the next functions:
+
+- <pre>a</pre>
+ Example
+ 
+- <pre>b</pre>
+ Example
 
 ### Menu events
 
