@@ -21,7 +21,7 @@ class Selector(object):
     Selector object
     """
 
-    def __init__(self, title, elements, onchange=None, onreturn=None, *args):
+    def __init__(self, title, elements, onchange=None, onreturn=None, **kwargs):
         """
         Constructor
         
@@ -29,9 +29,9 @@ class Selector(object):
         :param elements: Elements of the selector
         :param onchange: Event when changing the selector
         :param onreturn: Event when pressing return button
-        :param args: Optional arguments
+        :param kwargs: Optional arguments
         """
-        self._args = args
+        self._kwargs = kwargs
         self._elements = elements
         self._index = 0
         self._on_change = onchange
@@ -46,11 +46,15 @@ class Selector(object):
         :return: None
         """
         if self._on_return is not None:
-            if self._on_return is not None:
-                if len(self._args) > 0:
-                    self._on_return(self._elements[self._index][1], *self._args)
-                else:
-                    self._on_return(self._elements[self._index][1])
+            paramlist = self._elements[self._index]
+            paraml = []
+            for i in range(1, len(paramlist)):
+                paraml.append(paramlist[i])
+
+            if len(self._kwargs) > 0:
+                self._on_return(*paraml, **self._kwargs)
+            else:
+                self._on_return(*paraml)
 
     def change(self):
         """
@@ -59,10 +63,15 @@ class Selector(object):
         :return: None
         """
         if self._on_change is not None:
-            if len(self._args) > 0:
-                self._on_change(self._elements[self._index][1], *self._args)
+            paramlist = self._elements[self._index]
+            paraml = []
+            for i in range(1, len(paramlist)):
+                paraml.append(paramlist[i])
+
+            if len(self._kwargs) > 0:
+                self._on_change(*paraml, **self._kwargs)
             else:
-                self._on_change(self._elements[self._index][1])
+                self._on_change(*paraml)
 
     def get(self):
         """

@@ -38,7 +38,7 @@ class TextMenu(Menu):
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
                  **kwargs):
         """
-        TextMenu constructor.
+        TextMenu constructor
         
         :param surface: Pygame surface object
         :param window_width: Window width
@@ -53,8 +53,8 @@ class TextMenu(Menu):
         
         :type window_width: int
         :type window_height: int
-        :type font: basestring
-        :type title: basestring
+        :type font: str
+        :type title: str
         :type text_centered: bool
         :type text_color: tuple
         :type text_fontsize: int
@@ -99,28 +99,32 @@ class TextMenu(Menu):
         """
         Add line to text
         
-        :param text: 
+        :param text: Line text
+        :type text: str
         :return: 
         """
         assert isinstance(self._actual, TextMenu)
+        assert isinstance(text, str)
         text = text.strip()
         self._actual._text.append(text)
         dy = -self._actual._font_textsize / 2 - self._actual._textdy / 2
         self._actual._opt_posy += dy
 
-    def add_option(self, element_name, menu, *args):
+    def add_option(self, element_name, element, *args):
         """
         Add option to menu
 
         :param element_name: Name of the element
-        :param menu: Menu object
+        :param element: Menu object
         :param args: Aditional arguments
         :type element_name: basestring
-        :type menu: Menu, _locals._PymenuAction
+        :type element: Menu, _locals._PymenuAction
         :return: 
         """
-        assert isinstance(menu, Menu) or isinstance(menu, _locals._PymenuAction)
-        self._actual._option.append([element_name, menu, args])
+        a = isinstance(element, Menu)
+        b = isinstance(element, _locals._PymenuAction)
+        assert a or b, 'Element must be a Menu or a PymenuAction'
+        self._actual._option.append([element_name, element, args])
         self._actual._size += 1
         dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
         self._actual._opt_posy += dy

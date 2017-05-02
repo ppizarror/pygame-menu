@@ -231,41 +231,116 @@ class Menu(object):
         self._title_pos = (
             self._posy + 5 + title_offsetx, self._posx + title_offsety)
 
-    def add_option(self, element_name, menu, *args):
+    def add_option(self, element_name, element, *args):
         """
         Add option to menu
         
         :param element_name: Name of the element
-        :param menu: Menu object
+        :param element: Object
         :param args: Aditional arguments
         :type element_name: basestring
-        :type menu: Menu, _locals._PymenuAction
+        :type element: Menu, _locals._PymenuAction
         :return: 
         """
-        assert isinstance(menu, Menu) or isinstance(menu, _locals._PymenuAction)
-        self._actual._option.append([element_name, menu, args])
+        a = isinstance(element, Menu)
+        b = isinstance(element, _locals._PymenuAction)
+        c = isinstance(element, types.FunctionType)
+        d = callable(element)
+        assert a or b or c or d, \
+            'Element must be a Menu, an PymenuAction or a Function'
+        assert isinstance(element_name, str), 'Element name must be a string'
+        self._actual._option.append([element_name, element, args])
         self._actual._size += 1
         if self._actual._size > 1:
             dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
             self._actual._opt_posy += dy
 
-    def add_selector(self, title, values, event, *args):
+    def add_selector(self, title, values, onchange, onreturn,
+                     **kwargs):
         """
-        Add a selector to menu
+        Add a selector to menu: several options with values and two functions
+        when changing the selector (left/right) and pressing return to the
+        element.
+        
+        Values of the selector are like:
+            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
+        
+        And functions onchange and onreturn does
+            onchange(a, b, c..., **kwargs)
+            onreturn(a, b, c..., **kwargs)
         
         :param title: Title of the selector
-        :param values: Values of the selector
-        :param event: Event of the selector
-        :param args: Aditional arguments
+        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
+        :param onchange: Function when changing the selector
+        :param onreturn: Function when pressing return button
+        :param kwargs: Aditional arguments
+        :type title: basestring
+        :type values: list
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
         :return: None
         """
+        # Check value list
+        for vl in values:
+            assert len(vl) > 1, \
+                'Length of each element in value list must be greather than 1'
+            assert isinstance(vl[0], str), \
+                'First element of value list component must be a string'
+
         self._actual._option.append(
             [_locals.PYGAME_TYPE_SELECTOR,
-             _Selector(title, values, event, *args)])
+             _Selector(title, values, onchange=onchange, onreturn=onreturn,
+                       **kwargs)])
         self._actual._size += 1
         if self._actual._size > 1:
             dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
             self._actual._opt_posy += dy
+
+    def add_selector_change(self, title, values, fun, **kwargs):
+        """
+        Add a selector to the menu, apply function with values list and kwargs
+        optional parameters when pressing left/right on the element.
+
+        Values of the selector are like:
+            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
+
+        And when changing the value of the selector:
+            fun(a, b, c,..., **kwargs)
+
+        :param title: Title of the selector
+        :param values: Values of the selector
+        :param fun: Function to apply values when changing the selector
+        :param kwargs: Optional parameters to function
+        :type title: basestring
+        :type values: list
+        :type fun: function, NoneType
+        :return: 
+        """
+        self.add_selector(title=title, values=values, onchange=fun,
+                          onreturn=None, kwargs=kwargs)
+
+    def add_selector_return(self, title, values, fun, **kwargs):
+        """
+        Add a selector to the menu, apply function with values list and kwargs
+        optional parameters when pressing return on the element.
+
+        Values of the selector are like:
+            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
+
+        And when pressing return on the selector:
+            fun(a, b, c,..., **kwargs)
+
+        :param title: Title of the selector
+        :param values: Values of the selector
+        :param fun: Function to apply values when pressing return on the element
+        :param kwargs: Optional parameters to function
+        :type title: str
+        :type values: list
+        :type fun: function, NoneType
+        :return: 
+        """
+        self.add_selector(title=title, values=values, onchange=None,
+                          onreturn=fun, kwargs=kwargs)
 
     def disable(self):
         """
@@ -290,6 +365,7 @@ class Menu(object):
     def draw(self):
         """
         Draw menu to surface
+        
         :return: 
         """
         # Draw background rectangle
@@ -401,7 +477,7 @@ class Menu(object):
         Return title of Menu
         
         :return: Title
-        :rtype: basestring
+        :rtype: str
         """
         return self._title_str
 
@@ -516,9 +592,11 @@ class Menu(object):
         Reset menu
         
         :param total: How many elements to reset
+        :type total: int
         :return: 
         """
         assert isinstance(self._actual, Menu)
+        assert isinstance(total, int)
 
         i = 0
         while True:
@@ -553,6 +631,7 @@ class Menu(object):
     def select(self):
         """
         Apply selected option
+        
         :return: 
         """
         assert isinstance(self._actual, Menu)
@@ -585,8 +664,8 @@ class Menu(object):
                 exit()
         # If element is a function
         elif isinstance(option, types.FunctionType) or callable(option):
-            if len(self._actual._option[self._actual.index][2]) > 0:
-                option(self._actual._option[self._actual.index][2])
+            if len(self._actual._option[self._actual._index][2]) > 0:
+                option(self._actual._option[self._actual._index][2])
             else:
                 option()
         # If null type
