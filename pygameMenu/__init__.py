@@ -22,4 +22,4 @@ import fonts as fonts
 import locals
 
 # Version
-__version__ = 'v1.0'
+__version__ = 'v1.1'
