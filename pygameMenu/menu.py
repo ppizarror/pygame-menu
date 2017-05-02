@@ -260,8 +260,8 @@ class Menu(object):
                      **kwargs):
         """
         Add a selector to menu: several options with values and two functions
-        when changing the selector (left/right) and pressing return to the
-        element.
+        that execute when changing the selector (left/right) and pressing
+        return button on the element.
         
         Values of the selector are like:
             values = [('Item1', a, b, c...), ('Item2', a, b, c..)]

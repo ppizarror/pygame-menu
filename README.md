@@ -133,7 +133,49 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     menu.add_option('Exit', PYGAME_MENU_EXIT)            # Add exit function
     ```
 
-- <i>add_selector(self, title, values, onchange, onreturn, **kwargs)</i>:
+- <i>add_selector(self, title, values, onchange, onreturn, **kwargs)</i>: Add a *selector* to menu: several options with values and two functions that execute when changing the selector (left/right) and pressing *Return key* on the element.
+
+    | Param | Description | Type |
+    | :-: | :--| :--:|
+    |title| String on menu entry| str|
+    |values| Value list, list of tuples|list
+    |onchange| Function that executes when change the value of selector| function|
+    |onreturn| Function that executes when pressing return button on selected item | function|
+    |**kwargs| Additional arguments | -|
+    
+    Example:
+    ```python
+    def change_color_bg(c, **kwargs):
+        """
+        Change background color
+        
+        :param c: Color tuple
+        """
+        if c == (-1, -1, -1):  # If random color
+            c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
+        if kwargs['write_on_console']:
+            print('New bg color: ({0},{1},{2})'.format(*c))
+        COLOR_BACKGROUND[0] = c[0]
+        COLOR_BACKGROUND[1] = c[1]
+        COLOR_BACKGROUND[2] = c[2]
+        
+    timer_menu = pygameMenu.Menu(...)
+    
+    # Add selector
+    timer_menu.add_selector('Change bgcolor',
+                            # Values of selector, call to change_color_bg
+                            [('Random', (-1, -1, -1)),  # Random color
+                             ('Default', (128, 0, 128)),
+                             ('Black', (0, 0, 0)),
+                             ('Blue', COLOR_BLUE)],
+                            None, # onchange
+                            change_color_bg, # onreturn
+                            write_on_console=True # Optional change_color_bg param)
+                            
+    timer_menu.add_option('Reset timer', reset_timer)
+    timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
+    timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
+    ```
 
 ### Menu events
 

@@ -79,7 +79,8 @@ def reset_timer():
 
 def change_color_bg(c, **kwargs):
     """
-    Change color of background.
+    Change background color
+    
     :param c: Color tuple
     """
     if c == (-1, -1, -1):  # If random color
@@ -171,7 +172,6 @@ menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
 menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
 menu.add_option('Exit', PYGAME_MENU_EXIT)  # Add exit function
-menu.add_selector()
 
 # Main loop
 while True:
