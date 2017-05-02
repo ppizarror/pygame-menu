@@ -239,8 +239,8 @@ class Menu(object):
         :param element_name: Name of the element
         :param element: Object
         :param args: Aditional arguments
-        :type element_name: basestring
-        :type element: Menu, _locals._PymenuAction
+        :type element_name: str
+        :type element: Menu, _PymenuAction, function
         :return: 
         """
         a = isinstance(element, Menu)

@@ -167,10 +167,11 @@ menu = pygameMenu.Menu(surface,
                        menu_alpha=90,
                        enabled=False,
                        bgfun=mainmenu_background)
-menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer menu
-menu.add_option(help_menu.get_title(), help_menu)  # Add help menu
-menu.add_option(about_menu.get_title(), about_menu)  # Add about menu
+menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
+menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
+menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
 menu.add_option('Exit', PYGAME_MENU_EXIT)  # Add exit function
+menu.add_selector()
 
 # Main loop
 while True:

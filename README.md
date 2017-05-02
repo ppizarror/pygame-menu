@@ -100,7 +100,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 **Menu** and **TextMenu** have the next functions:
 
-- *add_option(self, element_name, element, args)*: Adds an *option* to the Menu
+- <i>add_option(self, element_name, element, *args)</i>: Adds an *option* to the Menu
 
     | Param | Description | Type |
     | :-: | :--| :--:|
@@ -133,7 +133,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     menu.add_option('Exit', PYGAME_MENU_EXIT)            # Add exit function
     ```
 
-- 
+- <i>add_selector(self, title, values, onchange, onreturn, **kwargs)</i>:
 
 ### Menu events
 
