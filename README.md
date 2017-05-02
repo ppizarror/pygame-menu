@@ -34,12 +34,14 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 ## Usage
 
+### Creating menus
+
 - **Menu**
 
 > This class creates a Menu
 >  
 > ```python
-> pygameMenu.Menu(surface, window_width, window_height, font, title, *optional_parameters*) -> Menu object
+> pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
 > ```
 >
 > Parameters are the following:
@@ -80,7 +82,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 > This class creates a textual menu
 > ```python
-> pygameMenu.TextMenu(surface, window_width, window_height, font, title, *optional_parameters*) -> TextMenu object
+> pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
 > ```
 >
 > This class inherites from Menu, so the parameters are the same, except the following extra parameters:
