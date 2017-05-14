@@ -193,7 +193,10 @@ class Menu(object):
         self._size = 0  # Menu total elements
 
         # Load fonts
-        self._font = _pygame.font.Font(font, self._fsize)
+        try:
+            self._font = _pygame.font.Font(font, self._fsize)
+        except:
+            raise Exception('Could not load {0} font file'.format(font))
         if font_title is None:
             font_title = font
         self._font_title = _pygame.font.Font(font_title, self._fsize_title)
@@ -534,18 +537,19 @@ class Menu(object):
                         not self._closelocked:
                     closefun = self._actual._onclose
                     close = True
-                    if isinstance(self._actual._onclose,
-                                  _locals._PymenuAction):
-                        if closefun == _locals.PYGAME_MENU_RESET:
-                            self.reset(100)
-                        elif closefun == _locals.PYGAME_MENU_BACK:
-                            self.reset(1)
-                        elif closefun == _locals.PYGAME_MENU_EXIT:
-                            exit()
-                        elif closefun == _locals.PYGAME_MENU_DISABLE_CLOSE:
-                            close = False
-                    elif isinstance(onclose, types.FunctionType):
-                        onclose()
+                    if closefun is not None:
+                        if isinstance(self._actual._onclose,
+                                      _locals._PymenuAction):
+                            if closefun == _locals.PYGAME_MENU_RESET:
+                                self.reset(100)
+                            elif closefun == _locals.PYGAME_MENU_BACK:
+                                self.reset(1)
+                            elif closefun == _locals.PYGAME_MENU_EXIT:
+                                exit()
+                            elif closefun == _locals.PYGAME_MENU_DISABLE_CLOSE:
+                                close = False
+                        elif isinstance(onclose, types.FunctionType):
+                            onclose()
                     if close:
                         self.disable()
                         return True
