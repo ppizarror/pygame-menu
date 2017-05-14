@@ -22,6 +22,7 @@ import locals as _locals
 
 # Library imports
 from selector import Selector as _Selector
+from utils import *
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
@@ -113,6 +114,7 @@ class Menu(object):
         :type window_height: int
         :type window_width: int
         """
+        check_python_version()
         assert isinstance(color_selected, tuple)
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
@@ -677,7 +679,10 @@ class Menu(object):
         # If element is a function
         elif isinstance(option, types.FunctionType) or callable(option):
             if len(self._actual._option[self._actual._index][2]) > 0:
-                option(self._actual._option[self._actual._index][2])
+                if type(self._actual._option[self._actual._index][2]) is tuple:
+                    option(*self._actual._option[self._actual._index][2])
+                else:
+                    option(self._actual._option[self._actual._index][2])
             else:
                 option()
         # If null type

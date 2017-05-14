@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 EXAMPLE
-Example file.
+Example file, timer clock with in-menu options.
 
 Copyright (C) 2017 Pablo Pizarro @ppizarror
 
