@@ -19,10 +19,10 @@ GNU General Public License for more details.
 import config_controls as _ctrl
 import config_menu as _cfg
 import locals as _locals
+# noinspection PyUnresolvedReferences
 
 # Library imports
 from selector import Selector as _Selector
-from utils import *
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
@@ -114,7 +114,6 @@ class Menu(object):
         :type window_height: int
         :type window_width: int
         """
-        check_python_version()
         assert isinstance(color_selected, tuple)
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
@@ -143,7 +142,7 @@ class Menu(object):
                 'bgfun must be a function (or None if menu does not pause ' \
                 'execution of the application)'
         else:
-            assert isinstance(bgfun, types.NoneType), \
+            assert isinstance(bgfun, type(None)), \
                 'bgfun must be None if menu does not pause execution of the ' \
                 'application'
         assert window_height > 0 and window_width > 0, \
@@ -249,10 +248,11 @@ class Menu(object):
         :return: 
         """
         a = isinstance(element, Menu)
-        b = isinstance(element, _locals._PymenuAction)
+        b = str(type(element)) == "<class 'pygameMenu.locals._PymenuAction'>"
         c = isinstance(element, types.FunctionType)
         d = callable(element)
-        assert a or b or c or d, \
+        e = isinstance(element, _locals._PymenuAction)
+        assert a or b or c or d or e, \
             'Element must be a Menu, an PymenuAction or a Function'
         assert isinstance(element_name, str), 'Element name must be a string'
         self._actual._option.append([element_name, element, args])
@@ -537,21 +537,30 @@ class Menu(object):
                     self.reset(1)
                 elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and \
                         not self._closelocked:
-                    closefun = self._actual._onclose
+                    onclose = self._actual._onclose
                     close = True
-                    if closefun is not None:
-                        if isinstance(self._actual._onclose,
-                                      _locals._PymenuAction):
-                            if closefun == _locals.PYGAME_MENU_RESET:
+                    if not isinstance(onclose, type(None)):
+                        a = isinstance(onclose, _locals._PymenuAction)
+                        b = str(type(
+                            onclose)) == "<class 'pygameMenu.locals" \
+                                         "._PymenuAction'>"
+                        if a or b:
+                            if _locals._eq_action(onclose,
+                                                  _locals.PYGAME_MENU_RESET):
                                 self.reset(100)
-                            elif closefun == _locals.PYGAME_MENU_BACK:
+                            elif _locals._eq_action(onclose,
+                                                    _locals.PYGAME_MENU_BACK):
                                 self.reset(1)
-                            elif closefun == _locals.PYGAME_MENU_EXIT:
+                            elif _locals._eq_action(onclose,
+                                                    _locals.PYGAME_MENU_EXIT):
                                 exit()
-                            elif closefun == _locals.PYGAME_MENU_DISABLE_CLOSE:
+                            elif _locals._eq_action(onclose,
+                                                    _locals.PYGAME_MENU_DISABLE_CLOSE):
                                 close = False
                         elif isinstance(onclose, types.FunctionType):
                             onclose()
+                    else:
+                        close = False
                     if close:
                         self.disable()
                         return True
@@ -647,6 +656,10 @@ class Menu(object):
         except:
             return
 
+        a = isinstance(option, _locals._PymenuAction)
+        b = str(type(option)) == "<class 'pygameMenu.locals" \
+                                 "._PymenuAction'>"
+
         # If element is a Menu
         if isinstance(option, Menu):
             actual = self
@@ -655,26 +668,26 @@ class Menu(object):
             self._actual._prev_draw = self.draw
             self.draw = option.draw
         # If option is a PyMenuAction
-        elif isinstance(option, _locals._PymenuAction):
+        elif a or b:
             # Back to menu
-            if option == _locals.PYGAME_MENU_BACK:
+            if _locals._eq_action(option, _locals.PYGAME_MENU_BACK):
                 self.reset(1)
             # Close menu
-            elif option == _locals.PYGAME_MENU_CLOSE:
+            elif _locals._eq_action(option, _locals.PYGAME_MENU_CLOSE):
                 self.disable()
                 self._closelocked = False
                 closefun = self._actual._onclose
                 if closefun is not None:
-                    if closefun == _locals.PYGAME_MENU_RESET:
+                    if _locals._eq_action(closefun, _locals.PYGAME_MENU_RESET):
                         self.reset(100)
-                    elif closefun == _locals.PYGAME_MENU_BACK:
+                    elif _locals._eq_action(closefun, _locals.PYGAME_MENU_BACK):
                         self.reset(1)
-                    elif closefun == _locals.PYGAME_MENU_EXIT:
+                    elif _locals._eq_action(closefun, _locals.PYGAME_MENU_EXIT):
                         exit()
-                    elif isinstance(onclose, types.FunctionType):
+                    elif isinstance(onclose, type(None)):
                         closefun()
             # Exit program
-            elif option == _locals.PYGAME_MENU_EXIT:
+            elif _locals._eq_action(option, _locals.PYGAME_MENU_EXIT):
                 exit()
         # If element is a function
         elif isinstance(option, types.FunctionType) or callable(option):
@@ -686,7 +699,7 @@ class Menu(object):
             else:
                 option()
         # If null type
-        elif isinstance(option, types.NoneType):
+        elif isinstance(option, type(None)):
             pass
         # If element is a selector
         elif isinstance(option, _Selector):

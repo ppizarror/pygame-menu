@@ -123,7 +123,8 @@ class TextMenu(Menu):
         """
         a = isinstance(element, Menu)
         b = isinstance(element, _locals._PymenuAction)
-        assert a or b, 'Element must be a Menu or a PymenuAction'
+        c = str(type(element)) == "<class 'pygameMenu.locals._PymenuAction'>"
+        assert a or b or c, 'Element must be a Menu or a PymenuAction'
         self._actual._option.append([element_name, element, args])
         self._actual._size += 1
         dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2

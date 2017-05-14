@@ -16,11 +16,11 @@ GNU General Public License for more details.
 """
 
 # Import pygame and libraries
-from pygame.locals import *
 from random import randrange
 import datetime
 import os
 import pygame
+from pygame.locals import *
 
 # Import pygameMenu
 import pygameMenu
@@ -102,7 +102,7 @@ timer_menu = pygameMenu.Menu(surface,
                              title_offsety=5,
                              menu_alpha=85,
                              menu_width=600,
-                             menu_height=H_SIZE / 2,
+                             menu_height=int(H_SIZE / 2),
                              # If this menu closes (press ESC) reset to main
                              onclose=PYGAME_MENU_RESET,
                              dopause=False)

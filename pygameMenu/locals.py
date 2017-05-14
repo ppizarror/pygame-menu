@@ -28,6 +28,11 @@ class _PymenuAction(object):
         return False
 
 
+# noinspection PyProtectedMember
+def _eq_action(action1, action2):
+    return action1._action == action2._action
+
+
 # Menu back
 PYGAME_MENU_BACK = _PymenuAction(0)
 
