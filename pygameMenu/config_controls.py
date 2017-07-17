@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 CONTROLS
-Controls of Menu object.
+Default controls of Menu object.
 
 Copyright (C) 2017 Pablo Pizarro @ppizarror
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 CONFIG
-Menu configuration.
+Default Menu configurations.
 
 Copyright (C) 2017 Pablo Pizarro @ppizarror
 

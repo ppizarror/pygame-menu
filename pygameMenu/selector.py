@@ -23,7 +23,7 @@ class Selector(object):
 
     def __init__(self, title, elements, onchange=None, onreturn=None, **kwargs):
         """
-        Constructor
+        Constructor.
         
         :param title: Title of the selector
         :param elements: Elements of the selector
@@ -41,7 +41,7 @@ class Selector(object):
 
     def apply(self):
         """
-        Apply the selected item when return event
+        Apply the selected item when return event.
         
         :return: None
         """
@@ -58,7 +58,7 @@ class Selector(object):
 
     def change(self):
         """
-        Apply the selected item when changing
+        Apply the selected item when changing.
         
         :return: None
         """
@@ -75,7 +75,7 @@ class Selector(object):
 
     def get(self):
         """
-        Return element text
+        Return element text.
         
         :return: String
         """
@@ -83,7 +83,7 @@ class Selector(object):
 
     def left(self):
         """
-        Move selector to left
+        Move selector to left.
         
         :return: 
         """
@@ -92,10 +92,9 @@ class Selector(object):
 
     def right(self):
         """
-        Move selector to right
+        Move selector to right.
         
         :return: 
         """
-
         self._index = (self._index + 1) % self._total_elements
         self.change()

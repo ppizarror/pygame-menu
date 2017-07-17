@@ -21,5 +21,7 @@ from textmenu import TextMenu
 import fonts as fonts
 import locals
 
-# Version
-__version__ = 'v1.5'
+# Other
+__author__ = 'Pablo Pizarro R.'
+__email__ = 'pablo.pizarro@ing.uchile.cl'
+__version__ = 'v1.6'

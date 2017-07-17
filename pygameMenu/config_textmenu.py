@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 CONFIG TEXTMENU
-Textmenu configurations.
+Default Textmenu configurations.
 
 Copyright (C) 2017 Pablo Pizarro @ppizarror
 

@@ -16,14 +16,17 @@ GNU General Public License for more details.
 """
 
 
-class _PymenuAction(object):
+class PymenuAction(object):
+    """
+    Pymenu event.
+    """
     def __init__(self, action):
         assert isinstance(action, int)
         self._action = action
 
     # noinspection PyProtectedMember
     def __eq__(self, other):
-        if isinstance(other, _PymenuAction):
+        if isinstance(other, PymenuAction):
             return self._action == other._action
         return False
 
@@ -34,22 +37,22 @@ def _eq_action(action1, action2):
 
 
 # Menu back
-PYGAME_MENU_BACK = _PymenuAction(0)
+PYGAME_MENU_BACK = PymenuAction(0)
 
 # Close menu
-PYGAME_MENU_CLOSE = _PymenuAction(1)
+PYGAME_MENU_CLOSE = PymenuAction(1)
 
 # Menu exit program
-PYGAME_MENU_EXIT = _PymenuAction(3)
+PYGAME_MENU_EXIT = PymenuAction(3)
 
 # Menu disable closing
-PYGAME_MENU_DISABLE_CLOSE = _PymenuAction(10)
+PYGAME_MENU_DISABLE_CLOSE = PymenuAction(10)
 
 # Menu reset
-PYGAME_MENU_RESET = _PymenuAction(4)
+PYGAME_MENU_RESET = PymenuAction(4)
 
 # Type of selector
-_PYGAME_TYPE_SELECTOR = _PymenuAction(2)
+_PYGAME_TYPE_SELECTOR = PymenuAction(2)
 
 # Text newline on TextMenu object
 TEXT_NEWLINE = ''

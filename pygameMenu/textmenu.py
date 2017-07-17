@@ -27,7 +27,7 @@ import pygame.gfxdraw as _gfxdraw
 # noinspection PyProtectedMember
 class TextMenu(Menu):
     """
-    Text menu object
+    Text menu object.
     """
 
     def __init__(self, surface, window_width, window_height, font, title,
@@ -38,7 +38,7 @@ class TextMenu(Menu):
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
                  **kwargs):
         """
-        TextMenu constructor
+        TextMenu constructor.
         
         :param surface: Pygame surface object
         :param window_width: Window width
@@ -50,7 +50,6 @@ class TextMenu(Menu):
         :param text_fontsize: Text font size
         :param text_margin: Line margin
         :param draw_text_region_x: X-Axis drawing region of the text
-        
         :type window_width: int
         :type window_height: int
         :type font: str
@@ -97,7 +96,7 @@ class TextMenu(Menu):
 
     def add_line(self, text):
         """
-        Add line to text
+        Add line of text.
         
         :param text: Line text
         :type text: str
@@ -112,7 +111,7 @@ class TextMenu(Menu):
 
     def add_option(self, element_name, element, *args):
         """
-        Add option to menu
+        Add option to menu.
 
         :param element_name: Name of the element
         :param element: Menu object
@@ -122,9 +121,9 @@ class TextMenu(Menu):
         :return: 
         """
         a = isinstance(element, Menu)
-        b = isinstance(element, _locals._PymenuAction)
+        b = isinstance(element, _locals.PymenuAction)
         c = str(type(element)) == "<class 'pygameMenu.locals._PymenuAction'>"
-        assert a or b or c, 'Element must be a Menu or a PymenuAction'
+        assert a or b or c, 'Element must be a Menu or PymenuAction'
         self._actual._option.append([element_name, element, args])
         self._actual._size += 1
         dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
@@ -132,7 +131,7 @@ class TextMenu(Menu):
 
     def draw(self):
         """
-        Draw menu on surface
+        Draw menu on surface.
         
         :return: None
         """

@@ -26,9 +26,9 @@ import pygameMenu
 from pygameMenu.locals import *
 
 ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
-         'Author: Pablo Pizarro @ppizarror.com',
+         'Author: {0}'.format(pygameMenu.__author__),
          TEXT_NEWLINE,
-         'Email: pablo.pizarro@ing.uchile.cl']
+         'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -86,7 +86,7 @@ def play_function(difficulty, font):
     if difficulty == 'EASY':
         f = font.render('Playing as baby', 1, COLOR_WHITE)
     elif difficulty == 'MEDIUM':
-        f = font.render('Playing as camper', 1, COLOR_WHITE)
+        f = font.render('Playing as normie', 1, COLOR_WHITE)
     elif difficulty == 'HARD':
         f = font.render('Playing as god', 1, COLOR_WHITE)
     else:
@@ -103,7 +103,8 @@ def play_function(difficulty, font):
     main_menu.reset(1)
 
     while True:
-        # Tick
+
+        # Clock tick
         clock.tick(60)
 
         # Application events
@@ -116,8 +117,7 @@ def play_function(difficulty, font):
                     if main_menu.is_disabled():
                         main_menu.enable()
 
-                        # Quit this function, then skip to loop of main-menu on
-                        # line 197
+                        # Quit this function, then skip to loop of main-menu on line 197
                         return
 
         # Pass events to main_menu

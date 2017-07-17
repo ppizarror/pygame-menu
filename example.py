@@ -9,6 +9,7 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,9 +29,9 @@ from pygameMenu.locals import *
 
 # Constants and global variables
 ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
-         'Author: Pablo Pizarro @ppizarror.com',
+         'Author: {0}'.format(pygameMenu.__author__),
          TEXT_NEWLINE,
-         'Email: pablo.pizarro@ing.uchile.cl']
+         'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BLUE = (12, 12, 200)
 COLOR_BACKGROUND = [128, 0, 128]
 COLOR_WHITE = (255, 255, 255)
@@ -46,7 +47,7 @@ W_SIZE = 800  # Width of window size
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
-# Write message on console
+# Write help message on console
 for m in HELP:
     print(m)
 
@@ -54,7 +55,7 @@ for m in HELP:
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 pygame.display.set_caption('PygameMenu example')
 
-# Main timer and game Clock
+# Main timer and game clock
 clock = pygame.time.Clock()
 timer = [0.0]
 dt = 1.0 / FPS
@@ -86,7 +87,7 @@ def change_color_bg(c, **kwargs):
     if c == (-1, -1, -1):  # If random color
         c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
     if kwargs['write_on_console']:
-        print('New bg color: ({0},{1},{2})'.format(*c))
+        print('New background color: ({0},{1},{2})'.format(*c))
     COLOR_BACKGROUND[0] = c[0]
     COLOR_BACKGROUND[1] = c[1]
     COLOR_BACKGROUND[2] = c[2]
@@ -98,12 +99,12 @@ timer_menu = pygameMenu.Menu(surface,
                              window_height=H_SIZE,
                              font=pygameMenu.fonts.FONT_NEVIS,
                              title='Timer Menu',
-                             # Adds 5px to vertical position title
+                             # Adds 5px to title vertical position
                              title_offsety=5,
                              menu_alpha=85,
                              menu_width=600,
                              menu_height=int(H_SIZE / 2),
-                             # If this menu closes (press ESC) reset to main
+                             # If this menu closes (press ESC) back to main
                              onclose=PYGAME_MENU_RESET,
                              dopause=False)
 timer_menu.add_option('Reset timer', reset_timer)
@@ -116,9 +117,9 @@ timer_menu.add_selector('Change bgcolor',
                          ('Black', (0, 0, 0)),
                          ('Blue', COLOR_BLUE)],
                         # Action when changing element with left/right
-                        None,
+                        onchange=None,
                         # Action when pressing return on a element
-                        change_color_bg,
+                        onreturn=change_color_bg,
                         # Kwargs, optional parametrs to change_color_bg function
                         write_on_console=True)
 timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
@@ -167,7 +168,8 @@ menu = pygameMenu.Menu(surface,
                        title_offsety=5,
                        menu_alpha=90,
                        enabled=False,
-                       bgfun=mainmenu_background)
+                       bgfun=mainmenu_background,
+                       onclose=PYGAME_MENU_CLOSE)
 menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
 menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu

@@ -31,7 +31,7 @@ import types
 # noinspection PyProtectedMember,PyBroadException,PyUnresolvedReferences
 class Menu(object):
     """
-    Menu object
+    Menu object.
     """
 
     def __init__(self, surface, window_width, window_height, font, title,
@@ -89,7 +89,6 @@ class Menu(object):
         :param rect_width: Border with of rectangle around selected item
         :param title_offsetx: Offset x-position of title (px)
         :param title_offsety: Offset y-position of title (px)
-        
         :type bgfun: function
         :type color_selected: tuple
         :type dopause: bool
@@ -165,9 +164,8 @@ class Menu(object):
         self._bgfun = bgfun
         self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0)))
-        self._bg_color_title = (
-            menu_color_title[0], menu_color_title[1], menu_color_title[2],
-            int(255 * (1 - (100 - menu_alpha) / 100.0)))
+        self._bg_color_title = (menu_color_title[0], menu_color_title[1],
+                                menu_color_title[2], int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._centered_option = menu_centered
         self._drawselrect = draw_select
         self._font_color = font_color
@@ -238,7 +236,7 @@ class Menu(object):
 
     def add_option(self, element_name, element, *args):
         """
-        Add option to menu
+        Add option to menu.
         
         :param element_name: Name of the element
         :param element: Object
@@ -251,7 +249,7 @@ class Menu(object):
         b = str(type(element)) == "<class 'pygameMenu.locals._PymenuAction'>"
         c = isinstance(element, types.FunctionType)
         d = callable(element)
-        e = isinstance(element, _locals._PymenuAction)
+        e = isinstance(element, _locals.PymenuAction)
         assert a or b or c or d or e, \
             'Element must be a Menu, an PymenuAction or a Function'
         assert isinstance(element_name, str), 'Element name must be a string'
@@ -350,7 +348,7 @@ class Menu(object):
 
     def disable(self):
         """
-        Disable menu
+        Disable menu.
         
         :return: None
         """
@@ -360,7 +358,7 @@ class Menu(object):
 
     def _down(self):
         """
-        Move selection down
+        Move selection down.
         
         :return: None
         """
@@ -370,7 +368,7 @@ class Menu(object):
 
     def draw(self):
         """
-        Draw menu to surface
+        Draw menu to surface.
         
         :return: 
         """
@@ -470,7 +468,7 @@ class Menu(object):
 
     def enable(self):
         """
-        Enable menu
+        Enable menu.
         
         :return: None
         """
@@ -540,7 +538,7 @@ class Menu(object):
                     onclose = self._actual._onclose
                     close = True
                     if not isinstance(onclose, type(None)):
-                        a = isinstance(onclose, _locals._PymenuAction)
+                        a = isinstance(onclose, _locals.PymenuAction)
                         b = str(type(
                             onclose)) == "<class 'pygameMenu.locals" \
                                          "._PymenuAction'>"
@@ -571,7 +569,7 @@ class Menu(object):
 
     def mainloop(self, events):
         """
-        Main function of Menu, draw, etc
+        Main function of Menu, draw, etc.
         
         :param events: Eventos
         :return: None
@@ -603,7 +601,7 @@ class Menu(object):
     # noinspection PyAttributeOutsideInit
     def reset(self, total):
         """
-        Reset menu
+        Reset menu.
         
         :param total: How many menus to reset (1: back)
         :type total: int
@@ -631,7 +629,7 @@ class Menu(object):
 
     def _right(self):
         """
-        Move selector to right
+        Move selector to right.
         
         :return: None
         """
@@ -645,7 +643,7 @@ class Menu(object):
     # noinspection PyAttributeOutsideInit
     def _select(self):
         """
-        Apply selected option
+        Apply selected option.
         
         :return: 
         """
@@ -656,7 +654,7 @@ class Menu(object):
         except:
             return
 
-        a = isinstance(option, _locals._PymenuAction)
+        a = isinstance(option, _locals.PymenuAction)
         b = str(type(option)) == "<class 'pygameMenu.locals" \
                                  "._PymenuAction'>"
 
@@ -707,7 +705,7 @@ class Menu(object):
 
     def _up(self):
         """
-        Option up
+        Option up.
         
         :return: None
         """
