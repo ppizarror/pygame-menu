@@ -28,7 +28,7 @@ MENU_CENTERED_TEXT = True
 MENU_DRAW_X = 50
 
 # Upper-left Y-Position of objects into Menu
-MENU_DRAW_Y = 57
+MENU_DRAW_Y = 60
 
 # Font color
 MENU_FONT_COLOR = (255, 255, 255)
