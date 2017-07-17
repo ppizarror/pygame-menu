@@ -48,63 +48,62 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 - **Menu**
 
-    > This class creates a Menu
-    >  
-    > ```python
-    > pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
-    > ```
-    >
-    > Parameters are the following:
-    >
-    > | Param | Description | Type |
-    > | :-: | :--| :--:|
-    > |  surface |  	 Pygame surface object | Surface
-    > |  window_width|     Window width size (px)| int|
-    > |  window_height|    Window height size (px) |int|
-    > |  font | Font file direction|str|
-    > |  title | Title of the menu (main title)|str
-    > |  enabled| Menu is enabled by default or not|bool
-    > | bgfun| Background drawing function (only if menu pause app) | function|
-    > | color_selected|Color of selected item|tuple
-    > |  dopause| Pause game|bool
-    > |  draw_region_x| Drawing position of element inside menu (x-axis)|int|
-    > |  draw_region_y| Drawing position of element inside menu (y-axis)|int|
-    > | draw_select| Draw a rectangle around selected item (bool)|bool|
-    > |  font_color| Color of font|tuple|
-    > |  font_size| Font size|int|
-    > |  font_size_title| Font size of the title|int|
-    > | font_title| Alternative font of the title (file direction)|str|
-    > |  menu_alpha| Alpha of background (0=transparent, 100=opaque) | int|
-    > |  menu_centered| Text centered menu|bool|
-    > |  menu_color| Menu color|tuple|
-    > |  menu_color_title| Background color of title|tuple|
-    > | menu_height| Height of menu (px)|int|
-    > |  menu_width| Width of menu (px)|int|
-    > |  onclose| Event that applies when closing menu|function, PymenuAction|
-    > |  option_margin| Margin of each element in menu (px)|int|
-    > | option_shadow| Indicate if a shadow is drawn on each option|bool|
-    > | rect_width| Border with of rectangle around selected item|int|
-    > | title_offsetx| Offset x-position of title (px)|int|
-    > | title_offsety| Offset y-position of title (px)|int|
-
-
+     This class creates a Menu
+      
+     ```python
+     pygameMenu.Menu(surface, window_width, windw_height, font, title, *args) # -> Menu object
+     ```
+    
+     Parameters are the following:
+    
+    | Param | Description | Type |
+    | :-: | :-- | :--:|
+    |  surface |  	 Pygame surface object | Surface
+    |  window_width|     Window width size (px)| int
+    |  window_height|    Window height size (px) |int
+    |  font | Font file direction|str|
+    |  title | Title of the menu (main title)|str
+    |  enabled| Menu is enabled by default or not|boo
+    | bgfun| Background drawing function (only if menupause app) | function|
+    | color_selected|Color of selected item|tuple
+    |  dopause| Pause game|bool
+    |  draw_region_x| Drawing position of element insie menu (x-axis)|int|
+    |  draw_region_y| Drawing position of element insie menu (y-axis)|int|
+    | draw_select| Draw a rectangle around selected item(bool)|bool|
+    |  font_color| Color of font|tuple|
+    |  font_size| Font size|int|
+    |  font_size_title| Font size of the title|int|
+    | font_title| Alternative font of the title (fil direction)|str|
+    |  menu_alpha| Alpha of background (0=tansparent, 100=opaque) | int|
+    |  menu_centered| Text centered menu|bool|
+    |  menu_color| Menu color|tuple|
+    |  menu_color_title| Background color of title|tupl|
+    | menu_height| Height of menu (px)|int|
+    |  menu_width| Width of menu (px)|int|
+    |  onclose| Event that applies when closing menufunction, PymenuAction|
+    |  option_margin| Margin of each element in menu(px)|int|
+    | option_shadow| Indicate if a shadow is drawn on ech option|bool|
+    | rect_width| Border with of rectangle around seleted item|int|
+    | title_offsetx| Offset x-position of title (px)int|
+    | title_offsety| Offset y-position of title (px)int|
+     
 - **TextMenu**
 
-    > This class creates a textual menu
-    > ```python
-    > pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
-    > ```
-    >
-    > This class inherites from Menu, so the parameters are the same, except the following extra parameters:
-    >
-    >
-    > | Param | Description | Type |
-    > | :-: | :--| :--:|
-    > |text_centered| Indicate if text is centered| bool|
-    > |text_color| Text color|tuple|
-    > |text_fontsize| Text font size| int
-    > |text_margin| Line margin| int
-    > |draw_text_region_x| X-Axis drawing region of the text| int|
+     This class creates a textual menu
+    ```python
+    pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
+     ```
+    
+     This class inherites from Menu, so the parameters are the same, except the following extra parameters:
+    
+    
+    | Param | Description | Type |
+    | :-: | :--| :--:|
+    |text_centered| Indicate if text is centered| bool
+    |text_color| Text color|tuple|
+    |text_fontsize| Text font size| int
+    |text_margin| Line margin| int
+    |draw_text_region_x| X-Axis drawing region of the text| int|
 
 ### Add options and entries to Menus
 
