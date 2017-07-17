@@ -117,7 +117,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     | Param | Description | Type |
     | :-: | :--| :--:|
     |element_name| String on menu entry| str|
-    |element_name| Menu object (Menu, function or Menu-Event) supported |_PymenuAction, function, Menu|
+    |element_name| Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu|
     |*args| Additional arguments | -|
     
     
