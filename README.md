@@ -1,4 +1,7 @@
 # Pygame Menu
+[![@ppizarror](http://ppizarror.com/resources/images/author.svg)](http://ppizarror.com)
+[![Licencia GPL](http://ppizarror.com/resources/images/licensegpl3.svg)](https://www.gnu.org/licenses/)
+[![Python](http://ppizarror.com/resources/images/python27.svg)](https://www.python.org/downloads/)
 
 * [Import](#import)
 * [Usage](#usage)
