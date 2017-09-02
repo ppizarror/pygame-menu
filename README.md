@@ -1,6 +1,6 @@
 # Pygame Menu
 [![@ppizarror](http://ppizarror.com/resources/images/author.svg)](http://ppizarror.com)
-[![Licencia GPL](http://ppizarror.com/resources/images/licensegpl3.svg)](https://www.gnu.org/licenses/)
+[![GPL License](http://ppizarror.com/resources/images/licensegpl3.svg)](https://www.gnu.org/licenses/)
 [![Python](http://ppizarror.com/resources/images/python27.svg)](https://www.python.org/downloads/)
 
 * [Import](#import)
@@ -333,4 +333,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 This project is licensed under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].
 
 ## Author
-<a href="http://ppizarror.com">Pablo Pizarro R.</a>, 2017.
+<a href="http://ppizarror.com">Pablo Pizarro R.</a> | 2017.
