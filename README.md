@@ -22,17 +22,17 @@ Python library that can create a Menu on Pygame, Supports:
 Examples:
 #### Normal Button menu
 <p align="center">
-<img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap1.PNG?raw=true" width="40%px" height="40%px">
+<img src="http://ppizarror.com/resources/images/pygame-menu/cap1.PNG?raw=true" width="60%" >
 </p>
 
 #### Text menu
 <p align="center">
-<img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap2.PNG?raw=true" width="40%px" height="40%px">
+<img src="http://ppizarror.com/resources/images/pygame-menu/cap2.PNG?raw=true" width="60%"  >
 </p>
 
 #### Small submenu
 <p align="center">
-<img src="https://github.com/ppizarror/ppizarror.github.io/blob/master/resources/images/pygame-menu/cap3.PNG?raw=true" width="40%px" height="40%px">
+<img src="http://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
 </p>
 
 ## Import
@@ -333,6 +333,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 This project is licensed under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html].
 
 ## Author
-Author: Pablo Pizarro, 2017.
-
-
+<a href="http://ppizarror.com">Pablo Pizarro R.</a>, 2017.
