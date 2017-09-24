@@ -10,7 +10,7 @@
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="http://ppizarror.com/badges/python27.svg" /></a>
 </div><br />
 
-Python library that can create a Menu on Pygame, Supports:
+Python library that can create a Menu on Pygame, supports:
 
 1. Textual menus
 2. Textual menus + buttons

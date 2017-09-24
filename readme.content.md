@@ -1,4 +1,4 @@
-Python library that can create a Menu on Pygame, Supports:
+Python library that can create a Menu on Pygame, supports:
 
 1. Textual menus
 2. Textual menus + buttons
