@@ -311,4 +311,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 |config_textmenu.py|Configure default parameter of TextMenu class|
 
 ## License
-This project is licensed under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html]
+This project is licensed under GPLv3 [https://www.gnu.org/licenses/gpl-3.0.html]
