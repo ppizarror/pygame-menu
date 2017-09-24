@@ -1,0 +1,42 @@
+{
+    "PROJECT": {
+        "NAME": "Pygame Menu",
+        "ICON": {
+            "IMAGE": "http://ppizarror.com/resources/other/python.png",
+            "ALT": "Pygame Menu",
+            "WIDTH": 200,
+            "HEIGHT": 200
+        },
+        "URL": "http://ppizarror.com/pygame-menu/",
+        "URL_TITLE": "Pygame Menu"
+    },
+    "AUTHOR": {
+        "NAME": "Pablo Pizarro R.",
+        "URL": "http://ppizarror.com",
+        "ALT": "ppizarror",
+        "DATE": "2017",
+        "SECTION": {
+            "TITLE": "Author",
+            "SHOW": true
+        }
+    },
+    "DESCRIPTION": "Menu for pygame, simple, lightweight and easy to use",
+    "BADGES": {
+        "0": {
+            "IMAGE": "http://ppizarror.com/badges/author.svg",
+            "HREF": "http://ppizarror.com",
+            "ALT": "@ppizarror"
+        },
+        "1": {
+            "IMAGE": "http://ppizarror.com/badges/licensegpl3.svg",
+            "HREF": "https://www.gnu.org/licenses/",
+            "ALT": "License GPL v3"
+        },
+		"2": {
+		  "IMAGE": "http://ppizarror.com/badges/python27.svg",
+		  "HREF": "https://www.python.org/downloads/",
+		  "ALT": "Python 2.7"
+		}
+    },
+    "CONTENT": "readme.content.md"
+}

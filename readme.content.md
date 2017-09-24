@@ -1,15 +1,3 @@
-<h1 align="center">
-  <a href="http://ppizarror.com/pygame-menu/" title="Pygame Menu">
-    <img alt="Pygame Menu" src="http://ppizarror.com/resources/other/python.png" width="200px" height="200px" />
-  </a>
-  <br /><br />
-  Pygame Menu</h1>
-<p align="center">Menu for pygame, simple, lightweight and easy to use</p>
-<div align="center"><a href="http://ppizarror.com"><img alt="@ppizarror" src="http://ppizarror.com/badges/author.svg" /></a>
-<a href="https://www.gnu.org/licenses/"><img alt="License GPL v3" src="http://ppizarror.com/badges/licensegpl3.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="http://ppizarror.com/badges/python27.svg" /></a>
-</div><br />
-
 Python library that can create a Menu on Pygame, Supports:
 
 1. Textual menus
@@ -324,6 +312,3 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 ## License
 This project is licensed under GPLv3 (GNU General Public License, version 3) [https://www.gnu.org/licenses/gpl-3.0.html]
-
-## Author
-<a href="http://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017
