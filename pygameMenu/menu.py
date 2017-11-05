@@ -16,13 +16,13 @@ GNU General Public License for more details.
 """
 
 # Import constants
-import config_controls as _ctrl
-import config_menu as _cfg
-import locals as _locals
+import pygameMenu.config_controls as _ctrl
+import pygameMenu.config_menu as _cfg
+import pygameMenu.locals as _locals
 # noinspection PyUnresolvedReferences
 
 # Library imports
-from selector import Selector as _Selector
+from pygameMenu.selector import Selector as _Selector
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types

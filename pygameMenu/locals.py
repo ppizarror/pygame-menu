@@ -20,6 +20,7 @@ class PymenuAction(object):
     """
     Pymenu event.
     """
+
     def __init__(self, action):
         assert isinstance(action, int)
         self._action = action

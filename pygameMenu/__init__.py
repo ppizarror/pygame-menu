@@ -15,13 +15,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
 
-# Libraries
-from menu import Menu
-from textmenu import TextMenu
-import fonts as fonts
-import locals
+# noinspection PyUnresolvedReferences
+from pygameMenu.menu import Menu
+# noinspection PyUnresolvedReferences
+from pygameMenu.textmenu import TextMenu
+# noinspection PyUnresolvedReferences
+import pygameMenu.fonts as fonts
 
 # Other
 __author__ = 'Pablo Pizarro R.'
 __email__ = 'pablo.pizarro@ing.uchile.cl'
-__version__ = 'v1.6'
+__version__ = 'v1.7 (5/11/2017)'
