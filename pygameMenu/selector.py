@@ -39,6 +39,22 @@ class Selector(object):
         self._title = title
         self._total_elements = len(elements)
 
+    def update_elements(self, elements):
+        """
+        Update selector elements.
+
+        :param elements: Elements of the selector
+        :return: None
+        """
+        selected_element = self._elements[self._index]
+        self._elements = elements
+        self._total_elements = len(elements)
+        try:
+            self._index = self._elements.index(selected_element)
+        except ValueError:
+            if self._index >= self._total_elements:
+                self._index = self._total_elements - 1
+
     def apply(self):
         """
         Apply the selected item when return event.
