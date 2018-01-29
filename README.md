@@ -326,4 +326,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 This project is licensed under GPLv3 [https://www.gnu.org/licenses/gpl-3.0.html]
 
 ## Author
-<a href="http://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017
+<a href="http://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2018
