@@ -282,7 +282,7 @@ class Menu(object):
         :type values: list
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-        :return: None
+        :return: Selector ID
         """
         # Check value list
         for vl in values:
@@ -295,10 +295,32 @@ class Menu(object):
             [_locals._PYGAME_TYPE_SELECTOR,
              _Selector(title, values, onchange=onchange, onreturn=onreturn,
                        **kwargs)])
+        selector_id = self._actual._size
         self._actual._size += 1
         if self._actual._size > 1:
             dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
             self._actual._opt_posy += dy
+        return selector_id
+
+    def update_selector(self, selector_id, values):
+        """
+        Update selector given its ID.
+
+        :param selector_id: ID of existing selector
+        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
+        :return:
+        """
+        assert self._actual._size > selector_id and self._actual._option[selector_id][
+            0] == _locals._PYGAME_TYPE_SELECTOR, "There is no selector with such ID"
+
+        # Check value list
+        for vl in values:
+            assert len(vl) > 1, \
+                'Length of each element in value list must be greather than 1'
+            assert isinstance(vl[0], str), \
+                'First element of value list component must be a string'
+
+        self._actual._option[selector_id][1].update_elements(values)
 
     def add_selector_change(self, title, values, fun, **kwargs):
         """
@@ -318,10 +340,10 @@ class Menu(object):
         :type title: basestring
         :type values: list
         :type fun: function, NoneType
-        :return: 
+        :return: Selector ID
         """
-        self.add_selector(title=title, values=values, onchange=fun,
-                          onreturn=None, kwargs=kwargs)
+        return self.add_selector(title=title, values=values, onchange=fun,
+                                 onreturn=None, kwargs=kwargs)
 
     def add_selector_return(self, title, values, fun, **kwargs):
         """
@@ -341,10 +363,10 @@ class Menu(object):
         :type title: str
         :type values: list
         :type fun: function, NoneType
-        :return: 
+        :return: Selector ID
         """
-        self.add_selector(title=title, values=values, onchange=None,
-                          onreturn=fun, kwargs=kwargs)
+        return self.add_selector(title=title, values=values, onchange=None,
+                                 onreturn=fun, kwargs=kwargs)
 
     def disable(self):
         """
@@ -418,12 +440,12 @@ class Menu(object):
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 3
                 self._surface.blit(text_bg,
                                    (self._actual._opt_posx + text_dx - 3,
                                     ycoords))
             ycoords = self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy
+                    self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords))
             # If selected item then draw a rectangle
@@ -433,35 +455,35 @@ class Menu(object):
                 else:
                     text_dx_tl = text_dx
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
                                   ((self._actual._opt_posx - text_dx_tl + 10,
                                     ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
+                            self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
                                   ((self._actual._opt_posx - text_dx_tl + 10,
                                     ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
                                   ((self._actual._opt_posx + text_dx - 10,
                                     ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx - text_dx_tl + 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
                                   ((self._actual._opt_posx - text_dx_tl + 10,
                                     ycoords)), self._actual._rect_width)
             dy += 1
