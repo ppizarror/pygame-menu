@@ -1,8 +1,10 @@
 # Pycharm files
 .idea/
+.ropeproject/
 
 # Zip files
 *.zip
 
 # Compiled python files
+*/__pycache__
 *.pyc

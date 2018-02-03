@@ -3,7 +3,7 @@
 SELECTOR
 Selector class, manage elements and adds entries to menu.
 
-Copyright (C) 2017 Pablo Pizarro @ppizarror
+Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ class Selector(object):
     def __init__(self, title, elements, onchange=None, onreturn=None, **kwargs):
         """
         Constructor.
-        
+
         :param title: Title of the selector
         :param elements: Elements of the selector
         :param onchange: Event when changing the selector
@@ -58,7 +58,7 @@ class Selector(object):
     def apply(self):
         """
         Apply the selected item when return event.
-        
+
         :return: None
         """
         if self._on_return is not None:
@@ -75,7 +75,7 @@ class Selector(object):
     def change(self):
         """
         Apply the selected item when changing.
-        
+
         :return: None
         """
         if self._on_change is not None:
@@ -92,7 +92,7 @@ class Selector(object):
     def get(self):
         """
         Return element text.
-        
+
         :return: String
         """
         return '{0} < {1} >'.format(self._title, self._elements[self._index][0])
@@ -100,8 +100,8 @@ class Selector(object):
     def left(self):
         """
         Move selector to left.
-        
-        :return: 
+
+        :return:
         """
         self._index = (self._index - 1) % self._total_elements
         self.change()
@@ -109,8 +109,8 @@ class Selector(object):
     def right(self):
         """
         Move selector to right.
-        
-        :return: 
+
+        :return:
         """
         self._index = (self._index + 1) % self._total_elements
         self.change()

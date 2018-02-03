@@ -39,7 +39,7 @@ class TextMenu(Menu):
                  **kwargs):
         """
         TextMenu constructor.
-        
+
         :param surface: Pygame surface object
         :param window_width: Window width
         :param window_height: Window height
@@ -97,10 +97,10 @@ class TextMenu(Menu):
     def add_line(self, text):
         """
         Add line of text.
-        
+
         :param text: Line text
         :type text: str
-        :return: 
+        :return: None
         """
         assert isinstance(self._actual, TextMenu)
         assert isinstance(text, str)
@@ -118,7 +118,7 @@ class TextMenu(Menu):
         :param args: Aditional arguments
         :type element_name: basestring
         :type element: Menu, _locals._PymenuAction
-        :return: 
+        :return: None
         """
         a = isinstance(element, Menu)
         b = isinstance(element, _locals.PymenuAction)
@@ -132,7 +132,7 @@ class TextMenu(Menu):
     def draw(self):
         """
         Draw menu on surface.
-        
+
         :return: None
         """
         assert isinstance(self._actual, TextMenu)
@@ -155,7 +155,7 @@ class TextMenu(Menu):
             else:
                 text_dx = 0
             ycoords = self._actual._opt_posy + self._actual._textdy + dy * (
-                self._actual._font_textsize + self._actual._textdy)
+                    self._actual._font_textsize + self._actual._textdy)
             ycoords -= self._actual._font_textsize / 2
             self._surface.blit(text, (self._actual._pos_text_x + text_dx,
                                       ycoords))
@@ -202,12 +202,12 @@ class TextMenu(Menu):
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 3
                 self._surface.blit(text_bg,
                                    (self._actual._opt_posx + text_dx - 3,
                                     ycoords + dysum))
             ycoords = self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy
+                    self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords + dysum))
             # If selected option draw a rectangle
@@ -217,35 +217,35 @@ class TextMenu(Menu):
                 else:
                     text_dx_tl = text_dx
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dysum + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
                                   ((self._actual._opt_posx - text_dx_tl + 10,
                                     ycoords + dysum)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dysum + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
+                            self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
                                   ((self._actual._opt_posx - text_dx_tl + 10,
                                     ycoords + dysum)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dysum + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
                                   ((self._actual._opt_posx + text_dx - 10,
                                     ycoords + dysum)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx - text_dx_tl + 10,
                     self._actual._opt_posy + dysum + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
                                   ((self._actual._opt_posx - text_dx_tl + 10,
                                     ycoords + dysum)), self._actual._rect_width)
             dy += 1

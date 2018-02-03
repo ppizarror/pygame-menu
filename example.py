@@ -3,7 +3,7 @@
 EXAMPLE
 Example file, timer clock with in-menu options.
 
-Copyright (C) 2017 Pablo Pizarro @ppizarror
+Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -192,8 +192,7 @@ while True:
             exit()
         elif event.type == KEYDOWN:
             if event.key == K_ESCAPE:
-                if menu.is_disabled():
-                    menu.enable()
+                menu.enable()
 
     # Draw timer
     time_string = str(datetime.timedelta(seconds=int(timer[0])))

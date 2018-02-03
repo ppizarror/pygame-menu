@@ -3,7 +3,7 @@
 PYGAMEMENU
 Pygame Menu library.
 
-Copyright (C) 2017 Pablo Pizarro @ppizarror
+Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,14 +15,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
 
-# noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
-# noinspection PyUnresolvedReferences
 from pygameMenu.textmenu import TextMenu
-# noinspection PyUnresolvedReferences
 import pygameMenu.fonts as fonts
 
 # Other
 __author__ = 'Pablo Pizarro R.'
 __email__ = 'pablo.pizarro@ing.uchile.cl'
-__version__ = 'v1.72 (29/01/2018)'
+__version__ = 'v1.8 (03/02/2018)'

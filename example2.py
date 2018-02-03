@@ -3,7 +3,7 @@
 EXAMPLE
 Game menu with 3 difficulty options.
 
-Copyright (C) 2017 Pablo Pizarro @ppizarror
+Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -173,7 +173,6 @@ about_menu = pygameMenu.TextMenu(surface,
                                  font=pygameMenu.fonts.FONT_BEBAS,
                                  font_title=pygameMenu.fonts.FONT_8BIT,
                                  title='About',
-                                 # Disable menu close (ESC button)
                                  onclose=PYGAME_MENU_DISABLE_CLOSE,
                                  font_color=COLOR_BLACK,
                                  text_fontsize=20,
@@ -201,7 +200,7 @@ main_menu = pygameMenu.Menu(surface,
                             font_size=30,
                             menu_width=int(WINDOW_SIZE[0] * 0.6),
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            onclose=PYGAME_MENU_DISABLE_CLOSE,  # ESC disabled
+                            onclose=PYGAME_MENU_DISABLE_CLOSE,
                             bgfun=main_background,
                             menu_color=MENU_BACKGROUND_COLOR,
                             option_shadow=False,
