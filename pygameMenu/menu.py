@@ -200,7 +200,7 @@ class Menu(object):
         # Load fonts
         try:
             self._font = _pygame.font.Font(font, self._fsize)
-        except Exception, e:
+        except Exception:
             raise Exception('Could not load {0} font file'.format(font))
         if font_title is None:
             font_title = font
@@ -588,7 +588,7 @@ class Menu(object):
             opcion = self._actual._option[self._actual._index][1]
             if isinstance(opcion, _Selector):
                 opcion.left()
-        except Exception, e:
+        except Exception:
             pass
 
     def reset(self, total):
@@ -629,7 +629,7 @@ class Menu(object):
             opcion = self._actual._option[self._actual._index][1]
             if isinstance(opcion, _Selector):
                 opcion.right()
-        except Exception, e:
+        except Exception:
             pass
 
     def _select(self):
@@ -642,7 +642,7 @@ class Menu(object):
 
         try:
             option = self._actual._option[self._actual._index][1]
-        except Exception, e:
+        except Exception:
             return
 
         a = isinstance(option, _locals.PymenuAction)
