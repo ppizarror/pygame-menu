@@ -36,7 +36,12 @@
 		  "IMAGE": "http://ppizarror.com/badges/python27.svg",
 		  "HREF": "https://www.python.org/downloads/",
 		  "ALT": "Python 2.7"
-		}
+		},
+        "3": {
+            "IMAGE": "http://ppizarror.com/badges/python36.svg",
+            "HREF": "https://www.python.org/downloads/",
+            "ALT": "Python 3.6"
+        }
     },
     "CONTENT": "readme.content.md"
 }

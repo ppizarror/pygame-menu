@@ -8,6 +8,7 @@
 <div align="center"><a href="http://ppizarror.com"><img alt="@ppizarror" src="http://ppizarror.com/badges/author.svg" /></a>
 <a href="https://www.gnu.org/licenses/"><img alt="License GPL v3" src="http://ppizarror.com/badges/licensegpl3.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="http://ppizarror.com/badges/python27.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="http://ppizarror.com/badges/python36.svg" /></a>
 </div><br />
 
 Python library that can create a Menu on Pygame, supports:
@@ -56,36 +57,37 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     
      Parameters are the following:
     
-    | Param | Description | Type |
-    | :-: | :-- | :--:|
-    |  surface |  	 Pygame surface object | Surface
-    |  window_width|     Window width size (px)| int
-    |  window_height|    Window height size (px) |int
-    |  font | Font file direction|str|
-    |  title | Title of the menu (main title)|str
-    |  enabled| Menu is enabled by default or not|boo
-    | bgfun| Background drawing function (only if menupause app) | function|
-    | color_selected|Color of selected item|tuple
-    |  dopause| Pause game|bool
-    |  draw_region_x| Drawing position of element insie menu (x-axis)|int|
-    |  draw_region_y| Drawing position of element insie menu (y-axis)|int|
-    | draw_select| Draw a rectangle around selected item(bool)|bool|
-    |  font_color| Color of font|tuple|
-    |  font_size| Font size|int|
-    |  font_size_title| Font size of the title|int|
-    | font_title| Alternative font of the title (fil direction)|str|
-    |  menu_alpha| Alpha of background (0=tansparent, 100=opaque) | int|
-    |  menu_centered| Text centered menu|bool|
-    |  menu_color| Menu color|tuple|
-    |  menu_color_title| Background color of title|tupl|
-    | menu_height| Height of menu (px)|int|
-    |  menu_width| Width of menu (px)|int|
-    |  onclose| Event that applies when closing menufunction, PymenuAction|
-    |  option_margin| Margin of each element in menu(px)|int|
-    | option_shadow| Indicate if a shadow is drawn on ech option|bool|
-    | rect_width| Border with of rectangle around seleted item|int|
-    | title_offsetx| Offset x-position of title (px)int|
-    | title_offsety| Offset y-position of title (px)int|
+    | Param | Description | Type | Default |
+    | :-: | :-- | :--:| :--: |
+    | surface | Pygame surface object | Pygame Surface | - |
+    | window_width | Window width size (px)| int | - |
+    | window_height | Window height size (px) |int | - |
+    | font | Font file dir | str | - |
+    | title | Title of the menu (main title) | str | - |
+    | bgfun | Background drawing function (only if menupause app) | function | None |
+    | color_selected | Color of selected item | tuple | MENU_SELECTEDCOLOR |
+    | dopause | Pause game | bool | True |
+    | draw_region_x | Drawing position of element inside menu (x-axis) | int | MENU_DRAW_X |
+    | draw_region_y | Drawing position of element inside menu (y-axis) | int | MENU_DRAW_Y |
+    | draw_select | Draw a rectangle around selected item(bool) | bool | MENU_SELECTED_DRAW |
+    | enabled | Menu is enabled by default or not | bool | True |
+    | font_color | Color of font | tuple | MENU_FONT_COLOR |
+    | font_size | Font size | int | MENU_FONT_SIZE |
+    | font_size_title | Font size of the title | int | MENU_FONT_SIZE_TITLE |
+    | font_title | Alternative font of the title (fil direction) | str | None |
+    | joystick_enabled | Enable joystick support | bool | True |
+    | menu_alpha | Alpha of background (0=tansparent, 100=opaque) | int | MENU_ALPHA |
+    | menu_centered | Text centered menu | bool | MENU_CENTERED_TEXT |
+    | menu_color | Menu color | tuple | MENU_BGCOLOR |
+    | menu_color_title | Background color of title | tuple | MENU_TITLE_BG_COLOR |
+    | menu_height | Height of menu (px) | int | MENU_HEIGHT |
+    | menu_width | Width of menu (px) | int | MENU_WIDTH |
+    | onclose | Event that applies when closing menufunction | PymenuAction | None |
+    | option_margin | Margin of each element in menu(px) | int | MENU_OPTION_MARGIN |
+    | option_shadow | Indicate if a shadow is drawn on ech option | bool | MENU_OPTION_SHADOW |
+    | rect_width | Border with of rectangle around seleted item | int | MENU_SELECTED_WIDTH |
+    | title_offsetx | Offset x-position of title (px) | int | 0 |
+    | title_offsety | Offset y-position of title (px) | int | 0 |
      
 - **TextMenu**
 
