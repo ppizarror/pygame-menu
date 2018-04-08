@@ -42,3 +42,16 @@ PYGAME_MENU_DISABLE_CLOSE = PymenuAction(10)  # Menu disable closing
 PYGAME_MENU_EXIT = PymenuAction(3)  # Menu exit program
 PYGAME_MENU_RESET = PymenuAction(4)  # Menu reset
 TEXT_NEWLINE = ''  # Text newline on TextMenu object
+
+JOY_DEADZONE = 0.5
+JOY_AXIS_Y = 1
+JOY_AXIS_X = 0
+
+JOY_CENTERED = (0, 0)
+JOY_UP = (0, 1)
+JOY_DOWN = (0, -1)
+JOY_RIGHT = (1, 0)
+JOY_LEFT = (-1, 0)
+
+JOY_BUTTON_SELECT = 0
+JOY_BUTTON_BACK = 1

@@ -225,6 +225,11 @@ class Menu(object):
         # Title properties
         self.set_title(title, title_offsetx, title_offsety)
 
+        if not _pygame.joystick.get_init():
+            _pygame.joystick.init()
+            for i in range(_pygame.joystick.get_count()):
+                _pygame.joystick.Joystick(i).init()
+
     def add_option(self, element_name, element, *args):
         """
         Add option to menu.
@@ -555,7 +560,29 @@ class Menu(object):
                     if close:
                         self.disable()
                         return True
-
+            elif event.type == _pygame.JOYHATMOTION:
+                if event.value == _locals.JOY_UP:
+                    self._up()
+                elif event.value == _locals.JOY_DOWN:
+                    self._down()
+                elif event.value == _locals.JOY_LEFT:
+                    self._left()
+                elif event.value == _locals.JOY_RIGHT:
+                    self._right()
+            elif event.type == _pygame.JOYAXISMOTION:
+                if event.axis == _locals.JOY_AXIS_Y and event.value < -_locals.JOY_DEADZONE:
+                    self._down()
+                if event.axis == _locals.JOY_AXIS_Y and event.value > _locals.JOY_DEADZONE:
+                    self._up()
+                if event.axis == _locals.JOY_AXIS_X and event.value > _locals.JOY_DEADZONE:
+                    self._right()
+                if event.axis == _locals.JOY_AXIS_X and event.value < -_locals.JOY_DEADZONE:
+                    self._left()
+            elif event.type == _pygame.JOYBUTTONDOWN:
+                if event.button == _locals.JOY_BUTTON_SELECT:
+                    self._select()
+                elif event.button == _locals.JOY_BUTTON_BACK:
+                    self.reset(1)
         _pygame.display.flip()
         self._closelocked = False
         return False
