@@ -3,7 +3,7 @@
 TEXT MENU
 Menu with text and buttons.
 
-Copyright (C) 2017 Pablo Pizarro @ppizarror
+Copyright (C) 2017-2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

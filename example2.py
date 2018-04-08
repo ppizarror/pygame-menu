@@ -1,9 +1,9 @@
 # coding=utf-8
 """
-EXAMPLE
+EXAMPLE 2
 Game menu with 3 difficulty options.
 
-Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
+Copyright (C) 2017-2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -141,23 +141,23 @@ def main_background():
 # -----------------------------------------------------------------------------
 # PLAY MENU
 play_menu = pygameMenu.Menu(surface,
-                            window_width=WINDOW_SIZE[0],
-                            window_height=WINDOW_SIZE[1],
-                            font=pygameMenu.fonts.FONT_BEBAS,
-                            title='Play menu',
-                            menu_alpha=100,
-                            font_size=30,
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
-                            menu_height=int(WINDOW_SIZE[1] * 0.6),
                             bgfun=main_background,
-                            menu_color=MENU_BACKGROUND_COLOR,
-                            option_shadow=False,
-                            font_color=COLOR_BLACK,
                             color_selected=COLOR_WHITE,
-                            onclose=PYGAME_MENU_DISABLE_CLOSE
+                            font=pygameMenu.fonts.FONT_BEBAS,
+                            font_color=COLOR_BLACK,
+                            font_size=30,
+                            menu_alpha=100,
+                            menu_color=MENU_BACKGROUND_COLOR,
+                            menu_height=int(WINDOW_SIZE[1] * 0.6),
+                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            onclose=PYGAME_MENU_DISABLE_CLOSE,
+                            option_shadow=False,
+                            title='Play menu',
+                            window_height=WINDOW_SIZE[1],
+                            window_width=WINDOW_SIZE[0]
                             )
 # When pressing return -> play(DIFFICULTY[0], font)
-play_menu.add_option('Play', play_function, DIFFICULTY,
+play_menu.add_option('Start', play_function, DIFFICULTY,
                      pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
 play_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                              ('Medium', 'MEDIUM'),
@@ -168,23 +168,24 @@ play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 
 # ABOUT MENU
 about_menu = pygameMenu.TextMenu(surface,
-                                 window_width=WINDOW_SIZE[0],
-                                 window_height=WINDOW_SIZE[1],
-                                 font=pygameMenu.fonts.FONT_BEBAS,
-                                 font_title=pygameMenu.fonts.FONT_8BIT,
-                                 title='About',
-                                 onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                 font_color=COLOR_BLACK,
-                                 text_fontsize=20,
-                                 font_size_title=30,
-                                 menu_color_title=COLOR_WHITE,
-                                 menu_color=MENU_BACKGROUND_COLOR,
-                                 menu_width=int(WINDOW_SIZE[0] * 0.6),
-                                 menu_height=int(WINDOW_SIZE[1] * 0.6),
-                                 option_shadow=False,
+                                 bgfun=main_background,
                                  color_selected=COLOR_WHITE,
+                                 font=pygameMenu.fonts.FONT_BEBAS,
+                                 font_color=COLOR_BLACK,
+                                 font_size_title=30,
+                                 font_title=pygameMenu.fonts.FONT_8BIT,
+                                 menu_color=MENU_BACKGROUND_COLOR,
+                                 menu_color_title=COLOR_WHITE,
+                                 menu_height=int(WINDOW_SIZE[1] * 0.6),
+                                 menu_width=int(WINDOW_SIZE[0] * 0.6),
+                                 onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                 option_shadow=False,
                                  text_color=COLOR_BLACK,
-                                 bgfun=main_background)
+                                 text_fontsize=20,
+                                 title='About',
+                                 window_height=WINDOW_SIZE[1],
+                                 window_width=WINDOW_SIZE[0]
+                                 )
 for m in ABOUT:
     about_menu.add_line(m)
 about_menu.add_line(TEXT_NEWLINE)
@@ -192,20 +193,20 @@ about_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 
 # MAIN MENU
 main_menu = pygameMenu.Menu(surface,
-                            window_width=WINDOW_SIZE[0],
-                            window_height=WINDOW_SIZE[1],
-                            font=pygameMenu.fonts.FONT_BEBAS,
-                            title='Main menu',
-                            menu_alpha=100,
-                            font_size=30,
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
-                            menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            onclose=PYGAME_MENU_DISABLE_CLOSE,
                             bgfun=main_background,
-                            menu_color=MENU_BACKGROUND_COLOR,
-                            option_shadow=False,
-                            font_color=COLOR_BLACK,
                             color_selected=COLOR_WHITE,
+                            font=pygameMenu.fonts.FONT_BEBAS,
+                            font_color=COLOR_BLACK,
+                            font_size=30,
+                            menu_alpha=100,
+                            menu_color=MENU_BACKGROUND_COLOR,
+                            menu_height=int(WINDOW_SIZE[1] * 0.6),
+                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            onclose=PYGAME_MENU_DISABLE_CLOSE,
+                            option_shadow=False,
+                            title='Main menu',
+                            window_height=WINDOW_SIZE[1],
+                            window_width=WINDOW_SIZE[0]
                             )
 main_menu.add_option('Play', play_menu)
 main_menu.add_option('About', about_menu)

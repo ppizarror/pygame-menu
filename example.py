@@ -1,9 +1,9 @@
 # coding=utf-8
 """
-EXAMPLE
+EXAMPLE 1
 Example file, timer clock with in-menu options.
 
-Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
+Copyright (C) 2017-2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ from pygame.locals import *
 import pygameMenu
 from pygameMenu.locals import *
 
+# -----------------------------------------------------------------------------
 # Constants and global variables
 ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
@@ -43,6 +44,7 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
+# -----------------------------------------------------------------------------
 # Init pygame
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -62,7 +64,7 @@ dt = 1.0 / FPS
 timer_font = pygame.font.Font(pygameMenu.fonts.FONT_NEVIS, 100)
 
 
-# Functions
+# -----------------------------------------------------------------------------
 def mainmenu_background():
     """
     Background color of the main menu, on this function user can plot
@@ -93,92 +95,96 @@ def change_color_bg(c, **kwargs):
     COLOR_BACKGROUND[2] = c[2]
 
 
+# -----------------------------------------------------------------------------
 # Timer menu
 timer_menu = pygameMenu.Menu(surface,
-                             window_width=W_SIZE,
-                             window_height=H_SIZE,
+                             dopause=False,
                              font=pygameMenu.fonts.FONT_NEVIS,
-                             title='Timer Menu',
-                             # Adds 5px to title vertical position
-                             title_offsety=5,
                              menu_alpha=85,
-                             menu_width=600,
+                             menu_color=(0, 0, 0),  # Background color
+                             menu_color_title=(0, 0, 0),
                              menu_height=int(H_SIZE / 2),
-                             # If this menu closes (press ESC) back to main
-                             onclose=PYGAME_MENU_RESET,
-                             dopause=False)
+                             menu_width=600,
+                             onclose=PYGAME_MENU_RESET,  # If this menu closes (press ESC) back to main
+                             title='Timer Menu',
+                             title_offsety=5,  # Adds 5px to title vertical position
+                             window_height=H_SIZE,
+                             window_width=W_SIZE
+                             )
 timer_menu.add_option('Reset timer', reset_timer)
 
 # Adds a selector (element that can handle functions)
 timer_menu.add_selector('Change bgcolor',
                         # Values of selector, call to change_color_bg
-                        [('Random', (-1, -1, -1)),  # Random color
+                        [('Random', (-1, -1, -1)),
                          ('Default', (128, 0, 128)),
                          ('Black', (0, 0, 0)),
                          ('Blue', COLOR_BLUE)],
-                        # Action when changing element with left/right
-                        onchange=None,
-                        # Action when pressing return on a element
-                        onreturn=change_color_bg,
-                        # Kwargs, optional parametrs to change_color_bg function
-                        write_on_console=True)
+                        onchange=None,  # Action when changing element with left/right
+                        onreturn=change_color_bg,  # Action when pressing return on a element
+                        write_on_console=True  # Optional parametrs to change_color_bg function
+                        )
 timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
 timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
 
+# -----------------------------------------------------------------------------
 # Help menu
 help_menu = pygameMenu.TextMenu(surface,
-                                window_width=W_SIZE,
-                                window_height=H_SIZE,
+                                dopause=False,
                                 font=pygameMenu.fonts.FONT_FRANCHISE,
-                                title='Help',
-                                # Pressing ESC button does nothing on this menu
-                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                menu_color=(30, 50, 107),  # Background color
                                 menu_color_title=(120, 45, 30),
-                                # Background color
-                                menu_color=(30, 50, 107),
-                                dopause=False)
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,  # Pressing ESC button does nothing
+                                title='Help',
+                                window_height=H_SIZE,
+                                window_width=W_SIZE
+                                )
 help_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
 for m in HELP:
     help_menu.add_line(m)
 
+# -----------------------------------------------------------------------------
 # About menu
 about_menu = pygameMenu.TextMenu(surface,
-                                 window_width=W_SIZE,
-                                 window_height=H_SIZE,
+                                 dopause=False,
                                  font=pygameMenu.fonts.FONT_NEVIS,
-                                 font_title=pygameMenu.fonts.FONT_8BIT,
-                                 title='About',
-                                 # Disable menu close (ESC button)
-                                 onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                 text_fontsize=20,
                                  font_size_title=30,
+                                 font_title=pygameMenu.fonts.FONT_8BIT,
                                  menu_color_title=COLOR_BLUE,
-                                 dopause=False)
+                                 onclose=PYGAME_MENU_DISABLE_CLOSE,  # Disable menu close (ESC button)
+                                 text_fontsize=20,
+                                 title='About',
+                                 window_height=H_SIZE,
+                                 window_width=W_SIZE
+                                 )
 about_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
 for m in ABOUT:
     about_menu.add_line(m)
 about_menu.add_line(TEXT_NEWLINE)
 
+# -----------------------------------------------------------------------------
 # Main menu, pauses execution of the application
 menu = pygameMenu.Menu(surface,
-                       window_width=W_SIZE,
-                       window_height=H_SIZE,
+                       bgfun=mainmenu_background,
+                       enabled=False,
                        font=pygameMenu.fonts.FONT_NEVIS,
+                       menu_alpha=90,
+                       onclose=PYGAME_MENU_CLOSE,
                        title='Main Menu',
                        title_offsety=5,
-                       menu_alpha=90,
-                       enabled=False,
-                       bgfun=mainmenu_background,
-                       onclose=PYGAME_MENU_CLOSE)
+                       window_height=H_SIZE,
+                       window_width=W_SIZE
+                       )
 menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
 menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
 menu.add_option('Exit', PYGAME_MENU_EXIT)  # Add exit function
 
+# -----------------------------------------------------------------------------
 # Main loop
 while True:
 
-    # Tick
+    # Tick clock
     clock.tick(60)
     timer[0] += dt
 

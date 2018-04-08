@@ -3,7 +3,7 @@
 MENU
 Menu class.
 
-Copyright (C) 2017,2018 Pablo Pizarro @ppizarror
+Copyright (C) 2017-2018 Pablo Pizarro @ppizarror
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,13 +47,14 @@ class Menu(object):
                  draw_select=_cfg.MENU_SELECTED_DRAW,
                  enabled=True,
                  font_color=_cfg.MENU_FONT_COLOR,
-                 font_size_title=_cfg.MENU_FONT_SIZE_TITLE,
                  font_size=_cfg.MENU_FONT_SIZE,
+                 font_size_title=_cfg.MENU_FONT_SIZE_TITLE,
                  font_title=None,
+                 joystick_enabled=True,
                  menu_alpha=_cfg.MENU_ALPHA,
                  menu_centered=_cfg.MENU_CENTERED_TEXT,
-                 menu_color_title=_cfg.MENU_TITLE_BG_COLOR,
                  menu_color=_cfg.MENU_BGCOLOR,
+                 menu_color_title=_cfg.MENU_TITLE_BG_COLOR,
                  menu_height=_cfg.MENU_HEIGHT,
                  menu_width=_cfg.MENU_WIDTH,
                  onclose=None,
@@ -61,15 +62,12 @@ class Menu(object):
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
-                 title_offsety=0):
+                 title_offsety=0
+                 ):
         """
         Menu constructor.
 
         :param surface: Pygame surface
-        :param window_width: Window width size (px)
-        :param window_height: Window height size (px)
-        :param font: Font file direction
-        :param title: Title of the menu (main title)
         :param bgfun: Background drawing function (only if menu pause app)
         :param color_selected: Color of selected item
         :param dopause: Pause game
@@ -77,37 +75,43 @@ class Menu(object):
         :param draw_region_y: Drawing position of element inside menu (y-axis)
         :param draw_select: Draw a rectangle around selected item (bool)
         :param enabled: Menu is enabled by default or not
+        :param font: Font file direction
         :param font_color: Color of font
-        :param font_size_title: Font size of the title
         :param font_size: Font size
+        :param font_size_title: Font size of the title
         :param font_title: Alternative font of the title (file direction)
+        :param joystick_enabled: Enable/disable joystick on menu
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :param menu_centered: Text centered menu
-        :param menu_color_title: Background color of title
         :param menu_color: Menu color
+        :param menu_color_title: Background color of title
         :param menu_height: Height of menu (px)
         :param menu_width: Width of menu (px)
         :param onclose: Function that applies when closing menu
         :param option_margin: Margin of each element in menu (px)
         :param option_shadow: Indicate if a shadow is drawn on each option
         :param rect_width: Border with of rectangle around selected item
+        :param title: Title of the menu (main title)
         :param title_offsetx: Offset x-position of title (px)
         :param title_offsety: Offset y-position of title (px)
+        :param window_height: Window height size (px)
+        :param window_width: Window width size (px)
         :type bgfun: function
         :type color_selected: tuple
         :type dopause: bool
         :type draw_region_x: int
         :type draw_region_y: int
         :type draw_select: bool
-        :type font_color: tuple
-        :type font_size_title: int
-        :type font_size: int
-        :type font_title: basestring
         :type font: basestring
+        :type font_color: tuple
+        :type font_size: int
+        :type font_size_title: int
+        :type font_title: basestring
+        :type joystick_enabled: bool
         :type menu_alpha: int
         :type menu_centered: bool
-        :type menu_color_title: tuple
         :type menu_color: tuple
+        :type menu_color_title: tuple
         :type menu_height: int
         :type menu_width: int
         :type option_margin: int
@@ -122,14 +126,15 @@ class Menu(object):
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
         assert isinstance(draw_select, bool)
-        assert isinstance(font_color, tuple)
-        assert isinstance(font_size_title, int)
-        assert isinstance(font_size, int)
         assert isinstance(font, str)
+        assert isinstance(font_color, tuple)
+        assert isinstance(font_size, int)
+        assert isinstance(font_size_title, int)
+        assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_centered, bool)
-        assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_color, tuple)
+        assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_height, int)
         assert isinstance(menu_width, int)
         assert isinstance(option_margin, int)
@@ -225,7 +230,9 @@ class Menu(object):
         # Title properties
         self.set_title(title, title_offsetx, title_offsety)
 
-        if not _pygame.joystick.get_init():
+        # Init joystick
+        self._joystick = joystick_enabled
+        if self._joystick and not _pygame.joystick.get_init():
             _pygame.joystick.init()
             for i in range(_pygame.joystick.get_count()):
                 _pygame.joystick.Joystick(i).init()
@@ -541,17 +548,13 @@ class Menu(object):
                             onclose)) == "<class 'pygameMenu.locals" \
                                          "._PymenuAction'>"
                         if a or b:
-                            if _locals._eq_action(onclose,
-                                                  _locals.PYGAME_MENU_RESET):
+                            if onclose == _locals.PYGAME_MENU_RESET:
                                 self.reset(100)
-                            elif _locals._eq_action(onclose,
-                                                    _locals.PYGAME_MENU_BACK):
+                            elif onclose == _locals.PYGAME_MENU_BACK:
                                 self.reset(1)
-                            elif _locals._eq_action(onclose,
-                                                    _locals.PYGAME_MENU_EXIT):
+                            elif onclose == _locals.PYGAME_MENU_EXIT:
                                 exit()
-                            elif _locals._eq_action(onclose,
-                                                    _locals.PYGAME_MENU_DISABLE_CLOSE):
+                            elif onclose == _locals.PYGAME_MENU_DISABLE_CLOSE:
                                 close = False
                         elif isinstance(onclose, types.FunctionType):
                             onclose()
@@ -560,7 +563,7 @@ class Menu(object):
                     if close:
                         self.disable()
                         return True
-            elif event.type == _pygame.JOYHATMOTION:
+            elif self._joystick and event.type == _pygame.JOYHATMOTION:
                 if event.value == _locals.JOY_UP:
                     self._up()
                 elif event.value == _locals.JOY_DOWN:
@@ -569,7 +572,7 @@ class Menu(object):
                     self._left()
                 elif event.value == _locals.JOY_RIGHT:
                     self._right()
-            elif event.type == _pygame.JOYAXISMOTION:
+            elif self._joystick and event.type == _pygame.JOYAXISMOTION:
                 if event.axis == _locals.JOY_AXIS_Y and event.value < -_locals.JOY_DEADZONE:
                     self._down()
                 if event.axis == _locals.JOY_AXIS_Y and event.value > _locals.JOY_DEADZONE:
@@ -578,7 +581,7 @@ class Menu(object):
                     self._right()
                 if event.axis == _locals.JOY_AXIS_X and event.value < -_locals.JOY_DEADZONE:
                     self._left()
-            elif event.type == _pygame.JOYBUTTONDOWN:
+            elif self._joystick and event.type == _pygame.JOYBUTTONDOWN:
                 if event.button == _locals.JOY_BUTTON_SELECT:
                     self._select()
                 elif event.button == _locals.JOY_BUTTON_BACK:
@@ -686,24 +689,24 @@ class Menu(object):
         # If option is a PyMenuAction
         elif a or b:
             # Back to menu
-            if _locals._eq_action(option, _locals.PYGAME_MENU_BACK):
+            if option == _locals.PYGAME_MENU_BACK:
                 self.reset(1)
             # Close menu
-            elif _locals._eq_action(option, _locals.PYGAME_MENU_CLOSE):
+            elif option == _locals.PYGAME_MENU_CLOSE:
                 self.disable()
                 self._closelocked = False
                 closefun = self._actual._onclose
                 if closefun is not None:
-                    if _locals._eq_action(closefun, _locals.PYGAME_MENU_RESET):
+                    if closefun == _locals.PYGAME_MENU_RESET:
                         self.reset(100)
-                    elif _locals._eq_action(closefun, _locals.PYGAME_MENU_BACK):
+                    elif closefun == _locals.PYGAME_MENU_BACK:
                         self.reset(1)
-                    elif _locals._eq_action(closefun, _locals.PYGAME_MENU_EXIT):
+                    elif closefun == _locals.PYGAME_MENU_EXIT:
                         exit()
                     elif isinstance(self._onclose, types.FunctionType):
                         closefun()
             # Exit program
-            elif _locals._eq_action(option, _locals.PYGAME_MENU_EXIT):
+            elif option == _locals.PYGAME_MENU_EXIT:
                 exit()
         # If element is a function
         elif isinstance(option, types.FunctionType) or callable(option):
