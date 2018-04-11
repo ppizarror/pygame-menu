@@ -27,7 +27,7 @@ import pygame.gfxdraw as _gfxdraw
 import types
 
 
-# noinspection PyProtectedMember,PyUnresolvedReferences,PyUnusedLocal,PyBroadException,PyAttributeOutsideInit
+# noinspection PyBroadException
 class Menu(object):
     """
     Menu object.
@@ -67,7 +67,6 @@ class Menu(object):
         """
         Menu constructor.
 
-        :param surface: Pygame surface
         :param bgfun: Background drawing function (only if menu pause app)
         :param color_selected: Color of selected item
         :param dopause: Pause game
@@ -91,6 +90,7 @@ class Menu(object):
         :param option_margin: Margin of each element in menu (px)
         :param option_shadow: Indicate if a shadow is drawn on each option
         :param rect_width: Border with of rectangle around selected item
+        :param surface: Pygame surface
         :param title: Title of the menu (main title)
         :param title_offsetx: Offset x-position of title (px)
         :param title_offsety: Offset y-position of title (px)
@@ -154,16 +154,16 @@ class Menu(object):
                 'Bgfun must be None if menu does not pause execution of the ' \
                 'application'
         assert window_height > 0 and window_width > 0, \
-            'Window size must be greather than zero'
-        assert rect_width >= 0, 'rect_width must be greather or equal than zero'
+            'Window size must be greater than zero'
+        assert rect_width >= 0, 'rect_width must be greater or equal than zero'
         assert option_margin >= 0, \
-            'Option margin must be greather or equal than zero'
+            'Option margin must be greater or equal than zero'
         assert menu_width > 0 and menu_height > 0, \
-            'Menu size must be greather than zero'
+            'Menu size must be greater than zero'
         assert font_size > 0 and font_size_title > 0, \
-            'Font sizes must be greather than zero'
+            'Font sizes must be greater than zero'
         assert draw_region_y >= 0 and draw_region_x >= 0, \
-            'Drawing regions must be greather or equal than zero'
+            'Drawing regions must be greater or equal than zero'
         assert dopause and bgfun is not None or not dopause and bgfun is None, \
             'If pause main execution is enabled then bgfun (Background ' \
             'function drawing) must be defined (not None)'
@@ -183,8 +183,8 @@ class Menu(object):
         self._fsize = font_size
         self._fsize_title = font_size_title
         self._height = menu_height
-        self._option_shadow = option_shadow
         self._opt_dy = option_margin
+        self._option_shadow = option_shadow
         self._rect_width = rect_width
         self._sel_color = color_selected
         self._surface = surface
@@ -195,11 +195,11 @@ class Menu(object):
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
+        self._index = 0  # Selected index
         self._onclose = onclose  # Function that calls after closing menu
         self._option = []  # Option menu
-        self._index = 0  # Selected index
         self._prev = None  # Previous menu
-        self._prev_draw = None
+        self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
 
         # Load fonts
@@ -249,12 +249,12 @@ class Menu(object):
         :return:
         """
         a = isinstance(element, Menu)
-        b = str(type(element)) == "<class 'pygameMenu.locals._PymenuAction'>"
+        b = str(type(element)) == _locals.PYGAMEMENU_PYMENUACTION
         c = isinstance(element, types.FunctionType)
         d = callable(element)
         e = isinstance(element, _locals.PymenuAction)
         assert a or b or c or d or e, \
-            'Element must be a Menu, an PymenuAction or a Function'
+            'Element must be a Menu, an PymenuAction or a function'
         assert isinstance(element_name, str), 'Element name must be a string'
         self._actual._option.append([element_name, element, args])
         self._actual._size += 1
@@ -280,22 +280,23 @@ class Menu(object):
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
-        :param kwargs: Aditional arguments
+        :param kwargs: Aditional parameters
         :type title: basestring
         :type values: list
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: Selector ID
+        :rtype: int
         """
         # Check value list
         for vl in values:
             assert len(vl) > 1, \
-                'Length of each element in value list must be greather than 1'
+                'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
 
         self._actual._option.append(
-            [_locals._PYGAME_TYPE_SELECTOR,
+            [_locals.PYGAMEMENU_TYPE_SELECTOR,
              _Selector(title, values, onchange=onchange, onreturn=onreturn,
                        **kwargs)])
         selector_id = self._actual._size
@@ -324,6 +325,7 @@ class Menu(object):
         :type values: list
         :type fun: function, NoneType
         :return: Selector ID
+        :rtype: int
         """
         return self.add_selector(title=title, values=values, onchange=fun,
                                  onreturn=None, kwargs=kwargs)
@@ -347,6 +349,7 @@ class Menu(object):
         :type values: list
         :type fun: function, NoneType
         :return: Selector ID
+        :rtype: int
         """
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
@@ -389,7 +392,7 @@ class Menu(object):
         dy = 0
         for option in self._actual._option:
             # Si el tipo es un selector
-            if option[0] == _locals._PYGAME_TYPE_SELECTOR:
+            if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
                 # If selected index draw a rectangle
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[1].get(), 1,
@@ -483,7 +486,7 @@ class Menu(object):
 
     def get_title(self):
         """
-        Return title of Menu
+        Return title of the Menu
 
         :return: Title
         :rtype: str
@@ -521,6 +524,7 @@ class Menu(object):
         if events is None:
             events = _pygame.event.get()
         for event in events:
+            # noinspection PyUnresolvedReferences
             if event.type == _pygame.locals.QUIT:
                 exit()
             elif event.type == _pygame.locals.KEYDOWN:
@@ -544,9 +548,7 @@ class Menu(object):
                     close = True
                     if not isinstance(onclose, type(None)):
                         a = isinstance(onclose, _locals.PymenuAction)
-                        b = str(type(
-                            onclose)) == "<class 'pygameMenu.locals" \
-                                         "._PymenuAction'>"
+                        b = str(type(onclose)) == _locals.PYGAMEMENU_PYMENUACTION
                         if a or b:
                             if onclose == _locals.PYGAME_MENU_RESET:
                                 self.reset(100)
@@ -594,7 +596,7 @@ class Menu(object):
         """
         Main function of Menu, draw, etc.
 
-        :param events: Eventos
+        :param events: Menu events
         :return: None
         """
         assert isinstance(self._actual, Menu)
@@ -615,12 +617,13 @@ class Menu(object):
         :return: None
         """
         try:
-            opcion = self._actual._option[self._actual._index][1]
-            if isinstance(opcion, _Selector):
-                opcion.left()
+            option = self._actual._option[self._actual._index][1]
+            if isinstance(option, _Selector):
+                option.left()
         except Exception:
             pass
 
+    # noinspection PyAttributeOutsideInit
     def reset(self, total):
         """
         Reset menu.
@@ -631,7 +634,7 @@ class Menu(object):
         """
         assert isinstance(self._actual, Menu)
         assert isinstance(total, int)
-        assert total > 0, 'Total must be greather than zero'
+        assert total > 0, 'Total must be greater than zero'
 
         i = 0
         while True:
@@ -656,9 +659,9 @@ class Menu(object):
         :return: None
         """
         try:
-            opcion = self._actual._option[self._actual._index][1]
-            if isinstance(opcion, _Selector):
-                opcion.right()
+            option = self._actual._option[self._actual._index][1]
+            if isinstance(option, _Selector):
+                option.right()
         except Exception:
             pass
 
@@ -669,15 +672,12 @@ class Menu(object):
         :return:
         """
         assert isinstance(self._actual, Menu)
-
         try:
             option = self._actual._option[self._actual._index][1]
         except Exception:
             return
-
         a = isinstance(option, _locals.PymenuAction)
-        b = str(type(option)) == "<class 'pygameMenu.locals" \
-                                 "._PymenuAction'>"
+        b = str(type(option)) == _locals.PYGAMEMENU_PYMENUACTION
 
         # If element is a Menu
         if isinstance(option, Menu):
@@ -724,6 +724,7 @@ class Menu(object):
         elif isinstance(option, _Selector):
             option.apply()
 
+    # noinspection PyAttributeOutsideInit
     def set_title(self, title, offsetx=0, offsety=0):
         """
         Set menu title.
@@ -736,8 +737,12 @@ class Menu(object):
         :type offsety: int
         :return: None
         """
-        self.title_offsety = offsety
-        self.title_offsetx = offsetx
+        assert isinstance(title, str)
+        assert isinstance(offsetx, int)
+        assert isinstance(offsety, int)
+
+        self._title_offsety = offsety
+        self._title_offsetx = offsetx
         self._title = self._font_title.render(title, 1, self._font_color)
         self._title_str = title
         title_width = self._title.get_size()[0]
@@ -753,7 +758,7 @@ class Menu(object):
                                 self._posx + self._fsize_title + 5),
                             (self._posy, self._posx + self._fsize_title + 5)]
         self._title_pos = (
-            self._posy + 5 + self.title_offsetx, self._posx + self.title_offsety)
+            self._posy + 5 + self._title_offsetx, self._posx + self._title_offsety)
 
     def _up(self):
         """
@@ -774,12 +779,10 @@ class Menu(object):
         :return:
         """
         assert self._actual._size > selector_id and self._actual._option[selector_id][
-            0] == _locals._PYGAME_TYPE_SELECTOR, "There is no selector with such ID"
-
-        # Check value list
-        for vl in values:
+            0] == _locals.PYGAMEMENU_TYPE_SELECTOR, 'There is no selector with such ID'
+        for vl in values:  # Check value list
             assert len(vl) > 1, \
-                'Length of each element in value list must be greather than 1'
+                'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
 

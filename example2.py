@@ -27,7 +27,7 @@ from pygameMenu.locals import *
 
 ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
-         TEXT_NEWLINE,
+         PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -188,7 +188,7 @@ about_menu = pygameMenu.TextMenu(surface,
                                  )
 for m in ABOUT:
     about_menu.add_line(m)
-about_menu.add_line(TEXT_NEWLINE)
+about_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
 about_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 
 # MAIN MENU

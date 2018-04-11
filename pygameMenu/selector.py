@@ -25,15 +25,19 @@ class Selector(object):
         """
         Constructor.
 
-        :param title: Title of the selector
         :param elements: Elements of the selector
+        :param kwargs: Optional arguments
         :param onchange: Event when changing the selector
         :param onreturn: Event when pressing return button
-        :param kwargs: Optional arguments
+        :param title: Title of the selector
+        :type elements: list
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
+        :type title: str
         """
-        self._kwargs = kwargs
         self._elements = elements
         self._index = 0
+        self._kwargs = kwargs
         self._on_change = onchange
         self._on_return = onreturn
         self._title = title
@@ -93,7 +97,8 @@ class Selector(object):
         """
         Return element text.
 
-        :return: String
+        :return: Element text
+        :rtype: str
         """
         return '{0} < {1} >'.format(self._title, self._elements[self._index][0])
 

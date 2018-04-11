@@ -30,47 +30,52 @@ class TextMenu(Menu):
     Text menu object.
     """
 
-    def __init__(self, surface, window_width, window_height, font, title,
+    def __init__(self,
+                 surface,
+                 window_width,
+                 window_height,
+                 font,
+                 title,
+                 draw_text_region_x=_cfg.TEXT_DRAW_X,
                  text_centered=_cfg.TEXT_CENTERED,
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
-                 draw_text_region_x=_cfg.TEXT_DRAW_X,
-                 **kwargs):
+                 **kwargs
+                 ):
         """
         TextMenu constructor.
 
-        :param surface: Pygame surface object
-        :param window_width: Window width
-        :param window_height: Window height
+        :param draw_text_region_x: X-Axis drawing region of the text
         :param font: Font file direction
-        :param title: Title of the Menu
+        :param kwargs: Aditional parameters
+        :param surface: Pygame surface object
         :param text_centered: Indicate if text is centered
         :param text_color: Text color
         :param text_fontsize: Text font size
         :param text_margin: Line margin
-        :param draw_text_region_x: X-Axis drawing region of the text
-        :type window_width: int
-        :type window_height: int
+        :param title: Title of the Menu
+        :param window_height: Window height
+        :param window_width: Window width
+        :type draw_text_region_x: int
         :type font: str
-        :type title: str
         :type text_centered: bool
         :type text_color: tuple
         :type text_fontsize: int
         :type text_margin: int
-        :type draw_text_region_x: int
+        :type title: str
+        :type window_height: int
+        :type window_width: int
         """
         assert isinstance(draw_text_region_x, int)
         assert isinstance(text_centered, bool)
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
-
-        # Other asserts
         assert draw_text_region_x >= 0, \
-            'X-Axis drawing region of the text must be greather than zero'
-        assert text_fontsize > 0, 'Text font size must be greather than zero'
+            'X-Axis drawing region of the text must be greater than zero'
+        assert text_fontsize > 0, 'Text font size must be greater than zero'
         assert text_margin >= 0, \
-            'Text margin must be greather or equal than zero'
+            'Text margin must be greater or equal than zero'
 
         # Super call
         super(TextMenu, self).__init__(surface, window_width, window_height,
@@ -104,6 +109,7 @@ class TextMenu(Menu):
         """
         assert isinstance(self._actual, TextMenu)
         assert isinstance(text, str)
+
         text = text.strip()
         self._actual._text.append(text)
         dy = -self._actual._font_textsize / 2 - self._actual._textdy / 2
@@ -122,8 +128,9 @@ class TextMenu(Menu):
         """
         a = isinstance(element, Menu)
         b = isinstance(element, _locals.PymenuAction)
-        c = str(type(element)) == "<class 'pygameMenu.locals._PymenuAction'>"
+        c = str(type(element)) == _locals.PYGAMEMENU_PYMENUACTION
         assert a or b or c, 'Element must be a Menu or PymenuAction'
+
         self._actual._option.append([element_name, element, args])
         self._actual._size += 1
         dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
@@ -136,6 +143,7 @@ class TextMenu(Menu):
         :return: None
         """
         assert isinstance(self._actual, TextMenu)
+
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
                                 self._actual._bgcolor)
@@ -167,7 +175,7 @@ class TextMenu(Menu):
         dy_index = 0
         for option in self._actual._option:
             # If option is selector
-            if option[0] == _locals._PYGAME_TYPE_SELECTOR:
+            if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
                 # If selected index then change color
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[1].get(), 1,
