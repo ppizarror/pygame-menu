@@ -262,7 +262,7 @@ class Menu(object):
             dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
             self._actual._opt_posy += dy
 
-    def add_selector(self, title, values, onchange, onreturn,
+    def add_selector(self, title, values, onchange, onreturn, default=0,
                      **kwargs):
         """
         Add a selector to menu: several options with values and two functions
@@ -300,6 +300,7 @@ class Menu(object):
         self._actual._option.append(
             [_locals.PYGAMEMENU_TYPE_SELECTOR,
              _Selector(title, values, onchange=onchange, onreturn=onreturn,
+                       default=default,
                        **kwargs)])
         selector_id = self._actual._size
         self._actual._size += 1
@@ -382,6 +383,7 @@ class Menu(object):
 
         :return:
         """
+
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
                                 self._actual._bgcolor)
@@ -393,9 +395,9 @@ class Menu(object):
         # Draw options
         dy = 0
         for option in self._actual._option:
-            # Si el tipo es un selector
+
+            # Gets text and shadow depending on the item type
             if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
-                # If selected index draw a rectangle
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[1].get(), 1,
                                                      self._actual._sel_color)
@@ -407,7 +409,6 @@ class Menu(object):
                     text_bg = self._actual._font.render(option[1].get(), 1,
                                                         _cfg.SHADOW_COLOR)
             else:
-                # If selected index draw a rectangle
                 if dy == self._actual._index:
                     text = self._actual._font.render(option[0], 1,
                                                      self._actual._sel_color)
@@ -418,6 +419,7 @@ class Menu(object):
                                                      self._actual._font_color)
                     text_bg = self._actual._font.render(option[0], 1,
                                                         _cfg.SHADOW_COLOR)
+
             # Text anchor
             text_width, text_height = text.get_size()
             t_dy = -int(text_height / 2.0)
@@ -425,6 +427,7 @@ class Menu(object):
                 text_dx = -int(text_width / 2.0)
             else:
                 text_dx = 0
+
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
@@ -436,6 +439,7 @@ class Menu(object):
                     self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords))
+
             # If selected item then draw a rectangle
             if self._actual._drawselrect and (dy == self._actual._index):
                 if not self._actual._centered_option:

@@ -174,6 +174,7 @@ class TextMenu(Menu):
         dy = 0
         dy_index = 0
         for option in self._actual._option:
+
             # If option is selector
             if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
                 # If selected index then change color
@@ -199,6 +200,7 @@ class TextMenu(Menu):
                                                      self._actual._font_color)
                     text_bg = self._actual._font.render(option[0], 1,
                                                         _cfg_menu.SHADOW_COLOR)
+
             # Text font and size
             text_width, text_height = text.get_size()
             if self._actual._centered_option:
@@ -207,6 +209,7 @@ class TextMenu(Menu):
             else:
                 text_dx = 0
                 t_dy = 0
+
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
@@ -218,6 +221,7 @@ class TextMenu(Menu):
                     self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords + dysum))
+
             # If selected option draw a rectangle
             if self._actual._drawselrect and (dy_index == self._actual._index):
                 if not self._actual._centered_option:

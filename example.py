@@ -122,6 +122,7 @@ timer_menu.add_selector('Change bgcolor',
                          ('Blue', COLOR_BLUE)],
                         onchange=None,  # Action when changing element with left/right
                         onreturn=change_color_bg,  # Action when pressing return on a element
+                        default=1,  # Optional parameter that sets default item of selector
                         write_on_console=True  # Optional parametrs to change_color_bg function
                         )
 timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)

@@ -25,17 +25,17 @@ class Selector(object):
         """
         Constructor.
 
+        :param title: Title of the selector
         :param elements: Elements of the selector
         :param default: Index of default element to display
         :param kwargs: Optional arguments
         :param onchange: Event when changing the selector
         :param onreturn: Event when pressing return button
-        :param title: Title of the selector
+        :type title: str
         :type elements: list
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :type default: int
-        :type title: str
         """
         self._elements = elements
         self._index = 0
@@ -44,8 +44,10 @@ class Selector(object):
         self._on_return = onreturn
         self._title = title
         self._total_elements = len(elements)
-        
-        for k in range(0,default):
+
+        # Apply default item
+        default %= self._total_elements
+        for k in range(0, default):
             self.right()
 
     def update_elements(self, elements):
