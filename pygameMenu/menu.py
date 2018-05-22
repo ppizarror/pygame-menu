@@ -278,6 +278,7 @@ class Menu(object):
 
         :param title: Title of the selector
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
+        :param default: Index of default value to display
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
@@ -285,6 +286,7 @@ class Menu(object):
         :type values: list
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
+        :type default: int
         :return: Selector ID
         :rtype: int
         """
