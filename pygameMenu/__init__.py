@@ -24,6 +24,6 @@ import pygameMenu.fonts as fonts
 
 # Other
 __author__ = 'ppizarror'
-__contributors__ = ['i96751414', 'asierrayk', 'ironsmile', 'maditnerd']
+__contributors__ = ['i96751414', 'asierrayk', 'ironsmile', 'maditnerd', 'thisIsMikeKane']
 __email__ = 'pablo.pizarro@ing.uchile.cl'
-__version__ = 'v1.92 (11 April 2018)'
+__version__ = 'v1.93 (7 May 2018)'
