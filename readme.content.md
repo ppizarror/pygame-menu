@@ -1,9 +1,9 @@
-Python library that can create a Menu on Pygame, supports:
+Python library that can create a simple Menu for Pygame application, supports:
 
 1. Textual menus
 2. Textual menus + buttons
 3. Lists of values (that i called **Selectors**) that can trigger functions when pressing Return or changing the value
-4. Button menus
+4. Buttons
 
 Examples:
 #### Normal Button menu
@@ -39,7 +39,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
      This class creates a Menu
       
      ```python
-     pygameMenu.Menu(surface, window_width, windw_height, font, title, *args) # -> Menu object
+     pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
      ```
     
      Parameters are the following:
@@ -104,28 +104,19 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     | Param | Description | Type |
     | :-: | :--| :--:|
     |element_name| String on menu entry| str|
-    |element_name| Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu|
+    |element| Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu|
     |*args| Additional arguments | -|
     
     
     Example:
     ```python
-    help_menu = pygameMenu.TextMenu(surface,window_width=W_SIZE, window_height=H_SIZE,
-                                    font=pygameMenu.fonts.FONT_FRANCHISE,
-                                    onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                    title='Help', dopause=False,                        
-                                    menu_color_title=(120, 45, 30),
-                                    menu_color=(30, 50, 107))
+    help_menu = pygameMenu.TextMenu(surface, window...)
     help_menu.add_option('Return to Menu', PYGAME_MENU_BACK) # Add option
     ```
      
     Another example:
     ```python
-    menu = pygameMenu.Menu(surface,window_width=W_SIZE, window_height=H_SIZE,
-                           font=pygameMenu.fonts.FONT_NEVIS,
-                           title='Main Menu', title_offsety=5,
-                           menu_alpha=90, enabled=False,
-                           bgfun=mainmenu_background)
+    menu = pygameMenu.Menu(surface, window...)
     menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
     menu.add_option(help_menu.get_title(), help_menu)    # Add help submenu
     menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
@@ -134,7 +125,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 - <i>add_selector(title, values, onchange, onreturn, **kwargs)</i>
 
-    - <i>add_selector_change(title, values, ochangen, **kwargs)</i>
+    - <i>add_selector_change(title, values, onchange, **kwargs)</i>
     - <i>add_selector_return(title, values, onreturn, **kwargs)</i>
 
     Add a *selector* to menu: several options with values and two functions that execute when changing the selector (left/right) and pressing *Return key* on the element.
@@ -276,7 +267,6 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     ```
     
 
-
 ### Menu events
 Supported events are the same:
 
@@ -288,7 +278,8 @@ Supported events are the same:
 | PYGAME_MENU_DISABLE_CLOSE | Disable close menu|
 | PYGAME_MENU_RESET | Reset menu |
 
-This events are imported on <i>from pygameMenu.locals import *</i> line.
+This events are imported on <i>from pygameMenu.locals import *</i> line. Also the menu can handle joypad events.
+
 
 ### Using fonts
 Also this library has some fonts to use, to load a font run this code:
@@ -310,6 +301,7 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 |config_controls.py|Configure default key-events of Menus|
 |config_menu.py|Configure default parameter of Menu class|
 |config_textmenu.py|Configure default parameter of TextMenu class|
+
 
 ## License
 This project is licensed under GPLv3 [https://www.gnu.org/licenses/gpl-3.0.html]
