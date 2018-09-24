@@ -27,6 +27,9 @@ import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
 
+# exit program
+from sys import exit
+
 
 # noinspection PyBroadException
 class Menu(object):
@@ -533,6 +536,7 @@ class Menu(object):
         for event in events:
             # noinspection PyUnresolvedReferences
             if event.type == _pygame.locals.QUIT:
+                pygame.quit()
                 exit()
             elif event.type == _pygame.locals.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_DOWN:
@@ -562,6 +566,7 @@ class Menu(object):
                             elif onclose == _locals.PYGAME_MENU_BACK:
                                 self.reset(1)
                             elif onclose == _locals.PYGAME_MENU_EXIT:
+                                pygame.quit()
                                 exit()
                             elif onclose == _locals.PYGAME_MENU_DISABLE_CLOSE:
                                 close = False
@@ -709,11 +714,13 @@ class Menu(object):
                     elif closefun == _locals.PYGAME_MENU_BACK:
                         self.reset(1)
                     elif closefun == _locals.PYGAME_MENU_EXIT:
+                        pygame.quit()
                         exit()
                     elif isinstance(self._onclose, types.FunctionType):
                         closefun()
             # Exit program
             elif option == _locals.PYGAME_MENU_EXIT:
+                pygame.quit()
                 exit()
         # If element is a function
         elif isinstance(option, types.FunctionType) or callable(option):
