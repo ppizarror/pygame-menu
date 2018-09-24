@@ -1,7 +1,6 @@
 from setuptools import setup
 from pygameMenu import __author__, __email__, __version__
 
-
 with open("README.md", 'r') as f:
     long_description = f.read()
 
