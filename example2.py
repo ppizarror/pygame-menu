@@ -9,6 +9,7 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -113,12 +114,11 @@ def play_function(difficulty, font):
             if e.type == QUIT:
                 exit()
             elif e.type == KEYDOWN:
-                if e.key == K_ESCAPE:
-                    if main_menu.is_disabled():
-                        main_menu.enable()
+                if e.key == K_ESCAPE and main_menu.is_disabled():
+                    main_menu.enable()
 
-                        # Quit this function, then skip to loop of main-menu on line 197
-                        return
+                    # Quit this function, then skip to loop of main-menu on line 217
+                    return
 
         # Pass events to main_menu
         main_menu.mainloop(playevents)
