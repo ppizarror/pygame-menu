@@ -12,3 +12,4 @@
 # Distribution files
 *.egg-info
 dist/*.tar.gz
+build
