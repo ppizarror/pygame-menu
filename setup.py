@@ -25,21 +25,27 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup
-from pygameMenu import __author__, __email__, __version__
+from pygameMenu import __author__, __description__, __email__, __url__, __version__
 
-with open("README.md", 'r') as f:
+with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(
-    name='pygameMenu',
-    version=__version__,
-    description='Menu for pygame, simple, lightweight and easy to use',
-    long_description=long_description,
-    license='GPLv3',
     author=__author__,
     author_email=__email__,
-    url='http://ppizarror.com/pygame-menu/',
-    packages=['pygameMenu'],
+    classifiers=[
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: pygame'
+    ],
+    description=__description__,
+    include_package_data=True,
     install_requires=['pygame'],
-    include_package_data=True
+    license='GPLv3',
+    long_description=long_description,
+    name='pygameMenu',
+    packages=['pygameMenu'],
+    url=__url__,
+    version=__version__
 )

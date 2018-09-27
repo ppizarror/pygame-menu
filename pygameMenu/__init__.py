@@ -41,5 +41,7 @@ __contributors__ = [
     'Rifqi31',
     'thisIsMikeKane',
 ]
+__description__ = 'Menu for pygame, simple, lightweight and easy to use'
 __email__ = 'pablo.pizarro@ing.uchile.cl'
+__url__ = 'http://ppizarror.com/pygame-menu/'
 __version__ = 'v1.94 (24 Sept 2018)'
