@@ -8,3 +8,6 @@
 # Compiled python files
 */__pycache__
 *.pyc
+
+# Distribution files
+*.egg-info
