@@ -33,6 +33,13 @@ import pygameMenu.fonts as fonts
 
 # Other
 __author__ = 'ppizarror'
-__contributors__ = ['i96751414', 'asierrayk', 'ironsmile', 'maditnerd', 'thisIsMikeKane']
+__contributors__ = [
+    'asierrayk',
+    'i96751414',
+    'ironsmile',
+    'maditnerd',
+    'Rifqi31',
+    'thisIsMikeKane',
+]
 __email__ = 'pablo.pizarro@ing.uchile.cl'
 __version__ = 'v1.94 (24 Sept 2018)'
