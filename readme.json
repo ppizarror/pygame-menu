@@ -28,9 +28,9 @@
             "ALT": "@ppizarror"
         },
         "1": {
-            "IMAGE": "http://ppizarror.com/badges/licensegpl3.svg",
-            "HREF": "https://www.gnu.org/licenses/",
-            "ALT": "License GPL v3"
+            "IMAGE": "http://ppizarror.com/badges/licensemit.svg",
+            "HREF": "https://opensource.org/licenses/MIT/",
+            "ALT": "License MIT"
         },
 		"2": {
 		  "IMAGE": "http://ppizarror.com/badges/python27.svg",

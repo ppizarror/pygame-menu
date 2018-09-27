@@ -2,7 +2,7 @@ Python library that can create a simple Menu for Pygame application, supports:
 
 1. Textual menus
 2. Textual menus + buttons
-3. Lists of values (that i called **Selectors**) that can trigger functions when pressing Return or changing the value
+3. Lists of values (**Selectors**) that can trigger functions when pressing Return or changing the value
 4. Buttons
 
 Examples:
@@ -304,4 +304,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 
 ## License
-This project is licensed under GPLv3 [https://www.gnu.org/licenses/gpl-3.0.html]
+This project is licensed unde MIT [https://opensource.org/licenses/MIT/]

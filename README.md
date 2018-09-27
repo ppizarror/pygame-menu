@@ -6,7 +6,7 @@
   Pygame Menu</h1>
 <p align="center">Menu for pygame, simple, lightweight and easy to use</p>
 <div align="center"><a href="http://ppizarror.com"><img alt="@ppizarror" src="http://ppizarror.com/badges/author.svg" /></a>
-<a href="https://www.gnu.org/licenses/"><img alt="License GPL v3" src="http://ppizarror.com/badges/licensegpl3.svg" /></a>
+<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="http://ppizarror.com/badges/licensemit.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="http://ppizarror.com/badges/python27.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="http://ppizarror.com/badges/python36.svg" /></a>
 </div><br />
@@ -15,7 +15,7 @@ Python library that can create a simple Menu for Pygame application, supports:
 
 1. Textual menus
 2. Textual menus + buttons
-3. Lists of values (that i called **Selectors**) that can trigger functions when pressing Return or changing the value
+3. Lists of values (**Selectors**) that can trigger functions when pressing Return or changing the value
 4. Buttons
 
 Examples:
@@ -317,7 +317,7 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 
 ## License
-This project is licensed under GPLv3 [https://www.gnu.org/licenses/gpl-3.0.html]
+This project is licensed unde MIT [https://opensource.org/licenses/MIT/]
 
 ## Author
 <a href="http://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2018
