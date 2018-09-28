@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from setuptools import setup
 from pygameMenu import __author__, __description__, __email__, __url__, __version__
 
-with open('README.md', 'r') as f:
+with open('README.rst', 'r') as f:
     long_description = f.read()
 
 setup(
@@ -44,7 +44,7 @@ setup(
     install_requires=['pygame'],
     license='GPLv3',
     long_description=long_description,
-    name='pygameMenu',
+    name='pygame-menu',
     packages=['pygameMenu'],
     url=__url__,
     version=__version__

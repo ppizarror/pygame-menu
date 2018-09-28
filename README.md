@@ -34,7 +34,16 @@ Examples:
 <img src="http://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
 </p>
 
+## Install
+
+Pygame-menu can be downloaded via pip. Simply run:
+
+```bash
+pip install pygame-menu
+```
+
 ## Import
+
 Import of this library is similar as pygame:
 ```python
 import pygameMenu                # This imports classes and other things
@@ -281,6 +290,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     
 
 ### Menu events
+
 Supported events are the same:
 
 | Event | Description |
@@ -295,6 +305,7 @@ This events are imported on <i>from pygameMenu.locals import *</i> line. Also th
 
 
 ### Using fonts
+
 Also this library has some fonts to use, to load a font run this code:
 
 ```python
@@ -306,7 +317,8 @@ fontdir = pygameMenu.fonts.FONT_NAME
 Avaiable fonts (*FONT_NAME*): **8BIT**, **BEBAS**, **FRANCHISE**, **MUNRO** and **NEVIS**. 
 
 
-## Configurations
+## Settings
+
 Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 | File | Description |
@@ -317,7 +329,13 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 
 ## License
+
 This project is licensed unde MIT [https://opensource.org/licenses/MIT/]
 
 ## Author
+
 <a href="http://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2018
+
+### Contributors
+
+@asierrayk, @i96751414, @ironsmile, @maditnerd, @Rifqi31, @thisIsMikeKane
