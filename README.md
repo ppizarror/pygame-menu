@@ -34,7 +34,16 @@ Examples:
 <img src="http://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
 </p>
 
+## Install
+
+Pygame-menu can be installed via pip. Simply run:
+
+```bash
+pip install pygame-menu
+```
+
 ## Import
+
 Import of this library is similar as pygame:
 ```python
 import pygameMenu                # This imports classes and other things
