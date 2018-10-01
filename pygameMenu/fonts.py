@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 FONTS
-Menu avaiable fonts.
+Menu available fonts.
 
 The MIT License (MIT)
 Copyright 2017-2018 Pablo Pizarro R. @ppizarror

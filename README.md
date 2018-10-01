@@ -214,7 +214,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 - <i>mainloop(events)</i>
 
-    Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses aplication and checks Events.
+    Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses application and checks Events.
     
     ```python
     menu = pygameMenu.Menu(...)
@@ -261,7 +261,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 - <i>get_title()</i>
 
-    Enable Menu (can check events and draw).
+    Give the title of the menu.
     
     ```python
     menu = pygameMenu.Menu(..., title='Menu title', ...)
@@ -312,7 +312,7 @@ import pygameMenu
 fontdir = pygameMenu.fonts.FONT_NAME
 ```
 
-Avaiable fonts (*FONT_NAME*): **8BIT**, **BEBAS**, **FRANCHISE**, **MUNRO** and **NEVIS**. 
+Available fonts (*FONT_NAME*): **8BIT**, **BEBAS**, **FRANCHISE**, **MUNRO** and **NEVIS**. 
 
 
 ## Configurations
