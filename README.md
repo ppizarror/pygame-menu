@@ -1,14 +1,14 @@
 <h1 align="center">
-  <a href="http://ppizarror.com/pygame-menu/" title="Pygame Menu">
-    <img alt="Pygame Menu" src="http://ppizarror.com/resources/other/python.png" width="200px" height="200px" />
+  <a href="https://ppizarror.com/pygame-menu/" title="Pygame Menu">
+    <img alt="Pygame Menu" src="https://ppizarror.com/resources/other/python.png" width="200px" height="200px" />
   </a>
   <br /><br />
   Pygame Menu</h1>
 <p align="center">Menu for pygame, simple, lightweight and easy to use</p>
-<div align="center"><a href="http://ppizarror.com"><img alt="@ppizarror" src="http://ppizarror.com/badges/author.svg" /></a>
-<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="http://ppizarror.com/badges/licensemit.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="http://ppizarror.com/badges/python27.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="http://ppizarror.com/badges/python36.svg" /></a>
+<div align="center"><a href="https://ppizarror.com"><img alt="@ppizarror" src="https://ppizarror.com/badges/author.svg" /></a>
+<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://ppizarror.com/badges/licensemit.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="https://ppizarror.com/badges/python27.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="https://ppizarror.com/badges/python36.svg" /></a>
 </div><br />
 
 Python library that can create a simple Menu for Pygame application, supports:
@@ -21,17 +21,17 @@ Python library that can create a simple Menu for Pygame application, supports:
 Examples:
 #### Normal Button menu
 <p align="center">
-<img src="http://ppizarror.com/resources/images/pygame-menu/cap1.PNG?raw=true" width="60%" >
+<img src="https://ppizarror.com/resources/images/pygame-menu/cap1.PNG?raw=true" width="60%" >
 </p>
 
 #### Text menu
 <p align="center">
-<img src="http://ppizarror.com/resources/images/pygame-menu/cap2.PNG?raw=true" width="60%"  >
+<img src="https://ppizarror.com/resources/images/pygame-menu/cap2.PNG?raw=true" width="60%"  >
 </p>
 
 #### Small submenu
 <p align="center">
-<img src="http://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
+<img src="https://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
 </p>
 
 ## Install
@@ -329,4 +329,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 This project is licensed unde MIT [https://opensource.org/licenses/MIT/]
 
 ## Author
-<a href="http://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2018
+<a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2018

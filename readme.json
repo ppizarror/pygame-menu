@@ -2,17 +2,17 @@
     "PROJECT": {
         "NAME": "Pygame Menu",
         "ICON": {
-            "IMAGE": "http://ppizarror.com/resources/other/python.png",
+            "IMAGE": "https://ppizarror.com/resources/other/python.png",
             "ALT": "Pygame Menu",
             "WIDTH": 200,
             "HEIGHT": 200
         },
-        "URL": "http://ppizarror.com/pygame-menu/",
+        "URL": "https://ppizarror.com/pygame-menu/",
         "URL_TITLE": "Pygame Menu"
     },
     "AUTHOR": {
         "NAME": "Pablo Pizarro R.",
-        "URL": "http://ppizarror.com",
+        "URL": "https://ppizarror.com",
         "ALT": "ppizarror",
         "DATE": "2017-2018",
         "SECTION": {
@@ -23,22 +23,22 @@
     "DESCRIPTION": "Menu for pygame, simple, lightweight and easy to use",
     "BADGES": {
         "0": {
-            "IMAGE": "http://ppizarror.com/badges/author.svg",
-            "HREF": "http://ppizarror.com",
+            "IMAGE": "https://ppizarror.com/badges/author.svg",
+            "HREF": "https://ppizarror.com",
             "ALT": "@ppizarror"
         },
         "1": {
-            "IMAGE": "http://ppizarror.com/badges/licensemit.svg",
+            "IMAGE": "https://ppizarror.com/badges/licensemit.svg",
             "HREF": "https://opensource.org/licenses/MIT/",
             "ALT": "License MIT"
         },
 		"2": {
-		  "IMAGE": "http://ppizarror.com/badges/python27.svg",
+		  "IMAGE": "https://ppizarror.com/badges/python27.svg",
 		  "HREF": "https://www.python.org/downloads/",
 		  "ALT": "Python 2.7"
 		},
         "3": {
-            "IMAGE": "http://ppizarror.com/badges/python36.svg",
+            "IMAGE": "https://ppizarror.com/badges/python36.svg",
             "HREF": "https://www.python.org/downloads/",
             "ALT": "Python 3.6"
         }
