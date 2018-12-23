@@ -1,47 +1,52 @@
 {
-    "PROJECT": {
-        "NAME": "Pygame Menu",
-        "ICON": {
-            "IMAGE": "https://ppizarror.com/resources/other/python.png",
-            "ALT": "Pygame Menu",
-            "WIDTH": 200,
-            "HEIGHT": 200
-        },
-        "URL": "https://ppizarror.com/pygame-menu/",
-        "URL_TITLE": "Pygame Menu"
+  "PROJECT": {
+    "NAME": "Pygame Menu",
+    "ICON": {
+      "IMAGE": "https://ppizarror.com/resources/other/python.png",
+      "ALT": "Pygame Menu",
+      "WIDTH": 200,
+      "HEIGHT": 200
     },
-    "AUTHOR": {
-        "NAME": "Pablo Pizarro R.",
-        "URL": "https://ppizarror.com",
-        "ALT": "ppizarror",
-        "DATE": "2017-2018",
-        "SECTION": {
-            "TITLE": "Author",
-            "SHOW": true
-        }
+    "URL": "https://ppizarror.com/pygame-menu/",
+    "URL_TITLE": "Pygame Menu"
+  },
+  "AUTHOR": {
+    "NAME": "Pablo Pizarro R.",
+    "URL": "https://ppizarror.com",
+    "ALT": "ppizarror",
+    "DATE": "2017-2018",
+    "SECTION": {
+      "TITLE": "Author",
+      "SHOW": true
+    }
+  },
+  "DESCRIPTION": "Menu for pygame, simple, lightweight and easy to use",
+  "BADGES": {
+    "0": {
+      "IMAGE": "https://ppizarror.com/badges/author.svg",
+      "HREF": "https://ppizarror.com",
+      "ALT": "@ppizarror"
     },
-    "DESCRIPTION": "Menu for pygame, simple, lightweight and easy to use",
-    "BADGES": {
-        "0": {
-            "IMAGE": "https://ppizarror.com/badges/author.svg",
-            "HREF": "https://ppizarror.com",
-            "ALT": "@ppizarror"
-        },
-        "1": {
-            "IMAGE": "https://ppizarror.com/badges/licensemit.svg",
-            "HREF": "https://opensource.org/licenses/MIT/",
-            "ALT": "License MIT"
-        },
-		"2": {
-		  "IMAGE": "https://ppizarror.com/badges/python27.svg",
-		  "HREF": "https://www.python.org/downloads/",
-		  "ALT": "Python 2.7"
-		},
-        "3": {
-            "IMAGE": "https://ppizarror.com/badges/python36.svg",
-            "HREF": "https://www.python.org/downloads/",
-            "ALT": "Python 3.6"
-        }
+    "1": {
+      "IMAGE": "https://ppizarror.com/badges/licensemit.svg",
+      "HREF": "https://opensource.org/licenses/MIT/",
+      "ALT": "License MIT"
     },
-    "CONTENT": "readme.content.md"
+    "2": {
+      "IMAGE": "https://ppizarror.com/badges/python27.svg",
+      "HREF": "https://www.python.org/downloads/",
+      "ALT": "Python 2.7"
+    },
+    "3": {
+      "IMAGE": "https://ppizarror.com/badges/python36.svg",
+      "HREF": "https://www.python.org/downloads/",
+      "ALT": "Python 3.6"
+    },
+    "4": {
+      "IMAGE": "https://ppizarror.com/badges/pygame194.svg",
+      "HREF": "https://www.pygame.org/",
+      "ALT": "Pygame 1.9.4"
+    }
+  },
+  "CONTENT": "readme.content.md"
 }

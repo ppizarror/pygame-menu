@@ -9,6 +9,7 @@
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://ppizarror.com/badges/licensemit.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7" src="https://ppizarror.com/badges/python27.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="https://ppizarror.com/badges/python36.svg" /></a>
+<a href="https://www.pygame.org/"><img alt="Pygame 1.9.4" src="https://ppizarror.com/badges/pygame194.svg" /></a>
 </div><br />
 
 Python library that can create a simple Menu for Pygame application, supports:
