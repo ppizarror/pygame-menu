@@ -41,7 +41,7 @@ setup(
     ],
     description=__description__,
     include_package_data=True,
-    install_requires=['pygame'],
+    install_requires=['pygame>=1.9.4'],
     license='MIT',
     long_description=long_description,
     name='pygame-menu',
