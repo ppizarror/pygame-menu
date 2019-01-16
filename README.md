@@ -330,4 +330,4 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 This project is licensed unde MIT [https://opensource.org/licenses/MIT/]
 
 ## Author
-<a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2018
+<a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2019
