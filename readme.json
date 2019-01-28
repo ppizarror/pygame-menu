@@ -46,6 +46,19 @@
       "IMAGE": "https://ppizarror.com/badges/pygame194.svg",
       "HREF": "https://www.pygame.org/",
       "ALT": "Pygame 1.9.4"
+    },
+	"5": {
+      "NEWLINE": true
+    },
+    "6": {
+      "IMAGE": "https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18",
+      "HREF": "https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/",
+      "ALT": "Total alerts"
+    },
+	"7": {
+      "IMAGE": "https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18",
+      "HREF": "https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python",
+      "ALT": "Language grade: Python"
     }
   },
   "CONTENT": "readme.content.md"
