@@ -4,7 +4,7 @@ SELECTOR
 Selector class, manage elements and adds entries to menu.
 
 The MIT License (MIT)
-Copyright 2017-2018 Pablo Pizarro R. @ppizarror
+Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -53,6 +53,9 @@ class Selector(object):
         self._on_return = onreturn
         self._title = title
         self._total_elements = len(elements)
+
+        # Selection format
+        self._sformat = '{0} < {1} >'
 
         # Apply default item
         default %= self._total_elements
@@ -109,6 +112,16 @@ class Selector(object):
             else:
                 self._on_change(*paraml)
 
+    def format_selection(self, s):
+        """
+        Change the selection text.
+
+        :param s: Selection text
+        :type s: basestring
+        :return:
+        """
+        self._sformat = s
+
     def get(self):
         """
         Return element text.
@@ -116,7 +129,7 @@ class Selector(object):
         :return: Element text
         :rtype: str
         """
-        return '{0} < {1} >'.format(self._title, self._elements[self._index][0])
+        return self._sformat.format(self._title, self._elements[self._index][0])
 
     def left(self):
         """
