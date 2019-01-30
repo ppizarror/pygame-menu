@@ -667,7 +667,7 @@ class Menu(object):
                 self._actual._prev = None
                 self._actual._prev_draw = None
                 i += 1
-                if total != 0 and i == total:
+                if i == total:
                     break
             else:
                 break
