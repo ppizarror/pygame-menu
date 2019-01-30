@@ -4,7 +4,7 @@ EXAMPLE 1
 Example file, timer clock with in-menu options.
 
 The MIT License (MIT)
-Copyright 2017-2018 Pablo Pizarro R. @ppizarror
+Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -128,7 +128,7 @@ timer_menu.add_selector('Change bgcolor',
                          ('Default', (128, 0, 128)),
                          ('Black', (0, 0, 0)),
                          ('Blue', COLOR_BLUE)],
-                        onchange=None,  # Action when changing element with left/right
+                        onchange=change_color_bg,  # Action when changing element with left/right
                         onreturn=change_color_bg,  # Action when pressing return on a element
                         default=1,  # Optional parameter that sets default item of selector
                         write_on_console=True  # Optional parameters to change_color_bg function
