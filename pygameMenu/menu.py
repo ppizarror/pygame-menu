@@ -547,17 +547,17 @@ class Menu(object):
                 _pygame.quit()
                 exit()
             elif event.type == _pygame.locals.KEYDOWN:
-                if event.key == _ctrl.MENU_CTRL_DOWN:
+                if event.key == _ctrl.MENU_CTRL_DOWN or event.key == _ctrl.MENU_CTRL_DOWN_W:
                     self._down()
-                elif event.key == _ctrl.MENU_CTRL_UP:
+                elif event.key == _ctrl.MENU_CTRL_UP or event.key == _ctrl.MENU_CTRL_UP_S:
                     self._up()
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
                     self._select()
                     if not self._actual._dopause:
                         return True
-                elif event.key == _ctrl.MENU_CTRL_LEFT:
+                elif event.key == _ctrl.MENU_CTRL_LEFT or event.key == _ctrl.MENU_CTRL_LEFT_A:
                     self._left()
-                elif event.key == _ctrl.MENU_CTRL_RIGHT:
+                elif event.key == _ctrl.MENU_CTRL_RIGHT or event.key == _ctrl.MENU_CTRL_RIGHT_D:
                     self._right()
                 elif event.key == _ctrl.MENU_CTRL_BACK:
                     self.reset(1)
