@@ -7,16 +7,19 @@ Python library that can create a simple Menu for Pygame application, supports:
 
 Examples:
 #### Normal Button menu
+
 <p align="center">
 <img src="https://ppizarror.com/resources/images/pygame-menu/cap1.PNG?raw=true" width="60%" >
 </p>
 
 #### Text menu
+
 <p align="center">
 <img src="https://ppizarror.com/resources/images/pygame-menu/cap2.PNG?raw=true" width="60%"  >
 </p>
 
 #### Small submenu
+
 <p align="center">
 <img src="https://ppizarror.com/resources/images/pygame-menu/cap3.PNG?raw=true" width="60%" >
 </p>
@@ -103,7 +106,8 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     |text_margin| Line margin| int
     |draw_text_region_x| X-Axis drawing region of the text| int|
 
-### Add options and entries to Menus
+### Adding options and entries to menus
+
 **Menu** and **TextMenu** have the next functions:
 
 - <i>add_option(element_name, element, *args)</i>
@@ -277,6 +281,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     
 
 ### Menu events
+
 Supported events are the same:
 
 | Event | Description |
@@ -291,6 +296,7 @@ This events are imported on <i>from pygameMenu.locals import *</i> line. Also th
 
 
 ### Using fonts
+
 Also this library has some fonts to use, to load a font run this code:
 
 ```python
@@ -303,6 +309,7 @@ Available fonts (*FONT_NAME*): **8BIT**, **BEBAS**, **FRANCHISE**, **MUNRO** and
 
 
 ## Configurations
+
 Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 | File | Description |
@@ -313,4 +320,5 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 
 ## License
-This project is licensed unde MIT [https://opensource.org/licenses/MIT/]
+
+This project is licensed under MIT [https://opensource.org/licenses/MIT/]
