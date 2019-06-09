@@ -158,7 +158,7 @@ class Menu(object):
 
         # Other asserts
         if dopause:
-            assert isinstance(bgfun, types.FunctionType), \
+            assert isinstance(bgfun, (types.FunctionType, types.MethodType)), \
                 'Bgfun must be a function (or None if menu does not pause ' \
                 'execution of the application)'
         else:
@@ -262,7 +262,7 @@ class Menu(object):
         """
         a = isinstance(element, Menu)
         b = str(type(element)) == _locals.PYGAMEMENU_PYMENUACTION
-        c = isinstance(element, types.FunctionType)
+        c = isinstance(element, (types.FunctionType, types.MethodType))
         d = callable(element)
         e = isinstance(element, _locals.PymenuAction)
         assert a or b or c or d or e, \
@@ -443,12 +443,12 @@ class Menu(object):
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
                 self._surface.blit(text_bg,
                                    (self._actual._opt_posx + text_dx - 3,
                                     ycoords))
             ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy
+                self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords))
 
@@ -459,37 +459,37 @@ class Menu(object):
                 else:
                     text_dx_tl = text_dx
                 ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                  ((self._actual._opt_posx - text_dx_tl + 10,
-                                    ycoords)), self._actual._rect_width)
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                    ((self._actual._opt_posx - text_dx_tl + 10,
+                      ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                            self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-                                  ((self._actual._opt_posx - text_dx_tl + 10,
-                                    ycoords)), self._actual._rect_width)
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
+                    ((self._actual._opt_posx - text_dx_tl + 10,
+                      ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._opt_dy) - t_dy + 2
+                    self._actual._fsize + self._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                  ((self._actual._opt_posx + text_dx - 10,
-                                    ycoords)), self._actual._rect_width)
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                    ((self._actual._opt_posx + text_dx - 10,
+                      ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx - text_dx_tl + 10,
                     self._actual._opt_posy + dy * (
-                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                  ((self._actual._opt_posx - text_dx_tl + 10,
-                                    ycoords)), self._actual._rect_width)
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                    ((self._actual._opt_posx - text_dx_tl + 10,
+                      ycoords)), self._actual._rect_width)
             dy += 1
 
     def enable(self):
@@ -578,7 +578,7 @@ class Menu(object):
                                 exit()
                             elif onclose == _locals.PYGAME_MENU_DISABLE_CLOSE:
                                 close = False
-                        elif isinstance(onclose, types.FunctionType):
+                        elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                             onclose()
                     else:
                         close = False
@@ -724,7 +724,7 @@ class Menu(object):
                     elif closefun == _locals.PYGAME_MENU_EXIT:
                         _pygame.quit()
                         exit()
-                    elif isinstance(self._onclose, types.FunctionType):
+                    elif isinstance(self._onclose, (types.FunctionType, types.MethodType)):
                         closefun()
             # Exit program
             elif option == _locals.PYGAME_MENU_EXIT:
