@@ -31,6 +31,7 @@ import pygameMenu.fonts as fonts
 # Other
 __author__ = 'ppizarror'
 __contributors__ = [
+    'anxuae',
     'asierrayk',
     'i96751414',
     'ironsmile',
