@@ -88,10 +88,16 @@ def reset_timer():
     timer[0] = 0
 
 
+class TestCallClassMethod(object):
+
+    def update_game_settings(self):
+        print("Update game with new settings")
+
+
 def change_color_bg(c, **kwargs):
     """
     Change background color
-    
+
     :param c: Color tuple
     """
     if c == (-1, -1, -1):  # If random color
@@ -178,7 +184,7 @@ menu = pygameMenu.Menu(surface,
                        enabled=False,
                        font=pygameMenu.fonts.FONT_NEVIS,
                        menu_alpha=90,
-                       onclose=PYGAME_MENU_CLOSE,
+                       onclose=TestCallClassMethod().update_game_settings,
                        title='Main Menu',
                        title_offsety=5,
                        window_height=H_SIZE,
@@ -188,6 +194,7 @@ menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
 menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
 menu.add_option('Exit', PYGAME_MENU_EXIT)  # Add exit function
+
 
 # -----------------------------------------------------------------------------
 # Main loop
