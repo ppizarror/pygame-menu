@@ -458,7 +458,7 @@ class Menu(object):
 
             # If selected item then draw a rectangle
             if self._actual._drawselrect and (dy == self._actual._index):
-                _pygame.draw.rect(self._surface, self._actual._sel_color, anchor.inflate(20, 4), 1)
+                _pygame.draw.rect(self._surface, self._actual._sel_color, anchor.inflate(16, 4), 1)
 
     def enable(self):
         """
@@ -714,19 +714,8 @@ class Menu(object):
                 self.reset(1)
             # Close menu
             elif option == _locals.PYGAME_MENU_CLOSE:
-                self.disable()
+                self._close()
                 self._closelocked = False
-                closefun = self._actual._onclose
-                if closefun is not None:
-                    if closefun == _locals.PYGAME_MENU_RESET:
-                        self.reset(100)
-                    elif closefun == _locals.PYGAME_MENU_BACK:
-                        self.reset(1)
-                    elif closefun == _locals.PYGAME_MENU_EXIT:
-                        _pygame.quit()
-                        exit()
-                    elif isinstance(self._onclose, (types.FunctionType, types.MethodType)):
-                        closefun()
             # Exit program
             elif option == _locals.PYGAME_MENU_EXIT:
                 _pygame.quit()
