@@ -443,12 +443,12 @@ class Menu(object):
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 3
                 self._surface.blit(text_bg,
                                    (self._actual._opt_posx + text_dx - 3,
                                     ycoords))
             ycoords = self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy
+                    self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords))
 
@@ -459,37 +459,37 @@ class Menu(object):
                 else:
                     text_dx_tl = text_dx
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx + text_dx - 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                  ((self._actual._opt_posx + text_dx - 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx - text_dx_tl + 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
             dy += 1
 
     def enable(self):
