@@ -376,6 +376,33 @@ class Menu(object):
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
 
+    def _close(self):
+        """
+        Execute close callbacks and disable the menu.
+        """
+        onclose = self._actual._onclose
+        close = True
+        if not isinstance(onclose, type(None)):
+            a = isinstance(onclose, _locals.PymenuAction)
+            b = str(type(onclose)) == _locals.PYGAMEMENU_PYMENUACTION
+            if a or b:
+                if onclose == _locals.PYGAME_MENU_RESET:
+                    self.reset(100)
+                elif onclose == _locals.PYGAME_MENU_BACK:
+                    self.reset(1)
+                elif onclose == _locals.PYGAME_MENU_EXIT:
+                    _pygame.quit()
+                    exit()
+                elif onclose == _locals.PYGAME_MENU_DISABLE_CLOSE:
+                    close = False
+            elif isinstance(onclose, (types.FunctionType, types.MethodType)):
+                onclose()
+        else:
+            close = False
+        if close:
+            self.disable()
+        return close
+
     def disable(self):
         """
         Disable menu.
@@ -408,6 +435,11 @@ class Menu(object):
         # Draw title
         _gfxdraw.filled_polygon(self._surface, self._actual._title_rect,
                                 self._bg_color_title)
+
+        # Draw back-box
+        if self._mouse:
+            _pygame.draw.rect(self._surface, self._actual._bgcolor, self._title_backbox_rect, 1)
+
         self._surface.blit(self._actual._title, self._title_pos)
 
         # Draw options
@@ -533,27 +565,7 @@ class Menu(object):
                     self.reset(1)
                 elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and \
                         not self._closelocked:
-                    onclose = self._actual._onclose
-                    close = True
-                    if not isinstance(onclose, type(None)):
-                        a = isinstance(onclose, _locals.PymenuAction)
-                        b = str(type(onclose)) == _locals.PYGAMEMENU_PYMENUACTION
-                        if a or b:
-                            if onclose == _locals.PYGAME_MENU_RESET:
-                                self.reset(100)
-                            elif onclose == _locals.PYGAME_MENU_BACK:
-                                self.reset(1)
-                            elif onclose == _locals.PYGAME_MENU_EXIT:
-                                _pygame.quit()
-                                exit()
-                            elif onclose == _locals.PYGAME_MENU_DISABLE_CLOSE:
-                                close = False
-                        elif isinstance(onclose, (types.FunctionType, types.MethodType)):
-                            onclose()
-                    else:
-                        close = False
-                    if close:
-                        self.disable()
+                    if self._close():
                         return True
             elif self._joystick and event.type == _pygame.JOYHATMOTION:
                 if event.value == _locals.JOY_UP:
@@ -579,15 +591,23 @@ class Menu(object):
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
             elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                for dy in range(len(self._actual._option)):
-                    anchor = self._actual._get_option_anchor(dy)
-                    if anchor.collidepoint(event.pos):
-                        changed = self._actual._index != dy
-                        self._actual._index = dy
-                        self._select()
-                        if not changed:  # Click on selected option
-                            self._right()
-                        break
+                if _pygame.Rect(*self._actual._title_backbox_rect).collidepoint(event.pos):
+                    if self._actual._prev is not None:
+                        self.reset(1)
+                    elif self._close():
+                        return True
+                else:
+                    for dy in range(len(self._actual._option)):
+                        anchor = self._actual._get_option_anchor(dy)
+                        if anchor.collidepoint(event.pos):
+                            changed = self._actual._index != dy
+                            self._actual._index = dy
+                            self._select()
+                            if not changed:  # Click on selected option
+                                self._right()
+                            if not self._actual._dopause:
+                                return True
+                            break
 
         _pygame.display.flip()
         self._closelocked = False
@@ -762,6 +782,11 @@ class Menu(object):
                             (self._posy, self._posx + self._fsize_title + 5)]
         self._title_pos = (
             self._posy + 5 + self._title_offsetx, self._posx + self._title_offsety)
+
+        cross_size = self._actual._title_rect[2][1] - self._actual._title_rect[1][1] - 6
+        self._title_backbox_rect = (self._actual._title_rect[1][0] - cross_size - 3,
+                                    self._actual._title_rect[1][1] + 3,
+                                    cross_size, cross_size)
 
     def _up(self):
         """
