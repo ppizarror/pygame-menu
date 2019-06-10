@@ -63,6 +63,7 @@ class Menu(object):
                  font_size_title=_cfg.MENU_FONT_SIZE_TITLE,
                  font_title=None,
                  joystick_enabled=True,
+                 mouse_enabled=True,
                  menu_alpha=_cfg.MENU_ALPHA,
                  menu_centered=_cfg.MENU_CENTERED_TEXT,
                  menu_color=_cfg.MENU_BGCOLOR,
@@ -92,6 +93,7 @@ class Menu(object):
         :param font_size_title: Font size of the title
         :param font_title: Alternative font of the title (file direction)
         :param joystick_enabled: Enable/disable joystick on menu
+        :param mouse_enabled: Enable/disable mouse click on menu
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :param menu_centered: Text centered menu
         :param menu_color: Menu color
@@ -120,6 +122,7 @@ class Menu(object):
         :type font_size_title: int
         :type font_title: basestring
         :type joystick_enabled: bool
+        :type mouse_enabled: bool
         :type menu_alpha: int
         :type menu_centered: bool
         :type menu_color: tuple
@@ -143,6 +146,7 @@ class Menu(object):
         assert isinstance(font_size, int)
         assert isinstance(font_size_title, int)
         assert isinstance(joystick_enabled, bool)
+        assert isinstance(mouse_enabled, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_centered, bool)
         assert isinstance(menu_color, tuple)
@@ -248,6 +252,9 @@ class Menu(object):
             _pygame.joystick.init()
             for i in range(_pygame.joystick.get_count()):
                 _pygame.joystick.Joystick(i).init()
+
+        # Init mouse
+        self._mouse = mouse_enabled
 
     def add_option(self, element_name, element, *args):
         """
@@ -395,7 +402,6 @@ class Menu(object):
 
         :return:
         """
-
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
                                 self._actual._bgcolor)
@@ -405,92 +411,22 @@ class Menu(object):
         self._surface.blit(self._actual._title, self._title_pos)
 
         # Draw options
-        dy = 0
-        for option in self._actual._option:
+        for dy in range(len(self._actual._option)):
 
             # Gets text and shadow depending on the item type
-            if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
-                if dy == self._actual._index:
-                    text = self._actual._font.render(option[1].get(), 1,
-                                                     self._actual._sel_color)
-                    text_bg = self._actual._font.render(option[1].get(), 1,
-                                                        _cfg.SHADOW_COLOR)
-                else:
-                    text = self._actual._font.render(option[1].get(), 1,
-                                                     self._actual._font_color)
-                    text_bg = self._actual._font.render(option[1].get(), 1,
-                                                        _cfg.SHADOW_COLOR)
-            else:
-                if dy == self._actual._index:
-                    text = self._actual._font.render(option[0], 1,
-                                                     self._actual._sel_color)
-                    text_bg = self._actual._font.render(option[0], 1,
-                                                        _cfg.SHADOW_COLOR)
-                else:
-                    text = self._actual._font.render(option[0], 1,
-                                                     self._actual._font_color)
-                    text_bg = self._actual._font.render(option[0], 1,
-                                                        _cfg.SHADOW_COLOR)
+            text, text_bg = self._get_option_texts(dy)
 
             # Text anchor
-            text_width, text_height = text.get_size()
-            t_dy = -int(text_height / 2.0)
-            if self._actual._centered_option:
-                text_dx = -int(text_width / 2.0)
-            else:
-                text_dx = 0
+            anchor = self._get_option_anchor(dy)
 
             # Draw fonts
             if self._actual._option_shadow:
-                ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
-                self._surface.blit(text_bg,
-                                   (self._actual._opt_posx + text_dx - 3,
-                                    ycoords))
-            ycoords = self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy
-            self._surface.blit(text, (self._actual._opt_posx + text_dx,
-                                      ycoords))
+                self._surface.blit(text_bg, anchor.move(-3, -3).topleft)
+            self._surface.blit(text, anchor.topleft)
 
             # If selected item then draw a rectangle
             if self._actual._drawselrect and (dy == self._actual._index):
-                if not self._actual._centered_option:
-                    text_dx_tl = -text_width
-                else:
-                    text_dx_tl = text_dx
-                ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx + text_dx - 10,
-                    self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
-                ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx + text_dx - 10,
-                    self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
-                ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._opt_dy) - t_dy + 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx + text_dx - 10,
-                    self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx + text_dx - 10,
-                      ycoords)), self._actual._rect_width)
-                ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx - text_dx_tl + 10,
-                    self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
-            dy += 1
+                _pygame.draw.rect(self._surface, self._actual._sel_color, anchor.inflate(20, 4), 1)
 
     def enable(self):
         """
@@ -510,6 +446,40 @@ class Menu(object):
         :rtype: str
         """
         return self._title_str
+
+    def _get_option_texts(self, index):
+        """Get text and shadow from the option index.
+        """
+        option = self._actual._option[index]
+        if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
+            string = option[1].get()
+        else:
+            string = option[0]
+
+        if index == self._actual._index:
+            color = self._actual._sel_color
+        else:
+            color = self._actual._font_color
+
+        text = self._actual._font.render(string, 1, color)
+        text_bg = self._actual._font.render(string, 1, _cfg.SHADOW_COLOR)
+        return text, text_bg
+
+    def _get_option_anchor(self, index):
+        """Get text Rect from the option index.
+        """
+        text, _ = self._get_option_texts(index)
+        text_width, text_height = text.get_size()
+        if self._actual._centered_option:
+            text_dx = -int(text_width / 2.0)
+        else:
+            text_dx = 0
+        t_dy = -int(text_height / 2.0)
+
+        xccord = self._actual._opt_posx + text_dx
+        ycoord = self._actual._opt_posy + index * (self._actual._fsize + self._actual._opt_dy) + t_dy
+
+        return _pygame.Rect(xccord, ycoord, text_width, text_height)
 
     def is_disabled(self):
         """
@@ -608,6 +578,17 @@ class Menu(object):
                     self._select()
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
+            elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
+                for dy in range(len(self._actual._option)):
+                    anchor = self._actual._get_option_anchor(dy)
+                    if anchor.collidepoint(event.pos):
+                        changed = self._actual._index != dy
+                        self._actual._index = dy
+                        self._select()
+                        if not changed:  # Click on selected option
+                            self._right()
+                        break
+
         _pygame.display.flip()
         self._closelocked = False
         return False
