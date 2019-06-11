@@ -559,7 +559,7 @@ class Menu(object):
                     self._left()
                 elif event.key == _ctrl.MENU_CTRL_RIGHT:
                     self._right()
-                elif event.key == _ctrl.MENU_CTRL_BACK:
+                elif event.key == _ctrl.MENU_CTRL_BACK and self._actual._prev is not None:
                     self.reset(1)
                 elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and \
                         not self._closelocked:
