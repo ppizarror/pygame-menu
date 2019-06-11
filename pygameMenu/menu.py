@@ -601,10 +601,12 @@ class Menu(object):
                     for dy in range(len(self._actual._option)):
                         anchor = self._actual._get_option_anchor(dy)
                         if anchor.collidepoint(event.pos):
-                            changed = self._actual._index != dy
+                            curr_menu = self._actual
+                            curr_index = self._actual._index
                             self._actual._index = dy
                             self._select()
-                            if not changed:  # Click on selected option
+                            if curr_menu == self._actual and curr_index == self._actual._index:
+                                # Same menu displayed and click on selected option
                                 self._right()
                             if not self._actual._dopause:
                                 return True
