@@ -166,8 +166,8 @@ class TextMenu(Menu):
             ycoords = self._actual._opt_posy + self._actual._textdy + dy * (
                 self._actual._font_textsize + self._actual._textdy)
             ycoords -= self._actual._font_textsize / 2
-            self._surface.blit(text, (self._actual._pos_text_x + text_dx,
-                                      ycoords))
+
+            self._surface.blit(text, (self._actual._pos_text_x + text_dx, ycoords))
             dy += 1
 
     def _get_option_anchor(self, index):

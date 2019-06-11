@@ -123,7 +123,8 @@ timer_menu = pygameMenu.Menu(surface,
                              title='Timer Menu',
                              title_offsety=5,  # Adds 5px to title vertical position
                              window_height=H_SIZE,
-                             window_width=W_SIZE
+                             window_width=W_SIZE,
+                             rect_width = 4
                              )
 timer_menu.add_option('Reset timer', reset_timer)
 
@@ -170,7 +171,9 @@ about_menu = pygameMenu.TextMenu(surface,
                                  text_fontsize=20,
                                  title='About',
                                  window_height=H_SIZE,
-                                 window_width=W_SIZE
+                                 window_width=W_SIZE,
+                                 text_centered=True,
+                                 draw_text_region_x=50
                                  )
 about_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
 for m in ABOUT:
@@ -188,7 +191,9 @@ menu = pygameMenu.Menu(surface,
                        title='Main Menu',
                        title_offsety=5,
                        window_height=H_SIZE,
-                       window_width=W_SIZE
+                       window_width=W_SIZE,
+                       draw_region_x=5,
+                       menu_centered=False
                        )
 menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu

@@ -381,8 +381,10 @@ class Menu(object):
         Execute close callbacks and disable the menu.
         """
         onclose = self._actual._onclose
-        close = True
-        if not isinstance(onclose, type(None)):
+        if onclose is None:
+            close = False
+        else:
+            close = True
             a = isinstance(onclose, _locals.PymenuAction)
             b = str(type(onclose)) == _locals.PYGAMEMENU_PYMENUACTION
             if a or b:
@@ -397,8 +399,7 @@ class Menu(object):
                     close = False
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()
-        else:
-            close = False
+
         if close:
             self.disable()
         return close
@@ -458,7 +459,7 @@ class Menu(object):
 
             # If selected item then draw a rectangle
             if self._actual._drawselrect and (dy == self._actual._index):
-                _pygame.draw.rect(self._surface, self._actual._sel_color, anchor.inflate(16, 4), 1)
+                _pygame.draw.rect(self._surface, self._actual._sel_color, anchor.inflate(16, 4), self._rect_width)
 
     def enable(self):
         """
