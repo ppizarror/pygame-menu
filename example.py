@@ -89,9 +89,16 @@ def reset_timer():
 
 
 class TestCallClassMethod(object):
+    """
+    Class call method
+    """
 
-    def update_game_settings(self):
-        print("Update game with new settings")
+    @staticmethod
+    def update_game_settings():
+        """
+        Class method
+        """
+        print('Update game with new settings')
 
 
 def change_color_bg(c, **kwargs):
@@ -117,7 +124,7 @@ timer_menu = pygameMenu.Menu(surface,
                              menu_alpha=85,
                              menu_color=(0, 0, 0),  # Background color
                              menu_color_title=(0, 0, 0),
-                             menu_height=int(H_SIZE / 2),
+                             menu_height=int(H_SIZE * 0.65),
                              menu_width=600,
                              onclose=PYGAME_MENU_RESET,  # If this menu closes (press ESC) back to main
                              title='Timer Menu',
@@ -140,6 +147,7 @@ timer_menu.add_selector('Change bgcolor',
                         default=1,  # Optional parameter that sets default item of selector
                         write_on_console=True  # Optional parameters to change_color_bg function
                         )
+timer_menu.add_option('Update game object', TestCallClassMethod().update_game_settings)
 timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
 timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
 
@@ -187,7 +195,7 @@ menu = pygameMenu.Menu(surface,
                        enabled=False,
                        font=pygameMenu.fonts.FONT_NEVIS,
                        menu_alpha=90,
-                       onclose=TestCallClassMethod().update_game_settings,
+                       onclose=PYGAME_MENU_CLOSE,
                        title='Main Menu',
                        title_offsety=5,
                        window_height=H_SIZE,
@@ -199,7 +207,6 @@ menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
 menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
 menu.add_option('Exit', PYGAME_MENU_EXIT)  # Add exit function
-
 
 # -----------------------------------------------------------------------------
 # Main loop

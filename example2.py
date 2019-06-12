@@ -68,7 +68,7 @@ def change_difficulty(d):
     
     :return: 
     """
-    print ('Selected difficulty: {0}'.format(d))
+    print('Selected difficulty: {0}'.format(d))
     DIFFICULTY[0] = d
 
 
