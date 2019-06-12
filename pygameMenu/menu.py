@@ -434,12 +434,18 @@ class Menu(object):
         _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
                                 self._actual._bgcolor)
         # Draw title
-        _gfxdraw.filled_polygon(self._surface, self._actual._title_rect,
+        _gfxdraw.filled_polygon(self._surface, self._actual._title_polygon_pos,
                                 self._bg_color_title)
 
         # Draw back-box
         if self._mouse:
-            _pygame.draw.rect(self._surface, self._actual._bgcolor, self._title_backbox_rect, 1)
+            rect = self._title_backbox_rect
+            _pygame.draw.rect(self._surface, self._actual._font_color, rect, 1)
+            _pygame.draw.polygon(self._surface, self._actual._font_color,
+                                 ((rect.left + 5, rect.centery), (rect.centerx, rect.top + 5),
+                                  (rect.centerx, rect.centery - 2), (rect.right - 5, rect.centery - 2),
+                                  (rect.right - 5, rect.centery + 2), (rect.centerx, rect.centery + 2),
+                                  (rect.centerx, rect.bottom - 5), (rect.left + 5, rect.centery)))
 
         self._surface.blit(self._actual._title, self._title_pos)
 
@@ -450,16 +456,16 @@ class Menu(object):
             text, text_bg = self._get_option_texts(dy)
 
             # Text anchor
-            anchor = self._get_option_anchor(dy)
+            rect = self._get_option_rect(dy)
 
             # Draw fonts
             if self._actual._option_shadow:
-                self._surface.blit(text_bg, anchor.move(-3, -3).topleft)
-            self._surface.blit(text, anchor.topleft)
+                self._surface.blit(text_bg, rect.move(-3, -3).topleft)
+            self._surface.blit(text, rect.topleft)
 
             # If selected item then draw a rectangle
             if self._actual._drawselrect and (dy == self._actual._index):
-                _pygame.draw.rect(self._surface, self._actual._sel_color, anchor.inflate(16, 4), self._rect_width)
+                _pygame.draw.rect(self._surface, self._actual._sel_color, rect.inflate(16, 4), self._rect_width)
 
     def enable(self):
         """
@@ -498,7 +504,7 @@ class Menu(object):
         text_bg = self._actual._font.render(string, 1, _cfg.SHADOW_COLOR)
         return text, text_bg
 
-    def _get_option_anchor(self, index):
+    def _get_option_rect(self, index):
         """Get text Rect from the option index.
         """
         text, _ = self._get_option_texts(index)
@@ -592,15 +598,15 @@ class Menu(object):
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
             elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                if _pygame.Rect(*self._actual._title_backbox_rect).collidepoint(*event.pos):
+                if self._actual._title_backbox_rect.collidepoint(*event.pos):
                     if self._actual._prev is not None:
                         self.reset(1)
                     elif self._close():
                         return True
                 else:
                     for dy in range(len(self._actual._option)):
-                        anchor = self._actual._get_option_anchor(dy)
-                        if anchor.collidepoint(*event.pos):
+                        rect = self._actual._get_option_rect(dy)
+                        if rect.collidepoint(*event.pos):
                             curr_menu = self._actual
                             curr_index = self._actual._index
                             self._actual._index = dy
@@ -763,22 +769,23 @@ class Menu(object):
         title_width = self._title.get_size()[0]
         title_height = self._title.get_size()[1]
         self._fsize_title = title_height
-        self._title_rect = [(self._posy, self._posx),
-                            (self._posy + self._width, self._posx), (
-                                self._posy + self._width,
-                                self._posx + self._fsize_title / 2),
-                            (self._posy + title_width + 25,
-                             self._posx + self._fsize_title / 2), (
-                                self._posy + title_width + 5,
-                                self._posx + self._fsize_title + 5),
-                            (self._posy, self._posx + self._fsize_title + 5)]
+        self._title_polygon_pos = [(self._posy, self._posx),
+                                   (self._posy + self._width, self._posx),
+                                   (self._posy + self._width,
+                                    self._posx + self._fsize_title / 2),
+                                   (self._posy + title_width + 25,
+                                    self._posx + self._fsize_title / 2),
+                                   (self._posy + title_width + 5,
+                                    self._posx + self._fsize_title + 5),
+                                   (self._posy, self._posx + self._fsize_title + 5)]
+
         self._title_pos = (
             self._posy + 5 + self._title_offsetx, self._posx + self._title_offsety)
 
-        cross_size = self._actual._title_rect[2][1] - self._actual._title_rect[1][1] - 6
-        self._title_backbox_rect = (self._actual._title_rect[1][0] - cross_size - 3,
-                                    self._actual._title_rect[1][1] + 3,
-                                    cross_size, cross_size)
+        cross_size = self._title_polygon_pos[2][1] - self._title_polygon_pos[1][1] - 6
+        self._title_backbox_rect = _pygame.Rect(self._title_polygon_pos[1][0] - cross_size - 3,
+                                                self._title_polygon_pos[1][1] + 3,
+                                                cross_size, cross_size)
 
     def _up(self):
         """
