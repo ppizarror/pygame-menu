@@ -91,6 +91,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     | font_size_title | Font size of the title | int | MENU_FONT_SIZE_TITLE |
     | font_title | Alternative font of the title (fil direction) | str | None |
     | joystick_enabled | Enable joystick support | bool | True |
+    | mouse_enabled | Enable mouse support | bool | True |
     | menu_alpha | Alpha of background (0=tansparent, 100=opaque) | int | MENU_ALPHA |
     | menu_centered | Text centered menu | bool | MENU_CENTERED_TEXT |
     | menu_color | Menu color | tuple | MENU_BGCOLOR |

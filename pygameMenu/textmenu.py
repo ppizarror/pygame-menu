@@ -151,14 +151,7 @@ class TextMenu(Menu):
         :return: None
         """
         assert isinstance(self._actual, TextMenu)
-
-        # Draw background rectangle
-        _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
-                                self._actual._bgcolor)
-        # Draw title
-        _gfxdraw.filled_polygon(self._surface, self._actual._title_rect,
-                                self._bg_color_title)
-        self._surface.blit(self._actual._title, self._title_pos)
+        Menu.draw(self)
 
         # Draw text
         dy = 0
@@ -171,102 +164,28 @@ class TextMenu(Menu):
             else:
                 text_dx = 0
             ycoords = self._actual._opt_posy + self._actual._textdy + dy * (
-                    self._actual._font_textsize + self._actual._textdy)
+                self._actual._font_textsize + self._actual._textdy)
             ycoords -= self._actual._font_textsize / 2
-            self._surface.blit(text, (self._actual._pos_text_x + text_dx,
-                                      ycoords))
+
+            self._surface.blit(text, (self._actual._pos_text_x + text_dx, ycoords))
             dy += 1
-        dysum = dy * (self._actual._font_textsize + self._actual._textdy)
+
+    def _get_option_anchor(self, index):
+        """Get text Rect from the option index.
+        """
+        dysum = len(self._actual._text) * (self._actual._font_textsize + self._actual._textdy)
         dysum += 2 * self._actual._textdy + self._actual._font_textsize
 
-        dy = 0
-        dy_index = 0
-        for option in self._actual._option:
+        text, _ = self._get_option_texts(index)
+        text_width, text_height = text.get_size()
+        if self._actual._centered_option:
+            text_dx = -int(text_width / 2.0)
+        else:
+            text_dx = 0
+        t_dy = -int(text_height / 2.0)
 
-            # If option is selector
-            if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
-                # If selected index then change color
-                if dy == self._actual._index:
-                    text = self._actual._font.render(option[1].get(), 1,
-                                                     self._actual._sel_color)
-                    text_bg = self._actual._font.render(option[1].get(), 1,
-                                                        _cfg_menu.SHADOW_COLOR)
-                else:
-                    text = self._actual._font.render(option[1].get(), 1,
-                                                     self._actual._font_color)
-                    text_bg = self._actual._font.render(option[1].get(), 1,
-                                                        _cfg_menu.SHADOW_COLOR)
-            else:
-                # If selected index then change color
-                if dy == self._actual._index:
-                    text = self._actual._font.render(option[0], 1,
-                                                     self._actual._sel_color)
-                    text_bg = self._actual._font.render(option[0], 1,
-                                                        _cfg_menu.SHADOW_COLOR)
-                else:
-                    text = self._actual._font.render(option[0], 1,
-                                                     self._actual._font_color)
-                    text_bg = self._actual._font.render(option[0], 1,
-                                                        _cfg_menu.SHADOW_COLOR)
+        xccord = self._actual._opt_posx + text_dx
+        ycoord = self._actual._opt_posy + index * (self._actual._fsize + self._actual._opt_dy)\
+            + t_dy + dysum
 
-            # Text font and size
-            text_width, text_height = text.get_size()
-            if self._actual._centered_option:
-                text_dx = -int(text_width / 2.0)
-                t_dy = -int(text_height / 2.0)
-            else:
-                text_dx = 0
-                t_dy = 0
-
-            # Draw fonts
-            if self._actual._option_shadow:
-                ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 3
-                self._surface.blit(text_bg,
-                                   (self._actual._opt_posx + text_dx - 3,
-                                    ycoords + dysum))
-            ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy
-            self._surface.blit(text, (self._actual._opt_posx + text_dx,
-                                      ycoords + dysum))
-
-            # If selected option draw a rectangle
-            if self._actual._drawselrect and (dy_index == self._actual._index):
-                if not self._actual._centered_option:
-                    text_dx_tl = -text_width
-                else:
-                    text_dx_tl = text_dx
-                ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx + text_dx - 10,
-                    self._actual._opt_posy + dysum + dy * (
-                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                  ((self._actual._opt_posx - text_dx_tl + 10,
-                                    ycoords + dysum)), self._actual._rect_width)
-                ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx + text_dx - 10,
-                    self._actual._opt_posy + dysum + dy * (
-                            self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-                                  ((self._actual._opt_posx - text_dx_tl + 10,
-                                    ycoords + dysum)), self._actual._rect_width)
-                ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._opt_dy) - t_dy + 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx + text_dx - 10,
-                    self._actual._opt_posy + dysum + dy * (
-                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                  ((self._actual._opt_posx + text_dx - 10,
-                                    ycoords + dysum)), self._actual._rect_width)
-                ycoords = self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-                _pygame.draw.line(self._surface, self._actual._sel_color, (
-                    self._actual._opt_posx - text_dx_tl + 10,
-                    self._actual._opt_posy + dysum + dy * (
-                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                                  ((self._actual._opt_posx - text_dx_tl + 10,
-                                    ycoords + dysum)), self._actual._rect_width)
-            dy += 1
-            dy_index += 1
+        return _pygame.Rect(xccord, ycoord, text_width, text_height)
