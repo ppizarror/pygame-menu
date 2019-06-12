@@ -56,7 +56,6 @@ import pygameMenu                # This imports classes and other things
 from pygameMenu.locals import *  # Import constants (like actions)
 ```
 
-Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to run this.
 
 ## Usage
 
@@ -64,7 +63,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 - **Menu**
 
-     This class creates a Menu
+     This class creates a menu.
       
      ```python
      pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
@@ -91,13 +90,13 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     | font_size_title | Font size of the title | int | MENU_FONT_SIZE_TITLE |
     | font_title | Alternative font of the title (fil direction) | str | None |
     | joystick_enabled | Enable joystick support | bool | True |
-    | mouse_enabled | Enable mouse support | bool | True |
     | menu_alpha | Alpha of background (0=tansparent, 100=opaque) | int | MENU_ALPHA |
     | menu_centered | Text centered menu | bool | MENU_CENTERED_TEXT |
     | menu_color | Menu color | tuple | MENU_BGCOLOR |
     | menu_color_title | Background color of title | tuple | MENU_TITLE_BG_COLOR |
     | menu_height | Height of menu (px) | int | MENU_HEIGHT |
     | menu_width | Width of menu (px) | int | MENU_WIDTH |
+    | mouse_enabled | Enable mouse support | bool | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
     | option_margin | Margin of each element in menu(px) | int | MENU_OPTION_MARGIN |
     | option_shadow | Indicate if a shadow is drawn on ech option | bool | MENU_OPTION_SHADOW |
@@ -107,10 +106,11 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
      
 - **TextMenu**
 
-     This class creates a textual menu
+     This class creates a textual menu.
+     
     ```python
     pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
-     ```
+    ```
     
      This class inherites from Menu, so the parameters are the same, except the following extra parameters:
     
@@ -129,7 +129,7 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
 
 - <i>add_option(element_name, element, *args)</i>
     
-    Adds an *option* to the Menu.
+    Adds an *option* to the menu.
 
     | Param | Description | Type |
     | :-: | :--| :--:|
@@ -296,7 +296,6 @@ Obviously you need <a href="http://www.pygame.org/download.shtml">Pygame</a> to 
     menu.is_disabled() # -> True
     ```
     
-
 ### Menu events
 
 Supported events are the same:
@@ -310,7 +309,6 @@ Supported events are the same:
 | PYGAME_MENU_RESET | Reset menu |
 
 This events are imported on <i>from pygameMenu.locals import *</i> line. Also the menu can handle joypad events.
-
 
 ### Using fonts
 
