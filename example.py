@@ -127,11 +127,11 @@ timer_menu = pygameMenu.Menu(surface,
                              menu_height=int(H_SIZE * 0.65),
                              menu_width=600,
                              onclose=PYGAME_MENU_RESET,  # If this menu closes (press ESC) back to main
+                             rect_width=4,
                              title='Timer Menu',
                              title_offsety=5,  # Adds 5px to title vertical position
                              window_height=H_SIZE,
-                             window_width=W_SIZE,
-                             rect_width = 4
+                             window_width=W_SIZE
                              )
 timer_menu.add_option('Reset timer', reset_timer)
 
@@ -142,9 +142,9 @@ timer_menu.add_selector('Change bgcolor',
                          ('Default', (128, 0, 128)),
                          ('Black', (0, 0, 0)),
                          ('Blue', COLOR_BLUE)],
+                        default=1,  # Optional parameter that sets default item of selector
                         onchange=change_color_bg,  # Action when changing element with left/right
                         onreturn=change_color_bg,  # Action when pressing return on a element
-                        default=1,  # Optional parameter that sets default item of selector
                         write_on_console=True  # Optional parameters to change_color_bg function
                         )
 timer_menu.add_option('Update game object', TestCallClassMethod().update_game_settings)
@@ -171,17 +171,17 @@ for m in HELP:
 # About menu
 about_menu = pygameMenu.TextMenu(surface,
                                  dopause=False,
+                                 draw_text_region_x=50,
                                  font=pygameMenu.fonts.FONT_NEVIS,
                                  font_size_title=30,
                                  font_title=pygameMenu.fonts.FONT_8BIT,
                                  menu_color_title=COLOR_BLUE,
                                  onclose=PYGAME_MENU_DISABLE_CLOSE,  # Disable menu close (ESC button)
+                                 text_centered=True,
                                  text_fontsize=20,
                                  title='About',
                                  window_height=H_SIZE,
-                                 window_width=W_SIZE,
-                                 text_centered=True,
-                                 draw_text_region_x=50
+                                 window_width=W_SIZE
                                  )
 about_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
 for m in ABOUT:
@@ -195,13 +195,12 @@ menu = pygameMenu.Menu(surface,
                        enabled=False,
                        font=pygameMenu.fonts.FONT_NEVIS,
                        menu_alpha=90,
+                       menu_centered=True,
                        onclose=PYGAME_MENU_CLOSE,
                        title='Main Menu',
                        title_offsety=5,
                        window_height=H_SIZE,
-                       window_width=W_SIZE,
-                       draw_region_x=5,
-                       menu_centered=False
+                       window_width=W_SIZE
                        )
 menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
 menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu

@@ -592,7 +592,7 @@ class Menu(object):
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
             elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                if _pygame.Rect(*self._actual._title_backbox_rect).collidepoint(event.pos):
+                if _pygame.Rect(*self._actual._title_backbox_rect).collidepoint(*event.pos):
                     if self._actual._prev is not None:
                         self.reset(1)
                     elif self._close():
@@ -600,7 +600,7 @@ class Menu(object):
                 else:
                     for dy in range(len(self._actual._option)):
                         anchor = self._actual._get_option_anchor(dy)
-                        if anchor.collidepoint(event.pos):
+                        if anchor.collidepoint(*event.pos):
                             curr_menu = self._actual
                             curr_index = self._actual._index
                             self._actual._index = dy
