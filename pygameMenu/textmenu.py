@@ -164,13 +164,13 @@ class TextMenu(Menu):
             else:
                 text_dx = 0
             ycoords = self._actual._opt_posy + self._actual._textdy + dy * (
-                    self._actual._font_textsize + self._actual._textdy)
+                self._actual._font_textsize + self._actual._textdy)
             ycoords -= self._actual._font_textsize / 2
 
             self._surface.blit(text, (self._actual._pos_text_x + text_dx, ycoords))
             dy += 1
 
-    def _get_option_anchor(self, index):
+    def _get_option_rect(self, index):
         """Get text Rect from the option index.
         """
         dysum = len(self._actual._text) * (self._actual._font_textsize + self._actual._textdy)
@@ -186,6 +186,6 @@ class TextMenu(Menu):
 
         xccord = self._actual._opt_posx + text_dx
         ycoord = self._actual._opt_posy + index * (self._actual._fsize + self._actual._opt_dy) \
-                 + t_dy + dysum
+            + t_dy + dysum
 
         return _pygame.Rect(xccord, ycoord, text_width, text_height)
