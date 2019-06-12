@@ -79,11 +79,9 @@ class TextMenu(Menu):
         assert isinstance(text_centered, bool)
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
-        assert draw_text_region_x >= 0, \
-            'X-Axis drawing region of the text must be greater than zero'
+        assert draw_text_region_x >= 0, 'X-Axis drawing region of the text must be greater than zero'
         assert text_fontsize > 0, 'Text font size must be greater than zero'
-        assert text_margin >= 0, \
-            'Text margin must be greater or equal than zero'
+        assert text_margin >= 0, 'Text margin must be greater or equal than zero'
 
         # Super call
         super(TextMenu, self).__init__(surface, window_width, window_height,
@@ -171,7 +169,12 @@ class TextMenu(Menu):
             dy += 1
 
     def _get_option_rect(self, index):
-        """Get text Rect from the option index.
+        """
+        Get text Rect from the option index.
+
+        :param index: Option index
+        :type indeX: int
+        :return: None
         """
         dysum = len(self._actual._text) * (self._actual._font_textsize + self._actual._textdy)
         dysum += 2 * self._actual._textdy + self._actual._font_textsize
@@ -185,7 +188,7 @@ class TextMenu(Menu):
         t_dy = -int(text_height / 2.0)
 
         xccord = self._actual._opt_posx + text_dx
-        ycoord = self._actual._opt_posy + index * (self._actual._fsize + self._actual._opt_dy) \
-                 + t_dy + dysum
+        ycoord = self._actual._opt_posy + \
+                 index * (self._actual._fsize + self._actual._opt_dy) + t_dy + dysum
 
         return _pygame.Rect(xccord, ycoord, text_width, text_height)

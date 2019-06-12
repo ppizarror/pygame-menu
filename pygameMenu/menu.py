@@ -379,6 +379,8 @@ class Menu(object):
     def _close(self):
         """
         Execute close callbacks and disable the menu.
+
+        :return: None
         """
         onclose = self._actual._onclose
         if onclose is None:
@@ -428,7 +430,7 @@ class Menu(object):
         """
         Draw menu to surface.
 
-        :return:
+        :return: None
         """
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._actual._bgrect,
@@ -479,7 +481,7 @@ class Menu(object):
 
     def get_title(self):
         """
-        Return title of the Menu
+        Return title of the menu.
 
         :return: Title
         :rtype: str
@@ -487,7 +489,12 @@ class Menu(object):
         return self._title_str
 
     def _get_option_texts(self, index):
-        """Get text and shadow from the option index.
+        """
+        Get text and shadow from the option index.
+
+        :param index: Option index
+        :type index: int
+        :return: Text and shadow
         """
         option = self._actual._option[index]
         if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
@@ -505,7 +512,12 @@ class Menu(object):
         return text, text_bg
 
     def _get_option_rect(self, index):
-        """Get text Rect from the option index.
+        """
+        Get text Rect from the option index.
+
+        :param index: Option index
+        :type index: int
+        :return: text rect of the option
         """
         text, _ = self._get_option_texts(index)
         text_width, text_height = text.get_size()
@@ -642,7 +654,7 @@ class Menu(object):
 
     def _left(self):
         """
-        Move selector left
+        Move selector to left.
 
         :return: None
         """
@@ -660,7 +672,7 @@ class Menu(object):
 
         :param total: How many menus to reset (1: back)
         :type total: int
-        :return:
+        :return: None
         """
         assert isinstance(self._actual, Menu)
         assert isinstance(total, int)
@@ -699,7 +711,7 @@ class Menu(object):
         """
         Apply selected option.
 
-        :return:
+        :return: None
         """
         assert isinstance(self._actual, Menu)
         try:
@@ -803,14 +815,12 @@ class Menu(object):
 
         :param selector_id: ID of existing selector
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
-        :return:
+        :return: None
         """
         assert self._actual._size > selector_id and self._actual._option[selector_id][
             0] == _locals.PYGAMEMENU_TYPE_SELECTOR, 'There is no selector with such ID'
         for vl in values:  # Check value list
-            assert len(vl) > 1, \
-                'Length of each element in value list must be greater than 1'
-            assert isinstance(vl[0], str), \
-                'First element of value list component must be a string'
+            assert len(vl) > 1, 'Length of each element in value list must be greater than 1'
+            assert isinstance(vl[0], str), 'First element of value list component must be a string'
 
         self._actual._option[selector_id][1].update_elements(values)

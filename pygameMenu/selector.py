@@ -97,7 +97,7 @@ class Selector(object):
 
     def change(self):
         """
-        Apply the selected item when changing.
+        Apply the selected item after change event is triggered.
 
         :return: None
         """
@@ -118,7 +118,7 @@ class Selector(object):
 
         :param s: Selection text
         :type s: basestring
-        :return:
+        :return: None
         """
         self._sformat = s
 
@@ -135,7 +135,7 @@ class Selector(object):
         """
         Move selector to left.
 
-        :return:
+        :return: None
         """
         self._index = (self._index - 1) % self._total_elements
         self.change()
@@ -144,7 +144,7 @@ class Selector(object):
         """
         Move selector to right.
 
-        :return:
+        :return: None
         """
         self._index = (self._index + 1) % self._total_elements
         self.change()
