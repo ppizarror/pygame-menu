@@ -30,8 +30,7 @@ import pygameMenu.config_menu as _cfg
 import pygameMenu.locals as _locals
 
 # Library imports
-from pygameMenu.selector import Selector as _Selector
-from pygameMenu.textinput import TextInput as _TextInput
+import pygameMenu.widgets as _widgets
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
@@ -321,9 +320,9 @@ class Menu(object):
 
         self._actual._option.append(
             [_locals.PYGAMEMENU_TYPE_SELECTOR,
-             _Selector(title, values, onchange=onchange, onreturn=onreturn,
-                       default=default,
-                       **kwargs)])
+             _widgets.Selector(title, values, onchange=onchange, onreturn=onreturn,
+                               default=default,
+                               **kwargs)])
         selector_id = self._actual._size
         self._actual._size += 1
         if self._actual._size > 1:
@@ -403,9 +402,9 @@ class Menu(object):
         """
         self._actual._option.append(
             [_locals.PYGAMEMENU_TYPE_TEXTINPUT,
-             _TextInput(self._font, title, default,
-                        text_color=self._font_color, font_size=self._fsize,
-                        onchange=onchange, onreturn=onreturn, **kwargs)])
+             _widgets.TextInput(self._font, title, default,
+                                text_color=self._font_color, font_size=self._fsize,
+                                onchange=onchange, onreturn=onreturn, **kwargs)])
         textinput_id = self._actual._size
         self._actual._size += 1
         if self._actual._size > 1:
@@ -710,7 +709,7 @@ class Menu(object):
         """
         try:
             option = self._actual._option[self._actual._index][1]
-            if isinstance(option, _Selector):
+            if isinstance(option, _widgets.Selector):
                 option.left()
         except Exception:
             pass
@@ -752,7 +751,7 @@ class Menu(object):
         """
         try:
             option = self._actual._option[self._actual._index][1]
-            if isinstance(option, _Selector):
+            if isinstance(option, _widgets.Selector):
                 option.right()
         except Exception:
             pass
@@ -804,7 +803,7 @@ class Menu(object):
         elif isinstance(option, type(None)):
             pass
         # If element is a selector
-        elif isinstance(option, (_Selector, _TextInput)):
+        elif isinstance(option, (_widgets.Selector, _widgets.TextInput)):
             option.apply()
 
     # noinspection PyAttributeOutsideInit

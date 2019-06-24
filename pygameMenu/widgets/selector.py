@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
 SELECTOR
 Selector class, manage elements and adds entries to menu.
@@ -40,6 +40,7 @@ class Selector(object):
         :param kwargs: Optional arguments
         :param onchange: Event when changing the selector
         :param onreturn: Event when pressing return button
+
         :type title: str
         :type elements: list
         :type onchange: function, NoneType
@@ -112,16 +113,6 @@ class Selector(object):
             else:
                 self._on_change(*paraml)
 
-    def format_selection(self, s):
-        """
-        Change the selection text.
-
-        :param s: Selection text
-        :type s: basestring
-        :return: None
-        """
-        self._sformat = s
-
     def get(self):
         """
         Return element text.
@@ -129,7 +120,16 @@ class Selector(object):
         :return: Element text
         :rtype: str
         """
-        return self._sformat.format(self._title, self._elements[self._index][0])
+        return self._sformat.format(self._title, self.get_value())
+
+    def get_value(self):
+        """
+        Return the current value of the selector.
+
+        :return: text
+        :rtype: str
+        """
+        return self._elements[self._index][0]
 
     def left(self):
         """
@@ -148,3 +148,25 @@ class Selector(object):
         """
         self._index = (self._index + 1) % self._total_elements
         self.change()
+
+    def set_selection_format(self, s):
+        """
+        Change the text format.
+
+        :param s: Selection text
+        :type s: basestring
+        :return: None
+        """
+        self._sformat = s
+
+    def set_value(self, text):
+        """
+        Set the current value of the selector.
+
+        :return: None
+        """
+        for element in self._elements:
+            if element[0] == text:
+                self._index = self._elements.index(element)
+                return
+        raise ValueError("No value '{}' found in selector".format(text))

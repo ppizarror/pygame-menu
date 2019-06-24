@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
 SELECTOR
 Selector class, manage elements and adds entries to menu.
