@@ -31,6 +31,7 @@ import pygameMenu.locals as _locals
 
 # Library imports
 from pygameMenu.selector import Selector as _Selector
+from pygameMenu.textinput import TextInput as _TextInput
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
@@ -189,10 +190,12 @@ class Menu(object):
         self._bgfun = bgfun
         self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0)))
+
         self._bg_color_title = (menu_color_title[0],
                                 menu_color_title[1],
                                 menu_color_title[2],
                                 int(255 * (1 - (100 - menu_alpha) / 100.0)))
+
         self._centered_option = menu_centered
         self._drawselrect = draw_select
         self._font_color = font_color
@@ -281,7 +284,7 @@ class Menu(object):
             dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
             self._actual._opt_posy += dy
 
-    def add_selector(self, title, values, onchange, onreturn, default=0,
+    def add_selector(self, title, values, onchange=None, onreturn=None, default=0,
                      **kwargs):
         """
         Add a selector to menu: several options with values and two functions
@@ -376,11 +379,45 @@ class Menu(object):
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
 
+    def add_textinput(self, title, onchange=None, onreturn=None, default="", **kwargs):
+        """
+        Add a text input to menu: free text area and two functions
+        that execute when changing the text and pressing return button
+        on the element.
+
+        And functions onchange and onreturn does
+            onchange(current_text, **kwargs)
+            onreturn(current_text, **kwargs)
+
+        :param title: Title of the text input
+        :param default: default value to display
+        :param onchange: Function when changing the selector
+        :param onreturn: Function when pressing return button
+        :param kwargs: Aditional parameters
+        :type title: basestring
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
+        :type default: str
+        :return: TextInput ID
+        :rtype: int
+        """
+        self._actual._option.append(
+            [_locals.PYGAMEMENU_TYPE_TEXTINPUT,
+             _TextInput(self._font, title, default,
+                        text_color=self._font_color, font_size=self._fsize,
+                        onchange=onchange, onreturn=onreturn, **kwargs)])
+        textinput_id = self._actual._size
+        self._actual._size += 1
+        if self._actual._size > 1:
+            dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
+            self._actual._opt_posy += dy
+        return textinput_id
+
     def _close(self):
         """
         Execute close callbacks and disable the menu.
 
-        :return: None
+        :return: True if menu has been disable
         """
         onclose = self._actual._onclose
         if onclose is None:
@@ -437,7 +474,7 @@ class Menu(object):
                                 self._actual._bgcolor)
         # Draw title
         _gfxdraw.filled_polygon(self._surface, self._actual._title_polygon_pos,
-                                self._bg_color_title)
+                                self._actual._bg_color_title)
 
         # Draw back-box
         if self._mouse:
@@ -460,13 +497,20 @@ class Menu(object):
             # Text anchor
             rect = self._get_option_rect(dy)
 
-            # Draw fonts
+            # Draw widget
             if self._actual._option_shadow:
                 self._surface.blit(text_bg, rect.move(-3, -3).topleft)
-            self._surface.blit(text, rect.topleft)
+
+            option = self._actual._option[dy]
+            if option[0] == _locals.PYGAMEMENU_TYPE_TEXTINPUT:
+                if dy != self._actual._index:
+                    option[1].cursor_visible = False
+                option[1].draw(self._surface, rect.topleft)
+            else:
+                self._surface.blit(text, rect.topleft)
 
             # If selected item then draw a rectangle
-            if self._actual._drawselrect and (dy == self._actual._index):
+            if self._actual._drawselrect and dy == self._actual._index:
                 _pygame.draw.rect(self._surface, self._actual._sel_color, rect.inflate(16, 4), self._rect_width)
 
     def enable(self):
@@ -496,16 +540,19 @@ class Menu(object):
         :type index: int
         :return: Text and shadow
         """
-        option = self._actual._option[index]
-        if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
-            string = option[1].get()
-        else:
-            string = option[0]
-
         if index == self._actual._index:
             color = self._actual._sel_color
         else:
             color = self._actual._font_color
+
+        option = self._actual._option[index]
+        if option[0] == _locals.PYGAMEMENU_TYPE_SELECTOR:
+            string = option[1].get()
+        elif option[0] == _locals.PYGAMEMENU_TYPE_TEXTINPUT:
+            string = option[1].label + option[1].get_value()
+            option[1].set_text_color(color)
+        else:
+            string = option[0]
 
         text = self._actual._font.render(string, 1, color)
         text_bg = self._actual._font.render(string, 1, _cfg.SHADOW_COLOR)
@@ -562,6 +609,7 @@ class Menu(object):
         self.draw()
         if events is None:
             events = _pygame.event.get()
+
         for event in events:
             # noinspection PyUnresolvedReferences
             if event.type == _pygame.locals.QUIT:
@@ -582,8 +630,7 @@ class Menu(object):
                     self._right()
                 elif event.key == _ctrl.MENU_CTRL_BACK and self._actual._prev is not None:
                     self.reset(1)
-                elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and \
-                        not self._closelocked:
+                elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and not self._closelocked:
                     if self._close():
                         return True
             elif self._joystick and event.type == _pygame.JOYHATMOTION:
@@ -629,6 +676,9 @@ class Menu(object):
                             if not self._actual._dopause:
                                 return True
                             break
+
+        if self._actual._option[self._actual._index][0] == _locals.PYGAMEMENU_TYPE_TEXTINPUT:
+            self._actual._option[self._actual._index][1].update(events)
 
         _pygame.display.flip()
         self._closelocked = False
@@ -754,7 +804,7 @@ class Menu(object):
         elif isinstance(option, type(None)):
             pass
         # If element is a selector
-        elif isinstance(option, _Selector):
+        elif isinstance(option, (_Selector, _TextInput)):
             option.apply()
 
     # noinspection PyAttributeOutsideInit
