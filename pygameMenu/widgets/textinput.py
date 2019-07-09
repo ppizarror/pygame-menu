@@ -35,13 +35,15 @@ class TextInput(Widget):
     """
 
     def __init__(self,
-                 label="",
-                 default="",
+                 label='',
+                 default='',
                  antialias=True,
                  cursor_color=(0, 0, 1),
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=35,
                  maxlength=0,
+                 maxsize=0,
+                 text_ellipsis='..',
                  onchange=None,
                  onreturn=None,
                  **kwargs
@@ -55,7 +57,9 @@ class TextInput(Widget):
         :param cursor_color: Color of cursor
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :param repeat_keys_interval_ms: Interval between key press repetition when held
+        :param maxsize: Maximum size of the text to be displayed (overflow)
         :param maxlength: Maximum length of input
+        :param text_ellipsis: Ellipsis text when overflow occurs
         """
         super(TextInput, self).__init__(onchange, onreturn, kwargs=kwargs)
         if maxlength < 0:
@@ -72,6 +76,11 @@ class TextInput(Widget):
         self.keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self.keyrepeat_intial_interval_ms = repeat_keys_initial_ms
         self.keyrepeat_interval_ms = repeat_keys_interval_ms
+
+        # Render box (overflow)
+        self.maxsize = maxsize
+        self.renderbox = [0, 0]
+        self.ellipsis = text_ellipsis
 
         # Things cursor:
         self.cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._font_size))
