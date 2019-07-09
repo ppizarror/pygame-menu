@@ -116,12 +116,12 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         if self.cursor_visible and self.selected:
-            cursor_x_pos = self._font.size(self.label + self._input_string[:self.cursor_position])[0]
+            cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self.cursor_position])[0]
             # Without this, the cursor is invisible when self.cursor_position > 0:
             if self.cursor_position > 0 or (self.label and self.cursor_position == 0):
                 cursor_x_pos -= self.cursor_surface.get_width()
 
-            cursor_y_pos = (self._surface.get_height() - self._font_size) / 2
+            cursor_y_pos = -4 + (self._surface.get_height() - self._font_size) / 2
             surface.blit(self.cursor_surface, (self._rect.x + cursor_x_pos, self._rect.y + cursor_y_pos))
 
     def get_value(self):
@@ -170,7 +170,10 @@ class TextInput(Widget):
                 if event.key not in self.keyrepeat_counters and event.key not in self._ignore_keys:
                     self.keyrepeat_counters[event.key] = [0, event.unicode]
 
-                if event.key == _pygame.K_BACKSPACE:
+                if event.key == _pygame.K_ESCAPE:
+                    updated = True
+
+                elif event.key == _pygame.K_BACKSPACE:
                     self._input_string = (
                             self._input_string[:max(self.cursor_position - 1, 0)]
                             + self._input_string[self.cursor_position:]
