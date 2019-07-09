@@ -62,20 +62,20 @@ DIFFICULTY = ['EASY']
 
 # -----------------------------------------------------------------------------
 
-def change_difficulty(d):
+def change_difficulty(value, d):
     """
     Change difficulty of the game.
-    
-    :return: 
+
+    :return:
     """
-    print('Selected difficulty: {0}'.format(d))
+    print('Selected difficulty: {} ({})'.format(value, d))
     DIFFICULTY[0] = d
 
 
 def random_color():
     """
     Return random color.
-    
+
     :return: Color tuple
     """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
@@ -84,7 +84,7 @@ def random_color():
 def play_function(difficulty, font):
     """
     Main game function
-    
+
     :param difficulty: Difficulty of the game
     :param font: Pygame font
     :return: None
@@ -140,7 +140,7 @@ def play_function(difficulty, font):
 def main_background():
     """
     Function used by menus, draw on background while menu is active.
-    
+
     :return: None
     """
     surface.fill(COLOR_BACKGROUND)

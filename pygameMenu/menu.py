@@ -337,7 +337,7 @@ class Menu(object):
         """
         # Check value list
         for vl in values:
-            assert len(vl) > 1, \
+            assert len(vl) >= 1, \
                 'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'

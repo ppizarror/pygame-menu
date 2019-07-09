@@ -81,8 +81,8 @@ settings_menu = pygameMenu.Menu(surface,
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-settings_menu.add_textinput("First name: ", default="John")
-settings_menu.add_textinput("Last name: ")
+settings_menu.add_text_input("First name: ", default="John")
+settings_menu.add_text_input("Last name: ")
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
                                                  ('Hard', 'HARD')])

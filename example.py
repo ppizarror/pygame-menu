@@ -101,7 +101,7 @@ class TestCallClassMethod(object):
         print('Update game with new settings')
 
 
-def change_color_bg(c, **kwargs):
+def change_color_bg(text, c=None, **kwargs):
     """
     Change background color
 
