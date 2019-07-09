@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-SELECTOR
-Selector class, manage elements and adds entries to menu.
+TEXT INPUT
+Text input class, this widget lets user to write text.
 
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
@@ -41,6 +41,7 @@ class TextInput(Widget):
                  cursor_color=(0, 0, 1),
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=35,
+                 maxlength=0,
                  onchange=None,
                  onreturn=None,
                  **kwargs
@@ -54,13 +55,18 @@ class TextInput(Widget):
         :param cursor_color: Color of cursor
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :param repeat_keys_interval_ms: Interval between key press repetition when held
+        :param maxlength: Maximum length of input
         """
         super(TextInput, self).__init__(onchange, onreturn, kwargs=kwargs)
+        if maxlength < 0:
+            raise Exception('maxlength must be equal or greater than zero')
+
         self._input_string = default  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN)
 
         self.label = label
         self.antialias = antialias
+        self.maxlength = maxlength
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self.keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -132,6 +138,16 @@ class TextInput(Widget):
         """
         self._input_string = text
 
+    def _check_input_size(self):
+        """
+        Check input size.
+
+        :return: bool, if True the input must be limited
+        """
+        if self.maxlength == 0:
+            return False
+        return self.maxlength < len(self._input_string)
+
     def update(self, events):
         """
         See upper class doc.
@@ -185,6 +201,9 @@ class TextInput(Widget):
                     updated = True
 
                 elif event.key not in self._ignore_keys:
+                    # Check input has not exceeded the limit
+                    if self._check_input_size():
+                        break
                     # If no special key is pressed, add unicode of key to input_string
                     self._input_string = (
                             self._input_string[:self.cursor_position]

@@ -412,7 +412,7 @@ class Menu(object):
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
 
-    def add_text_input(self, title, onchange=None, onreturn=None, default="", **kwargs):
+    def add_text_input(self, title, onchange=None, onreturn=None, default="", maxlength=0, **kwargs):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -424,6 +424,7 @@ class Menu(object):
 
         :param title: Title of the text input
         :param default: default value to display
+        :param maxlength: Maximum length of string, if 0 there's no limit
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
@@ -431,6 +432,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :type default: str
+        :type maxlength: int
         :return: TextInput ID
         :rtype: int
         """
@@ -440,7 +442,11 @@ class Menu(object):
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
-        widget = _widgets.TextInput(title, default,
+        # Check data
+        assert isinstance(maxlength, int), 'maxlength must be integer'
+        assert maxlength >= 0, 'maxlength must be greater or equal than zero'
+
+        widget = _widgets.TextInput(title, default, maxlength=maxlength,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
 
         widget.set_font(self._font, self._fsize,
