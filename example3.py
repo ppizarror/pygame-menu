@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 EXAMPLE 3
-Game menu with a input text
+Game menu with a input text.
 
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
@@ -62,6 +62,15 @@ def main_background():
     surface.fill((40, 40, 40))
 
 
+def check_name_test(value):
+    """
+    This function tests the text input widget.
+    :param value: The widget value
+    :return: None
+    """
+    print("User name: {0}".format(value))
+
+
 # -----------------------------------------------------------------------------
 # PLAY MENU
 settings_menu = pygameMenu.Menu(surface,
@@ -81,7 +90,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-settings_menu.add_text_input("First name: ", default="John")
+settings_menu.add_text_input("First name: ", default="John", onreturn=check_name_test)
 settings_menu.add_text_input("Last name: ")
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
