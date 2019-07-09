@@ -59,6 +59,7 @@ PYGAMEMENU_PYMENUACTION = "<class 'pygameMenu.locals._PymenuAction'>"
 PYGAMEMENU_TEXT_NEWLINE = ''  # Text newline on TextMenu object
 PYGAMEMENU_TYPE_SELECTOR = PymenuAction(2)  # Type of selector
 PYGAMEMENU_TYPE_TEXTINPUT = PymenuAction(5)  # Type of text input
+PYGAMEMENU_TYPE_BUTTON = PymenuAction(6)  # Type of button
 
 # Joypad
 JOY_AXIS_X = 0

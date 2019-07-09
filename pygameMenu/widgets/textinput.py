@@ -24,59 +24,40 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os.path
-import pygame
+import pygame as _pygame
+from pygameMenu import config_controls as _ctrl
+from pygameMenu.widgets.abstract import Widget
 
 
-class TextInput(object):
+class TextInput(Widget):
 
     """
-    Text input object
+    Text input widget
     """
 
     def __init__(self,
-                 font,
                  label="",
                  default="",
-                 font_size=35,
                  antialias=True,
-                 text_color=(0, 0, 0),
                  cursor_color=(0, 0, 1),
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=35,
                  onchange=None, onreturn=None, **kwargs):
         """
-        :param font: Name or list of names for font (see pygame.font.match_font for precise format)
+        Description of the specific paramaters (see Widget class for generic ones):
+
         :param default: Initial text to be displayed
-        :param font_size:  Size of font in pixels
         :param antialias: Determines if antialias is applied to font (uses more processing power)
-        :param text_color: Color of text (duh)
         :param cursor_color: Color of cursor
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :param repeat_keys_interval_ms: Interval between key press repetition when held
-        :param onchange: Event when changing the selector
-        :param onreturn: Event when pressing return button
-        :param kwargs: Optional arguments
-
-        :type onchange: function, NoneType
-        :type onreturn: function, NoneType
         """
+        super(TextInput, self).__init__(onchange, onreturn, kwargs=kwargs)
         self._input_string = default  # Inputted text
-        self._kwargs = kwargs
-        self._on_change = onchange
-        self._on_return = onreturn
+        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN)
 
         self.label = label
         self.antialias = antialias
-        self.text_color = text_color
-        self.text_size = font_size
-
-        if isinstance(font, pygame.font.Font):
-            self.font_object = font
-        else:
-            if not os.path.isfile(font):
-                font = pygame.font.match_font(font)
-            self.font_object = pygame.font.Font(font, font_size)
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self.keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -84,53 +65,124 @@ class TextInput(object):
         self.keyrepeat_interval_ms = repeat_keys_interval_ms
 
         # Things cursor:
-        self.cursor_surface = pygame.Surface((int(self.text_size / 20 + 1), self.text_size))
+        self.cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._font_size))
         self.cursor_surface.fill(cursor_color)
         self.cursor_position = len(default)  # Inside text
-        self.cursor_visible = True  # Switches every self.cursor_switch_ms ms
+        self.cursor_visible = False  # Switches every self.cursor_switch_ms ms
         self.cursor_switch_ms = 500  # /|\
         self.cursor_ms_counter = 0
 
-        self.clock = pygame.time.Clock()
+        self.clock = _pygame.time.Clock()
+
+    def clear(self):
+        """
+        Clear the current text.
+
+        :return: None
+        """
+        self._input_string = ""
+        self.cursor_position = 0
+
+    def draw(self, surface):
+        """
+        See upper class doc.
+        """
+        self.clock.tick()
+
+        self._render()
+
+        if self._shadow:
+            string = self.label + self._input_string
+            text_bg = self._font.render(string, self.antialias, self._shadow_color)
+            surface.blit(text_bg, self._rect.move(-3, -3).topleft)
+
+        surface.blit(self._surface, (self._rect.x, self._rect.y))
+
+        if self.cursor_visible and self.selected:
+            cursor_x_pos = self._font.size(self.label + self._input_string[:self.cursor_position])[0]
+            # Without this, the cursor is invisible when self.cursor_position > 0:
+            if self.cursor_position > 0 or (self.label and self.cursor_position == 0):
+                cursor_x_pos -= self.cursor_surface.get_width()
+
+            cursor_y_pos = (self._surface.get_height() - self._font_size) / 2
+            surface.blit(self.cursor_surface, (self._rect.x + cursor_x_pos, self._rect.y + cursor_y_pos))
+
+    def get_value(self):
+        """
+        See upper class doc.
+        """
+        return self._input_string
+
+    def _render(self):
+        """
+        See upper class doc.
+        """
+        string = self.label + self._input_string
+        if self.selected:
+            color = self._font_selected_color
+        else:
+            color = self._font_color
+        self._surface = self._font.render(string, self.antialias, color)
+
+    def set_value(self, text):
+        """
+        See upper class doc.
+        """
+        self._input_string = text
 
     def update(self, events):
+        """
+        See upper class doc.
+        """
+        updated = False
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == _pygame.KEYDOWN:
                 self.cursor_visible = True  # So the user sees where he writes
 
                 # If none exist, create counter for that key:
-                if event.key not in self.keyrepeat_counters:
+                if event.key not in self.keyrepeat_counters and event.key not in self._ignore_keys:
                     self.keyrepeat_counters[event.key] = [0, event.unicode]
 
-                if event.key == pygame.K_BACKSPACE:
+                if event.key == _pygame.K_BACKSPACE:
                     self._input_string = (
                         self._input_string[:max(self.cursor_position - 1, 0)]
                         + self._input_string[self.cursor_position:]
                     )
+                    updated = True
 
                     # Subtract one from cursor_pos, but do not go below zero:
                     self.cursor_position = max(self.cursor_position - 1, 0)
-                elif event.key == pygame.K_DELETE:
+
+                elif event.key == _pygame.K_DELETE:
                     self._input_string = (
                         self._input_string[:self.cursor_position]
                         + self._input_string[self.cursor_position + 1:]
                     )
+                    updated = True
 
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == _pygame.K_RIGHT:
                     # Add one to cursor_pos, but do not exceed len(input_string)
                     self.cursor_position = min(self.cursor_position + 1, len(self._input_string))
+                    updated = True
 
-                elif event.key == pygame.K_LEFT:
+                elif event.key == _pygame.K_LEFT:
                     # Subtract one from cursor_pos, but do not go below zero:
                     self.cursor_position = max(self.cursor_position - 1, 0)
+                    updated = True
 
-                elif event.key == pygame.K_END:
+                elif event.key == _pygame.K_END:
                     self.cursor_position = len(self._input_string)
+                    updated = True
 
-                elif event.key == pygame.K_HOME:
+                elif event.key == _pygame.K_HOME:
                     self.cursor_position = 0
+                    updated = True
 
-                else:
+                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                    self.apply()
+                    updated = True
+
+                elif event.key not in self._ignore_keys:
                     # If no special key is pressed, add unicode of key to input_string
                     self._input_string = (
                         self._input_string[:self.cursor_position]
@@ -138,8 +190,9 @@ class TextInput(object):
                         + self._input_string[self.cursor_position:]
                     )
                     self.cursor_position += len(event.unicode)  # Some are empty, e.g. K_UP
+                    updated = True
 
-            elif event.type == pygame.KEYUP:
+            elif event.type == _pygame.KEYUP:
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self.keyrepeat_counters:
                     del self.keyrepeat_counters[event.key]
@@ -153,7 +206,7 @@ class TextInput(object):
                 self.keyrepeat_counters[key][0] = self.keyrepeat_intial_interval_ms - self.keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self.keyrepeat_counters[key][1]
-                pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=event_key, unicode=event_unicode))
+                _pygame.event.post(_pygame.event.Event(_pygame.KEYDOWN, key=event_key, unicode=event_unicode))
 
         # Update self.cursor_visible
         self.cursor_ms_counter += self.clock.get_time()
@@ -161,83 +214,4 @@ class TextInput(object):
             self.cursor_ms_counter %= self.cursor_switch_ms
             self.cursor_visible = not self.cursor_visible
 
-    def apply(self):
-        """
-        Apply the selected item when return event.
-
-        :return: None
-        """
-        if self._on_return is not None:
-            if len(self._kwargs) > 0:
-                self._on_return(self.get_value(), **self._kwargs)
-            else:
-                self._on_return(self.get_value())
-
-    def change(self):
-        """
-        Apply the selected item after change event is triggered.
-
-        :return: None
-        """
-        if self._on_change is not None:
-            if len(self._kwargs) > 0:
-                self._on_change(self.get_value(), **self._kwargs)
-            else:
-                self._on_change(self.get_value())
-
-    def clear(self):
-        """
-        Clear the current text.
-
-        :return: None
-        """
-        self._input_string = ""
-        self.cursor_position = 0
-
-    def draw(self, surface, pos):
-        """
-        Return surface.
-
-        :return: Surface
-        :rtype: str
-        """
-        #
-        self.clock.tick()
-
-        # Re-render text surface:
-        text = self.font_object.render(self.label + self._input_string, self.antialias, self.text_color)
-        surface.blit(text, pos)
-
-        if self.cursor_visible:
-            cursor_x_pos = self.font_object.size(self.label + self._input_string[:self.cursor_position])[0]
-            # Without this, the cursor is invisible when self.cursor_position > 0:
-            if self.cursor_position > 0 or (self.label and self.cursor_position == 0):
-                cursor_x_pos -= self.cursor_surface.get_width()
-
-            cursor_y_pos = (text.get_height() - self.text_size) / 2
-            surface.blit(self.cursor_surface, (pos[0] + cursor_x_pos, pos[1] + cursor_y_pos))
-
-    def get_value(self):
-        """
-        Return the value of the text input.
-
-        :return: text
-        :rtype: str
-        """
-        return self._input_string
-
-    def set_value(self, text):
-        """
-        Set the value of the text input.
-
-        :return: None
-        """
-        self._input_string = text
-
-    def set_text_color(self, color):
-        """
-        Set the font color.
-
-        :return: None
-        """
-        self.text_color = color
+        return updated

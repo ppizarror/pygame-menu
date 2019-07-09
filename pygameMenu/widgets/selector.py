@@ -24,34 +24,37 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import pygame as _pygame
+from pygameMenu import config_controls as _ctrl
+from pygameMenu.widgets.abstract import Widget
+from pygameMenu import locals as _locals
 
-class Selector(object):
+
+class Selector(Widget):
+
     """
-    Selector object
+    Selector widget
     """
 
-    def __init__(self, title, elements, onchange=None, onreturn=None, default=0, **kwargs):
+    def __init__(self,
+                 title,
+                 elements,
+                 default=0,
+                 onchange=None, onreturn=None, **kwargs):
         """
-        Constructor.
+        Description of the specific paramaters (see Widget class for generic ones):
 
         :param title: Title of the selector
         :param elements: Elements of the selector
         :param default: Index of default element to display
-        :param kwargs: Optional arguments
-        :param onchange: Event when changing the selector
-        :param onreturn: Event when pressing return button
 
         :type title: str
         :type elements: list
-        :type onchange: function, NoneType
-        :type onreturn: function, NoneType
         :type default: int
         """
+        super(Selector, self).__init__(onchange, onreturn, kwargs=kwargs)
         self._elements = elements
         self._index = 0
-        self._kwargs = kwargs
-        self._on_change = onchange
-        self._on_return = onreturn
         self._title = title
         self._total_elements = len(elements)
 
@@ -63,64 +66,18 @@ class Selector(object):
         for k in range(0, default):
             self.right()
 
-    def update_elements(self, elements):
+    def draw(self, surface):
         """
-        Update selector elements.
-
-        :param elements: Elements of the selector
-        :return: None
+        See upper class doc.
         """
-        selected_element = self._elements[self._index]
-        self._elements = elements
-        self._total_elements = len(elements)
-        try:
-            self._index = self._elements.index(selected_element)
-        except ValueError:
-            if self._index >= self._total_elements:
-                self._index = self._total_elements - 1
+        self._render()
 
-    def apply(self):
-        """
-        Apply the selected item when return event.
+        if self._shadow:
+            string = self._sformat.format(self._title, self.get_value())
+            text_bg = self._font.render(string, 1, self._shadow_color)
+            surface.blit(text_bg, self._rect.move(-3, -3).topleft)
 
-        :return: None
-        """
-        if self._on_return is not None:
-            paramlist = self._elements[self._index]
-            paraml = []
-            for i in range(1, len(paramlist)):
-                paraml.append(paramlist[i])
-
-            if len(self._kwargs) > 0:
-                self._on_return(*paraml, **self._kwargs)
-            else:
-                self._on_return(*paraml)
-
-    def change(self):
-        """
-        Apply the selected item after change event is triggered.
-
-        :return: None
-        """
-        if self._on_change is not None:
-            paramlist = self._elements[self._index]
-            paraml = []
-            for i in range(1, len(paramlist)):
-                paraml.append(paramlist[i])
-
-            if len(self._kwargs) > 0:
-                self._on_change(*paraml, **self._kwargs)
-            else:
-                self._on_change(*paraml)
-
-    def get(self):
-        """
-        Return element text.
-
-        :return: Element text
-        :rtype: str
-        """
-        return self._sformat.format(self._title, self.get_value())
+        surface.blit(self._surface, self._rect.topleft)
 
     def get_value(self):
         """
@@ -134,20 +91,29 @@ class Selector(object):
     def left(self):
         """
         Move selector to left.
-
         :return: None
         """
         self._index = (self._index - 1) % self._total_elements
-        self.change()
+        self.change(*self._elements[self._index][1:])
+
+    def _render(self):
+        """
+        See upper class doc.
+        """
+        string = self._sformat.format(self._title, self.get_value())
+        if self.selected:
+            color = self._font_selected_color
+        else:
+            color = self._font_color
+        self._surface = self._font.render(string, 1, color)
 
     def right(self):
         """
         Move selector to right.
-
         :return: None
         """
         self._index = (self._index + 1) % self._total_elements
-        self.change()
+        self.change(*self._elements[self._index][1:])
 
     def set_selection_format(self, s):
         """
@@ -170,3 +136,59 @@ class Selector(object):
                 self._index = self._elements.index(element)
                 return
         raise ValueError("No value '{}' found in selector".format(text))
+
+    def update(self, events):
+        """
+        See upper class doc.
+        """
+        updated = False
+        for event in events:
+            if event.type == _pygame.locals.KEYDOWN:
+                if event.key == _ctrl.MENU_CTRL_LEFT:
+                    self.left()
+                    updated = True
+                elif event.key == _ctrl.MENU_CTRL_RIGHT:
+                    self.right()
+                    updated = True
+                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                    self.apply(*self._elements[self._index][1:])
+                    updated = True
+
+            elif self.joystick_enabled and event.type == _pygame.JOYHATMOTION:
+                if event.value == _locals.JOY_LEFT:
+                    self.left()
+                    updated = True
+                elif event.value == _locals.JOY_RIGHT:
+                    self.right()
+                    updated = True
+
+            elif self.joystick_enabled and event.type == _pygame.JOYAXISMOTION:
+                if event.axis == _locals.JOY_AXIS_X and event.value < _locals.JOY_DEADZONE:
+                    self.left()
+                    updated = True
+                if event.axis == _locals.JOY_AXIS_X and event.value > -_locals.JOY_DEADZONE:
+                    self.right()
+                    updated = True
+
+            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                if self._rect.collidepoint(*event.pos):
+                    self.right()
+                    updated = True
+
+        return updated
+
+    def update_elements(self, elements):
+        """
+        Update selector elements.
+
+        :param elements: Elements of the selector
+        :return: None
+        """
+        selected_element = self._elements[self._index]
+        self._elements = elements
+        self._total_elements = len(elements)
+        try:
+            self._index = self._elements.index(selected_element)
+        except ValueError:
+            if self._index >= self._total_elements:
+                self._index = self._total_elements - 1
