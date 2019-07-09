@@ -56,13 +56,12 @@ class Selector(Widget):
         self._elements = elements
         self._index = 0
         self._title = title
-        self._total_elements = len(elements)
 
         # Selection format
         self._sformat = '{0} < {1} >'
 
         # Apply default item
-        default %= self._total_elements
+        default %= len(self._elements)
         for k in range(0, default):
             self.right()
 
@@ -93,7 +92,7 @@ class Selector(Widget):
         Move selector to left.
         :return: None
         """
-        self._index = (self._index - 1) % self._total_elements
+        self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
     def _render(self):
@@ -112,7 +111,7 @@ class Selector(Widget):
         Move selector to right.
         :return: None
         """
-        self._index = (self._index + 1) % self._total_elements
+        self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
     def set_selection_format(self, s):
@@ -186,9 +185,8 @@ class Selector(Widget):
         """
         selected_element = self._elements[self._index]
         self._elements = elements
-        self._total_elements = len(elements)
         try:
             self._index = self._elements.index(selected_element)
         except ValueError:
-            if self._index >= self._total_elements:
-                self._index = self._total_elements - 1
+            if self._index >= len(self._elements):
+                self._index = len(self._elements) - 1
