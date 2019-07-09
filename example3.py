@@ -49,7 +49,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('PygameMenu example 2')
+pygame.display.set_caption('PygameMenu example 3')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
@@ -68,7 +68,7 @@ def check_name_test(value):
     :param value: The widget value
     :return: None
     """
-    print("User name: {0}".format(value))
+    print('User name: {0}'.format(value))
 
 
 # -----------------------------------------------------------------------------
@@ -90,8 +90,8 @@ settings_menu = pygameMenu.Menu(surface,
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-settings_menu.add_text_input("First name: ", default="John", onreturn=check_name_test)
-settings_menu.add_text_input("Last name: ", maxlength=10)
+settings_menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
+settings_menu.add_text_input('Last name: ', maxlength=10)
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
                                                  ('Hard', 'HARD')])
