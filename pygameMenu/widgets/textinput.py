@@ -30,9 +30,8 @@ from pygameMenu.widgets.abstract import Widget
 
 
 class TextInput(Widget):
-
     """
-    Text input widget
+    Text input widget.
     """
 
     def __init__(self,
@@ -42,10 +41,14 @@ class TextInput(Widget):
                  cursor_color=(0, 0, 1),
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=35,
-                 onchange=None, onreturn=None, **kwargs):
+                 onchange=None,
+                 onreturn=None,
+                 **kwargs
+                 ):
         """
         Description of the specific paramaters (see Widget class for generic ones):
 
+        :param label: Input label text
         :param default: Initial text to be displayed
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :param cursor_color: Color of cursor
@@ -88,7 +91,6 @@ class TextInput(Widget):
         See upper class doc.
         """
         self.clock.tick()
-
         self._render()
 
         if self._shadow:
@@ -145,8 +147,8 @@ class TextInput(Widget):
 
                 if event.key == _pygame.K_BACKSPACE:
                     self._input_string = (
-                        self._input_string[:max(self.cursor_position - 1, 0)]
-                        + self._input_string[self.cursor_position:]
+                            self._input_string[:max(self.cursor_position - 1, 0)]
+                            + self._input_string[self.cursor_position:]
                     )
                     updated = True
 
@@ -155,8 +157,8 @@ class TextInput(Widget):
 
                 elif event.key == _pygame.K_DELETE:
                     self._input_string = (
-                        self._input_string[:self.cursor_position]
-                        + self._input_string[self.cursor_position + 1:]
+                            self._input_string[:self.cursor_position]
+                            + self._input_string[self.cursor_position + 1:]
                     )
                     updated = True
 
@@ -185,9 +187,9 @@ class TextInput(Widget):
                 elif event.key not in self._ignore_keys:
                     # If no special key is pressed, add unicode of key to input_string
                     self._input_string = (
-                        self._input_string[:self.cursor_position]
-                        + event.unicode
-                        + self._input_string[self.cursor_position:]
+                            self._input_string[:self.cursor_position]
+                            + event.unicode
+                            + self._input_string[self.cursor_position:]
                     )
                     self.cursor_position += len(event.unicode)  # Some are empty, e.g. K_UP
                     updated = True
@@ -206,7 +208,10 @@ class TextInput(Widget):
                 self.keyrepeat_counters[key][0] = self.keyrepeat_intial_interval_ms - self.keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self.keyrepeat_counters[key][1]
-                _pygame.event.post(_pygame.event.Event(_pygame.KEYDOWN, key=event_key, unicode=event_unicode))
+                # noinspection PyArgumentList
+                _pygame.event.post(_pygame.event.Event(_pygame.KEYDOWN,
+                                                       key=event_key,
+                                                       unicode=event_unicode))
 
         # Update self.cursor_visible
         self.cursor_ms_counter += self.clock.get_time()

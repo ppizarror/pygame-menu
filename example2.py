@@ -170,7 +170,6 @@ play_menu.add_option('Start', play_function, DIFFICULTY,
 play_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                              ('Medium', 'MEDIUM'),
                                              ('Hard', 'HARD')],
-                       onreturn=None,
                        onchange=change_difficulty)
 play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 

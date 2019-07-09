@@ -30,8 +30,16 @@ import pygameMenu.config_menu as _cfg
 
 
 class Widget(object):
+    """
+    Widget abstract class.
+    """
 
-    def __init__(self, onchange=None, onreturn=None, args=None, kwargs=None):
+    def __init__(self,
+                 onchange=None,
+                 onreturn=None,
+                 args=None,
+                 kwargs=None
+                 ):
         """
         :param onchange: callback when changing the selector
         :param onreturn: callback when pressing return button
@@ -201,7 +209,7 @@ class Widget(object):
         :param value: value to be set on the widget.
         :return: None
         """
-        raise ValueError("Widget does not accept value")
+        raise ValueError('Widget does not accept value')
 
     def update(self, events):
         """

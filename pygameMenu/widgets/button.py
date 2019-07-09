@@ -31,14 +31,17 @@ from pygameMenu import locals as _locals
 
 
 class Button(Widget):
-
     """
-    Selector widget
+    Selector widget.
     """
 
     def __init__(self,
                  label,
-                 onchange=None, onreturn=None, *args, **kwargs):
+                 onchange=None,
+                 onreturn=None,
+                 *args,
+                 **kwargs
+                 ):
         """
         Description of the specific paramaters (see Widget class for generic ones):
 

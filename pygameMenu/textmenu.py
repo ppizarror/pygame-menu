@@ -48,7 +48,8 @@ class TextMenu(Menu):
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
-                 **kwargs):
+                 **kwargs
+                 ):
         """
         TextMenu constructor.
 
@@ -99,8 +100,7 @@ class TextMenu(Menu):
         self._text = []
 
         # Position of text
-        self._pos_text_x = int(
-            self._width * (self._draw_text_region_x / 100.0)) + self._posy
+        self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posy
         self._opt_posy -= self._textdy / 2 + self._font_textsize / 2
 
     def add_line(self, text):
@@ -151,8 +151,7 @@ class TextMenu(Menu):
                 text_dx = -int(text_width / 2.0)
             else:
                 text_dx = 0
-            ycoords = self._opt_posy + self._textdy + dy * (
-                self._font_textsize + self._textdy)
+            ycoords = self._opt_posy + self._textdy + dy * (self._font_textsize + self._textdy)
             ycoords -= self._font_textsize / 2
 
             self._surface.blit(text, (self._pos_text_x + text_dx, ycoords))
@@ -177,7 +176,6 @@ class TextMenu(Menu):
         t_dy = -int(rect.height / 2.0)
 
         xccord = self._opt_posx + text_dx
-        ycoord = self._opt_posy + \
-            index * (self._fsize + self._opt_dy) + t_dy + dysum
+        ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
 
         return xccord, ycoord

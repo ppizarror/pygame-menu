@@ -39,7 +39,7 @@ import types
 from sys import exit
 
 
-# noinspection PyBroadException
+# noinspection PyBroadException,PyProtectedMember,PyArgumentEqualDefault
 class Menu(object):
     """
     Menu object.
@@ -360,7 +360,7 @@ class Menu(object):
 
         self._option.append(widget)
         if len(self._option) == 1:
-            widget.set_selected(True)
+            widget.set_selected()
 
         return widget_id
 
@@ -450,7 +450,7 @@ class Menu(object):
 
         self._option.append(widget)
         if len(self._option) == 1:
-            widget.set_selected(True)
+            widget.set_selected()
 
         return widget_id
 
@@ -543,7 +543,13 @@ class Menu(object):
             self._enabled = True
             self._closelocked = True
 
-    def _exit(self):
+    @staticmethod
+    def _exit():
+        """
+        Internal exit function.
+
+        :return:
+        """
         _pygame.quit()
         exit()
 

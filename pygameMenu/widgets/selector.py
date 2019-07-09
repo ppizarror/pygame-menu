@@ -31,16 +31,18 @@ from pygameMenu import locals as _locals
 
 
 class Selector(Widget):
-
     """
-    Selector widget
+    Selector widget.
     """
 
     def __init__(self,
                  title,
                  elements,
                  default=0,
-                 onchange=None, onreturn=None, **kwargs):
+                 onchange=None,
+                 onreturn=None,
+                 **kwargs
+                 ):
         """
         Description of the specific paramaters (see Widget class for generic ones):
 
@@ -109,6 +111,7 @@ class Selector(Widget):
     def right(self):
         """
         Move selector to right.
+
         :return: None
         """
         self._index = (self._index + 1) % len(self._elements)
