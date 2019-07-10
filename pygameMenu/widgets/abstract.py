@@ -128,8 +128,8 @@ class Widget(object):
 
         :return: pygame.Rect
         """
-        if not self._surface:
-            self._render()
+        self._render()
+        
         self._rect.width, self._rect.height = self._surface.get_size()
         return self._rect
 

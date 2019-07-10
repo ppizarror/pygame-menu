@@ -32,7 +32,7 @@ from pygameMenu import locals as _locals
 
 class Button(Widget):
     """
-    Selector widget.
+    Button widget.
     """
 
     def __init__(self,
