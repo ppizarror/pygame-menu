@@ -62,9 +62,9 @@ class Widget(object):
         self._shadow = _cfg.MENU_OPTION_SHADOW
         self._shadow_color = _cfg.SHADOW_COLOR
 
+        # Public attributs
         self.joystick_enabled = True
         self.mouse_enabled = True
-
         self.selected = False
 
     def apply(self, *args):

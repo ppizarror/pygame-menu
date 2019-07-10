@@ -54,7 +54,9 @@ class Button(Widget):
         :type default: int
         """
         super(Button, self).__init__(onchange, onreturn, args, kwargs)
-        self._label = label
+
+        # Public attributs
+        self.label = label
 
     def draw(self, surface):
         """
@@ -63,7 +65,7 @@ class Button(Widget):
         self._render()
 
         if self._shadow:
-            text_bg = self._font.render(self._label, 1, self._shadow_color)
+            text_bg = self._font.render(self.label, 1, self._shadow_color)
             surface.blit(text_bg, self._rect.move(-3, -3).topleft)
         surface.blit(self._surface, self._rect.topleft)
 
@@ -75,7 +77,7 @@ class Button(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self._font.render(self._label, 1, color)
+        self._surface = self._font.render(self.label, 1, color)
 
     def update(self, events):
         """

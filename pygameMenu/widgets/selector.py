@@ -57,10 +57,10 @@ class Selector(Widget):
         super(Selector, self).__init__(onchange, onreturn, kwargs=kwargs)
         self._elements = elements
         self._index = 0
-        self._title = title
-
-        # Selection format
         self._sformat = '{0} < {1} >'
+        
+        # Public attributs
+        self.label = title
 
         # Apply default item
         default %= len(self._elements)
@@ -74,7 +74,7 @@ class Selector(Widget):
         self._render()
 
         if self._shadow:
-            string = self._sformat.format(self._title, self.get_value())
+            string = self._sformat.format(self.label, self.get_value())
             text_bg = self._font.render(string, 1, self._shadow_color)
             surface.blit(text_bg, self._rect.move(-3, -3).topleft)
 
@@ -101,7 +101,7 @@ class Selector(Widget):
         """
         See upper class doc.
         """
-        string = self._sformat.format(self._title, self.get_value())
+        string = self._sformat.format(self.label, self.get_value())
         if self.selected:
             color = self._font_selected_color
         else:
