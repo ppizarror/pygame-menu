@@ -202,11 +202,9 @@ from pygameMenu.locals import *  # Import constants (like actions)
     timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
     ```
 
-
 - <i>add_text_input(title, onchange, onreturn, default, maxlength, maxsize, **kwargs)</i>
 
-    Add a *text input* to menu: two functions that execute when updating the text in the
-    text entry and pressing *Return key* on the element.
+    Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
 
     | Param | Description | Type |
     | :-: | :--| :--:|
