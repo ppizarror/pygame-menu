@@ -489,7 +489,7 @@ class Menu(object):
                 onclose()
 
         if close:
-            self.disable(closelocked)
+            self._top.disable(closelocked)
         return close
 
     def disable(self, closelocked=True):
