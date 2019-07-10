@@ -1,7 +1,7 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
-PYGAME-MENU
-A menu for pygame.
+WIDGETS
+Widgets elements that can be added to the Menu.
 
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
@@ -24,22 +24,6 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from pygameMenu.menu import Menu
-from pygameMenu.textmenu import TextMenu
-import pygameMenu.fonts as fonts
-
-# Other
-__author__ = 'ppizarror'
-__contributors__ = [
-    'anxuae',
-    'asierrayk',
-    'i96751414',
-    'ironsmile',
-    'maditnerd',
-    'Rifqi31',
-    'thisIsMikeKane',
-]
-__description__ = 'Menu for pygame, simple, lightweight and easy to use'
-__email__ = 'pablo.pizarro@ing.uchile.cl'
-__url__ = 'https://github.com/ppizarror/pygame-menu'
-__version__ = 'v2.0.0'
+from pygameMenu.widgets.button import Button
+from pygameMenu.widgets.selector import Selector
+from pygameMenu.widgets.textinput import TextInput

@@ -48,7 +48,8 @@ class TextMenu(Menu):
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
-                 **kwargs):
+                 **kwargs
+                 ):
         """
         TextMenu constructor.
 
@@ -99,9 +100,8 @@ class TextMenu(Menu):
         self._text = []
 
         # Position of text
-        self._pos_text_x = int(
-            self._width * (self._draw_text_region_x / 100.0)) + self._posy
-        self._actual._opt_posy -= self._textdy / 2 + self._font_textsize / 2
+        self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posy
+        self._opt_posy -= self._textdy / 2 + self._font_textsize / 2
 
     def add_line(self, text):
         """
@@ -111,13 +111,12 @@ class TextMenu(Menu):
         :type text: str
         :return: None
         """
-        assert isinstance(self._actual, TextMenu)
         assert isinstance(text, str)
 
         text = text.strip()
-        self._actual._text.append(text)
-        dy = -self._actual._font_textsize / 2 - self._actual._textdy / 2
-        self._actual._opt_posy += dy
+        self._text.append(text)
+        dy = -self._font_textsize / 2 - self._textdy / 2
+        self._opt_posy += dy
 
     def add_option(self, element_name, element, *args):
         """
@@ -130,15 +129,10 @@ class TextMenu(Menu):
         :type element: Menu, _locals._PymenuAction
         :return: None
         """
-        a = isinstance(element, Menu)
-        b = isinstance(element, _locals.PymenuAction)
-        c = str(type(element)) == _locals.PYGAMEMENU_PYMENUACTION
-        assert a or b or c, 'Element must be a Menu or PymenuAction'
-
-        self._actual._option.append([element_name, element, args])
-        self._actual._size += 1
-        dy = -self._actual._fsize / 2 - self._actual._opt_dy / 2
-        self._actual._opt_posy += dy
+        if self._size <= 1:
+            dy = -self._fsize / 2 - self._opt_dy / 2
+            self._opt_posy += dy
+        super(TextMenu, self).add_option(element_name, element, *args)
 
     def draw(self):
         """
@@ -146,47 +140,42 @@ class TextMenu(Menu):
 
         :return: None
         """
-        assert isinstance(self._actual, TextMenu)
-        Menu.draw(self)
+        super(TextMenu, self).draw()
 
         # Draw text
         dy = 0
-        for linea in self._actual._text:
-            text = self._actual._fonttext.render(linea, 1,
-                                                 self._actual._font_textcolor)
+        for linea in self._text:
+            text = self._fonttext.render(linea, 1, self._font_textcolor)
             text_width = text.get_size()[0]
-            if self._actual._centered_text:
+            if self._centered_text:
                 text_dx = -int(text_width / 2.0)
             else:
                 text_dx = 0
-            ycoords = self._actual._opt_posy + self._actual._textdy + dy * (
-                    self._actual._font_textsize + self._actual._textdy)
-            ycoords -= self._actual._font_textsize / 2
+            ycoords = self._opt_posy + self._textdy + dy * (self._font_textsize + self._textdy)
+            ycoords -= self._font_textsize / 2
 
-            self._surface.blit(text, (self._actual._pos_text_x + text_dx, ycoords))
+            self._surface.blit(text, (self._pos_text_x + text_dx, ycoords))
             dy += 1
 
-    def _get_option_rect(self, index):
+    def _get_option_pos(self, index):
         """
-        Get text Rect from the option index.
+        Get option position from the option index.
 
         :param index: Option index
-        :type indeX: int
+        :type index: int
         :return: None
         """
-        dysum = len(self._actual._text) * (self._actual._font_textsize + self._actual._textdy)
-        dysum += 2 * self._actual._textdy + self._actual._font_textsize
+        dysum = len(self._text) * (self._font_textsize + self._textdy)
+        dysum += 2 * self._textdy + self._font_textsize
 
-        text, _ = self._get_option_texts(index)
-        text_width, text_height = text.get_size()
-        if self._actual._centered_option:
-            text_dx = -int(text_width / 2.0)
+        rect = self._option[index].get_rect()
+        if self._centered_option:
+            text_dx = -int(rect.width / 2.0)
         else:
             text_dx = 0
-        t_dy = -int(text_height / 2.0)
+        t_dy = -int(rect.height / 2.0)
 
-        xccord = self._actual._opt_posx + text_dx
-        ycoord = self._actual._opt_posy + \
-                 index * (self._actual._fsize + self._actual._opt_dy) + t_dy + dysum
+        xccord = self._opt_posx + text_dx
+        ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
 
-        return _pygame.Rect(xccord, ycoord, text_width, text_height)
+        return xccord, ycoord

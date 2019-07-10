@@ -201,7 +201,41 @@ from pygameMenu.locals import *  # Import constants (like actions)
     timer_menu.add_option('Return to Menu', PYGAME_MENU_BACK)
     timer_menu.add_option('Close Menu', PYGAME_MENU_CLOSE)
     ```
-    
+
+- <i>add_text_input(title, onchange, onreturn, default, maxlength, maxsize, **kwargs)</i>
+
+    Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
+
+    | Param | Description | Type |
+    | :-: | :--| :--:|
+    |title| Label string on menu entry| str|
+    |onchange| Function that executes when change the value of text input| function|
+    |onreturn| Function that executes when pressing return button | function|
+    |default| Default value to display | str|
+    |maxlength| Maximum length of string, if 0 there's no limit | int|
+    |maxsize| Maximum size of the text widget, if 0 there's no limit | int|
+    |**kwargs| Additional arguments | -|
+
+    Example:
+    ```python
+    def check_name_test(value):
+        """
+        This function tests the text input widget.
+        :param value: The widget value
+        :return: None
+        """
+        print('User name: {0}'.format(value))
+
+    settings_menu = pygameMenu.Menu(...)
+
+    # Add text input
+    settings_menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
+    settings_menu.add_text_input('Last name: ', default='Rambo', maxlength=10)
+    settings_menu.add_text_input('Some long text: ', maxsize=15)
+
+    settings_menu.add_option('Return to main menu', pgm_loc.PYGAME_MENU_BACK)
+    ```
+
 - <i>add_line(text)</i>
 
     Adds a new line on **TextMenu** object.
