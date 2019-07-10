@@ -304,7 +304,7 @@ class Menu(object):
 
         self._option.append(widget)
         if len(self._option) == 1:
-            widget.set_selected(True)
+            widget.set_selected()
 
         return widget_id
 
@@ -538,7 +538,7 @@ class Menu(object):
             widget.draw(self._surface)
 
             # If selected item then draw a rectangle
-            if self._drawselrect and index == self._index:
+            if self._drawselrect and widget.selected:
                 rect = widget.get_rect()
                 _pygame.draw.rect(self._surface, self._sel_color, rect.inflate(16, 4), self._rect_width)
 
@@ -756,7 +756,7 @@ class Menu(object):
             return
         actual._option[actual._index].set_selected(False)
         actual._index = index % actual._size
-        actual._option[actual._index].set_selected(True)
+        actual._option[actual._index].set_selected()
 
     # noinspection PyAttributeOutsideInit
     def set_title(self, title, offsetx=0, offsety=0):

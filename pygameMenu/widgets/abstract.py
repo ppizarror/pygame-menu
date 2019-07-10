@@ -76,7 +76,7 @@ class Widget(object):
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
-            - ``args`` givent to this method
+            - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
 
@@ -99,7 +99,7 @@ class Widget(object):
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
-            - ``args`` givent to this method
+            - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
 
@@ -129,7 +129,7 @@ class Widget(object):
         :return: pygame.Rect
         """
         self._render()
-        
+
         self._rect.width, self._rect.height = self._surface.get_size()
         return self._rect
 
