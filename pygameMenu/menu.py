@@ -448,7 +448,7 @@ class Menu(object):
         assert isinstance(maxlength, int), 'maxlength must be integer'
         assert maxlength >= 0, 'maxlength must be greater or equal than zero'
 
-        widget = _widgets.TextInput(title, default, maxlength=maxlength,
+        widget = _widgets.TextInput(title, default, maxlength=maxlength, maxsize=maxsize,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
 
         widget.set_font(self._font, self._fsize,

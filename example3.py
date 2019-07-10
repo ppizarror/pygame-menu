@@ -82,7 +82,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 menu_alpha=100,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.7),
-                                menu_width=int(WINDOW_SIZE[0] * 0.7),
+                                menu_width=int(WINDOW_SIZE[0] * 0.8),
                                 onclose=pgm_loc.PYGAME_MENU_DISABLE_CLOSE,
                                 option_shadow=False,
                                 title='Play menu',
@@ -91,8 +91,8 @@ settings_menu = pygameMenu.Menu(surface,
                                 )
 
 settings_menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
-settings_menu.add_text_input('Last name: ', maxlength=10)
-settings_menu.add_text_input('Some long text: ', maxsize=20)
+settings_menu.add_text_input('Last name: ', default='Rambo', maxlength=10)
+settings_menu.add_text_input('Some long text: ', maxsize=15)
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
                                                  ('Hard', 'HARD')])
@@ -107,8 +107,8 @@ main_menu = pygameMenu.Menu(surface,
                             font_size=30,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
-                            menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            menu_height=int(WINDOW_SIZE[1] * 0.7),
+                            menu_width=int(WINDOW_SIZE[0] * 0.8),
                             onclose=pgm_loc.PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Main menu',
