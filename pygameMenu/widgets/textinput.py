@@ -140,10 +140,6 @@ class TextInput(Widget):
             if self.cursor_position > 0 or (self.label and self.cursor_position == 0):
                 cursor_x_pos -= self.cursor_surface.get_width()
 
-            # If maxsize enabled cursor cannot be greater than surface rect
-            # if self.maxsize != 0:
-            #     cursor_x_pos = min(cursor_x_pos, self._surface.get_width())
-
             cursor_y_pos = -4 + (self._surface.get_height() - self._font_size) / 2
             surface.blit(self.cursor_surface, (self._rect.x + cursor_x_pos, self._rect.y + cursor_y_pos))
 
