@@ -349,7 +349,8 @@ class Menu(object):
             self._opt_posy += dy
 
         widget = _widgets.Selector(title, values,
-                                   onchange=onchange, onreturn=onreturn,
+                                   onchange=onchange,
+                                   onreturn=onreturn,
                                    default=default,
                                    **kwargs)
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 PYGAME-MENU
-Pygame Menu library.
+A menu for pygame.
 
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
@@ -42,4 +42,4 @@ __contributors__ = [
 __description__ = 'Menu for pygame, simple, lightweight and easy to use'
 __email__ = 'pablo.pizarro@ing.uchile.cl'
 __url__ = 'https://github.com/ppizarror/pygame-menu'
-__version__ = 'v1.96.1'
+__version__ = 'v2.0.0'

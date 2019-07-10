@@ -32,7 +32,7 @@ import pygame
 import pygameMenu
 from pygameMenu import locals as pgm_loc
 
-ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygame-menu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
          pgm_loc.PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -44,16 +44,20 @@ WINDOW_SIZE = (640, 480)
 
 # -----------------------------------------------------------------------------
 # Init pygame
+# -----------------------------------------------------------------------------
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('PygameMenu example 3')
+pygame.display.set_caption('pygame-menu example 3')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
 
+# -----------------------------------------------------------------------------
+# Methods
+# -----------------------------------------------------------------------------
 def main_background():
     """
     Background color of the main menu, on this function user can plot
@@ -72,7 +76,10 @@ def check_name_test(value):
 
 
 # -----------------------------------------------------------------------------
-# PLAY MENU
+# Create menus
+# -----------------------------------------------------------------------------
+
+# Settings menu
 settings_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
                                 color_selected=COLOR_WHITE,
@@ -98,7 +105,7 @@ settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Hard', 'HARD')])
 settings_menu.add_option('Return to main menu', pgm_loc.PYGAME_MENU_BACK)
 
-# MAIN MENU
+# Main menu
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
@@ -121,6 +128,7 @@ main_menu.add_option('Quit', pgm_loc.PYGAME_MENU_EXIT)
 
 # -----------------------------------------------------------------------------
 # Main loop
+# -----------------------------------------------------------------------------
 while True:
 
     # Tick
