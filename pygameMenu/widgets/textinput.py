@@ -66,7 +66,7 @@ class TextInput(Widget):
             raise Exception('maxlength must be equal or greater than zero')
 
         self._input_string = default  # Inputted text
-        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN)
+        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN, _pygame.K_ESCAPE)
 
         self.label = label
         self.antialias = antialias
@@ -212,8 +212,6 @@ class TextInput(Widget):
         if left < 0 and ls == 0:
             return
 
-        # print(left, right, ls)
-
         # If no overflow
         if ls <= self.maxsize:
             if right < 0 and self.renderbox[2] == ls:  # If del at the end of string
@@ -275,8 +273,6 @@ class TextInput(Widget):
         self.renderbox[0] = max(0, self.renderbox[0])
         self.renderbox[1] = max(0, self.renderbox[1])
         self.renderbox[2] = max(0, min(self.renderbox[2], min(self.maxsize, ls)))
-        # print(self.renderbox)
-        # print(self._input_string)
 
     def set_value(self, text):
         """
@@ -307,10 +303,7 @@ class TextInput(Widget):
                 if event.key not in self.keyrepeat_counters and event.key not in self._ignore_keys:
                     self.keyrepeat_counters[event.key] = [0, event.unicode]
 
-                if event.key == _pygame.K_ESCAPE:
-                    updated = True
-
-                elif event.key == _pygame.K_BACKSPACE:
+                if event.key == _pygame.K_BACKSPACE:
                     self._input_string = (
                             self._input_string[:max(self.cursor_position - 1, 0)]
                             + self._input_string[self.cursor_position:]
@@ -371,7 +364,7 @@ class TextInput(Widget):
                         self._update_renderbox(right=1, addition=True)
                     updated = True
 
-            elif event.type == _pygame.KEYUP or event.type == _pygame.KEYDOWN:
+            elif event.type == _pygame.KEYUP:
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self.keyrepeat_counters:
                     del self.keyrepeat_counters[event.key]
