@@ -116,7 +116,7 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
                             menu_width=int(WINDOW_SIZE[0] * 0.8),
-                            onclose=pgm_loc.PYGAME_MENU_DISABLE_CLOSE,
+                            onclose=pgm_loc.PYGAME_MENU_CLOSE,
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
@@ -133,6 +133,9 @@ while True:
 
     # Tick
     clock.tick(60)
+
+    # Paint background
+    main_background()
 
     # Application events
     events = pygame.event.get()

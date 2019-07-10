@@ -232,6 +232,9 @@ while True:
     # Tick
     clock.tick(60)
 
+    # Paint background
+    main_background()
+
     # Application events
     events = pygame.event.get()
     for event in events:
