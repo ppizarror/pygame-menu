@@ -93,14 +93,14 @@ class Menu(object):
         :param font_size_title: Font size of the title
         :param font_title: Alternative font of the title (file direction)
         :param joystick_enabled: Enable/disable joystick on menu
-        :param mouse_enabled: Enable/disable mouse click on menu
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :param menu_centered: Text centered menu
         :param menu_color: Menu color
         :param menu_color_title: Background color of title
         :param menu_height: Height of menu (px)
         :param menu_width: Width of menu (px)
-        :param onclose: Function that applies when closing menu
+        :param mouse_enabled: Enable/disable mouse click on menu
+        :param onclose: Function applied when closing the menu
         :param option_margin: Margin of each element in menu (px)
         :param option_shadow: Indicate if a shadow is drawn on each option
         :param rect_width: Border with of rectangle around selected item
@@ -122,13 +122,14 @@ class Menu(object):
         :type font_size_title: int
         :type font_title: basestring
         :type joystick_enabled: bool
-        :type mouse_enabled: bool
         :type menu_alpha: int
         :type menu_centered: bool
         :type menu_color: tuple
         :type menu_color_title: tuple
         :type menu_height: int
         :type menu_width: int
+        :type mouse_enabled: bool
+        :type onclose: function
         :type option_margin: int
         :type option_shadow: bool
         :type rect_width: int
@@ -308,7 +309,8 @@ class Menu(object):
 
         return widget_id
 
-    def add_selector(self, title, values, onchange=None, onreturn=None, default=0, **kwargs):
+    def add_selector(self, title, values, selector_id='',
+                     onchange=None, onreturn=None, default=0, **kwargs):
         """
         Add a selector to menu: several options with values and two functions
         that execute when changing the selector (left/right) and pressing
@@ -323,15 +325,17 @@ class Menu(object):
 
         :param title: Title of the selector
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
+        :param selector_id: ID of the selector
         :param default: Index of default value to display
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
         :type title: basestring
         :type values: list
+        :type selector_id: basestring
+        :type default: int
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-        :type default: int
         :return: Selector ID
         :rtype: int
         """
@@ -348,12 +352,7 @@ class Menu(object):
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
-        widget = _widgets.Selector(title, values,
-                                   onchange=onchange,
-                                   onreturn=onreturn,
-                                   default=default,
-                                   **kwargs)
-
+        widget = _widgets.Selector(title, values, selector_id, default, onchange, onreturn, **kwargs)
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
@@ -413,7 +412,7 @@ class Menu(object):
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
 
-    def add_text_input(self, title, onchange=None, onreturn=None,
+    def add_text_input(self, title, textinput_id='', onchange=None, onreturn=None,
                        default='', maxlength=0, maxsize=0, **kwargs):
         """
         Add a text input to menu: free text area and two functions
@@ -425,6 +424,7 @@ class Menu(object):
             onreturn(current_text, **kwargs)
 
         :param title: Title of the text input
+        :param textinput_id: ID of the text input
         :param default: default value to display
         :param maxlength: Maximum length of string, if 0 there's no limit
         :param maxsize: Maximum size of the text widget, if 0 there's no limit
@@ -432,10 +432,12 @@ class Menu(object):
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
         :type title: basestring
-        :type onchange: function, NoneType
-        :type onreturn: function, NoneType
+        :type textinput_id: basestring
         :type default: str
         :type maxlength: int
+        :type maxsize: int
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
         :return: TextInput ID
         :rtype: int
         """
@@ -449,7 +451,8 @@ class Menu(object):
         assert isinstance(maxlength, int), 'maxlength must be integer'
         assert maxlength >= 0, 'maxlength must be greater or equal than zero'
 
-        widget = _widgets.TextInput(title, default, maxlength=maxlength, maxsize=maxsize,
+        widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
+                                    maxlength=maxlength, maxsize=maxsize,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
 
         widget.set_font(self._font, self._fsize,
@@ -700,6 +703,20 @@ class Menu(object):
                     return
         else:
             self._main(events)
+
+    def get_input_data(self):
+        """
+        Return input data as a dict.
+
+        :return: Input dict
+        :rtype: dict
+        """
+        data = {}
+        for widget in self._actual._option:
+            v = widget.get_value()
+            if v is not _locals.PYGAME_MENU_NOT_A_VALUE:
+                data[widget.get_id()] = v
+        return data
 
     # noinspection PyAttributeOutsideInit
     def reset(self, total):

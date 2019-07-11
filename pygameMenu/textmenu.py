@@ -27,7 +27,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Library import
 from pygameMenu.menu import Menu
 import pygameMenu.config_textmenu as _cfg
-import pygameMenu.locals as _locals
 import pygame as _pygame
 
 

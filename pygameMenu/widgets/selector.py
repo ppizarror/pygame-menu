@@ -38,6 +38,7 @@ class Selector(Widget):
     def __init__(self,
                  title,
                  elements,
+                 selector_id='',
                  default=0,
                  onchange=None,
                  onreturn=None,
@@ -48,17 +49,24 @@ class Selector(Widget):
 
         :param title: Title of the selector
         :param elements: Elements of the selector
+        :param selector_id: ID of the selector
         :param default: Index of default element to display
-
+        :param onchange: callback when changing the selector
+        :param onreturn: callback when pressing return button
+        :param kwargs: Optional keyword-arguments for callbacks
         :type title: str
         :type elements: list
+        :type selector_id: basestring
         :type default: int
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
         """
-        super(Selector, self).__init__(onchange, onreturn, kwargs=kwargs)
+        super(Selector, self).__init__(widget_id=selector_id, onchange=onchange,
+                                       onreturn=onreturn, kwargs=kwargs)
         self._elements = elements
         self._index = 0
         self._sformat = '{0} < {1} >'
-        
+
         # Public attributs
         self.label = title
 

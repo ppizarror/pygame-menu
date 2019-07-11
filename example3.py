@@ -30,11 +30,11 @@ import pygame
 
 # Import pygameMenu
 import pygameMenu
-from pygameMenu import locals as pgm_loc
+from pygameMenu.locals import *
 
 ABOUT = ['pygame-menu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
-         pgm_loc.PYGAMEMENU_TEXT_NEWLINE,
+         PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -90,20 +90,36 @@ settings_menu = pygameMenu.Menu(surface,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.7),
                                 menu_width=int(WINDOW_SIZE[0] * 0.8),
-                                onclose=pgm_loc.PYGAME_MENU_DISABLE_CLOSE,
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                 option_shadow=False,
                                 title='Play menu',
                                 window_height=WINDOW_SIZE[1],
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-settings_menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
-settings_menu.add_text_input('Last name: ', default='Rambo', maxlength=10)
-settings_menu.add_text_input('Some long text: ', maxsize=15)
+settings_menu.add_text_input('First name: ', default='John',
+                             onreturn=check_name_test, textinput_id='first_name')
+settings_menu.add_text_input('Last name: ', default='Rambo',
+                             maxlength=10, textinput_id='last_name')
+settings_menu.add_text_input('Some long text: ', maxsize=15, textinput_id='long_text')
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
-                                                 ('Hard', 'HARD')])
-settings_menu.add_option('Return to main menu', pgm_loc.PYGAME_MENU_BACK)
+                                                 ('Hard', 'HARD')], selector_id='difficulty')
+
+
+def data_fun():
+    """
+    Print data of the menu
+    :return:
+    """
+    print('Settings data:')
+    data = settings_menu.get_input_data()
+    for k in data.keys():
+        print('\t{0}\t=>\t{1}'.format(k, data[k]))
+
+
+settings_menu.add_option('Store data', data_fun)  # Call function
+settings_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 
 # Main menu
 main_menu = pygameMenu.Menu(surface,
@@ -116,7 +132,7 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
                             menu_width=int(WINDOW_SIZE[0] * 0.8),
-                            onclose=pgm_loc.PYGAME_MENU_EXIT,  # User press ESC button
+                            onclose=PYGAME_MENU_EXIT,  # User press ESC button
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
@@ -124,7 +140,7 @@ main_menu = pygameMenu.Menu(surface,
                             )
 
 main_menu.add_option('Settings', settings_menu)
-main_menu.add_option('Quit', pgm_loc.PYGAME_MENU_EXIT)
+main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 # -----------------------------------------------------------------------------
 # Main loop

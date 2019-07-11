@@ -45,15 +45,17 @@ class Button(Widget):
         """
         Description of the specific paramaters (see Widget class for generic ones):
 
-        :param title: Title of the selector
-        :param elements: Elements of the selector
-        :param default: Index of default element to display
-
-        :type title: str
-        :type elements: list
-        :type default: int
+        :param label: Text of the button
+        :param onchange: callback when changing the selector
+        :param onreturn: callback when pressing return button
+        :param args: Optional arguments for callbacks
+        :param kwargs: Optional keyword-arguments for callbacks
+        :type label: basestring
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
         """
-        super(Button, self).__init__(onchange, onreturn, args, kwargs)
+        super(Button, self).__init__(onchange=onchange, onreturn=onreturn,
+                                     args=args, kwargs=kwargs)  # Button has no ID
 
         # Public attributs
         self.label = label

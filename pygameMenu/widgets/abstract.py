@@ -27,6 +27,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
+from pygameMenu.locals import PYGAME_MENU_NOT_A_VALUE
+from uuid import uuid4
 
 
 class Widget(object):
@@ -35,17 +37,27 @@ class Widget(object):
     """
 
     def __init__(self,
+                 widget_id='',
                  onchange=None,
                  onreturn=None,
                  args=None,
                  kwargs=None
                  ):
         """
+        :param widget_id: Widget identifier
         :param onchange: callback when changing the selector
         :param onreturn: callback when pressing return button
-        :param kwargs: Optional arguments for callbacks
+        :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
+        :type widget_id: basestring
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
         """
+
+        # Store id, if None or empty create new ID based on UUID
+        if widget_id is None or len(widget_id) == 0:
+            widget_id = str(uuid4())
+        self._id = widget_id
         self._surface = None  # Rendering surface
         self._rect = _pygame.Rect(0, 0, 0, 0)
 
@@ -117,7 +129,7 @@ class Widget(object):
         """
         Draw the widget shape.
 
-        :param surface: surface to draw.
+        :param surface: Surface to draw
         :return: None
         """
         raise NotImplementedError('Override is mandatory')
@@ -141,7 +153,15 @@ class Widget(object):
 
         :return: value
         """
-        return '__not_a_value__'
+        return PYGAME_MENU_NOT_A_VALUE
+
+    def get_id(self):
+        """
+        Returns widget id.
+
+        :return: id
+        """
+        return self._id
 
     def _render(self):
         """
@@ -184,12 +204,20 @@ class Widget(object):
     def set_selected(self, selected=True):
         """
         Mark the widget as selected.
+
+        :param selected: Set item as selected
+        :type selected: bool
         """
         self.selected = selected
 
     def set_shadow(self, enabled=True, color=None):
         """
         Show text shadow.
+
+        :param enabled: Shadow is enabled or not
+        :param color: Shadow color
+        :type enabled: bool
+        :type color: list, NoneType
         """
         self._shadow = enabled
         if color:
@@ -198,6 +226,11 @@ class Widget(object):
     def set_controls(self, joystick=True, mouse=True):
         """
         Enable interfaces to control the widget.
+
+        :param joystick: Use joystick
+        :param mouse: Use mouse
+        :type joystick: bool
+        :type mouse: bool
         """
         self.joystick_enabled = joystick
         self.mouse_enabled = mouse

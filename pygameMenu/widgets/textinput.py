@@ -37,15 +37,16 @@ class TextInput(Widget):
     def __init__(self,
                  label='',
                  default='',
+                 textinput_id='',
                  antialias=True,
                  cursor_color=(0, 0, 1),
-                 repeat_keys_initial_ms=400,
-                 repeat_keys_interval_ms=35,
                  maxlength=0,
                  maxsize=0,
-                 text_ellipsis='...',
                  onchange=None,
                  onreturn=None,
+                 repeat_keys_initial_ms=400,
+                 repeat_keys_interval_ms=35,
+                 text_ellipsis='...',
                  **kwargs
                  ):
         """
@@ -53,17 +54,36 @@ class TextInput(Widget):
 
         :param label: Input label text
         :param default: Initial text to be displayed
+        :param textinput_id: Id of the text input
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :param cursor_color: Color of cursor
+        :param maxlength: Maximum length of input
+        :param maxsize: Maximum size of the text to be displayed (overflow)
+        :param onchange: callback when changing the selector
+        :param onreturn: callback when pressing return button
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :param repeat_keys_interval_ms: Interval between key press repetition when held
-        :param maxsize: Maximum size of the text to be displayed (overflow)
-        :param maxlength: Maximum length of input
         :param text_ellipsis: Ellipsis text when overflow occurs
+        :param kwargs: Optional keyword-arguments for callbacks
+        :type label: basestring
+        :type default: basestring
+        :type textinput_id: basestring
+        :type antialias: bool
+        :type cursor_color: tuple
+        :type maxlength: int
+        :type maxsize: int
+        :type onchange: function, NoneType
+        :type onreturn: function, NoneType
+        :type repeat_keys_initial_ms: float, int
+        :type repeat_keys_interval_ms: float, int
+        :type text_ellipsis: basestring
         """
-        super(TextInput, self).__init__(onchange, onreturn, kwargs=kwargs)
+        super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
+                                        onreturn=onreturn, kwargs=kwargs)
         if maxlength < 0:
             raise Exception('maxlength must be equal or greater than zero')
+        if maxsize < 0:
+            raise Exception('maxsize must be equal or greater than zero')
 
         self._antialias = antialias
         self._input_string = default  # Inputted text
