@@ -182,8 +182,23 @@ class Selector(Widget):
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 if self._rect.collidepoint(*event.pos):
-                    self.right()
-                    updated = True
+                    # Render label and check the position of the options
+                    labelsize = self._font.size(self.label)[0]
+
+                    # Check if mouse collides left or right as percentage, use only X coordinate
+                    mousex, _ = event.pos
+                    topleft, _ = self._rect.topleft
+                    topright, _ = self._rect.topright
+                    dist = mousex - (topleft + labelsize)  # Distance from label
+                    if dist > 0:  # User clicked options, not label
+
+                        # Position in percentage, if <0.5 user clicked left
+                        pos = dist / (topright - topleft - labelsize)
+                        if pos <= 0.5:
+                            self.left()
+                        else:
+                            self.right()
+                            updated = True
 
         return updated
 
