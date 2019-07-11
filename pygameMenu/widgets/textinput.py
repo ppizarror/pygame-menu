@@ -87,7 +87,8 @@ class TextInput(Widget):
 
         self._antialias = antialias
         self._input_string = default  # Inputted text
-        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN, _pygame.K_ESCAPE)
+        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN, _pygame.K_ESCAPE,
+                             _pygame.K_NUMLOCK, _pygame.K_TAB, _pygame.K_CAPSLOCK)
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -318,7 +319,7 @@ class TextInput(Widget):
         for event in events:
             if event.type == _pygame.KEYDOWN:
                 self._cursor_visible = True  # So the user sees where he writes
-
+                print(event.key)
                 # If none exist, create counter for that key:
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]

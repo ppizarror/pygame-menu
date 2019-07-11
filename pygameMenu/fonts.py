@@ -34,6 +34,10 @@ __fontdir = '{0}/fonts/{1}.ttf'
 # Avaiable fonts
 FONT_8BIT = __fontdir.format(__actualpath, '8bit')
 FONT_BEBAS = __fontdir.format(__actualpath, 'bebas')
+FONT_COMIC_NEUE = __fontdir.format(__actualpath, 'comic_neue')
 FONT_FRANCHISE = __fontdir.format(__actualpath, 'franchise')
+FONT_HELVETICA = __fontdir.format(__actualpath, 'helvetica')
 FONT_MUNRO = __fontdir.format(__actualpath, 'munro')
 FONT_NEVIS = __fontdir.format(__actualpath, 'nevis')
+FONT_OPEN_SANS = __fontdir.format(__actualpath, 'open_sans')
+FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')
