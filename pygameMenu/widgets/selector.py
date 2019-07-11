@@ -198,7 +198,7 @@ class Selector(Widget):
                             self.left()
                         else:
                             self.right()
-                            updated = True
+                        updated = True
 
         return updated
 
