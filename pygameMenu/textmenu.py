@@ -54,34 +54,32 @@ class TextMenu(Menu):
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
-                 widget_alignment=_locals.PYGAME_ALIGN_CENTER,
                  **kwargs
                  ):
         """
         TextMenu constructor.
 
-        :param draw_text_region_x: X-Axis drawing region of the text
-        :param font: Font file direction
-        :param kwargs: Aditional parameters
         :param surface: Pygame surface object
-        :param text_centered: Indicate if text is centered
+        :param window_width: Window width
+        :param window_height: Window height
+        :param font: Font file direction
+        :param title: Title of the Menu
+        :param draw_text_region_x: X-Axis drawing region of the text
+        :param text_align: Text default alignment
         :param text_color: Text color
         :param text_fontsize: Text font size
         :param text_margin: Line margin
-        :param title: Title of the Menu
-        :param widget_align: Default widget alignment
-        :param window_height: Window height
-        :param window_width: Window width
-        :type draw_text_region_x: int
+        :param kwargs: Aditional parameters
+
+        :type window_width: int
+        :type window_height: int
         :type font: str
-        :type text_centered: bool
+        :type title: str
+        :type draw_text_region_x: int
+        :type text_align: basestring
         :type text_color: tuple
         :type text_fontsize: int
         :type text_margin: int
-        :type title: str
-        :type widget_align: basestring
-        :type window_height: int
-        :type window_width: int
         """
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
@@ -99,7 +97,6 @@ class TextMenu(Menu):
         self._font_textsize = text_fontsize
         self._text_align = text_align
         self._textdy = text_margin
-        self._widget_align = widget_alignment
 
         # Load font
         self._fonttext = _pygame.font.Font(font, self._font_textsize)

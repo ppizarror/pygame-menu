@@ -60,6 +60,7 @@ class Selector(Widget):
         :param onchange: callback when changing the selector
         :param onreturn: callback when pressing return button
         :param kwargs: Optional keyword-arguments for callbacks
+
         :type title: str
         :type elements: list
         :type selector_id: basestring

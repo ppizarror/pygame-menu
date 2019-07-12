@@ -117,6 +117,7 @@ class Menu(object):
         :param widget_align: Default widget alignment
         :param window_height: Window height size (px)
         :param window_width: Window width size (px)
+
         :type bgfun: function
         :type color_selected: tuple
         :type dopause: bool
@@ -266,7 +267,6 @@ class Menu(object):
         self._mouse = mouse_enabled
 
     def add_option(self, element_name, element, *args, **kwargs):
-
         """
         Add option (button) to menu.
 
