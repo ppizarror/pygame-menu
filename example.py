@@ -38,7 +38,7 @@ from pygameMenu.locals import *
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-ABOUT = ['pygame-menu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
          PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -65,7 +65,7 @@ for m in HELP:
 
 # Create window
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
-pygame.display.set_caption('pygame-menu example')
+pygame.display.set_caption('pygameMenu example')
 
 # Main timer and game clock
 clock = pygame.time.Clock()

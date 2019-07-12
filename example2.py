@@ -34,7 +34,7 @@ import pygame
 import pygameMenu
 from pygameMenu.locals import *
 
-ABOUT = ['pygame-menu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
          PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -53,7 +53,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('pygame-menu example 2')
+pygame.display.set_caption('pygameMenu example 2')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 

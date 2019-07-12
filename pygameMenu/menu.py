@@ -714,7 +714,7 @@ class Menu(object):
         data = {}
         for widget in self._actual._option:
             v = widget.get_value()
-            if v is not _locals.PYGAME_MENU_NOT_A_VALUE:
+            if v != _locals.PYGAME_MENU_NOT_A_VALUE:
                 data[widget.get_id()] = v
         return data
 
