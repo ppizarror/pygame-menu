@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
+from pygameMenu import locals as _locals
 from pygameMenu.widgets.abstract import Widget
 
 
@@ -44,6 +45,7 @@ class TextInput(Widget):
                  label='',
                  default='',
                  textinput_id='',
+                 type_data=_locals.PYGAME_INPUT_TEXT,
                  antialias=True,
                  cursor_color=(0, 0, 1),
                  maxlength=0,
@@ -61,6 +63,7 @@ class TextInput(Widget):
         :param label: Input label text
         :param default: Initial text to be displayed
         :param textinput_id: Id of the text input
+        :param type_data: Type of data
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :param cursor_color: Color of cursor
         :param maxlength: Maximum length of input
@@ -75,6 +78,7 @@ class TextInput(Widget):
         :type label: basestring
         :type default: basestring
         :type textinput_id: basestring
+        :type type_data: basestring
         :type antialias: bool
         :type cursor_color: tuple
         :type maxlength: int
@@ -114,6 +118,9 @@ class TextInput(Widget):
         self._cursor_switch_ms = 500  # /|\
         self._cursor_ms_counter = 0
         self._clock = _pygame.time.Clock()
+
+        # Other
+        self._type_data = type_data
 
         # Public attributs
         self.label = label
@@ -173,7 +180,7 @@ class TextInput(Widget):
                 cursor_x_pos -= self._cursor_surface.get_width()
 
             cursor_y_pos = 1
-            surface.blit(self._cursor_surface, (self._rect.x + cursor_x_pos, self._rect.y + cursor_y_pos))
+            surface.blit(self._cursor_surface, (self._rect.x + cursor_x_pos + 1, self._rect.y + cursor_y_pos))
 
     def get_value(self):
         """
@@ -387,17 +394,40 @@ class TextInput(Widget):
                     # Check input has not exceeded the limit
                     if self._check_input_size():
                         break
+
                     # If no special key is pressed, add unicode of key to input_string
-                    self._input_string = (
+                    new_string = (
                             self._input_string[:self._cursor_position]
                             + event.unicode
                             + self._input_string[self._cursor_position:]
                     )
-                    lkey = len(event.unicode)
-                    if lkey > 0:
-                        self._cursor_position += lkey  # Some are empty, e.g. K_UP
-                        self._update_renderbox(right=1, addition=True)
-                    updated = True
+
+                    # Check data type
+                    data_valid = True
+                    if self._type_data == _locals.PYGAME_INPUT_TEXT:
+                        pass
+                    elif self._type_data == _locals.PYGAME_INPUT_FLOAT:
+                        try:
+                            new_string = float(new_string)
+                        except ValueError:
+                            data_valid = False
+                    elif self._type_data == _locals.PYGAME_INPUT_INT:
+                        try:
+                            new_string = int(new_string)
+                        except ValueError:
+                            data_valid = False
+                    else:
+                        data_valid = False
+
+                    # If data is valid
+                    if data_valid:
+                        self._input_string = str(new_string)
+
+                        lkey = len(event.unicode)
+                        if lkey > 0:
+                            self._cursor_position += lkey  # Some are empty, e.g. K_UP
+                            self._update_renderbox(right=1, addition=True)
+                        updated = True
 
             elif event.type == _pygame.KEYUP:
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way

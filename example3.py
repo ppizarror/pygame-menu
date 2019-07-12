@@ -95,7 +95,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 font_size=30,
                                 menu_alpha=100,
                                 menu_color=MENU_BACKGROUND_COLOR,
-                                menu_height=int(WINDOW_SIZE[1] * 0.8),
+                                menu_height=int(WINDOW_SIZE[1] * 0.85),
                                 menu_width=int(WINDOW_SIZE[0] * 0.9),
                                 onclose=PYGAME_MENU_DISABLE_CLOSE,
                                 option_shadow=False,
@@ -109,7 +109,8 @@ settings_menu.add_text_input('First name: ', default='John',
                              onreturn=check_name_test, textinput_id='first_name')
 settings_menu.add_text_input('Last name: ', default='Rambo',
                              maxlength=10, textinput_id='last_name')
-settings_menu.add_text_input('Some long text: ', maxsize=15, textinput_id='long_text')
+settings_menu.add_text_input('Your age: ', maxlength=3, type_data=PYGAME_INPUT_INT)
+settings_menu.add_text_input('Some long text: ', maxsize=18, textinput_id='long_text')
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
                                                  ('Hard', 'HARD')], selector_id='difficulty')

@@ -36,7 +36,8 @@ __all__ = ['PYGAME_MENU_BACK', 'PYGAME_MENU_CLOSE', 'PYGAME_MENU_DISABLE_CLOSE',
            'PYGAMEMENU_TYPE_SELECTOR', 'PYGAMEMENU_TYPE_TEXTINPUT', 'JOY_AXIS_X',
            'JOY_AXIS_Y', 'JOY_BUTTON_BACK', 'JOY_BUTTON_SELECT', 'JOY_CENTERED',
            'JOY_DEADZONE', 'JOY_DOWN', 'JOY_LEFT', 'JOY_RIGHT', 'JOY_UP',
-           'PYGAME_ALIGN_CENTER', 'PYGAME_ALIGN_LEFT', 'PYGAME_ALIGN_RIGHT']
+           'PYGAME_ALIGN_CENTER', 'PYGAME_ALIGN_LEFT', 'PYGAME_ALIGN_RIGHT',
+           'PYGAME_INPUT_FLOAT', 'PYGAME_INPUT_INT', 'PYGAME_INPUT_TEXT']
 
 
 class PymenuAction(object):
@@ -85,3 +86,8 @@ JOY_UP = (0, 1)
 PYGAME_ALIGN_CENTER = '__pygameMenu_align_center__'
 PYGAME_ALIGN_LEFT = '__pygameMenu_align_left__'
 PYGAME_ALIGN_RIGHT = '__pygameMenu_align_right__'
+
+# Input data type
+PYGAME_INPUT_FLOAT = '__pygameMenu_input_float__'
+PYGAME_INPUT_INT = '__pygameMenu_input_int__'
+PYGAME_INPUT_TEXT = '__pygameMenu_input_text__'
