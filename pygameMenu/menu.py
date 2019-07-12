@@ -259,24 +259,33 @@ class Menu(object):
         # Init mouse
         self._mouse = mouse_enabled
 
-    def add_option(self, element_name, element, *args, align=''):
+    def add_option(self, element_name, element, *args, **kwargs):
 
         """
         Add option (button) to menu.
 
+        kwargs:
+            - align: Widget alignment
+
         :param element_name: Name of the element
         :param element: Object
-        :param align: Widget alignment
         :param args: Aditional arguments used by a function
+        :param kwargs: Additional keyword arguments
         :type element_name: str
         :type element: Menu, _PymenuAction, function
-        :type align: basestring
         :return: Button ID
         :rtype: int
         """
         assert isinstance(element_name, str), 'Element name must be a string'
-        if align == '':
-            align = self._widget_align
+
+        # Extend kwargs
+        kwargs_keys = kwargs.keys()
+        if 'align' not in kwargs_keys:
+            kwargs['align'] = ''
+
+        # Check alignment
+        if kwargs['align'] == '':
+            kwargs['align'] = self._widget_align
 
         widget_id = self._size
         self._size += 1
@@ -307,7 +316,7 @@ class Menu(object):
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
         widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(align)
+        widget.set_alignment(kwargs['align'])
 
         self._option.append(widget)
         if len(self._option) == 1:
