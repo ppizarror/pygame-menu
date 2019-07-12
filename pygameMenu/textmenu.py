@@ -44,8 +44,7 @@ class TextMenu(Menu):
                  font,
                  title,
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
-                 text_align=_locals.PYGAME_ALIGN_CENTER,
-                 text_centered=_cfg.TEXT_CENTERED,
+                 text_align=_locals.PYGAME_ALIGN_LEFT,
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
@@ -78,8 +77,6 @@ class TextMenu(Menu):
         :type window_height: int
         :type window_width: int
         """
-        assert isinstance(draw_text_region_x, int)
-        assert isinstance(text_centered, bool)
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
         assert draw_text_region_x >= 0, 'X-Axis drawing region of the text must be greater than zero'
@@ -91,7 +88,6 @@ class TextMenu(Menu):
                                        font, title, **kwargs)
 
         # Store configuration
-        self._centered_text = text_centered
         self._draw_text_region_x = draw_text_region_x
         self._font_textcolor = text_color
         self._font_textsize = text_fontsize
@@ -153,11 +149,19 @@ class TextMenu(Menu):
         for line in self._text:
             text = self._fonttext.render(line, 1, self._font_textcolor)
             text_width = text.get_size()[0]
-            if self._centered_text:
-                text_dx = -int(text_width / 2.0)
-            else:
-                print('sad')
+
+            # Check text align
+            if self._text_align == _locals.PYGAME_ALIGN_CENTER:
+                text_dx = -int(self._width * (self._draw_text_region_x / 100.0)) + \
+                          self._width / 2 - text_width / 2
+            elif self._text_align == _locals.PYGAME_ALIGN_LEFT:
                 text_dx = 0
+            elif self._text_align == _locals.PYGAME_ALIGN_RIGHT:
+                text_dx = -2 * int(self._width * (self._draw_text_region_x / 100.0)) \
+                          - text_width + self._width
+            else:
+                text_dx = 0
+
             ycoords = self._opt_posy + self._textdy + dy * (self._font_textsize + self._textdy)
             ycoords -= self._font_textsize / 2
 

@@ -166,6 +166,7 @@ help_menu = pygameMenu.TextMenu(surface,
                                 menu_color=(30, 50, 107),  # Background color
                                 menu_color_title=(120, 45, 30),
                                 onclose=PYGAME_MENU_DISABLE_CLOSE,  # Pressing ESC button does nothing
+                                text_align=PYGAME_ALIGN_CENTER,
                                 title='Help',
                                 window_height=H_SIZE,
                                 window_width=W_SIZE
@@ -177,13 +178,12 @@ for m in HELP:
 # About menu
 about_menu = pygameMenu.TextMenu(surface,
                                  dopause=False,
-                                 draw_text_region_x=50,
+                                 draw_text_region_x=5,  # 5% margin
                                  font=pygameMenu.fonts.FONT_NEVIS,
                                  font_size_title=30,
                                  font_title=pygameMenu.fonts.FONT_8BIT,
                                  menu_color_title=COLOR_BLUE,
                                  onclose=PYGAME_MENU_DISABLE_CLOSE,  # Disable menu close (ESC button)
-                                 text_centered=True,
                                  text_fontsize=20,
                                  title='About',
                                  window_height=H_SIZE,

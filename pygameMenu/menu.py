@@ -277,7 +277,6 @@ class Menu(object):
         assert isinstance(element_name, str), 'Element name must be a string'
         if align == '':
             align = self._widget_align
-        print(align)
 
         widget_id = self._size
         self._size += 1
