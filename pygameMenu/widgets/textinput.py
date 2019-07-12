@@ -1,8 +1,13 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
 TEXT INPUT
 Text input class, this widget lets user to write text.
 
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,6 +27,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 import pygame as _pygame
@@ -130,7 +136,7 @@ class TextInput(Widget):
         self._render()
 
         if not self._cursor_surface:
-            self._cursor_surface=_pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
+            self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
             self._cursor_surface.fill(self._cursor_color)
 
         if self._shadow:

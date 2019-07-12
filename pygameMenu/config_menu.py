@@ -1,8 +1,13 @@
 # coding=utf-8
 """
-CONFIG
-Default Menu settings.
+pygame-menu
+https://github.com/ppizarror/pygame-menu
 
+CONFIG
+Default menu settings.
+
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,6 +27,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 MENU_ALPHA = 90  # Alpha of menu color, 0: Opaque, 255: Transparent

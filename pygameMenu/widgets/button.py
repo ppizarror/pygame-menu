@@ -1,8 +1,13 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
 BUTTON
 Button class, manage elements and adds entries to menu.
 
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,6 +27,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 import pygame as _pygame
