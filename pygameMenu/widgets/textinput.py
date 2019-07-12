@@ -97,7 +97,7 @@ class TextInput(Widget):
             raise Exception('maxsize must be equal or greater than zero')
 
         self._antialias = antialias
-        self._input_string = default  # Inputted text
+        self._input_string = str(default)  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN, _pygame.K_ESCAPE,
                              _pygame.K_NUMLOCK, _pygame.K_TAB, _pygame.K_CAPSLOCK)
 
@@ -113,7 +113,7 @@ class TextInput(Widget):
         # Things cursor:
         self._cursor_color = cursor_color
         self._cursor_surface = None
-        self._cursor_position = len(default)  # Inside text
+        self._cursor_position = len(self._input_string)  # Inside text
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
         self._cursor_switch_ms = 500  # /|\
         self._cursor_ms_counter = 0
@@ -186,7 +186,20 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
-        return self._input_string
+        value = ''
+        if self._type_data == _locals.PYGAME_INPUT_TEXT:
+            value = self._input_string
+        elif self._type_data == _locals.PYGAME_INPUT_FLOAT:
+            try:
+                value = float(self._input_string)
+            except ValueError:
+                value = 0
+        elif self._type_data == _locals.PYGAME_INPUT_INT:
+            try:
+                value = int(self._input_string)
+            except ValueError:
+                value = 0
+        return value
 
     def _render(self):
         """
@@ -407,15 +420,21 @@ class TextInput(Widget):
                     if self._type_data == _locals.PYGAME_INPUT_TEXT:
                         pass
                     elif self._type_data == _locals.PYGAME_INPUT_FLOAT:
-                        try:
-                            new_string = float(new_string)
-                        except ValueError:
-                            data_valid = False
+                        if new_string == '-':
+                            data_valid = True
+                        else:
+                            try:
+                                new_string = float(new_string)
+                            except ValueError:
+                                data_valid = False
                     elif self._type_data == _locals.PYGAME_INPUT_INT:
-                        try:
-                            new_string = int(new_string)
-                        except ValueError:
-                            data_valid = False
+                        if new_string == '-':
+                            data_valid = True
+                        else:
+                            try:
+                                new_string = int(new_string)
+                            except ValueError:
+                                data_valid = False
                     else:
                         data_valid = False
 
