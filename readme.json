@@ -33,19 +33,19 @@
       "ALT": "License MIT"
     },
     "2": {
-      "IMAGE": "https://ppizarror.com/badges/python27.svg",
+      "IMAGE": "https://ppizarror.com/badges/python26+.svg",
       "HREF": "https://www.python.org/downloads/",
-      "ALT": "Python 2.7"
+      "ALT": "Python 2.6+"
     },
     "3": {
-      "IMAGE": "https://ppizarror.com/badges/python36.svg",
+      "IMAGE": "https://ppizarror.com/badges/python36+.svg",
       "HREF": "https://www.python.org/downloads/",
-      "ALT": "Python 3.6"
+      "ALT": "Python 3.6+"
     },
     "4": {
-      "IMAGE": "https://ppizarror.com/badges/pygame194.svg",
+      "IMAGE": "https://ppizarror.com/badges/pygame194-196.svg",
       "HREF": "https://www.pygame.org/",
-      "ALT": "Pygame 1.9.4"
+      "ALT": "Pygame 1.9.4-1.9.6"
     },
 	"5": {
       "NEWLINE": true

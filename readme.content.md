@@ -169,7 +169,7 @@ from pygameMenu.locals import *  # Import constants (like actions)
     | selector_id | Selector identification | str |
     | default | Default index of the displayed option | int |
     | align | Widget alignment | str |
-    | onchange | Function that executes when change the value of selector| function |
+    | onchange | Function that executes when change the value of selector | function |
     | onreturn | Function that executes when pressing return button on selected item | function |
     | **kwargs | Additional arguments | - |
 
@@ -215,17 +215,19 @@ from pygameMenu.locals import *  # Import constants (like actions)
 
     | Param | Description | Type |
     | :-: | :-- | :--: |
-    | title | Label string on menu entry| str |
+    | title | Label string on menu entry | str |
     | textinput_id | Text input identificator | str |
-    | onchange | Function that executes when change the value of text input| function |
-    | onreturn | Function that executes when pressing return button | function |
     | default | Default value to display | str |
+    | type_data | Data type of the input | str |
     | maxlength | Maximum length of string, if 0 there's no limit | int |
     | maxsize | Maximum size of the text widget, if 0 there's no limit | int |
     | align | Text input alignment | str |
+    | onchange | Function that executes when change the value of text input | function |
+    | onreturn | Function that executes when pressing return button | function |
     | **kwargs | Additional arguments | - |
 
     Align can take the following values: PYGAME_ALIGN_CENTER, PYGAME_ALIGN_LEFT, PYGAME_ALIGN_RIGHT.
+    Data type can take the following values: PYGAME_INPUT_INT, PYGAME_INPUT_FLOAT, PYGAME_INPUT_TEXT.
 
     Example:
     ```python
