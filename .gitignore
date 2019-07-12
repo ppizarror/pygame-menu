@@ -2,6 +2,9 @@
 .idea/
 .ropeproject/
 
+# Vscode files
+.vscode/
+
 # Zip files
 *.zip
 

@@ -14,8 +14,7 @@ selectors, items and texts menus with many options to customize.
 Install Instructions
 --------------------
 
-Pygame Toolbox can now be downloaded via pip. Simply run pip install
-pygame-menu.
+Pygame Toolbox can be downloaded via pip. Simply run pip install pygame-menu.
 
 Dependencies
 ~~~~~~~~~~~~
