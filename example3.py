@@ -94,6 +94,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 onclose=PYGAME_MENU_DISABLE_CLOSE,
                                 option_shadow=False,
                                 title='Settings',
+                                widget_alignment=PYGAME_ALIGN_LEFT,
                                 window_height=WINDOW_SIZE[1],
                                 window_width=WINDOW_SIZE[0]
                                 )
@@ -121,7 +122,7 @@ def data_fun():
 
 
 settings_menu.add_option('Store data', data_fun)  # Call function
-settings_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
+settings_menu.add_option('Return to main menu', PYGAME_MENU_BACK, align=PYGAME_ALIGN_CENTER)
 
 # Main menu
 main_menu = pygameMenu.Menu(surface,

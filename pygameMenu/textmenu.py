@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Library import
 from pygameMenu.menu import Menu
 import pygameMenu.config_textmenu as _cfg
+import pygameMenu.locals as _locals
 import pygame as _pygame
 
 
@@ -43,10 +44,12 @@ class TextMenu(Menu):
                  font,
                  title,
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
+                 text_align=_locals.PYGAME_ALIGN_CENTER,
                  text_centered=_cfg.TEXT_CENTERED,
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
+                 widget_alignment=_locals.PYGAME_ALIGN_CENTER,
                  **kwargs
                  ):
         """
@@ -61,6 +64,7 @@ class TextMenu(Menu):
         :param text_fontsize: Text font size
         :param text_margin: Line margin
         :param title: Title of the Menu
+        :param widget_align: Default widget alignment
         :param window_height: Window height
         :param window_width: Window width
         :type draw_text_region_x: int
@@ -70,6 +74,7 @@ class TextMenu(Menu):
         :type text_fontsize: int
         :type text_margin: int
         :type title: str
+        :type widget_align: basestring
         :type window_height: int
         :type window_width: int
         """
@@ -90,7 +95,9 @@ class TextMenu(Menu):
         self._draw_text_region_x = draw_text_region_x
         self._font_textcolor = text_color
         self._font_textsize = text_fontsize
+        self._text_align = text_align
         self._textdy = text_margin
+        self._widget_align = widget_alignment
 
         # Load font
         self._fonttext = _pygame.font.Font(font, self._font_textsize)
@@ -99,7 +106,7 @@ class TextMenu(Menu):
         self._text = []
 
         # Position of text
-        self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posy
+        self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
         self._opt_posy -= self._textdy / 2 + self._font_textsize / 2
 
     def add_line(self, text):
@@ -143,12 +150,13 @@ class TextMenu(Menu):
 
         # Draw text
         dy = 0
-        for linea in self._text:
-            text = self._fonttext.render(linea, 1, self._font_textcolor)
+        for line in self._text:
+            text = self._fonttext.render(line, 1, self._font_textcolor)
             text_width = text.get_size()[0]
             if self._centered_text:
                 text_dx = -int(text_width / 2.0)
             else:
+                print('sad')
                 text_dx = 0
             ycoords = self._opt_posy + self._textdy + dy * (self._font_textsize + self._textdy)
             ycoords -= self._font_textsize / 2
@@ -168,13 +176,17 @@ class TextMenu(Menu):
         dysum += 2 * self._textdy + self._font_textsize
 
         rect = self._option[index].get_rect()
-        if self._centered_option:
-            text_dx = -int(rect.width / 2.0)
+        if self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+            option_dx = -int(rect.width / 2.0)
+        elif self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+            option_dx = -self._width / 2 + 16
+        elif self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+            option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
         else:
-            text_dx = 0
+            option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        xccord = self._opt_posx + text_dx
+        xccord = self._opt_posx + option_dx
         ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
 
         return xccord, ycoord

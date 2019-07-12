@@ -75,7 +75,8 @@ class Menu(object):
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
-                 title_offsety=0
+                 title_offsety=0,
+                 widget_alignment=_locals.PYGAME_ALIGN_CENTER
                  ):
         """
         Menu constructor.
@@ -94,7 +95,6 @@ class Menu(object):
         :param font_title: Alternative font of the title (file direction)
         :param joystick_enabled: Enable/disable joystick on menu
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
-        :param menu_centered: Text centered menu
         :param menu_color: Menu color
         :param menu_color_title: Background color of title
         :param menu_height: Height of menu (px)
@@ -108,6 +108,7 @@ class Menu(object):
         :param title: Title of the menu (main title)
         :param title_offsetx: Offset x-position of title (px)
         :param title_offsety: Offset y-position of title (px)
+        :param widget_align: Default widget alignment
         :param window_height: Window height size (px)
         :param window_width: Window width size (px)
         :type bgfun: function
@@ -123,7 +124,6 @@ class Menu(object):
         :type font_title: basestring
         :type joystick_enabled: bool
         :type menu_alpha: int
-        :type menu_centered: bool
         :type menu_color: tuple
         :type menu_color_title: tuple
         :type menu_height: int
@@ -134,6 +134,7 @@ class Menu(object):
         :type option_shadow: bool
         :type rect_width: int
         :type title: basestring
+        :type widget_align: basestring
         :type window_height: int
         :type window_width: int
         """
@@ -196,7 +197,6 @@ class Menu(object):
                                 menu_color_title[2],
                                 int(255 * (1 - (100 - menu_alpha) / 100.0)))
 
-        self._centered_option = menu_centered
         self._drawselrect = draw_select
         self._font_color = font_color
         self._fsize = font_size
@@ -232,20 +232,19 @@ class Menu(object):
         self._font_title = _pygame.font.Font(font_title, self._fsize_title)
 
         # Position of menu
-        self._posy = (window_width - self._width) / 2
-        self._posx = (window_height - self._height) / 2
-        self._bgrect = [(self._posy, self._posx),
-                        (self._posy + self._width, self._posx),
-                        (self._posy + self._width, self._posx + self._height),
-                        (self._posy, self._posx + self._height)]
+        self._posx = (window_width - self._width) / 2
+        self._posy = (window_height - self._height) / 2
+        self._bgrect = [(self._posx, self._posy),
+                        (self._posx + self._width, self._posy),
+                        (self._posx + self._width, self._posy + self._height),
+                        (self._posx, self._posy + self._height)]
         self._draw_regionx = draw_region_x
         self._draw_regiony = draw_region_y
 
         # Option position
-        self._opt_posx = int(
-            self._width * (self._draw_regionx / 100.0)) + self._posy
-        self._opt_posy = int(
-            self._height * (self._draw_regiony / 100.0)) + self._posx
+        self._opt_posx = int(self._width * (self._draw_regionx / 100.0)) + self._posx
+        self._opt_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy
+        self._widget_align = widget_alignment
 
         # Title properties
         self.set_title(title, title_offsetx, title_offsety)
@@ -260,18 +259,25 @@ class Menu(object):
         # Init mouse
         self._mouse = mouse_enabled
 
-    def add_option(self, element_name, element, *args):
+    def add_option(self, element_name, element, *args, align=''):
+
         """
-        Add option to menu.
+        Add option (button) to menu.
 
         :param element_name: Name of the element
         :param element: Object
-        :param args: Aditional arguments
+        :param align: Widget alignment
+        :param args: Aditional arguments used by a function
         :type element_name: str
         :type element: Menu, _PymenuAction, function
-        :return:
+        :type align: basestring
+        :return: Button ID
+        :rtype: int
         """
         assert isinstance(element_name, str), 'Element name must be a string'
+        if align == '':
+            align = self._widget_align
+        print(align)
 
         widget_id = self._size
         self._size += 1
@@ -302,6 +308,7 @@ class Menu(object):
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
         widget.set_controls(self._joystick, self._mouse)
+        widget.set_alignment(align)
 
         self._option.append(widget)
         if len(self._option) == 1:
@@ -309,8 +316,8 @@ class Menu(object):
 
         return widget_id
 
-    def add_selector(self, title, values, selector_id='',
-                     onchange=None, onreturn=None, default=0, **kwargs):
+    def add_selector(self, title, values, selector_id='', default=0, align='',
+                     onchange=None, onreturn=None, **kwargs):
         """
         Add a selector to menu: several options with values and two functions
         that execute when changing the selector (left/right) and pressing
@@ -327,6 +334,7 @@ class Menu(object):
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
         :param selector_id: ID of the selector
         :param default: Index of default value to display
+        :param align: Widget alignment
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
@@ -334,6 +342,7 @@ class Menu(object):
         :type values: list
         :type selector_id: basestring
         :type default: int
+        :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: Selector ID
@@ -345,6 +354,8 @@ class Menu(object):
                 'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
+        if align == '':
+            align = self._widget_align
 
         widget_id = self._size
         self._size += 1
@@ -357,6 +368,7 @@ class Menu(object):
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
         widget.set_controls(self._joystick, self._mouse)
+        widget.set_alignment(align)
 
         self._option.append(widget)
         if len(self._option) == 1:
@@ -413,7 +425,8 @@ class Menu(object):
                                  onreturn=fun, kwargs=kwargs)
 
     def add_text_input(self, title, textinput_id='', onchange=None, onreturn=None,
-                       default='', maxlength=0, maxsize=0, **kwargs):
+                       default='', maxlength=0, maxsize=0, align='',
+                       **kwargs):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -428,6 +441,7 @@ class Menu(object):
         :param default: default value to display
         :param maxlength: Maximum length of string, if 0 there's no limit
         :param maxsize: Maximum size of the text widget, if 0 there's no limit
+        :param align: Widget alignment
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
@@ -436,6 +450,7 @@ class Menu(object):
         :type default: str
         :type maxlength: int
         :type maxsize: int
+        :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: TextInput ID
@@ -446,6 +461,8 @@ class Menu(object):
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
+        if align == '':
+            align = self._widget_align
 
         # Check data
         assert isinstance(maxlength, int), 'maxlength must be integer'
@@ -459,6 +476,7 @@ class Menu(object):
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
         widget.set_controls(self._joystick, self._mouse)
+        widget.set_alignment(align)
 
         self._option.append(widget)
         if len(self._option) == 1:
@@ -574,13 +592,20 @@ class Menu(object):
         :return: None
         """
         rect = self._option[index].get_rect()
-        if self._centered_option:
-            text_dx = -int(rect.width / 2.0)
+        align = self._option[index].get_alignment()
+
+        # Calculate alignment
+        if align == _locals.PYGAME_ALIGN_CENTER:
+            option_dx = -int(rect.width / 2.0)
+        elif align == _locals.PYGAME_ALIGN_LEFT:
+            option_dx = -self._width / 2 + 16  # +constant to deal with inflate
+        elif align == _locals.PYGAME_ALIGN_RIGHT:
+            option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
         else:
-            text_dx = 0
+            option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        xccord = self._opt_posx + text_dx
+        xccord = self._opt_posx + option_dx
         ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
         return xccord, ycoord
 
@@ -799,18 +824,18 @@ class Menu(object):
         title_width = self._title.get_size()[0]
         title_height = self._title.get_size()[1]
         self._fsize_title = title_height
-        self._title_polygon_pos = [(self._posy, self._posx),
-                                   (self._posy + self._width, self._posx),
-                                   (self._posy + self._width,
-                                    self._posx + self._fsize_title / 2),
-                                   (self._posy + title_width + 25,
-                                    self._posx + self._fsize_title / 2),
-                                   (self._posy + title_width + 5,
-                                    self._posx + self._fsize_title + 5),
-                                   (self._posy, self._posx + self._fsize_title + 5)]
+        self._title_polygon_pos = [(self._posx, self._posy),
+                                   (self._posx + self._width, self._posy),
+                                   (self._posx + self._width,
+                                    self._posy + self._fsize_title / 2),
+                                   (self._posx + title_width + 25,
+                                    self._posy + self._fsize_title / 2),
+                                   (self._posx + title_width + 5,
+                                    self._posy + self._fsize_title + 5),
+                                   (self._posx, self._posy + self._fsize_title + 5)]
 
         self._title_pos = (
-            self._posy + 5 + self._title_offsetx, self._posx + self._title_offsety)
+            self._posx + 5 + self._title_offsetx, self._posy + self._title_offsety)
 
         cross_size = self._title_polygon_pos[2][1] - self._title_polygon_pos[1][1] - 6
         self._title_backbox_rect = _pygame.Rect(self._title_polygon_pos[1][0] - cross_size - 3,

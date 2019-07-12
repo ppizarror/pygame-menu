@@ -27,7 +27,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
-from pygameMenu.locals import PYGAME_MENU_NOT_A_VALUE
+from pygameMenu.locals import PYGAME_MENU_NOT_A_VALUE, PYGAME_ALIGN_CENTER, \
+    PYGAME_ALIGN_LEFT, PYGAME_ALIGN_RIGHT
 from uuid import uuid4
 
 
@@ -60,6 +61,7 @@ class Widget(object):
         self._id = widget_id
         self._surface = None  # Rendering surface
         self._rect = _pygame.Rect(0, 0, 0, 0)
+        self._alignment = PYGAME_ALIGN_CENTER
 
         self._on_change = onchange
         self._on_return = onreturn
@@ -200,6 +202,28 @@ class Widget(object):
         """
         self._rect.x = posx
         self._rect.y = posy
+
+    def set_alignment(self, align):
+        """
+        Set the alignment of the widget.
+
+        :param align: center, left, right
+        :type align: basestring
+        :return: None
+        """
+        align = align.lower()
+        if align not in [PYGAME_ALIGN_LEFT, PYGAME_ALIGN_CENTER, PYGAME_ALIGN_RIGHT]:
+            raise Exception('Incorrect alignment of the widget')
+        self._alignment = align
+
+    def get_alignment(self):
+        """
+        Returns widget alignment.
+
+        :return: Widget align
+        :rtype: basestring
+        """
+        return self._alignment
 
     def set_selected(self, selected=True):
         """
