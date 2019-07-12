@@ -377,17 +377,22 @@ class Menu(object):
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
-        widget = _widgets.Selector(title, values, selector_id, default, onchange, onreturn, **kwargs)
+        # Create widget
+        widget = _widgets.Selector(title, values, selector_id, default,
+                                   onchange, onreturn, **kwargs)
+        self._check_id_duplicated(selector_id)
+
+        # Configure widget
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
 
+        # Store widget
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
-
         return widget_id
 
     def add_selector_change(self, title, values, fun, **kwargs):
@@ -438,9 +443,9 @@ class Menu(object):
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
 
-    def add_text_input(self, title, textinput_id='', onchange=None, onreturn=None,
-                       default='', maxlength=0, maxsize=0, align='',
-                       **kwargs):
+    def add_text_input(self, title, textinput_id='', default='',
+                       type_data=_locals.PYGAME_INPUT_TEXT, maxlength=0, maxsize=0,
+                       align='', onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -453,15 +458,18 @@ class Menu(object):
         :param title: Title of the text input
         :param textinput_id: ID of the text input
         :param default: default value to display
+        :param type_data: Data type of the input
         :param maxlength: Maximum length of string, if 0 there's no limit
         :param maxsize: Maximum size of the text widget, if 0 there's no limit
         :param align: Widget alignment
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
+
         :type title: basestring
         :type textinput_id: basestring
-        :type default: str
+        :type default: basestring
+        :type type_data: basestring
         :type maxlength: int
         :type maxsize: int
         :type align: basestring
@@ -482,27 +490,43 @@ class Menu(object):
         assert isinstance(maxlength, int), 'maxlength must be integer'
         assert maxlength >= 0, 'maxlength must be greater or equal than zero'
 
+        # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
-                                    maxlength=maxlength, maxsize=maxsize,
+                                    maxlength=maxlength, maxsize=maxsize, type_data=type_data,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
+        self._check_id_duplicated(textinput_id)
 
+        # Configure widget
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
         widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
 
+        # Store widget
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
-
         return widget_id
+
+    def _check_id_duplicated(self, widget_id):
+        """
+        Check if widget if is duplicated.
+
+        :param widget_id: New widget id
+        :type widget_id: basestring
+        :return:
+        """
+        for i in self._option:
+            if i.get_id() == widget_id:
+                raise Exception('The widget id="{0}" is duplicated'.format(textinput_id))
 
     def _close(self, closelocked=True):
         """
         Execute close callbacks and disable the menu.
 
         :return: True if menu has been disable
+        :rtype: bool
         """
         onclose = self._top._actual._onclose
         if onclose is None:
