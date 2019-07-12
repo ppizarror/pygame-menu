@@ -87,27 +87,27 @@ def mainmenu_background():
 
 def reset_timer():
     """
-    Reset timer
+    Reset timer.
     """
     timer[0] = 0
 
 
 class TestCallClassMethod(object):
     """
-    Class call method
+    Class call method.
     """
 
     @staticmethod
     def update_game_settings():
         """
-        Class method
+        Class method.
         """
         print('Update game with new settings')
 
 
 def change_color_bg(text, c=None, **kwargs):
     """
-    Change background color
+    Change background color.
 
     :param text: Name of the color in the selector
     :param c: Color tuple
