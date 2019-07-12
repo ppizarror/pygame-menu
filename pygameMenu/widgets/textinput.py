@@ -100,8 +100,8 @@ class TextInput(Widget):
         self._ellipsis = text_ellipsis
 
         # Things cursor:
-        self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._font_size))
-        self._cursor_surface.fill(cursor_color)
+        self._cursor_color = cursor_color
+        self._cursor_surface = None
         self._cursor_position = len(default)  # Inside text
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
         self._cursor_switch_ms = 500  # /|\
@@ -128,6 +128,10 @@ class TextInput(Widget):
         """
         self._clock.tick()
         self._render()
+
+        if not self._cursor_surface:
+            self._cursor_surface=_pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
+            self._cursor_surface.fill(self._cursor_color)
 
         if self._shadow:
             string = self.label + self._input_string
@@ -161,7 +165,7 @@ class TextInput(Widget):
             if self._cursor_position > 0 or (self.label and self._cursor_position == 0):
                 cursor_x_pos -= self._cursor_surface.get_width()
 
-            cursor_y_pos = -4 + (self._surface.get_height() - self._font_size) / 2
+            cursor_y_pos = 1
             surface.blit(self._cursor_surface, (self._rect.x + cursor_x_pos, self._rect.y + cursor_y_pos))
 
     def get_value(self):
