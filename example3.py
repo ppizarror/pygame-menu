@@ -69,6 +69,7 @@ def main_background():
 def check_name_test(value):
     """
     This function tests the text input widget.
+
     :param value: The widget value
     :return: None
     """
@@ -88,11 +89,12 @@ settings_menu = pygameMenu.Menu(surface,
                                 font_size=30,
                                 menu_alpha=100,
                                 menu_color=MENU_BACKGROUND_COLOR,
-                                menu_height=int(WINDOW_SIZE[1] * 0.7),
-                                menu_width=int(WINDOW_SIZE[0] * 0.8),
+                                menu_height=int(WINDOW_SIZE[1] * 0.8),
+                                menu_width=int(WINDOW_SIZE[0] * 0.9),
                                 onclose=PYGAME_MENU_DISABLE_CLOSE,
                                 option_shadow=False,
                                 title='Settings',
+                                widget_alignment=PYGAME_ALIGN_LEFT,
                                 window_height=WINDOW_SIZE[1],
                                 window_width=WINDOW_SIZE[0]
                                 )
@@ -109,7 +111,8 @@ settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
 
 def data_fun():
     """
-    Print data of the menu
+    Print data of the menu.
+
     :return:
     """
     print('Settings data:')
@@ -119,7 +122,7 @@ def data_fun():
 
 
 settings_menu.add_option('Store data', data_fun)  # Call function
-settings_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
+settings_menu.add_option('Return to main menu', PYGAME_MENU_BACK, align=PYGAME_ALIGN_CENTER)
 
 # Main menu
 main_menu = pygameMenu.Menu(surface,

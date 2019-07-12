@@ -87,27 +87,27 @@ def mainmenu_background():
 
 def reset_timer():
     """
-    Reset timer
+    Reset timer.
     """
     timer[0] = 0
 
 
 class TestCallClassMethod(object):
     """
-    Class call method
+    Class call method.
     """
 
     @staticmethod
     def update_game_settings():
         """
-        Class method
+        Class method.
         """
         print('Update game with new settings')
 
 
 def change_color_bg(text, c=None, **kwargs):
     """
-    Change background color
+    Change background color.
 
     :param text: Name of the color in the selector
     :param c: Color tuple
@@ -166,6 +166,7 @@ help_menu = pygameMenu.TextMenu(surface,
                                 menu_color=(30, 50, 107),  # Background color
                                 menu_color_title=(120, 45, 30),
                                 onclose=PYGAME_MENU_DISABLE_CLOSE,  # Pressing ESC button does nothing
+                                text_align=PYGAME_ALIGN_CENTER,
                                 title='Help',
                                 window_height=H_SIZE,
                                 window_width=W_SIZE
@@ -177,13 +178,12 @@ for m in HELP:
 # About menu
 about_menu = pygameMenu.TextMenu(surface,
                                  dopause=False,
-                                 draw_text_region_x=50,
+                                 draw_text_region_x=5,  # 5% margin
                                  font=pygameMenu.fonts.FONT_NEVIS,
                                  font_size_title=30,
                                  font_title=pygameMenu.fonts.FONT_8BIT,
                                  menu_color_title=COLOR_BLUE,
                                  onclose=PYGAME_MENU_DISABLE_CLOSE,  # Disable menu close (ESC button)
-                                 text_centered=True,
                                  text_fontsize=20,
                                  title='About',
                                  window_height=H_SIZE,
