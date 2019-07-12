@@ -63,8 +63,8 @@ class Widget(object):
 
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
-            widget_id = str(uuid4())
-        self._id = widget_id
+            widget_id = uuid4()
+        self._id = str(widget_id)
         self._surface = None  # Rendering surface
         self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = PYGAME_ALIGN_CENTER
@@ -217,7 +217,7 @@ class Widget(object):
         :type align: basestring
         :return: None
         """
-        align = align.lower()
+        align = str(align)
         if align not in [PYGAME_ALIGN_LEFT, PYGAME_ALIGN_CENTER, PYGAME_ALIGN_RIGHT]:
             raise Exception('Incorrect alignment of the widget')
         self._alignment = align

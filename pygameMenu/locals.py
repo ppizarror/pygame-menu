@@ -82,6 +82,6 @@ JOY_RIGHT = (1, 0)
 JOY_UP = (0, 1)
 
 # Alignment
-PYGAME_ALIGN_CENTER = 'center'
-PYGAME_ALIGN_LEFT = 'left'
-PYGAME_ALIGN_RIGHT = 'right'
+PYGAME_ALIGN_CENTER = '__pygameMenu_align_center__'
+PYGAME_ALIGN_LEFT = '__pygameMenu_align_left__'
+PYGAME_ALIGN_RIGHT = '__pygameMenu_align_right__'
