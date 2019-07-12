@@ -200,7 +200,7 @@ class Selector(Widget):
                     if dist > 0:  # User clicked options, not label
 
                         # Position in percentage, if <0.5 user clicked left
-                        pos = dist / (topright - topleft - labelsize)
+                        pos = dist / float(topright - topleft - labelsize)
                         if pos <= 0.5:
                             self.left()
                         else:
