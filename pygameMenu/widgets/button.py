@@ -86,7 +86,17 @@ class Button(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self._font.render(self.label, 1, color)
+
+        text = self._font.render(self.label, self._font_antialias, color)
+
+        if self._shadow:
+            size = (text.get_width() + 2, text.get_height() + 2)
+            text_bg = self._font.render(self.label, self._font_antialias, self._shadow_color)
+            self._surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
+            self._surface.blit(text_bg, (0, 0))
+            self._surface.blit(text, (2, 2))
+        else:
+            self._surface = text
 
     def update(self, events):
         """

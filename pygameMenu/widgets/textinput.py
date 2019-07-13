@@ -46,7 +46,6 @@ class TextInput(Widget):
                  default='',
                  textinput_id='',
                  type_data=_locals.PYGAME_INPUT_TEXT,
-                 antialias=True,
                  cursor_color=(0, 0, 1),
                  maxlength=0,
                  maxsize=0,
@@ -64,7 +63,6 @@ class TextInput(Widget):
         :param default: Initial text to be displayed
         :param textinput_id: Id of the text input
         :param type_data: Type of data
-        :param antialias: Determines if antialias is applied to font (uses more processing power)
         :param cursor_color: Color of cursor
         :param maxlength: Maximum length of input
         :param maxsize: Maximum size of the text to be displayed (overflow)
@@ -79,7 +77,6 @@ class TextInput(Widget):
         :type default: basestring
         :type textinput_id: basestring
         :type type_data: basestring
-        :type antialias: bool
         :type cursor_color: tuple
         :type maxlength: int
         :type maxsize: int
@@ -96,7 +93,6 @@ class TextInput(Widget):
         if maxsize < 0:
             raise Exception('maxsize must be equal or greater than zero')
 
-        self._antialias = antialias
         self._input_string = str(default)  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN, _pygame.K_ESCAPE,
                              _pygame.K_NUMLOCK, _pygame.K_TAB, _pygame.K_CAPSLOCK)
@@ -146,11 +142,6 @@ class TextInput(Widget):
         if not self._cursor_surface:
             self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
             self._cursor_surface.fill(self._cursor_color)
-
-        if self._shadow:
-            string = self.label + self._input_string
-            text_bg = self._font.render(string, self._antialias, self._shadow_color)
-            surface.blit(text_bg, self._rect.move(-3, -3).topleft)
 
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
@@ -210,7 +201,16 @@ class TextInput(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self._font.render(string, self._antialias, color)
+        text = self._font.render(string, self._font_antialias, color)
+
+        if self._shadow:
+            size = (text.get_width() + 2, text.get_height() + 2)
+            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+            self._surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
+            self._surface.blit(text_bg, (0, 0))
+            self._surface.blit(text, (2, 2))
+        else:
+            self._surface = text
 
     def _get_input_string(self):
         """

@@ -87,12 +87,6 @@ class Selector(Widget):
         See upper class doc.
         """
         self._render()
-
-        if self._shadow:
-            string = self._sformat.format(self.label, self.get_value())
-            text_bg = self._font.render(string, 1, self._shadow_color)
-            surface.blit(text_bg, self._rect.move(-3, -3).topleft)
-
         surface.blit(self._surface, self._rect.topleft)
 
     def get_value(self):
@@ -121,7 +115,17 @@ class Selector(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self._font.render(string, 1, color)
+
+        text = self._font.render(string, self._font_antialias, color)
+
+        if self._shadow:
+            size = (text.get_width() + 2, text.get_height() + 2)
+            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+            self._surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
+            self._surface.blit(text_bg, (0, 0))
+            self._surface.blit(text, (2, 2))
+        else:
+            self._surface = text
 
     def right(self):
         """
