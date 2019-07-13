@@ -279,8 +279,8 @@ class Menu(object):
         :param kwargs: Additional keyword arguments
         :type element_name: str
         :type element: Menu, _PymenuAction, function
-        :return: widget
-        :rtype: object
+        :return: Widget object
+        :rtype: Widget
         """
         assert isinstance(element_name, str), 'Element name must be a string'
 
@@ -359,8 +359,8 @@ class Menu(object):
         :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-        :return: widget
-        :rtype: object
+        :return: Widget object
+        :rtype: Widget
         """
         # Check value list
         for vl in values:
@@ -413,8 +413,8 @@ class Menu(object):
         :type title: basestring
         :type values: list
         :type fun: function, NoneType
-        :return: Selector ID
-        :rtype: int
+        :return: Widget object
+        :rtype: Widget
         """
         return self.add_selector(title=title, values=values, onchange=fun,
                                  onreturn=None, kwargs=kwargs)
@@ -437,8 +437,8 @@ class Menu(object):
         :type title: str
         :type values: list
         :type fun: function, NoneType
-        :return: Selector ID
-        :rtype: int
+        :return: Widget object
+        :rtype: Widget
         """
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
@@ -465,7 +465,6 @@ class Menu(object):
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
-
         :type title: basestring
         :type textinput_id: basestring
         :type default: basestring
@@ -475,9 +474,8 @@ class Menu(object):
         :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-
-        :return: widget
-        :rtype: object
+        :return: Widget object
+        :rtype: Widget
         """
         self._size += 1
         if self._size > 1:
@@ -653,7 +651,7 @@ class Menu(object):
         Return title of the menu.
 
         :return: Title
-        :rtype: str
+        :rtype: basestring
         """
         return self._title_str
 
@@ -775,7 +773,7 @@ class Menu(object):
         With ``recursive=True``: it looks for a widget inside the current menu
         and all sub-menus.
 
-        :param recursive: look in menu and sub-menus
+        :param recursive: Look in menu and sub-menus
         :param depth: Depth menu when using recursive
         :type recursive: bool
         :type depth: int
@@ -837,8 +835,8 @@ class Menu(object):
         """
         Open the given menu.
 
-        :param menu: menu object
-        :type menu: Menu or TextMenu
+        :param menu: Menu object
+        :type menu: Menu, TextMenu
         """
         actual = self
         menu._top = self._top
@@ -851,7 +849,7 @@ class Menu(object):
         """
         Select the widget at the given index and unselect others.
 
-        :param index: widget index
+        :param index: Widget index
         :type index: int
         """
         actual = self._top._actual
@@ -912,11 +910,11 @@ class Menu(object):
 
         None is returned if no widget found.
 
-        :param widget_id: widget id
-        :param recursive: look in menu and sub-menus
+        :param widget_id: Widget id
+        :param recursive: Look in menu and sub-menus
         :type widget_id: basestring
         :type recursive: bool
-        :return: Widget
+        :return: Widget object
         :rtype: Widget
         """
         for widget in self._option:

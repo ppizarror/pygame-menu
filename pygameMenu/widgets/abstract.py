@@ -56,7 +56,6 @@ class Widget(object):
         :param onreturn: callback when pressing return button
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
-
         :type widget_id: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
@@ -263,7 +262,6 @@ class Widget(object):
 
         :param joystick: Use joystick
         :param mouse: Use mouse
-
         :type joystick: bool
         :type mouse: bool
         """

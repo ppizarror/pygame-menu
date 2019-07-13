@@ -130,7 +130,7 @@ class TextMenu(Menu):
         :param element: Menu object
         :param args: Aditional arguments
         :type element_name: basestring
-        :type element: Menu, _locals._PymenuAction
+        :type element: Menu, _PymenuAction
         :return: None
         """
         if self._size <= 1:
