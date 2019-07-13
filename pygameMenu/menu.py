@@ -444,7 +444,7 @@ class Menu(object):
                                  onreturn=fun, kwargs=kwargs)
 
     def add_text_input(self, title, textinput_id='', default='',
-                       type_data=_locals.PYGAME_INPUT_TEXT, maxlength=0, maxsize=0,
+                       input_type=_locals.PYGAME_INPUT_TEXT, maxlength=0, maxsize=0,
                        align='', onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
@@ -458,18 +458,17 @@ class Menu(object):
         :param title: Title of the text input
         :param textinput_id: ID of the text input
         :param default: default value to display
-        :param type_data: Data type of the input
+        :param input_type: Data type of the input
         :param maxlength: Maximum length of string, if 0 there's no limit
         :param maxsize: Maximum size of the text widget, if 0 there's no limit
         :param align: Widget alignment
         :param onchange: Function when changing the selector
         :param onreturn: Function when pressing return button
         :param kwargs: Aditional parameters
-
         :type title: basestring
         :type textinput_id: basestring
         :type default: basestring
-        :type type_data: basestring
+        :type input_type: basestring
         :type maxlength: int
         :type maxsize: int
         :type align: basestring
@@ -492,7 +491,7 @@ class Menu(object):
 
         # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
-                                    maxlength=maxlength, maxsize=maxsize, type_data=type_data,
+                                    maxlength=maxlength, maxsize=maxsize, input_type=input_type,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
         self._check_id_duplicated(textinput_id)
 

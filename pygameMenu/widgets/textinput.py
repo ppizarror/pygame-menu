@@ -45,7 +45,7 @@ class TextInput(Widget):
                  label='',
                  default='',
                  textinput_id='',
-                 type_data=_locals.PYGAME_INPUT_TEXT,
+                 input_type=_locals.PYGAME_INPUT_TEXT,
                  antialias=True,
                  cursor_color=(0, 0, 1),
                  maxlength=0,
@@ -63,7 +63,7 @@ class TextInput(Widget):
         :param label: Input label text
         :param default: Initial text to be displayed
         :param textinput_id: Id of the text input
-        :param type_data: Type of data
+        :param input_type: Type of data
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :param cursor_color: Color of cursor
         :param maxlength: Maximum length of input
@@ -78,7 +78,7 @@ class TextInput(Widget):
         :type label: basestring
         :type default: basestring
         :type textinput_id: basestring
-        :type type_data: basestring
+        :type input_type: basestring
         :type antialias: bool
         :type cursor_color: tuple
         :type maxlength: int
@@ -120,7 +120,7 @@ class TextInput(Widget):
         self._clock = _pygame.time.Clock()
 
         # Other
-        self._type_data = type_data
+        self._input_type = input_type
 
         # Public attributs
         self.label = label
@@ -187,14 +187,14 @@ class TextInput(Widget):
         See upper class doc.
         """
         value = ''
-        if self._type_data == _locals.PYGAME_INPUT_TEXT:
+        if self._input_type == _locals.PYGAME_INPUT_TEXT:
             value = self._input_string
-        elif self._type_data == _locals.PYGAME_INPUT_FLOAT:
+        elif self._input_type == _locals.PYGAME_INPUT_FLOAT:
             try:
                 value = float(self._input_string)
             except ValueError:
                 value = 0
-        elif self._type_data == _locals.PYGAME_INPUT_INT:
+        elif self._input_type == _locals.PYGAME_INPUT_INT:
             try:
                 value = int(self._input_string)
             except ValueError:
@@ -417,9 +417,9 @@ class TextInput(Widget):
 
                     # Check data type
                     data_valid = True
-                    if self._type_data == _locals.PYGAME_INPUT_TEXT:
+                    if self._input_type == _locals.PYGAME_INPUT_TEXT:
                         pass
-                    elif self._type_data == _locals.PYGAME_INPUT_FLOAT:
+                    elif self._input_type == _locals.PYGAME_INPUT_FLOAT:
                         if new_string == '-':
                             data_valid = True
                         else:
@@ -427,7 +427,7 @@ class TextInput(Widget):
                                 new_string = float(new_string)
                             except ValueError:
                                 data_valid = False
-                    elif self._type_data == _locals.PYGAME_INPUT_INT:
+                    elif self._input_type == _locals.PYGAME_INPUT_INT:
                         if new_string == '-':
                             data_valid = True
                         else:
