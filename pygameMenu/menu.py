@@ -785,9 +785,10 @@ class Menu(object):
         """
         data = {}
         for widget in self._option:
-            v = widget.get_value()
-            if v != _locals.PYGAME_MENU_NOT_A_VALUE:
-                data[widget.get_id()] = v
+            try:
+                data[widget.get_id()] = widget.get_value()
+            except ValueError:
+                pass
         if recursive:
             for menu in self._submenus:
                 # May imply collision if IDs are identical in differents menus

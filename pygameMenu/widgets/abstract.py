@@ -33,8 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
-from pygameMenu.locals import PYGAME_MENU_NOT_A_VALUE, PYGAME_ALIGN_CENTER, \
-    PYGAME_ALIGN_LEFT, PYGAME_ALIGN_RIGHT
+from pygameMenu.locals import (PYGAME_ALIGN_CENTER, PYGAME_ALIGN_LEFT,
+                              PYGAME_ALIGN_RIGHT)
 from uuid import uuid4
 
 
@@ -106,9 +106,10 @@ class Widget(object):
         """
         if self._on_return:
             args = list(args) + list(self._args)
-            value = self.get_value()
-            if value != '__not_a_value__':
-                args.insert(0, value)
+            try:
+                args.insert(0, self.get_value())
+            except ValueError:
+                pass
             self._on_return(*args, **self._kwargs)
 
     def change(self, *args):
@@ -129,9 +130,10 @@ class Widget(object):
         """
         if self._on_change:
             args = list(args) + list(self._args)
-            value = self.get_value()
-            if value != '__not_a_value__':
-                args.insert(0, value)
+            try:
+                args.insert(0, self.get_value())
+            except ValueError:
+                pass
             self._on_change(*args, **self._kwargs)
 
     def draw(self, surface):
@@ -156,13 +158,13 @@ class Widget(object):
 
     def get_value(self):
         """
-        Return the value. The string '__not_a_value__' is returned
-        if this method has not been overwritten, this means no value
-        will be passed to the callbacks.
+        Return the value. If exception ``ValueError`` is raised,
+        no value will be passed to the callbacks.
 
         :return: value
         """
-        return PYGAME_MENU_NOT_A_VALUE
+        raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
+                                                                self.get_id()))
 
     def get_id(self):
         """
@@ -274,7 +276,8 @@ class Widget(object):
         :param value: value to be set on the widget.
         :return: None
         """
-        raise ValueError('Widget does not accept value')
+        raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
+                                                                self.get_id()))
 
     def update(self, events):
         """
