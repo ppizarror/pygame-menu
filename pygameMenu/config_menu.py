@@ -30,6 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pygameMenu.locals import PYGAME_POSITION_NORTHWEST as _PYGAME_POSITION_NORTHWEST
+
 MENU_ALPHA = 90  # Alpha of menu color, 0: Opaque, 255: Transparent
 MENU_BGCOLOR = (0, 0, 0)  # Background color of Menu
 MENU_CENTERED_TEXT = True  # Menu text is centered
@@ -44,6 +46,8 @@ MENU_OPTION_SHADOW = False  # Indicates if a shadow is drawn on selected option
 MENU_SELECTED_DRAW = True  # Indicates if rectangle is drawn on a selected item
 MENU_SELECTED_WIDTH = 1  # Width of selected item
 MENU_SELECTEDCOLOR = (180, 180, 180)  # Color of selected item
+MENU_SHADOW_COLOR = (0, 0, 0)  # Shadow color
+MENU_SHADOW_OFFSET = 2  # Shadow offset (px)
+MENU_SHADOW_POSITION = _PYGAME_POSITION_NORTHWEST  # Shadow position
 MENU_TITLE_BG_COLOR = (170, 65, 50)  # Background color
 MENU_WIDTH = 600  # Width of Menu (px)
-SHADOW_COLOR = (0, 0, 0)  # Shadow color

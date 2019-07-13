@@ -33,8 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
-from pygameMenu.locals import PYGAME_MENU_NOT_A_VALUE, PYGAME_ALIGN_CENTER, \
-    PYGAME_ALIGN_LEFT, PYGAME_ALIGN_RIGHT
+import pygameMenu.locals as _locals
 from uuid import uuid4
 
 
@@ -68,7 +67,7 @@ class Widget(object):
         self._id = str(widget_id)
         self._surface = None  # Rendering surface
         self._rect = _pygame.Rect(0, 0, 0, 0)
-        self._alignment = PYGAME_ALIGN_CENTER
+        self._alignment = _locals.PYGAME_ALIGN_CENTER
 
         self._on_change = onchange
         self._on_return = onreturn
@@ -82,8 +81,12 @@ class Widget(object):
         self._font_selected_color = _cfg.MENU_SELECTEDCOLOR
         self._font_antialias = True
 
+        # Text shadow
         self._shadow = _cfg.MENU_OPTION_SHADOW
-        self._shadow_color = _cfg.SHADOW_COLOR
+        self._shadow_color = _cfg.MENU_SHADOW_COLOR
+        self._shadow_offset = _cfg.MENU_SHADOW_OFFSET
+        self._shadow_position = _cfg.MENU_SHADOW_POSITION
+        self._create_shadow_tuple()
 
         # Public attributs
         self.joystick_enabled = True
@@ -164,7 +167,7 @@ class Widget(object):
 
         :return: value
         """
-        return PYGAME_MENU_NOT_A_VALUE
+        return _locals.PYGAME_MENU_NOT_A_VALUE
 
     def get_id(self):
         """
@@ -201,7 +204,9 @@ class Widget(object):
             text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
             # noinspection PyArgumentList
             surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-            surface.blit(text_bg, (-2, -2))
+
+            # Crete
+            surface.blit(text_bg, self._shadow_tuple)
             surface.blit(text, (0, 0))
         else:
             surface = text
@@ -249,7 +254,8 @@ class Widget(object):
         :return: None
         """
         align = str(align)
-        if align not in [PYGAME_ALIGN_LEFT, PYGAME_ALIGN_CENTER, PYGAME_ALIGN_RIGHT]:
+        if align not in [_locals.PYGAME_ALIGN_LEFT, _locals.PYGAME_ALIGN_CENTER,
+                         _locals.PYGAME_ALIGN_RIGHT]:
             raise Exception('Incorrect alignment of the widget')
         self._alignment = align
 
@@ -271,18 +277,70 @@ class Widget(object):
         """
         self.selected = selected
 
-    def set_shadow(self, enabled=True, color=None):
+    def set_shadow(self, enabled=True, color=None, position=None, offset=None):
         """
         Show text shadow.
 
         :param enabled: Shadow is enabled or not
         :param color: Shadow color
+        :param position: Shadow position
+        :param offset: Shadow offset
         :type enabled: bool
         :type color: list, NoneType
+        :type position: basestring, NoneType
+        :type offset: int, NoneType
         """
         self._shadow = enabled
-        if color:
+        if color is not None:
             self._shadow_color = color
+        if position is not None:
+            if position not in [_locals.PYGAME_POSITION_WEST, _locals.PYGAME_POSITION_SOUTHWEST,
+                                _locals.PYGAME_POSITION_SOUTH, _locals.PYGAME_POSITION_SOUTHEAST,
+                                _locals.PYGAME_POSITION_EAST, _locals.PYGAME_POSITION_NORTH,
+                                _locals.PYGAME_POSITION_NORTHWEST, _locals.PYGAME_POSITION_NORTHEAST]:
+                raise Exception('Incorrect shadow position of the widget')
+            self._shadow_position = position
+        if offset is not None:
+            try:
+                offset = int(offset)
+            except ValueError:
+                raise ValueError('Shadow offset must be integer')
+            if offset <= 0:
+                raise ValueError('Shadow offset must be greater than zero')
+            self._shadow_offset = offset
+
+        # Create shadow tuple position
+        self._create_shadow_tuple()
+
+    def _create_shadow_tuple(self):
+        """
+        Create shadow position tuple.
+
+        :return: None
+        """
+        x = 0
+        y = 0
+        if self._shadow_position == _locals.PYGAME_POSITION_NORTHWEST:
+            x = -1
+            y = -1
+        elif self._shadow_position == _locals.PYGAME_POSITION_NORTH:
+            y = -1
+        elif self._shadow_position == _locals.PYGAME_POSITION_NORTHEAST:
+            x = 1
+            y = -1
+        elif self._shadow_position == _locals.PYGAME_POSITION_EAST:
+            x = 1
+        elif self._shadow_position == _locals.PYGAME_POSITION_SOUTHEAST:
+            x = 1
+            y = 1
+        elif self._shadow_position == _locals.PYGAME_POSITION_SOUTH:
+            y = 1
+        elif self._shadow_position == _locals.PYGAME_POSITION_SOUTHWEST:
+            x = -1
+            y = 1
+        elif self._shadow_position == _locals.PYGAME_POSITION_WEST:
+            x = -1
+        self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
 
     def set_controls(self, joystick=True, mouse=True):
         """
@@ -290,7 +348,6 @@ class Widget(object):
 
         :param joystick: Use joystick
         :param mouse: Use mouse
-
         :type joystick: bool
         :type mouse: bool
         """

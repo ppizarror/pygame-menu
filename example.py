@@ -174,6 +174,7 @@ help_menu = pygameMenu.TextMenu(surface,
                                 menu_color_title=(120, 45, 30),
                                 onclose=PYGAME_MENU_DISABLE_CLOSE,  # Pressing ESC button does nothing
                                 option_shadow=True,
+                                option_shadow_position=PYGAME_POSITION_SOUTHEAST,
                                 text_align=PYGAME_ALIGN_CENTER,
                                 title='Help',
                                 window_height=H_SIZE,

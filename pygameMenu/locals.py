@@ -37,7 +37,10 @@ __all__ = ['PYGAME_MENU_BACK', 'PYGAME_MENU_CLOSE', 'PYGAME_MENU_DISABLE_CLOSE',
            'JOY_AXIS_Y', 'JOY_BUTTON_BACK', 'JOY_BUTTON_SELECT', 'JOY_CENTERED',
            'JOY_DEADZONE', 'JOY_DOWN', 'JOY_LEFT', 'JOY_RIGHT', 'JOY_UP',
            'PYGAME_ALIGN_CENTER', 'PYGAME_ALIGN_LEFT', 'PYGAME_ALIGN_RIGHT',
-           'PYGAME_INPUT_FLOAT', 'PYGAME_INPUT_INT', 'PYGAME_INPUT_TEXT']
+           'PYGAME_INPUT_FLOAT', 'PYGAME_INPUT_INT', 'PYGAME_INPUT_TEXT',
+           'PYGAME_POSITION_NORTHWEST', 'PYGAME_POSITION_NORTH', 'PYGAME_POSITION_NORTHEAST',
+           'PYGAME_POSITION_EAST', 'PYGAME_POSITION_SOUTHEAST', 'PYGAME_POSITION_SOUTH',
+           'PYGAME_POSITION_SOUTHWEST', 'PYGAME_POSITION_WEST']
 
 
 class PymenuAction(object):
@@ -91,3 +94,13 @@ PYGAME_ALIGN_RIGHT = '__pygameMenu_align_right__'
 PYGAME_INPUT_FLOAT = '__pygameMenu_input_float__'
 PYGAME_INPUT_INT = '__pygameMenu_input_int__'
 PYGAME_INPUT_TEXT = '__pygameMenu_input_text__'
+
+# Position
+PYGAME_POSITION_NORTHWEST = '__pygameMenu_position_northwest__'
+PYGAME_POSITION_NORTH = '__pygameMenu_position_north__'
+PYGAME_POSITION_NORTHEAST = '__pygameMenu_position_northeast__'
+PYGAME_POSITION_EAST = '__pygameMenu_position_east__'
+PYGAME_POSITION_SOUTHEAST = '__pygameMenu_position_southeast__'
+PYGAME_POSITION_SOUTH = '__pygameMenu_position_south__'
+PYGAME_POSITION_SOUTHWEST = '__pygameMenu_position_southwest__'
+PYGAME_POSITION_WEST = '__pygameMenu_position_west__'

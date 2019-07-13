@@ -79,6 +79,8 @@ class Menu(object):
                  onclose=None,
                  option_margin=_cfg.MENU_OPTION_MARGIN,
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
+                 option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
+                 option_shadow_position=_cfg.MENU_SHADOW_POSITION,
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
                  title_offsety=0,
@@ -109,15 +111,16 @@ class Menu(object):
         :param onclose: Function applied when closing the menu
         :param option_margin: Margin of each element in menu (px)
         :param option_shadow: Indicate if a shadow is drawn on each option
+        :param option_shadow_offset: Offset of shadow
+        :param option_shadow_position: Position of shadow
         :param rect_width: Border with of rectangle around selected item
         :param surface: Pygame surface
         :param title: Title of the menu (main title)
         :param title_offsetx: Offset x-position of title (px)
         :param title_offsety: Offset y-position of title (px)
-        :param widget_align: Default widget alignment
+        :param widget_alignment: Default widget alignment
         :param window_height: Window height size (px)
         :param window_width: Window width size (px)
-
         :type bgfun: function
         :type color_selected: tuple
         :type dopause: bool
@@ -139,9 +142,11 @@ class Menu(object):
         :type onclose: function
         :type option_margin: int
         :type option_shadow: bool
+        :type option_shadow_offset: int
+        :type option_shadow_position: basestring
         :type rect_width: int
         :type title: basestring
-        :type widget_align: basestring
+        :type widget_alignment: basestring
         :type window_height: int
         :type window_width: int
         """
@@ -211,6 +216,8 @@ class Menu(object):
         self._height = menu_height
         self._opt_dy = option_margin
         self._option_shadow = option_shadow
+        self._option_shadow_offset = option_shadow_offset
+        self._option_shadow_position = option_shadow_position
         self._rect_width = rect_width
         self._sel_color = color_selected
         self._surface = surface
@@ -320,7 +327,10 @@ class Menu(object):
 
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
-        widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
+        widget.set_shadow(enabled=self._option_shadow,
+                          color=_cfg.MENU_SHADOW_COLOR,
+                          position=self._option_shadow_position,
+                          offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(kwargs['align'])
 
@@ -385,7 +395,10 @@ class Menu(object):
         # Configure widget
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
-        widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
+        widget.set_shadow(enabled=self._option_shadow,
+                          color=_cfg.MENU_SHADOW_COLOR,
+                          position=self._option_shadow_position,
+                          offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
 
@@ -498,7 +511,10 @@ class Menu(object):
         # Configure widget
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
-        widget.set_shadow(self._option_shadow, _cfg.SHADOW_COLOR)
+        widget.set_shadow(enabled=self._option_shadow,
+                          color=_cfg.MENU_SHADOW_COLOR,
+                          position=self._option_shadow_position,
+                          offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
 
@@ -518,7 +534,7 @@ class Menu(object):
         """
         for i in self._option:
             if i.get_id() == widget_id:
-                raise Exception('The widget id="{0}" is duplicated'.format(textinput_id))
+                raise Exception('The widget id="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
         """
