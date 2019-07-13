@@ -784,7 +784,7 @@ class Menu(object):
         :rtype: dict
         """
         data = {}
-        for widget in self._actual._option:
+        for widget in self._option:
             v = widget.get_value()
             if v != _locals.PYGAME_MENU_NOT_A_VALUE:
                 data[widget.get_id()] = v
@@ -907,7 +907,7 @@ class Menu(object):
         :param recursive: look in menu and sub-menus
         :type recursive: bool
         """
-        for widget in self._actual._option:
+        for widget in self._option:
             if widget.get_id() == widget_id:
                 return widget
         if recursive:
