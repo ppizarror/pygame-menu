@@ -72,7 +72,6 @@ class TextInput(Widget):
         :param repeat_keys_interval_ms: Interval between key press repetition when held
         :param text_ellipsis: Ellipsis text when overflow occurs
         :param kwargs: Optional keyword-arguments for callbacks
-
         :type label: basestring
         :type default: basestring
         :type textinput_id: basestring
@@ -201,16 +200,7 @@ class TextInput(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-        text = self._font.render(string, self._font_antialias, color)
-
-        if self._shadow:
-            size = (text.get_width() + 2, text.get_height() + 2)
-            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-            self._surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-            self._surface.blit(text_bg, (0, 0))
-            self._surface.blit(text, (2, 2))
-        else:
-            self._surface = text
+        self._surface = self.render_string(string, color)
 
     def _get_input_string(self):
         """
@@ -237,7 +227,6 @@ class TextInput(Widget):
         :param addition: Update is text addition/deletion
         :param end: Move cursor to end
         :param start: Move cursor to start
-
         :type left: int
         :type right: int
         :type addition: bool

@@ -182,6 +182,32 @@ class Widget(object):
         """
         raise NotImplementedError('Override is mandatory')
 
+    def render_string(self, string, color):
+        """
+        Render text and turn it into a surface.
+
+        :param string: Text to render
+        :param color: Text color
+        :type string: basestring
+        :type color: tuple
+        :return: Text surface
+        :rtype: Surface
+        """
+        text = self._font.render(string, self._font_antialias, color)
+
+        if self._shadow:
+            size = (text.get_width() + 2, text.get_height() + 2)
+            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+            # noinspection PyArgumentList
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
+            surface.blit(text_bg, (0, 0))
+            surface.blit(text, (2, 2))
+        else:
+            surface = text
+
+        # Return renderered surface
+        return surface
+
     def set_font(self, font, font_size, color, selected_color, antialias=True):
         """
         Set the texts font.

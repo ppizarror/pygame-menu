@@ -115,17 +115,7 @@ class Selector(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-
-        text = self._font.render(string, self._font_antialias, color)
-
-        if self._shadow:
-            size = (text.get_width() + 2, text.get_height() + 2)
-            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-            self._surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-            self._surface.blit(text_bg, (0, 0))
-            self._surface.blit(text, (2, 2))
-        else:
-            self._surface = text
+        self._surface = self.render_string(string, color)
 
     def right(self):
         """
