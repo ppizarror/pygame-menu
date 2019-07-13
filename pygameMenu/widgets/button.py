@@ -91,7 +91,7 @@ class Button(Widget):
         updated = False
         for event in events:
 
-            if event.type == _pygame.locals.KEYDOWN:
+            if event.type == _pygame.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_ENTER:
                     self.apply()
                     updated = True
