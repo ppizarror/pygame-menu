@@ -234,7 +234,7 @@ from pygameMenu.locals import *  # Import constants (like actions)
     | title | Label string on menu entry | str |
     | textinput_id | Text input identificator | str |
     | default | Default value to display | str |
-    | type_data | Data type of the input | str |
+    | input_type | Data type of the input | str |
     | maxlength | Maximum length of string, if 0 there's no limit | int |
     | maxsize | Maximum size of the text widget, if 0 there's no limit | int |
     | align | Text input alignment | str |
