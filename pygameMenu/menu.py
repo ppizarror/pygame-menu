@@ -117,7 +117,6 @@ class Menu(object):
         :param widget_align: Default widget alignment
         :param window_height: Window height size (px)
         :param window_width: Window width size (px)
-
         :type bgfun: function
         :type color_selected: tuple
         :type dopause: bool
@@ -219,7 +218,7 @@ class Menu(object):
         # Inner variables
         self._top = None  # Top level menu
         self._actual = self  # Actual menu
-        self._submenus = [] # List of all linked menus
+        self._submenus = []  # List of all linked menus
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
@@ -280,7 +279,6 @@ class Menu(object):
         :param kwargs: Additional keyword arguments
         :type element_name: str
         :type element: Menu, _PymenuAction, function
-
         :return: widget
         :rtype: object
         """
@@ -361,7 +359,6 @@ class Menu(object):
         :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-
         :return: widget
         :rtype: object
         """
@@ -519,7 +516,7 @@ class Menu(object):
 
         :param widget_id: New widget id
         :type widget_id: basestring
-        :return:
+        :return: Exception if ID is duplicated
         """
         for i in self._option:
             if i.get_id() == widget_id:
@@ -771,7 +768,7 @@ class Menu(object):
         else:
             self._main(events)
 
-    def get_input_data(self, recursive=False):
+    def get_input_data(self, recursive=False, depth=0):
         """
         Return input data as a dict.
 
@@ -779,7 +776,9 @@ class Menu(object):
         and all sub-menus.
 
         :param recursive: look in menu and sub-menus
+        :param depth: Depth menu when using recursive
         :type recursive: bool
+        :type depth: int
         :return: Input dict
         :rtype: dict
         """
@@ -790,9 +789,19 @@ class Menu(object):
             except ValueError:
                 pass
         if recursive:
+            depth += 1
             for menu in self._submenus:
-                # May imply collision if IDs are identical in differents menus
-                data.update(menu.get_input_data(recursive))
+                data_submenu = menu.get_input_data(recursive=recursive, depth=depth)
+
+                # Check if there's a colission between keys
+                data_keys = data.keys()
+                subdata_keys = data_submenu.keys()
+                for key in subdata_keys:
+                    if key in data_keys:
+                        raise Exception('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
+
+                # Update data
+                data.update(data_submenu)
         return data
 
     # noinspection PyAttributeOutsideInit
@@ -904,9 +913,11 @@ class Menu(object):
         None is returned if no widget found.
 
         :param widget_id: widget id
-        :type widget_id: basestring
         :param recursive: look in menu and sub-menus
+        :type widget_id: basestring
         :type recursive: bool
+        :return: Widget
+        :rtype: Widget
         """
         for widget in self._option:
             if widget.get_id() == widget_id:

@@ -34,7 +34,7 @@ import os.path
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
 from pygameMenu.locals import (PYGAME_ALIGN_CENTER, PYGAME_ALIGN_LEFT,
-                              PYGAME_ALIGN_RIGHT)
+                               PYGAME_ALIGN_RIGHT)
 from uuid import uuid4
 
 
@@ -164,13 +164,14 @@ class Widget(object):
         :return: value
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
-                                                                self.get_id()))
+                                                               self.get_id()))
 
     def get_id(self):
         """
         Returns widget id.
 
         :return: id
+        :rtype: basestring
         """
         return self._id
 
@@ -185,7 +186,7 @@ class Widget(object):
 
     def set_font(self, font, font_size, color, selected_color):
         """
-        Set the texts font.
+        Set the text font.
 
         :param font: Name or list of names for font (see pygame.font.match_font for precise format)
         :param font_size:  Size of font in pixels
@@ -277,7 +278,7 @@ class Widget(object):
         :return: None
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
-                                                                self.get_id()))
+                                                               self.get_id()))
 
     def update(self, events):
         """
