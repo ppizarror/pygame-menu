@@ -771,9 +771,15 @@ class Menu(object):
         else:
             self._main(events)
 
-    def get_input_data(self):
+    def get_input_data(self, recursive=False):
         """
         Return input data as a dict.
+
+        With ``recursive=True``: it looks for a widget inside the current menu
+        and all sub-menus.
+
+        :param recursive: look in menu and sub-menus
+        :type recursive: bool
         :return: Input dict
         :rtype: dict
         """
@@ -782,6 +788,10 @@ class Menu(object):
             v = widget.get_value()
             if v != _locals.PYGAME_MENU_NOT_A_VALUE:
                 data[widget.get_id()] = v
+        if recursive:
+            for menu in self._submenus:
+                # May imply collision if IDs are identical in differents menus
+                data.update(menu.get_input_data(recursive))
         return data
 
     # noinspection PyAttributeOutsideInit
