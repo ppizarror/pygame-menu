@@ -79,6 +79,7 @@ class Widget(object):
         self._font_size = _cfg.MENU_FONT_SIZE
         self._font_color = _cfg.MENU_FONT_COLOR
         self._font_selected_color = _cfg.MENU_SELECTEDCOLOR
+        self._font_antialias = True
 
         self._shadow = _cfg.MENU_OPTION_SHADOW
         self._shadow_color = _cfg.SHADOW_COLOR
@@ -181,7 +182,7 @@ class Widget(object):
         """
         raise NotImplementedError('Override is mandatory')
 
-    def set_font(self, font, font_size, color, selected_color):
+    def set_font(self, font, font_size, color, selected_color, antialias=True):
         """
         Set the texts font.
 
@@ -189,6 +190,7 @@ class Widget(object):
         :param font_size:  Size of font in pixels
         :param color: Text color
         :param selected_color: Text color when widget is selected
+        :param antialias: Determines if antialias is applied to font (uses more processing power)
         """
         if isinstance(font, _pygame.font.Font):
             self._font = font
@@ -199,6 +201,7 @@ class Widget(object):
         self._font_size = font_size
         self._font_color = color
         self._font_selected_color = selected_color
+        self._font_antialias = antialias
 
     def set_position(self, posx, posy):
         """
