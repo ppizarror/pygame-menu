@@ -74,7 +74,6 @@ class TextInput(Widget):
         :param repeat_keys_interval_ms: Interval between key press repetition when held
         :param text_ellipsis: Ellipsis text when overflow occurs
         :param kwargs: Optional keyword-arguments for callbacks
-
         :type label: basestring
         :type default: basestring
         :type textinput_id: basestring
@@ -237,13 +236,12 @@ class TextInput(Widget):
         :param addition: Update is text addition/deletion
         :param end: Move cursor to end
         :param start: Move cursor to start
-
         :type left: int
         :type right: int
         :type addition: bool
         :type end: bool
         :type start: bool
-        :return:
+        :return: None
         """
         if self.maxsize == 0:
             return
