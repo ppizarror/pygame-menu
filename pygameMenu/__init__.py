@@ -30,8 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+# noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
+# noinspection PyUnresolvedReferences
 from pygameMenu.textmenu import TextMenu
+# noinspection PyUnresolvedReferences
 import pygameMenu.fonts as fonts
 
 # Other

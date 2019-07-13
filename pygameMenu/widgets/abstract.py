@@ -206,14 +206,12 @@ class Widget(object):
             text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
             # noinspection PyArgumentList
             surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-
-            # Crete
             surface.blit(text_bg, self._shadow_tuple)
             surface.blit(text, (0, 0))
         else:
             surface = text
 
-        # Return renderered surface
+        # Return rendered surface
         return surface
 
     def set_font(self, font, font_size, color, selected_color, antialias=True):
