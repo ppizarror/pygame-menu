@@ -56,7 +56,6 @@ class Button(Widget):
         :param onreturn: callback when pressing return button
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
-
         :type label: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType

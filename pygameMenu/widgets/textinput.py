@@ -232,7 +232,7 @@ class TextInput(Widget):
         :type addition: bool
         :type end: bool
         :type start: bool
-        :return:
+        :return: None
         """
         if self.maxsize == 0:
             return

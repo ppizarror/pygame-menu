@@ -55,7 +55,6 @@ class Widget(object):
         :param onreturn: callback when pressing return button
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
-
         :type widget_id: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
@@ -111,9 +110,10 @@ class Widget(object):
         """
         if self._on_return:
             args = list(args) + list(self._args)
-            value = self.get_value()
-            if value != '__not_a_value__':
-                args.insert(0, value)
+            try:
+                args.insert(0, self.get_value())
+            except ValueError:
+                pass
             self._on_return(*args, **self._kwargs)
 
     def change(self, *args):
@@ -134,9 +134,10 @@ class Widget(object):
         """
         if self._on_change:
             args = list(args) + list(self._args)
-            value = self.get_value()
-            if value != '__not_a_value__':
-                args.insert(0, value)
+            try:
+                args.insert(0, self.get_value())
+            except ValueError:
+                pass
             self._on_change(*args, **self._kwargs)
 
     def draw(self, surface):
@@ -161,19 +162,20 @@ class Widget(object):
 
     def get_value(self):
         """
-        Return the value. The string '__not_a_value__' is returned
-        if this method has not been overwritten, this means no value
-        will be passed to the callbacks.
+        Return the value. If exception ``ValueError`` is raised,
+        no value will be passed to the callbacks.
 
         :return: value
         """
-        return _locals.PYGAME_MENU_NOT_A_VALUE
+        raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
+                                                               self.get_id()))
 
     def get_id(self):
         """
         Returns widget id.
 
         :return: id
+        :rtype: basestring
         """
         return self._id
 
@@ -216,7 +218,7 @@ class Widget(object):
 
     def set_font(self, font, font_size, color, selected_color, antialias=True):
         """
-        Set the texts font.
+        Set the text font.
 
         :param font: Name or list of names for font (see pygame.font.match_font for precise format)
         :param font_size:  Size of font in pixels
@@ -361,7 +363,8 @@ class Widget(object):
         :param value: value to be set on the widget.
         :return: None
         """
-        raise ValueError('Widget does not accept value')
+        raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
+                                                               self.get_id()))
 
     def update(self, events):
         """
