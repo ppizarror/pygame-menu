@@ -219,6 +219,7 @@ class Menu(object):
         # Inner variables
         self._top = None  # Top level menu
         self._actual = self  # Actual menu
+        self._submenus = [] # List of all linked menus
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
@@ -279,8 +280,9 @@ class Menu(object):
         :param kwargs: Additional keyword arguments
         :type element_name: str
         :type element: Menu, _PymenuAction, function
-        :return: Button ID
-        :rtype: int
+
+        :return: widget
+        :rtype: object
         """
         assert isinstance(element_name, str), 'Element name must be a string'
 
@@ -293,7 +295,6 @@ class Menu(object):
         if kwargs['align'] == '':
             kwargs['align'] = self._widget_align
 
-        widget_id = self._size
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
@@ -301,6 +302,7 @@ class Menu(object):
 
         # If element is a Menu
         if isinstance(element, Menu):
+            self._submenus.append(element)
             widget = _widgets.Button(element_name, None, self._open, element)
         # If option is a PyMenuAction
         elif element == _locals.PYGAME_MENU_BACK:
@@ -328,7 +330,7 @@ class Menu(object):
         if len(self._option) == 1:
             widget.set_selected()
 
-        return widget_id
+        return widget
 
     def add_selector(self, title, values, selector_id='', default=0, align='',
                      onchange=None, onreturn=None, **kwargs):
@@ -359,8 +361,9 @@ class Menu(object):
         :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-        :return: Selector ID
-        :rtype: int
+
+        :return: widget
+        :rtype: object
         """
         # Check value list
         for vl in values:
@@ -371,7 +374,6 @@ class Menu(object):
         if align == '':
             align = self._widget_align
 
-        widget_id = self._size
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
@@ -393,7 +395,8 @@ class Menu(object):
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
-        return widget_id
+
+        return widget
 
     def add_selector_change(self, title, values, fun, **kwargs):
         """
@@ -475,10 +478,10 @@ class Menu(object):
         :type align: basestring
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
-        :return: TextInput ID
-        :rtype: int
+
+        :return: widget
+        :rtype: object
         """
-        widget_id = self._size
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
@@ -507,7 +510,8 @@ class Menu(object):
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
-        return widget_id
+
+        return widget
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -519,7 +523,7 @@ class Menu(object):
         """
         for i in self._option:
             if i.get_id() == widget_id:
-                raise Exception('The widget id="{0}" is duplicated'.format(textinput_id))
+                raise Exception('The widget id="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
         """
@@ -770,7 +774,6 @@ class Menu(object):
     def get_input_data(self):
         """
         Return input data as a dict.
-
         :return: Input dict
         :rtype: dict
         """
@@ -880,18 +883,26 @@ class Menu(object):
                                                 self._title_polygon_pos[1][1] + 3,
                                                 cross_size, cross_size)
 
-    def update_selector(self, selector_id, values):
+    def get_widget(self, widget_id, recursive=False):
         """
-        Update selector given its ID.
+        Return the widget with the given ID.
 
-        :param selector_id: ID of existing selector
-        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
-        :return: None
+        With ``recursive=True``: it looks for a widget inside the current menu
+        and all sub-menus.
+
+        None is returned if no widget found.
+
+        :param widget_id: widget id
+        :type widget_id: basestring
+        :param recursive: look in menu and sub-menus
+        :type recursive: bool
         """
-        assert self._size > selector_id and isinstance(
-            self._option[selector_id], _widgets.Selector), 'There is no selector with such ID'
-        for vl in values:  # Check value list
-            assert len(vl) > 1, 'Length of each element in value list must be greater than 1'
-            assert isinstance(vl[0], str), 'First element of value list component must be a string'
-
-        self._option[selector_id].update_elements(values)
+        for widget in self._actual._option:
+            if widget.get_id() == widget_id:
+                return widget
+        if recursive:
+            for menu in self._submenus:
+                widget = menu.get_widget(widget_id, recursive)
+                if widget:
+                    return widget
+        return None

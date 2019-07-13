@@ -216,6 +216,9 @@ class Selector(Widget):
         :param elements: Elements of the selector
         :return: None
         """
+        for elem in elements:  # Check value list
+            assert len(elem) >= 1, 'Length of each element in value list must be greater than 1'
+            assert isinstance(elem[0], str), 'First element of value list component must be a string'
         selected_element = self._elements[self._index]
         self._elements = elements
         try:

@@ -105,9 +105,9 @@ settings_menu = pygameMenu.Menu(surface,
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-settings_menu.add_text_input('First name: ', default='John',
+wid1 = settings_menu.add_text_input('First name: ', default='John',
                              onreturn=check_name_test, textinput_id='first_name')
-settings_menu.add_text_input('Last name: ', default='Rambo',
+wid2 = settings_menu.add_text_input('Last name: ', default='Rambo',
                              maxlength=10, textinput_id='last_name')
 settings_menu.add_text_input('Your age: ', default=25, maxlength=3,
                              textinput_id='age', type_data=PYGAME_INPUT_INT)
@@ -152,6 +152,9 @@ main_menu = pygameMenu.Menu(surface,
 
 main_menu.add_option('Settings', settings_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
+
+assert wid1 == main_menu.get_widget('first_name', recursive=True)
+assert None == main_menu.get_widget('last_name')
 
 # -----------------------------------------------------------------------------
 # Main loop
