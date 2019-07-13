@@ -72,10 +72,6 @@ class Button(Widget):
         See upper class doc.
         """
         self._render()
-
-        if self._shadow:
-            text_bg = self._font.render(self.label, 1, self._shadow_color)
-            surface.blit(text_bg, self._rect.move(-3, -3).topleft)
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):

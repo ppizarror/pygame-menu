@@ -75,6 +75,7 @@ class Widget(object):
         self._args = args or []
         self._kwargs = kwargs or {}
 
+        # Modified in set_font() method
         self._font = _cfg.MENU_FONT_SIZE_TITLE
         self._font_size = _cfg.MENU_FONT_SIZE
         self._font_color = _cfg.MENU_FONT_COLOR
@@ -200,8 +201,8 @@ class Widget(object):
             text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
             # noinspection PyArgumentList
             surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-            surface.blit(text_bg, (0, 0))
-            surface.blit(text, (2, 2))
+            surface.blit(text_bg, (-2, -2))
+            surface.blit(text, (0, 0))
         else:
             surface = text
 
