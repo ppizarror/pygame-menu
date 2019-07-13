@@ -70,7 +70,6 @@ class TextMenu(Menu):
         :param text_fontsize: Text font size
         :param text_margin: Line margin
         :param kwargs: Aditional parameters
-
         :type window_width: int
         :type window_height: int
         :type font: str
@@ -131,7 +130,7 @@ class TextMenu(Menu):
         :param element: Menu object
         :param args: Aditional arguments
         :type element_name: basestring
-        :type element: Menu, _locals._PymenuAction
+        :type element: Menu, _PymenuAction
         :return: None
         """
         if self._size <= 1:
