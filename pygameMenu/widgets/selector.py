@@ -154,7 +154,7 @@ class Selector(Widget):
         """
         updated = False
         for event in events:
-            if event.type == _pygame.locals.KEYDOWN:
+            if event.type == _pygame.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_LEFT:
                     self.left()
                     updated = True
