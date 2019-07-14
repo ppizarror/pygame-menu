@@ -65,6 +65,8 @@ class Widget(object):
             widget_id = uuid4()
         self._id = str(widget_id)
         self._surface = None  # Rendering surface
+        self._render_string_cache = None
+        self._render_string_cache_surface = None
         self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = _locals.PYGAME_ALIGN_CENTER
 
@@ -199,20 +201,26 @@ class Widget(object):
         :return: Text surface
         :rtype: Surface
         """
-        text = self._font.render(string, self._font_antialias, color)
+        if not self._render_string_cache or \
+            self._render_string_cache[0] != string or self._render_string_cache[1] != color:
 
-        if self._shadow:
-            size = (text.get_width() + 2, text.get_height() + 2)
-            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-            # noinspection PyArgumentList
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-            surface.blit(text_bg, self._shadow_tuple)
-            surface.blit(text, (0, 0))
-        else:
-            surface = text
+            text = self._font.render(string, self._font_antialias, color)
+
+            if self._shadow:
+                size = (text.get_width() + 2, text.get_height() + 2)
+                text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+                # noinspection PyArgumentList
+                surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
+                surface.blit(text_bg, self._shadow_tuple)
+                surface.blit(text, (0, 0))
+            else:
+                surface = text
+
+            self._render_string_cache= (string, color)
+            self._render_string_cache_surface = surface
 
         # Return rendered surface
-        return surface
+        return self._render_string_cache_surface
 
     def set_font(self, font, font_size, color, selected_color, antialias=True):
         """
