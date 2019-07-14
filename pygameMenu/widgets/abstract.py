@@ -196,7 +196,9 @@ class Widget(object):
         Compute hash from a series of variables.
 
         :param args: Variables to compute hash
-        :return: md5 string
+        :type args: Object
+        :return: hash data
+        :rtype: int
         """
         return hash(args)
 
