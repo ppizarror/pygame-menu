@@ -65,7 +65,7 @@ class Widget(object):
             widget_id = uuid4()
         self._id = str(widget_id)
         self._surface = None  # Rendering surface
-        self._render_string_cache = None
+        self._render_string_cache = 0
         self._render_string_cache_surface = None
         self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = _locals.PYGAME_ALIGN_CENTER
@@ -190,6 +190,16 @@ class Widget(object):
         """
         raise NotImplementedError('Override is mandatory')
 
+    @staticmethod
+    def _hash(*args):
+        """
+        Compute hash from a series of variables.
+
+        :param args: Variables to compute hash
+        :return: md5 string
+        """
+        return hash(args)
+
     def render_string(self, string, color):
         """
         Render text and turn it into a surface.
@@ -201,8 +211,8 @@ class Widget(object):
         :return: Text surface
         :rtype: Surface
         """
-        if not self._render_string_cache or \
-            self._render_string_cache[0] != string or self._render_string_cache[1] != color:
+        render_hash = self._hash(string, color)
+        if render_hash != self._render_string_cache:  # If render changed
 
             text = self._font.render(string, self._font_antialias, color)
 
@@ -216,7 +226,7 @@ class Widget(object):
             else:
                 surface = text
 
-            self._render_string_cache= (string, color)
+            self._render_string_cache = render_hash
             self._render_string_cache_surface = surface
 
         # Return rendered surface
