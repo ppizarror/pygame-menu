@@ -33,7 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Import pygame and libraries
 import os
 import pygame
-import timeit
 
 # Import pygameMenu
 import pygameMenu
@@ -115,9 +114,6 @@ settings_menu.add_text_input('Some long text: ', maxsize=18, textinput_id='long_
 settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                                  ('Medium', 'MEDIUM'),
                                                  ('Hard', 'HARD')], selector_id='difficulty')
-
-print(timeit.timeit(stmt='wid1.render_string("This is a text", (0, 20, 50))',
-                    setup="from __main__ import wid1", number=100000))
 
 
 def data_fun():

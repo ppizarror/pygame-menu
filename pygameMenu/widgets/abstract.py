@@ -191,7 +191,7 @@ class Widget(object):
         raise NotImplementedError('Override is mandatory')
 
     @staticmethod
-    def _hash(*args):
+    def hash_variables(*args):
         """
         Compute hash from a series of variables.
 
@@ -211,7 +211,7 @@ class Widget(object):
         :return: Text surface
         :rtype: Surface
         """
-        render_hash = self._hash(string, color)
+        render_hash = self.hash_variables(string, color)
         if render_hash != self._render_string_cache:  # If render changed
 
             text = self._font.render(string, self._font_antialias, color)
