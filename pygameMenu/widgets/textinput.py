@@ -66,8 +66,8 @@ class TextInput(Widget):
         :param cursor_color: Color of cursor
         :param maxlength: Maximum length of input
         :param maxsize: Maximum size of the text to be displayed (overflow)
-        :param onchange: callback when changing the selector
-        :param onreturn: callback when pressing return button
+        :param onchange: Callback when changing the selector
+        :param onreturn: Callback when pressing return button
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :param repeat_keys_interval_ms: Interval between key press repetition when held
         :param text_ellipsis: Ellipsis text when overflow occurs
@@ -328,7 +328,8 @@ class TextInput(Widget):
         """
         Check input size.
 
-        :return: bool, if True the input must be limited
+        :return: True if the input must be limited
+        :rtype: bool
         """
         if self.maxlength == 0:
             return False

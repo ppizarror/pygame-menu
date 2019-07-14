@@ -57,8 +57,8 @@ class Selector(Widget):
         :param elements: Elements of the selector
         :param selector_id: ID of the selector
         :param default: Index of default element to display
-        :param onchange: callback when changing the selector
-        :param onreturn: callback when pressing return button
+        :param onchange: Callback when changing the selector
+        :param onreturn: Callback when pressing return button
         :param kwargs: Optional keyword-arguments for callbacks
         :type title: str
         :type elements: list

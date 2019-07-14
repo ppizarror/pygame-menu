@@ -52,8 +52,8 @@ class Button(Widget):
         Description of the specific paramaters (see Widget class for generic ones):
 
         :param label: Text of the button
-        :param onchange: callback when changing the selector
-        :param onreturn: callback when pressing return button
+        :param onchange: Callback when changing the selector
+        :param onreturn: Callback when pressing return button
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         :type label: basestring

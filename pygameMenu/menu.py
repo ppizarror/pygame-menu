@@ -541,7 +541,7 @@ class Menu(object):
         """
         Execute close callbacks and disable the menu.
 
-        :return: True if menu has been disable
+        :return: True if menu has been disabled
         :rtype: bool
         """
         onclose = self._top._actual._onclose
@@ -676,7 +676,7 @@ class Menu(object):
         """
         Returns false/true if Menu is enabled or not
 
-        :return: Boolean
+        :return: True if the menu is disabled
         :rtype: bool
         """
         return not self.is_enabled()
@@ -685,7 +685,7 @@ class Menu(object):
         """
         Returns true/false if Menu is enabled or not
 
-        :return: Boolean
+        :return: True if the menu is enabled
         :rtype: bool
         """
         return self._enabled

@@ -51,8 +51,8 @@ class Widget(object):
                  ):
         """
         :param widget_id: Widget identifier
-        :param onchange: callback when changing the selector
-        :param onreturn: callback when pressing return button
+        :param onchange: Callback when changing the selector
+        :param onreturn: Callback when pressing return button
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         :type widget_id: basestring
@@ -105,7 +105,7 @@ class Widget(object):
             - ``args`` of the widget
             - ``kwargs`` of the widget
 
-        :param args: extra arguments passed to the callback
+        :param args: Extra arguments passed to the callback
         :return: None
         """
         if self._on_return:
@@ -219,7 +219,7 @@ class Widget(object):
         Set the text font.
 
         :param font: Name or list of names for font (see pygame.font.match_font for precise format)
-        :param font_size:  Size of font in pixels
+        :param font_size: Size of font in pixels
         :param color: Text color
         :param selected_color: Text color when widget is selected
         :param antialias: Determines if antialias is applied to font (uses more processing power)
@@ -249,7 +249,7 @@ class Widget(object):
         """
         Set the alignment of the widget.
 
-        :param align: center, left, right
+        :param align: Widget align, could be PYGAME_ALIGN_LEFT/CENTER/RIGHT
         :type align: basestring
         :return: None
         """
@@ -358,7 +358,7 @@ class Widget(object):
         """
         Set the value.
 
-        :param value: value to be set on the widget.
+        :param value: Value to be set on the widget
         :return: None
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
@@ -368,7 +368,7 @@ class Widget(object):
         """
         Update internal varibale according to the given events list.
 
-        :param events: list of pygame events
+        :param events: List of pygame events
         :return: True if updated
         """
         raise NotImplementedError('Override is mandatory')
