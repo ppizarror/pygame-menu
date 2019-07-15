@@ -66,6 +66,12 @@ class Button(Widget):
         # Public attributs
         self.label = label
 
+    def apply_font(self):
+        """
+        See upper class doc.
+        """
+        pass
+
     def draw(self, surface):
         """
         See upper class doc.
