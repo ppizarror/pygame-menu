@@ -158,7 +158,6 @@ class Widget(object):
         :return: pygame.Rect
         """
         self._render()
-
         self._rect.width, self._rect.height = self._surface.get_size()
         return self._rect
 
@@ -254,9 +253,9 @@ class Widget(object):
         self._font_color = color
         self._font_selected_color = selected_color
         self._font_antialias = antialias
-        self.apply_font()
+        self._apply_font()
 
-    def apply_font(self):
+    def _apply_font(self):
         """
         Function triggered after font is applied to widget.
 
@@ -388,6 +387,7 @@ class Widget(object):
         Set the value.
 
         :param value: Value to be set on the widget
+        :type value: Object
         :return: None
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
@@ -398,6 +398,8 @@ class Widget(object):
         Update internal varibale according to the given events list.
 
         :param events: List of pygame events
+        :type events: list
         :return: True if updated
+        :rtype: bool
         """
         raise NotImplementedError('Override is mandatory')

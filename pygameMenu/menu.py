@@ -529,13 +529,13 @@ class Menu(object):
         """
         Check if widget if is duplicated.
 
-        :param widget_id: New widget id
+        :param widget_id: New widget ID
         :type widget_id: basestring
         :return: Exception if ID is duplicated
         """
         for i in self._option:
             if i.get_id() == widget_id:
-                raise Exception('The widget id="{0}" is duplicated'.format(widget_id))
+                raise Exception('The widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
         """
@@ -674,7 +674,7 @@ class Menu(object):
 
     def is_disabled(self):
         """
-        Returns false/true if Menu is enabled or not
+        Returns false/true if menu is enabled or not
 
         :return: True if the menu is disabled
         :rtype: bool
@@ -683,7 +683,7 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Returns true/false if Menu is enabled or not
+        Returns true/false if menu is enabled or not
 
         :return: True if the menu is enabled
         :rtype: bool
@@ -767,7 +767,7 @@ class Menu(object):
 
     def mainloop(self, events):
         """
-        Main function of Menu, draw, etc.
+        Main function of menu.
 
         :param events: Menu events
         :return: None
@@ -927,7 +927,7 @@ class Menu(object):
 
         None is returned if no widget found.
 
-        :param widget_id: Widget id
+        :param widget_id: Widget ID
         :param recursive: Look in menu and sub-menus
         :type widget_id: basestring
         :type recursive: bool

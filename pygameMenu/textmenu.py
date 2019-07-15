@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Library import
+# Library imports
 from pygameMenu.menu import Menu
 import pygameMenu.config_textmenu as _cfg
 import pygameMenu.locals as _locals
@@ -130,7 +130,7 @@ class TextMenu(Menu):
         :param element: Menu object
         :param args: Aditional arguments
         :type element_name: basestring
-        :type element: Menu, _PymenuAction
+        :type element: Menu, PymenuAction
         :return: None
         """
         if self._size <= 1:

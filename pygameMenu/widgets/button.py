@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
-from pygameMenu.widgets.abstract import Widget
+from pygameMenu.widgets.widget import Widget
 from pygameMenu import locals as _locals
 
 
@@ -66,7 +66,7 @@ class Button(Widget):
         # Public attributs
         self.label = label
 
-    def apply_font(self):
+    def _apply_font(self):
         """
         See upper class doc.
         """
