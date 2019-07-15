@@ -254,6 +254,15 @@ class Widget(object):
         self._font_color = color
         self._font_selected_color = selected_color
         self._font_antialias = antialias
+        self.apply_font()
+
+    def apply_font(self):
+        """
+        Function triggered after font is applied to widget.
+
+        :return: None
+        """
+        raise NotImplementedError('Override is mandatory')
 
     def set_position(self, posx, posy):
         """
