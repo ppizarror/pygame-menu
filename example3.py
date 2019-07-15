@@ -67,6 +67,8 @@ def main_background():
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
+
+    :return: None
     """
     surface.fill((40, 40, 40))
 
@@ -77,6 +79,7 @@ def check_name_test(value):
 
     :param value: The widget value
     :type value: basestring
+    :return: None
     """
     print('User name: {0}'.format(value))
 
@@ -133,6 +136,8 @@ settings_menu.add_selector('Select difficulty',
 def data_fun():
     """
     Print data of the menu.
+
+    :return: None
     """
     print('Settings data:')
     data = settings_menu.get_input_data()

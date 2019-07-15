@@ -109,19 +109,20 @@ class TestCallClassMethod(object):
         print('Update game with new settings')
 
 
-def change_color_bg(text, c=None, **kwargs):
+def change_color_bg(value, c=None, **kwargs):
     """
     Change background color.
 
-    :param text: Name of the color in the selector
-    :type text: basestring
+    :param value: Selected option (data, index)
+    :type value: tuple
     :param c: Color tuple
     :type c: tuple
     """
+    color, _ = value
     if c == (-1, -1, -1):  # If random color
         c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
     if kwargs['write_on_console']:
-        print('New background color: {0} ({1},{2},{3})'.format(text, *c))
+        print('New background color: {0} ({1},{2},{3})'.format(color, *c))
     COLOR_BACKGROUND[0] = c[0]
     COLOR_BACKGROUND[1] = c[1]
     COLOR_BACKGROUND[2] = c[2]

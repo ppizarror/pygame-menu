@@ -72,9 +72,14 @@ def change_difficulty(value, d):
     """
     Change difficulty of the game.
 
-    :return:
+    :param value: Tuple containing the data of the selected object
+    :type value: tuple
+    :param d: Optional parameter passed as argument to add_selector
+    :type d: basestring
+    :return: None
     """
-    print('Selected difficulty: {} ({})'.format(value, d))
+    selected, index = value
+    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, d, index))
     DIFFICULTY[0] = d
 
 
@@ -134,7 +139,7 @@ def play_function(difficulty, font):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 253
+                    # Quit this function, then skip to loop of main-menu on line 260
                     return
 
         # Pass events to main_menu
@@ -149,6 +154,8 @@ def play_function(difficulty, font):
 def main_background():
     """
     Function used by menus, draw on background while menu is active.
+
+    :return: None
     """
     surface.fill(COLOR_BACKGROUND)
 
@@ -167,7 +174,7 @@ play_menu = pygameMenu.Menu(surface,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            menu_width=int(WINDOW_SIZE[0] * 0.7),
                             onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Play menu',
@@ -180,9 +187,9 @@ play_menu.add_option('Start',
                      DIFFICULTY,
                      pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
 play_menu.add_selector('Select difficulty',
-                       [('Easy', 'EASY'),
-                        ('Medium', 'MEDIUM'),
-                        ('Hard', 'HARD')],
+                       [('1 - Easy', 'EASY'),
+                        ('2 - Medium', 'MEDIUM'),
+                        ('3 - Hard', 'HARD')],
                        onchange=change_difficulty)
 play_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK)
 
