@@ -69,7 +69,6 @@ class TextMenu(Menu):
         :type font: str
         :param title: Title of the Menu
         :type title: str
-
         :param draw_text_region_x: X-Axis drawing region of the text
         :type draw_text_region_x: int
         :param text_align: Text default alignment

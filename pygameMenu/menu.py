@@ -100,7 +100,6 @@ class Menu(object):
         :type font: basestring
         :param title: Title of the menu (main title)
         :type title: basestring
-
         :param bgfun: Background drawing function (only if menu pause app)
         :type bgfun: function
         :param color_selected: Color of selected item
