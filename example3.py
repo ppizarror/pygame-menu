@@ -30,11 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import pygame and libraries
+# Import libraries
 import os
-import pygame
 
-# Import pygameMenu
+# Import pygame
+import pygame
 import pygameMenu
 
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
@@ -76,7 +76,7 @@ def check_name_test(value):
     This function tests the text input widget.
 
     :param value: The widget value
-    :return: None
+    :type value: basestring
     """
     print('User name: {0}'.format(value))
 
@@ -118,8 +118,6 @@ settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
 def data_fun():
     """
     Print data of the menu.
-
-    :return:
     """
     print('Settings data:')
     data = settings_menu.get_input_data()

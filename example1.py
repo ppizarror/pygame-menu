@@ -37,8 +37,6 @@ import os
 
 # Import pygame
 import pygame
-from pygame.locals import *
-
 import pygameMenu
 
 # -----------------------------------------------------------------------------
@@ -116,7 +114,9 @@ def change_color_bg(text, c=None, **kwargs):
     Change background color.
 
     :param text: Name of the color in the selector
+    :type text: basestring
     :param c: Color tuple
+    :type c: tuple
     """
     if c == (-1, -1, -1):  # If random color
         c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
@@ -237,10 +237,10 @@ while True:
     # Application events
     events = pygame.event.get()
     for event in events:
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             exit()
-        elif event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 menu.enable()
 
     # Draw timer

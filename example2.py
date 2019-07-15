@@ -36,8 +36,6 @@ import os
 
 # Import pygame
 import pygame
-from pygame.locals import *
-
 import pygameMenu
 
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
@@ -85,16 +83,19 @@ def random_color():
     Return random color.
 
     :return: Color tuple
+    :rtype: tuple
     """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
 def play_function(difficulty, font):
     """
-    Main game function
+    Main game function.
 
     :param difficulty: Difficulty of the game
+    :type difficulty: basestring
     :param font: Pygame font
+    :type font: pygame._font.Font
     :return: None
     """
     difficulty = difficulty[0]
@@ -127,13 +128,13 @@ def play_function(difficulty, font):
         # Application events
         playevents = pygame.event.get()
         for e in playevents:
-            if e.type == QUIT:
+            if e.type == pygame.QUIT:
                 exit()
-            elif e.type == KEYDOWN:
-                if e.key == K_ESCAPE and main_menu.is_disabled():
+            elif e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 217
+                    # Quit this function, then skip to loop of main-menu on line 250
                     return
 
         # Pass events to main_menu
@@ -148,8 +149,6 @@ def play_function(difficulty, font):
 def main_background():
     """
     Function used by menus, draw on background while menu is active.
-
-    :return: None
     """
     surface.fill(COLOR_BACKGROUND)
 
@@ -244,7 +243,7 @@ while True:
     # Application events
     events = pygame.event.get()
     for event in events:
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             exit()
 
     # Main menu
