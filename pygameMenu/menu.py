@@ -551,7 +551,6 @@ class Menu(object):
         else:
             close = True
             a = isinstance(onclose, _events._PymenuAction)
-            print(str(type(onclose)))
             b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
             if a or b:
                 if onclose == _events.PYGAME_MENU_RESET:
