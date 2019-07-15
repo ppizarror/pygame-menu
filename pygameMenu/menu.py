@@ -288,7 +288,7 @@ class Menu(object):
         :type element_name: str
         :type element: Menu, _PymenuAction, function
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.button.Button
         """
         assert isinstance(element_name, str), 'Element name must be a string'
 
@@ -371,7 +371,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.selector.Selector
         """
         # Check value list
         for vl in values:
@@ -428,7 +428,7 @@ class Menu(object):
         :type values: list
         :type fun: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.selector.Selector
         """
         return self.add_selector(title=title, values=values, onchange=fun,
                                  onreturn=None, kwargs=kwargs)
@@ -452,7 +452,7 @@ class Menu(object):
         :type values: list
         :type fun: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.selector.Selector
         """
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
@@ -489,7 +489,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.textinput.TextInput
         """
         self._size += 1
         if self._size > 1:
