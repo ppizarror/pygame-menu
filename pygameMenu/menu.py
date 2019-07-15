@@ -34,6 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygameMenu.config_controls as _ctrl
 import pygameMenu.config_menu as _cfg
 import pygameMenu.locals as _locals
+import pygameMenu.events as _events
 
 # Library imports
 import pygameMenu.widgets as _widgets
@@ -311,13 +312,13 @@ class Menu(object):
             self._submenus.append(element)
             widget = _widgets.Button(element_name, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _locals.PYGAME_MENU_BACK:
+        elif element == _events.PYGAME_MENU_BACK:
             # Back to menu
             widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _locals.PYGAME_MENU_CLOSE:
+        elif element == _events.PYGAME_MENU_CLOSE:
             # Close menu
             widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _locals.PYGAME_MENU_EXIT:
+        elif element == _events.PYGAME_MENU_EXIT:
             # Exit program
             widget = _widgets.Button(element_name, None, self._exit)
         # If element is a function
@@ -549,16 +550,17 @@ class Menu(object):
             close = False
         else:
             close = True
-            a = isinstance(onclose, _locals.PymenuAction)
-            b = str(type(onclose)) == _locals.PYGAMEMENU_PYMENUACTION
+            a = isinstance(onclose, _events._PymenuAction)
+            print(str(type(onclose)))
+            b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
             if a or b:
-                if onclose == _locals.PYGAME_MENU_RESET:
+                if onclose == _events.PYGAME_MENU_RESET:
                     self.reset(100)
-                elif onclose == _locals.PYGAME_MENU_BACK:
+                elif onclose == _events.PYGAME_MENU_BACK:
                     self.reset(1)
-                elif onclose == _locals.PYGAME_MENU_EXIT:
+                elif onclose == _events.PYGAME_MENU_EXIT:
                     self._exit()
-                elif onclose == _locals.PYGAME_MENU_DISABLE_CLOSE:
+                elif onclose == _events.PYGAME_MENU_DISABLE_CLOSE:
                     close = False
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()

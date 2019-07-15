@@ -36,6 +36,10 @@ from pygameMenu.menu import Menu
 from pygameMenu.textmenu import TextMenu
 # noinspection PyUnresolvedReferences
 import pygameMenu.fonts as fonts
+# noinspection PyUnresolvedReferences
+import pygameMenu.events
+# noinspection PyUnresolvedReferences
+import pygameMenu.locals
 
 # Other
 __author__ = 'ppizarror'

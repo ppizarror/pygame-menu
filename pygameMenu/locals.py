@@ -30,47 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['PYGAME_MENU_BACK', 'PYGAME_MENU_CLOSE', 'PYGAME_MENU_DISABLE_CLOSE',
-           'PYGAME_MENU_EXIT', 'PYGAME_MENU_RESET', 'PYGAMEMENU_PYMENUACTION',
-           'PYGAMEMENU_TEXT_NEWLINE', 'PYGAMEMENU_TYPE_BUTTON',
-           'PYGAMEMENU_TYPE_SELECTOR', 'PYGAMEMENU_TYPE_TEXTINPUT', 'JOY_AXIS_X',
-           'JOY_AXIS_Y', 'JOY_BUTTON_BACK', 'JOY_BUTTON_SELECT', 'JOY_CENTERED',
-           'JOY_DEADZONE', 'JOY_DOWN', 'JOY_LEFT', 'JOY_RIGHT', 'JOY_UP',
-           'PYGAME_ALIGN_CENTER', 'PYGAME_ALIGN_LEFT', 'PYGAME_ALIGN_RIGHT',
-           'PYGAME_INPUT_FLOAT', 'PYGAME_INPUT_INT', 'PYGAME_INPUT_TEXT',
-           'PYGAME_POSITION_NORTHWEST', 'PYGAME_POSITION_NORTH', 'PYGAME_POSITION_NORTHEAST',
-           'PYGAME_POSITION_EAST', 'PYGAME_POSITION_SOUTHEAST', 'PYGAME_POSITION_SOUTH',
-           'PYGAME_POSITION_SOUTHWEST', 'PYGAME_POSITION_WEST']
-
-
-class PymenuAction(object):
-    """
-    Pymenu event.
-    """
-
-    def __init__(self, action):
-        assert isinstance(action, int)
-        self._action = action
-
-    def __eq__(self, other):
-        if isinstance(other, PymenuAction):
-            return self._action == other._action
-        return False
-
-
-# Events
-PYGAME_MENU_BACK = PymenuAction(0)  # Menu back
-PYGAME_MENU_CLOSE = PymenuAction(1)  # Close menu
-PYGAME_MENU_DISABLE_CLOSE = PymenuAction(10)  # Menu disable closing
-PYGAME_MENU_EXIT = PymenuAction(3)  # Menu exit program
-PYGAME_MENU_RESET = PymenuAction(4)  # Menu reset
-
 # Other
-PYGAMEMENU_PYMENUACTION = "<class 'pygameMenu.locals._PymenuAction'>"
 PYGAMEMENU_TEXT_NEWLINE = ''  # Text newline on TextMenu object
-PYGAMEMENU_TYPE_BUTTON = PymenuAction(6)  # Type of button
-PYGAMEMENU_TYPE_SELECTOR = PymenuAction(2)  # Type of selector
-PYGAMEMENU_TYPE_TEXTINPUT = PymenuAction(5)  # Type of text input
 
 # Joypad
 JOY_AXIS_X = 0
