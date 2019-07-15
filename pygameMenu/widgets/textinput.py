@@ -104,6 +104,7 @@ class TextInput(Widget):
         # Render box (overflow)
         self._renderbox = [0, 0, 0]  # Left/Right/Inner
         self._ellipsis = text_ellipsis
+        self._ellipsis_size = 0
 
         # Things cursor:
         self._cursor_color = cursor_color
@@ -122,6 +123,12 @@ class TextInput(Widget):
         self.maxsize = maxsize
         self.maxlength = maxlength
 
+    def apply_font(self):
+        """
+        See upper class doc.
+        """
+        self._ellipsis_size = self._font.size(self._ellipsis)[0]
+
     def clear(self):
         """
         Clear the current text.
@@ -138,12 +145,14 @@ class TextInput(Widget):
         self._clock.tick()
         self._render()
 
-        if not self._cursor_surface:
+        # Render cursor surface if not created
+        if self._cursor_surface is None:
             self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
             self._cursor_surface.fill(self._cursor_color)
 
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
+        # Draw cursor
         if self._cursor_visible and self.selected:
             if self.maxsize == 0 or len(self._input_string) <= self.maxsize:  # If no limit is provided
                 cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
@@ -153,7 +162,7 @@ class TextInput(Widget):
                 cursor_x_pos = 2 + self._font.size(self.label + sstring)[0]
 
                 # Add ellipsis
-                delta = self._font.size(self._ellipsis)[0]
+                delta = self._ellipsis_size
                 if self._renderbox[0] != 0 and \
                         self._renderbox[1] != len(self._input_string):  # If Left+Right ellipsis
                     delta *= 1
