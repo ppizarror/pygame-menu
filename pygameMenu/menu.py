@@ -90,66 +90,71 @@ class Menu(object):
         """
         Menu constructor.
 
-        :param bgfun: Background drawing function (only if menu pause app)
-        :param color_selected: Color of selected item
-        :param dopause: Pause game
-        :param draw_region_x: Drawing position of element inside menu (x-axis)
-        :param draw_region_y: Drawing position of element inside menu (y-axis)
-        :param draw_select: Draw a rectangle around selected item (bool)
-        :param enabled: Menu is enabled by default or not
-        :param font: Font file direction
-        :param font_color: Color of font
-        :param font_size: Font size
-        :param font_size_title: Font size of the title
-        :param font_title: Alternative font of the title (file direction)
-        :param joystick_enabled: Enable/disable joystick on menu
-        :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
-        :param menu_color: Menu color
-        :param menu_color_title: Background color of title
-        :param menu_height: Height of menu (px)
-        :param menu_width: Width of menu (px)
-        :param mouse_enabled: Enable/disable mouse click on menu
-        :param onclose: Function applied when closing the menu
-        :param option_margin: Margin of each element in menu (px)
-        :param option_shadow: Indicate if a shadow is drawn on each option
-        :param option_shadow_offset: Offset of shadow
-        :param option_shadow_position: Position of shadow
-        :param rect_width: Border with of rectangle around selected item
         :param surface: Pygame surface
-        :param title: Title of the menu (main title)
-        :param title_offsetx: Offset x-position of title (px)
-        :param title_offsety: Offset y-position of title (px)
-        :param widget_alignment: Default widget alignment
-        :param window_height: Window height size (px)
+        :type surface: pygame.surface.SurfaceType
         :param window_width: Window width size (px)
-        :type bgfun: function
-        :type color_selected: tuple
-        :type dopause: bool
-        :type draw_region_x: int
-        :type draw_region_y: int
-        :type draw_select: bool
-        :type font: basestring
-        :type font_color: tuple
-        :type font_size: int
-        :type font_size_title: int
-        :type font_title: basestring
-        :type joystick_enabled: bool
-        :type menu_alpha: int
-        :type menu_color: tuple
-        :type menu_color_title: tuple
-        :type menu_height: int
-        :type menu_width: int
-        :type mouse_enabled: bool
-        :type onclose: function
-        :type option_margin: int
-        :type option_shadow: bool
-        :type option_shadow_offset: int
-        :type option_shadow_position: basestring
-        :type rect_width: int
-        :type title: basestring
-        :type widget_alignment: basestring
-        :type window_height: int
         :type window_width: int
+        :param window_height: Window height size (px)
+        :type window_height: int
+        :param font: Font file path
+        :type font: basestring
+        :param title: Title of the menu (main title)
+        :type title: basestring
+
+        :param bgfun: Background drawing function (only if menu pause app)
+        :type bgfun: function
+        :param color_selected: Color of selected item
+        :type color_selected: tuple
+        :param dopause: Pause game
+        :type dopause: bool
+        :param draw_region_x: Drawing position of element inside menu (x-axis)
+        :type draw_region_x: int
+        :param draw_region_y: Drawing position of element inside menu (y-axis)
+        :type draw_region_y: int
+        :param draw_select: Draw a rectangle around selected item (bool)
+        :type draw_select: bool
+        :param enabled: Menu is enabled by default or not
+        :type enabled: bool
+        :param font_color: Color of font
+        :type font_color: tuple
+        :param font_size: Font size
+        :type font_size: int
+        :param font_size_title: Font size of the title
+        :type font_size_title: int
+        :param font_title: Alternative font of the title (file path)
+        :type font_title: basestring
+        :param joystick_enabled: Enable/disable joystick on menu
+        :type joystick_enabled: bool
+        :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
+        :type menu_alpha: int
+        :param menu_color: Menu color
+        :type menu_color: tuple
+        :param menu_color_title: Background color of title
+        :type menu_color_title: tuple
+        :param menu_height: Height of menu (px)
+        :type menu_height: int
+        :param menu_width: Width of menu (px)
+        :type menu_width: int
+        :param mouse_enabled: Enable/disable mouse click on menu
+        :type mouse_enabled: bool
+        :param onclose: Function applied when closing the menu
+        :type onclose: function
+        :param option_margin: Margin of each element in menu (px)
+        :type option_margin: int
+        :param option_shadow: Indicate if a shadow is drawn on each option
+        :type option_shadow: bool
+        :param option_shadow_offset: Offset of shadow
+        :type option_shadow_offset: int
+        :param option_shadow_position: Position of shadow
+        :type option_shadow_position: basestring
+        :param rect_width: Border with of rectangle around selected item
+        :type rect_width: int
+        :param title_offsetx: Offset x-position of title (px)
+        :type title_offsetx: int
+        :param title_offsety: Offset y-position of title (px)
+        :type title_offsety: int
+        :param widget_alignment: Default widget alignment
+        :type widget_alignment: basestring
         """
         assert isinstance(color_selected, tuple)
         assert isinstance(dopause, bool)
@@ -182,8 +187,7 @@ class Menu(object):
                 'execution of the application)'
         else:
             assert isinstance(bgfun, type(None)), \
-                'Bgfun must be None if menu does not pause execution of the ' \
-                'application'
+                'Bgfun must be None if menu does not pause execution of the application'
         assert window_height > 0 and window_width > 0, \
             'Window size must be greater than zero'
         assert rect_width >= 0, 'rect_width must be greater or equal than zero'
@@ -225,9 +229,7 @@ class Menu(object):
         self._width = menu_width
 
         # Inner variables
-        self._top = None  # Top level menu
         self._actual = self  # Actual menu
-        self._submenus = []  # List of all linked menus
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
@@ -237,6 +239,8 @@ class Menu(object):
         self._prev = None  # Previous menu
         self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
+        self._submenus = []  # List of all linked menus
+        self._top = None  # Top level menu
 
         # Load fonts
         try:
@@ -283,11 +287,11 @@ class Menu(object):
             - align: Widget alignment
 
         :param element_name: Name of the element
+        :type element_name: basestring
         :param element: Object
+        :type element: Menu, _PymenuAction, function
         :param args: Aditional arguments used by a function
         :param kwargs: Additional keyword arguments
-        :type element_name: str
-        :type element: Menu, _PymenuAction, function
         :return: Widget object
         :rtype: pygameMenu.widgets.button.Button
         """
@@ -357,20 +361,20 @@ class Menu(object):
             onreturn(a, b, c..., **kwargs)
 
         :param title: Title of the selector
-        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
-        :param selector_id: ID of the selector
-        :param default: Index of default value to display
-        :param align: Widget alignment
-        :param onchange: Function when changing the selector
-        :param onreturn: Function when pressing return button
-        :param kwargs: Aditional parameters
         :type title: basestring
+        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
         :type values: list
+        :param selector_id: ID of the selector
         :type selector_id: basestring
+        :param default: Index of default value to display
         :type default: int
+        :param align: Widget alignment
         :type align: basestring
+        :param onchange: Function when changing the selector
         :type onchange: function, NoneType
+        :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param kwargs: Aditional parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
@@ -380,6 +384,7 @@ class Menu(object):
                 'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
+        assert default < len(values), 'Default position should be lower than number of values'
         if align == '':
             align = self._widget_align
 
@@ -422,12 +427,12 @@ class Menu(object):
             fun(a, b, c,..., **kwargs)
 
         :param title: Title of the selector
-        :param values: Values of the selector
-        :param fun: Function to apply values when changing the selector
-        :param kwargs: Optional parameters to function
         :type title: basestring
+        :param values: Values of the selector
         :type values: list
+        :param fun: Function to apply values when changing the selector
         :type fun: function, NoneType
+        :param kwargs: Optional parameters to function
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
@@ -446,12 +451,12 @@ class Menu(object):
             fun(a, b, c,..., **kwargs)
 
         :param title: Title of the selector
+        :type title: basestring
         :param values: Values of the selector
-        :param fun: Function to apply values when pressing return on the element
-        :param kwargs: Optional parameters to function
-        :type title: str
         :type values: list
+        :param fun: Function to apply values when pressing return on the element
         :type fun: function, NoneType
+        :param kwargs: Optional parameters to function
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
@@ -471,24 +476,24 @@ class Menu(object):
             onreturn(current_text, **kwargs)
 
         :param title: Title of the text input
-        :param textinput_id: ID of the text input
-        :param default: default value to display
-        :param input_type: Data type of the input
-        :param maxlength: Maximum length of string, if 0 there's no limit
-        :param maxsize: Maximum size of the text widget, if 0 there's no limit
-        :param align: Widget alignment
-        :param onchange: Function when changing the selector
-        :param onreturn: Function when pressing return button
-        :param kwargs: Aditional parameters
         :type title: basestring
+        :param textinput_id: ID of the text input
         :type textinput_id: basestring
-        :type default: basestring
+        :param default: Default value to display
+        :type default: basestring, int, float
+        :param input_type: Data type of the input
         :type input_type: basestring
+        :param maxlength: Maximum length of string, if 0 there's no limit
         :type maxlength: int
+        :param maxsize: Maximum size of the text widget, if 0 there's no limit
         :type maxsize: int
+        :param align: Widget alignment
         :type align: basestring
+        :param onchange: Function when changing the selector
         :type onchange: function, NoneType
+        :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param kwargs: Aditional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
@@ -542,6 +547,8 @@ class Menu(object):
         """
         Execute close callbacks and disable the menu.
 
+        :param closelocked: Lock close event
+        :type closelocked: bool
         :return: True if menu has been disabled
         :rtype: bool
         """
@@ -791,8 +798,8 @@ class Menu(object):
         and all sub-menus.
 
         :param recursive: Look in menu and sub-menus
-        :param depth: Depth menu when using recursive
         :type recursive: bool
+        :param depth: Depth menu when using recursive
         :type depth: int
         :return: Input dict
         :rtype: dict
@@ -854,6 +861,7 @@ class Menu(object):
 
         :param menu: Menu object
         :type menu: Menu, TextMenu
+        :return: None
         """
         actual = self
         menu._top = self._top
@@ -868,6 +876,7 @@ class Menu(object):
 
         :param index: Widget index
         :type index: int
+        :return: None
         """
         actual = self._top._actual
         if actual._size == 0:
@@ -882,10 +891,10 @@ class Menu(object):
         Set menu title.
 
         :param title: Menu title
-        :param offsetx: Offset x-position of title (px)
-        :param offsety: Offset y-position of title (px)
         :type title: str
+        :param offsetx: Offset x-position of title (px)
         :type offsetx: int
+        :param offsety: Offset y-position of title (px)
         :type offsety: int
         :return: None
         """
@@ -928,8 +937,8 @@ class Menu(object):
         None is returned if no widget found.
 
         :param widget_id: Widget ID
-        :param recursive: Look in menu and sub-menus
         :type widget_id: basestring
+        :param recursive: Look in menu and sub-menus
         :type recursive: bool
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget

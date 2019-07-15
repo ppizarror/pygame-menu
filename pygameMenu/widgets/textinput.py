@@ -60,30 +60,30 @@ class TextInput(Widget):
         Description of the specific paramaters (see Widget class for generic ones):
 
         :param label: Input label text
-        :param default: Initial text to be displayed
-        :param textinput_id: Id of the text input
-        :param input_type: Type of data
-        :param cursor_color: Color of cursor
-        :param maxlength: Maximum length of input
-        :param maxsize: Maximum size of the text to be displayed (overflow)
-        :param onchange: Callback when changing the selector
-        :param onreturn: Callback when pressing return button
-        :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-        :param repeat_keys_interval_ms: Interval between key press repetition when held
-        :param text_ellipsis: Ellipsis text when overflow occurs
-        :param kwargs: Optional keyword-arguments for callbacks
         :type label: basestring
+        :param default: Initial text to be displayed
         :type default: basestring
+        :param textinput_id: Id of the text input
         :type textinput_id: basestring
+        :param input_type: Type of data
         :type input_type: basestring
+        :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param maxlength: Maximum length of input
         :type maxlength: int
+        :param maxsize: Maximum size of the text to be displayed (overflow)
         :type maxsize: int
+        :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
+        :param onreturn: Callback when pressing return button
         :type onreturn: function, NoneType
+        :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :type repeat_keys_initial_ms: float, int
+        :param repeat_keys_interval_ms: Interval between key press repetition when held
         :type repeat_keys_interval_ms: float, int
+        :param text_ellipsis: Ellipsis text when overflow occurs
         :type text_ellipsis: basestring
+        :param kwargs: Optional keyword-arguments for callbacks
         """
         super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
                                         onreturn=onreturn, kwargs=kwargs)

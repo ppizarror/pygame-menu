@@ -126,7 +126,8 @@ settings_menu.add_selector('Select difficulty',
                            [('Easy', 'EASY'),
                             ('Medium', 'MEDIUM'),
                             ('Hard', 'HARD')],
-                           selector_id='difficulty')
+                           selector_id='difficulty',
+                           default=1)
 
 
 def data_fun():

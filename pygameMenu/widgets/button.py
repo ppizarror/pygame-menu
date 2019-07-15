@@ -52,13 +52,13 @@ class Button(Widget):
         Description of the specific paramaters (see Widget class for generic ones):
 
         :param label: Text of the button
+        :type label: basestring
         :param onchange: Callback when changing the selector
+        :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
+        :type onreturn: function, NoneType
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
-        :type label: basestring
-        :type onchange: function, NoneType
-        :type onreturn: function, NoneType
         """
         super(Button, self).__init__(onchange=onchange, onreturn=onreturn,
                                      args=args, kwargs=kwargs)  # Button has no ID

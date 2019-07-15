@@ -60,25 +60,27 @@ class TextMenu(Menu):
         TextMenu constructor.
 
         :param surface: Pygame surface object
+        :type surface: pygame.surface.SurfaceType
         :param window_width: Window width
-        :param window_height: Window height
-        :param font: Font file direction
-        :param title: Title of the Menu
-        :param draw_text_region_x: X-Axis drawing region of the text
-        :param text_align: Text default alignment
-        :param text_color: Text color
-        :param text_fontsize: Text font size
-        :param text_margin: Line margin
-        :param kwargs: Aditional parameters
         :type window_width: int
+        :param window_height: Window height
         :type window_height: int
+        :param font: Font file direction
         :type font: str
+        :param title: Title of the Menu
         :type title: str
+
+        :param draw_text_region_x: X-Axis drawing region of the text
         :type draw_text_region_x: int
+        :param text_align: Text default alignment
         :type text_align: basestring
+        :param text_color: Text color
         :type text_color: tuple
+        :param text_fontsize: Text font size
         :type text_fontsize: int
+        :param text_margin: Line margin
         :type text_margin: int
+        :param kwargs: Aditional parameters
         """
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
@@ -127,10 +129,10 @@ class TextMenu(Menu):
         Add option to menu.
 
         :param element_name: Name of the element
-        :param element: Menu object
-        :param args: Aditional arguments
         :type element_name: basestring
-        :type element: Menu, PymenuAction
+        :param element: Menu object
+        :type element: Menu, _PymenuAction
+        :param args: Aditional arguments
         :return: None
         """
         if self._size <= 1:

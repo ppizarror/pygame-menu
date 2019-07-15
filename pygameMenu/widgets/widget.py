@@ -51,13 +51,13 @@ class Widget(object):
                  ):
         """
         :param widget_id: Widget identifier
+        :type widget_id: basestring
         :param onchange: Callback when changing the selector
+        :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
+        :type onreturn: function, NoneType
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
-        :type widget_id: basestring
-        :type onchange: function, NoneType
-        :type onreturn: function, NoneType
         """
 
         # Store id, if None or empty create new ID based on UUID
@@ -131,7 +131,7 @@ class Widget(object):
             - ``args`` of the widget
             - ``kwargs`` of the widget
 
-        :param args: extra arguments passed to the callback
+        :param args: Extra arguments passed to the callback
         :return: None
         """
         if self._on_change:
@@ -147,6 +147,7 @@ class Widget(object):
         Draw the widget shape.
 
         :param surface: Surface to draw
+        :type surface: pygame.surface.SurfaceType
         :return: None
         """
         raise NotImplementedError('Override is mandatory')
@@ -156,6 +157,7 @@ class Widget(object):
         Return the Rect object.
 
         :return: pygame.Rect
+        :rtype: pygame.rect.RectType
         """
         self._render()
         self._rect.width, self._rect.height = self._surface.get_size()
@@ -167,15 +169,16 @@ class Widget(object):
         no value will be passed to the callbacks.
 
         :return: value
+        :rtype: Object
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
                                                                self.get_id()))
 
     def get_id(self):
         """
-        Returns widget id.
+        Returns widget ID.
 
-        :return: id
+        :return: ID
         :rtype: basestring
         """
         return self._id
@@ -206,11 +209,11 @@ class Widget(object):
         Render text and turn it into a surface.
 
         :param string: Text to render
-        :param color: Text color
         :type string: basestring
+        :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: Surface
+        :rtype: pygame.surface.SurfaceType
         """
         render_hash = self.hash_variables(string, color)
         if render_hash != self._render_string_cache:  # If render changed
@@ -238,10 +241,16 @@ class Widget(object):
         Set the text font.
 
         :param font: Name or list of names for font (see pygame.font.match_font for precise format)
+        :type font: basestring, list
         :param font_size: Size of font in pixels
+        :type font_size: int
         :param color: Text color
+        :type color: tuple
         :param selected_color: Text color when widget is selected
+        :type selected_color: tuple
         :param antialias: Determines if antialias is applied to font (uses more processing power)
+        :type antialias: bool
+        :return: None
         """
         if isinstance(font, _pygame.font.Font):
             self._font = font
@@ -268,7 +277,10 @@ class Widget(object):
         Set the position.
 
         :param posx: X position
+        :type posx: tuple
         :param posy: Y position
+        :type posy: tuple
+        :return: None
         """
         self._rect.x = posx
         self._rect.y = posy
@@ -302,6 +314,7 @@ class Widget(object):
 
         :param selected: Set item as selected
         :type selected: bool
+        :return: None
         """
         self.selected = selected
 
@@ -310,13 +323,14 @@ class Widget(object):
         Show text shadow.
 
         :param enabled: Shadow is enabled or not
-        :param color: Shadow color
-        :param position: Shadow position
-        :param offset: Shadow offset
         :type enabled: bool
+        :param color: Shadow color
         :type color: list, NoneType
+        :param position: Shadow position
         :type position: basestring, NoneType
+        :param offset: Shadow offset
         :type offset: int, NoneType
+        :return: None
         """
         self._shadow = enabled
         if color is not None:
@@ -375,9 +389,10 @@ class Widget(object):
         Enable interfaces to control the widget.
 
         :param joystick: Use joystick
-        :param mouse: Use mouse
         :type joystick: bool
+        :param mouse: Use mouse
         :type mouse: bool
+        :return: None
         """
         self.joystick_enabled = joystick
         self.mouse_enabled = mouse
