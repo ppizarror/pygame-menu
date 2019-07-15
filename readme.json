@@ -1,65 +1,70 @@
 {
-  "PROJECT": {
-    "NAME": "Pygame Menu",
-    "ICON": {
-      "IMAGE": "https://ppizarror.com/resources/other/python.png",
-      "ALT": "Pygame Menu",
-      "WIDTH": 200,
-      "HEIGHT": 200
-    },
-    "URL": "https://ppizarror.com/pygame-menu/",
-    "URL_TITLE": "Pygame Menu"
-  },
   "AUTHOR": {
-    "NAME": "Pablo Pizarro R.",
-    "URL": "https://ppizarror.com",
     "ALT": "ppizarror",
     "DATE": "2017-2019",
+    "NAME": "Pablo Pizarro R.",
     "SECTION": {
-      "TITLE": "Author",
-      "SHOW": true
-    }
+      "SHOW": true,
+      "TITLE": "Author"
+    },
+    "URL": "https://ppizarror.com"
   },
-  "DESCRIPTION": "Menu for pygame, simple, lightweight and easy to use",
   "BADGES": {
     "0": {
-      "IMAGE": "https://ppizarror.com/badges/author.svg",
+      "ALT": "@ppizarror",
       "HREF": "https://ppizarror.com",
-      "ALT": "@ppizarror"
+      "IMAGE": "https://ppizarror.com/badges/author.svg"
     },
     "1": {
-      "IMAGE": "https://ppizarror.com/badges/licensemit.svg",
+      "ALT": "License MIT",
       "HREF": "https://opensource.org/licenses/MIT/",
-      "ALT": "License MIT"
+      "IMAGE": "https://ppizarror.com/badges/licensemit.svg"
     },
     "2": {
-      "IMAGE": "https://ppizarror.com/badges/python27.svg",
+      "ALT": "Python 2.6+",
       "HREF": "https://www.python.org/downloads/",
-      "ALT": "Python 2.7"
+      "IMAGE": "https://ppizarror.com/badges/python26+.svg"
     },
     "3": {
-      "IMAGE": "https://ppizarror.com/badges/python36.svg",
+      "ALT": "Python 3.6+",
       "HREF": "https://www.python.org/downloads/",
-      "ALT": "Python 3.6"
+      "IMAGE": "https://ppizarror.com/badges/python36+.svg"
     },
     "4": {
-      "IMAGE": "https://ppizarror.com/badges/pygame194.svg",
+      "ALT": "Pygame 1.9.4-1.9.6",
       "HREF": "https://www.pygame.org/",
-      "ALT": "Pygame 1.9.4"
+      "IMAGE": "https://ppizarror.com/badges/pygame194-196.svg"
     },
-	"5": {
+    "5": {
       "NEWLINE": true
     },
     "6": {
-      "IMAGE": "https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18",
+      "ALT": "Total alerts",
       "HREF": "https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/",
-      "ALT": "Total alerts"
+      "IMAGE": "https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18"
     },
-	"7": {
-      "IMAGE": "https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18",
+    "7": {
+      "ALT": "Language grade: Python",
       "HREF": "https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python",
-      "ALT": "Language grade: Python"
+      "IMAGE": "https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18"
+    },
+    "8": {
+      "ALT": "PyPi package",
+      "HREF": "https://pypi.org/project/pygame-menu/",
+      "IMAGE": "https://badge.fury.io/py/pygame-menu.svg"
     }
   },
-  "CONTENT": "readme.content.md"
+  "CONTENT": "readme.content.md",
+  "DESCRIPTION": "Menu for pygame, simple, lightweight and easy to use",
+  "PROJECT": {
+    "ICON": {
+      "ALT": "Pygame Menu",
+      "HEIGHT": 200,
+      "IMAGE": "https://ppizarror.com/resources/other/python.png",
+      "WIDTH": 200
+    },
+    "NAME": "Pygame Menu",
+    "URL": "https://ppizarror.com/pygame-menu/",
+    "URL_TITLE": "Pygame Menu"
+  }
 }

@@ -1,8 +1,13 @@
 # coding=utf-8
 """
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
 EXAMPLE 2
 Game menu with 3 difficulty options.
 
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,6 +27,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 # Import pygame and libraries
@@ -34,7 +40,7 @@ import pygame
 import pygameMenu
 from pygameMenu.locals import *
 
-ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
          PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -47,12 +53,13 @@ WINDOW_SIZE = (640, 480)
 
 # -----------------------------------------------------------------------------
 # Init pygame
+# -----------------------------------------------------------------------------
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('PygameMenu example 2')
+pygame.display.set_caption('pygameMenu example 2')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
@@ -61,21 +68,22 @@ DIFFICULTY = ['EASY']
 
 
 # -----------------------------------------------------------------------------
-
-def change_difficulty(d):
+# Methods
+# -----------------------------------------------------------------------------
+def change_difficulty(value, d):
     """
     Change difficulty of the game.
-    
-    :return: 
+
+    :return:
     """
-    print('Selected difficulty: {0}'.format(d))
+    print('Selected difficulty: {} ({})'.format(value, d))
     DIFFICULTY[0] = d
 
 
 def random_color():
     """
     Return random color.
-    
+
     :return: Color tuple
     """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
@@ -84,7 +92,7 @@ def random_color():
 def play_function(difficulty, font):
     """
     Main game function
-    
+
     :param difficulty: Difficulty of the game
     :param font: Pygame font
     :return: None
@@ -140,14 +148,17 @@ def play_function(difficulty, font):
 def main_background():
     """
     Function used by menus, draw on background while menu is active.
-    
+
     :return: None
     """
     surface.fill(COLOR_BACKGROUND)
 
 
 # -----------------------------------------------------------------------------
-# PLAY MENU
+# Create menus
+# -----------------------------------------------------------------------------
+
+# Play menu
 play_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
@@ -170,11 +181,10 @@ play_menu.add_option('Start', play_function, DIFFICULTY,
 play_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
                                              ('Medium', 'MEDIUM'),
                                              ('Hard', 'HARD')],
-                       onreturn=None,
                        onchange=change_difficulty)
 play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 
-# ABOUT MENU
+# About menu
 about_menu = pygameMenu.TextMenu(surface,
                                  bgfun=main_background,
                                  color_selected=COLOR_WHITE,
@@ -199,7 +209,7 @@ for m in ABOUT:
 about_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
 about_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 
-# MAIN MENU
+# Main menu
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
@@ -222,10 +232,14 @@ main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 # -----------------------------------------------------------------------------
 # Main loop
+# -----------------------------------------------------------------------------
 while True:
 
     # Tick
     clock.tick(60)
+
+    # Paint background
+    main_background()
 
     # Application events
     events = pygame.event.get()

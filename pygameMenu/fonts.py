@@ -1,8 +1,13 @@
 # coding=utf-8
 """
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
 FONTS
 Menu available fonts.
 
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,6 +27,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 # Get actual folder
@@ -34,6 +40,10 @@ __fontdir = '{0}/fonts/{1}.ttf'
 # Avaiable fonts
 FONT_8BIT = __fontdir.format(__actualpath, '8bit')
 FONT_BEBAS = __fontdir.format(__actualpath, 'bebas')
+FONT_COMIC_NEUE = __fontdir.format(__actualpath, 'comic_neue')
 FONT_FRANCHISE = __fontdir.format(__actualpath, 'franchise')
+FONT_HELVETICA = __fontdir.format(__actualpath, 'helvetica')
 FONT_MUNRO = __fontdir.format(__actualpath, 'munro')
 FONT_NEVIS = __fontdir.format(__actualpath, 'nevis')
+FONT_OPEN_SANS = __fontdir.format(__actualpath, 'open_sans')
+FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')

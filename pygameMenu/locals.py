@@ -1,8 +1,13 @@
 # coding=utf-8
 """
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
 LOCALS
 Local constants.
 
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,13 +27,20 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 __all__ = ['PYGAME_MENU_BACK', 'PYGAME_MENU_CLOSE', 'PYGAME_MENU_DISABLE_CLOSE',
            'PYGAME_MENU_EXIT', 'PYGAME_MENU_RESET', 'PYGAMEMENU_PYMENUACTION',
-           'PYGAMEMENU_TEXT_NEWLINE', 'PYGAMEMENU_TYPE_SELECTOR', 'JOY_AXIS_X',
+           'PYGAMEMENU_TEXT_NEWLINE', 'PYGAMEMENU_TYPE_BUTTON',
+           'PYGAMEMENU_TYPE_SELECTOR', 'PYGAMEMENU_TYPE_TEXTINPUT', 'JOY_AXIS_X',
            'JOY_AXIS_Y', 'JOY_BUTTON_BACK', 'JOY_BUTTON_SELECT', 'JOY_CENTERED',
-           'JOY_DEADZONE', 'JOY_DOWN', 'JOY_LEFT', 'JOY_RIGHT', 'JOY_UP']
+           'JOY_DEADZONE', 'JOY_DOWN', 'JOY_LEFT', 'JOY_RIGHT', 'JOY_UP',
+           'PYGAME_ALIGN_CENTER', 'PYGAME_ALIGN_LEFT', 'PYGAME_ALIGN_RIGHT',
+           'PYGAME_INPUT_FLOAT', 'PYGAME_INPUT_INT', 'PYGAME_INPUT_TEXT',
+           'PYGAME_POSITION_NORTHWEST', 'PYGAME_POSITION_NORTH', 'PYGAME_POSITION_NORTHEAST',
+           'PYGAME_POSITION_EAST', 'PYGAME_POSITION_SOUTHEAST', 'PYGAME_POSITION_SOUTH',
+           'PYGAME_POSITION_SOUTHWEST', 'PYGAME_POSITION_WEST']
 
 
 class PymenuAction(object):
@@ -56,7 +68,9 @@ PYGAME_MENU_RESET = PymenuAction(4)  # Menu reset
 # Other
 PYGAMEMENU_PYMENUACTION = "<class 'pygameMenu.locals._PymenuAction'>"
 PYGAMEMENU_TEXT_NEWLINE = ''  # Text newline on TextMenu object
+PYGAMEMENU_TYPE_BUTTON = PymenuAction(6)  # Type of button
 PYGAMEMENU_TYPE_SELECTOR = PymenuAction(2)  # Type of selector
+PYGAMEMENU_TYPE_TEXTINPUT = PymenuAction(5)  # Type of text input
 
 # Joypad
 JOY_AXIS_X = 0
@@ -69,3 +83,23 @@ JOY_DOWN = (0, -1)
 JOY_LEFT = (-1, 0)
 JOY_RIGHT = (1, 0)
 JOY_UP = (0, 1)
+
+# Alignment
+PYGAME_ALIGN_CENTER = '__pygameMenu_align_center__'
+PYGAME_ALIGN_LEFT = '__pygameMenu_align_left__'
+PYGAME_ALIGN_RIGHT = '__pygameMenu_align_right__'
+
+# Input data type
+PYGAME_INPUT_FLOAT = '__pygameMenu_input_float__'
+PYGAME_INPUT_INT = '__pygameMenu_input_int__'
+PYGAME_INPUT_TEXT = '__pygameMenu_input_text__'
+
+# Position
+PYGAME_POSITION_NORTHWEST = '__pygameMenu_position_northwest__'
+PYGAME_POSITION_NORTH = '__pygameMenu_position_north__'
+PYGAME_POSITION_NORTHEAST = '__pygameMenu_position_northeast__'
+PYGAME_POSITION_EAST = '__pygameMenu_position_east__'
+PYGAME_POSITION_SOUTHEAST = '__pygameMenu_position_southeast__'
+PYGAME_POSITION_SOUTH = '__pygameMenu_position_south__'
+PYGAME_POSITION_SOUTHWEST = '__pygameMenu_position_southwest__'
+PYGAME_POSITION_WEST = '__pygameMenu_position_west__'

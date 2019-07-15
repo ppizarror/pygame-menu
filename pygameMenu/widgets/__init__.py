@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-SETUP DISTRIBUTION
-Create setup for PyPi.
+WIDGETS
+Widgets elements that can be added to the menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,29 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Library imports
-from setuptools import setup
-from pygameMenu import __author__, __description__, __email__, __url__, __version__
-
-with open('README.rst') as f:
-    long_description = f.read()
-
-setup(
-    author=__author__,
-    author_email=__email__,
-    classifiers=[
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: pygame'
-    ],
-    description=__description__,
-    include_package_data=True,
-    install_requires=['pygame>=1.9.4'],
-    license='MIT',
-    long_description=long_description,
-    name='pygame-menu',
-    packages=['pygameMenu'],
-    url=__url__,
-    version=__version__
-)
+from pygameMenu.widgets.button import Button
+from pygameMenu.widgets.selector import Selector
+from pygameMenu.widgets.textinput import TextInput

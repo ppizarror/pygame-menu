@@ -1,8 +1,13 @@
 # coding=utf-8
 """
-CONFIG TEXTMENU
-Default Textmenu settings.
+pygame-menu
+https://github.com/ppizarror/pygame-menu
 
+CONFIG TEXTMENU
+Default textmenu settings.
+
+License:
+-------------------------------------------------------------------------------
 The MIT License (MIT)
 Copyright 2017-2019 Pablo Pizarro R. @ppizarror
 
@@ -22,10 +27,10 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 
 MENU_FONT_TEXT_SIZE = 25  # Text size
-TEXT_CENTERED = False  # Text is centered
-TEXT_DRAW_X = 5  # X-Axis margin of text
+TEXT_DRAW_X = 2.5  # X-Axis margin of text (%)
 TEXT_FONT_COLOR = (255, 255, 255)  # Text font color
 TEXT_MARGIN = 10  # Text margin (px)
