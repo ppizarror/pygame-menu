@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-PYGAME-MENU
-A menu for pygame.
+EVENTS
+Menu events definition.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,29 +30,27 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# noinspection PyUnresolvedReferences
-from pygameMenu.menu import Menu
-# noinspection PyUnresolvedReferences
-from pygameMenu.textmenu import TextMenu
-# noinspection PyUnresolvedReferences
-import pygameMenu.fonts as fonts
-# noinspection PyUnresolvedReferences
-import pygameMenu.events
-# noinspection PyUnresolvedReferences
-import pygameMenu.locals
 
-# Other
-__author__ = 'ppizarror'
-__contributors__ = [
-    'anxuae',
-    'asierrayk',
-    'i96751414',
-    'ironsmile',
-    'maditnerd',
-    'Rifqi31',
-    'thisIsMikeKane',
-]
-__description__ = 'Menu for pygame, simple, lightweight and easy to use'
-__email__ = 'pablo.pizarro@ing.uchile.cl'
-__url__ = 'https://github.com/ppizarror/pygame-menu'
-__version__ = 'v2.0.0'
+class _PymenuAction(object):
+    """
+    Pymenu event.
+    """
+
+    def __init__(self, action):
+        assert isinstance(action, int)
+        self._action = action
+
+    def __eq__(self, other):
+        if isinstance(other, _PymenuAction):
+            return self._action == other._action
+        return False
+
+
+# Events
+PYGAMEMENU_PYMENUACTION = "<class 'pygameMenu.events._PymenuAction'>"  # For python compatibility
+
+PYGAME_MENU_BACK = _PymenuAction(0)  # Menu back
+PYGAME_MENU_CLOSE = _PymenuAction(1)  # Close menu
+PYGAME_MENU_DISABLE_CLOSE = _PymenuAction(10)  # Menu disable closing
+PYGAME_MENU_EXIT = _PymenuAction(3)  # Menu exit program
+PYGAME_MENU_RESET = _PymenuAction(4)  # Menu reset

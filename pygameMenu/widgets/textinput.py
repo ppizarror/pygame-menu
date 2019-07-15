@@ -60,30 +60,30 @@ class TextInput(Widget):
         Description of the specific paramaters (see Widget class for generic ones):
 
         :param label: Input label text
-        :param default: Initial text to be displayed
-        :param textinput_id: Id of the text input
-        :param input_type: Type of data
-        :param cursor_color: Color of cursor
-        :param maxlength: Maximum length of input
-        :param maxsize: Maximum size of the text to be displayed (overflow)
-        :param onchange: Callback when changing the selector
-        :param onreturn: Callback when pressing return button
-        :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-        :param repeat_keys_interval_ms: Interval between key press repetition when held
-        :param text_ellipsis: Ellipsis text when overflow occurs
-        :param kwargs: Optional keyword-arguments for callbacks
         :type label: basestring
+        :param default: Initial text to be displayed
         :type default: basestring
+        :param textinput_id: Id of the text input
         :type textinput_id: basestring
+        :param input_type: Type of data
         :type input_type: basestring
+        :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param maxlength: Maximum length of input
         :type maxlength: int
+        :param maxsize: Maximum size of the text to be displayed (overflow)
         :type maxsize: int
+        :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
+        :param onreturn: Callback when pressing return button
         :type onreturn: function, NoneType
+        :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :type repeat_keys_initial_ms: float, int
+        :param repeat_keys_interval_ms: Interval between key press repetition when held
         :type repeat_keys_interval_ms: float, int
+        :param text_ellipsis: Ellipsis text when overflow occurs
         :type text_ellipsis: basestring
+        :param kwargs: Optional keyword-arguments for callbacks
         """
         super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
                                         onreturn=onreturn, kwargs=kwargs)
@@ -120,19 +120,21 @@ class TextInput(Widget):
         self._cursor_switch_ms = 500  # /|\
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
-        # Other
-        self._input_type = input_type
-
         # Public attributs
         self.label = label
         self.maxlength = maxlength
         self.maxsize = maxsize
+
+        # Other
+        self._input_type = input_type
+        self._label_size = 0
 
     def _apply_font(self):
         """
         See upper class doc.
         """
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
+        self._label_size = self._font.size(self.label)[0]
 
     def clear(self):
         """
@@ -355,6 +357,49 @@ class TextInput(Widget):
         self._renderbox[1] = max(0, self._renderbox[1])
         self._renderbox[2] = max(0, min(self._renderbox[2], min(self.maxsize, ls)))
 
+    def _update_cursor_mouse(self, mousex):
+        """
+        Update cursor position after mouse click in text.
+
+        :param mousex: Mouse distance relative to surface.
+        :type mousex: int
+        :return: None
+        """
+        string = self._get_input_string()
+        if string == '':  # If string is empty cursor is not updated
+            return
+
+        # Calculate size of each character
+        string_size = []
+        string_total_size = 0
+        for i in range(len(string)):
+            cs = self._font.size(string[i])[0]  # Char size
+            string_size.append(cs)
+            string_total_size += cs
+
+        # Find the accumulated char size that gives the position of cursor
+        size_sum = 0
+        cursor_pos = len(string)
+        for i in range(len(string)):
+            size_sum += string_size[i] / 2
+            if self._label_size + size_sum >= mousex:
+                cursor_pos = i
+                break
+            size_sum += string_size[i] / 2
+
+        # If text have ellipsis
+        if self.maxsize != 0 and len(self._input_string) > self.maxsize:
+            if self._renderbox[0] != 0:  # Left ellipsis
+                cursor_pos -= 3
+            cursor_pos = max(0, min(self.maxsize, cursor_pos))
+            self._cursor_position = self._renderbox[0] + cursor_pos
+            self._renderbox[2] = cursor_pos
+
+        # Text does not have ellipsis, infered position is correct
+        else:
+            self._cursor_position = cursor_pos
+        self._cursor_render = True
+
     def set_value(self, text):
         """
         See upper class doc.
@@ -479,6 +524,13 @@ class TextInput(Widget):
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
+
+            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                if self._rect.collidepoint(*event.pos):
+                    # Check if mouse collides left or right as percentage, use only X coordinate
+                    mousex, _ = event.pos
+                    topleft, _ = self._rect.topleft
+                    self._update_cursor_mouse(mousex - topleft)
 
         # Update key counters:
         for key in self._keyrepeat_counters:

@@ -54,18 +54,18 @@ class Selector(Widget):
         Description of the specific paramaters (see Widget class for generic ones):
 
         :param title: Title of the selector
+        :type title: basestring
         :param elements: Elements of the selector
-        :param selector_id: ID of the selector
-        :param default: Index of default element to display
-        :param onchange: Callback when changing the selector
-        :param onreturn: Callback when pressing return button
-        :param kwargs: Optional keyword-arguments for callbacks
-        :type title: str
         :type elements: list
+        :param selector_id: ID of the selector
         :type selector_id: basestring
+        :param default: Index of default element to display
         :type default: int
+        :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
+        :param onreturn: Callback when pressing return button
         :type onreturn: function, NoneType
+        :param kwargs: Optional keyword-arguments for callbacks
         """
         super(Selector, self).__init__(widget_id=selector_id, onchange=onchange,
                                        onreturn=onreturn, kwargs=kwargs)
@@ -99,29 +99,19 @@ class Selector(Widget):
         """
         Return the current value of the selector.
 
-        :return: text
-        :rtype: str
+        :return: Value and index as a tuple
+        :rtype: tuple
         """
-        return self._elements[self._index][0]
+        return self._elements[self._index][0], self._index
 
     def left(self):
         """
         Move selector to left.
+
         :return: None
         """
         self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
-
-    def _render(self):
-        """
-        See upper class doc.
-        """
-        string = self._sformat.format(self.label, self.get_value())
-        if self.selected:
-            color = self._font_selected_color
-        else:
-            color = self._font_color
-        self._surface = self.render_string(string, color)
 
     def right(self):
         """
@@ -131,6 +121,17 @@ class Selector(Widget):
         """
         self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
+
+    def _render(self):
+        """
+        See upper class doc.
+        """
+        string = self._sformat.format(self.label, self.get_value()[0])
+        if self.selected:
+            color = self._font_selected_color
+        else:
+            color = self._font_color
+        self._surface = self.render_string(string, color)
 
     def set_selection_format(self, s):
         """
@@ -211,6 +212,7 @@ class Selector(Widget):
         Update selector elements.
 
         :param elements: Elements of the selector
+        :type elements: Object
         :return: None
         """
         for elem in elements:  # Check value list

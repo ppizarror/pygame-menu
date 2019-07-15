@@ -30,17 +30,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import pygame and libraries
+# Import libraries
 import os
-import pygame
 
-# Import pygameMenu
+# Import pygame
+import pygame
 import pygameMenu
-from pygameMenu.locals import *
 
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
-         PYGAMEMENU_TEXT_NEWLINE,
+         pygameMenu.locals.PYGAMEMENU_TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -56,7 +55,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('pygameMenu example 3')
+pygame.display.set_caption('PygameMenu Example 3')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
@@ -68,6 +67,8 @@ def main_background():
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
+
+    :return: None
     """
     surface.fill((40, 40, 40))
 
@@ -77,6 +78,7 @@ def check_name_test(value):
     This function tests the text input widget.
 
     :param value: The widget value
+    :type value: basestring
     :return: None
     """
     print('User name: {0}'.format(value))
@@ -97,30 +99,45 @@ settings_menu = pygameMenu.Menu(surface,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.85),
                                 menu_width=int(WINDOW_SIZE[0] * 0.9),
-                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
                                 title='Settings',
-                                widget_alignment=PYGAME_ALIGN_LEFT,
+                                widget_alignment=pygameMenu.locals.PYGAME_ALIGN_LEFT,
                                 window_height=WINDOW_SIZE[1],
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-wid1 = settings_menu.add_text_input('First name: ', default='John',
-                                    onreturn=check_name_test, textinput_id='first_name')
-wid2 = settings_menu.add_text_input('Last name: ', default='Rambo',
-                                    maxlength=10, textinput_id='last_name')
-settings_menu.add_text_input('Your age: ', default=25, maxlength=3,
-                             textinput_id='age', input_type=PYGAME_INPUT_INT)
-settings_menu.add_text_input('Some long text: ', maxsize=18, textinput_id='long_text')
-settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
-                                                 ('Medium', 'MEDIUM'),
-                                                 ('Hard', 'HARD')], selector_id='difficulty')
+# Add text inputs with different configurations
+wid1 = settings_menu.add_text_input('First name: ',
+                                    default='John',
+                                    onreturn=check_name_test,
+                                    textinput_id='first_name')
+wid2 = settings_menu.add_text_input('Last name: ',
+                                    default='Rambo',
+                                    maxlength=10,
+                                    textinput_id='last_name')
+settings_menu.add_text_input('Your age: ',
+                             default=25,
+                             maxlength=3,
+                             textinput_id='age',
+                             input_type=pygameMenu.locals.PYGAME_INPUT_INT)
+settings_menu.add_text_input('Some long text: ',
+                             maxsize=18,
+                             textinput_id='long_text')
+
+# Create selector with 3 difficulty options
+settings_menu.add_selector('Select difficulty',
+                           [('Easy', 'EASY'),
+                            ('Medium', 'MEDIUM'),
+                            ('Hard', 'HARD')],
+                           selector_id='difficulty',
+                           default=1)
 
 
 def data_fun():
     """
     Print data of the menu.
 
-    :return:
+    :return: None
     """
     print('Settings data:')
     data = settings_menu.get_input_data()
@@ -129,7 +146,8 @@ def data_fun():
 
 
 settings_menu.add_option('Store data', data_fun)  # Call function
-settings_menu.add_option('Return to main menu', PYGAME_MENU_BACK, align=PYGAME_ALIGN_CENTER)
+settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK,
+                         align=pygameMenu.locals.PYGAME_ALIGN_CENTER)
 
 # Main menu
 main_menu = pygameMenu.Menu(surface,
@@ -142,7 +160,7 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
                             menu_width=int(WINDOW_SIZE[0] * 0.8),
-                            onclose=PYGAME_MENU_EXIT,  # User press ESC button
+                            onclose=pygameMenu.events.PYGAME_MENU_EXIT,  # User press ESC button
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
@@ -150,7 +168,7 @@ main_menu = pygameMenu.Menu(surface,
                             )
 
 main_menu.add_option('Settings', settings_menu)
-main_menu.add_option('Quit', PYGAME_MENU_EXIT)
+main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
 
 assert main_menu.get_widget('first_name', recursive=True) is wid1
 assert main_menu.get_widget('last_name') is None
