@@ -414,54 +414,6 @@ class Menu(object):
 
         return widget
 
-    def add_selector_change(self, title, values, fun, **kwargs):
-        """
-        Add a selector to the menu, apply function with values list and kwargs
-        optional parameters when pressing left/right on the element.
-
-        Values of the selector are like:
-            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
-
-        And when changing the value of the selector:
-            fun(a, b, c,..., **kwargs)
-
-        :param title: Title of the selector
-        :type title: basestring
-        :param values: Values of the selector
-        :type values: list
-        :param fun: Function to apply values when changing the selector
-        :type fun: function, NoneType
-        :param kwargs: Optional parameters to function
-        :return: Widget object
-        :rtype: pygameMenu.widgets.selector.Selector
-        """
-        return self.add_selector(title=title, values=values, onchange=fun,
-                                 onreturn=None, kwargs=kwargs)
-
-    def add_selector_return(self, title, values, fun, **kwargs):
-        """
-        Add a selector to the menu, apply function with values list and kwargs
-        optional parameters when pressing return on the element.
-
-        Values of the selector are like:
-            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
-
-        And when pressing return on the selector:
-            fun(a, b, c,..., **kwargs)
-
-        :param title: Title of the selector
-        :type title: basestring
-        :param values: Values of the selector
-        :type values: list
-        :param fun: Function to apply values when pressing return on the element
-        :type fun: function, NoneType
-        :param kwargs: Optional parameters to function
-        :return: Widget object
-        :rtype: pygameMenu.widgets.selector.Selector
-        """
-        return self.add_selector(title=title, values=values, onchange=None,
-                                 onreturn=fun, kwargs=kwargs)
-
     def add_text_input(self, title, textinput_id='', default='',
                        input_type=_locals.PYGAME_INPUT_TEXT, maxlength=0, maxsize=0,
                        align='', onchange=None, onreturn=None, **kwargs):
