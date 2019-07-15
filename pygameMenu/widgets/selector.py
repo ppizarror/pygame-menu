@@ -99,29 +99,19 @@ class Selector(Widget):
         """
         Return the current value of the selector.
 
-        :return: text
-        :rtype: str
+        :return: Value and index as a tuple
+        :rtype: tuple
         """
-        return self._elements[self._index][0]
+        return self._elements[self._index][0], self._index
 
     def left(self):
         """
         Move selector to left.
+
         :return: None
         """
         self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
-
-    def _render(self):
-        """
-        See upper class doc.
-        """
-        string = self._sformat.format(self.label, self.get_value())
-        if self.selected:
-            color = self._font_selected_color
-        else:
-            color = self._font_color
-        self._surface = self.render_string(string, color)
 
     def right(self):
         """
@@ -131,6 +121,17 @@ class Selector(Widget):
         """
         self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
+
+    def _render(self):
+        """
+        See upper class doc.
+        """
+        string = self._sformat.format(self.label, self.get_value()[0])
+        if self.selected:
+            color = self._font_selected_color
+        else:
+            color = self._font_color
+        self._surface = self.render_string(string, color)
 
     def set_selection_format(self, s):
         """
