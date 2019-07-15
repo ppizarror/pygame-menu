@@ -750,11 +750,10 @@ class Menu(object):
                             return True
                     else:
                         for index in range(len(self._actual._option)):
-                            if self._actual._option[index].get_rect().collidepoint(*event.pos):
+                            widget = self._actual._option[index]
+                            if widget.get_rect().collidepoint(*event.pos):
                                 self._select(index)
-                                if isinstance(self._actual._option[self._actual._index], _widgets.Button):
-                                    # Trigger buttons directly after selection
-                                    self._actual._option[self._actual._index].update(events)
+                                widget.update(events)
                                 break
 
         if not self._enabled:
