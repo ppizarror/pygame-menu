@@ -909,8 +909,8 @@ class Menu(object):
                                     self._posy + self._fsize_title + 5),
                                    (self._posx, self._posy + self._fsize_title + 5)]
 
-        self._title_pos = (
-            self._posx + 5 + self._title_offsetx, self._posy + self._title_offsety)
+        self._title_pos = (self._posx + 5 + self._title_offsetx,
+                           self._posy + self._title_offsety)
 
         cross_size = self._title_polygon_pos[2][1] - self._title_polygon_pos[1][1] - 6
         self._title_backbox_rect = _pygame.Rect(self._title_polygon_pos[1][0] - cross_size - 3,
@@ -931,7 +931,7 @@ class Menu(object):
         :type widget_id: basestring
         :type recursive: bool
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.widget.Widget
         """
         for widget in self._option:
             if widget.get_id() == widget_id:
