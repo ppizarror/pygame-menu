@@ -288,7 +288,7 @@ class Menu(object):
         :type element_name: str
         :type element: Menu, _PymenuAction, function
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.button.Button
         """
         assert isinstance(element_name, str), 'Element name must be a string'
 
@@ -371,7 +371,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.selector.Selector
         """
         # Check value list
         for vl in values:
@@ -428,7 +428,7 @@ class Menu(object):
         :type values: list
         :type fun: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.selector.Selector
         """
         return self.add_selector(title=title, values=values, onchange=fun,
                                  onreturn=None, kwargs=kwargs)
@@ -452,7 +452,7 @@ class Menu(object):
         :type values: list
         :type fun: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.selector.Selector
         """
         return self.add_selector(title=title, values=values, onchange=None,
                                  onreturn=fun, kwargs=kwargs)
@@ -489,7 +489,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :type onreturn: function, NoneType
         :return: Widget object
-        :rtype: Widget
+        :rtype: pygameMenu.widgets.textinput.TextInput
         """
         self._size += 1
         if self._size > 1:
@@ -529,13 +529,13 @@ class Menu(object):
         """
         Check if widget if is duplicated.
 
-        :param widget_id: New widget id
+        :param widget_id: New widget ID
         :type widget_id: basestring
         :return: Exception if ID is duplicated
         """
         for i in self._option:
             if i.get_id() == widget_id:
-                raise Exception('The widget id="{0}" is duplicated'.format(widget_id))
+                raise Exception('The widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
         """
@@ -674,7 +674,7 @@ class Menu(object):
 
     def is_disabled(self):
         """
-        Returns false/true if Menu is enabled or not
+        Returns false/true if menu is enabled or not
 
         :return: True if the menu is disabled
         :rtype: bool
@@ -683,7 +683,7 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Returns true/false if Menu is enabled or not
+        Returns true/false if menu is enabled or not
 
         :return: True if the menu is enabled
         :rtype: bool
@@ -767,7 +767,7 @@ class Menu(object):
 
     def mainloop(self, events):
         """
-        Main function of Menu, draw, etc.
+        Main function of menu.
 
         :param events: Menu events
         :return: None
@@ -927,7 +927,7 @@ class Menu(object):
 
         None is returned if no widget found.
 
-        :param widget_id: Widget id
+        :param widget_id: Widget ID
         :param recursive: Look in menu and sub-menus
         :type widget_id: basestring
         :type recursive: bool

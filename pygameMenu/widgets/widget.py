@@ -65,6 +65,8 @@ class Widget(object):
             widget_id = uuid4()
         self._id = str(widget_id)
         self._surface = None  # Rendering surface
+        self._render_string_cache = 0
+        self._render_string_cache_surface = None
         self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = _locals.PYGAME_ALIGN_CENTER
 
@@ -156,7 +158,6 @@ class Widget(object):
         :return: pygame.Rect
         """
         self._render()
-
         self._rect.width, self._rect.height = self._surface.get_size()
         return self._rect
 
@@ -188,6 +189,18 @@ class Widget(object):
         """
         raise NotImplementedError('Override is mandatory')
 
+    @staticmethod
+    def hash_variables(*args):
+        """
+        Compute hash from a series of variables.
+
+        :param args: Variables to compute hash
+        :type args: Object
+        :return: hash data
+        :rtype: int
+        """
+        return hash(args)
+
     def render_string(self, string, color):
         """
         Render text and turn it into a surface.
@@ -199,20 +212,26 @@ class Widget(object):
         :return: Text surface
         :rtype: Surface
         """
-        text = self._font.render(string, self._font_antialias, color)
+        render_hash = self.hash_variables(string, color)
+        if render_hash != self._render_string_cache:  # If render changed
 
-        if self._shadow:
-            size = (text.get_width() + 2, text.get_height() + 2)
-            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-            # noinspection PyArgumentList
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
-            surface.blit(text_bg, self._shadow_tuple)
-            surface.blit(text, (0, 0))
-        else:
-            surface = text
+            text = self._font.render(string, self._font_antialias, color)
+
+            if self._shadow:
+                size = (text.get_width() + 2, text.get_height() + 2)
+                text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+                # noinspection PyArgumentList
+                surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
+                surface.blit(text_bg, self._shadow_tuple)
+                surface.blit(text, (0, 0))
+            else:
+                surface = text
+
+            self._render_string_cache = render_hash
+            self._render_string_cache_surface = surface
 
         # Return rendered surface
-        return surface
+        return self._render_string_cache_surface
 
     def set_font(self, font, font_size, color, selected_color, antialias=True):
         """
@@ -234,6 +253,15 @@ class Widget(object):
         self._font_color = color
         self._font_selected_color = selected_color
         self._font_antialias = antialias
+        self._apply_font()
+
+    def _apply_font(self):
+        """
+        Function triggered after font is applied to widget.
+
+        :return: None
+        """
+        raise NotImplementedError('Override is mandatory')
 
     def set_position(self, posx, posy):
         """
@@ -359,6 +387,7 @@ class Widget(object):
         Set the value.
 
         :param value: Value to be set on the widget
+        :type value: Object
         :return: None
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
@@ -369,6 +398,8 @@ class Widget(object):
         Update internal varibale according to the given events list.
 
         :param events: List of pygame events
+        :type events: list
         :return: True if updated
+        :rtype: bool
         """
         raise NotImplementedError('Override is mandatory')

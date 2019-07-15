@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
 from pygameMenu import locals as _locals
-from pygameMenu.widgets.abstract import Widget
+from pygameMenu.widgets.widget import Widget
 
 
 class TextInput(Widget):
@@ -98,29 +98,38 @@ class TextInput(Widget):
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
-        self._keyrepeat_intial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
+        self._keyrepeat_intial_interval_ms = repeat_keys_initial_ms
 
         # Render box (overflow)
-        self._renderbox = [0, 0, 0]  # Left/Right/Inner
         self._ellipsis = text_ellipsis
+        self._ellipsis_size = 0
+        self._renderbox = [0, 0, 0]  # Left/Right/Inner
 
         # Things cursor:
-        self._cursor_color = cursor_color
-        self._cursor_surface = None
-        self._cursor_position = len(self._input_string)  # Inside text
-        self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
-        self._cursor_switch_ms = 500  # /|\
-        self._cursor_ms_counter = 0
         self._clock = _pygame.time.Clock()
+        self._cursor_color = cursor_color
+        self._cursor_ms_counter = 0
+        self._cursor_position = len(self._input_string)  # Inside text
+        self._cursor_render = True  # If true cursor must be rendered
+        self._cursor_surface = None
+        self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
+        self._cursor_switch_ms = 500  # /|\
+        self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # Other
         self._input_type = input_type
 
         # Public attributs
         self.label = label
-        self.maxsize = maxsize
         self.maxlength = maxlength
+        self.maxsize = maxsize
+
+    def _apply_font(self):
+        """
+        See upper class doc.
+        """
+        self._ellipsis_size = self._font.size(self._ellipsis)[0]
 
     def clear(self):
         """
@@ -130,47 +139,6 @@ class TextInput(Widget):
         """
         self._input_string = ''
         self._cursor_position = 0
-
-    def draw(self, surface):
-        """
-        See upper class doc.
-        """
-        self._clock.tick()
-        self._render()
-
-        if not self._cursor_surface:
-            self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
-            self._cursor_surface.fill(self._cursor_color)
-
-        surface.blit(self._surface, (self._rect.x, self._rect.y))
-
-        if self._cursor_visible and self.selected:
-            if self.maxsize == 0 or len(self._input_string) <= self.maxsize:  # If no limit is provided
-                cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
-            else:  # Calculate position depending on renderbox
-                sstring = self._input_string
-                sstring = sstring[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
-                cursor_x_pos = 2 + self._font.size(self.label + sstring)[0]
-
-                # Add ellipsis
-                delta = self._font.size(self._ellipsis)[0]
-                if self._renderbox[0] != 0 and \
-                        self._renderbox[1] != len(self._input_string):  # If Left+Right ellipsis
-                    delta *= 1
-                elif self._renderbox[1] != len(self._input_string):  # Right ellipsis
-                    delta *= 0
-                elif self._renderbox[0] != 0:  # Left ellipsis
-                    delta *= 1
-                else:
-                    delta *= 0
-                cursor_x_pos += delta
-
-            # Without this, the cursor is invisible when self._cursor_position > 0:
-            if self._cursor_position > 0 or (self.label and self._cursor_position == 0):
-                cursor_x_pos -= self._cursor_surface.get_width()
-
-            cursor_y_pos = 1
-            surface.blit(self._cursor_surface, (self._rect.x + cursor_x_pos + 1, self._rect.y + cursor_y_pos))
 
     def get_value(self):
         """
@@ -191,6 +159,21 @@ class TextInput(Widget):
                 value = 0
         return value
 
+    def draw(self, surface):
+        """
+        See upper class doc.
+        """
+        self._clock.tick()
+        self._render()
+
+        # Draw string
+        surface.blit(self._surface, (self._rect.x, self._rect.y))
+
+        # Draw cursor
+        if self._cursor_visible and self.selected:
+            surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
+                                                self._rect.y + self._cursor_surface_pos[1]))
+
     def _render(self):
         """
         See upper class doc.
@@ -201,6 +184,56 @@ class TextInput(Widget):
         else:
             color = self._font_color
         self._surface = self.render_string(string, color)
+        self._render_cursor()
+
+    def _render_cursor(self):
+        """
+        Cursor is rendered and stored.
+
+        :return: None
+        """
+        # Cursor should not be rendered
+        if not self._cursor_render:
+            return
+
+        # Cursor surface does not exist
+        if self._cursor_surface is None:
+            if self._rect.height == 0:  # If menu has not been initialized this error can occur
+                return
+            self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
+            self._cursor_surface.fill(self._cursor_color)
+
+        # Calculate x position
+        if self.maxsize == 0 or len(self._input_string) <= self.maxsize:  # If no limit is provided
+            cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
+        else:  # Calculate position depending on renderbox
+            sstring = self._input_string
+            sstring = sstring[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
+            cursor_x_pos = 2 + self._font.size(self.label + sstring)[0]
+
+            # Add ellipsis
+            delta = self._ellipsis_size
+            if self._renderbox[0] != 0 and \
+                    self._renderbox[1] != len(self._input_string):  # If Left+Right ellipsis
+                delta *= 1
+            elif self._renderbox[1] != len(self._input_string):  # Right ellipsis
+                delta *= 0
+            elif self._renderbox[0] != 0:  # Left ellipsis
+                delta *= 1
+            else:
+                delta *= 0
+            cursor_x_pos += delta
+        if self._cursor_position > 0 or (self.label and self._cursor_position == 0):
+            # Without this, the cursor is invisible when self._cursor_position > 0:
+            cursor_x_pos -= self._cursor_surface.get_width()
+
+        # Calculate y position
+        cursor_y_pos = 1
+
+        # Store position
+        self._cursor_surface_pos[0] = cursor_x_pos
+        self._cursor_surface_pos[1] = cursor_y_pos
+        self._cursor_render = False
 
     def _get_input_string(self):
         """
@@ -234,6 +267,7 @@ class TextInput(Widget):
         :type start: bool
         :return: None
         """
+        self._cursor_render = True
         if self.maxsize == 0:
             return
         ls = len(self._input_string)

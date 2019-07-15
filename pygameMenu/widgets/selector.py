@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
-from pygameMenu.widgets.abstract import Widget
+from pygameMenu.widgets.widget import Widget
 from pygameMenu import locals as _locals
 
 
@@ -72,6 +72,7 @@ class Selector(Widget):
         self._elements = elements
         self._index = 0
         self._sformat = '{0} < {1} >'
+        self._labelsize = 0
 
         # Public attributs
         self.label = title
@@ -80,6 +81,12 @@ class Selector(Widget):
         default %= len(self._elements)
         for k in range(0, default):
             self.right()
+
+    def _apply_font(self):
+        """
+        See upper class doc.
+        """
+        self._labelsize = self._font.size(self.label)[0]
 
     def draw(self, surface):
         """
@@ -182,18 +189,15 @@ class Selector(Widget):
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 if self._rect.collidepoint(*event.pos):
-                    # Render label and check the position of the options
-                    labelsize = self._font.size(self.label)[0]
-
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
                     topleft, _ = self._rect.topleft
                     topright, _ = self._rect.topright
-                    dist = mousex - (topleft + labelsize)  # Distance from label
+                    dist = mousex - (topleft + self._labelsize)  # Distance from label
                     if dist > 0:  # User clicked options, not label
 
                         # Position in percentage, if <0.5 user clicked left
-                        pos = dist / float(topright - topleft - labelsize)
+                        pos = dist / float(topright - topleft - self._labelsize)
                         if pos <= 0.5:
                             self.left()
                         else:
