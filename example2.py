@@ -134,7 +134,7 @@ def play_function(difficulty, font):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 250
+                    # Quit this function, then skip to loop of main-menu on line 253
                     return
 
         # Pass events to main_menu
@@ -175,11 +175,14 @@ play_menu = pygameMenu.Menu(surface,
                             window_width=WINDOW_SIZE[0]
                             )
 # When pressing return -> play(DIFFICULTY[0], font)
-play_menu.add_option('Start', play_function, DIFFICULTY,
+play_menu.add_option('Start',
+                     play_function,
+                     DIFFICULTY,
                      pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
-play_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
-                                             ('Medium', 'MEDIUM'),
-                                             ('Hard', 'HARD')],
+play_menu.add_selector('Select difficulty',
+                       [('Easy', 'EASY'),
+                        ('Medium', 'MEDIUM'),
+                        ('Hard', 'HARD')],
                        onchange=change_difficulty)
 play_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK)
 

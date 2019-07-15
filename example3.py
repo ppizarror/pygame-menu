@@ -103,16 +103,30 @@ settings_menu = pygameMenu.Menu(surface,
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-wid1 = settings_menu.add_text_input('First name: ', default='John',
-                                    onreturn=check_name_test, textinput_id='first_name')
-wid2 = settings_menu.add_text_input('Last name: ', default='Rambo',
-                                    maxlength=10, textinput_id='last_name')
-settings_menu.add_text_input('Your age: ', default=25, maxlength=3,
-                             textinput_id='age', input_type=pygameMenu.locals.PYGAME_INPUT_INT)
-settings_menu.add_text_input('Some long text: ', maxsize=18, textinput_id='long_text')
-settings_menu.add_selector('Select difficulty', [('Easy', 'EASY'),
-                                                 ('Medium', 'MEDIUM'),
-                                                 ('Hard', 'HARD')], selector_id='difficulty')
+# Add text inputs with different configurations
+wid1 = settings_menu.add_text_input('First name: ',
+                                    default='John',
+                                    onreturn=check_name_test,
+                                    textinput_id='first_name')
+wid2 = settings_menu.add_text_input('Last name: ',
+                                    default='Rambo',
+                                    maxlength=10,
+                                    textinput_id='last_name')
+settings_menu.add_text_input('Your age: ',
+                             default=25,
+                             maxlength=3,
+                             textinput_id='age',
+                             input_type=pygameMenu.locals.PYGAME_INPUT_INT)
+settings_menu.add_text_input('Some long text: ',
+                             maxsize=18,
+                             textinput_id='long_text')
+
+# Create selector with 3 difficulty options
+settings_menu.add_selector('Select difficulty',
+                           [('Easy', 'EASY'),
+                            ('Medium', 'MEDIUM'),
+                            ('Hard', 'HARD')],
+                           selector_id='difficulty')
 
 
 def data_fun():
