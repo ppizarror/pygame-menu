@@ -58,6 +58,7 @@ class Menu(object):
                  window_height,
                  font,
                  title,
+                 back_box=True,
                  bgfun=None,
                  color_selected=_cfg.MENU_SELECTEDCOLOR,
                  dopause=True,
@@ -99,6 +100,8 @@ class Menu(object):
         :type font: basestring
         :param title: Title of the menu (main title)
         :type title: basestring
+        :param back_box: Draw a back-box button on header
+        :type back_box: bool
         :param bgfun: Background drawing function (only if menu pause app)
         :type bgfun: function
         :param color_selected: Color of selected item
@@ -136,7 +139,7 @@ class Menu(object):
         :param mouse_enabled: Enable/disable mouse click on menu
         :type mouse_enabled: bool
         :param onclose: Function applied when closing the menu
-        :type onclose: function
+        :type onclose: function, NoneType
         :param option_margin: Margin of each element in menu (px)
         :type option_margin: int
         :param option_shadow: Indicate if a shadow is drawn on each option
@@ -154,28 +157,34 @@ class Menu(object):
         :param widget_alignment: Default widget alignment
         :type widget_alignment: basestring
         """
+        assert isinstance(window_width, int)
+        assert isinstance(window_height, int)
+        assert isinstance(font, str)
+        assert isinstance(title, str)
+
+        assert isinstance(back_box, bool)
         assert isinstance(color_selected, tuple)
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
         assert isinstance(draw_select, bool)
-        assert isinstance(font, str)
+        assert isinstance(enabled, bool)
         assert isinstance(font_color, tuple)
         assert isinstance(font_size, int)
         assert isinstance(font_size_title, int)
+        assert isinstance(font_title, str) or isinstance(font_title, type(None))
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(mouse_enabled, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_color, tuple)
         assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_height, int)
         assert isinstance(menu_width, int)
+        assert isinstance(mouse_enabled, bool)
         assert isinstance(option_margin, int)
         assert isinstance(option_shadow, bool)
+        assert isinstance(option_shadow_offset, int)
+        assert isinstance(option_shadow_position, str)
         assert isinstance(rect_width, int)
-        assert isinstance(title, str)
-        assert isinstance(window_height, int)
-        assert isinstance(window_width, int)
 
         # Other asserts
         if dopause:
@@ -202,6 +211,7 @@ class Menu(object):
         assert 0 <= menu_alpha <= 100, 'Menu_alpha must be between 0 and 100'
 
         # Store configuration
+        self._back_box = back_box
         self._bgfun = bgfun
         self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0)))
@@ -548,7 +558,7 @@ class Menu(object):
                                 self._bg_color_title)
 
         # Draw back-box
-        if self._mouse:
+        if self._mouse and self._back_box:
             rect = self._title_backbox_rect
             _pygame.draw.rect(self._surface, self._font_color, rect, 1)
             _pygame.draw.polygon(self._surface, self._font_color,
