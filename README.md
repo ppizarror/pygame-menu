@@ -174,10 +174,7 @@ from pygameMenu.locals import *  # Import constants (like actions)
 
 - <i>add_selector(title, values, onchange, onreturn, **kwargs)</i>
 
-    - <i>add_selector_change(title, values, onchange, **kwargs)</i>
-    - <i>add_selector_return(title, values, onreturn, **kwargs)</i>
-
-    Add a *selector* to menu: several options with values and two functions that execute when changing the selector (left/right) and pressing *Return key* on the element.
+    Add a *selector* to menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
     | Param | Description | Type |
     | :-: | :-- | :--: |
