@@ -436,6 +436,7 @@ class TextInput(Widget):
                             + self._input_string[self._cursor_position:]
                     )
                     self._update_renderbox(left=-1, addition=True)
+                    self.change()
                     updated = True
 
                     # Subtract one from cursor_pos, but do not go below zero:
@@ -447,6 +448,7 @@ class TextInput(Widget):
                             + self._input_string[self._cursor_position + 1:]
                     )
                     self._update_renderbox(right=-1, addition=True)
+                    self.change()
                     updated = True
 
                 elif event.key == _pygame.K_RIGHT:
@@ -518,6 +520,7 @@ class TextInput(Widget):
                         if lkey > 0:
                             self._cursor_position += lkey  # Some are empty, e.g. K_UP
                             self._update_renderbox(right=1, addition=True)
+                        self.change()
                         updated = True
 
             elif event.type == _pygame.KEYUP:
