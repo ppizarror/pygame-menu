@@ -179,7 +179,7 @@ class Menu(object):
 
         # Other asserts
         if dopause:
-            assert isinstance(bgfun, (types.FunctionType, types.MethodType)), \
+            assert callable(bgfun), \
                 'Bgfun must be a function (or None if menu does not pause ' \
                 'execution of the application)'
         else:
