@@ -713,7 +713,7 @@ class Menu(object):
                             if widget.get_rect().collidepoint(*event.pos):
                                 self._select(index)
                                 widget.update(events)
-                                break
+                                return True  # It is updated
 
         if not self._enabled:
             # A widget has closed the menu
