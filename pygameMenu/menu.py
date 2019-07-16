@@ -426,7 +426,7 @@ class Menu(object):
         return widget
 
     def add_text_input(self, title, textinput_id='', default='',
-                       input_type=_locals.PYGAME_INPUT_TEXT, maxlength=0, maxsize=0,
+                       input_type=_locals.PYGAME_INPUT_TEXT, maxchar=0, maxwidth=0,
                        align='', onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
@@ -445,10 +445,10 @@ class Menu(object):
         :type default: basestring, int, float
         :param input_type: Data type of the input
         :type input_type: basestring
-        :param maxlength: Maximum length of string, if 0 there's no limit
-        :type maxlength: int
-        :param maxsize: Maximum size of the text widget, if 0 there's no limit
-        :type maxsize: int
+        :param maxchar: Maximum length of string, if 0 there's no limit
+        :type maxchar: int
+        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
+        :type maxwidth: int
         :param align: Widget alignment
         :type align: basestring
         :param onchange: Function when changing the selector
@@ -471,14 +471,14 @@ class Menu(object):
         assert isinstance(input_type, str), 'input_type must be a string'
         assert isinstance(align, str), 'align must be a string'
 
-        assert isinstance(maxlength, int), 'maxlength must be integer'
-        assert maxlength >= 0, 'maxlength must be greater or equal than zero'
-        assert isinstance(maxsize, int), 'maxsize must be a integer'
-        assert maxsize >= 0, 'maxsize must be greater or equal than zero'
+        assert isinstance(maxchar, int), 'maxchar must be integer'
+        assert maxchar >= 0, 'maxchar must be greater or equal than zero'
+        assert isinstance(maxwidth, int), 'maxwidth must be a integer'
+        assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
 
         # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
-                                    maxlength=maxlength, maxsize=maxsize, input_type=input_type,
+                                    maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
         self._check_id_duplicated(textinput_id)
 

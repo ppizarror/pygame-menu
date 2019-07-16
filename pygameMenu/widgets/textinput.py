@@ -47,8 +47,8 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
                  cursor_color=(0, 0, 1),
-                 maxlength=0,
-                 maxsize=0,
+                 maxchar=0,
+                 maxwidth=0,
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
@@ -69,10 +69,10 @@ class TextInput(Widget):
         :type input_type: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
-        :param maxlength: Maximum length of input
-        :type maxlength: int
-        :param maxsize: Maximum size of the text to be displayed (overflow)
-        :type maxsize: int
+        :param maxchar: Maximum length of input
+        :type maxchar: int
+        :param maxwidth: Maximum size of the text to be displayed (overflow)
+        :type maxwidth: int
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -87,10 +87,10 @@ class TextInput(Widget):
         """
         super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
                                         onreturn=onreturn, kwargs=kwargs)
-        if maxlength < 0:
-            raise Exception('maxlength must be equal or greater than zero')
-        if maxsize < 0:
-            raise Exception('maxsize must be equal or greater than zero')
+        if maxchar < 0:
+            raise Exception('maxchar must be equal or greater than zero')
+        if maxwidth < 0:
+            raise Exception('maxwidth must be equal or greater than zero')
 
         self._input_string = str(default)  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,
@@ -122,8 +122,8 @@ class TextInput(Widget):
 
         # Public attributs
         self.label = label
-        self.maxlength = maxlength
-        self.maxsize = maxsize
+        self.maxchar = maxchar
+        self.maxwidth = maxwidth
 
         # Other
         self._input_type = input_type
@@ -209,7 +209,7 @@ class TextInput(Widget):
             self._cursor_surface.fill(self._cursor_color)
 
         # Calculate x position
-        if self.maxsize == 0 or len(self._input_string) <= self.maxsize:  # If no limit is provided
+        if self.maxwidth == 0 or len(self._input_string) <= self.maxwidth:  # If no limit is provided
             cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             sstring = self._input_string
@@ -246,7 +246,7 @@ class TextInput(Widget):
 
         :return: String
         """
-        if self.maxsize != 0 and len(self._input_string) > self.maxsize:
+        if self.maxwidth != 0 and len(self._input_string) > self.maxwidth:
             text = self._input_string[self._renderbox[0]:self._renderbox[1]]
             if self._renderbox[1] != len(self._input_string):  # Right ellipsis
                 text += self._ellipsis
@@ -273,21 +273,21 @@ class TextInput(Widget):
         :return: None
         """
         self._cursor_render = True
-        if self.maxsize == 0:
+        if self.maxwidth == 0:
             return
         ls = len(self._input_string)
 
         # Move cursor to end
         if end:
-            self._renderbox[0] = max(0, ls - self.maxsize)
+            self._renderbox[0] = max(0, ls - self.maxwidth)
             self._renderbox[1] = ls
-            self._renderbox[2] = min(ls, self.maxsize)
+            self._renderbox[2] = min(ls, self.maxwidth)
             return
 
         # Move cursor to start
         if start:
             self._renderbox[0] = 0
-            self._renderbox[1] = min(ls, self.maxsize)
+            self._renderbox[1] = min(ls, self.maxwidth)
             self._renderbox[2] = 0
             return
 
@@ -296,7 +296,7 @@ class TextInput(Widget):
             return
 
         # If no overflow
-        if ls <= self.maxsize:
+        if ls <= self.maxwidth:
             if right < 0 and self._renderbox[2] == ls:  # If del at the end of string
                 return
             self._renderbox[0] = 0  # To catch unexpected errors
@@ -312,7 +312,7 @@ class TextInput(Widget):
             self._renderbox[2] += right
         else:
             if addition:  # If text is added
-                if right < 0 and self._renderbox[2] == self.maxsize:  # If del at the end of string
+                if right < 0 and self._renderbox[2] == self.maxwidth:  # If del at the end of string
                     return
                 if left < 0 and self._renderbox[2] == 0:  # If backspace at begining of string
                     return
@@ -325,7 +325,7 @@ class TextInput(Widget):
 
                 # If the user writes, move renderbox
                 if right > 0:
-                    if self._renderbox[2] == self.maxsize:  # If cursor is at the end push box
+                    if self._renderbox[2] == self.maxwidth:  # If cursor is at the end push box
                         self._renderbox[0] += right
                         self._renderbox[1] += right
                     self._renderbox[2] += right
@@ -344,18 +344,18 @@ class TextInput(Widget):
                 if self._renderbox[2] < 0:
                     self._renderbox[0] += left
                     self._renderbox[1] += left
-                if self._renderbox[2] > self.maxsize:
+                if self._renderbox[2] > self.maxwidth:
                     self._renderbox[0] += right
                     self._renderbox[1] += right
 
             # Apply string limits
-            self._renderbox[1] = max(self.maxsize, min(self._renderbox[1], ls))
-            self._renderbox[0] = self._renderbox[1] - self.maxsize
+            self._renderbox[1] = max(self.maxwidth, min(self._renderbox[1], ls))
+            self._renderbox[0] = self._renderbox[1] - self.maxwidth
 
         # Apply limits
         self._renderbox[0] = max(0, self._renderbox[0])
         self._renderbox[1] = max(0, self._renderbox[1])
-        self._renderbox[2] = max(0, min(self._renderbox[2], min(self.maxsize, ls)))
+        self._renderbox[2] = max(0, min(self._renderbox[2], min(self.maxwidth, ls)))
 
     def _update_cursor_mouse(self, mousex):
         """
@@ -388,10 +388,10 @@ class TextInput(Widget):
             size_sum += string_size[i] / 2
 
         # If text have ellipsis
-        if self.maxsize != 0 and len(self._input_string) > self.maxsize:
+        if self.maxwidth != 0 and len(self._input_string) > self.maxwidth:
             if self._renderbox[0] != 0:  # Left ellipsis
                 cursor_pos -= 3
-            cursor_pos = max(0, min(self.maxsize, cursor_pos))
+            cursor_pos = max(0, min(self.maxwidth, cursor_pos))
             self._cursor_position = self._renderbox[0] + cursor_pos
             self._renderbox[2] = cursor_pos
 
@@ -413,9 +413,9 @@ class TextInput(Widget):
         :return: True if the input must be limited
         :rtype: bool
         """
-        if self.maxlength == 0:
+        if self.maxchar == 0:
             return False
-        return self.maxlength < len(self._input_string)
+        return self.maxchar < len(self._input_string)
 
     def update(self, events):
         """
