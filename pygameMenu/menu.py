@@ -302,7 +302,7 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.button.Button
         """
-        assert isinstance(element_name, str), 'Element name must be a string'
+        assert isinstance(element_name, str), 'element_name must be a string'
 
         # Extend kwargs
         kwargs_keys = kwargs.keys()
@@ -391,7 +391,10 @@ class Menu(object):
                 'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
-        assert default < len(values), 'Default position should be lower than number of values'
+        assert default < len(values), 'default position should be lower than number of values'
+        assert isinstance(selector_id, str), 'id must be a string'
+        assert isinstance(default, int), 'default must be integer'
+        assert isinstance(align, str), 'align must be a string'
         if align == '':
             align = self._widget_align
 
@@ -464,8 +467,14 @@ class Menu(object):
             align = self._widget_align
 
         # Check data
+        assert isinstance(textinput_id, str), 'id must be a string'
+        assert isinstance(input_type, str), 'input_type must be a string'
+        assert isinstance(align, str), 'align must be a string'
+
         assert isinstance(maxlength, int), 'maxlength must be integer'
         assert maxlength >= 0, 'maxlength must be greater or equal than zero'
+        assert isinstance(maxsize, int), 'maxsize must be a integer'
+        assert maxsize >= 0, 'maxsize must be greater or equal than zero'
 
         # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
@@ -584,26 +593,6 @@ class Menu(object):
                 rect = widget.get_rect()
                 _pygame.draw.rect(self._surface, self._sel_color, rect.inflate(16, 4), self._rect_width)
 
-    def enable(self):
-        """
-        Enable menu.
-
-        :return: None
-        """
-        if self.is_disabled():
-            self._enabled = True
-            self._closelocked = True
-
-    @staticmethod
-    def _exit():
-        """
-        Internal exit function.
-
-        :return:
-        """
-        _pygame.quit()
-        exit()
-
     def _get_option_pos(self, index):
         """
         Get option position from the option index.
@@ -629,6 +618,26 @@ class Menu(object):
         xccord = self._opt_posx + option_dx
         ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
         return xccord, ycoord
+
+    def enable(self):
+        """
+        Enable menu.
+
+        :return: None
+        """
+        if self.is_disabled():
+            self._enabled = True
+            self._closelocked = True
+
+    @staticmethod
+    def _exit():
+        """
+        Internal exit function.
+
+        :return:
+        """
+        _pygame.quit()
+        exit()
 
     def get_title(self):
         """
@@ -761,6 +770,7 @@ class Menu(object):
         :return: Input dict
         :rtype: dict
         """
+        assert isinstance(recursive, bool), 'recursive must be a boolean'
         return self._get_input_data(recursive=recursive, depth=0)
 
     def _get_input_data(self, recursive, depth):
@@ -808,7 +818,7 @@ class Menu(object):
         :return: None
         """
         assert isinstance(self._top._actual, Menu)
-        assert isinstance(total, int)
+        assert isinstance(total, int), 'total must be a integer'
         assert total > 0, 'total must be greater than zero'
 
         i = 0
@@ -915,6 +925,8 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget
         """
+        assert isinstance(widget_id, str), 'widget_id must be a string'
+        assert isinstance(recursive, bool), 'recursive must be a boolean'
         for widget in self._option:
             if widget.get_id() == widget_id:
                 return widget
