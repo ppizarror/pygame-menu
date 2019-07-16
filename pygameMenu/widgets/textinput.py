@@ -417,6 +417,36 @@ class TextInput(Widget):
             return False
         return self.maxchar < len(self._input_string)
 
+    def _check_input_type(self, string):
+        """
+        Check if input type is valid.
+
+        :param string: String to validate
+        :type string: str
+        :return: True if the input type is valid
+        :rtype: bool
+        """
+        if self._input_type == _locals.PYGAME_INPUT_TEXT:
+            return True
+
+        conv = None
+        if self._input_type == _locals.PYGAME_INPUT_FLOAT:
+            conv = int
+        elif self._input_type == _locals.PYGAME_INPUT_INT:
+            conv = float
+
+        if string == '-':
+            return True
+
+        if conv is None:
+            return False
+
+        try:
+            conv(string)
+            return True
+        except ValueError:
+            return False
+
     def update(self, events):
         """
         See upper class doc.
@@ -489,32 +519,9 @@ class TextInput(Widget):
                             + self._input_string[self._cursor_position:]
                     )
 
-                    # Check data type
-                    data_valid = True
-                    if self._input_type == _locals.PYGAME_INPUT_TEXT:
-                        pass
-                    elif self._input_type == _locals.PYGAME_INPUT_FLOAT:
-                        if new_string == '-':
-                            data_valid = True
-                        else:
-                            try:
-                                new_string = float(new_string)
-                            except ValueError:
-                                data_valid = False
-                    elif self._input_type == _locals.PYGAME_INPUT_INT:
-                        if new_string == '-':
-                            data_valid = True
-                        else:
-                            try:
-                                new_string = int(new_string)
-                            except ValueError:
-                                data_valid = False
-                    else:
-                        data_valid = False
-
                     # If data is valid
-                    if data_valid:
-                        self._input_string = str(new_string)
+                    if self._check_input_type(new_string):
+                        self._input_string = new_string
 
                         lkey = len(event.unicode)
                         if lkey > 0:
