@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Library imports
-from setuptools import setup
+from setuptools import setup, find_packages
 from pygameMenu import __author__, __description__, __email__, __url__, __version__
 
 with open('README.rst') as f:
@@ -52,7 +52,7 @@ setup(
     license='MIT',
     long_description=long_description,
     name='pygame-menu',
-    packages=['pygameMenu'],
+    packages=find_packages(),
     url=__url__,
     version=__version__
 )

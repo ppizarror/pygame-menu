@@ -93,8 +93,11 @@ class TextInput(Widget):
             raise Exception('maxsize must be equal or greater than zero')
 
         self._input_string = str(default)  # Inputted text
-        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN, _pygame.K_ESCAPE,
-                             _pygame.K_NUMLOCK, _pygame.K_TAB, _pygame.K_CAPSLOCK)
+        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,
+                             _pygame.K_LCTRL, _pygame.K_RCTRL,
+                             _pygame.K_LSHIFT, _pygame.K_RSHIFT,
+                             _pygame.K_NUMLOCK,_pygame.K_CAPSLOCK,
+                             _pygame.K_TAB, _pygame.K_RETURN, _pygame.K_ESCAPE)
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
