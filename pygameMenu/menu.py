@@ -71,7 +71,6 @@ class Menu(object):
                  font_title=None,
                  joystick_enabled=True,
                  menu_alpha=_cfg.MENU_ALPHA,
-                 menu_centered=_cfg.MENU_CENTERED_TEXT,
                  menu_color=_cfg.MENU_BGCOLOR,
                  menu_color_title=_cfg.MENU_TITLE_BG_COLOR,
                  menu_height=_cfg.MENU_HEIGHT,
@@ -167,7 +166,6 @@ class Menu(object):
         assert isinstance(joystick_enabled, bool)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(menu_alpha, int)
-        assert isinstance(menu_centered, bool)
         assert isinstance(menu_color, tuple)
         assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_height, int)
@@ -741,7 +739,21 @@ class Menu(object):
         else:
             self._main(events)
 
-    def get_input_data(self, recursive=False, depth=0):
+    def get_input_data(self, recursive=False):
+        """
+        Return input data as a dict.
+
+        With ``recursive=True``: it looks for a widget inside the current menu
+        and all sub-menus.
+
+        :param recursive: Look in menu and sub-menus
+        :type recursive: bool
+        :return: Input dict
+        :rtype: dict
+        """
+        return self._get_input_data(recursive=recursive, depth=0)
+
+    def _get_input_data(self, recursive, depth):
         """
         Return input data as a dict.
 
@@ -777,7 +789,6 @@ class Menu(object):
                 data.update(data_submenu)
         return data
 
-    # noinspection PyAttributeOutsideInit
     def reset(self, total):
         """
         Reset menu.
@@ -788,7 +799,7 @@ class Menu(object):
         """
         assert isinstance(self._top._actual, Menu)
         assert isinstance(total, int)
-        assert total > 0, 'Total must be greater than zero'
+        assert total > 0, 'total must be greater than zero'
 
         i = 0
         while True:
