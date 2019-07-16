@@ -520,8 +520,8 @@ class TextInput(Widget):
                         if lkey > 0:
                             self._cursor_position += lkey  # Some are empty, e.g. K_UP
                             self._update_renderbox(right=1, addition=True)
-                        self.change()
-                        updated = True
+                            self.change()
+                            updated = True
 
             elif event.type == _pygame.KEYUP:
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
