@@ -33,9 +33,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Import constants
 import pygameMenu.config_controls as _ctrl
 import pygameMenu.config_menu as _cfg
-import pygameMenu.locals as _locals
 import pygameMenu.events as _events
 import pygameMenu.fonts as _fonts
+import pygameMenu.locals as _locals
 
 # Library imports
 import pygameMenu.widgets as _widgets

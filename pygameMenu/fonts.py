@@ -31,11 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Get actual folder
-import os
-import pygame as _pygame
+import os.path as _path
+import pygame.font as _font
 
-__actualpath = str(os.path.abspath(
-    os.path.dirname(__file__))).replace('\\', '/')
+__actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
 __fontdir = '{0}/fonts/{1}.ttf'
 
 # Avaiable fonts
@@ -61,7 +60,7 @@ def get_font(name, size):
     :return: Font object
     :rtype: pygame.font.Font
     """
-    if isinstance(name, _pygame.font.Font):
+    if isinstance(name, _font.Font):
         return name
     else:
 
@@ -69,13 +68,13 @@ def get_font(name, size):
             raise Exception('Font name cannot be empty')
 
         # Font is not a file, then use a system font
-        if not os.path.isfile(name):
+        if not _path.isfile(name):
             font_name = name
-            name = _pygame.font.match_font(font_name)
+            name = _font.match_font(font_name)
 
             if name is None:  # Show system avaiable fonts
                 from difflib import SequenceMatcher
-                system_fonts = _pygame.font.get_fonts()
+                system_fonts = _font.get_fonts()
                 most_similar = 0
                 most_similar_index = 0
                 for i in range(len(system_fonts)):
@@ -93,7 +92,7 @@ def get_font(name, size):
         # Try to load the font
         font = None
         try:
-            font = _pygame.font.Font(name, size)
+            font = _font.Font(name, size)
         except FileNotFoundError:
             pass
 
