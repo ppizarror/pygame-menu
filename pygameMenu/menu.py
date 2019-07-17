@@ -33,8 +33,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Import constants
 import pygameMenu.config_controls as _ctrl
 import pygameMenu.config_menu as _cfg
-import pygameMenu.locals as _locals
 import pygameMenu.events as _events
+import pygameMenu.fonts as _fonts
+import pygameMenu.locals as _locals
 
 # Library imports
 import pygameMenu.widgets as _widgets
@@ -58,6 +59,7 @@ class Menu(object):
                  window_height,
                  font,
                  title,
+                 back_box=True,
                  bgfun=None,
                  color_selected=_cfg.MENU_SELECTEDCOLOR,
                  dopause=True,
@@ -99,6 +101,8 @@ class Menu(object):
         :type font: basestring
         :param title: Title of the menu (main title)
         :type title: basestring
+        :param back_box: Draw a back-box button on header
+        :type back_box: bool
         :param bgfun: Background drawing function (only if menu pause app)
         :type bgfun: function
         :param color_selected: Color of selected item
@@ -136,7 +140,7 @@ class Menu(object):
         :param mouse_enabled: Enable/disable mouse click on menu
         :type mouse_enabled: bool
         :param onclose: Function applied when closing the menu
-        :type onclose: function
+        :type onclose: function, NoneType
         :param option_margin: Margin of each element in menu (px)
         :type option_margin: int
         :param option_shadow: Indicate if a shadow is drawn on each option
@@ -154,28 +158,34 @@ class Menu(object):
         :param widget_alignment: Default widget alignment
         :type widget_alignment: basestring
         """
+        assert isinstance(window_width, int)
+        assert isinstance(window_height, int)
+        assert isinstance(font, str)
+        assert isinstance(title, str)
+
+        assert isinstance(back_box, bool)
         assert isinstance(color_selected, tuple)
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
         assert isinstance(draw_select, bool)
-        assert isinstance(font, str)
+        assert isinstance(enabled, bool)
         assert isinstance(font_color, tuple)
         assert isinstance(font_size, int)
         assert isinstance(font_size_title, int)
+        assert isinstance(font_title, (str, type(None)))
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(mouse_enabled, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_color, tuple)
         assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_height, int)
         assert isinstance(menu_width, int)
+        assert isinstance(mouse_enabled, bool)
         assert isinstance(option_margin, int)
         assert isinstance(option_shadow, bool)
+        assert isinstance(option_shadow_offset, int)
+        assert isinstance(option_shadow_position, str)
         assert isinstance(rect_width, int)
-        assert isinstance(title, str)
-        assert isinstance(window_height, int)
-        assert isinstance(window_width, int)
 
         # Other asserts
         if dopause:
@@ -202,6 +212,7 @@ class Menu(object):
         assert 0 <= menu_alpha <= 100, 'Menu_alpha must be between 0 and 100'
 
         # Store configuration
+        self._back_box = back_box
         self._bgfun = bgfun
         self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0)))
@@ -240,13 +251,10 @@ class Menu(object):
         self._top = None  # Top level menu
 
         # Load fonts
-        try:
-            self._font = _pygame.font.Font(font, self._fsize)
-        except Exception:
-            raise Exception('Could not load {0} font file'.format(font))
+        self._font = _fonts.get_font(font, self._fsize)
         if font_title is None:
             font_title = font
-        self._font_title = _pygame.font.Font(font_title, self._fsize_title)
+        self._font_title = _fonts.get_font(font_title, self._fsize_title)
 
         # Position of menu
         self._posx = (window_width - self._width) / 2
@@ -292,16 +300,7 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.button.Button
         """
-        assert isinstance(element_name, str), 'Element name must be a string'
-
-        # Extend kwargs
-        kwargs_keys = kwargs.keys()
-        if 'align' not in kwargs_keys:
-            kwargs['align'] = ''
-
-        # Check alignment
-        if kwargs['align'] == '':
-            kwargs['align'] = self._widget_align
+        assert isinstance(element_name, str), 'element_name must be a string'
 
         self._size += 1
         if self._size > 1:
@@ -335,7 +334,7 @@ class Menu(object):
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(kwargs['align'])
+        widget.set_alignment(kwargs.pop('align', self._widget_align))
 
         self._option.append(widget)
         if len(self._option) == 1:
@@ -381,7 +380,10 @@ class Menu(object):
                 'Length of each element in value list must be greater than 1'
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
-        assert default < len(values), 'Default position should be lower than number of values'
+        assert default < len(values), 'default position should be lower than number of values'
+        assert isinstance(selector_id, str), 'id must be a string'
+        assert isinstance(default, int), 'default must be integer'
+        assert isinstance(align, str), 'align must be a string'
         if align == '':
             align = self._widget_align
 
@@ -413,7 +415,7 @@ class Menu(object):
         return widget
 
     def add_text_input(self, title, textinput_id='', default='',
-                       input_type=_locals.PYGAME_INPUT_TEXT, maxlength=0, maxsize=0,
+                       input_type=_locals.PYGAME_INPUT_TEXT, maxchar=0, maxwidth=0,
                        align='', onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
@@ -432,10 +434,10 @@ class Menu(object):
         :type default: basestring, int, float
         :param input_type: Data type of the input
         :type input_type: basestring
-        :param maxlength: Maximum length of string, if 0 there's no limit
-        :type maxlength: int
-        :param maxsize: Maximum size of the text widget, if 0 there's no limit
-        :type maxsize: int
+        :param maxchar: Maximum length of string, if 0 there's no limit
+        :type maxchar: int
+        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
+        :type maxwidth: int
         :param align: Widget alignment
         :type align: basestring
         :param onchange: Function when changing the selector
@@ -454,12 +456,18 @@ class Menu(object):
             align = self._widget_align
 
         # Check data
-        assert isinstance(maxlength, int), 'maxlength must be integer'
-        assert maxlength >= 0, 'maxlength must be greater or equal than zero'
+        assert isinstance(textinput_id, str), 'id must be a string'
+        assert isinstance(input_type, str), 'input_type must be a string'
+        assert isinstance(align, str), 'align must be a string'
+
+        assert isinstance(maxchar, int), 'maxchar must be integer'
+        assert maxchar >= 0, 'maxchar must be greater or equal than zero'
+        assert isinstance(maxwidth, int), 'maxwidth must be a integer'
+        assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
 
         # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
-                                    maxlength=maxlength, maxsize=maxsize, input_type=input_type,
+                                    maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
         self._check_id_duplicated(textinput_id)
 
@@ -548,7 +556,7 @@ class Menu(object):
                                 self._bg_color_title)
 
         # Draw back-box
-        if self._mouse:
+        if self._mouse and self._back_box:
             rect = self._title_backbox_rect
             _pygame.draw.rect(self._surface, self._font_color, rect, 1)
             _pygame.draw.polygon(self._surface, self._font_color,
@@ -573,26 +581,6 @@ class Menu(object):
             if self._drawselrect and widget.selected:
                 rect = widget.get_rect()
                 _pygame.draw.rect(self._surface, self._sel_color, rect.inflate(16, 4), self._rect_width)
-
-    def enable(self):
-        """
-        Enable menu.
-
-        :return: None
-        """
-        if self.is_disabled():
-            self._enabled = True
-            self._closelocked = True
-
-    @staticmethod
-    def _exit():
-        """
-        Internal exit function.
-
-        :return:
-        """
-        _pygame.quit()
-        exit()
 
     def _get_option_pos(self, index):
         """
@@ -619,6 +607,26 @@ class Menu(object):
         xccord = self._opt_posx + option_dx
         ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
         return xccord, ycoord
+
+    def enable(self):
+        """
+        Enable menu.
+
+        :return: None
+        """
+        if self.is_disabled():
+            self._enabled = True
+            self._closelocked = True
+
+    @staticmethod
+    def _exit():
+        """
+        Internal exit function.
+
+        :return:
+        """
+        _pygame.quit()
+        exit()
 
     def get_title(self):
         """
@@ -751,6 +759,7 @@ class Menu(object):
         :return: Input dict
         :rtype: dict
         """
+        assert isinstance(recursive, bool), 'recursive must be a boolean'
         return self._get_input_data(recursive=recursive, depth=0)
 
     def _get_input_data(self, recursive, depth):
@@ -798,7 +807,7 @@ class Menu(object):
         :return: None
         """
         assert isinstance(self._top._actual, Menu)
-        assert isinstance(total, int)
+        assert isinstance(total, int), 'total must be a integer'
         assert total > 0, 'total must be greater than zero'
 
         i = 0
@@ -905,6 +914,8 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget
         """
+        assert isinstance(widget_id, str), 'widget_id must be a string'
+        assert isinstance(recursive, bool), 'recursive must be a boolean'
         for widget in self._option:
             if widget.get_id() == widget_id:
                 return widget

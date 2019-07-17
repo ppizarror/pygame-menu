@@ -113,15 +113,15 @@ wid1 = settings_menu.add_text_input('First name: ',
                                     textinput_id='first_name')
 wid2 = settings_menu.add_text_input('Last name: ',
                                     default='Rambo',
-                                    maxlength=10,
+                                    maxchar=10,
                                     textinput_id='last_name')
 settings_menu.add_text_input('Your age: ',
                              default=25,
-                             maxlength=3,
+                             maxchar=3,
                              textinput_id='age',
                              input_type=pygameMenu.locals.PYGAME_INPUT_INT)
 settings_menu.add_text_input('Some long text: ',
-                             maxsize=20,
+                             maxwidth=20,
                              textinput_id='long_text')
 
 # Create selector with 3 difficulty options
@@ -153,7 +153,7 @@ settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BA
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
-                            font=pygameMenu.fonts.FONT_HELVETICA,
+                            font='arial',
                             font_color=COLOR_BLACK,
                             font_size=30,
                             menu_alpha=100,

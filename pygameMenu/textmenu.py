@@ -31,10 +31,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Library imports
+import pygame as _pygame
+
 from pygameMenu.menu import Menu
 import pygameMenu.config_textmenu as _cfg
 import pygameMenu.locals as _locals
-import pygame as _pygame
 
 
 # noinspection PyProtectedMember
@@ -70,7 +71,7 @@ class TextMenu(Menu):
         :param title: Title of the Menu
         :type title: str
         :param draw_text_region_x: X-Axis drawing region of the text
-        :type draw_text_region_x: int
+        :type draw_text_region_x: int, float
         :param text_align: Text default alignment
         :type text_align: basestring
         :param text_color: Text color
@@ -81,8 +82,14 @@ class TextMenu(Menu):
         :type text_margin: int
         :param kwargs: Aditional parameters
         """
+
+        assert isinstance(draw_text_region_x, int) or \
+               isinstance(draw_text_region_x, float)
+        assert isinstance(text_align, str)
+        assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
+
         assert draw_text_region_x >= 0, 'X-Axis drawing region of the text must be greater than zero'
         assert text_fontsize > 0, 'Text font size must be greater than zero'
         assert text_margin >= 0, 'Text margin must be greater or equal than zero'
@@ -116,28 +123,32 @@ class TextMenu(Menu):
         :type text: str
         :return: None
         """
-        assert isinstance(text, str)
-
+        assert isinstance(text, str), 'line text must be a string'
         text = text.strip()
         self._text.append(text)
         dy = -self._font_textsize / 2 - self._textdy / 2
         self._opt_posy += dy
 
-    def add_option(self, element_name, element, *args):
+    def add_option(self, element_name, element, *args, **kwargs):
         """
-        Add option to menu.
+        Add option (button) to menu.
+
+        kwargs:
+            - align: Widget alignment
 
         :param element_name: Name of the element
         :type element_name: basestring
-        :param element: Menu object
-        :type element: Menu, _PymenuAction
-        :param args: Aditional arguments
-        :return: None
+        :param element: Object
+        :type element: Menu, _PymenuAction, function
+        :param args: Aditional arguments used by a function
+        :param kwargs: Additional keyword arguments
+        :return: Widget object
+        :rtype: pygameMenu.widgets.button.Button
         """
         if self._size <= 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
+            dy = -0.5 * (self._fsize + self._opt_dy)
             self._opt_posy += dy
-        super(TextMenu, self).add_option(element_name, element, *args)
+        return super(TextMenu, self).add_option(element_name, element, *args, **kwargs)
 
     def draw(self):
         """
