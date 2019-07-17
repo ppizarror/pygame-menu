@@ -422,7 +422,7 @@ class TextInput(Widget):
         Check if input type is valid.
 
         :param string: String to validate
-        :type string: str
+        :type string: basestring
         :return: True if the input type is valid
         :rtype: bool
         """

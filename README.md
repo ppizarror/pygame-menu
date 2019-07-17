@@ -85,6 +85,7 @@ import pygameMenu
     | window_height | Window height size (px) |int | - |
     | font | Font file dir | str | - |
     | title | Title of the menu (main title) | str | - |
+    | back_box | Draw a back-box button on header | bool | True |
     | bgfun | Background drawing function (only if menupause app) | function | None |
     | color_selected | Color of selected item | tuple | MENU_SELECTEDCOLOR |
     | dopause | Pause game | bool | True |
