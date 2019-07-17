@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Get actual folder
 import os
+import pygame as _pygame
 
 __actualpath = str(os.path.abspath(
     os.path.dirname(__file__))).replace('\\', '/')
@@ -47,3 +48,20 @@ FONT_MUNRO = __fontdir.format(__actualpath, 'munro')
 FONT_NEVIS = __fontdir.format(__actualpath, 'nevis')
 FONT_OPEN_SANS = __fontdir.format(__actualpath, 'open_sans')
 FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')
+
+
+def get_font(name, size):
+    """
+    Return a pygame.Font from a name.
+
+    :param name: font name or path
+    :param size: font size
+    :type name: Font or str
+    :type size: int
+    """
+    if isinstance(name, _pygame.font.Font):
+        return name
+    else:
+        if not os.path.isfile(name):
+            name = _pygame.font.match_font(name)
+        return _pygame.font.Font(name, size)

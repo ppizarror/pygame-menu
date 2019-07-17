@@ -153,7 +153,7 @@ settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BA
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
-                            font=pygameMenu.fonts.FONT_HELVETICA,
+                            font='arial',
                             font_color=COLOR_BLACK,
                             font_size=30,
                             menu_alpha=100,
