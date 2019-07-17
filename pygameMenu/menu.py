@@ -33,8 +33,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Import constants
 import pygameMenu.config_controls as _ctrl
 import pygameMenu.config_menu as _cfg
-import pygameMenu.locals as _locals
 import pygameMenu.events as _events
+import pygameMenu.fonts as _fonts
+import pygameMenu.locals as _locals
 
 # Library imports
 import pygameMenu.widgets as _widgets
@@ -172,7 +173,7 @@ class Menu(object):
         assert isinstance(font_color, tuple)
         assert isinstance(font_size, int)
         assert isinstance(font_size_title, int)
-        assert isinstance(font_title, str) or isinstance(font_title, type(None))
+        assert isinstance(font_title, (str, type(None)))
         assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_color, tuple)
@@ -250,13 +251,10 @@ class Menu(object):
         self._top = None  # Top level menu
 
         # Load fonts
-        try:
-            self._font = _pygame.font.Font(font, self._fsize)
-        except Exception:
-            raise Exception('Could not load {0} font file'.format(font))
+        self._font = _fonts.get_font(font, self._fsize)
         if font_title is None:
             font_title = font
-        self._font_title = _pygame.font.Font(font_title, self._fsize_title)
+        self._font_title = _fonts.get_font(font_title, self._fsize_title)
 
         # Position of menu
         self._posx = (window_width - self._width) / 2
@@ -304,15 +302,6 @@ class Menu(object):
         """
         assert isinstance(element_name, str), 'element_name must be a string'
 
-        # Extend kwargs
-        kwargs_keys = kwargs.keys()
-        if 'align' not in kwargs_keys:
-            kwargs['align'] = ''
-
-        # Check alignment
-        if kwargs['align'] == '':
-            kwargs['align'] = self._widget_align
-
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
@@ -345,7 +334,7 @@ class Menu(object):
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(kwargs['align'])
+        widget.set_alignment(kwargs.pop('align', self._widget_align))
 
         self._option.append(widget)
         if len(self._option) == 1:

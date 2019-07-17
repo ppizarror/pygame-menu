@@ -30,10 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import os.path
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
 import pygameMenu.locals as _locals
+import pygameMenu.fonts as _fonts
 from uuid import uuid4
 
 
@@ -252,12 +252,7 @@ class Widget(object):
         :type antialias: bool
         :return: None
         """
-        if isinstance(font, _pygame.font.Font):
-            self._font = font
-        else:
-            if not os.path.isfile(font):
-                font = _pygame.font.match_font(font)
-            self._font = _pygame.font.Font(font, font_size)
+        self._font = _fonts.get_font(font, font_size)
         self._font_size = font_size
         self._font_color = color
         self._font_selected_color = selected_color

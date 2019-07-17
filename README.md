@@ -442,6 +442,13 @@ Available fonts (*FONT_NAME*):
 - **OPEN_SANS**
 - **PT_SERIF**
 
+System fonts can also be used. Available fonts can be listed using the following command in a python shell:
+
+```python
+import pygame
+print(pygame.font.get_fonts())
+```
+
 ## Configurations
 
 Default parameters of *Menu* and *TextMenu* are stored on the following files:
@@ -455,7 +462,6 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 ## License
 
 This project is licensed under MIT [https://opensource.org/licenses/MIT/](https://opensource.org/licenses/MIT/)
-
 
 ## Author
 <a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2019
