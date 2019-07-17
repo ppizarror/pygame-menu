@@ -5,10 +5,10 @@
   <br /><br />
   Pygame Menu</h1>
 <p align="center">Menu for pygame, simple, lightweight and easy to use</p>
-<div align="center"><a href="https://ppizarror.com"><img alt="@ppizarror" src="https://ppizarror.com/badges/author.svg" /></a>
-<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://ppizarror.com/badges/licensemit.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 2.6+" src="https://ppizarror.com/badges/python26+.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 3.6+" src="https://ppizarror.com/badges/python36+.svg" /></a>
+<div align="center"><a href="https://ppizarror.com"><img alt="@ppizarror" src="https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg" /></a>
+<a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 2.6+" src="https://img.shields.io/badge/python-2.6+-red.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 3.6+" src="https://img.shields.io/badge/python-3.6+-red.svg" /></a>
 <a href="https://www.pygame.org/"><img alt="Pygame 1.9.4-1.9.6" src="https://ppizarror.com/badges/pygame194-196.svg" /></a>
 <br><a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
@@ -27,25 +27,25 @@ Examples:
 #### Normal Button menu
 
 <p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap1.PNG" width="60%" >
+    <img src="https://ppizarror.com/resources/images/pygame-menu/cap1.PNG" width="60%" >
 </p>
 
 #### Text menu
 
 <p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap2.PNG" width="60%"  >
+    <img src="https://ppizarror.com/resources/images/pygame-menu/cap2.PNG" width="60%"  >
 </p>
 
 #### Small submenu
 
 <p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap3.PNG" width="60%" >
+    <img src="https://ppizarror.com/resources/images/pygame-menu/cap3.PNG" width="60%" >
 </p>
 
 #### Different inputs
 
 <p align="center">
-<img src="https://ppizarror.com/resources/images/pygame-menu/cap4.PNG" width="60%" >
+    <img src="https://ppizarror.com/resources/images/pygame-menu/cap4.PNG" width="60%" >
 </p>
 
 ## Install
