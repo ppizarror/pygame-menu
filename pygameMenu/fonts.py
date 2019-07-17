@@ -64,6 +64,40 @@ def get_font(name, size):
     if isinstance(name, _pygame.font.Font):
         return name
     else:
+
+        if name == '':
+            raise Exception('Font name cannot be empty')
+
+        # Font is not a file, then use a system font
         if not os.path.isfile(name):
-            name = _pygame.font.match_font(name)
-        return _pygame.font.Font(name, size)
+            font_name = name
+            name = _pygame.font.match_font(font_name)
+
+            if name is None:  # Show system avaiable fonts
+                from difflib import SequenceMatcher
+                system_fonts = _pygame.font.get_fonts()
+                most_similar = 0
+                most_similar_index = 0
+                for i in range(len(system_fonts)):
+                    # noinspection PyArgumentEqualDefault
+                    sim = SequenceMatcher(None, system_fonts[i], font_name).ratio()  # Similarity
+                    if sim > most_similar:
+                        most_similar = sim
+                        most_similar_index = i
+                sys_font_sim = system_fonts[most_similar_index]
+                sys_message = 'Check system fonts with pygame.font.get_fonts() function'
+                raise Exception('System font "{0}" unknown, use "{1}" instead\n{2}'.format(font_name,
+                                                                                           sys_font_sim,
+                                                                                           sys_message))
+
+        # Try to load the font
+        font = None
+        try:
+            font = _pygame.font.Font(name, size)
+        except FileNotFoundError:
+            pass
+
+        # If font was not loadad throw an exception
+        if font is None:
+            raise Exception('Font file "{0}" cannot be loaded'.format(font))
+        return font

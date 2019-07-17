@@ -251,10 +251,7 @@ class Menu(object):
         self._top = None  # Top level menu
 
         # Load fonts
-        try:
-            self._font = _fonts.get_font(font, self._fsize)
-        except Exception:
-            raise Exception('Could not load {0} font file'.format(font))
+        self._font = _fonts.get_font(font, self._fsize)
         if font_title is None:
             font_title = font
         self._font_title = _fonts.get_font(font_title, self._fsize_title)
