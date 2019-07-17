@@ -35,6 +35,27 @@ from pygameMenu import config_controls as _ctrl
 from pygameMenu import locals as _locals
 from pygameMenu.widgets.widget import Widget
 
+try:
+    from pyperclip import copy, paste
+except ModuleNotFoundError:
+    def copy():
+        """
+        Copy method.
+
+        :return: None
+        """
+        pass
+
+
+    def paste():
+        """
+        Paste method.
+
+        :return: Empty string
+        :rtype: basestring
+        """
+        return ''
+
 
 class TextInput(Widget):
     """
@@ -103,6 +124,7 @@ class TextInput(Widget):
                              _pygame.K_TAB, _pygame.K_RETURN, _pygame.K_ESCAPE)
 
         # Vars to make keydowns repeat after user pressed a key for some time:
+        self._block_copy_paste = False  # Blocks event
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
@@ -515,6 +537,42 @@ class TextInput(Widget):
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
+                # Check copy/paste
+                if _pygame.key.get_mods() & _pygame.KMOD_CTRL:
+                    if event.key == _pygame.K_c:
+                        if self._block_copy_paste:  # Prevents multiple executions of event
+                            return False
+
+                        # Copy all text
+                        copy(self._input_string)
+
+                        self._block_copy_paste = True
+                        return True
+
+                    elif event.key == _pygame.K_v:
+                        if self._block_copy_paste:  # Prevents multiple executions of event
+                            return False
+
+                        # Paste text in cursor
+                        text = paste()
+                        for i in ['\n', '\r']:
+                            text = text.replace(i, '')
+                        if text == '':
+                            return False
+
+                        new_string = self._input_string[0:self._cursor_position] + \
+                                     text + \
+                                     self._input_string[self._cursor_position:len(self._input_string)]
+
+                        # If string is valid
+                        if self._check_input_type(new_string):
+                            self._input_string = new_string
+                            for i in range(len(text)):  # Move cursor
+                                self._move_cursor_right()
+                            self.change()
+                        self._block_copy_paste = True
+                        return True
+
                 if event.key == _pygame.K_BACKSPACE:
                     self._input_string = (
                             self._input_string[:max(self._cursor_position - 1, 0)]
@@ -585,6 +643,7 @@ class TextInput(Widget):
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
+                self._block_copy_paste = False
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 self._check_mouse_collide_input(event.pos)
