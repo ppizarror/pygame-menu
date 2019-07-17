@@ -71,12 +71,12 @@ import pygameMenu
 - **Menu**
 
      This class creates a menu.
-      
-     ```python
-     pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
-     ```
     
-     Parameters are the following:
+    ```python
+    pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
+    ```
+    
+    Parameters are the following:
     
     | Param | Description | Type | Default |
     | :-: | :-- | :--: | :--: |
@@ -113,7 +113,7 @@ import pygameMenu
     | title_offsety | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | PYGAME_ALIGN_CENTER |
      
-     Check widget alignment and shadow position possible values in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
+    Check widget alignment and shadow position possible values in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
     
 
 - **TextMenu**
