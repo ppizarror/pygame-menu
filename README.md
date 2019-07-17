@@ -70,14 +70,14 @@ import pygameMenu
 
 - **Menu**
 
-     This class creates a menu.
-    
+    This class creates a menu.
+
     ```python
     pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
     ```
-    
+
     Parameters are the following:
-    
+
     | Param | Description | Type | Default |
     | :-: | :-- | :--: | :--: |
     | surface | Pygame surface object | Pygame Surface | - |
@@ -112,20 +112,19 @@ import pygameMenu
     | title_offsetx | Offset x-position of title (px) | int | 0 |
     | title_offsety | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | PYGAME_ALIGN_CENTER |
-     
+
     Check widget alignment and shadow position possible values in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
-    
 
 - **TextMenu**
 
      This class creates a textual menu.
-     
+
     ```python
     pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
     ```
-    
-     This class inherites from Menu, so the parameters are the same, except the following extra parameters:  
-    
+
+    This class inherites from Menu, so the parameters are the same, except the following extra parameters:  
+
     | Param | Description | Type | Default |
     | :-: | :--| :--: | :--: |
     | draw_text_region_x | X-Axis drawing region of the text | int | TEXT_DRAW_X |
@@ -138,8 +137,8 @@ import pygameMenu
 
 **Menu** and **TextMenu** have the next functions:
 
-- <i>add_option(element_name, element, *args)</i>
-    
+- *add_option(element_name, element, \*args)*
+
     Adds an *option* to the menu (buttons).
 
     | Param | Description | Type |
@@ -148,7 +147,7 @@ import pygameMenu
     | element | Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu |
     | *args | Additional arguments | - |
     | **kwargs | Additional keyword-arguments | - |
-    
+
     Additional keyword arguments:
 
     | Param | Description | Type |
@@ -158,6 +157,7 @@ import pygameMenu
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
     Example:
+
     ```python
     def fun():
         pass
@@ -166,8 +166,9 @@ import pygameMenu
     help_menu.add_option('Simple button', fun, align=pygameMenu.locals.PYGAME_ALIGN_LEFT)
     help_menu.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
     ```
-     
+
     Another example:
+
     ```python
     menu = pygameMenu.Menu(surface, window...)
     menu.add_option(timer_menu.get_title(), timer_menu)         # Add timer submenu
@@ -176,7 +177,7 @@ import pygameMenu
     menu.add_option('Exit', pygameMenu.events.PYGAME_MENU_EXIT) # Add exit function
     ```
 
-- <i>add_selector(title, values, onchange, onreturn, **kwargs)</i>
+- *add_selector(title, values, onchange, onreturn, \*\*kwargs)*
 
     Add a *selector* to menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
@@ -192,8 +193,9 @@ import pygameMenu
     | **kwargs | Additional arguments | - |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
-    
+
     Example:
+
     ```python
     def change_color_bg(value, c=None, **kwargs):
         """
@@ -213,9 +215,9 @@ import pygameMenu
         Reset timer function.
         """
         ...
-        
+
     timer_menu = pygameMenu.Menu(...)
-    
+
     # Add selector
     timer_menu.add_selector('Change bgcolor',
                             # Values of selector, call to change_color_bg
@@ -226,13 +228,13 @@ import pygameMenu
                             None, # onchange
                             change_color_bg, # onreturn
                             write_on_console=True # Optional change_color_bg param)
-                            
+
     timer_menu.add_option('Reset timer', reset_timer)
     timer_menu.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
     timer_menu.add_option('Close Menu', pygameMenu.events.PYGAME_MENU_CLOSE)
     ```
 
-- <i>add_text_input(title, onchange, onreturn, default, maxchar, maxwidth, **kwargs)</i>
+- *add_text_input(title, onchange, onreturn, default, maxchar, maxwidth, \*\*kwargs)*
 
     Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
 
@@ -250,8 +252,9 @@ import pygameMenu
     | **kwargs | Additional arguments | - |
 
     Check possible alignment or data type in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
-    
+
     Example:
+
     ```python
     def check_name_test(value):
         """
@@ -271,17 +274,18 @@ import pygameMenu
     settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK)
     ```
 
-- <i>add_line(text)</i>
+- *add_line(text)*
 
     Adds a new line on **TextMenu** object.
-    
+
     Example:
+
     ```python
     HELP = ['Press ESC to enable/disable Menu',
             'Press ENTER to access a Sub-Menu or use an option',
             'Press UP/DOWN to move through Menu',
             'Press LEFT/RIGHT to move through Selectors']
-            
+
     menu_help = pygameMenu.TextMenu(...)
     for line in HELP:
         menu_help.add_line(line) # Add line
@@ -290,84 +294,84 @@ import pygameMenu
     menu_help.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
     ```
 
-- <i>mainloop(events)</i>
+- *mainloop(events)*
 
     Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses application and checks Events.
-    
+
     ```python
     menu = pygameMenu.Menu(...)
-    
+
     # Main aplication
     while True:
-    
+
         # Application events
         events = pygame.event.get()
-    
+
         # Menu loop (If onpause is enabled then a infinite-loop is triggered on this line)
         menu.mainloop(events)
     ```
-    
-- <i>disable()</i>
-   
+
+- *disable()*
+
     Disable Menu (doest check events and draw on surface).
-    
+
     ```python
     menu = pygameMenu.Menu(...)
     menu.disable()
     ```
 
-- <i>draw()</i>
+- *draw()*
 
     Draw Menu on surface.
-    
+
     ```python
     menu = pygameMenu.Menu(...)
     menu.disable()
     ```
 
-- <i>enable()</i>
+- *enable()*
 
     Enable Menu (can check events and draw).
-    
+
     ```python
     menu = pygameMenu.Menu(...)
     menu.enable()
     ```
 
-- <i>get_title()</i>
+- *get_title()*
 
     Get the title of the menu.
-    
+
     ```python
     menu = pygameMenu.Menu(..., title='Menu title', ...)
     menu.get_title() # -> 'Menu title'
     ```
-    
-- <i>is_enabled()</i>
+
+- *is_enabled()*
 
     Check if menu is enabled.
-    
+
     ```python
     menu = pygameMenu.Menu(...)
     menu.disable()
     menu.is_enabled() # -> False
     ```
 
-- <i>is_disabled()</i>
+- *is_disabled()*
 
     Check if menu is disabled.
-    
+
     ```python
     menu = pygameMenu.Menu(...)
     menu.disable()
     menu.is_disabled() # -> True
     ```
 
-- <i>get_input_data(recursive=False)</i>
+- *get_input_data(recursive=False)*
 
     Get input data from a menu. The results are given as a dict object, keys are the ID of each element.
     If recursive, the data will contain inputs from sub-menus.
-    
+
     ```python
     menu = pygameMenu.Menu(...)
     menu.get_input_data() # -> {'id1': value, 'id2': value}
