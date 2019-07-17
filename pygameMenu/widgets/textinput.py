@@ -359,9 +359,9 @@ class TextInput(Widget):
 
     def _update_cursor_mouse(self, mousex):
         """
-        Update cursor position after mouse click in text.
+        Updates cursor position after mouse click in text.
 
-        :param mousex: Mouse distance relative to surface.
+        :param mousex: Mouse distance relative to surface
         :type mousex: int
         :return: None
         """
