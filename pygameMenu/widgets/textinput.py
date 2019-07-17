@@ -53,6 +53,7 @@ class TextInput(Widget):
                  onreturn=None,
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=35,
+                 repeat_mouse_interval_ms=200,
                  text_ellipsis='...',
                  **kwargs
                  ):
@@ -81,6 +82,8 @@ class TextInput(Widget):
         :type repeat_keys_initial_ms: float, int
         :param repeat_keys_interval_ms: Interval between key press repetition when held
         :type repeat_keys_interval_ms: float, int
+        :param repeat_mouse_interval_ms: Interval between mouse events when held
+        :type repeat_mouse_interval_ms: float, int
         :param text_ellipsis: Ellipsis text when overflow occurs
         :type text_ellipsis: basestring
         :param kwargs: Optional keyword-arguments for callbacks
@@ -102,7 +105,12 @@ class TextInput(Widget):
         # Vars to make keydowns repeat after user pressed a key for some time:
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
-        self._keyrepeat_intial_interval_ms = repeat_keys_initial_ms
+        self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
+
+        # Mouse handling
+        self._keyrepeat_mouse_ms = 0
+        self._keyrepeat_mouse_interval_ms = repeat_mouse_interval_ms
+        self._mouse_is_pressed = False
 
         # Render box (overflow)
         self._ellipsis = text_ellipsis
@@ -175,7 +183,7 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         # Draw cursor
-        if self._cursor_visible and self.selected:
+        if (self._cursor_visible and self.selected) or self._mouse_is_pressed:
             surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
@@ -391,6 +399,18 @@ class TextInput(Widget):
         if self.maxwidth != 0 and len(self._input_string) > self.maxwidth:
             if self._renderbox[0] != 0:  # Left ellipsis
                 cursor_pos -= 3
+
+            # Check if user clicked on ellipsis
+            if cursor_pos < 0 or cursor_pos > self.maxwidth:
+                if cursor_pos < 0:
+                    self._renderbox[2] = 0
+                    self._move_cursor_left()
+                if cursor_pos > self.maxwidth:
+                    self._renderbox[2] = self.maxwidth
+                    self._move_cursor_right()
+                return
+
+            # User clicked on text, update cursor
             cursor_pos = max(0, min(self.maxwidth, cursor_pos))
             self._cursor_position = self._renderbox[0] + cursor_pos
             self._renderbox[2] = cursor_pos
@@ -399,6 +419,21 @@ class TextInput(Widget):
         else:
             self._cursor_position = cursor_pos
         self._cursor_render = True
+
+    def _check_mouse_collide_input(self, pos):
+        """
+        Check mouse collision, if true update cursor.
+
+        :param pos: Position
+        :type pos: tuple
+        :return: None
+        """
+        if self._rect.collidepoint(*pos):
+            # Check if mouse collides left or right as percentage, use only X coordinate
+            mousex, _ = pos
+            topleft, _ = self._rect.topleft
+            self._update_cursor_mouse(mousex - topleft)
+            return True  # Prevents double click
 
     def set_value(self, text):
         """
@@ -447,6 +482,26 @@ class TextInput(Widget):
         except ValueError:
             return False
 
+    def _move_cursor_left(self):
+        """
+        Move cursor to left position.
+
+        :return: None
+        """
+        # Subtract one from cursor_pos, but do not go below zero:
+        self._cursor_position = max(self._cursor_position - 1, 0)
+        self._update_renderbox(left=-1)
+
+    def _move_cursor_right(self):
+        """
+        Move cursor to right position.
+
+        :return: None
+        """
+        # Add one to cursor_pos, but do not exceed len(input_string)
+        self._cursor_position = min(self._cursor_position + 1, len(self._input_string))
+        self._update_renderbox(right=1)
+
     def update(self, events):
         """
         See upper class doc.
@@ -482,15 +537,11 @@ class TextInput(Widget):
                     updated = True
 
                 elif event.key == _pygame.K_RIGHT:
-                    # Add one to cursor_pos, but do not exceed len(input_string)
-                    self._cursor_position = min(self._cursor_position + 1, len(self._input_string))
-                    self._update_renderbox(right=1)
+                    self._move_cursor_right()
                     updated = True
 
                 elif event.key == _pygame.K_LEFT:
-                    # Subtract one from cursor_pos, but do not go below zero:
-                    self._cursor_position = max(self._cursor_position - 1, 0)
-                    self._update_renderbox(left=-1)
+                    self._move_cursor_left()
                     updated = True
 
                 elif event.key == _pygame.K_END:
@@ -536,19 +587,28 @@ class TextInput(Widget):
                     del self._keyrepeat_counters[event.key]
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
-                if self._rect.collidepoint(*event.pos):
-                    # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = event.pos
-                    topleft, _ = self._rect.topleft
-                    self._update_cursor_mouse(mousex - topleft)
+                self._check_mouse_collide_input(event.pos)
+
+        # Get time clock
+        time_clock = self._clock.get_time()
+        self._keyrepeat_mouse_ms += time_clock
+
+        # Check mouse pressed
+        mouse_left, mouse_middle, mouse_right = _pygame.mouse.get_pressed()
+        self._mouse_is_pressed = mouse_left or mouse_right or mouse_middle
+
+        if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
+            self._keyrepeat_mouse_ms = 0
+            if mouse_left:
+                self._check_mouse_collide_input(_pygame.mouse.get_pos())
 
         # Update key counters:
         for key in self._keyrepeat_counters:
-            self._keyrepeat_counters[key][0] += self._clock.get_time()  # Update clock
+            self._keyrepeat_counters[key][0] += time_clock  # Update clock
 
             # Generate new key events if enough time has passed:
-            if self._keyrepeat_counters[key][0] >= self._keyrepeat_intial_interval_ms:
-                self._keyrepeat_counters[key][0] = self._keyrepeat_intial_interval_ms - self._keyrepeat_interval_ms
+            if self._keyrepeat_counters[key][0] >= self._keyrepeat_initial_interval_ms:
+                self._keyrepeat_counters[key][0] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
                 # noinspection PyArgumentList
@@ -558,7 +618,7 @@ class TextInput(Widget):
                                    )
 
         # Update self._cursor_visible
-        self._cursor_ms_counter += self._clock.get_time()
+        self._cursor_ms_counter += time_clock
         if self._cursor_ms_counter >= self._cursor_switch_ms:
             self._cursor_ms_counter %= self._cursor_switch_ms
             self._cursor_visible = not self._cursor_visible
