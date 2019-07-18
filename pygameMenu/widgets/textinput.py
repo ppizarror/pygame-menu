@@ -122,7 +122,7 @@ class TextInput(Widget):
         if history < 0:
             raise ValueError('history must be equal or greater than zero')
 
-        self._input_string = str(default)  # Inputted text
+        self._input_string = ''  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,
                              _pygame.K_LCTRL, _pygame.K_RCTRL,
                              _pygame.K_LSHIFT, _pygame.K_RSHIFT,
@@ -150,7 +150,7 @@ class TextInput(Widget):
         self._clock = _pygame.time.Clock()
         self._cursor_color = cursor_color
         self._cursor_ms_counter = 0
-        self._cursor_position = len(self._input_string)  # Inside text
+        self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
@@ -160,11 +160,29 @@ class TextInput(Widget):
         # Public attributs
         self.label = label
 
+        # History of editions
+        self._history = []
+        self._history_cursor = []
+        self._history_renderbox = []
+
+        self._history_index = 0  # Index at which the new editions are added
+        self._max_history = history
+
         # Other
         self._input_type = input_type
         self._label_size = 0
         self._maxchar = maxchar
         self._maxwidth = maxwidth
+
+        # Set default value
+        if default != '':
+            if self._check_input_type(default):
+                default = str(default)
+                self._update_input_string(default)
+                for i in range(len(default) + 1):
+                    self._move_cursor_right()
+            else:
+                raise ValueError('default value type is not correct according to input_type')
 
     def _apply_font(self):
         """
@@ -539,6 +557,32 @@ class TextInput(Widget):
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
 
+    def _update_input_string(self, new_string):
+        """
+        Update input string with a new string, store changes into history.
+
+        :param new_string: New string of text input
+        :type new_string: basestring
+        :return: None
+        """
+        l_history = len(self._history)
+
+        # If last edition is different than the new one updates the history
+        if l_history > 0 and self._max_history > 0 and self._history[l_history - 1] != new_string:
+            self._history.insert(self._history_index, new_string)
+
+            # Store renderbox or cursor
+            self._history_renderbox.insert(self._history_index, self._renderbox)
+            self._history_cursor.insert(self._history_index, self._cursor_position)
+
+            if len(self._history) > self._max_history:
+                self._history.pop(0)
+            self._history_index = len(self._history)  # This can be changed with undo/redo
+
+        # Updates string
+        print(self._history)
+        self._input_string = new_string
+
     def update(self, events):
         """
         See upper class doc.
@@ -593,7 +637,7 @@ class TextInput(Widget):
 
                         # If string is valid
                         if self._check_input_type(new_string):
-                            self._input_string = new_string
+                            self._update_input_string(new_string)
                             for i in range(len(text) + 1):  # Move cursor
                                 self._move_cursor_right()
 
@@ -606,10 +650,11 @@ class TextInput(Widget):
                         return False
 
                 if event.key == _pygame.K_BACKSPACE:
-                    self._input_string = (
+                    new_string = (
                             self._input_string[:max(self._cursor_position - 1, 0)]
                             + self._input_string[self._cursor_position:]
                     )
+                    self._update_input_string(new_string)
                     self._update_renderbox(left=-1, addition=True)
                     self.change()
                     updated = True
@@ -618,10 +663,11 @@ class TextInput(Widget):
                     self._cursor_position = max(self._cursor_position - 1, 0)
 
                 elif event.key == _pygame.K_DELETE:
-                    self._input_string = (
+                    new_string = (
                             self._input_string[:self._cursor_position]
                             + self._input_string[self._cursor_position + 1:]
                     )
+                    self._update_input_string(new_string)
                     self._update_renderbox(right=-1, addition=True)
                     self.change()
                     updated = True
@@ -662,10 +708,9 @@ class TextInput(Widget):
 
                     # If data is valid
                     if self._check_input_type(new_string):
-                        self._input_string = new_string
-
                         lkey = len(event.unicode)
                         if lkey > 0:
+                            self._update_input_string(new_string)
                             self._cursor_position += lkey  # Some are empty, e.g. K_UP
                             self._update_renderbox(right=1, addition=True)
                             self.change()
