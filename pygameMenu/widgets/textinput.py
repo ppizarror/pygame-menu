@@ -68,7 +68,7 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
                  cursor_color=(0, 0, 1),
-                 history=10,
+                 history=50,
                  maxchar=0,
                  maxwidth=0,
                  onchange=None,
@@ -175,14 +175,14 @@ class TextInput(Widget):
         self._maxwidth = maxwidth
 
         # Set default value
-        if default != '':
-            if self._check_input_type(default):
-                default = str(default)
-                self._update_input_string(default)
-                for i in range(len(default) + 1):
-                    self._move_cursor_right()
-            else:
-                raise ValueError('default value type is not correct according to input_type')
+        if self._check_input_type(default):
+            default = str(default)
+            self._input_string = default
+            for i in range(len(default) + 1):
+                self._move_cursor_right()
+            self._update_input_string(default)
+        else:
+            raise ValueError('default value "{0}" type is not correct according to input_type'.format(default))
 
     def _apply_font(self):
         """
@@ -508,6 +508,9 @@ class TextInput(Widget):
         :return: True if the input type is valid
         :rtype: bool
         """
+        if string == '':  # Empty is valid
+            return True
+
         if self._input_type == _locals.PYGAME_INPUT_TEXT:
             return True
 
@@ -556,6 +559,7 @@ class TextInput(Widget):
         self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
+        # self._history_index = len(self._history) - 1
 
     def _update_input_string(self, new_string):
         """
@@ -568,20 +572,125 @@ class TextInput(Widget):
         l_history = len(self._history)
 
         # If last edition is different than the new one updates the history
-        if l_history > 0 and self._max_history > 0 and self._history[l_history - 1] != new_string:
-            self._history.insert(self._history_index, new_string)
+        if ((l_history > 0 and self._history[l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
 
-            # Store renderbox or cursor
-            self._history_renderbox.insert(self._history_index, self._renderbox)
+            # If index is not at last add the current status as new
+            if self._history_index != l_history:
+                last_string = self._history[self._history_index]
+                self._history_index = len(self._history)
+                self._update_input_string(last_string)
+
+            # Add new status to history
+            self._history.insert(self._history_index, new_string)
             self._history_cursor.insert(self._history_index, self._cursor_position)
+            self._history_renderbox.insert(self._history_index,
+                                           [self._renderbox[0], self._renderbox[1], self._renderbox[2]])
 
             if len(self._history) > self._max_history:
                 self._history.pop(0)
+                self._history_cursor.pop(0)
+                self._history_renderbox.pop(0)
             self._history_index = len(self._history)  # This can be changed with undo/redo
 
         # Updates string
-        print(self._history)
         self._input_string = new_string
+
+    def _copy(self):
+        """
+        Copy text from clipboard.
+
+        :return: None
+        """
+        if self._block_copy_paste:  # Prevents multiple executions of event
+            return False
+
+        # Copy all text
+        copy(self._input_string)
+
+        self._block_copy_paste = True
+        return True
+
+    def _paste(self):
+        """
+        Paste text from clipboard.
+
+        :return: None
+        """
+        if self._block_copy_paste:  # Prevents multiple executions of event
+            return False
+
+        # Paste text in cursor
+        text = paste().strip()
+        for i in ['\n', '\r']:
+            text = text.replace(i, '')
+
+        # Delete escape chars
+        escapes = ''.join([chr(char) for char in range(1, 32)])
+        text = text.translate(escapes)
+        if text == '':
+            return False
+
+        # Cut string (if limit exists)
+        text_end = len(text)
+        if self._maxchar != 0:
+            char_limit = self._maxchar - len(self._input_string) + 1
+            text_end = min(char_limit, text_end)
+            if text_end <= 0:  # If there's not more space, returns
+                return
+
+        new_string = self._input_string[0:self._cursor_position] + \
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
+
+        # If string is valid
+        if self._check_input_type(new_string):
+            self._input_string = new_string  # For a purpose of computing render_box
+            for i in range(len(text) + 1):  # Move cursor
+                self._move_cursor_right()
+            self._update_input_string(new_string)
+
+            self.change()
+            self._block_copy_paste = True
+        return True
+
+    def _update_from_history(self):
+        """
+        Update all from history.
+
+        :return: None
+        """
+        self._input_string = self._history[self._history_index]
+        self._renderbox[0] = self._history_renderbox[self._history_index][0]
+        self._renderbox[1] = self._history_renderbox[self._history_index][1]
+        self._renderbox[2] = self._history_renderbox[self._history_index][2]
+        self._cursor_position = self._history_cursor[self._history_index]
+        self._cursor_render = True
+
+    def _undo(self):
+        """
+        Undo operation.
+
+        :return: None
+        """
+        if self._history_index == 0:  # There's no back history
+            return False
+        if self._history_index == len(self._history):  # If the actual is the last
+            self._history_index -= 1
+        self._history_index = max(0, self._history_index - 1)
+        self._update_from_history()
+        return True
+
+    def _redo(self):
+        """
+        Redo operation.
+
+        :return: None
+        """
+        if self._history_index == len(self._history) - 1:  # There's no forward history
+            return False
+        self._history_index = min(len(self._history) - 1, self._history_index + 1)
+        self._update_from_history()
+        return True
 
     def update(self, events):
         """
@@ -602,51 +711,23 @@ class TextInput(Widget):
 
                     # Ctrl+C copy
                     if event.key == _pygame.K_c:
-                        if self._block_copy_paste:  # Prevents multiple executions of event
-                            return False
-
-                        # Copy all text
-                        copy(self._input_string)
-
-                        self._block_copy_paste = True
-                        return True
+                        return self._copy()
 
                     # Ctrl+V paste
                     elif event.key == _pygame.K_v:
-                        if self._block_copy_paste:  # Prevents multiple executions of event
-                            return False
+                        return self._paste()
 
-                        # Paste text in cursor
-                        text = paste().strip()
-                        for i in ['\n', '\r']:
-                            text = text.replace(i, '')
-                        if text == '':
-                            return False
+                    # Ctrl+Z undo
+                    elif event.key == _pygame.K_z:
+                        return self._undo()
 
-                        # Cut string (if limit exists)
-                        text_end = len(text)
-                        if self._maxchar != 0:
-                            char_limit = self._maxchar - len(self._input_string) + 1
-                            text_end = min(char_limit, text_end)
-                            if text_end <= 0:  # If there's not more space, returns
-                                return
-
-                        new_string = self._input_string[0:self._cursor_position] + \
-                                     text[0:text_end] + \
-                                     self._input_string[self._cursor_position:len(self._input_string)]
-
-                        # If string is valid
-                        if self._check_input_type(new_string):
-                            self._update_input_string(new_string)
-                            for i in range(len(text) + 1):  # Move cursor
-                                self._move_cursor_right()
-
-                            self.change()
-                            self._block_copy_paste = True
-                        return True
+                    # Ctrl+Y redo
+                    elif event.key == _pygame.K_y:
+                        return self._redo()
 
                     # Command not found, returns
                     else:
+                        _pygame.event.pump()
                         return False
 
                 if event.key == _pygame.K_BACKSPACE:
@@ -706,13 +787,20 @@ class TextInput(Widget):
                             + self._input_string[self._cursor_position:]
                     )
 
+                    # If unwanted escape sequences returns
+                    event_escaped = repr(event.unicode)
+                    if '\\x' in event_escaped or '\\r' in event_escaped:
+                        _pygame.event.pump()  # Sync events
+                        return False
+
                     # If data is valid
                     if self._check_input_type(new_string):
                         lkey = len(event.unicode)
                         if lkey > 0:
-                            self._update_input_string(new_string)
-                            self._cursor_position += lkey  # Some are empty, e.g. K_UP
+                            self._cursor_position += 1  # Some are empty, e.g. K_UP
+                            self._input_string = new_string  # Only here this is changed (due to renderbox update)
                             self._update_renderbox(right=1, addition=True)
+                            self._update_input_string(new_string)
                             self.change()
                             updated = True
 
