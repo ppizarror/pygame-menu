@@ -74,7 +74,7 @@ class TextInput(Widget):
                  onreturn=None,
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=35,
-                 repeat_mouse_interval_ms=200,
+                 repeat_mouse_interval_ms=50,
                  text_ellipsis='...',
                  **kwargs
                  ):
@@ -293,7 +293,7 @@ class TextInput(Widget):
 
         :param left: Left update
         :param right: Right update
-        :param addition: Update is text addition/deletion
+        :param addition: Update if text addition/deletion
         :param end: Move cursor to end
         :param start: Move cursor to start
         :type left: int
@@ -538,7 +538,6 @@ class TextInput(Widget):
         See upper class doc.
         """
         updated = False
-
         for event in events:
             if event.type == _pygame.KEYDOWN:
                 self._cursor_visible = True  # So the user sees where he writes
@@ -586,10 +585,11 @@ class TextInput(Widget):
                         # If string is valid
                         if self._check_input_type(new_string):
                             self._input_string = new_string
-                            for i in range(len(text)):  # Move cursor
+                            for i in range(len(text) + 1):  # Move cursor
                                 self._move_cursor_right()
+
                             self.change()
-                        self._block_copy_paste = True
+                            self._block_copy_paste = True
                         return True
 
                 if event.key == _pygame.K_BACKSPACE:
