@@ -610,6 +610,20 @@ class TextInput(Widget):
         self._block_copy_paste = True
         return True
 
+    def _cut(self):
+        """
+        Cut operation.
+
+        :return:
+        """
+        self._copy()
+        self._cursor_position = 0
+        self._renderbox[0] = 0
+        self._renderbox[1] = 0
+        self._renderbox[2] = 0
+        self._update_input_string('')
+        self._cursor_render = True  # Due to manually updating renderbox
+
     def _paste(self):
         """
         Paste text from clipboard.
@@ -724,6 +738,10 @@ class TextInput(Widget):
                     # Ctrl+Y redo
                     elif event.key == _pygame.K_y:
                         return self._redo()
+
+                    # Ctrl+X cut
+                    elif event.key == _pygame.K_x:
+                        return self._cut()
 
                     # Command not found, returns
                     else:
