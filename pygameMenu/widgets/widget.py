@@ -317,6 +317,9 @@ class Widget(object):
         else:
             self._blur()
 
+        # Sync events with the system
+        _pygame.event.pump()
+
     def _focus(self):
         """
         Function that is executed when the widget receives a focus (is selected).
