@@ -68,6 +68,7 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
                  cursor_color=(0, 0, 1),
+                 history=10,
                  maxchar=0,
                  maxwidth=0,
                  onchange=None,
@@ -91,6 +92,8 @@ class TextInput(Widget):
         :type input_type: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param history: Maximum number of editions stored
+        :type history: int
         :param maxchar: Maximum length of input
         :type maxchar: int
         :param maxwidth: Maximum size of the text to be displayed (overflow)
@@ -112,9 +115,12 @@ class TextInput(Widget):
         super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
                                         onreturn=onreturn, kwargs=kwargs)
         if maxchar < 0:
-            raise Exception('maxchar must be equal or greater than zero')
+            raise ValueError('maxchar must be equal or greater than zero')
         if maxwidth < 0:
-            raise Exception('maxwidth must be equal or greater than zero')
+            raise ValueError('maxwidth must be equal or greater than zero')
+        assert isinstance(history, int)
+        if history < 0:
+            raise ValueError('history must be equal or greater than zero')
 
         self._input_string = str(default)  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,

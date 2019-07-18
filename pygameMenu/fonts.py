@@ -65,7 +65,7 @@ def get_font(name, size):
     else:
 
         if name == '':
-            raise Exception('Font name cannot be empty')
+            raise ValueError('Font name cannot be empty')
 
         # Font is not a file, then use a system font
         if not _path.isfile(name):
@@ -85,7 +85,7 @@ def get_font(name, size):
                         most_similar_index = i
                 sys_font_sim = system_fonts[most_similar_index]
                 sys_message = 'Check system fonts with pygame.font.get_fonts() function'
-                raise Exception('System font "{0}" unknown, use "{1}" instead\n{2}'.format(font_name,
+                raise ValueError('System font "{0}" unknown, use "{1}" instead\n{2}'.format(font_name,
                                                                                            sys_font_sim,
                                                                                            sys_message))
 
@@ -98,5 +98,5 @@ def get_font(name, size):
 
         # If font was not loadad throw an exception
         if font is None:
-            raise Exception('Font file "{0}" cannot be loaded'.format(font))
+            raise IOError('Font file "{0}" cannot be loaded'.format(font))
         return font

@@ -498,7 +498,7 @@ class Menu(object):
         """
         for i in self._option:
             if i.get_id() == widget_id:
-                raise Exception('The widget ID="{0}" is duplicated'.format(widget_id))
+                raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
         """
