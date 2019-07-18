@@ -312,6 +312,26 @@ class Widget(object):
         :return: None
         """
         self.selected = selected
+        if selected:
+            self._focus()
+        else:
+            self._blur()
+
+    def _focus(self):
+        """
+        Function that is executed when the widget receives a focus (is selected).
+
+        :return: None
+        """
+        pass
+
+    def _blur(self):
+        """
+        Function that is executed when the widget loses the focus.
+
+        :return: None
+        """
+        pass
 
     def set_shadow(self, enabled=True, color=None, position=None, offset=None):
         """

@@ -125,9 +125,10 @@ class TextInput(Widget):
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self._block_copy_paste = False  # Blocks event
+        self._key_is_pressed = False
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
-        self._keyrepeat_interval_ms = repeat_keys_interval_ms
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
+        self._keyrepeat_interval_ms = repeat_keys_interval_ms
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0
@@ -152,12 +153,12 @@ class TextInput(Widget):
 
         # Public attributs
         self.label = label
-        self.maxchar = maxchar
-        self.maxwidth = maxwidth
 
         # Other
         self._input_type = input_type
         self._label_size = 0
+        self._maxchar = maxchar
+        self._maxwidth = maxwidth
 
     def _apply_font(self):
         """
@@ -205,7 +206,7 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         # Draw cursor
-        if (self._cursor_visible and self.selected) or self._mouse_is_pressed:
+        if (self._cursor_visible and self.selected) or (self._mouse_is_pressed or self._key_is_pressed):
             surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
@@ -239,7 +240,7 @@ class TextInput(Widget):
             self._cursor_surface.fill(self._cursor_color)
 
         # Calculate x position
-        if self.maxwidth == 0 or len(self._input_string) <= self.maxwidth:  # If no limit is provided
+        if self._maxwidth == 0 or len(self._input_string) <= self._maxwidth:  # If no limit is provided
             cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             sstring = self._input_string
@@ -276,7 +277,7 @@ class TextInput(Widget):
 
         :return: String
         """
-        if self.maxwidth != 0 and len(self._input_string) > self.maxwidth:
+        if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
             text = self._input_string[self._renderbox[0]:self._renderbox[1]]
             if self._renderbox[1] != len(self._input_string):  # Right ellipsis
                 text += self._ellipsis
@@ -303,21 +304,21 @@ class TextInput(Widget):
         :return: None
         """
         self._cursor_render = True
-        if self.maxwidth == 0:
+        if self._maxwidth == 0:
             return
         ls = len(self._input_string)
 
         # Move cursor to end
         if end:
-            self._renderbox[0] = max(0, ls - self.maxwidth)
+            self._renderbox[0] = max(0, ls - self._maxwidth)
             self._renderbox[1] = ls
-            self._renderbox[2] = min(ls, self.maxwidth)
+            self._renderbox[2] = min(ls, self._maxwidth)
             return
 
         # Move cursor to start
         if start:
             self._renderbox[0] = 0
-            self._renderbox[1] = min(ls, self.maxwidth)
+            self._renderbox[1] = min(ls, self._maxwidth)
             self._renderbox[2] = 0
             return
 
@@ -326,7 +327,7 @@ class TextInput(Widget):
             return
 
         # If no overflow
-        if ls <= self.maxwidth:
+        if ls <= self._maxwidth:
             if right < 0 and self._renderbox[2] == ls:  # If del at the end of string
                 return
             self._renderbox[0] = 0  # To catch unexpected errors
@@ -342,7 +343,7 @@ class TextInput(Widget):
             self._renderbox[2] += right
         else:
             if addition:  # If text is added
-                if right < 0 and self._renderbox[2] == self.maxwidth:  # If del at the end of string
+                if right < 0 and self._renderbox[2] == self._maxwidth:  # If del at the end of string
                     return
                 if left < 0 and self._renderbox[2] == 0:  # If backspace at begining of string
                     return
@@ -355,7 +356,7 @@ class TextInput(Widget):
 
                 # If the user writes, move renderbox
                 if right > 0:
-                    if self._renderbox[2] == self.maxwidth:  # If cursor is at the end push box
+                    if self._renderbox[2] == self._maxwidth:  # If cursor is at the end push box
                         self._renderbox[0] += right
                         self._renderbox[1] += right
                     self._renderbox[2] += right
@@ -374,18 +375,18 @@ class TextInput(Widget):
                 if self._renderbox[2] < 0:
                     self._renderbox[0] += left
                     self._renderbox[1] += left
-                if self._renderbox[2] > self.maxwidth:
+                if self._renderbox[2] > self._maxwidth:
                     self._renderbox[0] += right
                     self._renderbox[1] += right
 
             # Apply string limits
-            self._renderbox[1] = max(self.maxwidth, min(self._renderbox[1], ls))
-            self._renderbox[0] = self._renderbox[1] - self.maxwidth
+            self._renderbox[1] = max(self._maxwidth, min(self._renderbox[1], ls))
+            self._renderbox[0] = self._renderbox[1] - self._maxwidth
 
         # Apply limits
         self._renderbox[0] = max(0, self._renderbox[0])
         self._renderbox[1] = max(0, self._renderbox[1])
-        self._renderbox[2] = max(0, min(self._renderbox[2], min(self.maxwidth, ls)))
+        self._renderbox[2] = max(0, min(self._renderbox[2], min(self._maxwidth, ls)))
 
     def _update_cursor_mouse(self, mousex):
         """
@@ -418,22 +419,22 @@ class TextInput(Widget):
             size_sum += string_size[i] / 2
 
         # If text have ellipsis
-        if self.maxwidth != 0 and len(self._input_string) > self.maxwidth:
+        if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
             if self._renderbox[0] != 0:  # Left ellipsis
                 cursor_pos -= 3
 
             # Check if user clicked on ellipsis
-            if cursor_pos < 0 or cursor_pos > self.maxwidth:
+            if cursor_pos < 0 or cursor_pos > self._maxwidth:
                 if cursor_pos < 0:
                     self._renderbox[2] = 0
                     self._move_cursor_left()
-                if cursor_pos > self.maxwidth:
-                    self._renderbox[2] = self.maxwidth
+                if cursor_pos > self._maxwidth:
+                    self._renderbox[2] = self._maxwidth
                     self._move_cursor_right()
                 return
 
             # User clicked on text, update cursor
-            cursor_pos = max(0, min(self.maxwidth, cursor_pos))
+            cursor_pos = max(0, min(self._maxwidth, cursor_pos))
             self._cursor_position = self._renderbox[0] + cursor_pos
             self._renderbox[2] = cursor_pos
 
@@ -470,9 +471,9 @@ class TextInput(Widget):
         :return: True if the input must be limited
         :rtype: bool
         """
-        if self.maxchar == 0:
+        if self._maxchar == 0:
             return False
-        return self.maxchar < len(self._input_string)
+        return self._maxchar < len(self._input_string)
 
     def _check_input_type(self, string):
         """
@@ -524,14 +525,24 @@ class TextInput(Widget):
         self._cursor_position = min(self._cursor_position + 1, len(self._input_string))
         self._update_renderbox(right=1)
 
+    def _blur(self):
+        """
+        See upper class doc.
+        """
+        self._key_is_pressed = False
+        self._mouse_is_pressed = False
+        self._keyrepeat_mouse_ms = 0
+
     def update(self, events):
         """
         See upper class doc.
         """
         updated = False
+
         for event in events:
             if event.type == _pygame.KEYDOWN:
                 self._cursor_visible = True  # So the user sees where he writes
+                self._key_is_pressed = True
 
                 # If none exist, create counter for that key:
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
@@ -554,14 +565,22 @@ class TextInput(Widget):
                             return False
 
                         # Paste text in cursor
-                        text = paste()
+                        text = paste().strip()
                         for i in ['\n', '\r']:
                             text = text.replace(i, '')
                         if text == '':
                             return False
 
+                        # Cut string (if limit exists)
+                        text_end = len(text)
+                        if self._maxchar != 0:
+                            char_limit = self._maxchar - len(self._input_string) + 1
+                            text_end = min(char_limit, text_end)
+                            if text_end <= 0:  # If there's not more space, returns
+                                return
+
                         new_string = self._input_string[0:self._cursor_position] + \
-                                     text + \
+                                     text[0:text_end] + \
                                      self._input_string[self._cursor_position:len(self._input_string)]
 
                         # If string is valid
@@ -643,7 +662,10 @@ class TextInput(Widget):
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
+
+                # Release inputs
                 self._block_copy_paste = False
+                self._key_is_pressed = False
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 self._check_mouse_collide_input(event.pos)
