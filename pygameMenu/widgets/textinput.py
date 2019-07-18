@@ -547,8 +547,10 @@ class TextInput(Widget):
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
-                # Check copy/paste
+                # User press ctrl+something
                 if _pygame.key.get_mods() & _pygame.KMOD_CTRL:
+
+                    # Ctrl+C copy
                     if event.key == _pygame.K_c:
                         if self._block_copy_paste:  # Prevents multiple executions of event
                             return False
@@ -559,6 +561,7 @@ class TextInput(Widget):
                         self._block_copy_paste = True
                         return True
 
+                    # Ctrl+V paste
                     elif event.key == _pygame.K_v:
                         if self._block_copy_paste:  # Prevents multiple executions of event
                             return False
@@ -591,6 +594,10 @@ class TextInput(Widget):
                             self.change()
                             self._block_copy_paste = True
                         return True
+
+                    # Command not found, returns
+                    else:
+                        return False
 
                 if event.key == _pygame.K_BACKSPACE:
                     self._input_string = (

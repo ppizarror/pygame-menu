@@ -121,7 +121,7 @@ settings_menu.add_text_input('Your age: ',
                              textinput_id='age',
                              input_type=pygameMenu.locals.PYGAME_INPUT_INT)
 settings_menu.add_text_input('Some long text: ',
-                             maxwidth=20,
+                             maxwidth=18,
                              textinput_id='long_text')
 
 # Create selector with 3 difficulty options
