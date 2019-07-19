@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import sys
 import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
 from pygameMenu import locals as _locals
@@ -37,8 +38,8 @@ from pygameMenu.widgets.widget import Widget
 
 try:
     from pyperclip import copy, paste
-except ModuleNotFoundError:
-    def copy():
+except ImportError:
+    def copy(text):
         """
         Copy method.
 
@@ -641,7 +642,10 @@ class TextInput(Widget):
 
         # Delete escape chars
         escapes = ''.join([chr(char) for char in range(1, 32)])
-        text = text.translate(escapes)
+        if sys.version_info[0] < 3:
+            text = text.translate(None, escapes)
+        else:
+            text = text.translate(escapes)
         if text == '':
             return False
 
