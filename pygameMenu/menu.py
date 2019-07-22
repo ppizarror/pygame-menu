@@ -212,20 +212,13 @@ class Menu(object):
         assert 0 <= menu_alpha <= 100, 'Menu_alpha must be between 0 and 100'
 
         # Store configuration
-        self._back_box = back_box
         self._bgfun = bgfun
         self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0)))
 
-        self._bg_color_title = (menu_color_title[0],
-                                menu_color_title[1],
-                                menu_color_title[2],
-                                int(255 * (1 - (100 - menu_alpha) / 100.0)))
-
         self._drawselrect = draw_select
         self._font_color = font_color
         self._fsize = font_size
-        self._fsize_title = font_size_title
         self._height = menu_height
         self._opt_dy = option_margin
         self._option_shadow = option_shadow
@@ -252,9 +245,6 @@ class Menu(object):
 
         # Load fonts
         self._font = _fonts.get_font(font, self._fsize)
-        if font_title is None:
-            font_title = font
-        self._font_title = _fonts.get_font(font_title, self._fsize_title)
 
         # Position of menu
         self._posx = (window_width - self._width) / 2
@@ -271,9 +261,6 @@ class Menu(object):
         self._opt_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy
         self._widget_align = widget_alignment
 
-        # Title properties
-        self.set_title(title, title_offsetx, title_offsety)
-
         # Init joystick
         self._joystick = joystick_enabled
         if self._joystick and not _pygame.joystick.get_init():
@@ -283,6 +270,16 @@ class Menu(object):
 
         # Init mouse
         self._mouse = mouse_enabled
+
+        # Create menu bar
+        self._menubar = _widgets.MenuBar(title, self._width, back_box, None, self._back)
+        self._menubar.set_title(title, title_offsetx, title_offsety)
+        font_title = _fonts.get_font(font_title or self._font, font_size_title)
+        bg_color_title = (menu_color_title[0], menu_color_title[1], menu_color_title[2],
+                          int(255 * (1 - (100 - menu_alpha) / 100.0)))
+        self._menubar.set_font(font_title, font_size_title,
+                               bg_color_title, self._font_color)
+        self._menubar.set_controls(self._joystick, self._mouse)
 
     def add_option(self, element_name, element, *args, **kwargs):
         """
@@ -488,6 +485,15 @@ class Menu(object):
 
         return widget
 
+    def _back(self):
+        """
+        Go to previous menu or close if top menu is currently displayed.
+        """
+        if self._top._actual._prev is not None:
+            self.reset(1)
+        else:
+            self._close()
+
     def _check_id_duplicated(self, widget_id):
         """
         Check if widget if is duplicated.
@@ -549,23 +555,13 @@ class Menu(object):
         :return: None
         """
         # Draw background rectangle
-        _gfxdraw.filled_polygon(self._surface, self._bgrect,
-                                self._bgcolor)
-        # Draw title
-        _gfxdraw.filled_polygon(self._surface, self._title_polygon_pos,
-                                self._bg_color_title)
+        _gfxdraw.filled_polygon(self._surface, self._bgrect, self._bgcolor)
 
-        # Draw back-box
-        if self._mouse and self._back_box:
-            rect = self._title_backbox_rect
-            _pygame.draw.rect(self._surface, self._font_color, rect, 1)
-            _pygame.draw.polygon(self._surface, self._font_color,
-                                 ((rect.left + 5, rect.centery), (rect.centerx, rect.top + 5),
-                                  (rect.centerx, rect.centery - 2), (rect.right - 5, rect.centery - 2),
-                                  (rect.right - 5, rect.centery + 2), (rect.centerx, rect.centery + 2),
-                                  (rect.centerx, rect.bottom - 5), (rect.left + 5, rect.centery)))
+        # Update menu bar position
+        self._menubar.set_position(self._posx, self._posy)
 
-        self._surface.blit(self._title, self._title_pos)
+        # Draw menu bar
+        self._menubar.draw(self._surface)
 
         # Draw options
         for index in range(len(self._option)):
@@ -628,15 +624,6 @@ class Menu(object):
         _pygame.quit()
         exit()
 
-    def get_title(self):
-        """
-        Return title of the menu.
-
-        :return: Title
-        :rtype: basestring
-        """
-        return self._title_str
-
     def is_disabled(self):
         """
         Returns false/true if menu is enabled or not
@@ -670,11 +657,15 @@ class Menu(object):
 
         self._actual.draw()
 
-        updated = self._actual._option[self._actual._index].update(events)
-        if updated and not self._actual._dopause:
-            return True
+        if self._menubar.update(events):
+            if not self._actual._dopause:
+                return True
 
-        elif not updated:
+        elif self._actual._option[self._actual._index].update(events):
+            if not self._actual._dopause:
+                return True
+
+        else:
             for event in events:
                 # noinspection PyUnresolvedReferences
                 if event.type == _pygame.locals.QUIT:
@@ -703,23 +694,13 @@ class Menu(object):
                     if event.axis == _locals.JOY_AXIS_Y and event.value > _locals.JOY_DEADZONE:
                         self._select(self._actual._index + 1)
 
-                elif self._joystick and event.type == _pygame.JOYBUTTONDOWN:
-                    if event.button == _locals.JOY_BUTTON_BACK:
-                        self.reset(1)
-
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                    if self._actual._title_backbox_rect.collidepoint(*event.pos):
-                        if self._actual._prev is not None:
-                            self.reset(1)
-                        elif self._close():
-                            return True
-                    else:
-                        for index in range(len(self._actual._option)):
-                            widget = self._actual._option[index]
-                            if widget.get_rect().collidepoint(*event.pos):
-                                self._select(index)
-                                widget.update(events)
-                                return True  # It is updated
+                    for index in range(len(self._actual._option)):
+                        widget = self._actual._option[index]
+                        if widget.get_rect().collidepoint(*event.pos):
+                            self._select(index)
+                            widget.update(events)
+                            return True  # It is updated
 
         if not self._enabled:
             # A widget has closed the menu
@@ -798,6 +779,15 @@ class Menu(object):
                 data.update(data_submenu)
         return data
 
+    def get_title(self):
+        """
+        Return title of the menu.
+
+        :return: Title
+        :rtype: basestring
+        """
+        return self._menubar.get_title()
+
     def reset(self, total):
         """
         Reset menu.
@@ -855,48 +845,6 @@ class Menu(object):
         actual._option[actual._index].set_selected(False)
         actual._index = index % actual._size
         actual._option[actual._index].set_selected()
-
-    # noinspection PyAttributeOutsideInit
-    def set_title(self, title, offsetx=0, offsety=0):
-        """
-        Set menu title.
-
-        :param title: Menu title
-        :type title: str
-        :param offsetx: Offset x-position of title (px)
-        :type offsetx: int
-        :param offsety: Offset y-position of title (px)
-        :type offsety: int
-        :return: None
-        """
-        assert isinstance(title, str)
-        assert isinstance(offsetx, int)
-        assert isinstance(offsety, int)
-
-        self._title_offsety = offsety
-        self._title_offsetx = offsetx
-        self._title = self._font_title.render(title, 1, self._font_color)
-        self._title_str = title
-        title_width = self._title.get_size()[0]
-        title_height = self._title.get_size()[1]
-        self._fsize_title = title_height
-        self._title_polygon_pos = [(self._posx, self._posy),
-                                   (self._posx + self._width, self._posy),
-                                   (self._posx + self._width,
-                                    self._posy + self._fsize_title / 2),
-                                   (self._posx + title_width + 25,
-                                    self._posy + self._fsize_title / 2),
-                                   (self._posx + title_width + 5,
-                                    self._posy + self._fsize_title + 5),
-                                   (self._posx, self._posy + self._fsize_title + 5)]
-
-        self._title_pos = (self._posx + 5 + self._title_offsetx,
-                           self._posy + self._title_offsety)
-
-        cross_size = self._title_polygon_pos[2][1] - self._title_polygon_pos[1][1] - 6
-        self._title_backbox_rect = _pygame.Rect(self._title_polygon_pos[1][0] - cross_size - 3,
-                                                self._title_polygon_pos[1][1] + 3,
-                                                cross_size, cross_size)
 
     def get_widget(self, widget_id, recursive=False):
         """

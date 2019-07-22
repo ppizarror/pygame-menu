@@ -378,6 +378,15 @@ import pygameMenu
     menu.get_input_data() # -> {'id1': value, 'id2': value}
     ```
 
+- <i>get_widget(widget_id, recursive=False)</i>
+
+      Get widget object from its ID.
+
+      ```python
+     menu = pygameMenu.Menu(...)
+     menu.get_widget('id1') # -> <pygameMenu.widgets.textinput.TextInput object at 0x10ac2db38>
+     ```
+
 ### Menu events
 
 | Event | Description |
@@ -430,7 +439,7 @@ some_menu = pygameMenu.Menu(surface,
                             ...)
 ```
 
-Available fonts (*FONT_NAME*):
+Available embedded fonts (*FONT_NAME*):
 
 - **8BIT**
 - **BEBAS**
@@ -442,7 +451,7 @@ Available fonts (*FONT_NAME*):
 - **OPEN_SANS**
 - **PT_SERIF**
 
-System fonts can also be used. Available fonts can be listed using the following command in a python shell:
+System fonts can also be used. Available system fonts can be listed using the following command in a python shell:
 
 ```python
 import pygame
