@@ -378,11 +378,11 @@ import pygameMenu
     menu.get_input_data() # -> {'id1': value, 'id2': value}
     ```
 
-- <i>get_widget(widget_id, recursive=False)</i>
+- *get_widget(widget_id, recursive=False)*
 
       Get widget object from its ID.
 
-      ```python
+     ```python
      menu = pygameMenu.Menu(...)
      menu.get_widget('id1') # -> <pygameMenu.widgets.textinput.TextInput object at 0x10ac2db38>
      ```
