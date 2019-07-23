@@ -218,15 +218,13 @@ class Sound(object):
         :type sound: pygame.mixer.Sound, NoneType
         :return: None
         """
-
-        # If sound is None then the active channel is None and returns
         if not sound:
             self._channel = None
             return
 
         # Find an avaiable channel
         channel = _mixer.find_channel()
-        if channel == self._channel:  # If the channel si the same as before
+        if channel == self._channel:  # If the channel is the same as before
             if _mixer.get_busy():
                 return
         self._channel = channel
