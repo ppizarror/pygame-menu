@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 MENUBAR
-MenuBar class to display menu title
+MenuBar class to display menu title.
 
 License:
 -------------------------------------------------------------------------------

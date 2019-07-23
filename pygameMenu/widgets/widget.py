@@ -272,9 +272,9 @@ class Widget(object):
         Set the position.
 
         :param posx: X position
-        :type posx: tuple
+        :type posx: int, float
         :param posy: Y position
-        :type posy: tuple
+        :type posy: int, float
         :return: None
         """
         self._rect.x = posx
