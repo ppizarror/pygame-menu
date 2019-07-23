@@ -95,6 +95,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 font=pygameMenu.fonts.FONT_HELVETICA,
                                 font_color=COLOR_BLACK,
                                 font_size=30,
+                                font_size_title=50,
                                 menu_alpha=100,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.85),
@@ -179,7 +180,6 @@ assert main_menu.get_widget('last_name') is None
 # Main loop
 # -----------------------------------------------------------------------------
 while True:
-
     # Tick
     clock.tick(FPS)
 

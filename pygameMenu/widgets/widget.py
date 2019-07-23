@@ -318,8 +318,24 @@ class Widget(object):
         else:
             self._blur()
 
-        # Sync events with the system
-        _pygame.event.pump()
+    @staticmethod
+    def check_key_pressed_valid(event):
+        """
+        Checks if the pressed key is valid.
+
+        :param event: Key press event
+        :type event: _pygame.event.EventType
+        :return: True if any key is pressed
+        :rtype: bool
+        """
+        # If the system detects that any key event has been pressed but
+        # there's not any key pressed then this method raises a KEYUP
+        # flag
+        bad_event = not (True in _pygame.key.get_pressed())
+        if bad_event:
+            ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
+            _pygame.event.post(ev)
+        return not bad_event
 
     def _focus(self):
         """

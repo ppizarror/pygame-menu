@@ -76,7 +76,7 @@ class TextInput(Widget):
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
-                 repeat_keys_interval_ms=35,
+                 repeat_keys_interval_ms=25,
                  repeat_mouse_interval_ms=50,
                  text_ellipsis='...',
                  **kwargs
@@ -171,7 +171,6 @@ class TextInput(Widget):
         self._max_history = history
 
         # Other
-        self._block_fixed_event = False
         self._input_type = input_type
         self._label_size = 0
         self._maxchar = maxchar
@@ -566,14 +565,6 @@ class TextInput(Widget):
         self._cursor_visible = False
         # self._history_index = len(self._history) - 1
 
-    def _focus(self):
-        """
-        See upper class doc.
-        """
-        if self._key_is_pressed:
-            self._block_fixed_event = True
-            _pygame.event.Event(_pygame.KEYUP, {'key': self._last_key})
-
     def _update_input_string(self, new_string):
         """
         Update input string with a new string, store changes into history.
@@ -730,6 +721,11 @@ class TextInput(Widget):
 
         for event in events:
             if event.type == _pygame.KEYDOWN:
+
+                # Check if any key is pressed, if True the event is invalid
+                if not self.check_key_pressed_valid(event):
+                    continue
+
                 self._cursor_visible = True  # So the user sees where he writes
                 self._key_is_pressed = True
                 self._last_key = event.key
@@ -763,7 +759,6 @@ class TextInput(Widget):
 
                     # Command not found, returns
                     else:
-                        _pygame.event.pump()
                         return False
 
                 if event.key == _pygame.K_BACKSPACE:
