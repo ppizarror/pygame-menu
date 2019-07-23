@@ -59,14 +59,14 @@ SOUND_TYPE_KEY_DELETION = '__pygameMenu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygameMenu_sound_open_menu__'
 
 # Sound examples
-PYGAMEMENU_SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click-mouse')
-PYGAMEMENU_SOUND_EXAMPLE_CLOSE_MENU = __sounddir.format(__actualpath, 'close-menu')
+PYGAMEMENU_SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click_mouse')
+PYGAMEMENU_SOUND_EXAMPLE_CLOSE_MENU = __sounddir.format(__actualpath, 'close_menu')
 PYGAMEMENU_SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
 PYGAMEMENU_SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
-PYGAMEMENU_SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event-error')
-PYGAMEMENU_SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key-add')
-PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key-delete')
-PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open-menu')
+PYGAMEMENU_SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event_error')
+PYGAMEMENU_SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key_add')
+PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_delete')
+PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 
 
 class Sound(object):
