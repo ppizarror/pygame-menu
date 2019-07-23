@@ -59,6 +59,12 @@ pygame.display.set_caption('PygameMenu Example 3')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
+# -----------------------------------------------------------------------------
+# Set sounds
+# -----------------------------------------------------------------------------
+sound = pygameMenu.sound.Sound()
+sound.load_example_sounds()
+
 
 # -----------------------------------------------------------------------------
 # Methods
@@ -82,6 +88,25 @@ def check_name_test(value):
     :return: None
     """
     print('User name: {0}'.format(value))
+
+
+# noinspection PyUnusedLocal
+def update_menu_sound(value, enabled):
+    """
+    Update menu sound.
+
+    :param value: Value of the selector (Label and index)
+    :type value: tuple
+    :param enabled: Parameter of the selector, (True/False)
+    :return: None
+    """
+    global main_menu
+    if enabled:
+        main_menu.set_sound(sound, recursive=True)
+        print('Menu sound were enabled')
+    else:
+        main_menu.set_sound(None, recursive=True)
+        print('Menu sound were disabled')
 
 
 # -----------------------------------------------------------------------------
@@ -171,6 +196,7 @@ main_menu = pygameMenu.Menu(surface,
 main_menu.set_fps(FPS)
 
 main_menu.add_option('Settings', settings_menu)
+main_menu.add_selector('Menu sounds', [('Off', False), ('On', True)], onchange=update_menu_sound)
 main_menu.add_option('Quit', pygameMenu.events.PYGAMEMENU_EXIT)
 
 assert main_menu.get_widget('first_name', recursive=True) is wid1
