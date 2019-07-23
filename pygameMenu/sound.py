@@ -224,7 +224,7 @@ class Sound(object):
         # Play the sound
         time = _time.time()
 
-        # If the previous sound is the same and has not ended
+        # If the previous sound is the same and has not ended (max 20% overlap)
         if sound['type'] != self._last_play or time - self._last_time >= 0.2 * sound['length']:
             self._channel.play(sound['file'],
                                loops=sound['loops'],
