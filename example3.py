@@ -156,6 +156,7 @@ main_menu = pygameMenu.Menu(surface,
                             font='arial',
                             font_color=COLOR_BLACK,
                             font_size=30,
+                            font_size_title=40,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
@@ -185,14 +186,8 @@ while True:
     # Paint background
     main_background()
 
-    # Application events
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            exit()
-
     # Main menu
-    main_menu.mainloop(events)
+    main_menu.mainloop()
 
     # Flip surface
     pygame.display.flip()

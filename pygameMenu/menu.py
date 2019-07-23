@@ -280,7 +280,7 @@ class Menu(object):
         # Create menu bar
         self._menubar = _widgets.MenuBar(title, self._width, back_box, None, self._back)
         self._menubar.set_title(title, title_offsetx, title_offsety)
-        font_title = _fonts.get_font(font_title or self._font, font_size_title)
+        font_title = _fonts.get_font(font_title or font, font_size_title)
         bg_color_title = (menu_color_title[0], menu_color_title[1], menu_color_title[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._menubar.set_font(font_title, font_size_title,
@@ -565,8 +565,6 @@ class Menu(object):
 
         # Update menu bar position
         self._menubar.set_position(self._posx, self._posy)
-
-        # Draw menu bar
         self._menubar.draw(self._surface)
 
         # Draw options
@@ -653,6 +651,7 @@ class Menu(object):
         Main function of the loop.
 
         :param events: Pygame events
+        :type events: list
         :return: None
         """
         if events is None:
@@ -721,11 +720,12 @@ class Menu(object):
         self._closelocked = False
         return False
 
-    def mainloop(self, events):
+    def mainloop(self, events=None):
         """
         Main function of menu.
 
         :param events: Menu events
+        :type events: list
         :return: None
         """
         self._top = self

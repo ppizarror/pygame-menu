@@ -86,8 +86,8 @@ def get_font(name, size):
                 sys_font_sim = system_fonts[most_similar_index]
                 sys_message = 'Check system fonts with pygame.font.get_fonts() function'
                 raise ValueError('System font "{0}" unknown, use "{1}" instead\n{2}'.format(font_name,
-                                                                                           sys_font_sim,
-                                                                                           sys_message))
+                                                                                            sys_font_sim,
+                                                                                            sys_message))
 
         # Try to load the font
         font = None

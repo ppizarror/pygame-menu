@@ -727,13 +727,6 @@ class TextInput(Widget):
         See upper class doc.
         """
         updated = False
-        if self.selected:
-            print(events)
-            print(self._last_key)
-            pass
-            # print(self._key_is_pressed, self._cursor_render, self._mouse_is_pressed)
-            # _pygame.event.clear(pump=True)
-            # return
 
         for event in events:
             if event.type == _pygame.KEYDOWN:
