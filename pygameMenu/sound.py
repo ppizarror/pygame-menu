@@ -38,7 +38,23 @@ import pygame as _pygame
 import os.path as _path
 
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
-__sounddir = '{0}/sounds/{1}.ttf'
+__sounddir = '{0}/sounds/{1}.ogg'
+
+# Sound types
+SOUND_TYPE_CLICK_MOUSE = '__pygameMenu_sound_click_mouse__'
+SOUND_TYPE_ERROR = '__pygameMenu_sound_error__'
+SOUND_TYPE_EVENT = '__pygameMenu_sound_event__'
+SOUND_TYPE_EVENT_ERROR = '__pygameMenu_sound_event_error__'
+SOUND_TYPE_KEY_ADDITION = '__pygameMenu_sound_key_addition__'
+SOUND_TYPE_KEY_DELETION = '__pygameMenu_sound_key_deletion__'
+
+# Sound examples
+SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click')
+SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
+SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
+SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event-error')
+SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key-add')
+SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key-delete')
 
 
 class Sound(object):
@@ -77,6 +93,9 @@ class Sound(object):
         # Channel where a sound is played
         self._channel = None
 
+        # Sound dict
+        self._sound = {}
+
     def set_sound(self, sound, file, loops=0, maxtime=0, fade_ms=0):
         """
         Set a particular sound.
@@ -98,6 +117,18 @@ class Sound(object):
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
         assert isinstance(fade_ms, (int, float))
+        assert loops >= 0, 'loops count must be equal or greater than zero'
+        assert maxtime >= 0, 'maxtime must be equal or greater than zero'
+        assert fade_ms >= 0, 'fade_ms must be equal or greater than zero'
+
+        # Check sound type is correct
+        if sound not in [SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_ERROR, SOUND_TYPE_EVENT,
+                         SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION, SOUND_TYPE_KEY_DELETION]:
+            raise ValueError('sound type not valid, check the manual')
+
+        # Load the file
+        print(file)
+        sound_data = _mixer.Sound(file=file)
 
     def _play_sound(self, sound):
         """
