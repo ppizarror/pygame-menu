@@ -71,6 +71,7 @@ class Menu(object):
                  font_size=_cfg.MENU_FONT_SIZE,
                  font_size_title=_cfg.MENU_FONT_SIZE_TITLE,
                  font_title=None,
+                 fps=0,
                  joystick_enabled=True,
                  menu_alpha=_cfg.MENU_ALPHA,
                  menu_color=_cfg.MENU_BGCOLOR,
@@ -117,6 +118,8 @@ class Menu(object):
         :type draw_select: bool
         :param enabled: Menu is enabled by default or not
         :type enabled: bool
+        :param fps: FPS of the menu
+        :type fps: int, float
         :param font_color: Color of font
         :type font_color: tuple
         :param font_size: Font size
@@ -195,21 +198,21 @@ class Menu(object):
         else:
             assert isinstance(bgfun, type(None)), \
                 'Bgfun must be None if menu does not pause execution of the application'
-        assert window_height > 0 and window_width > 0, \
-            'Window size must be greater than zero'
-        assert rect_width >= 0, 'rect_width must be greater or equal than zero'
-        assert option_margin >= 0, \
-            'Option margin must be greater or equal than zero'
-        assert menu_width > 0 and menu_height > 0, \
-            'Menu size must be greater than zero'
-        assert font_size > 0 and font_size_title > 0, \
-            'Font sizes must be greater than zero'
-        assert draw_region_y >= 0 and draw_region_x >= 0, \
-            'Drawing regions must be greater or equal than zero'
         assert dopause and bgfun is not None or not dopause and bgfun is None, \
             'If pause main execution is enabled then bgfun (Background ' \
             'function drawing) must be defined (not None)'
+        assert draw_region_y >= 0 and draw_region_x >= 0, \
+            'Drawing regions must be greater or equal than zero'
+        assert font_size > 0 and font_size_title > 0, \
+            'Font sizes must be greater than zero'
+        assert menu_width > 0 and menu_height > 0, \
+            'Menu size must be greater than zero'
         assert 0 <= menu_alpha <= 100, 'Menu_alpha must be between 0 and 100'
+        assert option_margin >= 0, \
+            'Option margin must be greater or equal than zero'
+        assert rect_width >= 0, 'rect_width must be greater or equal than zero'
+        assert window_height > 0 and window_width > 0, \
+            'Window size must be greater than zero'
 
         # Store configuration
         self._bgfun = bgfun
@@ -231,10 +234,12 @@ class Menu(object):
 
         # Inner variables
         self._actual = self  # Actual menu
+        self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._index = 0  # Selected index
+        self._fps = 0
         self._onclose = onclose  # Function that calls after closing menu
         self._option = []  # Option menu
         self._prev = None  # Previous menu
@@ -242,6 +247,7 @@ class Menu(object):
         self._size = 0  # Menu total elements
         self._submenus = []  # List of all linked menus
         self._top = None  # Top level menu
+        self.set_fps(fps)  # FPS of the menu
 
         # Load fonts
         self._font = _fonts.get_font(font, self._fsize)
@@ -649,14 +655,19 @@ class Menu(object):
         :param events: Pygame events
         :return: None
         """
-        if self._actual._dopause:  # If menu pauses game then apply function
-            self._bgfun()
-
         if events is None:
             events = _pygame.event.get()
 
+        if self._actual._dopause:  # If menu pauses game then apply function
+            self._bgfun()
+
+        # Clock tick
+        self._actual._clock.tick(self._fps)
+
+        # Draw the menu
         self._actual.draw()
 
+        # Process events, first check widgets, then the menu
         if self._actual._menubar.update(events):
             if not self._actual._dopause:
                 return True
@@ -779,6 +790,33 @@ class Menu(object):
                 data.update(data_submenu)
         return data
 
+    def get_fps(self):
+        """
+        Return the frames per second of the menu.
+
+        :return: FPS
+        :rtype: float
+        """
+        return self._clock.get_fps()
+
+    def set_fps(self, fps, recursive=True):
+        """
+        Set the frames per second of the menu.
+
+        :param fps: FPS
+        :type fps: float, int
+        :param recursive: Set FPS to all the submenus
+        :type recursive: bool
+        :return: None
+        """
+        assert isinstance(fps, (float, int))
+        assert isinstance(recursive, bool)
+        assert fps >= 0, 'fps must be equal or greater than zero'
+        self._fps = fps
+        if recursive:
+            for menu in self._submenus:
+                menu.set_fps(fps, recursive=True)
+
     def get_title(self):
         """
         Return title of the menu.
@@ -797,7 +835,7 @@ class Menu(object):
         :return: None
         """
         assert isinstance(self._top._actual, Menu)
-        assert isinstance(total, int), 'total must be a integer'
+        assert isinstance(total, int), 'total must be an integer'
         assert total > 0, 'total must be greater than zero'
 
         i = 0

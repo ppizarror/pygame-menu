@@ -166,6 +166,7 @@ main_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
+main_menu.set_fps(FPS)
 
 main_menu.add_option('Settings', settings_menu)
 main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
@@ -179,7 +180,7 @@ assert main_menu.get_widget('last_name') is None
 while True:
 
     # Tick
-    clock.tick(60)
+    clock.tick(FPS)
 
     # Paint background
     main_background()

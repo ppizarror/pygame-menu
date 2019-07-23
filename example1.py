@@ -206,21 +206,23 @@ for m in ABOUT:
 about_menu.add_line(pygameMenu.locals.PYGAMEMENU_TEXT_NEWLINE)
 
 # Main menu, pauses execution of the application
-menu = pygameMenu.Menu(surface,
-                       bgfun=mainmenu_background,
-                       enabled=False,
-                       font=pygameMenu.fonts.FONT_NEVIS,
-                       menu_alpha=90,
-                       onclose=pygameMenu.events.PYGAME_MENU_CLOSE,
-                       title='Main Menu',
-                       title_offsety=5,
-                       window_height=H_SIZE,
-                       window_width=W_SIZE
-                       )
-menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
-menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
-menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
-menu.add_option('Exit', pygameMenu.events.PYGAME_MENU_EXIT)  # Add exit function
+main_menu = pygameMenu.Menu(surface,
+                            bgfun=mainmenu_background,
+                            enabled=False,
+                            font=pygameMenu.fonts.FONT_NEVIS,
+                            menu_alpha=90,
+                            fps=FPS,
+                            onclose=pygameMenu.events.PYGAME_MENU_CLOSE,
+                            title='Main Menu',
+                            title_offsety=5,
+                            window_height=H_SIZE,
+                            window_width=W_SIZE
+                            )
+
+main_menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
+main_menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
+main_menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
+main_menu.add_option('Exit', pygameMenu.events.PYGAME_MENU_EXIT)  # Add exit function
 
 # -----------------------------------------------------------------------------
 # Main loop
@@ -228,7 +230,7 @@ menu.add_option('Exit', pygameMenu.events.PYGAME_MENU_EXIT)  # Add exit function
 while True:
 
     # Tick clock
-    clock.tick(60)
+    clock.tick(FPS)
     timer[0] += dt
 
     # Paint background
@@ -241,7 +243,7 @@ while True:
             exit()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                menu.enable()
+                main_menu.enable()
 
     # Draw timer
     time_string = str(datetime.timedelta(seconds=int(timer[0])))
@@ -251,7 +253,7 @@ while True:
         W_SIZE / 2 - time_blit_size[0] / 2, H_SIZE / 2 - time_blit_size[1] / 2))
 
     # Execute main from principal menu if is enabled
-    menu.mainloop(events)
+    main_menu.mainloop(events)
 
     # Flip surface
     pygame.display.flip()
