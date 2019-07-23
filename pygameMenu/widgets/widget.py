@@ -69,6 +69,7 @@ class Widget(object):
         self._render_string_cache_surface = None
         self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = _locals.PYGAME_ALIGN_CENTER
+        self._fps = 0
 
         self._on_change = onchange
         self._on_return = onreturn
@@ -371,6 +372,25 @@ class Widget(object):
 
         # Create shadow tuple position
         self._create_shadow_tuple()
+
+    def set_fps(self, fps):
+        """
+        Set the FPS limit of the widget.
+
+        :param fps: FPS (Frames Per Second) limit of the widget
+        :type fps: float, int
+        :return: None
+        """
+        self._fps = float(fps)
+
+    def get_fps(self):
+        """
+        Return the FPS limit of the widget.
+
+        :return: FPS limit
+        :rtype: float
+        """
+        return self._fps
 
     def _create_shadow_tuple(self):
         """

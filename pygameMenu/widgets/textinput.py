@@ -88,7 +88,7 @@ class TextInput(Widget):
         :type label: basestring
         :param default: Initial text to be displayed
         :type default: basestring
-        :param textinput_id: Id of the text input
+        :param textinput_id: ID of the text input
         :type textinput_id: basestring
         :param input_type: Type of data
         :type input_type: basestring

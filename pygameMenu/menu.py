@@ -801,7 +801,7 @@ class Menu(object):
 
     def set_fps(self, fps, recursive=True):
         """
-        Set the frames per second of the menu.
+        Set the frames per second limit of the menu.
 
         :param fps: FPS
         :type fps: float, int
@@ -812,7 +812,9 @@ class Menu(object):
         assert isinstance(fps, (float, int))
         assert isinstance(recursive, bool)
         assert fps >= 0, 'fps must be equal or greater than zero'
-        self._fps = fps
+        self._fps = float(fps)
+        for widget in self._option:
+            widget.set_fps(fps)
         if recursive:
             for menu in self._submenus:
                 menu.set_fps(fps, recursive=True)
