@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE 3
-Game menu with a input text.
+Game menu with a input text, also sounds are tested.
 
 License:
 -------------------------------------------------------------------------------
@@ -83,6 +83,11 @@ def check_name_test(value):
     """
     print('User name: {0}'.format(value))
 
+
+# -----------------------------------------------------------------------------
+# Set sounds
+# -----------------------------------------------------------------------------
+sound = pygameMenu.sound.Sound()
 
 # -----------------------------------------------------------------------------
 # Create menus

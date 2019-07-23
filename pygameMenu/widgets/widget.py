@@ -324,7 +324,7 @@ class Widget(object):
         Checks if the pressed key is valid.
 
         :param event: Key press event
-        :type event: _pygame.event.EventType
+        :type event: pygame.event.EventType
         :return: True if any key is pressed
         :rtype: bool
         """
