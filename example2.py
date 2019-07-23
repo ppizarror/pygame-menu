@@ -161,6 +161,12 @@ def main_background():
 
 
 # -----------------------------------------------------------------------------
+# Set sounds
+# -----------------------------------------------------------------------------
+sound = pygameMenu.sound.Sound()
+sound.load_example_sounds()
+
+# -----------------------------------------------------------------------------
 # Create menus
 # -----------------------------------------------------------------------------
 
@@ -235,11 +241,14 @@ main_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
-main_menu.set_fps(FPS)
 
 main_menu.add_option('Play', play_menu)
 main_menu.add_option('About', about_menu)
 main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
+
+# Configure main menu
+main_menu.set_fps(FPS)
+main_menu.set_sound(sound, recursive=True)
 
 # -----------------------------------------------------------------------------
 # Main loop

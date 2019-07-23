@@ -98,5 +98,5 @@ def get_font(name, size):
 
         # If font was not loadad throw an exception
         if font is None:
-            raise IOError('Font file "{0}" cannot be loaded'.format(font))
+            raise FileNotFoundError('Font file "{0}" cannot be loaded'.format(font))
         return font

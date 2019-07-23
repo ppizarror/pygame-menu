@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Import constants
+from pygameMenu.sound import Sound as _Sound
 import pygameMenu.config_controls as _ctrl
 import pygameMenu.config_menu as _cfg
 import pygameMenu.events as _events
@@ -245,6 +246,7 @@ class Menu(object):
         self._prev = None  # Previous menu
         self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
+        self._sounds = _Sound()
         self._submenus = []  # List of all linked menus
         self._top = None  # Top level menu
         self.set_fps(fps)  # FPS of the menu
@@ -818,6 +820,24 @@ class Menu(object):
         if recursive:
             for menu in self._submenus:
                 menu.set_fps(fps, recursive=True)
+
+    def set_sound(self, sound, recursive=False):
+        """
+        Set sound engine to a menu.
+
+        :param sound: Sound object
+        :type sound: pygameMenu.sound.Sound
+        :param recursive: Set FPS to all the submenus
+        :type recursive: bool
+        :return: None
+        """
+        assert isinstance(sound, type(self._sounds))
+        self._sounds = sound
+        for widget in self._option:
+            widget.set_sound(sound)
+        if recursive:
+            for menu in self._submenus:
+                menu.set_sound(sound, recursive=True)
 
     def get_title(self):
         """

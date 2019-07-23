@@ -49,7 +49,7 @@ SOUND_TYPE_KEY_ADDITION = '__pygameMenu_sound_key_addition__'
 SOUND_TYPE_KEY_DELETION = '__pygameMenu_sound_key_deletion__'
 
 # Sound examples
-SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click')
+SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click-mouse')
 SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
 SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
 SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event-error')
@@ -94,9 +94,13 @@ class Sound(object):
         self._channel = None
 
         # Sound dict
+        self._type_sounds = [SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_ERROR, SOUND_TYPE_EVENT,
+                             SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION, SOUND_TYPE_KEY_DELETION]
         self._sound = {}
+        for sound in self._type_sounds:
+            self._sound[sound] = {}
 
-    def set_sound(self, sound, file, loops=0, maxtime=0, fade_ms=0):
+    def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
         """
         Set a particular sound.
 
@@ -104,6 +108,8 @@ class Sound(object):
         :type sound: basestring
         :param file: Sound file
         :type file: basestring
+        :param volume: Volume of the sound, (0-1)
+        :type volume: float
         :param loops: Loops of the sound
         :type loops: int
         :param maxtime: Max playing time of the sound
@@ -120,15 +126,47 @@ class Sound(object):
         assert loops >= 0, 'loops count must be equal or greater than zero'
         assert maxtime >= 0, 'maxtime must be equal or greater than zero'
         assert fade_ms >= 0, 'fade_ms must be equal or greater than zero'
+        assert 1 >= volume >= 0, 'volume must be between 0 and 1'
 
         # Check sound type is correct
-        if sound not in [SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_ERROR, SOUND_TYPE_EVENT,
-                         SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION, SOUND_TYPE_KEY_DELETION]:
+        if sound not in self._type_sounds:
             raise ValueError('sound type not valid, check the manual')
 
-        # Load the file
-        print(file)
-        sound_data = _mixer.Sound(file=file)
+        # Check the file exists
+        if not _path.isfile(file):
+            raise FileNotFoundError('sound file "{0}" does not exist'.format(file))
+
+        # Load the sound
+        try:
+            sound_data = _mixer.Sound(file=file)
+        except _pygame.error:
+            print('The sound format is not valid, the sound has been disabled')
+            self._sound[sound] = {}
+            return
+
+        # Store the sound
+        self._sound[sound] = {
+            'file': sound_data,
+            'path': file,
+            'volume': volume,
+            'loops': loops,
+            'maxtime': maxtime,
+            'fade_ms': fade_ms,
+        }
+
+    def load_example_sounds(self, volume=0.5):
+        """
+        Load example sounds.
+
+        :param volume: Volume of the sound, (0-1)
+        :type volume: float
+        :return:
+        """
+        # Must be in the same order of types
+        examples = [SOUND_EXAMPLE_CLICK_MOUSE, SOUND_EXAMPLE_ERROR, SOUND_EXAMPLE_EVENT,
+                    SOUND_EXAMPLE_EVENT_ERROR, SOUND_EXAMPLE_KEY_ADDITION, SOUND_EXAMPLE_KEY_DELETION]
+        for sound in range(len(self._type_sounds)):
+            self.set_sound(self._type_sounds[sound], examples[sound], volume=volume)
 
     def _play_sound(self, sound):
         """
@@ -140,7 +178,7 @@ class Sound(object):
         """
 
         # If sound is None then the active channel is None and returns
-        if sound is None:
+        if not sound:
             self._channel = None
             return
 
@@ -150,7 +188,46 @@ class Sound(object):
             return
 
         # Play the sound
-        (volume, file, loops, maxtime, fade_ms) = sound
         self._channel.stop()
-        self._channel.set_volume(volume, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
-        self._channel.play(file)
+        self._channel.set_volume(sound['volume'])
+        self._channel.play(sound['file'],
+                           loops=sound['loops'],
+                           maxtime=sound['maxtime'],
+                           fade_ms=sound['fade_ms']
+                           )
+
+    def play_click_mouse(self):
+        """
+        Play click mouse sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_CLICK_MOUSE])
+
+    def play_error(self):
+        """
+        Play error sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_ERROR])
+
+    def play_event(self):
+        """
+        Play event sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_EVENT])
+
+    def play_event_error(self):
+        """
+        Play event error sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_EVENT_ERROR])
+
+    def play_key_add(self):
+        """
+        Play key addition sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_KEY_ADDITION])
+
+    def play_key_del(self):
+        """
+        Play key deletion sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_KEY_DELETION])
