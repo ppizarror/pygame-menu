@@ -157,6 +157,7 @@ class MenuBar(Widget):
         assert isinstance(offsetx, int)
         assert isinstance(offsety, int)
 
+        self.label = title
         self._offsety = offsety
         self._offsetx = offsetx
 
