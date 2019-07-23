@@ -49,8 +49,8 @@ class _PymenuAction(object):
 # Events
 PYGAMEMENU_PYMENUACTION = "<class 'pygameMenu.events._PymenuAction'>"  # For python compatibility
 
-PYGAME_MENU_BACK = _PymenuAction(0)  # Menu back
-PYGAME_MENU_CLOSE = _PymenuAction(1)  # Close menu
-PYGAME_MENU_DISABLE_CLOSE = _PymenuAction(10)  # Menu disable closing
-PYGAME_MENU_EXIT = _PymenuAction(3)  # Menu exit program
-PYGAME_MENU_RESET = _PymenuAction(4)  # Menu reset
+PYGAMEMENU_BACK = _PymenuAction(0)  # Menu back
+PYGAMEMENU_CLOSE = _PymenuAction(1)  # Close menu
+PYGAMEMENU_DISABLE_CLOSE = _PymenuAction(10)  # Menu disable closing
+PYGAMEMENU_EXIT = _PymenuAction(3)  # Menu exit program
+PYGAMEMENU_RESET = _PymenuAction(4)  # Menu reset

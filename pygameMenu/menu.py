@@ -317,13 +317,13 @@ class Menu(object):
             self._submenus.append(element)
             widget = _widgets.Button(element_name, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _events.PYGAME_MENU_BACK:
+        elif element == _events.PYGAMEMENU_BACK:
             # Back to menu
             widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _events.PYGAME_MENU_CLOSE:
+        elif element == _events.PYGAMEMENU_CLOSE:
             # Close menu
             widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _events.PYGAME_MENU_EXIT:
+        elif element == _events.PYGAMEMENU_EXIT:
             # Exit program
             widget = _widgets.Button(element_name, None, self._exit)
         # If element is a function
@@ -531,13 +531,13 @@ class Menu(object):
             a = isinstance(onclose, _events._PymenuAction)
             b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
             if a or b:
-                if onclose == _events.PYGAME_MENU_RESET:
+                if onclose == _events.PYGAMEMENU_RESET:
                     self.reset(100)
-                elif onclose == _events.PYGAME_MENU_BACK:
+                elif onclose == _events.PYGAMEMENU_BACK:
                     self.reset(1)
-                elif onclose == _events.PYGAME_MENU_EXIT:
+                elif onclose == _events.PYGAMEMENU_EXIT:
                     self._exit()
-                elif onclose == _events.PYGAME_MENU_DISABLE_CLOSE:
+                elif onclose == _events.PYGAMEMENU_DISABLE_CLOSE:
                     close = False
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()
@@ -684,6 +684,7 @@ class Menu(object):
                     self._exit()
 
                 elif event.type == _pygame.locals.KEYDOWN:
+                    self._sounds.play_key_del()
                     if event.key == _ctrl.MENU_CTRL_DOWN:
                         self._select(self._actual._index - 1)
                     elif event.key == _ctrl.MENU_CTRL_UP:
