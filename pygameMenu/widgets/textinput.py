@@ -39,6 +39,7 @@ from pygameMenu.widgets.widget import Widget
 try:
     from pyperclip import copy, paste
 except ImportError:
+    # noinspection PyUnusedLocal
     def copy(text):
         """
         Copy method.
