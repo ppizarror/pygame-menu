@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE 3
-Game menu with a input text, also sounds are tested.
+Game menu with a input text.
 
 License:
 -------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.85),
                                 menu_width=int(WINDOW_SIZE[0] * 0.9),
-                                onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
+                                onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
                                 title='Settings',
                                 widget_alignment=pygameMenu.locals.PYGAME_ALIGN_LEFT,
                                 window_height=WINDOW_SIZE[1],
@@ -147,7 +147,7 @@ def data_fun():
 
 
 settings_menu.add_option('Store data', data_fun)  # Call function
-settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK,
+settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAMEMENU_BACK,
                          align=pygameMenu.locals.PYGAME_ALIGN_CENTER)
 
 # Main menu
@@ -162,7 +162,7 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
                             menu_width=int(WINDOW_SIZE[0] * 0.8),
-                            onclose=pygameMenu.events.PYGAME_MENU_EXIT,  # User press ESC button
+                            onclose=pygameMenu.events.PYGAMEMENU_EXIT,  # User press ESC button
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
@@ -171,7 +171,7 @@ main_menu = pygameMenu.Menu(surface,
 main_menu.set_fps(FPS)
 
 main_menu.add_option('Settings', settings_menu)
-main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
+main_menu.add_option('Quit', pygameMenu.events.PYGAMEMENU_EXIT)
 
 assert main_menu.get_widget('first_name', recursive=True) is wid1
 assert main_menu.get_widget('last_name') is None

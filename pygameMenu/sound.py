@@ -35,6 +35,7 @@ from pygame import mixer as _mixer
 import pygame as _pygame
 
 # Get sounds folder
+import time as _time
 import os.path as _path
 
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
@@ -42,19 +43,23 @@ __sounddir = '{0}/sounds/{1}.ogg'
 
 # Sound types
 SOUND_TYPE_CLICK_MOUSE = '__pygameMenu_sound_click_mouse__'
+SOUND_TYPE_CLOSE_MENU = '__pygameMenu_sound_close_menu__'
 SOUND_TYPE_ERROR = '__pygameMenu_sound_error__'
 SOUND_TYPE_EVENT = '__pygameMenu_sound_event__'
 SOUND_TYPE_EVENT_ERROR = '__pygameMenu_sound_event_error__'
 SOUND_TYPE_KEY_ADDITION = '__pygameMenu_sound_key_addition__'
 SOUND_TYPE_KEY_DELETION = '__pygameMenu_sound_key_deletion__'
+SOUND_TYPE_OPEN_MENU = '__pygameMenu_sound_open_menu__'
 
 # Sound examples
-SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click-mouse')
-SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
-SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
-SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event-error')
-SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key-add')
-SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key-delete')
+PYGAMEMENU_SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click-mouse')
+PYGAMEMENU_SOUND_EXAMPLE_CLOSE_MENU = __sounddir.format(__actualpath, 'close-menu')
+PYGAMEMENU_SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
+PYGAMEMENU_SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
+PYGAMEMENU_SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event-error')
+PYGAMEMENU_SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key-add')
+PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key-delete')
+PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open-menu')
 
 
 class Sound(object):
@@ -94,11 +99,23 @@ class Sound(object):
         self._channel = None
 
         # Sound dict
-        self._type_sounds = [SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_ERROR, SOUND_TYPE_EVENT,
-                             SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION, SOUND_TYPE_KEY_DELETION]
+        self._type_sounds = [
+            SOUND_TYPE_CLICK_MOUSE,
+            SOUND_TYPE_CLOSE_MENU,
+            SOUND_TYPE_ERROR,
+            SOUND_TYPE_EVENT,
+            SOUND_TYPE_EVENT_ERROR,
+            SOUND_TYPE_KEY_ADDITION,
+            SOUND_TYPE_KEY_DELETION,
+            SOUND_TYPE_OPEN_MENU
+        ]
         self._sound = {}
         for sound in self._type_sounds:
             self._sound[sound] = {}
+
+        # Last played song
+        self._last_play = 0
+        self._last_time = 0
 
     def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
         """
@@ -144,17 +161,22 @@ class Sound(object):
             self._sound[sound] = {}
             return
 
+        # Configure the sound
+        sound_data.set_volume(volume)
+
         # Store the sound
         self._sound[sound] = {
             'file': sound_data,
             'path': file,
+            'type': sound,
+            'length': sound_data.get_length(),
             'volume': volume,
             'loops': loops,
             'maxtime': maxtime,
             'fade_ms': fade_ms,
         }
 
-    def load_example_sounds(self, volume=0.5):
+    def load_example_sounds(self, volume=0.85):
         """
         Load example sounds.
 
@@ -163,8 +185,16 @@ class Sound(object):
         :return:
         """
         # Must be in the same order of types
-        examples = [SOUND_EXAMPLE_CLICK_MOUSE, SOUND_EXAMPLE_ERROR, SOUND_EXAMPLE_EVENT,
-                    SOUND_EXAMPLE_EVENT_ERROR, SOUND_EXAMPLE_KEY_ADDITION, SOUND_EXAMPLE_KEY_DELETION]
+        examples = [
+            PYGAMEMENU_SOUND_EXAMPLE_CLICK_MOUSE,
+            PYGAMEMENU_SOUND_EXAMPLE_CLOSE_MENU,
+            PYGAMEMENU_SOUND_EXAMPLE_ERROR,
+            PYGAMEMENU_SOUND_EXAMPLE_EVENT,
+            PYGAMEMENU_SOUND_EXAMPLE_EVENT_ERROR,
+            PYGAMEMENU_SOUND_EXAMPLE_KEY_ADDITION,
+            PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION,
+            PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU
+        ]
         for sound in range(len(self._type_sounds)):
             self.set_sound(self._type_sounds[sound], examples[sound], volume=volume)
 
@@ -183,18 +213,28 @@ class Sound(object):
             return
 
         # Find an avaiable channel
-        self._channel = _mixer.find_channel()
+        channel = _mixer.find_channel()
+        if channel == self._channel:  # If the channel si the same as before
+            if _mixer.get_busy():
+                return
+        self._channel = channel
         if self._channel is None:  # The sound can't be played because all channels are busy
             return
 
         # Play the sound
-        self._channel.stop()
-        self._channel.set_volume(sound['volume'])
-        self._channel.play(sound['file'],
-                           loops=sound['loops'],
-                           maxtime=sound['maxtime'],
-                           fade_ms=sound['fade_ms']
-                           )
+        time = _time.time()
+
+        # If the previous sound is the same and has not ended
+        if sound['type'] != self._last_play or time - self._last_time >= 0.2 * sound['length']:
+            self._channel.play(sound['file'],
+                               loops=sound['loops'],
+                               maxtime=sound['maxtime'],
+                               fade_ms=sound['fade_ms']
+                               )
+
+        # Store last execution
+        self._last_play = sound['type']
+        self._last_time = time
 
     def play_click_mouse(self):
         """
@@ -231,3 +271,15 @@ class Sound(object):
         Play key deletion sound.
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_DELETION])
+
+    def play_open_menu(self):
+        """
+        Play open menu sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_OPEN_MENU])
+
+    def play_close_menu(self):
+        """
+        Play close menu sound.
+        """
+        self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
