@@ -137,6 +137,7 @@ class TextInput(Widget):
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
+        self._last_key = 0
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0
@@ -166,11 +167,11 @@ class TextInput(Widget):
         self._history = []
         self._history_cursor = []
         self._history_renderbox = []
-
         self._history_index = 0  # Index at which the new editions are added
         self._max_history = history
 
         # Other
+        self._block_fixed_event = False
         self._input_type = input_type
         self._label_size = 0
         self._maxchar = maxchar
@@ -232,7 +233,7 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         # Draw cursor
-        if (self._cursor_visible and self.selected) or (self._mouse_is_pressed or self._key_is_pressed):
+        if self.selected and (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
             surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
@@ -558,7 +559,7 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
-        self._key_is_pressed = False
+        # self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
         self._cursor_render = True
@@ -569,8 +570,9 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
-        _pygame.event.clear()
-        _pygame.event.pump()
+        if self._key_is_pressed:
+            self._block_fixed_event = True
+            _pygame.event.Event(_pygame.KEYUP, {'key': self._last_key})
 
     def _update_input_string(self, new_string):
         """
@@ -725,10 +727,19 @@ class TextInput(Widget):
         See upper class doc.
         """
         updated = False
+        if self.selected:
+            print(events)
+            print(self._last_key)
+            pass
+            # print(self._key_is_pressed, self._cursor_render, self._mouse_is_pressed)
+            # _pygame.event.clear(pump=True)
+            # return
+
         for event in events:
             if event.type == _pygame.KEYDOWN:
                 self._cursor_visible = True  # So the user sees where he writes
                 self._key_is_pressed = True
+                self._last_key = event.key
 
                 # If none exist, create counter for that key:
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
