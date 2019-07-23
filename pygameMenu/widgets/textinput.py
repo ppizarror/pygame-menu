@@ -562,7 +562,15 @@ class TextInput(Widget):
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
         self._cursor_render = True
+        self._cursor_visible = False
         # self._history_index = len(self._history) - 1
+
+    def _focus(self):
+        """
+        See upper class doc.
+        """
+        _pygame.event.clear()
+        _pygame.event.pump()
 
     def _update_input_string(self, new_string):
         """
