@@ -124,7 +124,7 @@ class Sound(object):
         :param sound: Sound type.
         :type sound: basestring
         :param file: Sound file
-        :type file: basestring
+        :type file: basestring, NoneType
         :param volume: Volume of the sound, (0-1)
         :type volume: float
         :param loops: Loops of the sound
@@ -136,7 +136,7 @@ class Sound(object):
         :return: None
         """
         assert isinstance(sound, str)
-        assert isinstance(file, str)
+        assert isinstance(file, (str, type(None)))
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
         assert isinstance(fade_ms, (int, float))
@@ -148,6 +148,11 @@ class Sound(object):
         # Check sound type is correct
         if sound not in self._type_sounds:
             raise ValueError('sound type not valid, check the manual')
+
+        # If file is none disable the sound
+        if file is None:
+            self._sound[sound] = {}
+            return
 
         # Check the file exists
         if not _path.isfile(file):
@@ -176,7 +181,7 @@ class Sound(object):
             'fade_ms': fade_ms,
         }
 
-    def load_example_sounds(self, volume=0.85):
+    def load_example_sounds(self, volume=0.5):
         """
         Load example sounds.
 

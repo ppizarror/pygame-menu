@@ -63,7 +63,12 @@ dt = 1 / FPS
 # Set sounds
 # -----------------------------------------------------------------------------
 sound = pygameMenu.sound.Sound()
+
+# Load example sounds
 sound.load_example_sounds()
+
+# Disable a sound
+sound.set_sound(pygameMenu.sound.SOUND_TYPE_ERROR, None)
 
 
 # -----------------------------------------------------------------------------

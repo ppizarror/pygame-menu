@@ -645,6 +645,7 @@ class TextInput(Widget):
         # Delete escape chars
         escapes = ''.join([chr(char) for char in range(1, 32)])
         if sys.version_info[0] < 3:
+            # noinspection PyArgumentList
             text = text.translate(None, escapes)
         else:
             text = text.translate(escapes)
@@ -657,7 +658,8 @@ class TextInput(Widget):
             char_limit = self._maxchar - len(self._input_string) + 1
             text_end = min(char_limit, text_end)
             if text_end <= 0:  # If there's not more space, returns
-                return
+                self.sound.play_event_error()
+                return False
 
         new_string = self._input_string[0:self._cursor_position] + \
                      text[0:text_end] + \
@@ -665,13 +667,17 @@ class TextInput(Widget):
 
         # If string is valid
         if self._check_input_type(new_string):
+            self.sound.play_key_add()
             self._input_string = new_string  # For a purpose of computing render_box
             for i in range(len(text) + 1):  # Move cursor
                 self._move_cursor_right()
             self._update_input_string(new_string)
-
             self.change()
             self._block_copy_paste = True
+        else:
+            self.sound.play_event_error()
+            return False
+
         return True
 
     def _update_from_history(self):
@@ -743,7 +749,6 @@ class TextInput(Widget):
 
                     # Ctrl+V paste
                     elif event.key == _pygame.K_v:
-                        self.sound.play_key_add()
                         return self._paste()
 
                     # Ctrl+Z undo
@@ -766,7 +771,10 @@ class TextInput(Widget):
                         return False
 
                 if event.key == _pygame.K_BACKSPACE:
-                    self.sound.play_key_del()
+                    if self._cursor_position == 0:
+                        self.sound.play_event_error()
+                    else:
+                        self.sound.play_key_del()
                     new_string = (
                             self._input_string[:max(self._cursor_position - 1, 0)]
                             + self._input_string[self._cursor_position:]
@@ -780,7 +788,10 @@ class TextInput(Widget):
                     updated = True
 
                 elif event.key == _pygame.K_DELETE:
-                    self.sound.play_key_del()
+                    if self._cursor_position == len(self._input_string):
+                        self.sound.play_event_error()
+                    else:
+                        self.sound.play_key_del()
                     new_string = (
                             self._input_string[:self._cursor_position]
                             + self._input_string[self._cursor_position + 1:]
@@ -818,8 +829,10 @@ class TextInput(Widget):
                     updated = True
 
                 elif event.key not in self._ignore_keys:
-                    # Check input has not exceeded the limit
+
+                    # Check input exceeded the limit returns
                     if self._check_input_size():
+                        self.sound.play_event_error()
                         break
 
                     # If no special key is pressed, add unicode of key to input_string
@@ -829,7 +842,7 @@ class TextInput(Widget):
                             + self._input_string[self._cursor_position:]
                     )
 
-                    # If unwanted escape sequences returns
+                    # If unwanted escape sequences
                     event_escaped = repr(event.unicode)
                     if '\\x' in event_escaped or '\\r' in event_escaped:
                         _pygame.event.pump()  # Sync events
@@ -846,6 +859,8 @@ class TextInput(Widget):
                             self._update_input_string(new_string)
                             self.change()
                             updated = True
+                    else:
+                        self.sound.play_event_error()
 
             elif event.type == _pygame.KEYUP:
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
