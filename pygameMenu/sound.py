@@ -32,7 +32,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Import pygame and base audio mixer
 from pygame import mixer as _mixer
-import pygame as _pygame
+from pygame import error as _pygame_error
+
+try:  # pygame<2.0.0 compatibility
+    from pygame import AUDIO_ALLOW_CHANNELS_CHANGE as _AUDIO_ALLOW_CHANNELS_CHANGE
+    from pygame import AUDIO_ALLOW_FREQUENCY_CHANGE as _AUDIO_ALLOW_FREQUENCY_CHANGE
+except ImportError:
+    _AUDIO_ALLOW_CHANNELS_CHANGE = False
+    _AUDIO_ALLOW_FREQUENCY_CHANGE = False
 
 # Get sounds folder
 import time as _time
@@ -68,7 +75,7 @@ class Sound(object):
     """
 
     def __init__(self, frequency=22050, size=-16, channels=2, buffer=4096, devicename=None,
-                 allowedchanges=_pygame.AUDIO_ALLOW_FREQUENCY_CHANGE | _pygame.AUDIO_ALLOW_CHANNELS_CHANGE):
+                 allowedchanges=_AUDIO_ALLOW_CHANNELS_CHANGE | _AUDIO_ALLOW_FREQUENCY_CHANGE):
         """
         Constructor.
 
@@ -161,7 +168,7 @@ class Sound(object):
         # Load the sound
         try:
             sound_data = _mixer.Sound(file=file)
-        except _pygame.error:
+        except _pygame_error:
             print('The sound format is not valid, the sound has been disabled')
             self._sound[sound] = {}
             return
