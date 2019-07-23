@@ -98,6 +98,7 @@ class Button(Widget):
 
             if event.type == _pygame.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_ENTER:
+                    self.sound.play_open_menu()
                     self.apply()
                     updated = True
 
@@ -107,6 +108,7 @@ class Button(Widget):
                     updated = True
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                self.sound.play_click_mouse()
                 if self._rect.collidepoint(*event.pos):
                     self.apply()
                     updated = True

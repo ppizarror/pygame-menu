@@ -68,19 +68,19 @@ DIFFICULTY = ['EASY']
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def change_difficulty(value, d):
+def change_difficulty(value, difficulty):
     """
     Change difficulty of the game.
 
     :param value: Tuple containing the data of the selected object
     :type value: tuple
-    :param d: Optional parameter passed as argument to add_selector
-    :type d: basestring
+    :param difficulty: Optional parameter passed as argument to add_selector
+    :type difficulty: basestring
     :return: None
     """
     selected, index = value
-    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, d, index))
-    DIFFICULTY[0] = d
+    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, difficulty, index))
+    DIFFICULTY[0] = difficulty
 
 
 def random_color():
@@ -139,7 +139,7 @@ def play_function(difficulty, font):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 271
+                    # Quit this function, then skip to loop of main-menu on line 264
                     return
 
         # Pass events to main_menu
@@ -159,12 +159,6 @@ def main_background():
     """
     surface.fill(COLOR_BACKGROUND)
 
-
-# -----------------------------------------------------------------------------
-# Set sounds
-# -----------------------------------------------------------------------------
-sound = pygameMenu.sound.Sound()
-sound.load_example_sounds()
 
 # -----------------------------------------------------------------------------
 # Create menus
@@ -248,7 +242,6 @@ main_menu.add_option('Quit', pygameMenu.events.PYGAMEMENU_EXIT)
 
 # Configure main menu
 main_menu.set_fps(FPS)
-main_menu.set_sound(sound, recursive=True)
 
 # -----------------------------------------------------------------------------
 # Main loop

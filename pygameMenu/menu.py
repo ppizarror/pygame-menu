@@ -684,14 +684,17 @@ class Menu(object):
                     self._exit()
 
                 elif event.type == _pygame.locals.KEYDOWN:
-                    self._sounds.play_key_del()
                     if event.key == _ctrl.MENU_CTRL_DOWN:
                         self._select(self._actual._index - 1)
+                        self._sounds.play_key_add()
                     elif event.key == _ctrl.MENU_CTRL_UP:
                         self._select(self._actual._index + 1)
+                        self._sounds.play_key_add()
                     elif event.key == _ctrl.MENU_CTRL_BACK and self._actual._prev is not None:
+                        self._sounds.play_close_menu()
                         self.reset(1)
                     elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and not self._closelocked:
+                        self._sounds.play_close_menu()
                         if self._close():
                             return True
 
@@ -708,6 +711,7 @@ class Menu(object):
                         self._select(self._actual._index + 1)
 
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
+                    self._sounds.play_click_mouse()
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
                         if widget.get_rect().collidepoint(*event.pos):
@@ -832,7 +836,9 @@ class Menu(object):
         :type recursive: bool
         :return: None
         """
-        assert isinstance(sound, type(self._sounds))
+        assert isinstance(sound, (type(self._sounds), type(None)))
+        if sound is None:
+            sound = _Sound()
         self._sounds = sound
         for widget in self._option:
             widget.set_sound(sound)

@@ -743,18 +743,22 @@ class TextInput(Widget):
 
                     # Ctrl+V paste
                     elif event.key == _pygame.K_v:
+                        self.sound.play_key_add()
                         return self._paste()
 
                     # Ctrl+Z undo
                     elif event.key == _pygame.K_z:
+                        self.sound.play_key_del()
                         return self._undo()
 
                     # Ctrl+Y redo
                     elif event.key == _pygame.K_y:
+                        self.sound.play_key_add()
                         return self._redo()
 
                     # Ctrl+X cut
                     elif event.key == _pygame.K_x:
+                        self.sound.play_key_del()
                         return self._cut()
 
                     # Command not found, returns
@@ -762,6 +766,7 @@ class TextInput(Widget):
                         return False
 
                 if event.key == _pygame.K_BACKSPACE:
+                    self.sound.play_key_del()
                     new_string = (
                             self._input_string[:max(self._cursor_position - 1, 0)]
                             + self._input_string[self._cursor_position:]
@@ -769,12 +774,13 @@ class TextInput(Widget):
                     self._update_input_string(new_string)
                     self._update_renderbox(left=-1, addition=True)
                     self.change()
-                    updated = True
 
                     # Subtract one from cursor_pos, but do not go below zero:
                     self._cursor_position = max(self._cursor_position - 1, 0)
+                    updated = True
 
                 elif event.key == _pygame.K_DELETE:
+                    self.sound.play_key_del()
                     new_string = (
                             self._input_string[:self._cursor_position]
                             + self._input_string[self._cursor_position + 1:]
@@ -785,24 +791,29 @@ class TextInput(Widget):
                     updated = True
 
                 elif event.key == _pygame.K_RIGHT:
+                    self.sound.play_key_add()
                     self._move_cursor_right()
                     updated = True
 
                 elif event.key == _pygame.K_LEFT:
+                    self.sound.play_key_add()
                     self._move_cursor_left()
                     updated = True
 
                 elif event.key == _pygame.K_END:
+                    self.sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
                     updated = True
 
                 elif event.key == _pygame.K_HOME:
+                    self.sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
                     updated = True
 
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
+                    self.sound.play_open_menu()
                     self.apply()
                     updated = True
 
@@ -828,6 +839,7 @@ class TextInput(Widget):
                     if self._check_input_type(new_string):
                         lkey = len(event.unicode)
                         if lkey > 0:
+                            self.sound.play_key_add()
                             self._cursor_position += 1  # Some are empty, e.g. K_UP
                             self._input_string = new_string  # Only here this is changed (due to renderbox update)
                             self._update_renderbox(right=1, addition=True)
