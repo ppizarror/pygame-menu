@@ -657,7 +657,7 @@ class Menu(object):
 
         self._actual.draw()
 
-        if self._menubar.update(events):
+        if self._actual._menubar.update(events):
             if not self._actual._dopause:
                 return True
 
