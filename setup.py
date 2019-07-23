@@ -48,7 +48,7 @@ setup(
     ],
     description=__description__,
     include_package_data=True,
-    install_requires=['pygame>=1.9.4'],
+    install_requires=['pygame>=1.9.4', 'pyperclip'],
     license='MIT',
     long_description=long_description,
     name='pygame-menu',

@@ -111,7 +111,7 @@ def play_function(difficulty, font):
     elif difficulty == 'MEDIUM':
         f = font.render('Playing as normie', 1, COLOR_WHITE)
     elif difficulty == 'HARD':
-        f = font.render('Playing as god', 1, COLOR_WHITE)
+        f = font.render('Playing as champion', 1, COLOR_WHITE)
     else:
         raise Exception('Unknown difficulty {0}'.format(difficulty))
 

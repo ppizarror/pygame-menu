@@ -291,7 +291,7 @@ class Widget(object):
         align = str(align)
         if align not in [_locals.PYGAME_ALIGN_LEFT, _locals.PYGAME_ALIGN_CENTER,
                          _locals.PYGAME_ALIGN_RIGHT]:
-            raise Exception('Incorrect alignment of the widget')
+            raise ValueError('Incorrect alignment of the widget')
         self._alignment = align
 
     def get_alignment(self):
@@ -312,6 +312,29 @@ class Widget(object):
         :return: None
         """
         self.selected = selected
+        if selected:
+            self._focus()
+        else:
+            self._blur()
+
+        # Sync events with the system
+        _pygame.event.pump()
+
+    def _focus(self):
+        """
+        Function that is executed when the widget receives a focus (is selected).
+
+        :return: None
+        """
+        pass
+
+    def _blur(self):
+        """
+        Function that is executed when the widget loses the focus.
+
+        :return: None
+        """
+        pass
 
     def set_shadow(self, enabled=True, color=None, position=None, offset=None):
         """
@@ -335,13 +358,13 @@ class Widget(object):
                                 _locals.PYGAME_POSITION_SOUTH, _locals.PYGAME_POSITION_SOUTHEAST,
                                 _locals.PYGAME_POSITION_EAST, _locals.PYGAME_POSITION_NORTH,
                                 _locals.PYGAME_POSITION_NORTHWEST, _locals.PYGAME_POSITION_NORTHEAST]:
-                raise Exception('Incorrect shadow position of the widget')
+                raise ValueError('Incorrect shadow position of the widget')
             self._shadow_position = position
         if offset is not None:
             try:
                 offset = int(offset)
             except ValueError:
-                raise ValueError('Shadow offset must be integer')
+                raise TypeError('Shadow offset must be integer')
             if offset <= 0:
                 raise ValueError('Shadow offset must be greater than zero')
             self._shadow_offset = offset
