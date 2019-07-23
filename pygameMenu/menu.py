@@ -330,7 +330,7 @@ class Menu(object):
         elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
             widget = _widgets.Button(element_name, None, element, *args)
         else:
-            raise ValueError('Element must be a Menu, an PymenuAction or a function')
+            raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
