@@ -644,11 +644,7 @@ class TextInput(Widget):
 
         # Delete escape chars
         escapes = ''.join([chr(char) for char in range(1, 32)])
-        if sys.version_info[0] < 3:
-            # noinspection PyArgumentList
-            text = text.translate(None, escapes)
-        else:
-            text = text.translate(escapes)
+        text = text.translate(escapes)
         if text == '':
             return False
 
