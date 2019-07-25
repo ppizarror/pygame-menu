@@ -802,12 +802,18 @@ class TextInput(Widget):
                     updated = True
 
                 elif event.key == _pygame.K_RIGHT:
-                    self.sound.play_key_add()
+                    if self._cursor_position == len(self._input_string):
+                        self.sound.play_event_error()
+                    else:
+                        self.sound.play_key_add()
                     self._move_cursor_right()
                     updated = True
 
                 elif event.key == _pygame.K_LEFT:
-                    self.sound.play_key_add()
+                    if self._cursor_position == 0:
+                        self.sound.play_event_error()
+                    else:
+                        self.sound.play_key_add()
                     self._move_cursor_left()
                     updated = True
 
