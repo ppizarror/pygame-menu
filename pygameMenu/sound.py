@@ -74,11 +74,13 @@ class Sound(object):
     Sound class.
     """
 
-    def __init__(self, frequency=22050, size=-16, channels=2, buffer=4096, devicename=None,
+    def __init__(self, uniquechannel=True, frequency=22050, size=-16, channels=2, buffer=4096, devicename=None,
                  allowedchanges=_AUDIO_ALLOW_CHANNELS_CHANGE | _AUDIO_ALLOW_FREQUENCY_CHANGE):
         """
         Constructor.
 
+        :param uniquechannel: Force the channel to be unique, this is setted at the moment of creation of the object.
+        :type uniquechannel: bool
         :param frequency: Frequency of sounds
         :type frequency: int
         :param size: Size of sample
@@ -92,6 +94,16 @@ class Sound(object):
         :param allowedchanges: Convert the samples at runtime
         :type allowedchanges: bool
         """
+        assert isinstance(uniquechannel, bool)
+        assert isinstance(frequency, int)
+        assert isinstance(size, int)
+        assert isinstance(channels, int)
+        assert isinstance(buffer, int)
+        assert isinstance(devicename, (type(None), str))
+        assert isinstance(allowedchanges, int)
+        assert frequency > 0, 'frequency must be greater than zero'
+        assert channels > 0, 'channels must be greater than zero'
+        assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
         if _mixer.get_init() is None:
@@ -104,6 +116,7 @@ class Sound(object):
 
         # Channel where a sound is played
         self._channel = None
+        self._uniquechannel = uniquechannel
 
         # Sound dict
         self._type_sounds = [
@@ -123,6 +136,21 @@ class Sound(object):
         # Last played song
         self._last_play = 0
         self._last_time = 0
+
+    def get_channel(self):
+        """
+        Get the current channel.
+
+        :return: Channel
+        :rtype: pygame.mixer.Channel
+        """
+        channel = _mixer.find_channel()
+        if self._uniquechannel:  # If the channel is unique
+            if self._channel is None:  # If the channel has not been setted
+                self._channel = channel
+        else:
+            self._channel = channel  # Store the avaiable channel
+        return self._channel
 
     def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
         """
@@ -194,7 +222,7 @@ class Sound(object):
 
         :param volume: Volume of the sound, (0-1)
         :type volume: float
-        :return:
+        :return: None
         """
         # Must be in the same order of types
         examples = [
@@ -223,24 +251,22 @@ class Sound(object):
             return
 
         # Find an avaiable channel
-        channel = _mixer.find_channel()
-        if channel == self._channel:  # If the channel is the same as before
-            if _mixer.get_busy():
-                return
-        self._channel = channel
-        if self._channel is None:  # The sound can't be played because all channels are busy
+        channel = self.get_channel()  # This will set the channel if it's None
+        if channel is None:  # The sound can't be played because all channels are busy
             return
 
         # Play the sound
         time = _time.time()
 
         # If the previous sound is the same and has not ended (max 20% overlap)
-        if sound['type'] != self._last_play or time - self._last_time >= 0.2 * sound['length']:
-            self._channel.play(sound['file'],
-                               loops=sound['loops'],
-                               maxtime=sound['maxtime'],
-                               fade_ms=sound['fade_ms']
-                               )
+        if sound['type'] != self._last_play or time - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
+            if self._uniquechannel:  # Stop the current channel if it's unique
+                channel.stop()
+            channel.play(sound['file'],
+                         loops=sound['loops'],
+                         maxtime=sound['maxtime'],
+                         fade_ms=sound['fade_ms']
+                         )
 
         # Store last execution
         self._last_play = sound['type']
