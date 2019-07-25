@@ -76,7 +76,7 @@ class TextInput(Widget):
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
-                 repeat_keys_interval_ms=35,
+                 repeat_keys_interval_ms=25,
                  repeat_mouse_interval_ms=50,
                  text_ellipsis='...',
                  **kwargs
@@ -88,7 +88,7 @@ class TextInput(Widget):
         :type label: basestring
         :param default: Initial text to be displayed
         :type default: basestring
-        :param textinput_id: Id of the text input
+        :param textinput_id: ID of the text input
         :type textinput_id: basestring
         :param input_type: Type of data
         :type input_type: basestring
@@ -137,6 +137,7 @@ class TextInput(Widget):
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
+        self._last_key = 0
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0
@@ -166,7 +167,6 @@ class TextInput(Widget):
         self._history = []
         self._history_cursor = []
         self._history_renderbox = []
-
         self._history_index = 0  # Index at which the new editions are added
         self._max_history = history
 
@@ -232,7 +232,7 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         # Draw cursor
-        if (self._cursor_visible and self.selected) or (self._mouse_is_pressed or self._key_is_pressed):
+        if self.selected and (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
             surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
@@ -558,19 +558,12 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
-        self._key_is_pressed = False
+        # self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
         self._cursor_render = True
         self._cursor_visible = False
         # self._history_index = len(self._history) - 1
-
-    def _focus(self):
-        """
-        See upper class doc.
-        """
-        _pygame.event.clear()
-        _pygame.event.pump()
 
     def _update_input_string(self, new_string):
         """
@@ -725,10 +718,17 @@ class TextInput(Widget):
         See upper class doc.
         """
         updated = False
+
         for event in events:
             if event.type == _pygame.KEYDOWN:
+
+                # Check if any key is pressed, if True the event is invalid
+                if not self.check_key_pressed_valid(event):
+                    continue
+
                 self._cursor_visible = True  # So the user sees where he writes
                 self._key_is_pressed = True
+                self._last_key = event.key
 
                 # If none exist, create counter for that key:
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
@@ -759,7 +759,6 @@ class TextInput(Widget):
 
                     # Command not found, returns
                     else:
-                        _pygame.event.pump()
                         return False
 
                 if event.key == _pygame.K_BACKSPACE:

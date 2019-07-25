@@ -139,7 +139,7 @@ def play_function(difficulty, font):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 260
+                    # Quit this function, then skip to loop of main-menu on line 262
                     return
 
         # Pass events to main_menu
@@ -235,6 +235,8 @@ main_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
+main_menu.set_fps(FPS)
+
 main_menu.add_option('Play', play_menu)
 main_menu.add_option('About', about_menu)
 main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
@@ -245,7 +247,7 @@ main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
 while True:
 
     # Tick
-    clock.tick(60)
+    clock.tick(FPS)
 
     # Paint background
     main_background()

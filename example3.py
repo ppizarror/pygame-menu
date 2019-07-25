@@ -95,6 +95,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 font=pygameMenu.fonts.FONT_HELVETICA,
                                 font_color=COLOR_BLACK,
                                 font_size=30,
+                                font_size_title=50,
                                 menu_alpha=100,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.85),
@@ -156,6 +157,7 @@ main_menu = pygameMenu.Menu(surface,
                             font='arial',
                             font_color=COLOR_BLACK,
                             font_size=30,
+                            font_size_title=40,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
@@ -166,6 +168,7 @@ main_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
+main_menu.set_fps(FPS)
 
 main_menu.add_option('Settings', settings_menu)
 main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
@@ -177,21 +180,14 @@ assert main_menu.get_widget('last_name') is None
 # Main loop
 # -----------------------------------------------------------------------------
 while True:
-
     # Tick
-    clock.tick(60)
+    clock.tick(FPS)
 
     # Paint background
     main_background()
 
-    # Application events
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            exit()
-
     # Main menu
-    main_menu.mainloop(events)
+    main_menu.mainloop()
 
     # Flip surface
     pygame.display.flip()
