@@ -160,7 +160,7 @@ timer_menu.add_selector('Change bgcolor',
                          ('Blue', COLOR_BLUE)],
                         default=1,  # Optional parameter that sets default item of selector
                         onchange=change_color_bg,  # Action when changing element with left/right
-                        onreturn=change_color_bg,  # Action when pressing return on a element
+                        onreturn=change_color_bg,  # Action when pressing return on an element
                         write_on_console=True  # Optional parameters to change_color_bg function
                         )
 timer_menu.add_option('Update game object', TestCallClassMethod().update_game_settings)

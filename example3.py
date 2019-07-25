@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE 3
-Game menu with a input text.
+Game menu with an input text.
 
 License:
 -------------------------------------------------------------------------------

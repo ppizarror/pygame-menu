@@ -467,7 +467,7 @@ class Menu(object):
 
         assert isinstance(maxchar, int), 'maxchar must be integer'
         assert maxchar >= 0, 'maxchar must be greater or equal than zero'
-        assert isinstance(maxwidth, int), 'maxwidth must be a integer'
+        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
         assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
 
         # Create widget

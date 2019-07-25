@@ -308,7 +308,7 @@ import pygameMenu
         # Application events
         events = pygame.event.get()
 
-        # Menu loop (If onpause is enabled then a infinite-loop is triggered on this line)
+        # Menu loop (If onpause is enabled then an infinite-loop is triggered on this line)
         menu.mainloop(events)
     ```
 
