@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE 2
-Game menu with 3 difficulty options.
+Game menu with 3 difficulty options, also sounds are tested.
 
 License:
 -------------------------------------------------------------------------------
@@ -68,19 +68,19 @@ DIFFICULTY = ['EASY']
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def change_difficulty(value, d):
+def change_difficulty(value, difficulty):
     """
     Change difficulty of the game.
 
     :param value: Tuple containing the data of the selected object
     :type value: tuple
-    :param d: Optional parameter passed as argument to add_selector
-    :type d: basestring
+    :param difficulty: Optional parameter passed as argument to add_selector
+    :type difficulty: basestring
     :return: None
     """
     selected, index = value
-    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, d, index))
-    DIFFICULTY[0] = d
+    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, difficulty, index))
+    DIFFICULTY[0] = difficulty
 
 
 def random_color():
@@ -139,7 +139,7 @@ def play_function(difficulty, font):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 262
+                    # Quit this function, then skip to loop of main-menu on line 264
                     return
 
         # Pass events to main_menu
@@ -175,7 +175,7 @@ play_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
                             menu_width=int(WINDOW_SIZE[0] * 0.7),
-                            onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
+                            onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Play menu',
                             window_height=WINDOW_SIZE[1],
@@ -191,7 +191,7 @@ play_menu.add_selector('Select difficulty',
                         ('2 - Medium', 'MEDIUM'),
                         ('3 - Hard', 'HARD')],
                        onchange=change_difficulty)
-play_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK)
+play_menu.add_option('Return to main menu', pygameMenu.events.PYGAMEMENU_BACK)
 
 # About menu
 about_menu = pygameMenu.TextMenu(surface,
@@ -205,7 +205,7 @@ about_menu = pygameMenu.TextMenu(surface,
                                  menu_color_title=COLOR_WHITE,
                                  menu_height=int(WINDOW_SIZE[1] * 0.6),
                                  menu_width=int(WINDOW_SIZE[0] * 0.6),
-                                 onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
+                                 onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
                                  option_shadow=False,
                                  text_color=COLOR_BLACK,
                                  text_fontsize=20,
@@ -216,7 +216,7 @@ about_menu = pygameMenu.TextMenu(surface,
 for m in ABOUT:
     about_menu.add_line(m)
 about_menu.add_line(pygameMenu.locals.PYGAMEMENU_TEXT_NEWLINE)
-about_menu.add_option('Return to menu', pygameMenu.events.PYGAME_MENU_BACK)
+about_menu.add_option('Return to menu', pygameMenu.events.PYGAMEMENU_BACK)
 
 # Main menu
 main_menu = pygameMenu.Menu(surface,
@@ -229,17 +229,19 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
                             menu_width=int(WINDOW_SIZE[0] * 0.6),
-                            onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
+                            onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
-main_menu.set_fps(FPS)
 
 main_menu.add_option('Play', play_menu)
 main_menu.add_option('About', about_menu)
-main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
+main_menu.add_option('Quit', pygameMenu.events.PYGAMEMENU_EXIT)
+
+# Configure main menu
+main_menu.set_fps(FPS)
 
 # -----------------------------------------------------------------------------
 # Main loop

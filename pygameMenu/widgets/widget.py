@@ -30,11 +30,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from uuid import uuid4
+
+from pygameMenu.sound import Sound as _Sound
 import pygame as _pygame
 import pygameMenu.config_menu as _cfg
 import pygameMenu.locals as _locals
 import pygameMenu.fonts as _fonts
-from uuid import uuid4
 
 
 class Widget(object):
@@ -94,6 +96,7 @@ class Widget(object):
         self.joystick_enabled = True
         self.mouse_enabled = True
         self.selected = False
+        self.sound = _Sound()
 
     def apply(self, *args):
         """
@@ -324,7 +327,7 @@ class Widget(object):
         Checks if the pressed key is valid.
 
         :param event: Key press event
-        :type event: _pygame.event.EventType
+        :type event: pygame.event.EventType
         :return: True if any key is pressed
         :rtype: bool
         """
@@ -398,6 +401,16 @@ class Widget(object):
         :return: None
         """
         self._fps = float(fps)
+
+    def set_sound(self, sound):
+        """
+        Set sound engine to the widget.
+
+        :param sound: Sound object
+        :type sound: pygameMenu.sound.Sound
+        :return: None
+        """
+        self.sound = sound
 
     def get_fps(self):
         """

@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE 3
-Game menu with a input text.
+Game menu with an input text.
 
 License:
 -------------------------------------------------------------------------------
@@ -59,6 +59,17 @@ pygame.display.set_caption('PygameMenu Example 3')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
+# -----------------------------------------------------------------------------
+# Set sounds
+# -----------------------------------------------------------------------------
+sound = pygameMenu.sound.Sound()
+
+# Load example sounds
+sound.load_example_sounds()
+
+# Disable a sound
+sound.set_sound(pygameMenu.sound.SOUND_TYPE_ERROR, None)
+
 
 # -----------------------------------------------------------------------------
 # Methods
@@ -84,6 +95,25 @@ def check_name_test(value):
     print('User name: {0}'.format(value))
 
 
+# noinspection PyUnusedLocal
+def update_menu_sound(value, enabled):
+    """
+    Update menu sound.
+
+    :param value: Value of the selector (Label and index)
+    :type value: tuple
+    :param enabled: Parameter of the selector, (True/False)
+    :return: None
+    """
+    global main_menu
+    if enabled:
+        main_menu.set_sound(sound, recursive=True)
+        print('Menu sound were enabled')
+    else:
+        main_menu.set_sound(None, recursive=True)
+        print('Menu sound were disabled')
+
+
 # -----------------------------------------------------------------------------
 # Create menus
 # -----------------------------------------------------------------------------
@@ -100,7 +130,7 @@ settings_menu = pygameMenu.Menu(surface,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.85),
                                 menu_width=int(WINDOW_SIZE[0] * 0.9),
-                                onclose=pygameMenu.events.PYGAME_MENU_DISABLE_CLOSE,
+                                onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
                                 title='Settings',
                                 widget_alignment=pygameMenu.locals.PYGAME_ALIGN_LEFT,
                                 window_height=WINDOW_SIZE[1],
@@ -147,7 +177,7 @@ def data_fun():
 
 
 settings_menu.add_option('Store data', data_fun)  # Call function
-settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK,
+settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAMEMENU_BACK,
                          align=pygameMenu.locals.PYGAME_ALIGN_CENTER)
 
 # Main menu
@@ -162,7 +192,7 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.7),
                             menu_width=int(WINDOW_SIZE[0] * 0.8),
-                            onclose=pygameMenu.events.PYGAME_MENU_EXIT,  # User press ESC button
+                            onclose=pygameMenu.events.PYGAMEMENU_EXIT,  # User press ESC button
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
@@ -171,7 +201,8 @@ main_menu = pygameMenu.Menu(surface,
 main_menu.set_fps(FPS)
 
 main_menu.add_option('Settings', settings_menu)
-main_menu.add_option('Quit', pygameMenu.events.PYGAME_MENU_EXIT)
+main_menu.add_selector('Menu sounds', [('Off', False), ('On', True)], onchange=update_menu_sound)
+main_menu.add_option('Quit', pygameMenu.events.PYGAMEMENU_EXIT)
 
 assert main_menu.get_widget('first_name', recursive=True) is wid1
 assert main_menu.get_widget('last_name') is None

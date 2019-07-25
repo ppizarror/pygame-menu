@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Import constants
+from pygameMenu.sound import Sound as _Sound
 import pygameMenu.config_controls as _ctrl
 import pygameMenu.config_menu as _cfg
 import pygameMenu.events as _events
@@ -245,6 +246,7 @@ class Menu(object):
         self._prev = None  # Previous menu
         self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
+        self._sounds = _Sound()
         self._submenus = []  # List of all linked menus
         self._top = None  # Top level menu
         self.set_fps(fps)  # FPS of the menu
@@ -315,20 +317,20 @@ class Menu(object):
             self._submenus.append(element)
             widget = _widgets.Button(element_name, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _events.PYGAME_MENU_BACK:
+        elif element == _events.PYGAMEMENU_BACK:
             # Back to menu
             widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _events.PYGAME_MENU_CLOSE:
+        elif element == _events.PYGAMEMENU_CLOSE:
             # Close menu
             widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _events.PYGAME_MENU_EXIT:
+        elif element == _events.PYGAMEMENU_EXIT:
             # Exit program
             widget = _widgets.Button(element_name, None, self._exit)
         # If element is a function
         elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
             widget = _widgets.Button(element_name, None, element, *args)
         else:
-            raise ValueError('Element must be a Menu, an PymenuAction or a function')
+            raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
@@ -465,7 +467,7 @@ class Menu(object):
 
         assert isinstance(maxchar, int), 'maxchar must be integer'
         assert maxchar >= 0, 'maxchar must be greater or equal than zero'
-        assert isinstance(maxwidth, int), 'maxwidth must be a integer'
+        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
         assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
 
         # Create widget
@@ -529,13 +531,13 @@ class Menu(object):
             a = isinstance(onclose, _events._PymenuAction)
             b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
             if a or b:
-                if onclose == _events.PYGAME_MENU_RESET:
+                if onclose == _events.PYGAMEMENU_RESET:
                     self.reset(100)
-                elif onclose == _events.PYGAME_MENU_BACK:
+                elif onclose == _events.PYGAMEMENU_BACK:
                     self.reset(1)
-                elif onclose == _events.PYGAME_MENU_EXIT:
+                elif onclose == _events.PYGAMEMENU_EXIT:
                     self._exit()
-                elif onclose == _events.PYGAME_MENU_DISABLE_CLOSE:
+                elif onclose == _events.PYGAMEMENU_DISABLE_CLOSE:
                     close = False
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()
@@ -684,11 +686,15 @@ class Menu(object):
                 elif event.type == _pygame.locals.KEYDOWN:
                     if event.key == _ctrl.MENU_CTRL_DOWN:
                         self._select(self._actual._index - 1)
+                        self._sounds.play_key_add()
                     elif event.key == _ctrl.MENU_CTRL_UP:
                         self._select(self._actual._index + 1)
+                        self._sounds.play_key_add()
                     elif event.key == _ctrl.MENU_CTRL_BACK and self._actual._prev is not None:
+                        self._sounds.play_close_menu()
                         self.reset(1)
                     elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and not self._closelocked:
+                        self._sounds.play_close_menu()
                         if self._close():
                             return True
 
@@ -705,6 +711,7 @@ class Menu(object):
                         self._select(self._actual._index + 1)
 
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
+                    self._sounds.play_click_mouse()
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
                         if widget.get_rect().collidepoint(*event.pos):
@@ -818,6 +825,26 @@ class Menu(object):
         if recursive:
             for menu in self._submenus:
                 menu.set_fps(fps, recursive=True)
+
+    def set_sound(self, sound, recursive=False):
+        """
+        Set sound engine to a menu.
+
+        :param sound: Sound object
+        :type sound: pygameMenu.sound.Sound
+        :param recursive: Set FPS to all the submenus
+        :type recursive: bool
+        :return: None
+        """
+        assert isinstance(sound, (type(self._sounds), type(None)))
+        if sound is None:
+            sound = _Sound()
+        self._sounds = sound
+        for widget in self._option:
+            widget.set_sound(sound)
+        if recursive:
+            for menu in self._submenus:
+                menu.set_sound(sound, recursive=True)
 
     def get_title(self):
         """

@@ -168,12 +168,15 @@ class Selector(Widget):
                     continue
 
                 if event.key == _ctrl.MENU_CTRL_LEFT:
+                    self.sound.play_key_add()
                     self.left()
                     updated = True
                 elif event.key == _ctrl.MENU_CTRL_RIGHT:
+                    self.sound.play_key_add()
                     self.right()
                     updated = True
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
+                    self.sound.play_open_menu()
                     self.apply(*self._elements[self._index][1:])
                     updated = True
 
