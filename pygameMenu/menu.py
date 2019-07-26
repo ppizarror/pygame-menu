@@ -441,9 +441,9 @@ class Menu(object):
 
         return widget
 
-    def add_text_input(self, title, textinput_id='', default='',
-                       input_type=_locals.PYGAME_INPUT_TEXT, maxchar=0, maxwidth=0,
-                       align='', onchange=None, onreturn=None, **kwargs):
+    def add_text_input(self, title, textinput_id='', default='', input_type=_locals.PYGAME_INPUT_TEXT,
+                       input_underline='', maxchar=0, maxwidth=0, align='',
+                       onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -461,6 +461,8 @@ class Menu(object):
         :type default: basestring, int, float
         :param input_type: Data type of the input
         :type input_type: basestring
+        :param input_underline: Underline character
+        :type input_underline: basestring
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
@@ -485,6 +487,7 @@ class Menu(object):
         # Check data
         assert isinstance(textinput_id, str), 'id must be a string'
         assert isinstance(input_type, str), 'input_type must be a string'
+        assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(align, str), 'align must be a string'
 
         assert isinstance(maxchar, int), 'maxchar must be integer'
@@ -495,6 +498,7 @@ class Menu(object):
         # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
                                     maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
+                                    input_underline=input_underline,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
         widget.set_menu(self)
         self._check_id_duplicated(textinput_id)

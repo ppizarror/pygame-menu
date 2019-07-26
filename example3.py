@@ -145,15 +145,17 @@ wid1 = settings_menu.add_text_input('First name: ',
 wid2 = settings_menu.add_text_input('Last name: ',
                                     default='Rambo',
                                     maxchar=10,
-                                    textinput_id='last_name')
+                                    textinput_id='last_name',
+                                    input_underline='.')
 settings_menu.add_text_input('Your age: ',
                              default=25,
                              maxchar=3,
                              textinput_id='age',
                              input_type=pygameMenu.locals.PYGAME_INPUT_INT)
 settings_menu.add_text_input('Some long text: ',
-                             maxwidth=18,
-                             textinput_id='long_text')
+                             maxwidth=14,
+                             textinput_id='long_text',
+                             input_underline='_')
 
 # Create selector with 3 difficulty options
 settings_menu.add_selector('Select difficulty',
