@@ -336,7 +336,7 @@ class TextInput(Widget):
             current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
             _, _, menu_width, _ = menu.get_position()
             space_between_label = menu_width - self._label_size - self._rect.x
-            char = _math.ceil(space_between_label / self._input_underline_size)  # floor does not work
+            char = _math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
 
             # If char limit
             max_width_current = 0
@@ -344,11 +344,11 @@ class TextInput(Widget):
                 max_chars = max(self._maxchar, self._maxwidth_base)
                 max_size = self.font_render_string('O' * max_chars, color)
                 max_size = max_size.get_size()[0]
-                maxchar_char = _math.ceil(max_size / self._input_underline_size)
+                maxchar_char = _math.ceil(max_size * 1.0 / self._input_underline_size)
                 char = min(char, maxchar_char)
                 max_width_current = current_rect.width
 
-            underline_string = self._input_underline * char
+            underline_string = self._input_underline * int(char)
 
             # Render char
             underline = self.font_render_string(underline_string, color)
