@@ -297,7 +297,7 @@ class Menu(object):
 
         # Selected option
         self._selected_inflate_x = 16
-        self._selected_inflate_y = 4
+        self._selected_inflate_y = 5
 
         # FPS of the menu
         self.set_fps(fps)
@@ -610,11 +610,11 @@ class Menu(object):
 
             # If selected item then draw a rectangle
             if self._drawselrect and widget.selected:
-                rect = widget.get_rect()
-                _pygame.draw.rect(self._surface,
-                                  self._sel_color,
-                                  rect.inflate(self._selected_inflate_x, self._selected_inflate_y),
-                                  self._rect_width)
+                widget.draw_selected_rect(self._surface,
+                                          self._sel_color,
+                                          self._selected_inflate_x,
+                                          self._selected_inflate_y,
+                                          self._rect_width)
 
     def _get_option_pos(self, index):
         """
@@ -622,7 +622,8 @@ class Menu(object):
 
         :param index: Option index
         :type index: int
-        :return: None
+        :return: Position (x,y)
+        :rtype: tuple
         """
         rect = self._option[index].get_rect()
         align = self._option[index].get_alignment()
@@ -644,7 +645,7 @@ class Menu(object):
 
     def enable(self):
         """
-        Enable menu.
+        Enables the menu.
 
         :return: None
         """
@@ -657,7 +658,7 @@ class Menu(object):
         """
         Internal exit function.
 
-        :return:
+        :return: None
         """
         _pygame.quit()
         exit()

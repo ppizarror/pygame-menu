@@ -364,7 +364,7 @@ class TextInput(Widget):
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))
-            new_surface.blit(underline, (self._label_size - 1, 5))
+            new_surface.blit(underline, (self._label_size - 1, 6))  # Position (x, y)
             self._last_rendered_surface_with_underline = new_surface
             self._last_rendered_surface_underline_width = new_width
         else:
@@ -413,7 +413,10 @@ class TextInput(Widget):
             cursor_x_pos -= self._cursor_surface.get_width()
 
         # Calculate y position
-        cursor_y_pos = 1
+        cursor_y_pos = 0
+
+        # Move x position
+        cursor_x_pos += 2
 
         # Store position
         self._cursor_surface_pos[0] = cursor_x_pos

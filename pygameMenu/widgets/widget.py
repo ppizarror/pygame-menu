@@ -72,18 +72,20 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._id = str(widget_id)
-        self._surface = None  # type: _pygame.Surface
-        self._render_string_cache = 0
-        self._render_string_cache_surface = None
-        self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = _locals.PYGAME_ALIGN_CENTER
         self._fps = 0
+        self._id = str(widget_id)
+        self._last_selected_surface = None  # type: _pygame.SurfaceType
+        self._selected_rect = None  # type: _pygame.rect.RectType
+        self._rect = _pygame.Rect(0, 0, 0, 0)
+        self._render_string_cache = 0
+        self._render_string_cache_surface = None
+        self._surface = None  # type: _pygame.SurfaceType
 
-        self._on_change = onchange
-        self._on_return = onreturn
         self._args = args or []
         self._kwargs = kwargs or {}
+        self._on_change = onchange
+        self._on_return = onreturn
 
         # Menu reference
         self._menu = None
@@ -165,6 +167,44 @@ class Widget(object):
         :return: None
         """
         raise NotImplementedError('Override is mandatory')
+
+    def draw_selected_rect(self, surface, selected_color, inflatex, inflatey, border_width):
+        """
+        Draw selected rect around widget.
+
+        :param surface: Surface to draw
+        :type surface: pygame.surface.SurfaceType
+        :param selected_color: Selected color
+        :type selected_color: tuple
+        :param inflatex: Pixels to inflate the rect (x axis)
+        :type inflatex: int
+        :param inflatey: Pixels to inflate the rect (y axis)
+        :type inflatey: int
+        :param border_width: Border rect width
+        :type border_width: int
+        :return: None
+        """
+        # Generate new rect if it's different
+        rect = self._selected_rect
+
+        if self._last_selected_surface != self._surface:  # If surface changed
+            self._last_selected_surface = self._surface
+            self._selected_rect = self._rect.copy()
+
+            # Inflate rect
+            self._selected_rect = self._selected_rect.inflate(inflatex, inflatey)
+
+            # Translate rect
+            self._selected_rect = self._selected_rect.move(0, -1)
+
+            # Update rect
+            rect = self._selected_rect
+
+        # Draw rect
+        _pygame.draw.rect(surface,
+                          selected_color,
+                          rect,
+                          border_width)
 
     def get_rect(self):
         """
