@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import sys
 import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
 from pygameMenu import locals as _locals
