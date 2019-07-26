@@ -240,6 +240,7 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
         self._index = 0  # Selected index
         self._fps = 0
+        self._frame = 0
         self._onclose = onclose  # Function that calls after closing menu
         self._size = 0  # Menu total elements
         self._sounds = _Sound()
@@ -294,8 +295,21 @@ class Menu(object):
                                bg_color_title, self._font_color)
         self._menubar.set_controls(self._joystick, self._mouse)
 
+        # Selected option
+        self._selected_inflate_x = 16
+        self._selected_inflate_y = 4
+
         # FPS of the menu
         self.set_fps(fps)
+
+    def get_position(self):
+        """
+        Return menu position as a tuple.
+
+        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
+        :rtype: tuple
+        """
+        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
 
     def add_option(self, element_name, element, *args, **kwargs):
         """
@@ -482,6 +496,7 @@ class Menu(object):
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
                                     maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
+        widget.set_menu(self)
         self._check_id_duplicated(textinput_id)
 
         # Configure widget
@@ -493,7 +508,6 @@ class Menu(object):
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
-        widget.set_menu(self)
 
         # Store widget
         self._option.append(widget)
@@ -571,6 +585,8 @@ class Menu(object):
 
         :return: None
         """
+        self._frame += 1
+
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._bgrect, self._bgcolor)
 
@@ -578,7 +594,7 @@ class Menu(object):
         self._menubar.set_position(self._posx, self._posy)
         self._menubar.draw(self._surface)
 
-        # Draw options
+        # Draw options (widgets)
         for index in range(len(self._option)):
             widget = self._option[index]
 
@@ -591,7 +607,10 @@ class Menu(object):
             # If selected item then draw a rectangle
             if self._drawselrect and widget.selected:
                 rect = widget.get_rect()
-                _pygame.draw.rect(self._surface, self._sel_color, rect.inflate(16, 4), self._rect_width)
+                _pygame.draw.rect(self._surface,
+                                  self._sel_color,
+                                  rect.inflate(self._selected_inflate_x, self._selected_inflate_y),
+                                  self._rect_width)
 
     def _get_option_pos(self, index):
         """
@@ -608,9 +627,9 @@ class Menu(object):
         if align == _locals.PYGAME_ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif align == _locals.PYGAME_ALIGN_LEFT:
-            option_dx = -self._width / 2 + 16  # +constant to deal with inflate
+            option_dx = -self._width / 2 + self._selected_inflate_x
         elif align == _locals.PYGAME_ALIGN_RIGHT:
-            option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
+            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
@@ -663,8 +682,10 @@ class Menu(object):
 
         :param events: Pygame events
         :type events: list
-        :return: None
+        :return: True if mainloop must be stopped
+        :rtype: bool
         """
+        break_mainloop = False
         if events is None:
             events = _pygame.event.get()
 
@@ -674,17 +695,14 @@ class Menu(object):
         # Clock tick
         self._actual._clock.tick(self._fps)
 
-        # Draw the menu
-        self._actual.draw()
-
         # Process events, first check widgets, then the menu
         if self._actual._menubar.update(events):
             if not self._actual._dopause:
-                return True
+                break_mainloop = True
 
         elif self._actual._option[self._actual._index].update(events):
             if not self._actual._dopause:
-                return True
+                break_mainloop = True
 
         else:
             for event in events:  # type: _pygame.event.EventType
@@ -692,6 +710,7 @@ class Menu(object):
                 # noinspection PyUnresolvedReferences
                 if event.type == _pygame.locals.QUIT:
                     self._exit()
+                    break_mainloop = True
 
                 elif event.type == _pygame.locals.KEYDOWN:
                     if event.key == _ctrl.MENU_CTRL_DOWN:
@@ -706,7 +725,7 @@ class Menu(object):
                     elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and not self._closelocked:
                         self._sounds.play_close_menu()
                         if self._close():
-                            return True
+                            break_mainloop = True
 
                 elif self._joystick and event.type == _pygame.JOYHATMOTION:
                     if event.value == _locals.JOY_UP:
@@ -727,15 +746,19 @@ class Menu(object):
                         if widget.get_rect().collidepoint(*event.pos):
                             self._select(index)
                             widget.update(events)
-                            return True  # It is updated
+                            break_mainloop = True  # It is updated
 
         if not self._enabled:
             # A widget has closed the menu
-            return True
+            break_mainloop = True
 
+        # Draw content
+        self._actual.draw()
         _pygame.display.flip()
+
         self._closelocked = False
-        return False
+
+        return break_mainloop
 
     def mainloop(self, events=None):
         """
@@ -906,6 +929,7 @@ class Menu(object):
         self._top._actual._actual = menu._actual
         self._top._actual._prev = actual
         self._depth += 1
+        self._select(0)
 
     def _select(self, index):
         """
