@@ -34,6 +34,7 @@ import pygame as _pygame
 from pygameMenu import config_controls as _ctrl
 from pygameMenu import locals as _locals
 from pygameMenu.widgets.widget import Widget
+import math as _math
 
 try:
     from pyperclip import copy, paste
@@ -68,7 +69,7 @@ class TextInput(Widget):
                  default='',
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
-                 input_underline='',
+                 input_underline='_',
                  cursor_color=(0, 0, 1),
                  history=50,
                  maxchar=0,
@@ -76,7 +77,7 @@ class TextInput(Widget):
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
-                 repeat_keys_interval_ms=25,
+                 repeat_keys_interval_ms=35,
                  repeat_mouse_interval_ms=50,
                  text_ellipsis='...',
                  **kwargs
@@ -188,7 +189,12 @@ class TextInput(Widget):
 
         # Other
         self._input_type = input_type
+        self._input_underline = input_underline
+        self._input_underline_size = 0
+        self._first_render = True
         self._label_size = 0
+        self._last_rendered_string = '__pygameMenu__last_render_string__'
+        self._last_rendered_surface = None
         self._maxchar = maxchar
         self._maxwidth = maxwidth
 
@@ -208,6 +214,9 @@ class TextInput(Widget):
         """
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
         self._label_size = self._font.size(self.label)[0]
+
+        # Generate the underline surface
+        self._input_underline_size = self._font.size(self._input_underline)[0]
 
     def clear(self):
         """
@@ -256,13 +265,88 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
+
+        # Render string
         string = self.label + self._get_input_string()
         if self.selected:
             color = self._font_selected_color
         else:
             color = self._font_color
+
+        new_surface = self.render_string(string, color)
+        updated_surface = self._last_rendered_surface != new_surface
         self._surface = self.render_string(string, color)
+        self._last_rendered_surface = self._surface
+
+        # Apply render methods after first rendering call
+        if self._first_render:
+            self._first_render = False
+            return
+
         self._render_cursor()
+        self._surface = self._render_underline(string, color, updated_surface)
+
+        # Update last rendered
+        self._last_rendered_string = string
+
+    def _render_underline(self, string, color, updated):
+        """
+        Render underline surface.
+
+        :param string: String to render
+        :type string: basestring
+        :param color: Color of the string to render
+        :type color: tuple
+        :param updated: Render string has been updated or not
+        :type updated: bool
+        :return: New rendered surface
+        :rtype: pygame.surface.SurfaceType
+        """
+        # Render input underline
+        if self._input_underline_size > 0 and string != self._last_rendered_string or updated:
+            menu = self.get_menu()
+
+            # Calculate total avaiable space
+            _, _, menu_width, _ = menu.get_position()
+            space_between_label = menu_width - self._label_size - self._rect.x
+            space_chars = _math.ceil(space_between_label / self._input_underline_size)  # floor does not work
+
+            # Compute how many characters are avaiable using maxwidth, maxchars or space
+            maxchar = self._maxchar
+            maxwidth = self._maxwidth
+            if maxchar == 0:
+                maxchar = _math.inf
+            if maxwidth == 0:
+                maxwidth = _math.inf
+            char = int(min(maxchar, maxwidth, space_chars))
+
+            # Increase the char if overflow
+            if self._maxwidth != 0:
+                current_size = self._surface.get_size()[0] - self._label_size
+                maxwidth_char = _math.ceil(current_size / self._input_underline_size)
+                char = max(char, maxwidth_char)
+
+            underline_string = self._input_underline * char
+
+            # Render char
+            underline = self.font_render_string(underline_string, color)
+
+            # Create a new surface
+            current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
+            new_width = self._label_size + underline.get_size()[0]
+            new_size = (new_width + 1, current_rect.height + 3)
+
+            # noinspection PyArgumentList
+            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+
+            # Blit current surface
+            new_surface.blit(self._surface, (0, 0))
+            new_surface.blit(underline, (self._label_size - 1, 5))
+            self._last_rendered_surface_with_underline = new_surface
+        else:
+            new_surface = self._last_rendered_surface_with_underline  # Reuse the rendered surface
+
+        return new_surface
 
     def _render_cursor(self):
         """
@@ -515,7 +599,7 @@ class TextInput(Widget):
         """
         if self._maxchar == 0:
             return False
-        return self._maxchar < len(self._input_string)
+        return self._maxchar <= len(self._input_string)
 
     def _check_input_type(self, string):
         """
@@ -577,9 +661,16 @@ class TextInput(Widget):
         # self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
-        self._cursor_render = True
         self._cursor_visible = False
         # self._history_index = len(self._history) - 1
+
+    def _focus(self):
+        """
+        See upper class doc.
+        """
+        self._cursor_ms_counter = 0
+        self._cursor_visible = True
+        self._cursor_render = True
 
     def _update_input_string(self, new_string):
         """

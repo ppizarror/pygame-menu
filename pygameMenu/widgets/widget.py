@@ -218,6 +218,21 @@ class Widget(object):
         """
         return hash(args)
 
+    def font_render_string(self, text, color):
+        """
+        Render text.
+
+        :param text: Text to render
+        :type text: basestring
+        :param color: Text color
+        :type color: tuple
+        :return: Text surface
+        :rtype: pygame.surface.SurfaceType
+        """
+        assert isinstance(text, str)
+        assert isinstance(color, tuple)
+        return self._font.render(text, self._font_antialias, color)
+
     def render_string(self, string, color):
         """
         Render text and turn it into a surface.
@@ -232,7 +247,7 @@ class Widget(object):
         render_hash = self.hash_variables(string, color)
         if render_hash != self._render_string_cache:  # If render changed
 
-            text = self._font.render(string, self._font_antialias, color)
+            text = self.font_render_string(string, color)
 
             # Create surface
             size = (text.get_width() + 2, text.get_height() + 2)
