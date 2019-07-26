@@ -218,7 +218,7 @@ class Widget(object):
         """
         return hash(args)
 
-    def font_render_string(self, text, color):
+    def font_render_string(self, text, color=(0, 0, 0)):
         """
         Render text.
 

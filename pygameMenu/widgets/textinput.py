@@ -69,7 +69,7 @@ class TextInput(Widget):
                  default='',
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
-                 input_underline='_',
+                 input_underline='',
                  cursor_color=(0, 0, 1),
                  history=50,
                  maxchar=0,
@@ -188,15 +188,20 @@ class TextInput(Widget):
         self._max_history = history
 
         # Other
+        self._first_render = True
         self._input_type = input_type
         self._input_underline = input_underline
         self._input_underline_size = 0
-        self._first_render = True
+        self._keychar_size = {'': 0}
         self._label_size = 0
+        self._last_char = ''
         self._last_rendered_string = '__pygameMenu__last_render_string__'
         self._last_rendered_surface = None
+        self._last_rendered_surface_underline_width = 0
         self._maxchar = maxchar
-        self._maxwidth = maxwidth
+        self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
+        self._maxwidth_base = maxwidth
+        self._maxwidthsize = 0  # Updated in font
 
         # Set default value
         if self._check_input_type(default):
@@ -217,6 +222,9 @@ class TextInput(Widget):
 
         # Generate the underline surface
         self._input_underline_size = self._font.size(self._input_underline)[0]
+
+        # Size of maxwidth if not zero
+        self._maxwidthsize = self.font_render_string('O' * self._maxwidth_base).get_size()[0]
 
     def clear(self):
         """
@@ -302,29 +310,29 @@ class TextInput(Widget):
         :return: New rendered surface
         :rtype: pygame.surface.SurfaceType
         """
+        # If underline is not enabled
+        if self._input_underline_size == 0:
+            return self._surface
+
         # Render input underline
-        if self._input_underline_size > 0 and string != self._last_rendered_string or updated:
+        if string != self._last_rendered_string or updated:
             menu = self.get_menu()
 
             # Calculate total avaiable space
+            current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
             _, _, menu_width, _ = menu.get_position()
             space_between_label = menu_width - self._label_size - self._rect.x
-            space_chars = _math.ceil(space_between_label / self._input_underline_size)  # floor does not work
+            char = _math.ceil(space_between_label / self._input_underline_size)  # floor does not work
 
-            # Compute how many characters are avaiable using maxwidth, maxchars or space
-            maxchar = self._maxchar
-            maxwidth = self._maxwidth
-            if maxchar == 0:
-                maxchar = _math.inf
-            if maxwidth == 0:
-                maxwidth = _math.inf
-            char = int(min(maxchar, maxwidth, space_chars))
-
-            # Increase the char if overflow
-            if self._maxwidth != 0:
-                current_size = self._surface.get_size()[0] - self._label_size
-                maxwidth_char = _math.ceil(current_size / self._input_underline_size)
-                char = max(char, maxwidth_char)
+            # If char limit
+            max_width_current = 0
+            if self._maxchar != 0 or self._maxwidth != 0:
+                max_chars = max(self._maxchar, self._maxwidth_base)
+                max_size = self.font_render_string('O' * max_chars, color)
+                max_size = max_size.get_size()[0]
+                maxchar_char = _math.ceil(max_size / self._input_underline_size)
+                char = min(char, maxchar_char)
+                max_width_current = current_rect.width
 
             underline_string = self._input_underline * char
 
@@ -332,8 +340,9 @@ class TextInput(Widget):
             underline = self.font_render_string(underline_string, color)
 
             # Create a new surface
-            current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
-            new_width = self._label_size + underline.get_size()[0]
+            new_width = max(self._label_size + underline.get_size()[0],
+                            max_width_current,
+                            self._last_rendered_surface_underline_width)
             new_size = (new_width + 1, current_rect.height + 3)
 
             # noinspection PyArgumentList
@@ -343,6 +352,7 @@ class TextInput(Widget):
             new_surface.blit(self._surface, (0, 0))
             new_surface.blit(underline, (self._label_size - 1, 5))
             self._last_rendered_surface_with_underline = new_surface
+            self._last_rendered_surface_underline_width = new_width
         else:
             new_surface = self._last_rendered_surface_with_underline  # Reuse the rendered surface
 
@@ -366,7 +376,7 @@ class TextInput(Widget):
             self._cursor_surface.fill(self._cursor_color)
 
         # Calculate x position
-        if self._maxwidth == 0 or len(self._input_string) <= self._maxwidth:  # If no limit is provided
+        if self._maxwidth == 0:  # If no limit is provided
             cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             sstring = self._input_string
@@ -375,12 +385,11 @@ class TextInput(Widget):
 
             # Add ellipsis
             delta = self._ellipsis_size
-            if self._renderbox[0] != 0 and \
-                    self._renderbox[1] != len(self._input_string):  # If Left+Right ellipsis
+            if self._ellipsis_left_and_right():  # If Left+Right ellipsis
                 delta *= 1
-            elif self._renderbox[1] != len(self._input_string):  # Right ellipsis
+            elif self._ellipsis_right():  # Right ellipsis
                 delta *= 0
-            elif self._renderbox[0] != 0:  # Left ellipsis
+            elif self._ellipsis_left():  # Left ellipsis
                 delta *= 1
             else:
                 delta *= 0
@@ -397,36 +406,69 @@ class TextInput(Widget):
         self._cursor_surface_pos[1] = cursor_y_pos
         self._cursor_render = False
 
-    def _get_input_string(self):
+    def _ellipsis_left(self):
+        """
+        Return true if left ellipsis is active.
+
+        :return: Boolean
+        :rtype: bool
+        """
+        return self._renderbox[0] != 0 and self._maxwidth != 0
+
+    def _ellipsis_right(self):
+        """
+        Return true if right ellipsis is active.
+
+        :return: Boolean
+        :rtype: bool
+        """
+        return self._renderbox[1] != len(self._input_string) and self._maxwidth != 0
+
+    def _ellipsis_left_and_right(self):
+        """
+        Return true if left and right ellipsis is active.
+
+        :return: Boolean
+        :rtype: bool
+        """
+        return self._ellipsis_left() and self._ellipsis_right()
+
+    def _get_input_string(self, add_ellipsis=True):
         """
         Return input string, apply overflow if enabled.
 
+        :param add_ellipsis: Adds ellipsis text
+        :type add_ellipsis: bool
         :return: String
+        :rtype: basestring
         """
         if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
             text = self._input_string[self._renderbox[0]:self._renderbox[1]]
-            if self._renderbox[1] != len(self._input_string):  # Right ellipsis
-                text += self._ellipsis
-            if self._renderbox[0] != 0:  # Left ellipsis
-                text = self._ellipsis + text
+            if add_ellipsis:
+                if self._ellipsis_right():
+                    text += self._ellipsis
+                if self._ellipsis_left():
+                    text = self._ellipsis + text
             return text
         else:
             return self._input_string
 
-    def _update_renderbox(self, left=0, right=0, addition=False, end=False, start=False):
+    def _update_renderbox(self, left=0, right=0, addition=False, end=False, start=False, update_maxwidth=True):
         """
         Update renderbox position.
 
         :param left: Left update
-        :param right: Right update
-        :param addition: Update if text addition/deletion
-        :param end: Move cursor to end
-        :param start: Move cursor to start
         :type left: int
+        :param right: Right update
         :type right: int
+        :param addition: Update if text addition/deletion
         :type addition: bool
+        :param end: Move cursor to end
         :type end: bool
+        :param start: Move cursor to start
         :type start: bool
+        :param update_maxwidth: Update maxwidth limit depending on the chars written
+        :type update_maxwidth: bool
         :return: None
         """
         self._cursor_render = True
@@ -456,6 +498,8 @@ class TextInput(Widget):
         if ls <= self._maxwidth:
             if right < 0 and self._renderbox[2] == ls:  # If del at the end of string
                 return
+            if left < 0 and self._renderbox[2] == 0:  # If cursor is at beginning
+                return
             self._renderbox[0] = 0  # To catch unexpected errors
             if addition:  # left/right are ignored
                 if left < 0:
@@ -469,14 +513,14 @@ class TextInput(Widget):
             self._renderbox[2] += right
         else:
             if addition:  # If text is added
-                if right < 0 and self._renderbox[2] == self._maxwidth:  # If del at the end of string
+                if right < 0 and self._renderbox[2] == self._maxwidth:  # If press del at the end of string
                     return
                 if left < 0 and self._renderbox[2] == 0:  # If backspace at begining of string
                     return
 
                 # If user deletes something and it is in the end
                 if right < 0:  # del
-                    if self._renderbox[0] != 0:
+                    if self._ellipsis_left():
                         if (self._renderbox[1] - 1) == ls:  # At the end
                             self._renderbox[2] -= right
 
@@ -488,12 +532,13 @@ class TextInput(Widget):
                     self._renderbox[2] += right
 
                 if left < 0:
-                    if self._renderbox[0] == 0:
+                    if self._renderbox[0] == 0:  # If cursor is at the begining
                         self._renderbox[2] += left
                     self._renderbox[0] += left
                     self._renderbox[1] += left
 
             if not addition:  # Move inner (left/right)
+
                 self._renderbox[2] += right
                 self._renderbox[2] += left
 
@@ -501,9 +546,15 @@ class TextInput(Widget):
                 if self._renderbox[2] < 0:
                     self._renderbox[0] += left
                     self._renderbox[1] += left
-                if self._renderbox[2] > self._maxwidth:
+                elif self._renderbox[2] > self._maxwidth:
                     self._renderbox[0] += right
                     self._renderbox[1] += right
+                else:
+                    update_maxwidth = False
+
+                # If cursor is at limit
+                if self._renderbox[1] >= ls or self._renderbox[0] <= 0:
+                    update_maxwidth = False
 
             # Apply string limits
             self._renderbox[1] = max(self._maxwidth, min(self._renderbox[1], ls))
@@ -513,6 +564,59 @@ class TextInput(Widget):
         self._renderbox[0] = max(0, self._renderbox[0])
         self._renderbox[1] = max(0, self._renderbox[1])
         self._renderbox[2] = max(0, min(self._renderbox[2], min(self._maxwidth, ls)))
+
+        if update_maxwidth:
+            self._update_maxlimit_renderbox()
+
+    def _update_maxlimit_renderbox(self):
+        """
+        Update renderbox based on how many characters have been written on input.
+
+        :return: None
+        """
+
+        # Update limit
+
+        sign = 0  # Sign of search
+        while True:
+            curr_string = self._get_input_string(False)
+            lcs = len(curr_string)
+            if lcs > 0:
+                accum_size = 0
+                if self._ellipsis_left():
+                    accum_size += self._ellipsis_size + 5
+
+                biggest = 0
+                for char in curr_string:
+                    accum_size += self._keychar_size[char]
+                    biggest = max(biggest, self._keychar_size[char])
+
+                if self._ellipsis_right():
+                    accum_size += self._ellipsis_size
+
+                if accum_size < self._maxwidthsize - biggest:  # Increase
+                    if sign < 0:
+                        break
+                    sign = 1
+                    if self._renderbox[0] != 0:
+                        self._renderbox[0] -= 1
+                    else:
+                        break
+                    self._maxwidth += 1
+                    self._renderbox[2] += 1
+                elif accum_size > self._maxwidthsize:
+                    if sign > 0:
+                        break
+                    sign = -1
+                    self._renderbox[0] += 1
+                    # self._renderbox[1] += 1
+                    self._maxwidth -= 1
+                    self._renderbox[2] -= 1
+                else:
+                    break
+            else:
+                self._maxwidth = self._maxwidth_base  # Return to normal
+                break
 
     def _update_cursor_mouse(self, mousex):
         """
@@ -546,7 +650,7 @@ class TextInput(Widget):
 
         # If text have ellipsis
         if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
-            if self._renderbox[0] != 0:  # Left ellipsis
+            if self._ellipsis_left():
                 cursor_pos -= 3
 
             # Check if user clicked on ellipsis
@@ -770,12 +874,19 @@ class TextInput(Widget):
 
         # If string is valid
         if self._check_input_type(new_string):
+
+            # Update char size
+            for char in new_string:
+                if char not in self._keychar_size:
+                    self._keychar_size[char] = self.font_render_string(char).get_size()[0]
+
             self.sound.play_key_add()
             self._input_string = new_string  # For a purpose of computing render_box
             for i in range(len(text) + 1):  # Move cursor
                 self._move_cursor_right()
             self._update_input_string(new_string)
             self.change()
+            self._update_maxlimit_renderbox()
             self._block_copy_paste = True
         else:
             self.sound.play_event_error()
@@ -962,6 +1073,13 @@ class TextInput(Widget):
                     if self._check_input_type(new_string):
                         lkey = len(event.unicode)
                         if lkey > 0:
+
+                            # Update char size
+                            if event.unicode not in self._keychar_size:
+                                self._keychar_size[event.unicode] = self.font_render_string(event.unicode).get_size()[0]
+                            self._last_char = event.unicode
+
+                            # Update string
                             self.sound.play_key_add()
                             self._cursor_position += 1  # Some are empty, e.g. K_UP
                             self._input_string = new_string  # Only here this is changed (due to renderbox update)
@@ -969,6 +1087,7 @@ class TextInput(Widget):
                             self._update_input_string(new_string)
                             self.change()
                             updated = True
+
                     else:
                         self.sound.play_event_error()
 
