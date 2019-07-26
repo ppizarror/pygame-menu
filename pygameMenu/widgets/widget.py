@@ -39,6 +39,7 @@ import pygameMenu.locals as _locals
 import pygameMenu.fonts as _fonts
 
 
+# noinspection PyTypeChecker
 class Widget(object):
     """
     Widget abstract class.
@@ -66,7 +67,7 @@ class Widget(object):
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
         self._id = str(widget_id)
-        self._surface = None  # Rendering surface
+        self._surface = None  # type: _pygame.Surface
         self._render_string_cache = 0
         self._render_string_cache_surface = None
         self._rect = _pygame.Rect(0, 0, 0, 0)
@@ -77,6 +78,9 @@ class Widget(object):
         self._on_return = onreturn
         self._args = args or []
         self._kwargs = kwargs or {}
+
+        # Menu reference
+        self.menu = None
 
         # Modified in set_font() method
         self._font = _cfg.MENU_FONT_SIZE_TITLE
@@ -262,6 +266,16 @@ class Widget(object):
         self._font_selected_color = selected_color
         self._font_antialias = antialias
         self._apply_font()
+
+    def set_menu(self, menu):
+        """
+        Set menu reference.
+
+        :param menu: Menu object
+        :type menu: pygameMenu.menu.Menu
+        :return: None
+        """
+        self.menu = menu
 
     def _apply_font(self):
         """
@@ -485,3 +499,6 @@ class Widget(object):
         :rtype: bool
         """
         raise NotImplementedError('Override is mandatory')
+
+
+WidgetType = Widget

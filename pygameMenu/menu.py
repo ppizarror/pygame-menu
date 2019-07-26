@@ -243,7 +243,6 @@ class Menu(object):
         self._onclose = onclose  # Function that calls after closing menu
         self._size = 0  # Menu total elements
         self._sounds = _Sound()
-        self.set_fps(fps)  # FPS of the menu
 
         # Menu widgets
         self._option = []  # type: list[_widgets.WidgetType]
@@ -294,6 +293,9 @@ class Menu(object):
         self._menubar.set_font(font_title, font_size_title,
                                bg_color_title, self._font_color)
         self._menubar.set_controls(self._joystick, self._mouse)
+
+        # FPS of the menu
+        self.set_fps(fps)
 
     def add_option(self, element_name, element, *args, **kwargs):
         """

@@ -160,7 +160,8 @@ class Selector(Widget):
         See upper class doc.
         """
         updated = False
-        for event in events:
+        for event in events:  # type: _pygame.event.EventType
+
             if event.type == _pygame.KEYDOWN:
 
                 # Check key is valid

@@ -574,7 +574,7 @@ class TextInput(Widget):
         """
         l_history = len(self._history)
 
-        # If last edition is different than the new one updates the history
+        # If last edition is different than the new one -> updates the history
         if ((l_history > 0 and self._history[l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
 
             # If index is not at last add the current status as new
@@ -720,7 +720,8 @@ class TextInput(Widget):
         """
         updated = False
 
-        for event in events:
+        for event in events:  # type: _pygame.event.EventType
+
             if event.type == _pygame.KEYDOWN:
 
                 # Check if any key is pressed, if True the event is invalid

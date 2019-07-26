@@ -166,15 +166,17 @@ class MenuBar(Widget):
         See upper class doc.
         """
         updated = False
-        for event in events:
+        for event in events:  # type: _pygame.event.EventType
 
             if self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 if self._backbox_rect.collidepoint(*event.pos):
+                    self.sound.play_click_mouse()
                     self.apply()
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
                 if event.button == _locals.JOY_BUTTON_BACK:
+                    self.sound.play_key_del()
                     self.apply()
                     updated = True
 

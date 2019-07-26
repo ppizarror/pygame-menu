@@ -69,6 +69,7 @@ PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_del
 PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 
 
+# noinspection PyTypeChecker
 class Sound(object):
     """
     Sound class.
@@ -115,7 +116,7 @@ class Sound(object):
                         allowedchanges=allowedchanges)
 
         # Channel where a sound is played
-        self._channel = None
+        self._channel = None  # type: _mixer.ChannelType
         self._uniquechannel = uniquechannel
 
         # Sound dict
