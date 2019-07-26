@@ -44,7 +44,7 @@ class MenuBar(Widget):
     def __init__(self,
                  label,
                  width,
-                 back_box,
+                 back_box=False,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -66,6 +66,9 @@ class MenuBar(Widget):
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
+        assert isinstance(label, str)
+        assert isinstance(width, (int, float))
+        assert isinstance(back_box, bool)
         super(MenuBar, self).__init__(onchange=onchange, onreturn=onreturn,
                                       args=args, kwargs=kwargs)  # MenuBar has no ID
 

@@ -67,8 +67,13 @@ class Selector(Widget):
         :type onreturn: function, NoneType
         :param kwargs: Optional keyword-arguments for callbacks
         """
+        assert isinstance(title, str)
+        assert isinstance(elements, list)
+        assert isinstance(selector_id, str)
+        assert isinstance(default, int)
         super(Selector, self).__init__(widget_id=selector_id, onchange=onchange,
                                        onreturn=onreturn, kwargs=kwargs)
+
         self._elements = elements
         self._index = 0
         self._sformat = '{0} < {1} >'

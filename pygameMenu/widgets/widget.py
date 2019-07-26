@@ -63,6 +63,12 @@ class Widget(object):
         :param kwargs: Optional keyword-arguments for callbacks
         """
 
+        assert isinstance(widget_id, str)
+        if onchange:
+            assert callable(onchange), 'onchange must be a function or None'
+        if onreturn:
+            assert callable(onreturn), 'onreturn must be a function or None'
+
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()

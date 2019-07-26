@@ -60,6 +60,7 @@ class Button(Widget):
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
+        assert isinstance(label, str)
         super(Button, self).__init__(onchange=onchange, onreturn=onreturn,
                                      args=args, kwargs=kwargs)  # Button has no ID
 

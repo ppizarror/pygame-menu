@@ -68,6 +68,7 @@ class TextInput(Widget):
                  default='',
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
+                 input_underline='',
                  cursor_color=(0, 0, 1),
                  history=50,
                  maxchar=0,
@@ -85,12 +86,14 @@ class TextInput(Widget):
 
         :param label: Input label text
         :type label: basestring
-        :param default: Initial text to be displayed
-        :type default: basestring
+        :param default: Initial value to be displayed
+        :type default: basestring, int, float
         :param textinput_id: ID of the text input
         :type textinput_id: basestring
         :param input_type: Type of data
         :type input_type: basestring
+        :param input_underline: Character drawn under the input
+        :type input_underline: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
         :param history: Maximum number of editions stored
@@ -113,15 +116,29 @@ class TextInput(Widget):
         :type text_ellipsis: basestring
         :param kwargs: Optional keyword-arguments for callbacks
         """
-        super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
-                                        onreturn=onreturn, kwargs=kwargs)
+        assert isinstance(label, str)
+        assert isinstance(default, (str, int, float))
+        assert isinstance(textinput_id, str)
+        assert isinstance(input_type, str)
+        assert isinstance(input_underline, str)
+        assert isinstance(cursor_color, tuple)
+        assert isinstance(history, int)
+        assert isinstance(maxchar, int)
+        assert isinstance(maxwidth, int)
+        assert isinstance(repeat_keys_initial_ms, int)
+        assert isinstance(repeat_keys_interval_ms, int)
+        assert isinstance(repeat_mouse_interval_ms, int)
+        assert isinstance(text_ellipsis, str)
+
         if maxchar < 0:
             raise ValueError('maxchar must be equal or greater than zero')
         if maxwidth < 0:
             raise ValueError('maxwidth must be equal or greater than zero')
-        assert isinstance(history, int)
         if history < 0:
             raise ValueError('history must be equal or greater than zero')
+
+        super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
+                                        onreturn=onreturn, kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
         self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,
