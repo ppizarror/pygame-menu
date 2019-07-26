@@ -39,16 +39,14 @@ import pygameMenu.fonts as _fonts
 import pygameMenu.locals as _locals
 
 # Library imports
+from sys import exit
 import pygameMenu.widgets as _widgets
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
 
-# exit program
-from sys import exit
 
-
-# noinspection PyBroadException,PyProtectedMember,PyArgumentEqualDefault
+# noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker,PyUnresolvedReferences
 class Menu(object):
     """
     Menu object.
@@ -237,19 +235,27 @@ class Menu(object):
         self._actual = self  # Actual menu
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
+        self._depth = 0  # Depth of menu (used by reset)
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._index = 0  # Selected index
         self._fps = 0
         self._onclose = onclose  # Function that calls after closing menu
-        self._option = []  # Option menu
-        self._prev = None  # Previous menu
-        self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
         self._sounds = _Sound()
-        self._submenus = []  # List of all linked menus
-        self._top = None  # Top level menu
         self.set_fps(fps)  # FPS of the menu
+
+        # Menu widgets
+        self._option = []  # type: list[_widgets.WidgetType]
+
+        # Previous menu
+        self._prev = None  # type: Menu
+
+        # Top level menu
+        self._top = None  # type: Menu
+
+        # List of all linked menus
+        self._submenus = []  # type: list[Menu]
 
         # Load fonts
         self._font = _fonts.get_font(font, self._fsize)
@@ -485,6 +491,7 @@ class Menu(object):
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
+        widget.set_menu(self)
 
         # Store widget
         self._option.append(widget)
@@ -510,8 +517,8 @@ class Menu(object):
         :type widget_id: basestring
         :return: Exception if ID is duplicated
         """
-        for i in self._option:
-            if i.get_id() == widget_id:
+        for widget in self._option:
+            if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
@@ -532,7 +539,7 @@ class Menu(object):
             b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
             if a or b:
                 if onclose == _events.PYGAMEMENU_RESET:
-                    self.reset(100)
+                    self.reset(self._depth)
                 elif onclose == _events.PYGAMEMENU_BACK:
                     self.reset(1)
                 elif onclose == _events.PYGAMEMENU_EXIT:
@@ -678,7 +685,8 @@ class Menu(object):
                 return True
 
         else:
-            for event in events:
+            for event in events:  # type: _pygame.event.EventType
+
                 # noinspection PyUnresolvedReferences
                 if event.type == _pygame.locals.QUIT:
                     self._exit()
@@ -746,7 +754,7 @@ class Menu(object):
         else:
             self._main(events)
 
-    def get_input_data(self, recursive=False):
+    def get_input_data(self, recursive=False, depth=0):
         """
         Return input data as a dict.
 
@@ -755,11 +763,13 @@ class Menu(object):
 
         :param recursive: Look in menu and sub-menus
         :type recursive: bool
+        :param depth: Depth of the input data, by default it's zero
+        :type depth: int
         :return: Input dict
         :rtype: dict
         """
         assert isinstance(recursive, bool), 'recursive must be a boolean'
-        return self._get_input_data(recursive=recursive, depth=0)
+        return self._get_input_data(recursive=recursive, depth=depth)
 
     def _get_input_data(self, recursive, depth):
         """
@@ -786,10 +796,10 @@ class Menu(object):
             for menu in self._submenus:
                 data_submenu = menu.get_input_data(recursive=recursive, depth=depth)
 
-                # Check if there's a colission between keys
+                # Check if there is a colission between keys
                 data_keys = data.keys()
                 subdata_keys = data_submenu.keys()
-                for key in subdata_keys:
+                for key in subdata_keys:  # type: str
                     if key in data_keys:
                         raise Exception('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
 
@@ -871,12 +881,10 @@ class Menu(object):
         while True:
             if self._top._actual._prev is not None:
                 prev = self._top._actual._prev
-                prev_draw = self._top._actual._prev_draw
-                self._top.draw = prev_draw
                 self._select(0)
                 self._top._actual = prev
                 self._top._actual._prev = None
-                self._top._actual._prev_draw = None
+                self._depth -= 1
                 i += 1
                 if i == total:
                     break
@@ -895,8 +903,7 @@ class Menu(object):
         menu._top = self._top
         self._top._actual._actual = menu._actual
         self._top._actual._prev = actual
-        self._top._actual._prev_draw = self.draw
-        self._top.draw = menu.draw
+        self._depth += 1
 
     def _select(self, index):
         """
