@@ -86,7 +86,7 @@ class Widget(object):
         self._kwargs = kwargs or {}
 
         # Menu reference
-        self.menu = None
+        self._menu = None
 
         # Modified in set_font() method
         self._font = _cfg.MENU_FONT_SIZE_TITLE
@@ -234,15 +234,16 @@ class Widget(object):
 
             text = self._font.render(string, self._font_antialias, color)
 
+            # Create surface
+            size = (text.get_width() + 2, text.get_height() + 2)
+            # noinspection PyArgumentList
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+
+            # Draw shadow first
             if self._shadow:
-                size = (text.get_width() + 2, text.get_height() + 2)
                 text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-                # noinspection PyArgumentList
-                surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
                 surface.blit(text_bg, self._shadow_tuple)
-                surface.blit(text, (0, 0))
-            else:
-                surface = text
+            surface.blit(text, (0, 0))
 
             self._render_string_cache = render_hash
             self._render_string_cache_surface = surface
@@ -281,7 +282,16 @@ class Widget(object):
         :type menu: pygameMenu.menu.Menu
         :return: None
         """
-        self.menu = menu
+        self._menu = menu
+
+    def get_menu(self):
+        """
+        Return menu reference (if exist).
+
+        :return: Menu reference
+        :rtype: pygameMenu.menu.Menu
+        """
+        return self._menu
 
     def _apply_font(self):
         """
