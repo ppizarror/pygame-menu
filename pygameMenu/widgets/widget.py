@@ -340,7 +340,7 @@ class Widget(object):
 
     def get_menu(self):
         """
-        Return menu reference (if exist).
+        Return menu reference (if exists).
 
         :return: Menu reference
         :rtype: pygameMenu.menu.Menu
@@ -349,7 +349,7 @@ class Widget(object):
 
     def _apply_font(self):
         """
-        Function triggered after font is applied to widget.
+        Function triggered after a font is applied to the widget.
 
         :return: None
         """
