@@ -77,7 +77,7 @@ class TextInput(Widget):
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
-                 repeat_keys_interval_ms=35,
+                 repeat_keys_interval_ms=40,
                  repeat_mouse_interval_ms=50,
                  text_ellipsis='...',
                  **kwargs
@@ -280,11 +280,7 @@ class TextInput(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-
-        new_surface = self.render_string(string, color)
-        updated_surface = self._last_rendered_surface != new_surface
-        self._surface = self.render_string(string, color)
-        self._last_rendered_surface = self._surface
+        updated_surface = self._render_string_surface(string, color)
 
         # Apply render methods after first rendering call
         if self._first_render:
@@ -296,6 +292,24 @@ class TextInput(Widget):
 
         # Update last rendered
         self._last_rendered_string = string
+
+    def _render_string_surface(self, string, color):
+        """
+        Renders string surface.
+
+        :param string: String to render
+        :type string: basestring
+        :param color: Color of the string to render
+        :type color: tuple
+        :return: True if surface is updated
+        :rtype: bool
+        """
+        new_surface = self.render_string(string, color)
+        updated_surface = self._last_rendered_surface != new_surface
+        if updated_surface:
+            self._surface = new_surface
+            self._last_rendered_surface = self._surface
+        return updated_surface
 
     def _render_underline(self, string, color, updated):
         """

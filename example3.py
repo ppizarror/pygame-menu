@@ -155,7 +155,7 @@ settings_menu.add_text_input('Your age: ',
 settings_menu.add_text_input('Some long text: ',
                              maxwidth=14,
                              textinput_id='long_text',
-                             input_underline='_')
+                             input_underline='')
 
 # Create selector with 3 difficulty options
 settings_menu.add_selector('Select difficulty',
