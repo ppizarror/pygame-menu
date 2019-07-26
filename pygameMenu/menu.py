@@ -676,6 +676,25 @@ class Menu(object):
         """
         return self._enabled
 
+    @staticmethod
+    def check_key_pressed_valid(event):
+        """
+        Checks if the pressed key is valid.
+
+        :param event: Key press event
+        :type event: pygame.event.EventType
+        :return: True if any key is pressed
+        :rtype: bool
+        """
+        # If the system detects that any key event has been pressed but
+        # there's not any key pressed then this method raises a KEYUP
+        # flag
+        bad_event = not (True in _pygame.key.get_pressed())
+        if bad_event:
+            ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
+            _pygame.event.post(ev)
+        return not bad_event
+
     def _main(self, events=None):
         """
         Main function of the loop.
@@ -713,6 +732,11 @@ class Menu(object):
                     break_mainloop = True
 
                 elif event.type == _pygame.locals.KEYDOWN:
+
+                    # Check key event is valid
+                    if not self.check_key_pressed_valid(event):
+                        continue
+
                     if event.key == _ctrl.MENU_CTRL_DOWN:
                         self._select(self._actual._index - 1)
                         self._sounds.play_key_add()
