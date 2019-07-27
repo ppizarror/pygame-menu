@@ -297,7 +297,7 @@ class Menu(object):
 
         # Selected option
         self._selected_inflate_x = 16
-        self._selected_inflate_y = 5
+        self._selected_inflate_y = 6
 
         # FPS of the menu
         self.set_fps(fps)
