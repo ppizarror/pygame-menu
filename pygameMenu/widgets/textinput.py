@@ -71,7 +71,7 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
                  input_underline='',
-                 cursor_color=(0, 0, 1),
+                 cursor_color=(0, 0, 0),
                  history=50,
                  maxchar=0,
                  maxwidth=0,
@@ -80,7 +80,7 @@ class TextInput(Widget):
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=40,
                  repeat_mouse_interval_ms=100,
-                 selection_color=(0.6, 0.6, 0.6),
+                 selection_color=(30, 30, 30),
                  text_ellipsis='...',
                  **kwargs
                  ):
@@ -364,7 +364,9 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            self._selection_surface = _pygame.Surface((x, y))  # type: _pygame.SurfaceType
+            # noinspection PyArgumentList
+            self._selection_surface = _pygame.Surface((x, y), _pygame.SRCALPHA,
+                                                      32).convert_alpha()  # type: _pygame.SurfaceType
             self._selection_surface.fill(self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
@@ -1083,9 +1085,9 @@ class TextInput(Widget):
 
         for i in range(removed):
             if left:
-                self._backspace()
-            else:
                 self._delete()
+            else:
+                self._backspace()
 
         # Destroy selection
         self._unselect_text()
