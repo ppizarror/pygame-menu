@@ -456,7 +456,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 - **Sound**
 
     ```python
-    pygameMenu.sound.Sound(uniquechannel,frequency,size,channels,buffer,devicename,allowedchanges) # -> Sound object
+    pygameMenu.sound.Sound(uniquechannel, frequency, size, channels, buffer, devicename, allowedchanges)
     ```
 
     Parameters are the following:
