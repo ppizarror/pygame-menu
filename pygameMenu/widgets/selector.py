@@ -76,11 +76,9 @@ class Selector(Widget):
 
         self._elements = elements
         self._index = 0
-        self._sformat = '{0} < {1} >'
+        self._label = title
         self._labelsize = 0
-
-        # Public attributs
-        self.label = title
+        self._sformat = '{0} < {1} >'
 
         # Apply default item
         default %= len(self._elements)
@@ -91,7 +89,7 @@ class Selector(Widget):
         """
         See upper class doc.
         """
-        self._labelsize = self._font.size(self.label)[0]
+        self._labelsize = self._font.size(self._label)[0]
 
     def draw(self, surface):
         """
@@ -131,7 +129,7 @@ class Selector(Widget):
         """
         See upper class doc.
         """
-        string = self._sformat.format(self.label, self.get_value()[0])
+        string = self._sformat.format(self._label, self.get_value()[0])
         if self.selected:
             color = self._font_selected_color
         else:

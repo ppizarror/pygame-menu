@@ -63,9 +63,7 @@ class Button(Widget):
         assert isinstance(label, str)
         super(Button, self).__init__(onchange=onchange, onreturn=onreturn,
                                      args=args, kwargs=kwargs)  # Button has no ID
-
-        # Public attributs
-        self.label = label
+        self._label = label
 
     def _apply_font(self):
         """
@@ -88,7 +86,7 @@ class Button(Widget):
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self.render_string(self.label, color)
+        self._surface = self.render_string(self._label, color)
 
     def update(self, events):
         """

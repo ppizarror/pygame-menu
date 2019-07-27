@@ -36,6 +36,7 @@ from pygameMenu import locals as _locals
 from pygameMenu.widgets.widget import Widget
 
 
+# noinspection PyTypeChecker
 class MenuBar(Widget):
     """
     MenuBar widget.
@@ -72,16 +73,14 @@ class MenuBar(Widget):
         super(MenuBar, self).__init__(onchange=onchange, onreturn=onreturn,
                                       args=args, kwargs=kwargs)  # MenuBar has no ID
 
-        self._offsety = 0
-        self._offsetx = 0
-        self._width = width
         self._backbox = back_box
-        self._backbox_pos = None
-        self._backbox_rect = None
-        self._polygon_pos = None
-
-        # Public attributs
-        self.label = label
+        self._backbox_pos = None  # type: tuple
+        self._backbox_rect = None  # type: _pygame.rect.RectType
+        self._label = label
+        self._offsetx = 0
+        self._offsety = 0
+        self._polygon_pos = None  # type: tuple
+        self._width = width
 
     def _apply_font(self):
         """
@@ -111,13 +110,13 @@ class MenuBar(Widget):
         :return: Title
         :rtype: basestring
         """
-        return self.label
+        return self._label
 
     def _render(self):
         """
         See upper class doc.
         """
-        self._surface = self.render_string(self.label, self._font_selected_color)
+        self._surface = self.render_string(self._label, self._font_selected_color)
 
         # Usually done in  get_rect(), but can not be called here because it call _render() itself
         self._rect.width, self._rect.height = self._surface.get_size()
@@ -143,7 +142,6 @@ class MenuBar(Widget):
                              (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
                              (self._backbox_rect.left + 5, self._backbox_rect.centery))
 
-    # noinspection PyAttributeOutsideInit
     def set_title(self, title, offsetx=0, offsety=0):
         """
         Set menu title.
@@ -160,7 +158,7 @@ class MenuBar(Widget):
         assert isinstance(offsetx, int)
         assert isinstance(offsety, int)
 
-        self.label = title
+        self._label = title
         self._offsety = offsety
         self._offsetx = offsetx
 

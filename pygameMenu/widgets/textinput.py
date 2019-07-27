@@ -188,9 +188,6 @@ class TextInput(Widget):
         self._cursor_switch_ms = 500  # /|\
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
-        # Public attributs
-        self.label = label
-
         # History of editions
         self._history = []
         self._history_cursor = []
@@ -215,6 +212,7 @@ class TextInput(Widget):
         self._input_underline = input_underline
         self._input_underline_size = 0
         self._keychar_size = {'': 0}
+        self._label = label
         self._label_size = 0
         self._last_char = ''
         self._last_rendered_string = '__pygameMenu__last_render_string__'
@@ -241,7 +239,7 @@ class TextInput(Widget):
         See upper class doc.
         """
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
-        self._label_size = self._font.size(self.label)[0]
+        self._label_size = self._font.size(self._label)[0]
 
         # Generate the underline surface
         self._input_underline_size = self._font.size(self._input_underline)[0]
@@ -302,7 +300,7 @@ class TextInput(Widget):
         """
 
         # Render string
-        string = self.label + self._get_input_string()
+        string = self._label + self._get_input_string()
         if self.selected:
             color = self._font_selected_color
         else:
@@ -350,8 +348,8 @@ class TextInput(Widget):
             sstring_init = self._input_string[self._renderbox[0]:pos[0]]
             sstring_final = self._input_string[self._renderbox[0]:pos[1]]
 
-            x1 = self._cursor_offset + self._font.size(self.label + sstring_init)[0]
-            x2 = self._cursor_offset + self._font.size(self.label + sstring_final)[0] - 1
+            x1 = self._cursor_offset + self._font.size(self._label + sstring_init)[0]
+            x2 = self._cursor_offset + self._font.size(self._label + sstring_final)[0] - 1
 
             self._last_selection_render[0] = self._selection_box[0]
             self._last_selection_render[1] = self._selection_box[1]
@@ -360,7 +358,7 @@ class TextInput(Widget):
             if x <= 0:
                 self._selection_surface = None
                 return
-            y = self._font.size(self.label)[1]
+            y = self._font.size(self._label)[1]
 
             # Add ellipsis
             delta = self._ellipsis_size
@@ -485,11 +483,11 @@ class TextInput(Widget):
         # Calculate x position
         if self._maxwidth == 0:  # If no limit is provided
             cursor_x_pos = self._cursor_offset + \
-                           self._font.size(self.label + self._input_string[:self._cursor_position])[0]
+                           self._font.size(self._label + self._input_string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             sstring = self._input_string
             sstring = sstring[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
-            cursor_x_pos = self._cursor_offset + self._font.size(self.label + sstring)[0]
+            cursor_x_pos = self._cursor_offset + self._font.size(self._label + sstring)[0]
 
             # Add ellipsis
             delta = self._ellipsis_size
@@ -502,7 +500,7 @@ class TextInput(Widget):
             else:
                 delta *= 0
             cursor_x_pos += delta
-        if self._cursor_position > 0 or (self.label and self._cursor_position == 0):
+        if self._cursor_position > 0 or (self._label and self._cursor_position == 0):
             # Without this, the cursor is invisible when self._cursor_position > 0:
             cursor_x_pos -= self._cursor_surface.get_width()
 
