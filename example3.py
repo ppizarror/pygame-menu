@@ -152,7 +152,8 @@ settings_menu.add_text_input('Your age: ',
                              default=25,
                              maxchar=3,
                              textinput_id='age',
-                             input_type=pygameMenu.locals.PYGAME_INPUT_INT)
+                             input_type=pygameMenu.locals.PYGAME_INPUT_INT,
+                             enable_selection=False)
 settings_menu.add_text_input('Some long text: ',
                              maxwidth=14,
                              textinput_id='long_text',
