@@ -591,10 +591,6 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 | config_menu.py | Configure default parameter of Menu class |
 | config_textmenu.py | Configure default parameter of TextMenu class |
 
-## License
-
-This project is licensed under MIT [https://opensource.org/licenses/MIT/](https://opensource.org/licenses/MIT/)
-
 ## Author
 
 [Pablo Pizarro R.](https://ppizarror.com) | 2017-2019
@@ -604,3 +600,7 @@ This project is licensed under MIT [https://opensource.org/licenses/MIT/](https:
 Special greetings to:
 
 - [anxuae](https://github.com/anxuae)
+
+## License
+
+This project is licensed under MIT [https://opensource.org/licenses/MIT/](https://opensource.org/licenses/MIT/)
