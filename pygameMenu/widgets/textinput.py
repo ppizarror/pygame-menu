@@ -72,9 +72,11 @@ class TextInput(Widget):
                  input_type=_locals.PYGAME_INPUT_TEXT,
                  input_underline='',
                  cursor_color=(0, 0, 0),
+                 enable_selection=True,
                  history=50,
                  maxchar=0,
                  maxwidth=0,
+                 maxwidth_dynamically_update=True,
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
@@ -99,12 +101,16 @@ class TextInput(Widget):
         :type input_underline: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param enable_selection: Enables selection of text
+        :type enable_selection: tuple
         :param history: Maximum number of editions stored
         :type history: int
         :param maxchar: Maximum length of input
         :type maxchar: int
         :param maxwidth: Maximum size of the text to be displayed (overflow)
         :type maxwidth: int
+        :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
+        :type maxwidth_dynamically_update: bool
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -195,10 +201,12 @@ class TextInput(Widget):
         # Text selection
         self._last_selection_render = [0, 0]
         self._selection_active = False
+        self._selection_enabled = enable_selection
         self._selection_box = [0, 0]  # [from, to]
         self._selection_color = selection_color
-        self._selection_render = False
+        self._selection_mouse_first_position = -1
         self._selection_position = [0, 0]  # (x,y)
+        self._selection_render = False
         self._selection_surface = None  # type: _pygame.SurfaceType
 
         # Other
@@ -215,6 +223,7 @@ class TextInput(Widget):
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
         self._maxwidth_base = maxwidth
+        self._maxwidth_update = maxwidth_dynamically_update
         self._maxwidthsize = 0  # Updated in font
 
         # Set default value
@@ -321,6 +330,9 @@ class TextInput(Widget):
         :type force: bool
         :return: None
         """
+        if not self._selection_enabled:
+            return
+
         if self._selection_active and (
                 self._last_selection_render[0] != self._selection_box[0] or self._last_selection_render[1] !=
                 self._selection_box[1]) or force:
@@ -674,6 +686,9 @@ class TextInput(Widget):
 
         :return: None
         """
+        if not self._maxwidth_update:
+            return
+
         sign = 0  # Sign of search
         while True:
             curr_string = self._get_input_string(False)
@@ -767,10 +782,21 @@ class TextInput(Widget):
             cursor_pos = max(0, min(self._maxwidth, cursor_pos))
             self._cursor_position = self._renderbox[0] + cursor_pos
             self._renderbox[2] = cursor_pos
+            self._update_maxlimit_renderbox()
 
         # Text does not have ellipsis, infered position is correct
         else:
             self._cursor_position = cursor_pos
+
+        if self._selection_mouse_first_position == -1:
+            if self._selection_active:
+                self._selection_mouse_first_position = self._cursor_position
+        else:
+            a = self._selection_mouse_first_position
+            b = self._cursor_position
+            self._selection_box[0] = min(a, b)
+            self._selection_box[1] = max(a, b)
+            self._render_selection_box(True)
         self._cursor_render = True
 
     def _check_mouse_collide_input(self, pos):
@@ -1324,7 +1350,6 @@ class TextInput(Widget):
                     # If unwanted escape sequences
                     event_escaped = repr(event.unicode)
                     if '\\x' in event_escaped or '\\r' in event_escaped:
-                        _pygame.event.pump()  # Sync events
                         return False
 
                     # If data is valid
@@ -1363,7 +1388,14 @@ class TextInput(Widget):
                 self._key_is_pressed = False
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                self._selection_active = False
                 self._check_mouse_collide_input(event.pos)
+
+            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONDOWN:
+                if self._selection_active:
+                    self._unselect_text()
+                self._selection_active = True
+                self._selection_mouse_first_position = -1
 
         # Get time clock
         time_clock = self._clock.get_time()
