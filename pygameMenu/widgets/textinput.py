@@ -59,6 +59,7 @@ except ImportError:
         return ''
 
 
+# noinspection PyTypeChecker
 class TextInput(Widget):
     """
     Text input widget.
@@ -187,6 +188,12 @@ class TextInput(Widget):
         self._history_index = 0  # Index at which the new editions are added
         self._max_history = history
 
+        # Text selection
+        self._selection_active = False
+        self._selection_box = [0, 0]  # [from, to]
+        self._selection_render = False
+        self._selection_surface = None  # type: _pygame.SurfaceType
+
         # Other
         self._first_render = True
         self._input_type = input_type
@@ -287,11 +294,21 @@ class TextInput(Widget):
             self._first_render = False
             return
 
-        self._render_cursor()
         self._surface = self._render_underline(string, color, updated_surface)
+
+        self._render_cursor()
+        self._render_selection_box()
 
         # Update last rendered
         self._last_rendered_string = string
+
+    def _render_selection_box(self):
+        """
+        Render selected text.
+
+        :return: None
+        """
+        pass
 
     def _render_string_surface(self, string, color):
         """
@@ -591,9 +608,6 @@ class TextInput(Widget):
 
         :return: None
         """
-
-        # Update limit
-
         sign = 0  # Sign of search
         while True:
             curr_string = self._get_input_string(False)
@@ -783,6 +797,7 @@ class TextInput(Widget):
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
         self._cursor_visible = False
+        self._selection_active = False
         # self._history_index = len(self._history) - 1
 
     def _focus(self):
@@ -792,6 +807,24 @@ class TextInput(Widget):
         self._cursor_ms_counter = 0
         self._cursor_visible = True
         self._cursor_render = True
+
+    def _unselect_text(self):
+        """
+        Unselect text.
+
+        :return: None
+        """
+        self._selection_box[0] = 0
+        self._selection_box[1] = 0
+
+    def _get_selected_text(self):
+        """
+        Return text selected.
+
+        :return: Text
+        :rtype: basestring
+        """
+        return self._input_string[self._selection_box[0]:self._selection_box[1]]
 
     def _update_input_string(self, new_string):
         """
@@ -1002,6 +1035,7 @@ class TextInput(Widget):
                     else:
                         return False
 
+                # Backspace button, delete text from right
                 if event.key == _pygame.K_BACKSPACE:
                     if self._cursor_position == 0:
                         self.sound.play_event_error()
@@ -1019,6 +1053,7 @@ class TextInput(Widget):
                     self._cursor_position = max(self._cursor_position - 1, 0)
                     updated = True
 
+                # Delete button, delete text from left
                 elif event.key == _pygame.K_DELETE:
                     if self._cursor_position == len(self._input_string):
                         self.sound.play_event_error()
@@ -1033,39 +1068,67 @@ class TextInput(Widget):
                     self.change()
                     updated = True
 
+                # Right arrow
                 elif event.key == _pygame.K_RIGHT:
                     if self._cursor_position == len(self._input_string):
                         self.sound.play_event_error()
                     else:
                         self.sound.play_key_add()
                     self._move_cursor_right()
+
+                    # Update selection box
+                    if self._selection_active:
+                        self._selection_box[1] = min(len(self._input_string) - 1, self._selection_box[1] + 1)
+                    else:
+                        self._unselect_text()
                     updated = True
 
+                # Left arrow
                 elif event.key == _pygame.K_LEFT:
                     if self._cursor_position == 0:
                         self.sound.play_event_error()
                     else:
                         self.sound.play_key_add()
                     self._move_cursor_left()
+
+                    # Update selection box
+                    if self._selection_active:
+                        self._selection_box[0] = max(0, self._selection_box[0] - 1)
+                    else:
+                        self._unselect_text()
                     updated = True
 
+                # End
                 elif event.key == _pygame.K_END:
                     self.sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
+                    self._unselect_text()
                     updated = True
 
+                # Home
                 elif event.key == _pygame.K_HOME:
                     self.sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
+                    self._unselect_text()
                     updated = True
 
+                # Enter
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
                     self.sound.play_open_menu()
                     self.apply()
+                    self._unselect_text()
                     updated = True
 
+                # Press lshift, rshift -> selection
+                elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
+                    self._selection_active = True
+                    self._selection_box[0] = self._cursor_position - 1
+                    self._selection_box[1] = self._cursor_position - 1
+                    return False
+
+                # Any other key, add as input
                 elif event.key not in self._ignore_keys:
 
                     # Check input exceeded the limit returns
@@ -1112,6 +1175,10 @@ class TextInput(Widget):
                 # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
+
+                # If selection keys are released, stop selection
+                elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
+                    self._selection_active = False
 
                 # Release inputs
                 self._block_copy_paste = False

@@ -103,6 +103,7 @@ def update_menu_sound(value, enabled):
     :param value: Value of the selector (Label and index)
     :type value: tuple
     :param enabled: Parameter of the selector, (True/False)
+    :type enabled: bool
     :return: None
     """
     global main_menu
