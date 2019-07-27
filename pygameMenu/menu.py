@@ -302,15 +302,6 @@ class Menu(object):
         # FPS of the menu
         self.set_fps(fps)
 
-    def get_position(self):
-        """
-        Return menu position as a tuple.
-
-        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
-        :rtype: tuple
-        """
-        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
-
     def add_option(self, element_name, element, *args, **kwargs):
         """
         Add option (button) to menu.
@@ -682,7 +673,7 @@ class Menu(object):
         return self._enabled
 
     @staticmethod
-    def check_key_pressed_valid(event):
+    def _check_key_pressed_valid(event):
         """
         Checks if the pressed key is valid.
 
@@ -739,7 +730,7 @@ class Menu(object):
                 elif event.type == _pygame.locals.KEYDOWN:
 
                     # Check key event is valid
-                    if not self.check_key_pressed_valid(event):
+                    if not self._check_key_pressed_valid(event):
                         continue
 
                     if event.key == _ctrl.MENU_CTRL_DOWN:
@@ -861,6 +852,15 @@ class Menu(object):
                 data.update(data_submenu)
         return data
 
+    def get_position(self):
+        """
+        Returns menu position as a tuple.
+
+        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
+        :rtype: tuple
+        """
+        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
+
     def get_fps(self):
         """
         Return the frames per second of the menu.
@@ -921,7 +921,7 @@ class Menu(object):
 
     def reset(self, total):
         """
-        Reset menu.
+        Reset the menu.
 
         :param total: How many menus to reset (1: back)
         :type total: int

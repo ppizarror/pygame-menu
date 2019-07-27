@@ -80,7 +80,7 @@ class Sound(object):
         """
         Constructor.
 
-        :param uniquechannel: Force the channel to be unique, this is setted at the moment of creation of the object.
+        :param uniquechannel: Force the channel to be unique, this is setted at the moment of creation of the object
         :type uniquechannel: bool
         :param frequency: Frequency of sounds
         :type frequency: int
@@ -157,7 +157,7 @@ class Sound(object):
         """
         Set a particular sound.
 
-        :param sound: Sound type.
+        :param sound: Sound type
         :type sound: basestring
         :param file: Sound file
         :type file: basestring, NoneType
