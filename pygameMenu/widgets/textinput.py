@@ -370,8 +370,7 @@ class TextInput(Widget):
             self._selection_position[1] = self._rect.y
 
             # Fill cursor
-            if x > 0:
-                self._cursor_surface.fill(self._font_selected_color)
+            self._cursor_surface.fill(self._font_selected_color)
 
     def _render_string_surface(self, string, color):
         """
@@ -651,7 +650,7 @@ class TextInput(Widget):
                     update_maxwidth = False
 
                 # If cursor is at limit
-                if self._renderbox[1] > ls or self._renderbox[0] <= 0:
+                if self._renderbox[1] > ls or self._renderbox[0] < 0:
                     if self._renderbox[2] != self._maxwidth - 1:
                         update_maxwidth = False
 
@@ -704,10 +703,13 @@ class TextInput(Widget):
                     if sign > 0:
                         break
                     sign = -1
-                    self._renderbox[0] += 1
-                    # self._renderbox[1] += 1
+                    if self._renderbox[2] == 0:
+                        self._renderbox[1] -= 1
+                    else:
+                        self._renderbox[0] += 1
+                        # self._renderbox[1] += 1
+                        self._renderbox[2] -= 1
                     self._maxwidth -= 1
-                    self._renderbox[2] -= 1
                 else:
                     break
             else:
@@ -1074,17 +1076,48 @@ class TextInput(Widget):
 
         :return: None
         """
-        print("remove sel")
-        print(self._input_string)
-        new_string = (self._input_string[:self._selection_box[0]]
-                      + self._input_string[self._selection_box[1]:]
-                      )
-        print(new_string)
-        if self._cursor_position == self._selection_box[1]:  # If cursor is at right
-            removed = self._selection_box[1] - self._selection_box[0]
-        else:
-            removed = 0
-            removed_right = self._selection_box[1] - self._selection_box[0]
+        removed = self._selection_box[1] - self._selection_box[0]
+        left = False
+        if self._selection_box[0] == self._cursor_position:
+            left = True
+
+        for i in range(removed):
+            if left:
+                self._backspace()
+            else:
+                self._delete()
+
+        # Destroy selection
+        self._unselect_text()
+
+    def _backspace(self):
+        """
+        Backspace event.
+
+        :return: None
+        """
+        new_string = (
+                self._input_string[:max(self._cursor_position - 1, 0)]
+                + self._input_string[self._cursor_position:]
+        )
+        self._update_input_string(new_string)
+        self._update_renderbox(left=-1, addition=True)
+
+        # Subtract one from cursor_pos, but do not go below zero:
+        self._cursor_position = max(self._cursor_position - 1, 0)
+
+    def _delete(self):
+        """
+        Delete event.
+
+        :return: None
+        """
+        new_string = (
+                self._input_string[:self._cursor_position]
+                + self._input_string[self._cursor_position + 1:]
+        )
+        self._update_input_string(new_string)
+        self._update_renderbox(right=-1, addition=True)
 
     def update(self, events):
         """
@@ -1135,13 +1168,13 @@ class TextInput(Widget):
                         return self._cut()
 
                     elif event.key == _pygame.K_a:
-                        self._selection_active = True
                         self._selection_box[0] = 0
                         self._selection_box[1] = len(self._input_string)
                         self._cursor_position = self._selection_box[1]
                         for i in range(len(self._input_string)):
                             self._move_cursor_right()
                         self._render_selection_box(True)
+                        self._selection_active = False
                         return False
 
                     # Command not found, returns
@@ -1162,16 +1195,8 @@ class TextInput(Widget):
                         self._remove_selection()
                         return True
 
-                    new_string = (
-                            self._input_string[:max(self._cursor_position - 1, 0)]
-                            + self._input_string[self._cursor_position:]
-                    )
-                    self._update_input_string(new_string)
-                    self._update_renderbox(left=-1, addition=True)
+                    self._backspace()
                     self.change()
-
-                    # Subtract one from cursor_pos, but do not go below zero:
-                    self._cursor_position = max(self._cursor_position - 1, 0)
                     updated = True
 
                 # Delete button, delete text from left
@@ -1188,12 +1213,7 @@ class TextInput(Widget):
                         self._remove_selection()
                         return True
 
-                    new_string = (
-                            self._input_string[:self._cursor_position]
-                            + self._input_string[self._cursor_position + 1:]
-                    )
-                    self._update_input_string(new_string)
-                    self._update_renderbox(right=-1, addition=True)
+                    self._delete()
                     self.change()
                     updated = True
 
@@ -1283,14 +1303,14 @@ class TextInput(Widget):
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys:
 
+                    # If selected text
+                    if self._selection_surface:
+                        self._remove_selection()
+
                     # Check input exceeded the limit returns
                     if self._check_input_size():
                         self.sound.play_event_error()
                         break
-
-                    # If selected text
-                    if self._selection_surface:
-                        self._remove_selection()
 
                     # If no special key is pressed, add unicode of key to input_string
                     new_string = (
