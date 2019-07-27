@@ -517,6 +517,8 @@ class Menu(object):
     def _back(self):
         """
         Go to previous menu or close if top menu is currently displayed.
+
+        :return: None
         """
         if self._top._actual._prev is not None:
             self.reset(1)

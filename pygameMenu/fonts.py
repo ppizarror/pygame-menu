@@ -51,7 +51,7 @@ FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')
 
 def get_font(name, size):
     """
-    Return a pygame.Font from a name.
+    Return a pygame.Font from a name or file.
 
     :param name: font name or path
     :param size: font size
