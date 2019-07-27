@@ -569,7 +569,7 @@ class Menu(object):
 
     def disable(self, closelocked=True):
         """
-        Disable menu.
+        Disable the menu.
 
         :return: None
         """
