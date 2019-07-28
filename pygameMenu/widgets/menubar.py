@@ -105,7 +105,7 @@ class MenuBar(Widget):
 
     def get_title(self):
         """
-        Return title of the menu.
+        Return the title of the menu.
 
         :return: Title
         :rtype: basestring

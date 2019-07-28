@@ -86,7 +86,7 @@ class Menu(object):
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
                  title_offsety=0,
-                 widget_alignment=_locals.PYGAME_ALIGN_CENTER
+                 widget_alignment=_locals.ALIGN_CENTER
                  ):
         """
         Menu constructor.
@@ -235,7 +235,6 @@ class Menu(object):
         self._actual = self  # Actual menu
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
-        self._depth = 0  # Depth of menu (used by reset)
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._index = 0  # Selected index
@@ -330,13 +329,13 @@ class Menu(object):
             self._submenus.append(element)
             widget = _widgets.Button(element_name, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _events.PYGAMEMENU_BACK:
+        elif element == _events.BACK:
             # Back to menu
             widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _events.PYGAMEMENU_CLOSE:
+        elif element == _events.CLOSE:
             # Close menu
             widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _events.PYGAMEMENU_EXIT:
+        elif element == _events.EXIT:
             # Exit program
             widget = _widgets.Button(element_name, None, self._exit)
         # If element is a function
@@ -360,8 +359,16 @@ class Menu(object):
 
         return widget
 
-    def add_selector(self, title, values, selector_id='', default=0, align='',
-                     onchange=None, onreturn=None, **kwargs):
+    def add_selector(self,
+                     title,
+                     values,
+                     selector_id='',
+                     default=0,
+                     align='',
+                     onchange=None,
+                     onreturn=None,
+                     **kwargs
+                     ):
         """
         Add a selector to menu: several options with values and two functions
         that execute when changing the selector (left/right) and pressing
@@ -432,9 +439,21 @@ class Menu(object):
 
         return widget
 
-    def add_text_input(self, title, textinput_id='', default='', input_type=_locals.PYGAME_INPUT_TEXT,
-                       input_underline='', maxchar=0, maxwidth=0, align='', enable_selection=True,
-                       onchange=None, onreturn=None, **kwargs):
+    def add_text_input(self,
+                       title,
+                       textinput_id='',
+                       default='',
+                       input_type=_locals.INPUT_TEXT,
+                       input_underline='',
+                       maxchar=0,
+                       maxwidth=0,
+                       align='',
+                       enable_selection=True,
+                       password=False,
+                       onchange=None,
+                       onreturn=None,
+                       **kwargs
+                       ):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -462,6 +481,8 @@ class Menu(object):
         :type align: basestring
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
+        :param password: Text input is a password
+        :type password: bool
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
@@ -490,10 +511,18 @@ class Menu(object):
         assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
 
         # Create widget
-        widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
-                                    maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
-                                    input_underline=input_underline, enable_selection=enable_selection,
-                                    onchange=onchange, onreturn=onreturn, **kwargs)
+        widget = _widgets.TextInput(title,
+                                    default,
+                                    textinput_id=textinput_id,
+                                    maxchar=maxchar,
+                                    maxwidth=maxwidth,
+                                    input_type=input_type,
+                                    input_underline=input_underline,
+                                    enable_selection=enable_selection,
+                                    password=password,
+                                    onchange=onchange,
+                                    onreturn=onreturn,
+                                    **kwargs)
         widget.set_menu(self)
         self._check_id_duplicated(textinput_id)
 
@@ -537,6 +566,24 @@ class Menu(object):
             if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
+    def _get_depth(self):
+        """
+        Find menu depth.
+
+        :return: Depth
+        :rtype: int
+        """
+        if 
+        prev = self._top._actual._prev
+        depth = 0
+        while True:
+            if prev is not None:
+                depth += 1
+            else:
+                break
+            prev = prev._prev
+        return depth
+
     def _close(self, closelocked=True):
         """
         Execute close callbacks and disable the menu.
@@ -552,15 +599,15 @@ class Menu(object):
         else:
             close = True
             a = isinstance(onclose, _events._PymenuAction)
-            b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
+            b = str(type(onclose)) == _events._PYMENUACTION
             if a or b:
-                if onclose == _events.PYGAMEMENU_RESET:
-                    self.reset(self._depth)
-                elif onclose == _events.PYGAMEMENU_BACK:
+                if onclose == _events.RESET:
+                    self.reset(self._get_depth())
+                elif onclose == _events.BACK:
                     self.reset(1)
-                elif onclose == _events.PYGAMEMENU_EXIT:
+                elif onclose == _events.EXIT:
                     self._exit()
-                elif onclose == _events.PYGAMEMENU_DISABLE_CLOSE:
+                elif onclose == _events.DISABLE_CLOSE:
                     close = False
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()
@@ -625,11 +672,11 @@ class Menu(object):
         align = self._option[index].get_alignment()
 
         # Calculate alignment
-        if align == _locals.PYGAME_ALIGN_CENTER:
+        if align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif align == _locals.PYGAME_ALIGN_LEFT:
+        elif align == _locals.ALIGN_LEFT:
             option_dx = -self._width / 2 + self._selected_inflate_x
-        elif align == _locals.PYGAME_ALIGN_RIGHT:
+        elif align == _locals.ALIGN_RIGHT:
             option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
@@ -661,7 +708,7 @@ class Menu(object):
 
     def is_disabled(self):
         """
-        Returns false/true if menu is enabled or not
+        Returns false/true if menu is enabled or not.
 
         :return: True if the menu is disabled
         :rtype: bool
@@ -670,7 +717,7 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Returns true/false if menu is enabled or not
+        Returns true/false if menu is enabled or not.
 
         :return: True if the menu is enabled
         :rtype: bool
@@ -943,7 +990,6 @@ class Menu(object):
                 self._select(0)
                 self._top._actual = prev
                 self._top._actual._prev = None
-                self._depth -= 1
                 i += 1
                 if i == total:
                     break
@@ -962,7 +1008,6 @@ class Menu(object):
         menu._top = self._top
         self._top._actual._actual = menu._actual
         self._top._actual._prev = actual
-        self._depth += 1
         self._select(0)
 
     def _select(self, index):

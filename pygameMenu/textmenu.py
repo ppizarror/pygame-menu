@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 import pygame as _pygame
-
 from pygameMenu.menu import Menu
 import pygameMenu.config_textmenu as _cfg
 import pygameMenu.locals as _locals
@@ -41,7 +40,7 @@ import pygameMenu.locals as _locals
 # noinspection PyProtectedMember
 class TextMenu(Menu):
     """
-    Text menu object.
+    Menu with text lines.
     """
 
     def __init__(self,
@@ -51,7 +50,7 @@ class TextMenu(Menu):
                  font,
                  title,
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
-                 text_align=_locals.PYGAME_ALIGN_LEFT,
+                 text_align=_locals.ALIGN_LEFT,
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
@@ -130,19 +129,7 @@ class TextMenu(Menu):
 
     def add_option(self, element_name, element, *args, **kwargs):
         """
-        Add option (button) to menu.
-
-        kwargs:
-            - align: Widget alignment
-
-        :param element_name: Name of the element
-        :type element_name: basestring
-        :param element: Object
-        :type element: Menu, _PymenuAction, function
-        :param args: Aditional arguments used by a function
-        :param kwargs: Additional keyword arguments
-        :return: Widget object
-        :rtype: pygameMenu.widgets.button.Button
+        See upper class doc.
         """
         if self._size <= 1:
             dy = -0.5 * (self._fsize + self._opt_dy)
@@ -151,9 +138,7 @@ class TextMenu(Menu):
 
     def draw(self):
         """
-        Draw menu on surface.
-
-        :return: None
+        See upper class doc.
         """
         super(TextMenu, self).draw()
 
@@ -164,12 +149,12 @@ class TextMenu(Menu):
             text_width = text.get_size()[0]
 
             # Check text align
-            if self._text_align == _locals.PYGAME_ALIGN_CENTER:
+            if self._text_align == _locals.ALIGN_CENTER:
                 text_dx = -int(self._width * (self._draw_text_region_x / 100.0)) + \
                           self._width / 2 - text_width / 2
-            elif self._text_align == _locals.PYGAME_ALIGN_LEFT:
+            elif self._text_align == _locals.ALIGN_LEFT:
                 text_dx = 0
-            elif self._text_align == _locals.PYGAME_ALIGN_RIGHT:
+            elif self._text_align == _locals.ALIGN_RIGHT:
                 text_dx = -2 * int(self._width * (self._draw_text_region_x / 100.0)) \
                           - text_width + self._width
             else:
@@ -183,23 +168,18 @@ class TextMenu(Menu):
 
     def _get_option_pos(self, index):
         """
-        Get option position from the option index.
-
-        :param index: Option index
-        :type index: int
-        :return: Position (x,y)
-        :rtype: tuple
+        See upper class doc.
         """
         dysum = len(self._text) * (self._font_textsize + self._textdy)
         dysum += 2 * self._textdy + self._font_textsize
 
         rect = self._option[index].get_rect()
-        if self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+        if self._widget_align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif self._widget_align == _locals.PYGAME_ALIGN_CENTER:
-            option_dx = -self._width / 2 + 16
-        elif self._widget_align == _locals.PYGAME_ALIGN_CENTER:
-            option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
+        elif self._widget_align == _locals.ALIGN_CENTER:
+            option_dx = -self._width / 2 + self._selected_inflate_x
+        elif self._widget_align == _locals.ALIGN_CENTER:
+            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
         t_dy = -int(rect.height / 2.0)

@@ -53,9 +53,9 @@ def get_font(name, size):
     """
     Return a pygame.Font from a name or file.
 
-    :param name: font name or path
-    :param size: font size
+    :param name: Font name or path
     :type name: Font or str
+    :param size: Font size
     :type size: int
     :return: Font object
     :rtype: pygame.font.Font

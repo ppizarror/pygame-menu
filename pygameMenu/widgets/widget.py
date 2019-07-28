@@ -72,7 +72,7 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._alignment = _locals.PYGAME_ALIGN_CENTER
+        self._alignment = _locals.ALIGN_CENTER
         self._fps = 0
         self._id = str(widget_id)
         self._last_selected_surface = None  # type: _pygame.SurfaceType
@@ -377,8 +377,8 @@ class Widget(object):
         :return: None
         """
         align = str(align)
-        if align not in [_locals.PYGAME_ALIGN_LEFT, _locals.PYGAME_ALIGN_CENTER,
-                         _locals.PYGAME_ALIGN_RIGHT]:
+        if align not in [_locals.ALIGN_LEFT, _locals.ALIGN_CENTER,
+                         _locals.ALIGN_RIGHT]:
             raise ValueError('Incorrect alignment of the widget')
         self._alignment = align
 
@@ -458,10 +458,10 @@ class Widget(object):
         if color is not None:
             self._shadow_color = color
         if position is not None:
-            if position not in [_locals.PYGAME_POSITION_WEST, _locals.PYGAME_POSITION_SOUTHWEST,
-                                _locals.PYGAME_POSITION_SOUTH, _locals.PYGAME_POSITION_SOUTHEAST,
-                                _locals.PYGAME_POSITION_EAST, _locals.PYGAME_POSITION_NORTH,
-                                _locals.PYGAME_POSITION_NORTHWEST, _locals.PYGAME_POSITION_NORTHEAST]:
+            if position not in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
+                                _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
+                                _locals.POSITION_EAST, _locals.POSITION_NORTH,
+                                _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST]:
                 raise ValueError('Incorrect shadow position of the widget')
             self._shadow_position = position
         if offset is not None:
@@ -513,25 +513,25 @@ class Widget(object):
         """
         x = 0
         y = 0
-        if self._shadow_position == _locals.PYGAME_POSITION_NORTHWEST:
+        if self._shadow_position == _locals.POSITION_NORTHWEST:
             x = -1
             y = -1
-        elif self._shadow_position == _locals.PYGAME_POSITION_NORTH:
+        elif self._shadow_position == _locals.POSITION_NORTH:
             y = -1
-        elif self._shadow_position == _locals.PYGAME_POSITION_NORTHEAST:
+        elif self._shadow_position == _locals.POSITION_NORTHEAST:
             x = 1
             y = -1
-        elif self._shadow_position == _locals.PYGAME_POSITION_EAST:
+        elif self._shadow_position == _locals.POSITION_EAST:
             x = 1
-        elif self._shadow_position == _locals.PYGAME_POSITION_SOUTHEAST:
+        elif self._shadow_position == _locals.POSITION_SOUTHEAST:
             x = 1
             y = 1
-        elif self._shadow_position == _locals.PYGAME_POSITION_SOUTH:
+        elif self._shadow_position == _locals.POSITION_SOUTH:
             y = 1
-        elif self._shadow_position == _locals.PYGAME_POSITION_SOUTHWEST:
+        elif self._shadow_position == _locals.POSITION_SOUTHWEST:
             x = -1
             y = 1
-        elif self._shadow_position == _locals.PYGAME_POSITION_WEST:
+        elif self._shadow_position == _locals.POSITION_WEST:
             x = -1
         self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
 

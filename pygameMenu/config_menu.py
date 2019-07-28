@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygameMenu.locals import PYGAME_POSITION_NORTHWEST as _PYGAME_POSITION_NORTHWEST
+from pygameMenu.locals import POSITION_NORTHWEST as _PYGAME_POSITION_NORTHWEST
 
 MENU_ALPHA = 90  # Alpha of menu color, 0: Opaque, 255: Transparent
 MENU_BGCOLOR = (0, 0, 0)  # Background color of Menu

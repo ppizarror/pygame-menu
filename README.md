@@ -106,14 +106,14 @@ import pygameMenu
     | menu_width | Width of menu (px) | int | MENU_WIDTH |
     | mouse_enabled | Enable mouse support | bool | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
-    | option_margin | Margin of each element in menu(px) | int | MENU_OPTION_MARGIN |
+    | option_margin | Margin of each element in menu (px) | int | MENU_OPTION_MARGIN |
     | option_shadow | Indicate if a shadow is drawn on ech option | bool | MENU_OPTION_SHADOW |
     | option_shadow_offset | Offset of option text shadow | int | MENU_SHADOW_OFFSET |
     | option_shadow_position | Position of shadow | string | MENU_SHADOW_POSITION |
     | rect_width | Border with of rectangle around a seleted item | int | MENU_SELECTED_WIDTH |
     | title_offsetx | Offset x-position of title (px) | int | 0 |
     | title_offsety | Offset y-position of title (px) | int | 0 |
-    | widget_alignment | Default widget alignment | string | PYGAME_ALIGN_CENTER |
+    | widget_alignment | Default widget alignment | string | locals.ALIGN_CENTER |
 
     Check widget alignment and shadow position possible values in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
@@ -130,7 +130,7 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :-: | :--| :--: | :--: |
     | draw_text_region_x | X-Axis drawing region of the text | int | TEXT_DRAW_X |
-    | text_align | Text default alignment | string | PYGAME_ALIGN_LEFT |
+    | text_align | Text default alignment | string | locals.ALIGN_LEFT |
     | text_color | Text color | tuple | TEXT_FONT_COLOR |
     | text_fontsize | Text font size | int | MENU_FONT_TEXT_SIZE |
     | text_margin | Line margin | int | TEXT_MARGIN |
@@ -143,18 +143,18 @@ import pygameMenu
 
     Adds an *option* to the menu (buttons).
 
-    | Param | Description | Type |
-    | :-: | :--| :--: |
-    | element_name | String on menu entry | str |
-    | element | Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu |
-    | *args | Additional arguments | - |
-    | **kwargs | Additional keyword-arguments | - |
+    | Param | Description | Type | Default |
+    | :-: | :-- | :--: | :--: |
+    | element_name | String on menu entry | str | *Required* |
+    | element | Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu | *Required* |
+    | *args | Additional arguments | - | - |
+    | **kwargs | Additional keyword-arguments | - | - |
 
     Additional keyword arguments:
 
-    | Param | Description | Type |
-    | :-: | :--| :--: |
-    | align | Button alignment | str |
+    | Param | Description | Type | Default |
+    | :-: | :--| :--: | :--: |
+    | align | Button alignment | str | locals.ALIGN_CENTER |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
@@ -165,8 +165,8 @@ import pygameMenu
         pass
 
     help_menu = pygameMenu.TextMenu(surface, window...)
-    help_menu.add_option('Simple button', fun, align=pygameMenu.locals.PYGAME_ALIGN_LEFT)
-    help_menu.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
+    help_menu.add_option('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
+    help_menu.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
 
     Another example:
@@ -176,23 +176,23 @@ import pygameMenu
     menu.add_option(timer_menu.get_title(), timer_menu)         # Add timer submenu
     menu.add_option(help_menu.get_title(), help_menu)           # Add help submenu
     menu.add_option(about_menu.get_title(), about_menu)         # Add about submenu
-    menu.add_option('Exit', pygameMenu.events.PYGAME_MENU_EXIT) # Add exit function
+    menu.add_option('Exit', pygameMenu.events.MENU_EXIT) # Add exit function
     ```
 
 - *add_selector(title, values, selector_id, default, align, onchange, onreturn, \*\*kwargs)*
 
     Add a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
-    | Param | Description | Type |
-    | :-: | :-- | :--: |
-    | title | String on menu entry | str |
-    | values | Value list, list of tuples | list |
-    | selector_id | Selector identification | str |
-    | default | Default index of the displayed option | int |
-    | align | Widget alignment | str |
-    | onchange | Function that executes when change the value of selector | function |
-    | onreturn | Function that executes when pressing return button on selected item | function |
-    | **kwargs | Additional arguments | - |
+    | Param | Description | Type | Default |
+    | :-: | :-- | :--: | :--: |
+    | title | String on menu entry | str | *Required* |
+    | values | Value list, list of tuples | list | *Required* |
+    | selector_id | Selector identification | str | '' |
+    | default | Default index of the displayed option | int | 0 |
+    | align | Widget alignment | str | locals.ALIGN_CENTER |
+    | onchange | Function that executes when change the value of selector | function | None |
+    | onreturn | Function that executes when pressing return button on selected item | function | None |
+    | **kwargs | Additional arguments | - | - |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
@@ -233,28 +233,29 @@ import pygameMenu
                             )
 
     timer_menu.add_option('Reset timer', reset_timer)
-    timer_menu.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
-    timer_menu.add_option('Close Menu', pygameMenu.events.PYGAME_MENU_CLOSE)
+    timer_menu.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
+    timer_menu.add_option('Close Menu', pygameMenu.events.MENU_CLOSE)
     ```
 
 - *add_text_input(title, textinput_id, default, input_type, input_underline, maxchar, maxwidth, align, enable_selection, onchange, onreturn, \*\*kwargs)*
 
     Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
 
-    | Param | Description | Type |
-    | :-: | :-- | :--: |
-    | title | Label string on menu entry | str |
-    | textinput_id | Text input identificator | str |
-    | default | Default value to display | str |
-    | input_type | Data type of the input | str |
-    | input_underline | Char underline of the input | str |
-    | maxchar | Maximum length of string, if 0 there's no limit | int |
-    | maxwidth | Maximum size of the text widget, if 0 there's no limit | int |
-    | align | Text input alignment | str |
+    | Param | Description | Type | Default |
+    | :-: | :-- | :--: | :--: |
+    | title | Label string on menu entry | str | *Required* |
+    | textinput_id | Text input identificator | str | '' |
+    | default | Default value to display | str | '' |
+    | input_type | Data type of the input | str | locals.INPUT_TEST |
+    | input_underline | Char underline of the input | str | '' |
+    | maxchar | Maximum length of string, if 0 there's no limit | int | 0 |
+    | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
+    | align | Text input alignment | str | locals.ALIGN_CENTER |
     | enable_selection | Enables text selection | bool |
-    | onchange | Function that executes when change the value of text input | function |
-    | onreturn | Function that executes when pressing return button | function |
-    | **kwargs | Additional arguments | - |
+    | password | Input is displayed as a password | bool | False |
+    | onchange | Function that executes when change the value of text input | function | None |
+    | onreturn | Function that executes when pressing return button | function | None |
+    | **kwargs | Additional arguments | - | - |
 
     Check possible alignment or data type in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
@@ -276,7 +277,7 @@ import pygameMenu
     settings_menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
     settings_menu.add_text_input('Some long text: ', maxwidth=15)
 
-    settings_menu.add_option('Return to main menu', pygameMenu.events.PYGAME_MENU_BACK)
+    settings_menu.add_option('Return to main menu', pygameMenu.events.MENU_BACK)
     ```
 
 - *add_line(text)*
@@ -296,7 +297,7 @@ import pygameMenu
         menu_help.add_line(line) # Add line
     ...
 
-    menu_help.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
+    menu_help.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
 
 - *disable(closelocked)*
@@ -442,11 +443,11 @@ import pygameMenu
 
 | Event | Description |
 | :-: | :-- |
-| PYGAME_MENU_BACK | Go back on menu|
-| PYGAME_MENU_CLOSE | Close menu|
-| PYGAME_MENU_DISABLE_CLOSE | Disable close menu|
-| PYGAME_MENU_EXIT | Close application
-| PYGAME_MENU_RESET | Reset menu |
+| MENU_BACK | Go back on menu|
+| MENU_CLOSE | Close menu|
+| MENU_DISABLE_CLOSE | Disable close menu|
+| MENU_EXIT | Close application
+| MENU_RESET | Reset menu |
 
 This events must be imported from *pygameMenu.events*.
 
@@ -528,26 +529,26 @@ The different configuration values must be loaded from *pygameMenu.locals*.
 
 #### Alignment
 
-- PYGAME_ALIGN_CENTER
-- PYGAME_ALIGN_LEFT
-- PYGAME_ALIGN_RIGHT
+- ALIGN_CENTER
+- ALIGN_LEFT
+- ALIGN_RIGHT
 
 #### Data type
 
-- PYGAME_INPUT_FLOAT
-- PYGAME_INPUT_INT
-- PYGAME_INPUT_TEXT
+- INPUT_FLOAT
+- INPUT_INT
+- INPUT_TEXT
 
 #### Shadow position
 
-- PYGAME_POSITION_NORTHWEST
-- PYGAME_POSITION_NORTH
-- PYGAME_POSITION_NORTHEAST
-- PYGAME_POSITION_EAST
-- PYGAME_POSITION_SOUTHEAST
-- PYGAME_POSITION_SOUTH
-- PYGAME_POSITION_SOUTHWEST
-- PYGAME_POSITION_WEST
+- POSITION_NORTHWEST
+- POSITION_NORTH
+- POSITION_NORTHEAST
+- POSITION_EAST
+- POSITION_SOUTHEAST
+- POSITION_SOUTH
+- POSITION_SOUTHWEST
+- POSITION_WEST
 
 ### Using fonts
 

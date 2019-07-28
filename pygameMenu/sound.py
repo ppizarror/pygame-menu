@@ -59,20 +59,20 @@ SOUND_TYPE_KEY_DELETION = '__pygameMenu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygameMenu_sound_open_menu__'
 
 # Sound examples
-PYGAMEMENU_SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click_mouse')
-PYGAMEMENU_SOUND_EXAMPLE_CLOSE_MENU = __sounddir.format(__actualpath, 'close_menu')
-PYGAMEMENU_SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
-PYGAMEMENU_SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
-PYGAMEMENU_SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event_error')
-PYGAMEMENU_SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key_add')
-PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_delete')
-PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
+_SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click_mouse')
+_SOUND_EXAMPLE_CLOSE_MENU = __sounddir.format(__actualpath, 'close_menu')
+_SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
+_SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
+_SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event_error')
+_SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key_add')
+_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_delete')
+_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 
 
 # noinspection PyTypeChecker
 class Sound(object):
     """
-    Sound class.
+    Sound engine class.
     """
 
     def __init__(self, uniquechannel=True, frequency=22050, size=-16, channels=2, buffer=4096, devicename=None,
@@ -227,14 +227,14 @@ class Sound(object):
         """
         # Must be in the same order of types
         examples = [
-            PYGAMEMENU_SOUND_EXAMPLE_CLICK_MOUSE,
-            PYGAMEMENU_SOUND_EXAMPLE_CLOSE_MENU,
-            PYGAMEMENU_SOUND_EXAMPLE_ERROR,
-            PYGAMEMENU_SOUND_EXAMPLE_EVENT,
-            PYGAMEMENU_SOUND_EXAMPLE_EVENT_ERROR,
-            PYGAMEMENU_SOUND_EXAMPLE_KEY_ADDITION,
-            PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION,
-            PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU
+            _SOUND_EXAMPLE_CLICK_MOUSE,
+            _SOUND_EXAMPLE_CLOSE_MENU,
+            _SOUND_EXAMPLE_ERROR,
+            _SOUND_EXAMPLE_EVENT,
+            _SOUND_EXAMPLE_EVENT_ERROR,
+            _SOUND_EXAMPLE_KEY_ADDITION,
+            _SOUND_EXAMPLE_KEY_DELETION,
+            _SOUND_EXAMPLE_OPEN_MENU
         ]
         for sound in range(len(self._type_sounds)):
             self.set_sound(self._type_sounds[sound], examples[sound], volume=volume)

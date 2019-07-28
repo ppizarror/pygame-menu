@@ -30,9 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Other
-PYGAMEMENU_TEXT_NEWLINE = ''  # Text newline on TextMenu object
-
 # Joypad
 JOY_AXIS_X = 0
 JOY_AXIS_Y = 1
@@ -46,21 +43,24 @@ JOY_RIGHT = (1, 0)
 JOY_UP = (0, 1)
 
 # Alignment
-PYGAME_ALIGN_CENTER = '__pygameMenu_align_center__'
-PYGAME_ALIGN_LEFT = '__pygameMenu_align_left__'
-PYGAME_ALIGN_RIGHT = '__pygameMenu_align_right__'
+ALIGN_CENTER = '__pygameMenu_align_center__'
+ALIGN_LEFT = '__pygameMenu_align_left__'
+ALIGN_RIGHT = '__pygameMenu_align_right__'
 
 # Input data type
-PYGAME_INPUT_FLOAT = '__pygameMenu_input_float__'
-PYGAME_INPUT_INT = '__pygameMenu_input_int__'
-PYGAME_INPUT_TEXT = '__pygameMenu_input_text__'
+INPUT_FLOAT = '__pygameMenu_input_float__'
+INPUT_INT = '__pygameMenu_input_int__'
+INPUT_TEXT = '__pygameMenu_input_text__'
 
 # Position
-PYGAME_POSITION_NORTHWEST = '__pygameMenu_position_northwest__'
-PYGAME_POSITION_NORTH = '__pygameMenu_position_north__'
-PYGAME_POSITION_NORTHEAST = '__pygameMenu_position_northeast__'
-PYGAME_POSITION_EAST = '__pygameMenu_position_east__'
-PYGAME_POSITION_SOUTHEAST = '__pygameMenu_position_southeast__'
-PYGAME_POSITION_SOUTH = '__pygameMenu_position_south__'
-PYGAME_POSITION_SOUTHWEST = '__pygameMenu_position_southwest__'
-PYGAME_POSITION_WEST = '__pygameMenu_position_west__'
+POSITION_NORTHWEST = '__pygameMenu_position_northwest__'
+POSITION_NORTH = '__pygameMenu_position_north__'
+POSITION_NORTHEAST = '__pygameMenu_position_northeast__'
+POSITION_EAST = '__pygameMenu_position_east__'
+POSITION_SOUTHEAST = '__pygameMenu_position_southeast__'
+POSITION_SOUTH = '__pygameMenu_position_south__'
+POSITION_SOUTHWEST = '__pygameMenu_position_southwest__'
+POSITION_WEST = '__pygameMenu_position_west__'
+
+# Other
+TEXT_NEWLINE = ''  # Text newline on TextMenu object
