@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 import pygame as _pygame
-
 from pygameMenu.menu import Menu
 import pygameMenu.config_textmenu as _cfg
 import pygameMenu.locals as _locals
@@ -41,7 +40,7 @@ import pygameMenu.locals as _locals
 # noinspection PyProtectedMember
 class TextMenu(Menu):
     """
-    Text menu object.
+    Menu with text lines.
     """
 
     def __init__(self,
@@ -130,19 +129,7 @@ class TextMenu(Menu):
 
     def add_option(self, element_name, element, *args, **kwargs):
         """
-        Add option (button) to menu.
-
-        kwargs:
-            - align: Widget alignment
-
-        :param element_name: Name of the element
-        :type element_name: basestring
-        :param element: Object
-        :type element: Menu, _PymenuAction, function
-        :param args: Aditional arguments used by a function
-        :param kwargs: Additional keyword arguments
-        :return: Widget object
-        :rtype: pygameMenu.widgets.button.Button
+        See upper class doc.
         """
         if self._size <= 1:
             dy = -0.5 * (self._fsize + self._opt_dy)

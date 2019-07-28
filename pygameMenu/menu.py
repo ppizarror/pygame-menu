@@ -235,7 +235,6 @@ class Menu(object):
         self._actual = self  # Actual menu
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
-        self._depth = 0  # Depth of menu (used by reset)
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._index = 0  # Selected index
@@ -567,6 +566,23 @@ class Menu(object):
             if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
+    def _get_depth(self):
+        """
+        Find menu depth.
+
+        :return: Depth
+        :rtype: int
+        """
+        prev = self._top._actual._prev
+        depth = 0
+        while True:
+            if prev is not None:
+                depth += 1
+            else:
+                break
+            prev = prev._prev
+        return depth
+
     def _close(self, closelocked=True):
         """
         Execute close callbacks and disable the menu.
@@ -585,7 +601,7 @@ class Menu(object):
             b = str(type(onclose)) == _events._PYMENUACTION
             if a or b:
                 if onclose == _events.RESET:
-                    self.reset(self._depth)
+                    self.reset(self._get_depth())
                 elif onclose == _events.BACK:
                     self.reset(1)
                 elif onclose == _events.EXIT:
@@ -973,7 +989,6 @@ class Menu(object):
                 self._select(0)
                 self._top._actual = prev
                 self._top._actual._prev = None
-                self._depth -= 1
                 i += 1
                 if i == total:
                     break
@@ -992,7 +1007,6 @@ class Menu(object):
         menu._top = self._top
         self._top._actual._actual = menu._actual
         self._top._actual._prev = actual
-        self._depth += 1
         self._select(0)
 
     def _select(self, index):

@@ -72,7 +72,7 @@ _SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 # noinspection PyTypeChecker
 class Sound(object):
     """
-    Sound class.
+    Sound engine class.
     """
 
     def __init__(self, uniquechannel=True, frequency=22050, size=-16, channels=2, buffer=4096, devicename=None,

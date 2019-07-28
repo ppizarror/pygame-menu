@@ -149,10 +149,27 @@ timer_menu = pygameMenu.Menu(surface,
                              window_height=H_SIZE,
                              window_width=W_SIZE
                              )
-timer_menu.add_option('Reset timer', reset_timer)
 
-# Adds a selector (element that can handle functions)
-timer_menu.add_selector('Change bgcolor',
+timer_submenu = pygameMenu.Menu(surface,
+                                dopause=False,
+                                font=pygameMenu.fonts.FONT_OPEN_SANS,
+                                menu_alpha=50,
+                                menu_color=(0, 0, 0),  # Background color
+                                menu_color_title=(0, 0, 0),
+                                menu_height=int(H_SIZE * 0.5),
+                                menu_width=600,
+                                onclose=pygameMenu.events.DISABLE_CLOSE,
+                                option_shadow=True,
+                                rect_width=4,
+                                title='Timer Menu',
+                                title_offsety=5,  # Adds 5px to title vertical position
+                                window_height=H_SIZE,
+                                window_width=W_SIZE
+                                )
+
+# Add options
+timer_menu.add_option('Reset timer', reset_timer)
+timer_menu.add_selector('Change bgcolor',  # Adds a selector (element that can handle functions)
                         # Values of selector, call to change_color_bg
                         [('Random', (-1, -1, -1)),
                          ('Default', (128, 0, 128)),
