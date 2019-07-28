@@ -235,11 +235,12 @@ class Menu(object):
         self._actual = self  # Actual menu
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
+        self._depth = 0
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
-        self._index = 0  # Selected index
         self._fps = 0
         self._frame = 0
+        self._index = 0  # Selected index
         self._onclose = onclose  # Function that calls after closing menu
         self._size = 0  # Menu total elements
         self._sounds = _Sound()
@@ -549,6 +550,7 @@ class Menu(object):
 
         :return: None
         """
+        self._check_menu_initialized()
         if self._top._actual._prev is not None:
             self.reset(1)
         else:
@@ -573,16 +575,7 @@ class Menu(object):
         :return: Depth
         :rtype: int
         """
-        if 
-        prev = self._top._actual._prev
-        depth = 0
-        while True:
-            if prev is not None:
-                depth += 1
-            else:
-                break
-            prev = prev._prev
-        return depth
+        return self._top._depth
 
     def _close(self, closelocked=True):
         """
@@ -593,6 +586,7 @@ class Menu(object):
         :return: True if menu has been disabled
         :rtype: bool
         """
+        self._check_menu_initialized()
         onclose = self._top._actual._onclose
         if onclose is None:
             close = False
@@ -602,7 +596,7 @@ class Menu(object):
             b = str(type(onclose)) == _events._PYMENUACTION
             if a or b:
                 if onclose == _events.RESET:
-                    self.reset(self._get_depth())
+                    self.full_reset()
                 elif onclose == _events.BACK:
                     self.reset(1)
                 elif onclose == _events.EXIT:
@@ -832,6 +826,15 @@ class Menu(object):
 
         return break_mainloop
 
+    def _check_menu_initialized(self):
+        """
+        Check menu initialization.
+
+        :return: None
+        """
+        if self._top is None:
+            raise Exception('The menu has not been initialized yet, try using mainloop function')
+
     def mainloop(self, events=None):
         """
         Main function of menu.
@@ -962,14 +965,27 @@ class Menu(object):
             for menu in self._submenus:
                 menu.set_sound(sound, recursive=True)
 
-    def get_title(self):
+    def get_title(self, current=False):
         """
         Return title of the menu.
 
+        :param current: Get the current title of the menu object (if a submenu has been opened)
+        :type current: bool
         :return: Title
         :rtype: basestring
         """
-        return self._menubar.get_title()
+        if current:
+            return self._actual._menubar.get_title()
+        else:
+            return self._menubar.get_title()
+
+    def full_reset(self):
+        """
+        Reset to the first menu.
+
+        :return: None
+        """
+        self.reset(self._get_depth())
 
     def reset(self, total):
         """
@@ -979,6 +995,7 @@ class Menu(object):
         :type total: int
         :return: None
         """
+        self._check_menu_initialized()
         assert isinstance(self._top._actual, Menu)
         assert isinstance(total, int), 'total must be an integer'
         assert total > 0, 'total must be greater than zero'
@@ -986,6 +1003,7 @@ class Menu(object):
         i = 0
         while True:
             if self._top._actual._prev is not None:
+                self._top._depth = max(0, self._top._depth - 1)
                 prev = self._top._actual._prev
                 self._select(0)
                 self._top._actual = prev
@@ -1004,8 +1022,11 @@ class Menu(object):
         :type menu: Menu, TextMenu
         :return: None
         """
+        self._check_menu_initialized()
         actual = self
+        self._top._depth += 1
         menu._top = self._top
+        menu._depth = self._top._depth
         self._top._actual._actual = menu._actual
         self._top._actual._prev = actual
         self._select(0)
@@ -1018,6 +1039,7 @@ class Menu(object):
         :type index: int
         :return: None
         """
+        self._check_menu_initialized()
         actual = self._top._actual
         if actual._size == 0:
             return
