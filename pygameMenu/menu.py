@@ -573,6 +573,7 @@ class Menu(object):
         :return: Depth
         :rtype: int
         """
+        if 
         prev = self._top._actual._prev
         depth = 0
         while True:
