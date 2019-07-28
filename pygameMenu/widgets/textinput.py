@@ -1067,7 +1067,7 @@ class TextInput(Widget):
         # Cut string (if limit exists)
         text_end = len(text)
         if self._maxchar != 0:
-            char_limit = self._maxchar - len(self._input_string) + 1
+            char_limit = self._maxchar - len(self._input_string)
             text_end = min(char_limit, text_end)
             if text_end <= 0:  # If there's not more space, returns
                 self.sound.play_event_error()
