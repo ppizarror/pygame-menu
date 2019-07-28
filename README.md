@@ -327,6 +327,15 @@ import pygameMenu
     menu.enable()
     ```
 
+- *full_reset()*
+
+    Reset the menu back to the origin.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.full_reset()
+    ```
+
 - *get_fps()*
 
     Get the current frames per second of the Menu.
