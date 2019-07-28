@@ -79,6 +79,8 @@ class TextInput(Widget):
                  maxwidth_dynamically_update=True,
                  onchange=None,
                  onreturn=None,
+                 password=False,
+                 password_char='*',
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=40,
                  repeat_mouse_interval_ms=100,
@@ -115,6 +117,10 @@ class TextInput(Widget):
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
         :type onreturn: function, NoneType
+        :param password: Input string is displayed as a pasword
+        :type password: bool
+        :param password_char: Character used by password type
+        :type password_char: basestring
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :type repeat_keys_initial_ms: float, int
         :param repeat_keys_interval_ms: Interval between key press repetition when held
@@ -136,17 +142,21 @@ class TextInput(Widget):
         assert isinstance(history, int)
         assert isinstance(maxchar, int)
         assert isinstance(maxwidth, int)
+        assert isinstance(password, bool)
+        assert isinstance(password_char, str)
         assert isinstance(repeat_keys_initial_ms, int)
         assert isinstance(repeat_keys_interval_ms, int)
         assert isinstance(repeat_mouse_interval_ms, int)
         assert isinstance(text_ellipsis, str)
 
+        if history < 0:
+            raise ValueError('history must be equal or greater than zero')
         if maxchar < 0:
             raise ValueError('maxchar must be equal or greater than zero')
         if maxwidth < 0:
             raise ValueError('maxwidth must be equal or greater than zero')
-        if history < 0:
-            raise ValueError('history must be equal or greater than zero')
+        if len(password_char) != 1:
+            raise ValueError('password_char must be a character')
 
         super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
                                         onreturn=onreturn, kwargs=kwargs)
@@ -223,6 +233,8 @@ class TextInput(Widget):
         self._maxwidth_base = maxwidth
         self._maxwidth_update = maxwidth_dynamically_update
         self._maxwidthsize = 0  # Updated in font
+        self._password = password
+        self._password_char = password_char
 
         # Set default value
         if self._check_input_type(default):
@@ -246,6 +258,14 @@ class TextInput(Widget):
 
         # Size of maxwidth if not zero
         self._maxwidthsize = self.font_render_string('O' * self._maxwidth_base).get_size()[0]
+
+        # Update password char size
+        if self._password:
+            password_size = self.font_render_string(self._password_char).get_size()[0]
+            if password_size == 0:
+                raise ValueError(
+                    'Password character is not valid, the size of the font is zero, use another character or change the font')
+            self._keychar_size[self._password_char] = password_size
 
     def clear(self):
         """
@@ -345,11 +365,12 @@ class TextInput(Widget):
                 pos[1] = min(self._selection_box[1], self._renderbox[1])
 
             # Find coordinates of each position
-            sstring_init = self._input_string[self._renderbox[0]:pos[0]]
-            sstring_final = self._input_string[self._renderbox[0]:pos[1]]
+            string = self._get_input_string_filtered()
+            string_init = string[self._renderbox[0]:pos[0]]
+            string_final = string[self._renderbox[0]:pos[1]]
 
-            x1 = self._cursor_offset + self._font.size(self._label + sstring_init)[0]
-            x2 = self._cursor_offset + self._font.size(self._label + sstring_final)[0] - 1
+            x1 = self._cursor_offset + self._font.size(self._label + string_init)[0]
+            x2 = self._cursor_offset + self._font.size(self._label + string_final)[0] - 1
 
             self._last_selection_render[0] = self._selection_box[0]
             self._last_selection_render[1] = self._selection_box[1]
@@ -480,14 +501,16 @@ class TextInput(Widget):
             self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
             self._cursor_surface.fill(self._cursor_color)
 
+        # Get string
+        string = self._get_input_string_filtered()
+
         # Calculate x position
         if self._maxwidth == 0:  # If no limit is provided
             cursor_x_pos = self._cursor_offset + \
-                           self._font.size(self._label + self._input_string[:self._cursor_position])[0]
+                           self._font.size(self._label + string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
-            sstring = self._input_string
-            sstring = sstring[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
-            cursor_x_pos = self._cursor_offset + self._font.size(self._label + sstring)[0]
+            string = string[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
+            cursor_x_pos = self._cursor_offset + self._font.size(self._label + string)[0]
 
             # Add ellipsis
             delta = self._ellipsis_size
@@ -542,6 +565,21 @@ class TextInput(Widget):
         """
         return self._ellipsis_left() and self._ellipsis_right()
 
+    def _get_input_string_filtered(self):
+        """
+        Returns input string where all filters have been applied.
+
+        :return: String
+        :rtype: basestring
+        """
+        string = self._input_string
+
+        # Apply password
+        if self._password:
+            string = self._password_char * len(string)
+
+        return string
+
     def _get_input_string(self, add_ellipsis=True):
         """
         Return input string, apply overflow if enabled.
@@ -551,8 +589,10 @@ class TextInput(Widget):
         :return: String
         :rtype: basestring
         """
-        if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
-            text = self._input_string[self._renderbox[0]:self._renderbox[1]]
+        string = self._get_input_string_filtered()
+
+        if self._maxwidth != 0 and len(string) > self._maxwidth:
+            text = string[self._renderbox[0]:self._renderbox[1]]
             if add_ellipsis:
                 if self._ellipsis_right():
                     text += self._ellipsis
@@ -560,7 +600,7 @@ class TextInput(Widget):
                     text = self._ellipsis + text
             return text
         else:
-            return self._input_string
+            return string
 
     def _update_renderbox(self, left=0, right=0, addition=False, end=False, start=False, update_maxwidth=True):
         """
@@ -689,7 +729,7 @@ class TextInput(Widget):
 
         sign = 0  # Sign of search
         while True:
-            curr_string = self._get_input_string(False)
+            curr_string = self._get_input_string(False)  # Already filtered
             lcs = len(curr_string)
             if lcs > 0:
                 accum_size = 0
@@ -970,6 +1010,8 @@ class TextInput(Widget):
         """
         if self._block_copy_paste:  # Prevents multiple executions of event
             return False
+        if self._password:  # Password cannot be copied
+            return False
 
         if self._selection_surface:  # If text is selected
             copy(self._get_selected_text())
@@ -985,7 +1027,7 @@ class TextInput(Widget):
 
         :return:
         """
-        self._copy()
+        self._copy()  # This is a safe operation, all checks have been passed
 
         # If text is selected
         if self._selection_surface:

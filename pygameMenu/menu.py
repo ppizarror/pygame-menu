@@ -434,7 +434,7 @@ class Menu(object):
 
     def add_text_input(self, title, textinput_id='', default='', input_type=_locals.PYGAME_INPUT_TEXT,
                        input_underline='', maxchar=0, maxwidth=0, align='', enable_selection=True,
-                       onchange=None, onreturn=None, **kwargs):
+                       password=False, onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -462,6 +462,8 @@ class Menu(object):
         :type align: basestring
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
+        :param password: Text input is a password
+        :type password: bool
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
@@ -490,10 +492,18 @@ class Menu(object):
         assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
 
         # Create widget
-        widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
-                                    maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
-                                    input_underline=input_underline, enable_selection=enable_selection,
-                                    onchange=onchange, onreturn=onreturn, **kwargs)
+        widget = _widgets.TextInput(title,
+                                    default,
+                                    textinput_id=textinput_id,
+                                    maxchar=maxchar,
+                                    maxwidth=maxwidth,
+                                    input_type=input_type,
+                                    input_underline=input_underline,
+                                    enable_selection=enable_selection,
+                                    password=password,
+                                    onchange=onchange,
+                                    onreturn=onreturn,
+                                    **kwargs)
         widget.set_menu(self)
         self._check_id_duplicated(textinput_id)
 
