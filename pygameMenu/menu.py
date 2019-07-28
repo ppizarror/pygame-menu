@@ -39,16 +39,14 @@ import pygameMenu.fonts as _fonts
 import pygameMenu.locals as _locals
 
 # Library imports
+from sys import exit
 import pygameMenu.widgets as _widgets
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
 
-# exit program
-from sys import exit
 
-
-# noinspection PyBroadException,PyProtectedMember,PyArgumentEqualDefault
+# noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker,PyUnresolvedReferences
 class Menu(object):
     """
     Menu object.
@@ -237,19 +235,27 @@ class Menu(object):
         self._actual = self  # Actual menu
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
+        self._depth = 0  # Depth of menu (used by reset)
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._index = 0  # Selected index
         self._fps = 0
+        self._frame = 0
         self._onclose = onclose  # Function that calls after closing menu
-        self._option = []  # Option menu
-        self._prev = None  # Previous menu
-        self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
         self._sounds = _Sound()
-        self._submenus = []  # List of all linked menus
-        self._top = None  # Top level menu
-        self.set_fps(fps)  # FPS of the menu
+
+        # Menu widgets
+        self._option = []  # type: list[_widgets.WidgetType]
+
+        # Previous menu
+        self._prev = None  # type: Menu
+
+        # Top level menu
+        self._top = None  # type: Menu
+
+        # List of all linked menus
+        self._submenus = []  # type: list[Menu]
 
         # Load fonts
         self._font = _fonts.get_font(font, self._fsize)
@@ -288,6 +294,13 @@ class Menu(object):
         self._menubar.set_font(font_title, font_size_title,
                                bg_color_title, self._font_color)
         self._menubar.set_controls(self._joystick, self._mouse)
+
+        # Selected option
+        self._selected_inflate_x = 16
+        self._selected_inflate_y = 5
+
+        # FPS of the menu
+        self.set_fps(fps)
 
     def add_option(self, element_name, element, *args, **kwargs):
         """
@@ -419,9 +432,9 @@ class Menu(object):
 
         return widget
 
-    def add_text_input(self, title, textinput_id='', default='',
-                       input_type=_locals.PYGAME_INPUT_TEXT, maxchar=0, maxwidth=0,
-                       align='', onchange=None, onreturn=None, **kwargs):
+    def add_text_input(self, title, textinput_id='', default='', input_type=_locals.PYGAME_INPUT_TEXT,
+                       input_underline='', maxchar=0, maxwidth=0, align='',
+                       onchange=None, onreturn=None, **kwargs):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -439,6 +452,8 @@ class Menu(object):
         :type default: basestring, int, float
         :param input_type: Data type of the input
         :type input_type: basestring
+        :param input_underline: Underline character
+        :type input_underline: basestring
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
@@ -463,6 +478,7 @@ class Menu(object):
         # Check data
         assert isinstance(textinput_id, str), 'id must be a string'
         assert isinstance(input_type, str), 'input_type must be a string'
+        assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(align, str), 'align must be a string'
 
         assert isinstance(maxchar, int), 'maxchar must be integer'
@@ -473,7 +489,9 @@ class Menu(object):
         # Create widget
         widget = _widgets.TextInput(title, default, textinput_id=textinput_id,
                                     maxchar=maxchar, maxwidth=maxwidth, input_type=input_type,
+                                    input_underline=input_underline,
                                     onchange=onchange, onreturn=onreturn, **kwargs)
+        widget.set_menu(self)
         self._check_id_duplicated(textinput_id)
 
         # Configure widget
@@ -510,8 +528,8 @@ class Menu(object):
         :type widget_id: basestring
         :return: Exception if ID is duplicated
         """
-        for i in self._option:
-            if i.get_id() == widget_id:
+        for widget in self._option:
+            if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self, closelocked=True):
@@ -532,7 +550,7 @@ class Menu(object):
             b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
             if a or b:
                 if onclose == _events.PYGAMEMENU_RESET:
-                    self.reset(100)
+                    self.reset(self._depth)
                 elif onclose == _events.PYGAMEMENU_BACK:
                     self.reset(1)
                 elif onclose == _events.PYGAMEMENU_EXIT:
@@ -562,6 +580,8 @@ class Menu(object):
 
         :return: None
         """
+        self._frame += 1
+
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._bgrect, self._bgcolor)
 
@@ -569,7 +589,7 @@ class Menu(object):
         self._menubar.set_position(self._posx, self._posy)
         self._menubar.draw(self._surface)
 
-        # Draw options
+        # Draw options (widgets)
         for index in range(len(self._option)):
             widget = self._option[index]
 
@@ -581,8 +601,11 @@ class Menu(object):
 
             # If selected item then draw a rectangle
             if self._drawselrect and widget.selected:
-                rect = widget.get_rect()
-                _pygame.draw.rect(self._surface, self._sel_color, rect.inflate(16, 4), self._rect_width)
+                widget.draw_selected_rect(self._surface,
+                                          self._sel_color,
+                                          self._selected_inflate_x,
+                                          self._selected_inflate_y,
+                                          self._rect_width)
 
     def _get_option_pos(self, index):
         """
@@ -590,7 +613,8 @@ class Menu(object):
 
         :param index: Option index
         :type index: int
-        :return: None
+        :return: Position (x,y)
+        :rtype: tuple
         """
         rect = self._option[index].get_rect()
         align = self._option[index].get_alignment()
@@ -599,9 +623,9 @@ class Menu(object):
         if align == _locals.PYGAME_ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif align == _locals.PYGAME_ALIGN_LEFT:
-            option_dx = -self._width / 2 + 16  # +constant to deal with inflate
+            option_dx = -self._width / 2 + self._selected_inflate_x
         elif align == _locals.PYGAME_ALIGN_RIGHT:
-            option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
+            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
@@ -612,7 +636,7 @@ class Menu(object):
 
     def enable(self):
         """
-        Enable menu.
+        Enables the menu.
 
         :return: None
         """
@@ -625,7 +649,7 @@ class Menu(object):
         """
         Internal exit function.
 
-        :return:
+        :return: None
         """
         _pygame.quit()
         exit()
@@ -648,14 +672,35 @@ class Menu(object):
         """
         return self._enabled
 
+    @staticmethod
+    def _check_key_pressed_valid(event):
+        """
+        Checks if the pressed key is valid.
+
+        :param event: Key press event
+        :type event: pygame.event.EventType
+        :return: True if any key is pressed
+        :rtype: bool
+        """
+        # If the system detects that any key event has been pressed but
+        # there's not any key pressed then this method raises a KEYUP
+        # flag
+        bad_event = not (True in _pygame.key.get_pressed())
+        if bad_event:
+            ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
+            _pygame.event.post(ev)
+        return not bad_event
+
     def _main(self, events=None):
         """
         Main function of the loop.
 
         :param events: Pygame events
         :type events: list
-        :return: None
+        :return: True if mainloop must be stopped
+        :rtype: bool
         """
+        break_mainloop = False
         if events is None:
             events = _pygame.event.get()
 
@@ -665,25 +710,29 @@ class Menu(object):
         # Clock tick
         self._actual._clock.tick(self._fps)
 
-        # Draw the menu
-        self._actual.draw()
-
         # Process events, first check widgets, then the menu
         if self._actual._menubar.update(events):
             if not self._actual._dopause:
-                return True
+                break_mainloop = True
 
         elif self._actual._option[self._actual._index].update(events):
             if not self._actual._dopause:
-                return True
+                break_mainloop = True
 
         else:
-            for event in events:
+            for event in events:  # type: _pygame.event.EventType
+
                 # noinspection PyUnresolvedReferences
                 if event.type == _pygame.locals.QUIT:
                     self._exit()
+                    break_mainloop = True
 
                 elif event.type == _pygame.locals.KEYDOWN:
+
+                    # Check key event is valid
+                    if not self._check_key_pressed_valid(event):
+                        continue
+
                     if event.key == _ctrl.MENU_CTRL_DOWN:
                         self._select(self._actual._index - 1)
                         self._sounds.play_key_add()
@@ -696,7 +745,7 @@ class Menu(object):
                     elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and not self._closelocked:
                         self._sounds.play_close_menu()
                         if self._close():
-                            return True
+                            break_mainloop = True
 
                 elif self._joystick and event.type == _pygame.JOYHATMOTION:
                     if event.value == _locals.JOY_UP:
@@ -717,15 +766,19 @@ class Menu(object):
                         if widget.get_rect().collidepoint(*event.pos):
                             self._select(index)
                             widget.update(events)
-                            return True  # It is updated
+                            break_mainloop = True  # It is updated
 
         if not self._enabled:
             # A widget has closed the menu
-            return True
+            break_mainloop = True
 
+        # Draw content
+        self._actual.draw()
         _pygame.display.flip()
+
         self._closelocked = False
-        return False
+
+        return break_mainloop
 
     def mainloop(self, events=None):
         """
@@ -746,7 +799,7 @@ class Menu(object):
         else:
             self._main(events)
 
-    def get_input_data(self, recursive=False):
+    def get_input_data(self, recursive=False, depth=0):
         """
         Return input data as a dict.
 
@@ -755,11 +808,13 @@ class Menu(object):
 
         :param recursive: Look in menu and sub-menus
         :type recursive: bool
+        :param depth: Depth of the input data, by default it's zero
+        :type depth: int
         :return: Input dict
         :rtype: dict
         """
         assert isinstance(recursive, bool), 'recursive must be a boolean'
-        return self._get_input_data(recursive=recursive, depth=0)
+        return self._get_input_data(recursive=recursive, depth=depth)
 
     def _get_input_data(self, recursive, depth):
         """
@@ -786,16 +841,25 @@ class Menu(object):
             for menu in self._submenus:
                 data_submenu = menu.get_input_data(recursive=recursive, depth=depth)
 
-                # Check if there's a colission between keys
+                # Check if there is a colission between keys
                 data_keys = data.keys()
                 subdata_keys = data_submenu.keys()
-                for key in subdata_keys:
+                for key in subdata_keys:  # type: str
                     if key in data_keys:
                         raise Exception('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
 
                 # Update data
                 data.update(data_submenu)
         return data
+
+    def get_position(self):
+        """
+        Returns menu position as a tuple.
+
+        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
+        :rtype: tuple
+        """
+        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
 
     def get_fps(self):
         """
@@ -857,7 +921,7 @@ class Menu(object):
 
     def reset(self, total):
         """
-        Reset menu.
+        Reset the menu.
 
         :param total: How many menus to reset (1: back)
         :type total: int
@@ -871,12 +935,10 @@ class Menu(object):
         while True:
             if self._top._actual._prev is not None:
                 prev = self._top._actual._prev
-                prev_draw = self._top._actual._prev_draw
-                self._top.draw = prev_draw
                 self._select(0)
                 self._top._actual = prev
                 self._top._actual._prev = None
-                self._top._actual._prev_draw = None
+                self._depth -= 1
                 i += 1
                 if i == total:
                     break
@@ -895,8 +957,8 @@ class Menu(object):
         menu._top = self._top
         self._top._actual._actual = menu._actual
         self._top._actual._prev = actual
-        self._top._actual._prev_draw = self.draw
-        self._top.draw = menu.draw
+        self._depth += 1
+        self._select(0)
 
     def _select(self, index):
         """

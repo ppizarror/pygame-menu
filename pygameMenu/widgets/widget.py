@@ -39,6 +39,7 @@ import pygameMenu.locals as _locals
 import pygameMenu.fonts as _fonts
 
 
+# noinspection PyTypeChecker
 class Widget(object):
     """
     Widget abstract class.
@@ -62,21 +63,32 @@ class Widget(object):
         :param kwargs: Optional keyword-arguments for callbacks
         """
 
+        assert isinstance(widget_id, str)
+        if onchange:
+            assert callable(onchange), 'onchange must be a function or None'
+        if onreturn:
+            assert callable(onreturn), 'onreturn must be a function or None'
+
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._id = str(widget_id)
-        self._surface = None  # Rendering surface
-        self._render_string_cache = 0
-        self._render_string_cache_surface = None
-        self._rect = _pygame.Rect(0, 0, 0, 0)
         self._alignment = _locals.PYGAME_ALIGN_CENTER
         self._fps = 0
+        self._id = str(widget_id)
+        self._last_selected_surface = None  # type: _pygame.SurfaceType
+        self._selected_rect = None  # type: _pygame.rect.RectType
+        self._rect = _pygame.Rect(0, 0, 0, 0)
+        self._render_string_cache = 0
+        self._render_string_cache_surface = None
+        self._surface = None  # type: _pygame.SurfaceType
 
-        self._on_change = onchange
-        self._on_return = onreturn
         self._args = args or []
         self._kwargs = kwargs or {}
+        self._on_change = onchange
+        self._on_return = onreturn
+
+        # Menu reference
+        self._menu = None
 
         # Modified in set_font() method
         self._font = _cfg.MENU_FONT_SIZE_TITLE
@@ -156,6 +168,44 @@ class Widget(object):
         """
         raise NotImplementedError('Override is mandatory')
 
+    def draw_selected_rect(self, surface, selected_color, inflatex, inflatey, border_width):
+        """
+        Draw selected rect around widget.
+
+        :param surface: Surface to draw
+        :type surface: pygame.surface.SurfaceType
+        :param selected_color: Selected color
+        :type selected_color: tuple
+        :param inflatex: Pixels to inflate the rect (x axis)
+        :type inflatex: int
+        :param inflatey: Pixels to inflate the rect (y axis)
+        :type inflatey: int
+        :param border_width: Border rect width
+        :type border_width: int
+        :return: None
+        """
+        # Generate new rect if it's different
+        rect = self._selected_rect
+
+        if self._last_selected_surface != self._surface:  # If surface changed
+            self._last_selected_surface = self._surface
+            self._selected_rect = self._rect.copy()
+
+            # Inflate rect
+            self._selected_rect = self._selected_rect.inflate(inflatex, inflatey)
+
+            # Translate rect
+            self._selected_rect = self._selected_rect.move(0, -1)
+
+            # Update rect
+            rect = self._selected_rect
+
+        # Draw rect
+        _pygame.draw.rect(surface,
+                          selected_color,
+                          rect,
+                          border_width)
+
     def get_rect(self):
         """
         Return the Rect object.
@@ -208,6 +258,20 @@ class Widget(object):
         """
         return hash(args)
 
+    def font_render_string(self, text, color=(0, 0, 0)):
+        """
+        Render text.
+
+        :param text: Text to render
+        :type text: basestring
+        :param color: Text color
+        :type color: tuple
+        :return: Text surface
+        :rtype: pygame.surface.SurfaceType
+        """
+        assert isinstance(color, tuple)
+        return self._font.render(str(text), self._font_antialias, color)
+
     def render_string(self, string, color):
         """
         Render text and turn it into a surface.
@@ -222,17 +286,18 @@ class Widget(object):
         render_hash = self.hash_variables(string, color)
         if render_hash != self._render_string_cache:  # If render changed
 
-            text = self._font.render(string, self._font_antialias, color)
+            text = self.font_render_string(string, color)
 
+            # Create surface
+            size = (text.get_width() + 2, text.get_height() + 2)
+            # noinspection PyArgumentList
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+
+            # Draw shadow first
             if self._shadow:
-                size = (text.get_width() + 2, text.get_height() + 2)
                 text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-                # noinspection PyArgumentList
-                surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()
                 surface.blit(text_bg, self._shadow_tuple)
-                surface.blit(text, (0, 0))
-            else:
-                surface = text
+            surface.blit(text, (0, 0))
 
             self._render_string_cache = render_hash
             self._render_string_cache_surface = surface
@@ -263,9 +328,28 @@ class Widget(object):
         self._font_antialias = antialias
         self._apply_font()
 
+    def set_menu(self, menu):
+        """
+        Set menu reference.
+
+        :param menu: Menu object
+        :type menu: pygameMenu.menu.Menu
+        :return: None
+        """
+        self._menu = menu
+
+    def get_menu(self):
+        """
+        Return menu reference (if exists).
+
+        :return: Menu reference
+        :rtype: pygameMenu.menu.Menu
+        """
+        return self._menu
+
     def _apply_font(self):
         """
-        Function triggered after font is applied to widget.
+        Function triggered after a font is applied to the widget.
 
         :return: None
         """
@@ -485,3 +569,6 @@ class Widget(object):
         :rtype: bool
         """
         raise NotImplementedError('Override is mandatory')
+
+
+WidgetType = Widget

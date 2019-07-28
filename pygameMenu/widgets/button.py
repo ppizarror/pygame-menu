@@ -60,6 +60,7 @@ class Button(Widget):
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
+        assert isinstance(label, str)
         super(Button, self).__init__(onchange=onchange, onreturn=onreturn,
                                      args=args, kwargs=kwargs)  # Button has no ID
 
@@ -94,7 +95,7 @@ class Button(Widget):
         See upper class doc.
         """
         updated = False
-        for event in events:
+        for event in events:  # type: _pygame.event.EventType
 
             if event.type == _pygame.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_ENTER:
@@ -104,6 +105,7 @@ class Button(Widget):
 
             elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
                 if event.button == _locals.JOY_BUTTON_SELECT:
+                    self.sound.play_key_add()
                     self.apply()
                     updated = True
 

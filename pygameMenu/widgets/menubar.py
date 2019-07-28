@@ -44,7 +44,7 @@ class MenuBar(Widget):
     def __init__(self,
                  label,
                  width,
-                 back_box,
+                 back_box=False,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -66,6 +66,9 @@ class MenuBar(Widget):
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
+        assert isinstance(label, str)
+        assert isinstance(width, (int, float))
+        assert isinstance(back_box, bool)
         super(MenuBar, self).__init__(onchange=onchange, onreturn=onreturn,
                                       args=args, kwargs=kwargs)  # MenuBar has no ID
 
@@ -166,15 +169,17 @@ class MenuBar(Widget):
         See upper class doc.
         """
         updated = False
-        for event in events:
+        for event in events:  # type: _pygame.event.EventType
 
             if self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 if self._backbox_rect.collidepoint(*event.pos):
+                    self.sound.play_click_mouse()
                     self.apply()
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
                 if event.button == _locals.JOY_BUTTON_BACK:
+                    self.sound.play_key_del()
                     self.apply()
                     updated = True
 

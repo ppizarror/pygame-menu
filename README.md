@@ -13,7 +13,7 @@
 <br><a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 <a href="https://pypi.org/project/pygame-menu/"><img alt="PyPi package" src="https://badge.fury.io/py/pygame-menu.svg" /></a>
-</div><br />
+</div><br/>
 
 Python library that can create a simple Menu for pygame application, supports:
 
@@ -96,7 +96,8 @@ import pygameMenu
     | font_color | Color of font | tuple | MENU_FONT_COLOR |
     | font_size | Font size | int | MENU_FONT_SIZE |
     | font_size_title | Font size of the title | int | MENU_FONT_SIZE_TITLE |
-    | font_title | Alternative font of the title (fil direction) | str | None |
+    | font_title | Alternative font of the title | str | None |
+    | fps | Fps limit of the menu, 0: no limit | int,float | 0 |
     | joystick_enabled | Enable joystick support | bool | True |
     | menu_alpha | Alpha of background (0=tansparent, 100=opaque) | int | MENU_ALPHA |
     | menu_color | Menu color | tuple | MENU_BGCOLOR |
@@ -109,7 +110,7 @@ import pygameMenu
     | option_shadow | Indicate if a shadow is drawn on ech option | bool | MENU_OPTION_SHADOW |
     | option_shadow_offset | Offset of option text shadow | int | MENU_SHADOW_OFFSET |
     | option_shadow_position | Position of shadow | string | MENU_SHADOW_POSITION |
-    | rect_width | Border with of rectangle around seleted item | int | MENU_SELECTED_WIDTH |
+    | rect_width | Border with of rectangle around a seleted item | int | MENU_SELECTED_WIDTH |
     | title_offsetx | Offset x-position of title (px) | int | 0 |
     | title_offsety | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | PYGAME_ALIGN_CENTER |
@@ -180,7 +181,7 @@ import pygameMenu
 
 - *add_selector(title, values, onchange, onreturn, \*\*kwargs)*
 
-    Add a *selector* to menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
+    Add a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
     | Param | Description | Type |
     | :-: | :-- | :--: |
@@ -228,7 +229,8 @@ import pygameMenu
                              ('Blue', COLOR_BLUE)],
                             None, # onchange
                             change_color_bg, # onreturn
-                            write_on_console=True # Optional change_color_bg param)
+                            write_on_console=True # Optional change_color_bg param
+                            )
 
     timer_menu.add_option('Reset timer', reset_timer)
     timer_menu.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
@@ -245,6 +247,7 @@ import pygameMenu
     | textinput_id | Text input identificator | str |
     | default | Default value to display | str |
     | input_type | Data type of the input | str |
+    | input_underline | Char underline of the input | str |
     | maxchar | Maximum length of string, if 0 there's no limit | int |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int |
     | align | Text input alignment | str |
@@ -295,23 +298,6 @@ import pygameMenu
     menu_help.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
     ```
 
-- *mainloop(events)*
-
-    Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses application and checks Events.
-
-    ```python
-    menu = pygameMenu.Menu(...)
-
-    # Main aplication
-    while True:
-
-        # Application events
-        events = pygame.event.get()
-
-        # Menu loop (If onpause is enabled then an infinite-loop is triggered on this line)
-        menu.mainloop(events)
-    ```
-
 - *disable()*
 
     Disable Menu (doest check events and draw on surface).
@@ -339,33 +325,12 @@ import pygameMenu
     menu.enable()
     ```
 
-- *get_title()*
+- *get_fps()*
 
-    Get the title of the menu.
-
-    ```python
-    menu = pygameMenu.Menu(..., title='Menu title', ...)
-    menu.get_title() # -> 'Menu title'
-    ```
-
-- *is_enabled()*
-
-    Check if menu is enabled.
+    Get the current frames per second of the Menu.
 
     ```python
-    menu = pygameMenu.Menu(...)
-    menu.disable()
-    menu.is_enabled() # -> False
-    ```
-
-- *is_disabled()*
-
-    Check if menu is disabled.
-
-    ```python
-    menu = pygameMenu.Menu(...)
-    menu.disable()
-    menu.is_disabled() # -> True
+    fps = main_menu.get_fps() # -> 60.0
     ```
 
 - *get_input_data(recursive=False)*
@@ -378,14 +343,99 @@ import pygameMenu
     menu.get_input_data() # -> {'id1': value, 'id2': value}
     ```
 
+- *get_position()*
+
+    Returns menu position as a tuple *(x1, y1, x2, y2)*, where *(x1, y1)* is the top-left position and *(x2, y2)* is the bottom-right position.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.get_position() # -> (50, 100, 500, 500)
+    ```
+
+- *get_title()*
+
+    Get the title of the menu.
+
+    ```python
+    menu = pygameMenu.Menu(..., title='Menu title', ...)
+    menu.get_title() # -> 'Menu title'
+    ```
+
 - *get_widget(widget_id, recursive=False)*
 
-      Get widget object from its ID.
+    Get widget object from its ID.
 
-     ```python
-     menu = pygameMenu.Menu(...)
-     menu.get_widget('id1') # -> <pygameMenu.widgets.textinput.TextInput object at 0x10ac2db38>
-     ```
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.get_widget('id1') # -> <pygameMenu.widgets.textinput.TextInput object at 0x10ac2db38>
+    ```
+
+- *is_disabled()*
+
+    Check if the menu is disabled.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.disable()
+    menu.is_disabled() # -> True
+    ```
+
+- *is_enabled()*
+
+    Check if the menu is enabled.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.disable()
+    menu.is_enabled() # -> False
+    ```
+
+- *mainloop(events)*
+
+    Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses application and checks Events.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+
+    # Main aplication
+    while True:
+
+        # Application events
+        events = pygame.event.get()
+
+        # Menu loop (If onpause is enabled then an infinite-loop is triggered on this line)
+        menu.mainloop(events)
+    ```
+
+- *reset(total)*
+
+    Reset the menu (back) a certain number of times (*total*).
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.reset(1) # Back
+    ```
+
+- *set_fps(fps, recursive=True)*
+
+    Set the fps limit of the menu, if *recursive* is True the limit is applied to all submenus.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.set_fps(30, True)
+    ```
+
+- *set_sound(sound, recursive=False)*
+
+    Adds a sound engine to the menu, if *recursive* the sound is applied to all submenus.
+
+    ```python
+    sound = pygameMenu.sound.Sound()
+    ...
+
+    menu = pygameMenu.Menu(...)
+    menu.set_sound(sound, True)
+    ```
 
 ### Menu events
 
@@ -398,6 +448,78 @@ import pygameMenu
 | PYGAME_MENU_RESET | Reset menu |
 
 This events must be imported from *pygameMenu.events*.
+
+### Sounds
+
+A basic sound engine can be created using *Sound* class imported from *pygameMenu.sound*. The sound engine can be customized setting a sound file to several sounds defined by a type. For example, buttons or keys.
+
+- **Sound**
+
+    ```python
+    pygameMenu.sound.Sound(uniquechannel, frequency, size, channels, buffer, devicename, allowedchanges)
+    ```
+
+    Parameters are the following:
+
+    | Param | Description | Type | Default |
+    | :-: | :-- | :--: | :--: |
+    | uniquechannel | Force the channel to be unique, this is setted at the moment of creation of the object | bool | True |
+    | frequency | Frequency of sounds | int | 22050 |
+    | size | Size of sample | int | -16 |
+    | channels | Number of channels by default | int | 2 |
+    | buffer | Buffer size | int | 4096 |
+    | devicename | Device name | str | None |
+    | allowedchanges | Convert the samples at runtime | int | 0 |
+
+- *set_sound(sound, file, volume, loops, maxtime, fade_ms)*
+
+    Set a sound file to a sound type.
+
+    | Param | Description | Type | Default |
+    | :-: | :-- | :--: | :--: |
+    | sound | Sound type | str | - |
+    | file | Sound file | str | - |
+    | volume | Volume of the sound | float | 0.5 |
+    | loops | Number of loops of the sound | int | 0 |
+    | maxtime | Max playing time of the sound | int | 0 |
+    | fade_ms | Fading ms | int | 0 |
+
+    Sounds types are the following:
+
+    | Type | Description |
+    | :-: | :-- |
+    | SOUND_TYPE_CLICK_MOUSE | Mouse click |
+    | SOUND_TYPE_CLOSE_MENU | A menu is closed |
+    | SOUND_TYPE_ERROR | Generic error |
+    | SOUND_TYPE_EVENT | Generic event |
+    | SOUND_TYPE_EVENT_ERROR | Error generated by user |
+    | SOUND_TYPE_KEY_ADDITION | User type a key |
+    | SOUND_TYPE_KEY_DELETION | User deletes with a key |
+    | SOUND_TYPE_OPEN_MENU | A menu is opened |
+
+    ```python
+    sound = pygameMenu.sound.Sound()
+    sound.set_sound(pygameMenu.sound.SOUND_TYPE_ERROR, None) # Disable a sound
+    sound.set_sound(pygameMenu.sound.SOUND_TYPE_OPEN_MENU, 'C:/.../example.ogg')
+    ```
+
+- *load_example_sounds(volume=0.5)*
+
+    Load the example sounds provided by the package.
+
+    ```python
+    sound = pygameMenu.sound.Sound(...)
+    sound.load_example_sounds()
+    ```
+
+- *get_channel()*
+
+    Get the channel of the sound engine.
+
+    ```python
+    sound = pygameMenu.sound.Sound(...)
+    sound.get_channel() # -> <Channel object at 0x0000023AC8EA2CF0>
+    ```
 
 ### Configuration values
 
@@ -436,7 +558,8 @@ import pygameMenu
 fontdir = pygameMenu.fonts.FONT_NAME
 some_menu = pygameMenu.Menu(surface,
                             font=fontdir,
-                            ...)
+                            ...
+                            )
 ```
 
 Available embedded fonts (*FONT_NAME*):
@@ -458,7 +581,7 @@ import pygame
 print(pygame.font.get_fonts())
 ```
 
-## Configurations
+## Configuration files
 
 Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
@@ -468,9 +591,16 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 | config_menu.py | Configure default parameter of Menu class |
 | config_textmenu.py | Configure default parameter of TextMenu class |
 
+## Author
+
+[Pablo Pizarro R.](https://ppizarror.com) | 2017-2019
+
+### Contributors
+
+Special greetings to:
+
+- [anxuae](https://github.com/anxuae)
+
 ## License
 
 This project is licensed under MIT [https://opensource.org/licenses/MIT/](https://opensource.org/licenses/MIT/)
-
-## Author
-<a href="https://ppizarror.com" title="ppizarror">Pablo Pizarro R.</a> | 2017-2019

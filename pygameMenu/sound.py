@@ -69,6 +69,7 @@ PYGAMEMENU_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_del
 PYGAMEMENU_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 
 
+# noinspection PyTypeChecker
 class Sound(object):
     """
     Sound class.
@@ -79,7 +80,7 @@ class Sound(object):
         """
         Constructor.
 
-        :param uniquechannel: Force the channel to be unique, this is setted at the moment of creation of the object.
+        :param uniquechannel: Force the channel to be unique, this is setted at the moment of creation of the object
         :type uniquechannel: bool
         :param frequency: Frequency of sounds
         :type frequency: int
@@ -115,7 +116,7 @@ class Sound(object):
                         allowedchanges=allowedchanges)
 
         # Channel where a sound is played
-        self._channel = None
+        self._channel = None  # type: _mixer.ChannelType
         self._uniquechannel = uniquechannel
 
         # Sound dict
@@ -156,7 +157,7 @@ class Sound(object):
         """
         Set a particular sound.
 
-        :param sound: Sound type.
+        :param sound: Sound type
         :type sound: basestring
         :param file: Sound file
         :type file: basestring, NoneType
