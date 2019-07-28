@@ -151,9 +151,7 @@ class TextMenu(Menu):
 
     def draw(self):
         """
-        Draw menu on surface.
-
-        :return: None
+        See upper class doc.
         """
         super(TextMenu, self).draw()
 
@@ -183,12 +181,7 @@ class TextMenu(Menu):
 
     def _get_option_pos(self, index):
         """
-        Get option position from the option index.
-
-        :param index: Option index
-        :type index: int
-        :return: Position (x,y)
-        :rtype: tuple
+        See upper class doc.
         """
         dysum = len(self._text) * (self._font_textsize + self._textdy)
         dysum += 2 * self._textdy + self._font_textsize
@@ -197,9 +190,9 @@ class TextMenu(Menu):
         if self._widget_align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif self._widget_align == _locals.ALIGN_CENTER:
-            option_dx = -self._width / 2 + 16
+            option_dx = -self._width / 2 + self._selected_inflate_x
         elif self._widget_align == _locals.ALIGN_CENTER:
-            option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
+            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
         t_dy = -int(rect.height / 2.0)

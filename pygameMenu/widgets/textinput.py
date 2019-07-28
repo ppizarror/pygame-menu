@@ -1064,7 +1064,7 @@ class TextInput(Widget):
         if text == '':
             return False
 
-        # Cut string (if limit exists)
+        # Cut string (if limit does exists)
         text_end = len(text)
         if self._maxchar != 0:
             char_limit = self._maxchar - len(self._input_string)

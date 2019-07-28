@@ -691,7 +691,7 @@ class Menu(object):
 
     def is_disabled(self):
         """
-        Returns false/true if menu is enabled or not
+        Returns false/true if menu is enabled or not.
 
         :return: True if the menu is disabled
         :rtype: bool
@@ -700,7 +700,7 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Returns true/false if menu is enabled or not
+        Returns true/false if menu is enabled or not.
 
         :return: True if the menu is enabled
         :rtype: bool
