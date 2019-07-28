@@ -51,7 +51,7 @@ class TextMenu(Menu):
                  font,
                  title,
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
-                 text_align=_locals.PYGAME_ALIGN_LEFT,
+                 text_align=_locals.ALIGN_LEFT,
                  text_color=_cfg.TEXT_FONT_COLOR,
                  text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
                  text_margin=_cfg.TEXT_MARGIN,
@@ -164,12 +164,12 @@ class TextMenu(Menu):
             text_width = text.get_size()[0]
 
             # Check text align
-            if self._text_align == _locals.PYGAME_ALIGN_CENTER:
+            if self._text_align == _locals.ALIGN_CENTER:
                 text_dx = -int(self._width * (self._draw_text_region_x / 100.0)) + \
                           self._width / 2 - text_width / 2
-            elif self._text_align == _locals.PYGAME_ALIGN_LEFT:
+            elif self._text_align == _locals.ALIGN_LEFT:
                 text_dx = 0
-            elif self._text_align == _locals.PYGAME_ALIGN_RIGHT:
+            elif self._text_align == _locals.ALIGN_RIGHT:
                 text_dx = -2 * int(self._width * (self._draw_text_region_x / 100.0)) \
                           - text_width + self._width
             else:
@@ -194,11 +194,11 @@ class TextMenu(Menu):
         dysum += 2 * self._textdy + self._font_textsize
 
         rect = self._option[index].get_rect()
-        if self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+        if self._widget_align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+        elif self._widget_align == _locals.ALIGN_CENTER:
             option_dx = -self._width / 2 + 16
-        elif self._widget_align == _locals.PYGAME_ALIGN_CENTER:
+        elif self._widget_align == _locals.ALIGN_CENTER:
             option_dx = self._width / 2 - rect.width - 16  # +constant to deal with inflate
         else:
             option_dx = 0

@@ -40,7 +40,7 @@ import pygameMenu
 
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
-         pygameMenu.locals.PYGAMEMENU_TEXT_NEWLINE,
+         pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -175,7 +175,7 @@ play_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
                             menu_width=int(WINDOW_SIZE[0] * 0.7),
-                            onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
+                            onclose=pygameMenu.events.DISABLE_CLOSE,
                             option_shadow=False,
                             title='Play menu',
                             window_height=WINDOW_SIZE[1],
@@ -191,7 +191,7 @@ play_menu.add_selector('Select difficulty',
                         ('2 - Medium', 'MEDIUM'),
                         ('3 - Hard', 'HARD')],
                        onchange=change_difficulty)
-play_menu.add_option('Return to main menu', pygameMenu.events.PYGAMEMENU_BACK)
+play_menu.add_option('Return to main menu', pygameMenu.events.BACK)
 
 # About menu
 about_menu = pygameMenu.TextMenu(surface,
@@ -205,7 +205,7 @@ about_menu = pygameMenu.TextMenu(surface,
                                  menu_color_title=COLOR_WHITE,
                                  menu_height=int(WINDOW_SIZE[1] * 0.6),
                                  menu_width=int(WINDOW_SIZE[0] * 0.6),
-                                 onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
+                                 onclose=pygameMenu.events.DISABLE_CLOSE,
                                  option_shadow=False,
                                  text_color=COLOR_BLACK,
                                  text_fontsize=20,
@@ -215,8 +215,8 @@ about_menu = pygameMenu.TextMenu(surface,
                                  )
 for m in ABOUT:
     about_menu.add_line(m)
-about_menu.add_line(pygameMenu.locals.PYGAMEMENU_TEXT_NEWLINE)
-about_menu.add_option('Return to menu', pygameMenu.events.PYGAMEMENU_BACK)
+about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+about_menu.add_option('Return to menu', pygameMenu.events.BACK)
 
 # Main menu
 main_menu = pygameMenu.Menu(surface,
@@ -229,7 +229,7 @@ main_menu = pygameMenu.Menu(surface,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
                             menu_width=int(WINDOW_SIZE[0] * 0.6),
-                            onclose=pygameMenu.events.PYGAMEMENU_DISABLE_CLOSE,
+                            onclose=pygameMenu.events.DISABLE_CLOSE,
                             option_shadow=False,
                             title='Main menu',
                             window_height=WINDOW_SIZE[1],
@@ -238,7 +238,7 @@ main_menu = pygameMenu.Menu(surface,
 
 main_menu.add_option('Play', play_menu)
 main_menu.add_option('About', about_menu)
-main_menu.add_option('Quit', pygameMenu.events.PYGAMEMENU_EXIT)
+main_menu.add_option('Quit', pygameMenu.events.EXIT)
 
 # Configure main menu
 main_menu.set_fps(FPS)

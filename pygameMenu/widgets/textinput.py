@@ -69,7 +69,7 @@ class TextInput(Widget):
                  label='',
                  default='',
                  textinput_id='',
-                 input_type=_locals.PYGAME_INPUT_TEXT,
+                 input_type=_locals.INPUT_TEXT,
                  input_underline='',
                  cursor_color=(0, 0, 0),
                  enable_selection=True,
@@ -281,14 +281,14 @@ class TextInput(Widget):
         See upper class doc.
         """
         value = ''
-        if self._input_type == _locals.PYGAME_INPUT_TEXT:
+        if self._input_type == _locals.INPUT_TEXT:
             value = self._input_string
-        elif self._input_type == _locals.PYGAME_INPUT_FLOAT:
+        elif self._input_type == _locals.INPUT_FLOAT:
             try:
                 value = float(self._input_string)
             except ValueError:
                 value = 0
-        elif self._input_type == _locals.PYGAME_INPUT_INT:
+        elif self._input_type == _locals.INPUT_INT:
             try:
                 value = int(self._input_string)
             except ValueError:
@@ -881,13 +881,13 @@ class TextInput(Widget):
         if string == '':  # Empty is valid
             return True
 
-        if self._input_type == _locals.PYGAME_INPUT_TEXT:
+        if self._input_type == _locals.INPUT_TEXT:
             return True
 
         conv = None
-        if self._input_type == _locals.PYGAME_INPUT_FLOAT:
+        if self._input_type == _locals.INPUT_FLOAT:
             conv = int
-        elif self._input_type == _locals.PYGAME_INPUT_INT:
+        elif self._input_type == _locals.INPUT_INT:
             conv = float
 
         if string == '-':

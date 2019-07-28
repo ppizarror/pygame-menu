@@ -86,7 +86,7 @@ class Menu(object):
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
                  title_offsety=0,
-                 widget_alignment=_locals.PYGAME_ALIGN_CENTER
+                 widget_alignment=_locals.ALIGN_CENTER
                  ):
         """
         Menu constructor.
@@ -330,13 +330,13 @@ class Menu(object):
             self._submenus.append(element)
             widget = _widgets.Button(element_name, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _events.PYGAMEMENU_BACK:
+        elif element == _events.BACK:
             # Back to menu
             widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _events.PYGAMEMENU_CLOSE:
+        elif element == _events.CLOSE:
             # Close menu
             widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _events.PYGAMEMENU_EXIT:
+        elif element == _events.EXIT:
             # Exit program
             widget = _widgets.Button(element_name, None, self._exit)
         # If element is a function
@@ -360,8 +360,16 @@ class Menu(object):
 
         return widget
 
-    def add_selector(self, title, values, selector_id='', default=0, align='',
-                     onchange=None, onreturn=None, **kwargs):
+    def add_selector(self,
+                     title,
+                     values,
+                     selector_id='',
+                     default=0,
+                     align='',
+                     onchange=None,
+                     onreturn=None,
+                     **kwargs
+                     ):
         """
         Add a selector to menu: several options with values and two functions
         that execute when changing the selector (left/right) and pressing
@@ -432,9 +440,21 @@ class Menu(object):
 
         return widget
 
-    def add_text_input(self, title, textinput_id='', default='', input_type=_locals.PYGAME_INPUT_TEXT,
-                       input_underline='', maxchar=0, maxwidth=0, align='', enable_selection=True,
-                       password=False, onchange=None, onreturn=None, **kwargs):
+    def add_text_input(self,
+                       title,
+                       textinput_id='',
+                       default='',
+                       input_type=_locals.INPUT_TEXT,
+                       input_underline='',
+                       maxchar=0,
+                       maxwidth=0,
+                       align='',
+                       enable_selection=True,
+                       password=False,
+                       onchange=None,
+                       onreturn=None,
+                       **kwargs
+                       ):
         """
         Add a text input to menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -562,15 +582,15 @@ class Menu(object):
         else:
             close = True
             a = isinstance(onclose, _events._PymenuAction)
-            b = str(type(onclose)) == _events.PYGAMEMENU_PYMENUACTION
+            b = str(type(onclose)) == _events._PYMENUACTION
             if a or b:
-                if onclose == _events.PYGAMEMENU_RESET:
+                if onclose == _events.RESET:
                     self.reset(self._depth)
-                elif onclose == _events.PYGAMEMENU_BACK:
+                elif onclose == _events.BACK:
                     self.reset(1)
-                elif onclose == _events.PYGAMEMENU_EXIT:
+                elif onclose == _events.EXIT:
                     self._exit()
-                elif onclose == _events.PYGAMEMENU_DISABLE_CLOSE:
+                elif onclose == _events.DISABLE_CLOSE:
                     close = False
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()
@@ -635,11 +655,11 @@ class Menu(object):
         align = self._option[index].get_alignment()
 
         # Calculate alignment
-        if align == _locals.PYGAME_ALIGN_CENTER:
+        if align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif align == _locals.PYGAME_ALIGN_LEFT:
+        elif align == _locals.ALIGN_LEFT:
             option_dx = -self._width / 2 + self._selected_inflate_x
-        elif align == _locals.PYGAME_ALIGN_RIGHT:
+        elif align == _locals.ALIGN_RIGHT:
             option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
