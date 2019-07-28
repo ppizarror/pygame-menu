@@ -82,7 +82,6 @@ class TextMenu(Menu):
         :type text_margin: int
         :param kwargs: Aditional parameters
         """
-
         assert isinstance(draw_text_region_x, int) or \
                isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
@@ -188,7 +187,8 @@ class TextMenu(Menu):
 
         :param index: Option index
         :type index: int
-        :return: None
+        :return: Position (x,y)
+        :rtype: tuple
         """
         dysum = len(self._text) * (self._font_textsize + self._textdy)
         dysum += 2 * self._textdy + self._font_textsize

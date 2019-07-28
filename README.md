@@ -179,7 +179,7 @@ import pygameMenu
     menu.add_option('Exit', pygameMenu.events.PYGAME_MENU_EXIT) # Add exit function
     ```
 
-- *add_selector(title, values, onchange, onreturn, \*\*kwargs)*
+- *add_selector(title, values, selector_id, default, align, onchange, onreturn, \*\*kwargs)*
 
     Add a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
@@ -237,7 +237,7 @@ import pygameMenu
     timer_menu.add_option('Close Menu', pygameMenu.events.PYGAME_MENU_CLOSE)
     ```
 
-- *add_text_input(title, onchange, onreturn, default, maxchar, maxwidth, \*\*kwargs)*
+- *add_text_input(title, textinput_id, default, input_type, input_underline, maxchar, maxwidth, align, enable_selection, onchange, onreturn, \*\*kwargs)*
 
     Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
 
@@ -251,6 +251,7 @@ import pygameMenu
     | maxchar | Maximum length of string, if 0 there's no limit | int |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int |
     | align | Text input alignment | str |
+    | enable_selection | Enables text selection | bool |
     | onchange | Function that executes when change the value of text input | function |
     | onreturn | Function that executes when pressing return button | function |
     | **kwargs | Additional arguments | - |
@@ -298,9 +299,9 @@ import pygameMenu
     menu_help.add_option('Return to Menu', pygameMenu.events.PYGAME_MENU_BACK)
     ```
 
-- *disable()*
+- *disable(closelocked)*
 
-    Disable Menu (doest check events and draw on surface).
+    Disable Menu (doest check events and draw on surface). If *closelocked* is *True* all the locked pened submenus are closed too.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -333,10 +334,10 @@ import pygameMenu
     fps = main_menu.get_fps() # -> 60.0
     ```
 
-- *get_input_data(recursive=False)*
+- *get_input_data(recursive=False, depth=0)*
 
     Get input data from a menu. The results are given as a dict object, keys are the ID of each element.
-    If recursive, the data will contain inputs from sub-menus.
+    If recursive, the data will contain inputs from sub-menus; *depth* defines the depth of each input. It's used only as a informative value by now.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -390,7 +391,7 @@ import pygameMenu
     menu.is_enabled() # -> False
     ```
 
-- *mainloop(events)*
+- *mainloop(events=None)*
 
     Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses application and checks Events.
 

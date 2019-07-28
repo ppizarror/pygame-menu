@@ -59,6 +59,7 @@ except ImportError:
         return ''
 
 
+# noinspection PyTypeChecker
 class TextInput(Widget):
     """
     Text input widget.
@@ -70,15 +71,18 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.PYGAME_INPUT_TEXT,
                  input_underline='',
-                 cursor_color=(0, 0, 1),
+                 cursor_color=(0, 0, 0),
+                 enable_selection=True,
                  history=50,
                  maxchar=0,
                  maxwidth=0,
+                 maxwidth_dynamically_update=True,
                  onchange=None,
                  onreturn=None,
                  repeat_keys_initial_ms=400,
                  repeat_keys_interval_ms=40,
-                 repeat_mouse_interval_ms=50,
+                 repeat_mouse_interval_ms=100,
+                 selection_color=(30, 30, 30),
                  text_ellipsis='...',
                  **kwargs
                  ):
@@ -97,12 +101,16 @@ class TextInput(Widget):
         :type input_underline: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param enable_selection: Enables selection of text
+        :type enable_selection: tuple
         :param history: Maximum number of editions stored
         :type history: int
         :param maxchar: Maximum length of input
         :type maxchar: int
         :param maxwidth: Maximum size of the text to be displayed (overflow)
         :type maxwidth: int
+        :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
+        :type maxwidth_dynamically_update: bool
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -113,6 +121,8 @@ class TextInput(Widget):
         :type repeat_keys_interval_ms: float, int
         :param repeat_mouse_interval_ms: Interval between mouse events when held
         :type repeat_mouse_interval_ms: float, int
+        :param selection_color: Selection box color
+        :type selection_color: tuple
         :param text_ellipsis: Ellipsis text when overflow occurs
         :type text_ellipsis: basestring
         :param kwargs: Optional keyword-arguments for callbacks
@@ -170,15 +180,13 @@ class TextInput(Widget):
         self._clock = _pygame.time.Clock()
         self._cursor_color = cursor_color
         self._cursor_ms_counter = 0
+        self._cursor_offset = -1
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500  # /|\
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
-
-        # Public attributs
-        self.label = label
 
         # History of editions
         self._history = []
@@ -187,12 +195,24 @@ class TextInput(Widget):
         self._history_index = 0  # Index at which the new editions are added
         self._max_history = history
 
+        # Text selection
+        self._last_selection_render = [0, 0]
+        self._selection_active = False
+        self._selection_enabled = enable_selection
+        self._selection_box = [0, 0]  # [from, to]
+        self._selection_color = selection_color
+        self._selection_mouse_first_position = -1
+        self._selection_position = [0, 0]  # (x,y)
+        self._selection_render = False
+        self._selection_surface = None  # type: _pygame.SurfaceType
+
         # Other
         self._first_render = True
         self._input_type = input_type
         self._input_underline = input_underline
         self._input_underline_size = 0
         self._keychar_size = {'': 0}
+        self._label = label
         self._label_size = 0
         self._last_char = ''
         self._last_rendered_string = '__pygameMenu__last_render_string__'
@@ -201,6 +221,7 @@ class TextInput(Widget):
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
         self._maxwidth_base = maxwidth
+        self._maxwidth_update = maxwidth_dynamically_update
         self._maxwidthsize = 0  # Updated in font
 
         # Set default value
@@ -218,7 +239,7 @@ class TextInput(Widget):
         See upper class doc.
         """
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
-        self._label_size = self._font.size(self.label)[0]
+        self._label_size = self._font.size(self._label)[0]
 
         # Generate the underline surface
         self._input_underline_size = self._font.size(self._input_underline)[0]
@@ -261,6 +282,10 @@ class TextInput(Widget):
         self._clock.tick()
         self._render()
 
+        # Draw selection first
+        if self._selection_surface is not None:
+            surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+
         # Draw string
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
@@ -275,7 +300,7 @@ class TextInput(Widget):
         """
 
         # Render string
-        string = self.label + self._get_input_string()
+        string = self._label + self._get_input_string()
         if self.selected:
             color = self._font_selected_color
         else:
@@ -287,11 +312,77 @@ class TextInput(Widget):
             self._first_render = False
             return
 
-        self._render_cursor()
         self._surface = self._render_underline(string, color, updated_surface)
+
+        self._render_cursor()
+        self._render_selection_box()
 
         # Update last rendered
         self._last_rendered_string = string
+
+    def _render_selection_box(self, force=False):
+        """
+        Render selected text.
+
+        :param force: Force update
+        :type force: bool
+        :return: None
+        """
+        if not self._selection_enabled:
+            return
+
+        if self._selection_active and (
+                self._last_selection_render[0] != self._selection_box[0] or self._last_selection_render[1] !=
+                self._selection_box[1]) or force:
+
+            # If there's no limit
+            pos = [0, 0]
+            if self._maxwidth == 0:
+                pos[0] = self._selection_box[0]
+                pos[1] = self._selection_box[1]
+            else:
+                pos[0] = max(self._selection_box[0], self._renderbox[0])
+                pos[1] = min(self._selection_box[1], self._renderbox[1])
+
+            # Find coordinates of each position
+            sstring_init = self._input_string[self._renderbox[0]:pos[0]]
+            sstring_final = self._input_string[self._renderbox[0]:pos[1]]
+
+            x1 = self._cursor_offset + self._font.size(self._label + sstring_init)[0]
+            x2 = self._cursor_offset + self._font.size(self._label + sstring_final)[0] - 1
+
+            self._last_selection_render[0] = self._selection_box[0]
+            self._last_selection_render[1] = self._selection_box[1]
+
+            x = x2 - x1
+            if x <= 0:
+                self._selection_surface = None
+                return
+            y = self._font.size(self._label)[1]
+
+            # Add ellipsis
+            delta = self._ellipsis_size
+            if self._ellipsis_left_and_right():  # If Left+Right ellipsis
+                delta *= 1
+            elif self._ellipsis_right():  # Right ellipsis
+                delta *= 0
+            elif self._ellipsis_left():  # Left ellipsis
+                delta *= 1
+            else:
+                delta *= 0
+            x1 += delta
+            x2 += delta
+
+            # Create surface and fill
+            # noinspection PyArgumentList
+            self._selection_surface = _pygame.Surface((x, y), _pygame.SRCALPHA,
+                                                      32).convert_alpha()  # type: _pygame.SurfaceType
+            self._selection_surface.fill(self._selection_color)
+            self._selection_position[0] = x1 + self._rect.x
+            self._selection_position[1] = self._rect.y
+
+            # Fill cursor
+            self._cursor_surface.fill(self._font_selected_color)
 
     def _render_string_surface(self, string, color):
         """
@@ -391,11 +482,12 @@ class TextInput(Widget):
 
         # Calculate x position
         if self._maxwidth == 0:  # If no limit is provided
-            cursor_x_pos = 2 + self._font.size(self.label + self._input_string[:self._cursor_position])[0]
+            cursor_x_pos = self._cursor_offset + \
+                           self._font.size(self._label + self._input_string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             sstring = self._input_string
             sstring = sstring[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
-            cursor_x_pos = 2 + self._font.size(self.label + sstring)[0]
+            cursor_x_pos = self._cursor_offset + self._font.size(self._label + sstring)[0]
 
             # Add ellipsis
             delta = self._ellipsis_size
@@ -408,7 +500,7 @@ class TextInput(Widget):
             else:
                 delta *= 0
             cursor_x_pos += delta
-        if self._cursor_position > 0 or (self.label and self._cursor_position == 0):
+        if self._cursor_position > 0 or (self._label and self._cursor_position == 0):
             # Without this, the cursor is invisible when self._cursor_position > 0:
             cursor_x_pos -= self._cursor_surface.get_width()
 
@@ -570,8 +662,9 @@ class TextInput(Widget):
                     update_maxwidth = False
 
                 # If cursor is at limit
-                if self._renderbox[1] >= ls or self._renderbox[0] <= 0:
-                    update_maxwidth = False
+                if self._renderbox[1] > ls or self._renderbox[0] < 0:
+                    if self._renderbox[2] != self._maxwidth - 1:
+                        update_maxwidth = False
 
             # Apply string limits
             self._renderbox[1] = max(self._maxwidth, min(self._renderbox[1], ls))
@@ -591,8 +684,8 @@ class TextInput(Widget):
 
         :return: None
         """
-
-        # Update limit
+        if not self._maxwidth_update:
+            return
 
         sign = 0  # Sign of search
         while True:
@@ -625,10 +718,13 @@ class TextInput(Widget):
                     if sign > 0:
                         break
                     sign = -1
-                    self._renderbox[0] += 1
-                    # self._renderbox[1] += 1
+                    if self._renderbox[2] == 0:
+                        self._renderbox[1] -= 1
+                    else:
+                        self._renderbox[0] += 1
+                        # self._renderbox[1] += 1
+                        self._renderbox[2] -= 1
                     self._maxwidth -= 1
-                    self._renderbox[2] -= 1
                 else:
                     break
             else:
@@ -684,10 +780,21 @@ class TextInput(Widget):
             cursor_pos = max(0, min(self._maxwidth, cursor_pos))
             self._cursor_position = self._renderbox[0] + cursor_pos
             self._renderbox[2] = cursor_pos
+            self._update_maxlimit_renderbox()
 
         # Text does not have ellipsis, infered position is correct
         else:
             self._cursor_position = cursor_pos
+
+        if self._selection_mouse_first_position == -1:
+            if self._selection_active:
+                self._selection_mouse_first_position = self._cursor_position
+        else:
+            a = self._selection_mouse_first_position
+            b = self._cursor_position
+            self._selection_box[0] = min(a, b)
+            self._selection_box[1] = max(a, b)
+            self._render_selection_box(True)
         self._cursor_render = True
 
     def _check_mouse_collide_input(self, pos):
@@ -783,6 +890,7 @@ class TextInput(Widget):
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
         self._cursor_visible = False
+        self._unselect_text()
         # self._history_index = len(self._history) - 1
 
     def _focus(self):
@@ -792,6 +900,33 @@ class TextInput(Widget):
         self._cursor_ms_counter = 0
         self._cursor_visible = True
         self._cursor_render = True
+
+    def _unselect_text(self):
+        """
+        Unselect text.
+
+        :return: True if the selected text was removed in the method call
+        :rtype: bool
+        """
+        removed = self._selection_surface is not None
+        if not removed:
+            return False
+        self._selection_box[0] = 0
+        self._selection_box[1] = 0
+        self._selection_surface = None
+        if self._cursor_surface is not None:
+            self._cursor_surface.fill(self._cursor_color)
+        self._selection_active = False
+        return removed
+
+    def _get_selected_text(self):
+        """
+        Return text selected.
+
+        :return: Text
+        :rtype: basestring
+        """
+        return self._input_string[self._selection_box[0]:self._selection_box[1]]
 
     def _update_input_string(self, new_string):
         """
@@ -836,8 +971,10 @@ class TextInput(Widget):
         if self._block_copy_paste:  # Prevents multiple executions of event
             return False
 
-        # Copy all text
-        copy(self._input_string)
+        if self._selection_surface:  # If text is selected
+            copy(self._get_selected_text())
+        else:  # Copy all text
+            copy(self._input_string)
 
         self._block_copy_paste = True
         return True
@@ -849,12 +986,17 @@ class TextInput(Widget):
         :return:
         """
         self._copy()
-        self._cursor_position = 0
-        self._renderbox[0] = 0
-        self._renderbox[1] = 0
-        self._renderbox[2] = 0
-        self._update_input_string('')
-        self._cursor_render = True  # Due to manually updating renderbox
+
+        # If text is selected
+        if self._selection_surface:
+            self._remove_selection()
+        else:
+            self._cursor_position = 0
+            self._renderbox[0] = 0
+            self._renderbox[1] = 0
+            self._renderbox[2] = 0
+            self._update_input_string('')
+            self._cursor_render = True  # Due to manually updating renderbox
 
     def _paste(self):
         """
@@ -864,6 +1006,10 @@ class TextInput(Widget):
         """
         if self._block_copy_paste:  # Prevents multiple executions of event
             return False
+
+        # If text is selected
+        if self._selection_surface:
+            self._remove_selection()
 
         # Paste text in cursor
         text = paste().strip()
@@ -899,7 +1045,7 @@ class TextInput(Widget):
 
             self.sound.play_key_add()
             self._input_string = new_string  # For a purpose of computing render_box
-            for i in range(len(text) + 1):  # Move cursor
+            for i in range(len(text)):  # Move cursor
                 self._move_cursor_right()
             self._update_input_string(new_string)
             self.change()
@@ -950,6 +1096,55 @@ class TextInput(Widget):
         self._update_from_history()
         return True
 
+    def _remove_selection(self):
+        """
+        Remove text from selection.
+
+        :return: None
+        """
+        removed = self._selection_box[1] - self._selection_box[0]
+        left = False
+        if self._selection_box[0] == self._cursor_position:
+            left = True
+
+        for i in range(removed):
+            if left:
+                self._delete()
+            else:
+                self._backspace()
+
+        # Destroy selection
+        self._unselect_text()
+
+    def _backspace(self):
+        """
+        Backspace event.
+
+        :return: None
+        """
+        new_string = (
+                self._input_string[:max(self._cursor_position - 1, 0)]
+                + self._input_string[self._cursor_position:]
+        )
+        self._update_input_string(new_string)
+        self._update_renderbox(left=-1, addition=True)
+
+        # Subtract one from cursor_pos, but do not go below zero:
+        self._cursor_position = max(self._cursor_position - 1, 0)
+
+    def _delete(self):
+        """
+        Delete event.
+
+        :return: None
+        """
+        new_string = (
+                self._input_string[:self._cursor_position]
+                + self._input_string[self._cursor_position + 1:]
+        )
+        self._update_input_string(new_string)
+        self._update_renderbox(right=-1, addition=True)
+
     def update(self, events):
         """
         See upper class doc.
@@ -998,75 +1193,145 @@ class TextInput(Widget):
                         self.sound.play_key_del()
                         return self._cut()
 
+                    elif event.key == _pygame.K_a:
+                        self._selection_box[0] = 0
+                        self._selection_box[1] = len(self._input_string)
+                        self._cursor_position = self._selection_box[1]
+                        for i in range(len(self._input_string)):
+                            self._move_cursor_right()
+                        self._render_selection_box(True)
+                        self._selection_active = False
+                        return False
+
                     # Command not found, returns
                     else:
                         return False
 
+                # Backspace button, delete text from right
                 if event.key == _pygame.K_BACKSPACE:
+
+                    # Play sound
                     if self._cursor_position == 0:
                         self.sound.play_event_error()
                     else:
                         self.sound.play_key_del()
-                    new_string = (
-                            self._input_string[:max(self._cursor_position - 1, 0)]
-                            + self._input_string[self._cursor_position:]
-                    )
-                    self._update_input_string(new_string)
-                    self._update_renderbox(left=-1, addition=True)
-                    self.change()
 
-                    # Subtract one from cursor_pos, but do not go below zero:
-                    self._cursor_position = max(self._cursor_position - 1, 0)
+                    # If text is selected
+                    if self._selection_surface:
+                        self._remove_selection()
+                        return True
+
+                    self._backspace()
+                    self.change()
                     updated = True
 
+                # Delete button, delete text from left
                 elif event.key == _pygame.K_DELETE:
+
+                    # Play sound
                     if self._cursor_position == len(self._input_string):
                         self.sound.play_event_error()
                     else:
                         self.sound.play_key_del()
-                    new_string = (
-                            self._input_string[:self._cursor_position]
-                            + self._input_string[self._cursor_position + 1:]
-                    )
-                    self._update_input_string(new_string)
-                    self._update_renderbox(right=-1, addition=True)
+
+                    # If text is selected
+                    if self._selection_surface:
+                        self._remove_selection()
+                        return True
+
+                    self._delete()
                     self.change()
                     updated = True
 
+                # Right arrow
                 elif event.key == _pygame.K_RIGHT:
+
+                    # Play sound
                     if self._cursor_position == len(self._input_string):
                         self.sound.play_event_error()
                     else:
                         self.sound.play_key_add()
+
+                    # Update selection box
+                    if self._selection_active:
+                        if self._cursor_position == self._selection_box[1]:
+                            if self._selection_box[0] == self._selection_box[1]:
+                                self._selection_box[1] = self._selection_box[0] + 1
+                            else:
+                                self._selection_box[1] = min(len(self._input_string), self._selection_box[1] + 1)
+                        else:
+                            self._selection_box[0] = min(self._selection_box[1], self._selection_box[0] + 1)
+                    else:
+                        if self._unselect_text():
+                            return
+
+                    # Move cursor
                     self._move_cursor_right()
                     updated = True
 
+                # Left arrow
                 elif event.key == _pygame.K_LEFT:
+
+                    # Play sound
                     if self._cursor_position == 0:
                         self.sound.play_event_error()
                     else:
                         self.sound.play_key_add()
+
+                    # Update selection box
+                    if self._selection_active:
+                        if self._cursor_position == self._selection_box[0]:
+                            self._selection_box[0] = max(0, self._selection_box[0] - 1)
+                        else:
+                            if self._selection_box[1] - self._selection_box[0] == 1:
+                                self._selection_box[1] = self._selection_box[0]
+                            else:
+                                self._selection_box[1] = max(self._selection_box[0], self._selection_box[1] - 1)
+                    else:
+                        if self._unselect_text():
+                            return
+
+                    # Move cursor
                     self._move_cursor_left()
                     updated = True
 
+                # End
                 elif event.key == _pygame.K_END:
                     self.sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
+                    self._unselect_text()
                     updated = True
 
+                # Home
                 elif event.key == _pygame.K_HOME:
                     self.sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
+                    self._unselect_text()
                     updated = True
 
+                # Enter
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
                     self.sound.play_open_menu()
                     self.apply()
+                    self._unselect_text()
                     updated = True
 
+                # Press lshift, rshift -> selection
+                elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
+                    if not self._selection_active:
+                        self._selection_active = True
+                        self._selection_box[0] = self._cursor_position
+                        self._selection_box[1] = self._cursor_position
+                    return False
+
+                # Any other key, add as input
                 elif event.key not in self._ignore_keys:
+
+                    # If selected text
+                    if self._selection_surface:
+                        self._remove_selection()
 
                     # Check input exceeded the limit returns
                     if self._check_input_size():
@@ -1083,7 +1348,6 @@ class TextInput(Widget):
                     # If unwanted escape sequences
                     event_escaped = repr(event.unicode)
                     if '\\x' in event_escaped or '\\r' in event_escaped:
-                        _pygame.event.pump()  # Sync events
                         return False
 
                     # If data is valid
@@ -1113,12 +1377,23 @@ class TextInput(Widget):
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
 
+                # If selection keys are released, stop selection
+                elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
+                    self._selection_active = False
+
                 # Release inputs
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                self._selection_active = False
                 self._check_mouse_collide_input(event.pos)
+
+            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONDOWN:
+                if self._selection_active:
+                    self._unselect_text()
+                self._selection_active = True
+                self._selection_mouse_first_position = -1
 
         # Get time clock
         time_clock = self._clock.get_time()
