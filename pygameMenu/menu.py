@@ -30,20 +30,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import constants
-from pygameMenu.sound import Sound as _Sound
-import pygameMenu.controls as _ctrl
-import pygameMenu.config as _cfg
-import pygameMenu.events as _events
-import pygameMenu.fonts as _fonts
-import pygameMenu.locals as _locals
-
 # Library imports
 from sys import exit
-import pygameMenu.widgets as _widgets
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
+
+from pygameMenu.sound import Sound as _Sound
+import pygameMenu.config as _cfg
+import pygameMenu.controls as _ctrl
+import pygameMenu.events as _events
+import pygameMenu.fonts as _fonts
+import pygameMenu.locals as _locals
+import pygameMenu.widgets as _widgets
 
 
 # noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker,PyUnresolvedReferences

@@ -30,10 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame as _pygame
 from uuid import uuid4
 
 from pygameMenu.sound import Sound as _Sound
-import pygame as _pygame
 import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
 import pygameMenu.fonts as _fonts

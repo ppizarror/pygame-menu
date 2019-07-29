@@ -31,9 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Library imports
-import pygame as _pygame
 from pygameMenu.menu import Menu
 import pygameMenu.config as _cfg
+import pygameMenu.fonts as _fonts
 import pygameMenu.locals as _locals
 
 
@@ -104,7 +104,7 @@ class TextMenu(Menu):
         self._textdy = text_margin
 
         # Load font
-        self._fonttext = _pygame.font.Font(font, self._font_textsize)
+        self._fonttext = _fonts.get_font(font, self._font_textsize)
 
         # Inner variables
         self._text = []

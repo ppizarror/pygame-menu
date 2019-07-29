@@ -178,7 +178,7 @@ class MenuTest(unittest.TestCase):
         Test textual menus.
         """
         menu = pygameMenu.TextMenu(surface,
-                                   font=pygameMenu.fonts.FONT_FRANCHISE,
+                                   font='consolas',
                                    dopause=False,
                                    menu_color=(30, 50, 107),  # Background color
                                    menu_color_title=(120, 45, 30),

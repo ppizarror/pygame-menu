@@ -33,8 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 
-from pygameMenu import controls as _ctrl
 from pygameMenu.widgets.widget import Widget
+import pygameMenu.controls as _ctrl
 
 
 # noinspection PyTypeChecker
