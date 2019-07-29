@@ -767,15 +767,17 @@ class Menu(object):
         # Clock tick
         self._actual._clock.tick(self._fps)
 
-        # Process events, first check widgets, then the menu
+        # Process events, check title
         if self._actual._menubar.update(events):
             if not self._actual._dopause:
                 break_mainloop = True
 
+        # Check selected widget
         elif len(self._actual._option) > 0 and self._actual._option[self._actual._index].update(events):
             if not self._actual._dopause:
                 break_mainloop = True
 
+        # Check others
         else:
             for event in events:  # type: _pygame.event.EventType
 
@@ -965,7 +967,7 @@ class Menu(object):
 
         :param sound: Sound object
         :type sound: pygameMenu.sound.Sound
-        :param recursive: Set FPS to all the submenus
+        :param recursive: Set the sound engine to all submenus
         :type recursive: bool
         :return: None
         """
@@ -1034,7 +1036,7 @@ class Menu(object):
         """
         Get actual selected option.
 
-        :return: Selected option index.
+        :return: Selected option index
         :rtype: int
         """
         return self._top._actual._index
@@ -1091,7 +1093,7 @@ class Menu(object):
 
         :param widget_id: Widget ID
         :type widget_id: basestring
-        :param recursive: Look in menu and sub-menus
+        :param recursive: Look in menu and submenus
         :type recursive: bool
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget
