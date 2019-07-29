@@ -30,11 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame as _pygame
 from uuid import uuid4
 
 from pygameMenu.sound import Sound as _Sound
-import pygame as _pygame
-import pygameMenu.config_menu as _cfg
+import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
 import pygameMenu.fonts as _fonts
 
@@ -132,7 +132,7 @@ class Widget(object):
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            self._on_return(*args, **self._kwargs)
+            return self._on_return(*args, **self._kwargs)
 
     def change(self, *args):
         """
@@ -156,7 +156,7 @@ class Widget(object):
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            self._on_change(*args, **self._kwargs)
+            return self._on_change(*args, **self._kwargs)
 
     def draw(self, surface):
         """
@@ -290,8 +290,8 @@ class Widget(object):
 
             # Create surface
             size = (text.get_width() + 2, text.get_height() + 2)
-            # noinspection PyArgumentList
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
 
             # Draw shadow first
             if self._shadow:
@@ -372,7 +372,7 @@ class Widget(object):
         """
         Set the alignment of the widget.
 
-        :param align: Widget align, could be PYGAME_ALIGN_LEFT/CENTER/RIGHT
+        :param align: Widget align, could be ALIGN_LEFT/CENTER/RIGHT
         :type align: basestring
         :return: None
         """

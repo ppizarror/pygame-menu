@@ -30,11 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
-from pygameMenu import config_controls as _ctrl
-from pygameMenu import locals as _locals
-from pygameMenu.widgets.widget import Widget
 import math as _math
+import pygame as _pygame
+
+from pygameMenu.widgets.widget import Widget
+import pygameMenu.controls as _ctrl
+import pygameMenu.locals as _locals
 
 try:
     from pyperclip import copy, paste
@@ -162,7 +163,7 @@ class TextInput(Widget):
                                         onreturn=onreturn, kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
-        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,
+        self._ignore_keys = (_ctrl.KEY_MOVE_UP, _ctrl.KEY_MOVE_DOWN,
                              _pygame.K_LCTRL, _pygame.K_RCTRL,
                              _pygame.K_LSHIFT, _pygame.K_RSHIFT,
                              _pygame.K_NUMLOCK, _pygame.K_CAPSLOCK,
@@ -282,7 +283,7 @@ class TextInput(Widget):
         """
         value = ''
         if self._input_type == _locals.INPUT_TEXT:
-            value = self._input_string
+            value = self._input_string  # Without filters
         elif self._input_type == _locals.INPUT_FLOAT:
             try:
                 value = float(self._input_string)
@@ -290,7 +291,7 @@ class TextInput(Widget):
                 value = 0
         elif self._input_type == _locals.INPUT_INT:
             try:
-                value = int(self._input_string)
+                value = int(float(self._input_string))
             except ValueError:
                 value = 0
         return value
@@ -395,9 +396,8 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            # noinspection PyArgumentList
-            self._selection_surface = _pygame.Surface((x, y), _pygame.SRCALPHA,
-                                                      32).convert_alpha()  # type: _pygame.SurfaceType
+            new_surface = _pygame.Surface((x, y), _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            self._selection_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
             self._selection_surface.fill(self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
@@ -454,7 +454,10 @@ class TextInput(Widget):
             max_width_current = 0
             if self._maxchar != 0 or self._maxwidth != 0:
                 max_chars = max(self._maxchar, self._maxwidth_base)
-                max_size = self.font_render_string('O' * max_chars, color)
+                basechar = 'O'
+                if self._password:
+                    basechar = self._password_char
+                max_size = self.font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
                 maxchar_char = _math.ceil(max_size * 1.0 / self._input_underline_size)
                 char = min(char, maxchar_char)
@@ -471,8 +474,8 @@ class TextInput(Widget):
                             self._last_rendered_surface_underline_width)
             new_size = (new_width + 1, current_rect.height + 3)
 
-            # noinspection PyArgumentList
-            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            new_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))
@@ -886,9 +889,9 @@ class TextInput(Widget):
 
         conv = None
         if self._input_type == _locals.INPUT_FLOAT:
-            conv = int
-        elif self._input_type == _locals.INPUT_INT:
             conv = float
+        elif self._input_type == _locals.INPUT_INT:
+            conv = int
 
         if string == '-':
             return True
@@ -1354,7 +1357,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Enter
-                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                elif event.key == _ctrl.KEY_APPLY:
                     self.sound.play_open_menu()
                     self.apply()
                     self._unselect_text()

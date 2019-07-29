@@ -30,18 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Joypad
-JOY_AXIS_X = 0
-JOY_AXIS_Y = 1
-JOY_BUTTON_BACK = 1
-JOY_BUTTON_SELECT = 0
-JOY_CENTERED = (0, 0)
-JOY_DEADZONE = 0.5
-JOY_DOWN = (0, -1)
-JOY_LEFT = (-1, 0)
-JOY_RIGHT = (1, 0)
-JOY_UP = (0, 1)
-
 # Alignment
 ALIGN_CENTER = '__pygameMenu_align_center__'
 ALIGN_LEFT = '__pygameMenu_align_left__'

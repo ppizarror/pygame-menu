@@ -32,8 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
-from pygameMenu import locals as _locals
+
 from pygameMenu.widgets.widget import Widget
+import pygameMenu.controls as _ctrl
 
 
 # noinspection PyTypeChecker
@@ -170,13 +171,13 @@ class MenuBar(Widget):
         for event in events:  # type: _pygame.event.EventType
 
             if self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
-                if self._backbox_rect.collidepoint(*event.pos):
+                if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self.sound.play_click_mouse()
                     self.apply()
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
-                if event.button == _locals.JOY_BUTTON_BACK:
+                if event.button == _ctrl.JOY_BUTTON_BACK:
                     self.sound.play_key_del()
                     self.apply()
                     updated = True

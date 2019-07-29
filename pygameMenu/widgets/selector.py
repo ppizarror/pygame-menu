@@ -31,9 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-from pygameMenu import config_controls as _ctrl
+
 from pygameMenu.widgets.widget import Widget
-from pygameMenu import locals as _locals
+import pygameMenu.controls as _ctrl
 
 
 class Selector(Widget):
@@ -171,32 +171,32 @@ class Selector(Widget):
                 if not self.check_key_pressed_valid(event):
                     continue
 
-                if event.key == _ctrl.MENU_CTRL_LEFT:
+                if event.key == _ctrl.KEY_LEFT:
                     self.sound.play_key_add()
                     self.left()
                     updated = True
-                elif event.key == _ctrl.MENU_CTRL_RIGHT:
+                elif event.key == _ctrl.KEY_RIGHT:
                     self.sound.play_key_add()
                     self.right()
                     updated = True
-                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                elif event.key == _ctrl.KEY_APPLY:
                     self.sound.play_open_menu()
                     self.apply(*self._elements[self._index][1:])
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYHATMOTION:
-                if event.value == _locals.JOY_LEFT:
+                if event.value == _ctrl.JOY_LEFT:
                     self.left()
                     updated = True
-                elif event.value == _locals.JOY_RIGHT:
+                elif event.value == _ctrl.JOY_RIGHT:
                     self.right()
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYAXISMOTION:
-                if event.axis == _locals.JOY_AXIS_X and event.value < _locals.JOY_DEADZONE:
+                if event.axis == _ctrl.JOY_AXIS_X and event.value < _ctrl.JOY_DEADZONE:
                     self.left()
                     updated = True
-                if event.axis == _locals.JOY_AXIS_X and event.value > -_locals.JOY_DEADZONE:
+                if event.axis == _ctrl.JOY_AXIS_X and event.value > -_ctrl.JOY_DEADZONE:
                     self.right()
                     updated = True
 

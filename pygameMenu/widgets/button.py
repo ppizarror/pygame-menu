@@ -31,9 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-from pygameMenu import config_controls as _ctrl
+
 from pygameMenu.widgets.widget import Widget
-from pygameMenu import locals as _locals
+import pygameMenu.controls as _ctrl
 
 
 class Button(Widget):
@@ -96,13 +96,13 @@ class Button(Widget):
         for event in events:  # type: _pygame.event.EventType
 
             if event.type == _pygame.KEYDOWN:
-                if event.key == _ctrl.MENU_CTRL_ENTER:
+                if event.key == _ctrl.KEY_APPLY:
                     self.sound.play_open_menu()
                     self.apply()
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
-                if event.button == _locals.JOY_BUTTON_SELECT:
+                if event.button == _ctrl.JOY_BUTTON_SELECT:
                     self.sound.play_key_add()
                     self.apply()
                     updated = True
