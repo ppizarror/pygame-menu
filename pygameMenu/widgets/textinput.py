@@ -396,9 +396,8 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            # noinspection PyArgumentList
-            self._selection_surface = _pygame.Surface((x, y), _pygame.SRCALPHA,
-                                                      32).convert_alpha()  # type: _pygame.SurfaceType
+            new_surface = _pygame.Surface((x, y), _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            self._selection_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
             self._selection_surface.fill(self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
@@ -475,7 +474,7 @@ class TextInput(Widget):
                             self._last_rendered_surface_underline_width)
             new_size = (new_width + 1, current_rect.height + 3)
 
-            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32)
+            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
             new_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
 
             # Blit current surface

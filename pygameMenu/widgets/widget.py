@@ -290,9 +290,8 @@ class Widget(object):
 
             # Create surface
             size = (text.get_width() + 2, text.get_height() + 2)
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
             surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
-            # lgtm [py/call/wrong-arguments]
 
             # Draw shadow first
             if self._shadow:
@@ -373,7 +372,7 @@ class Widget(object):
         """
         Set the alignment of the widget.
 
-        :param align: Widget align, could be PYGAME_ALIGN_LEFT/CENTER/RIGHT
+        :param align: Widget align, could be ALIGN_LEFT/CENTER/RIGHT
         :type align: basestring
         :return: None
         """

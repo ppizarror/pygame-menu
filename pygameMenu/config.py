@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygameMenu.locals import POSITION_NORTHWEST as _PYGAME_POSITION_NORTHWEST
+from pygameMenu.locals import POSITION_NORTHWEST as _POSITION_NORTHWEST
 
 """
 Menu object configuration.
@@ -50,7 +50,7 @@ MENU_SELECTED_WIDTH = 1  # Width of selected item
 MENU_SELECTEDCOLOR = (180, 180, 180)  # Color of selected item
 MENU_SHADOW_COLOR = (0, 0, 0)  # Shadow color
 MENU_SHADOW_OFFSET = 2  # Shadow offset (px)
-MENU_SHADOW_POSITION = _PYGAME_POSITION_NORTHWEST  # Shadow position
+MENU_SHADOW_POSITION = _POSITION_NORTHWEST  # Shadow position
 MENU_TITLE_BG_COLOR = (170, 65, 50)  # Background color
 MENU_WIDTH = 600  # Width of Menu (px)
 
