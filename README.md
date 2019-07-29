@@ -4,15 +4,20 @@
   </a>
   <br /><br />
   Pygame Menu</h1>
+
 <p align="center">Menu for pygame, simple, lightweight and easy to use</p>
-<div align="center"><a href="https://ppizarror.com"><img alt="@ppizarror" src="https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg" /></a>
+
+<div align="left">
+<a href="https://ppizarror.com"><img alt="@ppizarror" src="https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg" /></a>
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 2.6+" src="https://img.shields.io/badge/python-2.6+-red.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 3.6+" src="https://img.shields.io/badge/python-3.6+-red.svg" /></a>
-<a href="https://www.pygame.org/"><img alt="Pygame 1.9.4-1.9.6" src="https://ppizarror.com/badges/pygame194-196.svg" /></a>
-<br><a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
-<a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 2.6/3.6" src="https://img.shields.io/badge/python-2.7+ / 3.6+-red.svg" /></a>
+<!-- <a href="https://www.pygame.org/"><img alt="Pygame 1.9.4-1.9.6" src="https://ppizarror.com/badges/pygame194-196.svg" /></a> -->
 <a href="https://pypi.org/project/pygame-menu/"><img alt="PyPi package" src="https://badge.fury.io/py/pygame-menu.svg" /></a>
+<br>
+<a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master" /></a>
+<a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg" /></a>
+<a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
+<a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 </div><br/>
 
 Python library that can create a simple Menu for pygame application, supports:
