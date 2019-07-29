@@ -223,6 +223,19 @@ class PygameMenuUtils(object):
         return fonts[opt]
 
     @staticmethod
+    def load_font(font, size):
+        """
+        Load font from file.
+
+        :param font: Font name
+        :type font: basestring
+        :param size: Font size
+        :type size: int
+        :return: Font object
+        """
+        return pygameMenu.fonts.get_font(font, size)
+
+    @staticmethod
     def random_system_font():
         """
         Return random system font.

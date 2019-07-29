@@ -91,7 +91,7 @@ def random_color():
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty, font):
+def play_function(difficulty, font, test=False):
     """
     Main game function.
 
@@ -99,8 +99,11 @@ def play_function(difficulty, font):
     :type difficulty: basestring
     :param font: Pygame font
     :type font: pygame._font.Font
+    :param test: Test method, if true only one loop is allowed
+    :type test: bool
     :return: None
     """
+    assert isinstance(difficulty, (tuple, list))
     difficulty = difficulty[0]
     assert isinstance(difficulty, str)
 
@@ -148,6 +151,10 @@ def play_function(difficulty, font):
         surface.blit(f, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2))
         pygame.display.flip()
 
+        # If test returns
+        if test:
+            break
+
 
 def main_background():
     """
@@ -188,7 +195,8 @@ play_menu.add_selector('Select difficulty',
                        [('1 - Easy', 'EASY'),
                         ('2 - Medium', 'MEDIUM'),
                         ('3 - Hard', 'HARD')],
-                       onchange=change_difficulty)
+                       onchange=change_difficulty,
+                       selector_id='select_difficulty')
 play_menu.add_option('Return to main menu', pygameMenu.events.BACK)
 
 # About menu
@@ -272,6 +280,10 @@ def main(test=False):
 
         # Flip surface
         pygame.display.flip()
+
+        # At first loop returns
+        if test:
+            break
 
 
 if __name__ == '__main__':

@@ -240,6 +240,10 @@ def main(test=False):
         # Flip surface
         pygame.display.flip()
 
+        # At first loop returns
+        if test:
+            break
+
 
 if __name__ == '__main__':
     main()
