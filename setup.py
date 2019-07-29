@@ -32,11 +32,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup, find_packages
-from pygameMenu import __author__, __description__, __email__, __url__, __version__
+from pygameMenu import __author__, __description__, __email__, __url__
+from pygameMenu.version import ver
 
+# Load readme
 with open('README.rst') as f:
     long_description = f.read()
 
+# Load requirements
+with open('requirements.txt') as f:
+    requirements = []
+    for line in f:
+        requirements.append(line.strip())
+
+# Setup library
 setup(
     author=__author__,
     author_email=__email__,
@@ -48,11 +57,12 @@ setup(
     ],
     description=__description__,
     include_package_data=True,
-    install_requires=['pygame>=1.9.5', 'pyperclip'],
+    install_requires=requirements,
     license='MIT',
     long_description=long_description,
+    python_requires='>=2.6',
     name='pygame-menu',
     packages=find_packages(),
     url=__url__,
-    version=__version__
+    version=ver
 )
