@@ -850,19 +850,21 @@ class Menu(object):
         if self._top is None:
             raise Exception('The menu has not been initialized yet, try using mainloop function')
 
-    def mainloop(self, events=None):
+    def mainloop(self, events=None, disable_loop=False):
         """
         Main function of menu.
 
         :param events: Menu events
         :type events: list
+        :param disable_loop: Disable infinite loop waiting for events
+        :type disable_loop: bool
         :return: None
         """
         self._top = self
 
         if self.is_disabled():
             return
-        if self._actual._dopause:
+        if self._actual._dopause and not disable_loop:
             while True:
                 if self._main():
                     return
