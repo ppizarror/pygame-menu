@@ -300,6 +300,15 @@ import pygameMenu
     menu_help.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
 
+- *clear()*
+
+    Full reset and clear all the widgets.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.clear()
+    ```
+
 - *disable(closelocked)*
 
     Disable Menu (doest check events and draw on surface). If *closelocked* is *True* all the locked pened submenus are closed too.

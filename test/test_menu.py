@@ -52,6 +52,7 @@ class MenuTest(unittest.TestCase):
         """
         Test depth of a menu.
         """
+        self.menu.clear()
         self.assertEqual(self.menu._get_depth(), 0)
 
         # Adds some menus
@@ -76,7 +77,8 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_title(), 'submenu 10')
 
         """
-        Submenu 10 has not changed to any, so back will not affect it
+        Submenu 10 has not changed to any, so back will not affect it,
+        but mainmenu will reset 1 unit
         """
         menu._back()
         self.assertEqual(menu.get_title(), 'submenu 10')
@@ -84,15 +86,42 @@ class MenuTest(unittest.TestCase):
         """
         Mainmenu has changed, go back changes from submenu 10 to 9
         """
-        self.menu._back()
         self.assertEqual(self.menu._get_depth(), 9)
+        self.menu._back()
+        self.assertEqual(self.menu._get_depth(), 8)
         self.assertEqual(self.menu.get_title(), 'mainmenu')
-        self.assertEqual(self.menu.get_title(True), 'submenu 9')
+        self.assertEqual(self.menu.get_title(True), 'submenu 8')
 
         """
         Full go back (reset)
         """
-        self.menu.reset()
+        self.menu.full_reset()
+        self.assertEqual(self.menu._get_depth(), 0)
+        self.assertEqual(self.menu.get_title(True), 'mainmenu')
+
+    # noinspection PyArgumentEqualDefault
+    def test_get_widget(self):
+        """
+        Tests widget status.
+        """
+        self.menu.clear()
+
+        widget = self.menu.add_text_input('test', 'some_id')
+        widget_found = self.menu.get_widget('some_id')
+        self.assertEqual(widget, widget_found)
+
+        # Add a widget to a deepest menu
+        prev_menu = self.menu
+        for i in range(11):
+            menu = create_generic_menu()
+            prev_menu.add_option('menu', menu)
+            prev_menu = menu
+
+        # Add a deep input
+        deep_widget = prev_menu.add_text_input('title', 'deep_id')
+
+        self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
+        self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
 
 
 if __name__ == '__main__':
