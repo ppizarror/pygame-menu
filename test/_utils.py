@@ -2,10 +2,11 @@
 Test suite utils.
 """
 
-# noinspection PyUnresolvedReferences
 import pygame
 import pygameMenu
 import random
+
+# noinspection PyUnresolvedReferences
 import unittest
 
 # Constants
@@ -145,12 +146,26 @@ class PygameUtils(object):
     def get_system_font():
         """
         Return random system font.
+
         :return: System font name
         :rtype: basestring
         """
         fonts = pygame.font.get_fonts()
-        opt = random.randrange(0, len(fonts))
-        return fonts[opt]
+        default_font = pygameMenu.fonts.FONT_8BIT
+        if len(fonts) == 0:
+            return default_font
+
+        # Find a good font:
+        i = 0
+        while True:
+            opt = random.randrange(0, len(fonts))
+            font = str(fonts[opt])
+            if len(font) > 0:
+                return font
+            else:
+                i += 1
+            if i == 10:  # In case anything fails
+                return default_font
 
 
 def create_generic_menu(title=''):
