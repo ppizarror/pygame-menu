@@ -454,7 +454,10 @@ class TextInput(Widget):
             max_width_current = 0
             if self._maxchar != 0 or self._maxwidth != 0:
                 max_chars = max(self._maxchar, self._maxwidth_base)
-                max_size = self.font_render_string('O' * max_chars, color)
+                basechar = 'O'
+                if self._password:
+                    basechar = self._password_char
+                max_size = self.font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
                 maxchar_char = _math.ceil(max_size * 1.0 / self._input_underline_size)
                 char = min(char, maxchar_char)
