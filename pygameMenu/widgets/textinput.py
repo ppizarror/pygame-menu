@@ -474,8 +474,8 @@ class TextInput(Widget):
                             self._last_rendered_surface_underline_width)
             new_size = (new_width + 1, current_rect.height + 3)
 
-            # noinspection PyArgumentList
-            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32)
+            new_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))

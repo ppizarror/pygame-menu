@@ -290,8 +290,8 @@ class Widget(object):
 
             # Create surface
             size = (text.get_width() + 2, text.get_height() + 2)
-            # noinspection PyArgumentList
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32).convert_alpha()  # type: _pygame.SurfaceType
+            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)
+            surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
 
             # Draw shadow first
             if self._shadow:
