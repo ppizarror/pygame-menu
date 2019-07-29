@@ -1034,8 +1034,8 @@ class Menu(object):
         :return: None
         """
         self.full_reset()
-        self._actual._option.clear()
-        self._actual._submenus.clear()
+        del self._actual._option[:]
+        del self._actual._submenus[:]
 
     def _open(self, menu):
         """
