@@ -31,22 +31,28 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # noinspection PyUnresolvedReferences
-from pygameMenu.menu import Menu
+import pygameMenu.config
 
 # noinspection PyUnresolvedReferences
-from pygameMenu.textmenu import TextMenu
-
-# noinspection PyUnresolvedReferences
-from pygameMenu.sound import Sound
-
-# noinspection PyUnresolvedReferences
-import pygameMenu.fonts as fonts
+import pygameMenu.controls
 
 # noinspection PyUnresolvedReferences
 import pygameMenu.events
 
 # noinspection PyUnresolvedReferences
+import pygameMenu.fonts
+
+# noinspection PyUnresolvedReferences
 import pygameMenu.locals
+
+# noinspection PyUnresolvedReferences
+from pygameMenu.menu import Menu
+
+# noinspection PyUnresolvedReferences
+from pygameMenu.sound import Sound
+
+# noinspection PyUnresolvedReferences
+from pygameMenu.textmenu import TextMenu
 
 # Other
 __author__ = 'ppizarror'

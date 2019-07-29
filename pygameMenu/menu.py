@@ -32,8 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Import constants
 from pygameMenu.sound import Sound as _Sound
-import pygameMenu.config_controls as _ctrl
-import pygameMenu.config_menu as _cfg
+import pygameMenu.controls as _ctrl
+import pygameMenu.config as _cfg
 import pygameMenu.events as _events
 import pygameMenu.fonts as _fonts
 import pygameMenu.locals as _locals
@@ -746,12 +746,14 @@ class Menu(object):
             _pygame.event.post(ev)
         return not bad_event
 
-    def _main(self, events=None):
+    def _main(self, events=None, test_event=False):
         """
         Main function of the loop.
 
         :param events: Pygame events
         :type events: list
+        :param test_event: Disable event check
+        :type test_event: bool
         :return: True if mainloop must be stopped
         :rtype: bool
         """
@@ -770,7 +772,7 @@ class Menu(object):
             if not self._actual._dopause:
                 break_mainloop = True
 
-        elif self._actual._option[self._actual._index].update(events):
+        elif len(self._actual._option) > 0 and self._actual._option[self._actual._index].update(events):
             if not self._actual._dopause:
                 break_mainloop = True
 
@@ -778,26 +780,28 @@ class Menu(object):
             for event in events:  # type: _pygame.event.EventType
 
                 # noinspection PyUnresolvedReferences
-                if event.type == _pygame.locals.QUIT:
+                if event.type == _pygame.locals.QUIT or (
+                        event.type == _pygame.KEYDOWN and event.key == _pygame.K_F4 and (
+                        event.mod == _pygame.KMOD_LALT or event.mod == _pygame.KMOD_RALT)):
                     self._exit()
                     break_mainloop = True
 
                 elif event.type == _pygame.locals.KEYDOWN:
 
                     # Check key event is valid
-                    if not self._check_key_pressed_valid(event):
+                    if not self._check_key_pressed_valid(event) and not test_event:
                         continue
 
-                    if event.key == _ctrl.MENU_CTRL_DOWN:
+                    if event.key == _ctrl.DOWN:
                         self._select(self._actual._index - 1)
                         self._sounds.play_key_add()
-                    elif event.key == _ctrl.MENU_CTRL_UP:
+                    elif event.key == _ctrl.UP:
                         self._select(self._actual._index + 1)
                         self._sounds.play_key_add()
-                    elif event.key == _ctrl.MENU_CTRL_BACK and self._actual._prev is not None:
+                    elif event.key == _ctrl.BACK and self._actual._prev is not None:
                         self._sounds.play_close_menu()
                         self.reset(1)
-                    elif event.key == _ctrl.MENU_CTRL_CLOSE_MENU and not self._closelocked:
+                    elif event.key == _ctrl.CLOSE_MENU and not self._closelocked:
                         self._sounds.play_close_menu()
                         if self._close():
                             break_mainloop = True
@@ -832,7 +836,6 @@ class Menu(object):
             self._actual.draw()
 
         _pygame.display.flip()
-
         self._closelocked = False
 
         return break_mainloop
@@ -1026,6 +1029,15 @@ class Menu(object):
                 break
 
         self._select(self._top._actual._index)
+
+    def _get_actual_index(self):
+        """
+        Get actual selected option.
+
+        :return: Selected option index.
+        :rtype: int
+        """
+        return self._top._actual._index
 
     def clear(self):
         """

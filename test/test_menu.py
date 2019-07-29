@@ -27,6 +27,7 @@ class MenuTest(unittest.TestCase):
             button = menu_prev.add_option('open', menu)
             button.apply()
             menu_prev = menu
+        self.menu.draw()
 
         self.assert_(self.menu != menu)
         self.assertEqual(menu._get_depth(), 10)
@@ -86,6 +87,28 @@ class MenuTest(unittest.TestCase):
 
         self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
+
+    def test_events(self):
+        """
+        Test key events.
+        """
+        self.menu.clear()
+
+        # Add a menu and a method that set a function
+        def _assert():
+            print('wena')
+
+        # Add some options (5)
+        for i in range(5):
+            self.menu.add_option('button', _assert)
+
+        # Create a event in pygame
+        self.menu._main([pygame.event.Event(pygame.KEYDOWN, {"key": pygameMenu.controls.DOWN})], test_event=True)  # Down
+        self.assertEqual(self.menu._get_actual_index(), 1)
+
+        # Press Up twice
+        for i in range(2):
+            self.menu._main([pygame.event.Event(pygame.KEYDOWN, {"key": pygame.K_UP})], test_event=True)  # Down
 
 
 if __name__ == '__main__':

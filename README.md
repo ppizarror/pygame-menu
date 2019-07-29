@@ -610,11 +610,11 @@ print(pygame.font.get_fonts())
 
 Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
-| File | Description |
-| :-: | :-- |
-| config_controls.py | Configure default key-events of Menus |
-| config_menu.py | Configure default parameter of Menu class |
-| config_textmenu.py | Configure default parameter of TextMenu class |
+| File | Description | Import
+| :-: | :-- | :--: |
+| controls.py | Configure default key-events of Menus | pygameMenu.controls |
+| config_menu.py | Configure default parameter of Menu class | pygameMenu.configMenu |
+| config_textmenu.py | Configure default parameter of TextMenu class | pygameMenu.configTextMenu |
 
 ## Author
 

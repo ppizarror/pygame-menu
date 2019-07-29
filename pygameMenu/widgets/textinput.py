@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-from pygameMenu import config_controls as _ctrl
+from pygameMenu import controls as _ctrl
 from pygameMenu import locals as _locals
 from pygameMenu.widgets.widget import Widget
 import math as _math
@@ -162,7 +162,7 @@ class TextInput(Widget):
                                         onreturn=onreturn, kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
-        self._ignore_keys = (_ctrl.MENU_CTRL_UP, _ctrl.MENU_CTRL_DOWN,
+        self._ignore_keys = (_ctrl.UP, _ctrl.DOWN,
                              _pygame.K_LCTRL, _pygame.K_RCTRL,
                              _pygame.K_LSHIFT, _pygame.K_RSHIFT,
                              _pygame.K_NUMLOCK, _pygame.K_CAPSLOCK,
@@ -1357,7 +1357,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Enter
-                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                elif event.key == _ctrl.APPLY:
                     self.sound.play_open_menu()
                     self.apply()
                     self._unselect_text()

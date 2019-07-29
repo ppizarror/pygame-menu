@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-from pygameMenu import config_controls as _ctrl
+from pygameMenu import controls as _ctrl
 from pygameMenu.widgets.widget import Widget
 from pygameMenu import locals as _locals
 
@@ -171,15 +171,15 @@ class Selector(Widget):
                 if not self.check_key_pressed_valid(event):
                     continue
 
-                if event.key == _ctrl.MENU_CTRL_LEFT:
+                if event.key == _ctrl.LEFT:
                     self.sound.play_key_add()
                     self.left()
                     updated = True
-                elif event.key == _ctrl.MENU_CTRL_RIGHT:
+                elif event.key == _ctrl.RIGHT:
                     self.sound.play_key_add()
                     self.right()
                     updated = True
-                elif event.key == _ctrl.MENU_CTRL_ENTER:
+                elif event.key == _ctrl.APPLY:
                     self.sound.play_open_menu()
                     self.apply(*self._elements[self._index][1:])
                     updated = True

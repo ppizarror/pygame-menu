@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Library imports
 import pygame as _pygame
 from pygameMenu.menu import Menu
-import pygameMenu.config_textmenu as _cfg
+import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
 
 

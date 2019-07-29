@@ -34,7 +34,7 @@ from uuid import uuid4
 
 from pygameMenu.sound import Sound as _Sound
 import pygame as _pygame
-import pygameMenu.config_menu as _cfg
+import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
 import pygameMenu.fonts as _fonts
 
@@ -292,6 +292,7 @@ class Widget(object):
             size = (text.get_width() + 2, text.get_height() + 2)
             surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)
             surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
+            # lgtm [py/call/wrong-arguments]
 
             # Draw shadow first
             if self._shadow:
