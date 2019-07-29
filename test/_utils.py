@@ -170,8 +170,59 @@ class PygameUtils(object):
         y = float(y1 + y2) / 2
         return [x, y]
 
+
+class PygameMenuUtils(object):
+    """
+    Static class for utilitary pygame-menu methods.
+    """
+
     @staticmethod
-    def get_system_font():
+    def get_font(name, size):
+        """
+        Returns a font.
+
+        :param name: Font name
+        :type name: basestring
+        :param size: Font size
+        :type size: int
+        :return: Font
+        :rtype: pygame.font.FontType
+        """
+        return pygameMenu.fonts.get_font(name, size)
+
+    @staticmethod
+    def get_library_fonts():
+        """
+        Return a test font from the library.
+
+        :return: Font file
+        :rtype: list[basestring]
+        """
+        return [
+            pygameMenu.fonts.FONT_8BIT,
+            pygameMenu.fonts.FONT_BEBAS,
+            pygameMenu.fonts.FONT_COMIC_NEUE,
+            pygameMenu.fonts.FONT_FRANCHISE,
+            pygameMenu.fonts.FONT_HELVETICA,
+            pygameMenu.fonts.FONT_MUNRO,
+            pygameMenu.fonts.FONT_NEVIS,
+            pygameMenu.fonts.FONT_OPEN_SANS,
+            pygameMenu.fonts.FONT_PT_SERIF
+        ]
+
+    def random_font(self):
+        """
+        Retunrn a random font from the library.
+
+        :return: Font file
+        :rtype: basestring
+        """
+        fonts = self.get_library_fonts()
+        opt = random.randrange(0, len(fonts))
+        return fonts[opt]
+
+    @staticmethod
+    def random_system_font():
         """
         Return random system font.
 
@@ -195,23 +246,23 @@ class PygameUtils(object):
             if i == 10:  # In case anything fails
                 return default_font
 
+    @staticmethod
+    def generic_menu(title=''):
+        """
+        Generate a generic test menu.
 
-def create_generic_menu(title=''):
-    """
-    Generate a generic test menu.
-
-    :param title: Menu title
-    :type title: basestring
-    :return: Menu
-    :rtype: pygameMenu.Menu
-    """
-    return pygameMenu.Menu(surface,
-                           dopause=False,
-                           enabled=False,
-                           font=pygameMenu.fonts.FONT_NEVIS,
-                           fps=FPS,
-                           menu_alpha=90,
-                           title=title,
-                           window_height=H_SIZE,
-                           window_width=W_SIZE
-                           )
+        :param title: Menu title
+        :type title: basestring
+        :return: Menu
+        :rtype: pygameMenu.Menu
+        """
+        return pygameMenu.Menu(surface,
+                               dopause=False,
+                               enabled=False,
+                               font=pygameMenu.fonts.FONT_NEVIS,
+                               fps=FPS,
+                               menu_alpha=90,
+                               title=title,
+                               window_height=H_SIZE,
+                               window_width=W_SIZE
+                               )
