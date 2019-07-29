@@ -132,7 +132,7 @@ class Widget(object):
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            self._on_return(*args, **self._kwargs)
+            return self._on_return(*args, **self._kwargs)
 
     def change(self, *args):
         """
@@ -156,7 +156,7 @@ class Widget(object):
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            self._on_change(*args, **self._kwargs)
+            return self._on_change(*args, **self._kwargs)
 
     def draw(self, surface):
         """

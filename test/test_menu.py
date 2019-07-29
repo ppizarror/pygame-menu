@@ -84,9 +84,11 @@ class MenuTest(unittest.TestCase):
 
         # Add a deep input
         deep_widget = prev_menu.add_text_input('title', 'deep_id')
+        deep_selector = prev_menu.add_selector('selector', [('0', 0), ('1', 1)], 'deep_selector', default=1)
 
         self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
+        self.assertEqual(self.menu.get_widget('deep_selector', recursive=True), deep_selector)
 
     def test_events(self):
         """
@@ -95,20 +97,104 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
 
         # Add a menu and a method that set a function
-        def _assert():
-            print('wena')
+        def _some_event():
+            return 'the value'
 
-        # Add some options (5)
+        # Add some options
+        button = None
+        first_button = None
         for i in range(5):
-            self.menu.add_option('button', _assert)
+            button = self.menu.add_option('button', _some_event)
+            if i == 0:
+                first_button = button
 
         # Create a event in pygame
-        self.menu._main([pygame.event.Event(pygame.KEYDOWN, {"key": pygameMenu.controls.KEY_MOVE_UP})], test_event=True)  # Down
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True), test_event=True)
         self.assertEqual(self.menu._get_actual_index(), 1)
 
-        # Press Up twice
+        # Move down twice
         for i in range(2):
-            self.menu._main([pygame.event.Event(pygame.KEYDOWN, {"key": pygame.K_UP})], test_event=True)  # Down
+            self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_DOWN, keydown=True), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 4)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 0)
+
+        # Press enter, button should trigger and call function
+        self.assertEqual(button.apply(), 'the value')
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True), test_event=True)
+
+        # Other
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_CLOSE_MENU, keydown=True), test_event=True)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True), test_event=True)
+
+        # Check index is the same as before
+        self.assertEqual(self.menu._get_actual_index(), 0)
+
+        # Check joy
+        self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_UP), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 1)
+        self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_DOWN), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 0)
+        self.menu._main(PygameUtils.joy_motion(1, 1), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 1)
+        self.menu._main(PygameUtils.joy_motion(1, -1), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 0)
+        self.menu._main(PygameUtils.joy_motion(1, -1), test_event=True)
+        self.assertEqual(self.menu._get_actual_index(), 4)
+
+        # Check mouse, get last widget
+        click_pos = PygameUtils.get_middle_rect(button.get_rect())
+        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]), test_event=True)
+        click_pos = PygameUtils.get_middle_rect(first_button.get_rect())
+        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]), test_event=True)
+
+    def test_input_data(self):
+        """
+        Test input data gathering.
+        """
+        self.menu.clear()
+
+        self.menu.add_text_input('text1', 'id1', 1)  # Force to string
+        data = self.menu.get_input_data(True)
+        self.assertEqual(data['id1'], '1')
+
+        self.menu.add_text_input('text1', 'id2', 1.5, input_type=pygameMenu.locals.INPUT_INT)
+        data = self.menu.get_input_data(True)
+        self.assertEqual(data['id2'], 1)  # Cast to int
+
+        # Repeated -> exception
+        def _add_repeated():
+            self.menu.add_text_input('text1', 'id1', 1)
+
+        self.assertRaises(ValueError, _add_repeated)
+
+        self.menu.add_text_input('text1', 'id3', 1.5, input_type=pygameMenu.locals.INPUT_FLOAT)
+        data = self.menu.get_input_data(True)
+        self.assertEqual(data['id3'], 1.5)  # Correct
+
+    @staticmethod
+    def test_textmenu():
+        """
+        Test textual menus.
+        """
+        menu = pygameMenu.TextMenu(surface,
+                                   font=pygameMenu.fonts.FONT_FRANCHISE,
+                                   dopause=False,
+                                   menu_color=(30, 50, 107),  # Background color
+                                   menu_color_title=(120, 45, 30),
+                                   onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
+                                   option_shadow=True,
+                                   option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
+                                   text_align=pygameMenu.locals.ALIGN_CENTER,
+                                   title='Help',
+                                   window_height=H_SIZE,
+                                   window_width=W_SIZE
+                                   )
+        menu.mainloop()
+        menu.add_option('Return to Menu', pygameMenu.events.BACK)
+        for m in ['a', 'b', 'c', 'd', 'e']:
+            menu.add_line(m)
+        menu.draw()
 
 
 if __name__ == '__main__':
