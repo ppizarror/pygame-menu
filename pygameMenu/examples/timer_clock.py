@@ -34,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from random import randrange
 import datetime
 import os
-
 import pygame.examples.aliens
 import pygameMenu
 

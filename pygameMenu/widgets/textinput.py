@@ -159,8 +159,10 @@ class TextInput(Widget):
         if len(password_char) != 1:
             raise ValueError('password_char must be a character')
 
-        super(TextInput, self).__init__(widget_id=textinput_id, onchange=onchange,
-                                        onreturn=onreturn, kwargs=kwargs)
+        super(TextInput, self).__init__(widget_id=textinput_id,
+                                        onchange=onchange,
+                                        onreturn=onreturn,
+                                        kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
         self._ignore_keys = (_ctrl.KEY_MOVE_UP, _ctrl.KEY_MOVE_DOWN,

@@ -33,7 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Import libraries
 from random import randrange
 import os
-
 import pygame
 import pygameMenu
 

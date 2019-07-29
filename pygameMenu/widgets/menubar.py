@@ -71,8 +71,12 @@ class MenuBar(Widget):
         assert isinstance(label, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
-        super(MenuBar, self).__init__(onchange=onchange, onreturn=onreturn,
-                                      args=args, kwargs=kwargs)  # MenuBar has no ID
+
+        # MenuBar has no ID
+        super(MenuBar, self).__init__(onchange=onchange,
+                                      onreturn=onreturn,
+                                      args=args,
+                                      kwargs=kwargs)
 
         self._backbox = back_box
         self._backbox_pos = None  # type: tuple

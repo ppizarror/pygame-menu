@@ -305,7 +305,8 @@ class Menu(object):
         Add option (button) to menu.
 
         kwargs:
-            - align: Widget alignment
+            - align         Widget alignment
+            - option_id     Option ID
 
         :param element_name: Name of the element
         :type element_name: basestring
@@ -318,6 +319,10 @@ class Menu(object):
         """
         assert isinstance(element_name, str), 'element_name must be a string'
 
+        # Get id
+        option_id = kwargs.pop('option_id', '')
+        assert isinstance(option_id, str), 'ID must be a string'
+
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
@@ -326,22 +331,20 @@ class Menu(object):
         # If element is a Menu
         if isinstance(element, Menu):
             self._submenus.append(element)
-            widget = _widgets.Button(element_name, None, self._open, element)
+            widget = _widgets.Button(element_name, option_id, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _events.BACK:
-            # Back to menu
-            widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _events.CLOSE:
-            # Close menu
-            widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _events.EXIT:
-            # Exit program
-            widget = _widgets.Button(element_name, None, self._exit)
+        elif element == _events.BACK:  # Back to menu
+            widget = _widgets.Button(element_name, option_id, None, self.reset, 1)
+        elif element == _events.CLOSE:  # Close menu
+            widget = _widgets.Button(element_name, option_id, None, self._close, False)
+        elif element == _events.EXIT:  # Exit program
+            widget = _widgets.Button(element_name, option_id, None, self._exit)
         # If element is a function
         elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
-            widget = _widgets.Button(element_name, None, element, *args)
+            widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
+        self._check_id_duplicated(option_id)
 
         widget.set_font(self._font, self._fsize,
                         self._font_color, self._sel_color)
@@ -405,7 +408,7 @@ class Menu(object):
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
         assert default < len(values), 'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'id must be a string'
+        assert isinstance(selector_id, str), 'ID must be a string'
         assert isinstance(default, int), 'default must be integer'
         assert isinstance(align, str), 'align must be a string'
         if align == '':
@@ -498,7 +501,7 @@ class Menu(object):
             align = self._widget_align
 
         # Check data
-        assert isinstance(textinput_id, str), 'id must be a string'
+        assert isinstance(textinput_id, str), 'ID must be a string'
         assert isinstance(input_type, str), 'input_type must be a string'
         assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(align, str), 'align must be a string'
@@ -906,7 +909,7 @@ class Menu(object):
         for widget in self._option:
             try:
                 data[widget.get_id()] = widget.get_value()
-            except ValueError:
+            except ValueError:  # Widget does not return data
                 pass
         if recursive:
             depth += 1
