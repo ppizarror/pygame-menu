@@ -97,7 +97,7 @@ def get_font(name, size):
                 sys_message = 'Check system fonts with pygame.font.get_fonts() function'
 
                 # Get examples
-                examples_number = 50
+                examples_number = 3
                 examples = []
                 j = 0
                 for i in range(len(system_fonts)):

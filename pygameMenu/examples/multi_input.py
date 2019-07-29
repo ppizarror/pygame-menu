@@ -188,10 +188,11 @@ settings_menu.add_option('Return to main menu', pygameMenu.events.BACK,
                          align=pygameMenu.locals.ALIGN_CENTER)
 
 # Main menu
+system_fonts = pygame.font.get_fonts()
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
-                            font='arr',
+                            font=system_fonts[0],
                             font_color=COLOR_BLACK,
                             font_size=30,
                             font_size_title=40,
