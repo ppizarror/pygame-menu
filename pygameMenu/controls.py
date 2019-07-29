@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 CONTROLS
-Default controls of menu object.
+Default controls of menu object and key definition.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,14 +30,26 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import locals
+# Import pygame locals
 import pygame.locals as __locals
 
-# Controls
-APPLY = __locals.K_RETURN
-BACK = __locals.K_BACKSPACE
-CLOSE_MENU = __locals.K_ESCAPE
-DOWN = __locals.K_UP
-LEFT = __locals.K_LEFT
-RIGHT = __locals.K_RIGHT
-UP = __locals.K_DOWN
+# Joypad
+JOY_AXIS_X = 0
+JOY_AXIS_Y = 1
+JOY_BUTTON_BACK = 1
+JOY_BUTTON_SELECT = 0
+JOY_CENTERED = (0, 0)
+JOY_DEADZONE = 0.5
+JOY_DOWN = (0, -1)
+JOY_LEFT = (-1, 0)
+JOY_RIGHT = (1, 0)
+JOY_UP = (0, 1)
+
+# Keyboard events
+KEY_APPLY = __locals.K_RETURN
+KEY_BACK = __locals.K_BACKSPACE
+KEY_CLOSE_MENU = __locals.K_ESCAPE
+KEY_LEFT = __locals.K_LEFT
+KEY_MOVE_DOWN = __locals.K_UP
+KEY_MOVE_UP = __locals.K_DOWN
+KEY_RIGHT = __locals.K_RIGHT

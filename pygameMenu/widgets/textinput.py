@@ -30,11 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import math as _math
 import pygame as _pygame
+
 from pygameMenu import controls as _ctrl
 from pygameMenu import locals as _locals
 from pygameMenu.widgets.widget import Widget
-import math as _math
 
 try:
     from pyperclip import copy, paste
@@ -162,7 +163,7 @@ class TextInput(Widget):
                                         onreturn=onreturn, kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
-        self._ignore_keys = (_ctrl.UP, _ctrl.DOWN,
+        self._ignore_keys = (_ctrl.KEY_MOVE_UP, _ctrl.KEY_MOVE_DOWN,
                              _pygame.K_LCTRL, _pygame.K_RCTRL,
                              _pygame.K_LSHIFT, _pygame.K_RSHIFT,
                              _pygame.K_NUMLOCK, _pygame.K_CAPSLOCK,
@@ -1357,7 +1358,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Enter
-                elif event.key == _ctrl.APPLY:
+                elif event.key == _ctrl.KEY_APPLY:
                     self.sound.play_open_menu()
                     self.apply()
                     self._unselect_text()

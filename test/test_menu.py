@@ -103,7 +103,7 @@ class MenuTest(unittest.TestCase):
             self.menu.add_option('button', _assert)
 
         # Create a event in pygame
-        self.menu._main([pygame.event.Event(pygame.KEYDOWN, {"key": pygameMenu.controls.DOWN})], test_event=True)  # Down
+        self.menu._main([pygame.event.Event(pygame.KEYDOWN, {"key": pygameMenu.controls.KEY_MOVE_UP})], test_event=True)  # Down
         self.assertEqual(self.menu._get_actual_index(), 1)
 
         # Press Up twice

@@ -792,30 +792,30 @@ class Menu(object):
                     if not self._check_key_pressed_valid(event) and not test_event:
                         continue
 
-                    if event.key == _ctrl.DOWN:
+                    if event.key == _ctrl.KEY_MOVE_DOWN:
                         self._select(self._actual._index - 1)
                         self._sounds.play_key_add()
-                    elif event.key == _ctrl.UP:
+                    elif event.key == _ctrl.KEY_MOVE_UP:
                         self._select(self._actual._index + 1)
                         self._sounds.play_key_add()
-                    elif event.key == _ctrl.BACK and self._actual._prev is not None:
+                    elif event.key == _ctrl.KEY_BACK and self._actual._prev is not None:
                         self._sounds.play_close_menu()
                         self.reset(1)
-                    elif event.key == _ctrl.CLOSE_MENU and not self._closelocked:
+                    elif event.key == _ctrl.KEY_CLOSE_MENU and not self._closelocked:
                         self._sounds.play_close_menu()
                         if self._close():
                             break_mainloop = True
 
                 elif self._joystick and event.type == _pygame.JOYHATMOTION:
-                    if event.value == _locals.JOY_UP:
+                    if event.value == _ctrl.JOY_UP:
                         self._select(self._actual._index + 1)
-                    elif event.value == _locals.JOY_DOWN:
+                    elif event.value == _ctrl.JOY_DOWN:
                         self._select(self._actual._index - 1)
 
                 elif self._joystick and event.type == _pygame.JOYAXISMOTION:
-                    if event.axis == _locals.JOY_AXIS_Y and event.value < -_locals.JOY_DEADZONE:
+                    if event.axis == _ctrl.JOY_AXIS_Y and event.value < -_ctrl.JOY_DEADZONE:
                         self._select(self._actual._index - 1)
-                    if event.axis == _locals.JOY_AXIS_Y and event.value > _locals.JOY_DEADZONE:
+                    if event.axis == _ctrl.JOY_AXIS_Y and event.value > _ctrl.JOY_DEADZONE:
                         self._select(self._actual._index + 1)
 
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:

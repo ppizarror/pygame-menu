@@ -32,7 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
-from pygameMenu import locals as _locals
+
+from pygameMenu import controls as _ctrl
 from pygameMenu.widgets.widget import Widget
 
 
@@ -176,7 +177,7 @@ class MenuBar(Widget):
                     updated = True
 
             elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
-                if event.button == _locals.JOY_BUTTON_BACK:
+                if event.button == _ctrl.JOY_BUTTON_BACK:
                     self.sound.play_key_del()
                     self.apply()
                     updated = True
