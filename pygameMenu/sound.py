@@ -206,7 +206,7 @@ class Sound(object):
 
         # Check the file exists
         if not _path.isfile(file):
-            raise FileNotFoundError('sound file "{0}" does not exist'.format(file))
+            raise IOError('sound file "{0}" does not exist'.format(file))
 
         # Load the sound
         try:

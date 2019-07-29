@@ -60,7 +60,7 @@ setup(
     install_requires=requirements,
     license='MIT',
     long_description=long_description,
-    python_requires='>=2.6',
+    python_requires='>=2.7',
     name='pygame-menu',
     packages=find_packages(),
     url=__url__,
