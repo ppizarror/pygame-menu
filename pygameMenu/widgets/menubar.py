@@ -171,7 +171,7 @@ class MenuBar(Widget):
         for event in events:  # type: _pygame.event.EventType
 
             if self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
-                if self._backbox_rect.collidepoint(*event.pos):
+                if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self.sound.play_click_mouse()
                     self.apply()
                     updated = True
