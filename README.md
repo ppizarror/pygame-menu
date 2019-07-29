@@ -192,7 +192,7 @@ import pygameMenu
     | :-: | :-- | :--: | :--: |
     | title | String on menu entry | str | *Required* |
     | values | Value list, list of tuples | list | *Required* |
-    | selector_id | Selector identification | str | '' |
+    | selector_id | Selector identification | str | "" |
     | default | Default index of the displayed option | int | 0 |
     | align | Widget alignment | str | locals.ALIGN_CENTER |
     | onchange | Function that executes when change the value of selector | function | None |
@@ -249,10 +249,10 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :-: | :-- | :--: | :--: |
     | title | Label string on menu entry | str | *Required* |
-    | textinput_id | Text input identificator | str | '' |
-    | default | Default value to display | str | '' |
+    | textinput_id | Text input identificator | str | "" |
+    | default | Default value to display | str | "" |
     | input_type | Data type of the input | str | locals.INPUT_TEST |
-    | input_underline | Char underline of the input | str | '' |
+    | input_underline | Char underline of the input | str | "" |
     | maxchar | Maximum length of string, if 0 there's no limit | int | 0 |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
     | align | Text input alignment | str | locals.ALIGN_CENTER |
@@ -493,8 +493,39 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
     | size | Size of sample | int | -16 |
     | channels | Number of channels by default | int | 2 |
     | buffer | Buffer size | int | 4096 |
-    | devicename | Device name | str | None |
+    | devicename | Device name | str | "" |
     | allowedchanges | Convert the samples at runtime | int | 0 |
+
+- *get_channel()*
+
+    Get the channel of the sound engine.
+
+    ```python
+    sound = pygameMenu.sound.Sound(...)
+    sound.get_channel() # -> <Channel object at 0x0000023AC8EA2CF0>
+    ```
+
+- *get_channel_info()*
+
+    Get the current channel information of the sound engine.
+
+    ```python
+    sound = pygameMenu.sound.Sound(...)
+    sound.get_channel_info() # -> {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
+    ```
+
+- *load_example_sounds(volume=0.5)*
+
+    Load the example sounds provided by the package.
+
+    ```python
+    sound = pygameMenu.sound.Sound(...)
+    sound.load_example_sounds()
+    ```
+
+- *pause()*
+
+    Pause the current channel.
 
 - *set_sound(sound, file, volume, loops, maxtime, fade_ms)*
 
@@ -528,23 +559,13 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
     sound.set_sound(pygameMenu.sound.SOUND_TYPE_OPEN_MENU, 'C:/.../example.ogg')
     ```
 
-- *load_example_sounds(volume=0.5)*
+- *stop()*
 
-    Load the example sounds provided by the package.
+    Stop the current channel.
 
-    ```python
-    sound = pygameMenu.sound.Sound(...)
-    sound.load_example_sounds()
-    ```
+- *unpause()*
 
-- *get_channel()*
-
-    Get the channel of the sound engine.
-
-    ```python
-    sound = pygameMenu.sound.Sound(...)
-    sound.get_channel() # -> <Channel object at 0x0000023AC8EA2CF0>
-    ```
+    Unpause the current channel.
 
 ### Configuration values
 

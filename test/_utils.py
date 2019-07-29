@@ -210,14 +210,15 @@ class PygameMenuUtils(object):
             pygameMenu.fonts.FONT_PT_SERIF
         ]
 
-    def random_font(self):
+    @staticmethod
+    def random_font():
         """
         Retunrn a random font from the library.
 
         :return: Font file
         :rtype: basestring
         """
-        fonts = self.get_library_fonts()
+        fonts = PygameMenuUtils.get_library_fonts()
         opt = random.randrange(0, len(fonts))
         return fonts[opt]
 
@@ -230,7 +231,7 @@ class PygameMenuUtils(object):
         :rtype: basestring
         """
         fonts = pygame.font.get_fonts()
-        default_font = pygameMenu.fonts.FONT_8BIT
+        default_font = PygameMenuUtils.random_font()
         if len(fonts) == 0:
             return default_font
 

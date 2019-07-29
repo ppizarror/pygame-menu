@@ -30,9 +30,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+# General imports
+from sys import stderr as _stderr
+import os.path as _path
+import time as _time
+
 # Import pygame and base audio mixer
-from pygame import mixer as _mixer
 from pygame import error as _pygame_error
+from pygame import mixer as _mixer
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE as _AUDIO_ALLOW_CHANNELS_CHANGE
@@ -40,10 +45,6 @@ try:  # pygame<2.0.0 compatibility
 except ImportError:
     _AUDIO_ALLOW_CHANNELS_CHANGE = False
     _AUDIO_ALLOW_FREQUENCY_CHANGE = False
-
-# Get sounds folder
-import time as _time
-import os.path as _path
 
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
 __sounddir = '{0}/sounds/{1}.ogg'
@@ -75,8 +76,15 @@ class Sound(object):
     Sound engine class.
     """
 
-    def __init__(self, uniquechannel=True, frequency=22050, size=-16, channels=2, buffer=4096, devicename=None,
-                 allowedchanges=_AUDIO_ALLOW_CHANNELS_CHANGE | _AUDIO_ALLOW_FREQUENCY_CHANGE):
+    def __init__(self,
+                 uniquechannel=True,
+                 frequency=22050,
+                 size=-16,
+                 channels=2,
+                 buffer=4096,
+                 devicename='',
+                 allowedchanges=_AUDIO_ALLOW_CHANNELS_CHANGE | _AUDIO_ALLOW_FREQUENCY_CHANGE,
+                 force_init=False):
         """
         Constructor.
 
@@ -91,29 +99,31 @@ class Sound(object):
         :param buffer: Buffer size
         :type buffer: int
         :param devicename: Device name
-        :type devicename: NoneType, basestring
-        :param allowedchanges: Convert the samples at runtime
+        :type devicename: basestring
+        :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
         :type allowedchanges: bool
+        :param force_init: Force mixer init with new parameters
+        :type force_init: bool
         """
         assert isinstance(uniquechannel, bool)
         assert isinstance(frequency, int)
         assert isinstance(size, int)
         assert isinstance(channels, int)
         assert isinstance(buffer, int)
-        assert isinstance(devicename, (type(None), str))
+        assert isinstance(devicename, str)
         assert isinstance(allowedchanges, int)
+        assert isinstance(force_init, bool)
         assert frequency > 0, 'frequency must be greater than zero'
         assert channels > 0, 'channels must be greater than zero'
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if _mixer.get_init() is None:
+        if _mixer.get_init() is None or force_init:
             _mixer.init(frequency=frequency,
                         size=size,
                         channels=channels,
                         buffer=buffer,
-                        devicename=devicename,
-                        allowedchanges=allowedchanges)
+                        devicename=devicename)
 
         # Channel where a sound is played
         self._channel = None  # type: _mixer.ChannelType
@@ -137,6 +147,9 @@ class Sound(object):
         # Last played song
         self._last_play = 0
         self._last_time = 0
+
+        # Other (dev)
+        self._verbose = True
 
     def get_channel(self):
         """
@@ -169,7 +182,8 @@ class Sound(object):
         :type maxtime: int, float
         :param fade_ms: Fading ms
         :type fade_ms: int, float
-        :return: None
+        :return: The status of the sound load, True if the sound was loaded
+        :rtype: bool
         """
         assert isinstance(sound, str)
         assert isinstance(file, (str, type(None)))
@@ -188,7 +202,7 @@ class Sound(object):
         # If file is none disable the sound
         if file is None:
             self._sound[sound] = {}
-            return
+            return False
 
         # Check the file exists
         if not _path.isfile(file):
@@ -198,9 +212,10 @@ class Sound(object):
         try:
             sound_data = _mixer.Sound(file=file)
         except _pygame_error:
-            print('The sound format is not valid, the sound has been disabled')
+            if self._verbose:
+                print('The sound format is not valid, the sound has been disabled', file=_stderr)
             self._sound[sound] = {}
-            return
+            return False
 
         # Configure the sound
         sound_data.set_volume(volume)
@@ -216,6 +231,7 @@ class Sound(object):
             'maxtime': maxtime,
             'fade_ms': fade_ms,
         }
+        return True
 
     def load_example_sounds(self, volume=0.5):
         """
@@ -245,16 +261,16 @@ class Sound(object):
 
         :param sound: Sound to be played
         :type sound: pygame.mixer.Sound, NoneType
-        :return: None
+        :return: True if the sound was played
+        :rtype: bool
         """
         if not sound:
-            self._channel = None
-            return
+            return False
 
         # Find an avaiable channel
         channel = self.get_channel()  # This will set the channel if it's None
         if channel is None:  # The sound can't be played because all channels are busy
-            return
+            return False
 
         # Play the sound
         time = _time.time()
@@ -272,6 +288,8 @@ class Sound(object):
         # Store last execution
         self._last_play = sound['type']
         self._last_time = time
+
+        return True
 
     def play_click_mouse(self):
         """
@@ -320,3 +338,45 @@ class Sound(object):
         Play close menu sound.
         """
         self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
+
+    def stop(self):
+        """
+        Stop sound of the channel.
+        """
+        channel = self.get_channel()  # type: _mixer.ChannelType
+        if channel is None:  # The sound can't be played because all channels are busy
+            return
+        channel.stop()
+
+    def pause(self):
+        """
+        Pause channel.
+        """
+        channel = self.get_channel()  # type: _mixer.ChannelType
+        if channel is None:  # The sound can't be played because all channels are busy
+            return
+        channel.pause()
+
+    def unpause(self):
+        """
+        Unpause channel.
+        """
+        channel = self.get_channel()  # type: _mixer.ChannelType
+        if channel is None:  # The sound can't be played because all channels are busy
+            return
+        channel.unpause()
+
+    def get_channel_info(self):
+        """
+        Get the current channel information.
+        """
+        channel = self.get_channel()  # type: _mixer.ChannelType
+        data = {}
+        if channel is None:  # The sound can't be played because all channels are busy
+            return data
+        data['busy'] = channel.get_busy()
+        data['endevent'] = channel.get_endevent()
+        data['queue'] = channel.get_queue()
+        data['sound'] = channel.get_sound()
+        data['volume'] = channel.get_volume()
+        return data
