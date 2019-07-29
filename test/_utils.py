@@ -244,21 +244,9 @@ class PygameMenuUtils(object):
         :rtype: basestring
         """
         fonts = pygame.font.get_fonts()
-        default_font = PygameMenuUtils.random_font()
-        if len(fonts) == 0:
-            return default_font
-
-        # Find a good font:
-        i = 0
-        while True:
-            opt = random.randrange(0, len(fonts))
-            font = str(fonts[opt])
-            if len(font) > 0:
-                return font
-            else:
-                i += 1
-            if i == 10:  # In case anything fails
-                return default_font
+        fonts.sort()
+        fonts.pop(0)  # Python 2 first item is empty
+        return fonts[random.randrange(0, len(fonts))]
 
     @staticmethod
     def generic_menu(title=''):
