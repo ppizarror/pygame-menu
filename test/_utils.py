@@ -3,9 +3,10 @@ Test suite utils.
 """
 
 # noinspection PyUnresolvedReferences
-import unittest
 import pygame
 import pygameMenu
+import random
+import unittest
 
 # Constants
 FPS = 60  # Frames per second of the menu
@@ -139,6 +140,17 @@ class PygameUtils(object):
         x = float(x1 + x2) / 2
         y = float(y1 + y2) / 2
         return [x, y]
+
+    @staticmethod
+    def get_system_font():
+        """
+        Return random system font.
+        :return: System font name
+        :rtype: basestring
+        """
+        fonts = pygame.font.get_fonts()
+        opt = random.randrange(0, len(fonts))
+        return fonts[opt]
 
 
 def create_generic_menu(title=''):
