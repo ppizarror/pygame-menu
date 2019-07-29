@@ -283,7 +283,7 @@ class TextInput(Widget):
         """
         value = ''
         if self._input_type == _locals.INPUT_TEXT:
-            value = self._input_string
+            value = self._input_string  # Without filters
         elif self._input_type == _locals.INPUT_FLOAT:
             try:
                 value = float(self._input_string)
@@ -291,7 +291,7 @@ class TextInput(Widget):
                 value = 0
         elif self._input_type == _locals.INPUT_INT:
             try:
-                value = int(self._input_string)
+                value = int(float(self._input_string))
             except ValueError:
                 value = 0
         return value
@@ -890,9 +890,9 @@ class TextInput(Widget):
 
         conv = None
         if self._input_type == _locals.INPUT_FLOAT:
-            conv = int
-        elif self._input_type == _locals.INPUT_INT:
             conv = float
+        elif self._input_type == _locals.INPUT_INT:
+            conv = int
 
         if string == '-':
             return True
