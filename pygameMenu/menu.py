@@ -916,7 +916,7 @@ class Menu(object):
                 subdata_keys = data_submenu.keys()
                 for key in subdata_keys:  # type: str
                     if key in data_keys:
-                        raise Exception('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
+                        raise ValueError('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
 
                 # Update data
                 data.update(data_submenu)

@@ -1,5 +1,33 @@
+# coding=utf-8
 """
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
+TEST MENU
 Menu object tests.
+
+License:
+-------------------------------------------------------------------------------
+The MIT License (MIT)
+Copyright 2017-2019 Pablo Pizarro R. @ppizarror
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
 """
 from test._utils import *
 
@@ -161,16 +189,25 @@ class MenuTest(unittest.TestCase):
         self.menu.add_text_input('text1', 'id2', 1.5, input_type=pygameMenu.locals.INPUT_INT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id2'], 1)  # Cast to int
-
-        # Repeated -> exception
-        def _add_repeated():
-            self.menu.add_text_input('text1', 'id1', 1)
-
-        self.assertRaises(ValueError, _add_repeated)
+        self.assertRaises(ValueError, lambda: self.menu.add_text_input('text1', 'id1', 1))
 
         self.menu.add_text_input('text1', 'id3', 1.5, input_type=pygameMenu.locals.INPUT_FLOAT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id3'], 1.5)  # Correct
+
+        # Add input to a submenu
+        submenu = create_generic_menu()
+        submenu.add_text_input('text', 'id4', 'thewidget')
+        self.menu.add_option('submenu', submenu)
+        data = self.menu.get_input_data(True)
+        self.assertEqual(data['id4'], 'thewidget')
+
+        # Add a submenu within submenu with a repeated id, menu.get_input_data
+        # should raise an exception
+        subsubmenu = create_generic_menu()
+        subsubmenu.add_text_input('text', 'id4', 'repeateddata')
+        submenu.add_option('submenu', subsubmenu)
+        self.assertRaises(ValueError, lambda: self.menu.get_input_data(True))
 
     @staticmethod
     def test_textmenu():
