@@ -213,7 +213,7 @@ class Sound(object):
             sound_data = _mixer.Sound(file=file)
         except _pygame_error:
             if self._verbose:
-                print('The sound format is not valid, the sound has been disabled', file=_stderr)
+                _stderr.write('The sound format is not valid, the sound has been disabled\n')
             self._sound[sound] = {}
             return False
 
