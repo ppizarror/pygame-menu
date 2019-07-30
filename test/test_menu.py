@@ -177,6 +177,23 @@ class MenuTest(unittest.TestCase):
         click_pos = PygameUtils.get_middle_rect(first_button.get_rect())
         self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
 
+    def test_mouse_empty_submenu(self):
+        """
+        Test mouse event where the following submenu has less elements.
+        """
+        self.menu.clear()
+
+        submenu = PygameMenuUtils.generic_menu()  # 1 option
+        submenu.add_option('button', lambda: None)
+
+        self.menu.add_option('button', lambda: None)
+        self.menu.add_option('button', lambda: None)
+        button = self.menu.add_option('button', submenu)
+        self.menu.draw()
+
+        click_pos = PygameUtils.get_middle_rect(button.get_rect())
+        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+
     def test_input_data(self):
         """
         Test input data gathering.
