@@ -1431,18 +1431,19 @@ class TextInput(Widget):
                     # If no special key is pressed, add unicode of key to input_string
                     new_string = (
                             self._input_string[:self._cursor_position]
-                            + str(event.unicode)
+                            + event.unicode
                             + self._input_string[self._cursor_position:]
                     )
 
                     # If unwanted escape sequences
                     event_escaped = repr(event.unicode)
-                    if '\\x' in event_escaped or '\\r' in event_escaped:
+                    if '\\r' in event_escaped:
                         return False
 
                     # If data is valid
                     if self._check_input_type(new_string):
                         lkey = len(event.unicode)
+                        print(lkey)
                         if lkey > 0:
 
                             # Update char size

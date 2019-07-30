@@ -270,7 +270,7 @@ class Widget(object):
         :rtype: pygame.surface.SurfaceType
         """
         assert isinstance(color, tuple)
-        return self._font.render(str(text), self._font_antialias, color)
+        return self._font.render(text, self._font_antialias, color)
 
     def render_string(self, string, color):
         """

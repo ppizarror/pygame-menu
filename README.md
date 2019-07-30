@@ -112,6 +112,7 @@ import pygameMenu
     | menu_height | Height of menu (px) | int | MENU_HEIGHT |
     | menu_width | Width of menu (px) | int | MENU_WIDTH |
     | mouse_enabled | Enable mouse support | bool | True |
+    | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
     | option_margin | Margin of each element in menu (px) | int | MENU_OPTION_MARGIN |
     | option_shadow | Indicate if a shadow is drawn on ech option | bool | MENU_OPTION_SHADOW |

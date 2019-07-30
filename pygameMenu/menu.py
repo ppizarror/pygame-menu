@@ -77,6 +77,7 @@ class Menu(object):
                  menu_height=_cfg.MENU_HEIGHT,
                  menu_width=_cfg.MENU_WIDTH,
                  mouse_enabled=True,
+                 mouse_visible=True,
                  onclose=None,
                  option_margin=_cfg.MENU_OPTION_MARGIN,
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
@@ -140,6 +141,8 @@ class Menu(object):
         :type menu_width: int
         :param mouse_enabled: Enable/disable mouse click on menu
         :type mouse_enabled: bool
+        :param mouse_visible: Set mouse visible on menu
+        :type mouse_visible: bool
         :param onclose: Function applied when closing the menu
         :type onclose: function, NoneType
         :param option_margin: Margin of each element in menu (px)
@@ -182,6 +185,7 @@ class Menu(object):
         assert isinstance(menu_height, int)
         assert isinstance(menu_width, int)
         assert isinstance(mouse_enabled, bool)
+        assert isinstance(mouse_visible, bool)
         assert isinstance(option_margin, int)
         assert isinstance(option_shadow, bool)
         assert isinstance(option_shadow_offset, int)
@@ -205,7 +209,8 @@ class Menu(object):
             'Font sizes must be greater than zero'
         assert menu_width > 0 and menu_height > 0, \
             'Menu size must be greater than zero'
-        assert 0 <= menu_alpha <= 100, 'Menu_alpha must be between 0 and 100'
+        assert 0 <= menu_alpha <= 100, \
+            'menu_alpha must be between 0 and 100 (both values included)'
         assert option_margin >= 0, \
             'Option margin must be greater or equal than zero'
         assert rect_width >= 0, 'rect_width must be greater or equal than zero'
@@ -281,7 +286,8 @@ class Menu(object):
                 _pygame.joystick.Joystick(i).init()
 
         # Init mouse
-        self._mouse = mouse_enabled
+        self._mouse = mouse_enabled and mouse_visible
+        self._mouse_visible = mouse_visible
 
         # Create menu bar
         self._menubar = _widgets.MenuBar(title, self._width, back_box, None, self._back)
@@ -772,6 +778,9 @@ class Menu(object):
         if events is None:
             events = _pygame.event.get()
 
+        # Update mouse
+        _pygame.mouse.set_visible(self._actual._mouse_visible)
+
         if self._actual._dopause:  # If menu pauses game then apply function
             self._bgfun()
 
@@ -837,8 +846,9 @@ class Menu(object):
                         widget = self._actual._option[index]
                         if widget.get_rect().collidepoint(*event.pos):
                             self._select(index)
-                            widget.update(events)
+                            widget.update(events)  # This option can change the current menu to a submenu
                             break_mainloop = True  # It is updated
+                            break
 
         # A widget has closed the menu
         if not self._top._enabled:

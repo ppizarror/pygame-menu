@@ -40,7 +40,7 @@ import pygameMenu
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-ABOUT = ['pygameMenu {0}'.format(pygameMenu.version.ver),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
          pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -67,7 +67,7 @@ for m in HELP:
 
 # Create window
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
-pygame.display.set_caption('PygameMenu Example 1')
+pygame.display.set_caption('Example - Timer Clock')
 
 # Main timer and game clock
 clock = pygame.time.Clock()
@@ -208,6 +208,7 @@ about_menu = pygameMenu.TextMenu(surface,
                                  font_size_title=30,
                                  font_title=pygameMenu.font.FONT_8BIT,
                                  menu_color_title=COLOR_BLUE,
+                                 mouse_visible=False,
                                  onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
                                  option_shadow=True,
                                  text_fontsize=20,

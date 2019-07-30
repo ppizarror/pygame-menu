@@ -36,7 +36,7 @@ import os
 import pygame
 import pygameMenu
 
-ABOUT = ['pygameMenu {0}'.format(pygameMenu.version.ver),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: {0}'.format(pygameMenu.__author__),
          pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -55,7 +55,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('PygameMenu Example 2')
+pygame.display.set_caption('Example - Game Selector')
 clock = pygame.time.Clock()
 
 # Global variables
