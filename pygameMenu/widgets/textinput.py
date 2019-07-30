@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import math as _math
 import pygame as _pygame
-
 from pygameMenu.widgets.widget import Widget
 import pygameMenu.controls as _ctrl
 import pygameMenu.locals as _locals
@@ -174,11 +173,19 @@ class TextInput(Widget):
                                         kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
-        self._ignore_keys = (_ctrl.KEY_MOVE_UP, _ctrl.KEY_MOVE_DOWN,
-                             _pygame.K_LCTRL, _pygame.K_RCTRL,
-                             _pygame.K_LSHIFT, _pygame.K_RSHIFT,
-                             _pygame.K_NUMLOCK, _pygame.K_CAPSLOCK,
-                             _pygame.K_TAB, _pygame.K_RETURN, _pygame.K_ESCAPE)
+        self._ignore_keys = (  # Ignore keys on input-gathering events
+            _ctrl.KEY_MOVE_DOWN,
+            _ctrl.KEY_MOVE_UP,
+            _pygame.K_CAPSLOCK,
+            _pygame.K_ESCAPE,
+            _pygame.K_LCTRL,
+            _pygame.K_LSHIFT,
+            _pygame.K_NUMLOCK,
+            _pygame.K_RCTRL,
+            _pygame.K_RETURN,
+            _pygame.K_RSHIFT,
+            _pygame.K_TAB
+        )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
         self._block_copy_paste = False  # Blocks event
@@ -328,9 +335,7 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
-
-        # Render string
-        string = self._label + self._get_input_string()
+        string = self._label + self._get_input_string()  # Render string
         if self.selected:
             color = self._font_selected_color
         else:
@@ -342,9 +347,13 @@ class TextInput(Widget):
             self._first_render = False
             return
 
+        # Apply underline if exists
         self._surface = self._render_underline(string, color, updated_surface)
 
+        # Render the cursor
         self._render_cursor()
+
+        # Render the selection box if text is selected
         self._render_selection_box()
 
         # Update last rendered
@@ -571,7 +580,7 @@ class TextInput(Widget):
 
     def _ellipsis_left_and_right(self):
         """
-        Return true if left and right ellipsis is active.
+        Return true if left and right ellipsis are active.
 
         :return: Boolean
         :rtype: bool
@@ -582,7 +591,7 @@ class TextInput(Widget):
         """
         Returns input string where all filters have been applied.
 
-        :return: String
+        :return: Filtered string
         :rtype: basestring
         """
         string = self._input_string

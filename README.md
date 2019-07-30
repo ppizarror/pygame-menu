@@ -604,7 +604,7 @@ Also this library has some fonts to use, to load a font run this code:
 ```python
 import pygameMenu
 
-fontdir = pygameMenu.fonts.FONT_NAME
+fontdir = pygameMenu.font.FONT_NAME
 some_menu = pygameMenu.Menu(surface,
                             font=fontdir,
                             ...

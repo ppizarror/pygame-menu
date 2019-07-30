@@ -36,7 +36,7 @@ from uuid import uuid4
 from pygameMenu.sound import Sound as _Sound
 import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
-import pygameMenu.fonts as _fonts
+import pygameMenu.font as _fonts
 
 
 # noinspection PyTypeChecker
@@ -377,7 +377,8 @@ class Widget(object):
         :return: None
         """
         align = str(align)
-        if align not in [_locals.ALIGN_LEFT, _locals.ALIGN_CENTER,
+        if align not in [_locals.ALIGN_LEFT,
+                         _locals.ALIGN_CENTER,
                          _locals.ALIGN_RIGHT]:
             raise ValueError('Incorrect alignment of the widget')
         self._alignment = align

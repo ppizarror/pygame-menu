@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
-
 from pygameMenu.widgets.widget import Widget
 import pygameMenu.controls as _ctrl
 
@@ -76,7 +75,8 @@ class MenuBar(Widget):
         super(MenuBar, self).__init__(onchange=onchange,
                                       onreturn=onreturn,
                                       args=args,
-                                      kwargs=kwargs)
+                                      kwargs=kwargs
+                                      )
 
         self._backbox = back_box
         self._backbox_pos = None  # type: tuple
@@ -105,8 +105,9 @@ class MenuBar(Widget):
             _pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
             _pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
-        surface.blit(self._surface, (5 + self._rect.topleft[0] + self._offsetx,
-                                     self._rect.topleft[1] + self._offsety))
+        surface.blit(self._surface,
+                     (5 + self._rect.topleft[0] + self._offsetx,
+                      self._rect.topleft[1] + self._offsety))
 
     def get_title(self):
         """
@@ -123,29 +124,33 @@ class MenuBar(Widget):
         """
         self._surface = self.render_string(self._label, self._font_selected_color)
 
-        # Usually done in  get_rect(), but can not be called here because it call _render() itself
+        # Usually done in get_rect(), but can not be called here because it call _render() itself
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        self._polygon_pos = ((self._rect.x, self._rect.y),
-                             (self._rect.x + self._width, self._rect.y),
-                             (self._rect.x + self._width, self._rect.y + self._rect.height * 0.6),
-                             (self._rect.x + self._rect.width + 30, self._rect.y + self._rect.height * 0.6),
-                             (self._rect.x + self._rect.width + 10, self._rect.y + self._rect.height + 5),
-                             (self._rect.x, self._rect.y + self._rect.height + 5))
+        self._polygon_pos = (
+            (self._rect.x, self._rect.y),
+            (self._rect.x + self._width, self._rect.y),
+            (self._rect.x + self._width, self._rect.y + self._rect.height * 0.6),
+            (self._rect.x + self._rect.width + 30, self._rect.y + self._rect.height * 0.6),
+            (self._rect.x + self._rect.width + 10, self._rect.y + self._rect.height + 5),
+            (self._rect.x, self._rect.y + self._rect.height + 5)
+        )
 
         cross_size = self._polygon_pos[2][1] - self._polygon_pos[1][1] - 6
         self._backbox_rect = _pygame.Rect(self._polygon_pos[1][0] - cross_size - 3,
                                           self._polygon_pos[1][1] + 3,
                                           cross_size, cross_size)
 
-        self._backbox_pos = ((self._backbox_rect.left + 5, self._backbox_rect.centery),
-                             (self._backbox_rect.centerx, self._backbox_rect.top + 5),
-                             (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
-                             (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
-                             (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
-                             (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
-                             (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
-                             (self._backbox_rect.left + 5, self._backbox_rect.centery))
+        self._backbox_pos = (
+            (self._backbox_rect.left + 5, self._backbox_rect.centery),
+            (self._backbox_rect.centerx, self._backbox_rect.top + 5),
+            (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
+            (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
+            (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
+            (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
+            (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
+            (self._backbox_rect.left + 5, self._backbox_rect.centery)
+        )
 
     def set_title(self, title, offsetx=0, offsety=0):
         """

@@ -30,31 +30,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# noinspection PyUnresolvedReferences
+# Library imports
 import pygameMenu.config
-
-# noinspection PyUnresolvedReferences
 import pygameMenu.controls
-
-# noinspection PyUnresolvedReferences
 import pygameMenu.events
-
-# noinspection PyUnresolvedReferences
-import pygameMenu.fonts
-
-# noinspection PyUnresolvedReferences
+import pygameMenu.font
 import pygameMenu.locals
-
-# noinspection PyUnresolvedReferences
 import pygameMenu.version
 
-# noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
-
-# noinspection PyUnresolvedReferences
 from pygameMenu.sound import Sound
-
-# noinspection PyUnresolvedReferences
 from pygameMenu.textmenu import TextMenu
 
 # Other
@@ -66,7 +51,7 @@ __contributors__ = [
     'ironsmile',
     'maditnerd',
     'Rifqi31',
-    'thisIsMikeKane',
+    'thisIsMikeKane'
 ]
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'
 __email__ = 'pablo.pizarro@ing.uchile.cl'

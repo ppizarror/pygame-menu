@@ -97,7 +97,7 @@ def play_function(difficulty, font, test=False):
     :param difficulty: Difficulty of the game
     :type difficulty: basestring
     :param font: Pygame font
-    :type font: pygame._font.Font
+    :type font: pygame.font.FontType
     :param test: Test method, if true only one loop is allowed
     :type test: bool
     :return: None
@@ -131,8 +131,8 @@ def play_function(difficulty, font, test=False):
         clock.tick(60)
 
         # Application events
-        playevents = pygame.event.get()
-        for e in playevents:
+        events = pygame.event.get()
+        for e in events:
             if e.type == pygame.QUIT:
                 exit()
             elif e.type == pygame.KEYDOWN:
@@ -143,7 +143,7 @@ def play_function(difficulty, font, test=False):
                     return
 
         # Pass events to main_menu
-        main_menu.mainloop(playevents)
+        main_menu.mainloop(events)
 
         # Continue playing
         surface.fill(bg_color)
@@ -172,7 +172,7 @@ def main_background():
 play_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
-                            font=pygameMenu.fonts.FONT_BEBAS,
+                            font=pygameMenu.font.FONT_BEBAS,
                             font_color=COLOR_BLACK,
                             font_size=30,
                             menu_alpha=100,
@@ -185,11 +185,10 @@ play_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
-# When pressing return -> play(DIFFICULTY[0], font)
-play_menu.add_option('Start',
+play_menu.add_option('Start',  # When pressing return -> play(DIFFICULTY[0], font)
                      play_function,
                      DIFFICULTY,
-                     pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
+                     pygame.font.Font(pygameMenu.font.FONT_FRANCHISE, 30))
 play_menu.add_selector('Select difficulty',
                        [('1 - Easy', 'EASY'),
                         ('2 - Medium', 'MEDIUM'),
@@ -202,10 +201,10 @@ play_menu.add_option('Return to main menu', pygameMenu.events.BACK)
 about_menu = pygameMenu.TextMenu(surface,
                                  bgfun=main_background,
                                  color_selected=COLOR_WHITE,
-                                 font=pygameMenu.fonts.FONT_BEBAS,
+                                 font=pygameMenu.font.FONT_BEBAS,
                                  font_color=COLOR_BLACK,
                                  font_size_title=30,
-                                 font_title=pygameMenu.fonts.FONT_8BIT,
+                                 font_title=pygameMenu.font.FONT_8BIT,
                                  menu_color=MENU_BACKGROUND_COLOR,
                                  menu_color_title=COLOR_WHITE,
                                  menu_height=int(WINDOW_SIZE[1] * 0.6),
@@ -227,7 +226,7 @@ about_menu.add_option('Return to menu', pygameMenu.events.BACK)
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
-                            font=pygameMenu.fonts.FONT_BEBAS,
+                            font=pygameMenu.font.FONT_BEBAS,
                             font_color=COLOR_BLACK,
                             font_size=30,
                             menu_alpha=100,

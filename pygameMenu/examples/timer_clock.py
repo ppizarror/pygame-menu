@@ -73,7 +73,7 @@ pygame.display.set_caption('PygameMenu Example 1')
 clock = pygame.time.Clock()
 timer = [0.0]
 dt = 1.0 / FPS
-timer_font = pygame.font.Font(pygameMenu.fonts.FONT_NEVIS, 100)
+timer_font = pygameMenu.font.get_font(pygameMenu.font.FONT_NEVIS, 100)
 
 
 # -----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ def change_color_bg(value, c=None, **kwargs):
 # Timer
 timer_menu = pygameMenu.Menu(surface,
                              dopause=False,
-                             font=pygameMenu.fonts.FONT_NEVIS,
+                             font=pygameMenu.font.FONT_NEVIS,
                              menu_alpha=85,
                              menu_color=(0, 0, 0),  # Background color
                              menu_color_title=(0, 0, 0),
@@ -150,7 +150,7 @@ timer_menu = pygameMenu.Menu(surface,
 
 timer_submenu = pygameMenu.Menu(surface,
                                 dopause=False,
-                                font=pygameMenu.fonts.FONT_OPEN_SANS,
+                                font=pygameMenu.font.FONT_OPEN_SANS,
                                 menu_alpha=50,
                                 menu_color=(0, 0, 0),  # Background color
                                 menu_color_title=(0, 0, 0),
@@ -185,7 +185,7 @@ timer_menu.add_option('Close Menu', pygameMenu.events.CLOSE)
 # Help menu
 help_menu = pygameMenu.TextMenu(surface,
                                 dopause=False,
-                                font=pygameMenu.fonts.FONT_FRANCHISE,
+                                font=pygameMenu.font.FONT_FRANCHISE,
                                 menu_color=(30, 50, 107),  # Background color
                                 menu_color_title=(120, 45, 30),
                                 onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
@@ -204,9 +204,9 @@ for m in HELP:
 about_menu = pygameMenu.TextMenu(surface,
                                  dopause=False,
                                  draw_text_region_x=5,  # 5% margin
-                                 font=pygameMenu.fonts.FONT_NEVIS,
+                                 font=pygameMenu.font.FONT_NEVIS,
                                  font_size_title=30,
-                                 font_title=pygameMenu.fonts.FONT_8BIT,
+                                 font_title=pygameMenu.font.FONT_8BIT,
                                  menu_color_title=COLOR_BLUE,
                                  onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
                                  option_shadow=True,
@@ -224,7 +224,7 @@ about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
 main_menu = pygameMenu.Menu(surface,
                             bgfun=mainmenu_background,
                             enabled=False,
-                            font=pygameMenu.fonts.FONT_NEVIS,
+                            font=pygameMenu.font.FONT_NEVIS,
                             menu_alpha=90,
                             fps=FPS,
                             onclose=pygameMenu.events.CLOSE,

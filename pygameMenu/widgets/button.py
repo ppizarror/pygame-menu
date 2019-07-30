@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-
 from pygameMenu.widgets.widget import Widget
 import pygameMenu.controls as _ctrl
 
@@ -68,7 +67,8 @@ class Button(Widget):
                                      onchange=onchange,
                                      onreturn=onreturn,
                                      args=args,
-                                     kwargs=kwargs)
+                                     kwargs=kwargs
+                                     )
         self._label = label
 
     def _apply_font(self):

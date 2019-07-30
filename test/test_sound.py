@@ -61,7 +61,7 @@ class SoundTest(unittest.TestCase):
         self.assertRaises(IOError,
                           lambda: self.sound.set_sound(pygameMenu.sound.SOUND_TYPE_CLICK_MOUSE, 'bad_file'))
         self.assertEqual(self.sound._play_sound(None), False)
-        self.assertEqual(self.sound.set_sound(pygameMenu.sound.SOUND_TYPE_ERROR, pygameMenu.fonts.FONT_PT_SERIF), False)
+        self.assertEqual(self.sound.set_sound(pygameMenu.sound.SOUND_TYPE_ERROR, pygameMenu.font.FONT_PT_SERIF), False)
 
     def test_example_sounds(self):
         """

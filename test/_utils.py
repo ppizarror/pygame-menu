@@ -207,7 +207,7 @@ class PygameMenuUtils(object):
         :return: Font
         :rtype: pygame.font.FontType
         """
-        return pygameMenu.fonts.get_font(name, size)
+        return pygameMenu.font.get_font(name, size)
 
     @staticmethod
     def get_library_fonts():
@@ -218,15 +218,15 @@ class PygameMenuUtils(object):
         :rtype: list[basestring]
         """
         return [
-            pygameMenu.fonts.FONT_8BIT,
-            pygameMenu.fonts.FONT_BEBAS,
-            pygameMenu.fonts.FONT_COMIC_NEUE,
-            pygameMenu.fonts.FONT_FRANCHISE,
-            pygameMenu.fonts.FONT_HELVETICA,
-            pygameMenu.fonts.FONT_MUNRO,
-            pygameMenu.fonts.FONT_NEVIS,
-            pygameMenu.fonts.FONT_OPEN_SANS,
-            pygameMenu.fonts.FONT_PT_SERIF
+            pygameMenu.font.FONT_8BIT,
+            pygameMenu.font.FONT_BEBAS,
+            pygameMenu.font.FONT_COMIC_NEUE,
+            pygameMenu.font.FONT_FRANCHISE,
+            pygameMenu.font.FONT_HELVETICA,
+            pygameMenu.font.FONT_MUNRO,
+            pygameMenu.font.FONT_NEVIS,
+            pygameMenu.font.FONT_OPEN_SANS,
+            pygameMenu.font.FONT_PT_SERIF
         ]
 
     @staticmethod
@@ -252,7 +252,7 @@ class PygameMenuUtils(object):
         :type size: int
         :return: Font object
         """
-        return pygameMenu.fonts.get_font(font, size)
+        return pygameMenu.font.get_font(font, size)
 
     @staticmethod
     def random_system_font():
@@ -280,7 +280,7 @@ class PygameMenuUtils(object):
         return pygameMenu.Menu(surface,
                                dopause=False,
                                enabled=False,
-                               font=pygameMenu.fonts.FONT_NEVIS,
+                               font=pygameMenu.font.FONT_NEVIS,
                                fps=FPS,
                                menu_alpha=90,
                                title=title,

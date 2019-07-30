@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Library imports
 from pygameMenu.menu import Menu
 import pygameMenu.config as _cfg
-import pygameMenu.fonts as _fonts
+import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
 
@@ -88,9 +88,9 @@ class TextMenu(Menu):
         assert isinstance(text_fontsize, int)
         assert isinstance(text_margin, int)
 
-        assert draw_text_region_x >= 0, 'X-Axis drawing region of the text must be greater than zero'
-        assert text_fontsize > 0, 'Text font size must be greater than zero'
-        assert text_margin >= 0, 'Text margin must be greater or equal than zero'
+        assert draw_text_region_x >= 0, 'draw_text_region_x of the text must be greater or equal than zero'
+        assert text_fontsize > 0, 'text_fontsize must be greater than zero'
+        assert text_margin >= 0, 'text_margin must be greater or equal than zero'
 
         # Super call
         super(TextMenu, self).__init__(surface,

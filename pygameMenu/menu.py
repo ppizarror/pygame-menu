@@ -40,7 +40,7 @@ from pygameMenu.sound import Sound as _Sound
 import pygameMenu.config as _cfg
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
-import pygameMenu.fonts as _fonts
+import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 import pygameMenu.widgets as _widgets
 
