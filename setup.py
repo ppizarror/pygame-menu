@@ -62,7 +62,7 @@ setup(
     long_description=long_description,
     python_requires='>=2.7',
     name='pygame-menu',
-    packages=find_packages(),
+    packages=find_packages(exclude=["test"]),
     url=__url__,
     version=ver
 )
