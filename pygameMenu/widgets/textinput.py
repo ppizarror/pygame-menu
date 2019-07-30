@@ -1443,7 +1443,6 @@ class TextInput(Widget):
                     # If data is valid
                     if self._check_input_type(new_string):
                         lkey = len(event.unicode)
-                        print(lkey)
                         if lkey > 0:
 
                             # Update char size
