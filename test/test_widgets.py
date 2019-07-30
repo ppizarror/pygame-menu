@@ -39,6 +39,7 @@ class WidgetsTest(unittest.TestCase):
         Setup sound engine.
         """
         self.menu = PygameMenuUtils.generic_menu()
+        self.menu.mainloop()
 
     def test_selector(self):
         """
@@ -49,6 +50,8 @@ class WidgetsTest(unittest.TestCase):
                                            ('2 - Medium', 'MEDIUM'),
                                            ('3 - Hard', 'HARD')],
                                           default=1)
+        self.menu.draw()
+
         selector.draw(surface)
         selector.selected = False
         selector.draw(surface)
@@ -72,3 +75,83 @@ class WidgetsTest(unittest.TestCase):
         selector.update_elements(new_elements)
         selector.set_value('6 - Hard')
         self.assertRaises(ValueError, None)
+
+    def test_textinput(self):
+        """
+        Test textinput widget.
+        """
+
+        # Assert bad settings
+        self.assertRaises(ValueError,
+                          lambda: self.menu.add_text_input('title',
+                                                           input_type=pygameMenu.locals.INPUT_FLOAT,
+                                                           default='bad'))
+        self.assertRaises(ValueError,  # Default and password cannot coexist
+                          lambda: self.menu.add_text_input('title',
+                                                           password=True,
+                                                           default='bad'))
+
+        # Create text input widget
+        textinput = self.menu.add_text_input('title', password=True, input_underline='_')
+        textinput.set_value('new_value')
+        textinput.selected = False
+        textinput.draw(surface)
+        textinput.selected = True
+        textinput.draw(surface)
+        self.assertEqual(textinput.get_value(), 'new_value')
+        textinput.clear()
+        self.assertEqual(textinput.get_value(), '')
+
+        # Create selection box
+        string = 'the text'
+        textinput._cursor_render = True
+        textinput.set_value(string)
+        textinput._select_all()
+        self.assertEqual(textinput._get_selected_text(), 'the text')
+        textinput.draw(surface)
+        textinput._unselect_text()
+        textinput.draw(surface)
+
+        textinput = self.menu.add_text_input('title',
+                                             password=True,
+                                             input_underline='_',
+                                             maxwidth=20)
+        textinput.set_value('the size of this textinput is way greater than the limit')
+        textinput.draw(surface)
+        textinput._copy()
+        textinput._paste()
+        textinput._cut()
+
+        # Assert events
+        textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
+        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_DELETE, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_LEFT, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_END, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_HOME, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True, char=' '))
+        textinput.clear()
+
+        # Type
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput.update(PygameUtils.key(pygame.K_e, keydown=True, char='e'))
+        textinput.update(PygameUtils.key(pygame.K_s, keydown=True, char='s'))
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+
+        # Keyup
+        textinput.update(PygameUtils.key(pygame.K_a, keyup=True, char='a'))
+        self.assertEqual(textinput.get_value(), 'test')  # The text we typed
+
+        # Test selection, if user selects all and types anything the selected
+        # text must be destroyed
+        textinput._unselect_text()
+        self.assertEqual(textinput._get_selected_text(), '')
+        textinput._select_all()
+        self.assertEqual(textinput._get_selected_text(), 'test')
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+
+        # Now the value must be t
+        self.assertEqual(textinput._get_selected_text(), '')
+        self.assertEqual(textinput.get_value(), 't')

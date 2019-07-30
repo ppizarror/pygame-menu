@@ -239,15 +239,12 @@ class TextInput(Widget):
         self._password = password
         self._password_char = password_char
 
+        # If password is active no default value should exist
+        if self._password and default != '':
+            raise ValueError('default value must be empty if the input is a password')
+
         # Set default value
-        if self._check_input_type(default):
-            default = str(default)
-            self._input_string = default
-            for i in range(len(default) + 1):
-                self._move_cursor_right()
-            self._update_input_string(default)
-        else:
-            raise ValueError('default value "{0}" type is not correct according to input_type'.format(default))
+        self.set_value(default)
 
     def _apply_font(self):
         """
@@ -313,7 +310,8 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         # Draw cursor
-        if self.selected and (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
+        if self.selected and self._cursor_surface and (
+                self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
             surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
@@ -405,7 +403,8 @@ class TextInput(Widget):
             self._selection_position[1] = self._rect.y
 
             # Fill cursor
-            self._cursor_surface.fill(self._font_selected_color)
+            if self._cursor_surface:
+                self._cursor_surface.fill(self._font_selected_color)
 
     def _render_string_surface(self, string, color):
         """
@@ -861,7 +860,14 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
-        self._input_string = text
+        if self._check_input_type(text):
+            default = str(text)
+            self._input_string = default
+            for i in range(len(default) + 1):
+                self._move_cursor_right()
+            self._update_input_string(default)
+        else:
+            raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
 
     def _check_input_size(self):
         """
@@ -1192,6 +1198,22 @@ class TextInput(Widget):
         self._update_input_string(new_string)
         self._update_renderbox(right=-1, addition=True)
 
+    def _select_all(self):
+        """
+        Select all text.
+
+        :return: None
+        """
+        if not self._selection_enabled:
+            return
+        self._selection_box[0] = 0
+        self._selection_box[1] = len(self._input_string)
+        self._cursor_position = self._selection_box[1]
+        for i in range(len(self._input_string)):
+            self._move_cursor_right()
+        self._render_selection_box(True)
+        self._selection_active = False
+
     def update(self, events):
         """
         See upper class doc.
@@ -1240,14 +1262,9 @@ class TextInput(Widget):
                         self.sound.play_key_del()
                         return self._cut()
 
+                    # Ctrl+A select all
                     elif event.key == _pygame.K_a:
-                        self._selection_box[0] = 0
-                        self._selection_box[1] = len(self._input_string)
-                        self._cursor_position = self._selection_box[1]
-                        for i in range(len(self._input_string)):
-                            self._move_cursor_right()
-                        self._render_selection_box(True)
-                        self._selection_active = False
+                        self._select_all()
                         return False
 
                     # Command not found, returns
@@ -1388,7 +1405,7 @@ class TextInput(Widget):
                     # If no special key is pressed, add unicode of key to input_string
                     new_string = (
                             self._input_string[:self._cursor_position]
-                            + event.unicode
+                            + str(event.unicode)
                             + self._input_string[self._cursor_position:]
                     )
 

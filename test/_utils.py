@@ -111,12 +111,14 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def key(key, inlist=True, keydown=False, keyup=False, testmode=True):
+    def key(key, char='', inlist=True, keydown=False, keyup=False, testmode=True):
         """
         Create a keyboard event.
 
         :param key: Key to press
         :type key: int
+        :param char: Char representing the key
+        :type char: basestring
         :param inlist: Return event in a list
         :type inlist: bool
         :param keydown: Event is keydown
@@ -139,8 +141,10 @@ class PygameUtils(object):
             event = pygame.KEYUP
         event_obj = pygame.event.Event(event,
                                        {'key': key,
-                                        'test': testmode
+                                        'test': testmode,
                                         })
+        if len(char) == 1:
+            event_obj.dict['unicode'] = char
         if inlist:
             event_obj = [event_obj]
         return event_obj
