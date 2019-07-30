@@ -1,2 +1,4 @@
 recursive-include pygameMenu/fonts *.ttf
 recursive-include pygameMenu/sounds *.ogg
+exclude test/*.py
+exclude README.rst
