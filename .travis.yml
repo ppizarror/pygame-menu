@@ -5,8 +5,9 @@ sudo: false
 language: python
 python:
   - "2.7"
+  - "3.4"
+  - "3.5"
   - "3.6"
-
 cache: pip
 
 # Pip installs
@@ -21,7 +22,7 @@ env:
 
 # Run scripts
 script:
-  - nosetests test/test_menu.py -v --with-coverage
+  - nosetests test/ -v --with-coverage
 
 # Push the results back to codecov
 after_success:

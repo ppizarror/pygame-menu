@@ -71,8 +71,11 @@ class Selector(Widget):
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
-        super(Selector, self).__init__(widget_id=selector_id, onchange=onchange,
-                                       onreturn=onreturn, kwargs=kwargs)
+
+        super(Selector, self).__init__(widget_id=selector_id,
+                                       onchange=onchange,
+                                       onreturn=onreturn,
+                                       kwargs=kwargs)
 
         self._elements = elements
         self._index = 0
@@ -135,16 +138,6 @@ class Selector(Widget):
         else:
             color = self._font_color
         self._surface = self.render_string(string, color)
-
-    def set_selection_format(self, s):
-        """
-        Change the text format.
-
-        :param s: Selection text
-        :type s: basestring
-        :return: None
-        """
-        self._sformat = s
 
     def set_value(self, text):
         """

@@ -305,7 +305,8 @@ class Menu(object):
         Add option (button) to menu.
 
         kwargs:
-            - align: Widget alignment
+            - align         Widget alignment
+            - option_id     Option ID
 
         :param element_name: Name of the element
         :type element_name: basestring
@@ -318,6 +319,10 @@ class Menu(object):
         """
         assert isinstance(element_name, str), 'element_name must be a string'
 
+        # Get id
+        option_id = kwargs.pop('option_id', '')
+        assert isinstance(option_id, str), 'ID must be a string'
+
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
@@ -326,30 +331,31 @@ class Menu(object):
         # If element is a Menu
         if isinstance(element, Menu):
             self._submenus.append(element)
-            widget = _widgets.Button(element_name, None, self._open, element)
+            widget = _widgets.Button(element_name, option_id, None, self._open, element)
         # If option is a PyMenuAction
-        elif element == _events.BACK:
-            # Back to menu
-            widget = _widgets.Button(element_name, None, self.reset, 1)
-        elif element == _events.CLOSE:
-            # Close menu
-            widget = _widgets.Button(element_name, None, self._close, False)
-        elif element == _events.EXIT:
-            # Exit program
-            widget = _widgets.Button(element_name, None, self._exit)
+        elif element == _events.BACK:  # Back to menu
+            widget = _widgets.Button(element_name, option_id, None, self.reset, 1)
+        elif element == _events.CLOSE:  # Close menu
+            widget = _widgets.Button(element_name, option_id, None, self._close, False)
+        elif element == _events.EXIT:  # Exit program
+            widget = _widgets.Button(element_name, option_id, None, self._exit)
         # If element is a function
         elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
-            widget = _widgets.Button(element_name, None, element, *args)
+            widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
+        self._check_id_duplicated(option_id)
 
-        widget.set_font(self._font, self._fsize,
-                        self._font_color, self._sel_color)
+        widget.set_font(self._font,
+                        self._fsize,
+                        self._font_color,
+                        self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick,
+                            self._mouse)
         widget.set_alignment(kwargs.pop('align', self._widget_align))
 
         self._option.append(widget)
@@ -405,7 +411,7 @@ class Menu(object):
             assert isinstance(vl[0], str), \
                 'First element of value list component must be a string'
         assert default < len(values), 'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'id must be a string'
+        assert isinstance(selector_id, str), 'ID must be a string'
         assert isinstance(default, int), 'default must be integer'
         assert isinstance(align, str), 'align must be a string'
         if align == '':
@@ -422,13 +428,16 @@ class Menu(object):
         self._check_id_duplicated(selector_id)
 
         # Configure widget
-        widget.set_font(self._font, self._fsize,
-                        self._font_color, self._sel_color)
+        widget.set_font(self._font,
+                        self._fsize,
+                        self._font_color,
+                        self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick,
+                            self._mouse)
         widget.set_alignment(align)
 
         # Store widget
@@ -498,7 +507,7 @@ class Menu(object):
             align = self._widget_align
 
         # Check data
-        assert isinstance(textinput_id, str), 'id must be a string'
+        assert isinstance(textinput_id, str), 'ID must be a string'
         assert isinstance(input_type, str), 'input_type must be a string'
         assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(align, str), 'align must be a string'
@@ -526,13 +535,16 @@ class Menu(object):
         self._check_id_duplicated(textinput_id)
 
         # Configure widget
-        widget.set_font(self._font, self._fsize,
-                        self._font_color, self._sel_color)
+        widget.set_font(self._font,
+                        self._fsize,
+                        self._font_color,
+                        self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick,
+                            self._mouse)
         widget.set_alignment(align)
 
         # Store widget
@@ -630,7 +642,7 @@ class Menu(object):
 
     def draw(self):
         """
-        Draw menu to surface.
+        Draw menu to the active surface.
 
         :return: None
         """
@@ -733,7 +745,7 @@ class Menu(object):
 
         :param event: Key press event
         :type event: pygame.event.EventType
-        :return: True if any key is pressed
+        :return: True if a key is pressed
         :rtype: bool
         """
         # If the system detects that any key event has been pressed but
@@ -741,18 +753,18 @@ class Menu(object):
         # flag
         bad_event = not (True in _pygame.key.get_pressed())
         if bad_event:
+            if 'test' in event.dict and event.dict['test']:
+                return True
             ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
             _pygame.event.post(ev)
         return not bad_event
 
-    def _main(self, events=None, test_event=False):
+    def _main(self, events=None):
         """
         Main function of the loop.
 
         :param events: Pygame events
         :type events: list
-        :param test_event: Disable event check
-        :type test_event: bool
         :return: True if mainloop must be stopped
         :rtype: bool
         """
@@ -790,7 +802,7 @@ class Menu(object):
                 elif event.type == _pygame.locals.KEYDOWN:
 
                     # Check key event is valid
-                    if not self._check_key_pressed_valid(event) and not test_event:
+                    if not self._check_key_pressed_valid(event):
                         continue
 
                     if event.key == _ctrl.KEY_MOVE_DOWN:
@@ -850,19 +862,21 @@ class Menu(object):
         if self._top is None:
             raise Exception('The menu has not been initialized yet, try using mainloop function')
 
-    def mainloop(self, events=None):
+    def mainloop(self, events=None, disable_loop=False):
         """
         Main function of menu.
 
         :param events: Menu events
         :type events: list
+        :param disable_loop: Disable infinite loop waiting for events
+        :type disable_loop: bool
         :return: None
         """
         self._top = self
 
         if self.is_disabled():
             return
-        if self._actual._dopause:
+        if self._actual._dopause and not disable_loop:
             while True:
                 if self._main():
                     return
@@ -904,7 +918,7 @@ class Menu(object):
         for widget in self._option:
             try:
                 data[widget.get_id()] = widget.get_value()
-            except ValueError:
+            except ValueError:  # Widget does not return data
                 pass
         if recursive:
             depth += 1
@@ -916,7 +930,7 @@ class Menu(object):
                 subdata_keys = data_submenu.keys()
                 for key in subdata_keys:  # type: str
                     if key in data_keys:
-                        raise Exception('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
+                        raise ValueError('Colission between widget data ID="{0}" at depth={1}'.format(key, depth))
 
                 # Update data
                 data.update(data_submenu)

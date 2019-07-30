@@ -412,7 +412,7 @@ class Widget(object):
 
         :param event: Key press event
         :type event: pygame.event.EventType
-        :return: True if any key is pressed
+        :return: True if a key is pressed
         :rtype: bool
         """
         # If the system detects that any key event has been pressed but
@@ -420,6 +420,8 @@ class Widget(object):
         # flag
         bad_event = not (True in _pygame.key.get_pressed())
         if bad_event:
+            if 'test' in event.dict and event.dict['test']:
+                return True
             ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
             _pygame.event.post(ev)
         return not bad_event

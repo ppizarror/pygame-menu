@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TEST
-This directory contains all project tests files.
+TEST EXAMPLES
+Test example files.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,3 +29,45 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+from test._utils import *
+
+# Imports
+import pygameMenu.examples.timer_clock as example1
+import pygameMenu.examples.game_selector as example2
+import pygameMenu.examples.multi_input as example3
+
+
+class ExamplesTest(unittest.TestCase):
+
+    @staticmethod
+    def test_example_timer_clock():
+        """
+        Test timer clock example.
+        """
+        example1.main(True)
+        example1.mainmenu_background()
+        example1.reset_timer()
+
+    def test_example_difficulty_selector(self):
+        """
+        Test multi-input example.
+        """
+        example2.main(True)
+        font = PygameMenuUtils.load_font(PygameMenuUtils.random_font(), 5)
+        example2.play_function(['EASY'], font, test=True)
+
+        # Find
+        menu_inputs = example2.play_menu.get_input_data(recursive=True)
+        keys = menu_inputs.keys()
+        self.assert_('select_difficulty' in keys)
+        selector = example2.play_menu.get_widget('select_difficulty', True)
+        selector.update([])
+        selector.left()
+        selector.apply()
+
+    @staticmethod
+    def test_example_multi_input():
+        """
+        Test multi-input example.
+        """
+        example3.main(True)

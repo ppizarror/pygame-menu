@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TEST
-This directory contains all project tests files.
+TEST FONT
+Test font management.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,3 +29,29 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+from test._utils import *
+
+
+class FontTest(unittest.TestCase):
+
+    def test_font_load(self):
+        """
+        Load a font from a file.
+        """
+        font = PygameMenuUtils.get_font(pygameMenu.fonts.FONT_8BIT, 5)
+        self.assert_(font is not None)
+        self.assertEqual(font, pygameMenu.fonts.get_font(font, 5))
+        self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('', 0))
+        self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('sys', 0))
+
+    def test_system_load(self):
+        """
+        Test fonts from system.
+        """
+        font_sys = PygameMenuUtils.random_system_font()
+        font = PygameMenuUtils.get_font(font_sys, 5)
+        self.assert_(font is not None)
+
+        # Modify the system font and load, this will raise an exception
+        font_sys_bad = font_sys[:-1]
+        self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font(font_sys_bad, 5))

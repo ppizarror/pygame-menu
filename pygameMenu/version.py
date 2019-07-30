@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TEST
-This directory contains all project tests files.
+VERSION
+Library version.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,3 +29,32 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+
+
+# noinspection PyTypeChecker
+class PygameMenuVersion(tuple):
+    """
+    Version class.
+    """
+
+    __slots__ = ()
+    fields = 'major', 'minor', 'patch'
+
+    def __new__(cls, major, minor, patch):
+        return tuple.__new__(cls, (major, minor, patch))
+
+    def __repr__(self):
+        fields = ('{}={}'.format(fld, val) for fld, val in zip(self.fields, self))
+        return '{}({})'.format(str(self.__class__.__name__), ', '.join(fields))
+
+    def __str__(self):
+        return '{}.{}.{}'.format(*self)
+
+    major = property(lambda self: self[0])
+    minor = property(lambda self: self[1])
+    patch = property(lambda self: self[2])
+
+
+ver = "2.0.0"
+vernum = PygameMenuVersion(2, 0, 0)
+rev = ""

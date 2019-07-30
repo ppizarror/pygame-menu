@@ -3,7 +3,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE 3
+EXAMPLE - MULTI-INPUT
 Shows different inputs (widgets).
 
 License:
@@ -32,12 +32,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Import libraries
 import os
-
-# Import pygame
 import pygame
 import pygameMenu
 
-ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.version.ver),
          'Author: {0}'.format(pygameMenu.__author__),
          pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -57,7 +55,6 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 surface = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption('PygameMenu Example 3')
 clock = pygame.time.Clock()
-dt = 1 / FPS
 
 # -----------------------------------------------------------------------------
 # Set sounds
@@ -193,7 +190,7 @@ settings_menu.add_option('Return to main menu', pygameMenu.events.BACK,
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
-                            font='arial',
+                            font=pygameMenu.fonts.FONT_COMIC_NEUE,
                             font_color=COLOR_BLACK,
                             font_size=30,
                             font_size_title=40,
@@ -216,18 +213,36 @@ main_menu.add_option('Quit', pygameMenu.events.EXIT)
 assert main_menu.get_widget('first_name', recursive=True) is wid1
 assert main_menu.get_widget('last_name') is None
 
+
 # -----------------------------------------------------------------------------
 # Main loop
 # -----------------------------------------------------------------------------
-while True:
-    # Tick
-    clock.tick(FPS)
+def main(test=False):
+    """
+    Main program.
 
-    # Paint background
-    main_background()
+    :param test: Indicate function is being tested
+    :type test: bool
+    :return: None
+    """
+    while True:
 
-    # Main menu
-    main_menu.mainloop()
+        # Tick
+        clock.tick(FPS)
 
-    # Flip surface
-    pygame.display.flip()
+        # Paint background
+        main_background()
+
+        # Main menu
+        main_menu.mainloop(disable_loop=test)
+
+        # Flip surface
+        pygame.display.flip()
+
+        # At first loop returns
+        if test:
+            break
+
+
+if __name__ == '__main__':
+    main()

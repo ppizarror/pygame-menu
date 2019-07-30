@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 PYGAME-MENU
-A menu for pygame.
+A menu for pygame, simple, lightweight and easy to use.
 
 License:
 -------------------------------------------------------------------------------
@@ -46,6 +46,9 @@ import pygameMenu.fonts
 import pygameMenu.locals
 
 # noinspection PyUnresolvedReferences
+import pygameMenu.version
+
+# noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
 
 # noinspection PyUnresolvedReferences
@@ -65,7 +68,6 @@ __contributors__ = [
     'Rifqi31',
     'thisIsMikeKane',
 ]
-__description__ = 'Menu for pygame, simple, lightweight and easy to use'
+__description__ = 'A menu for pygame, simple, lightweight and easy to use'
 __email__ = 'pablo.pizarro@ing.uchile.cl'
 __url__ = 'https://github.com/ppizarror/pygame-menu'
-__version__ = 'v2.0.0'

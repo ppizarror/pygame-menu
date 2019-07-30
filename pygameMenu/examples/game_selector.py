@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE 2
-Game menu with 3 difficulty options, also sounds are tested.
+EXAMPLE - GAME SELECTOR
+Game with 3 difficulty options.
 
 License:
 -------------------------------------------------------------------------------
@@ -33,12 +33,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Import libraries
 from random import randrange
 import os
-
-# Import pygame
 import pygame
 import pygameMenu
 
-ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.version.ver),
          'Author: {0}'.format(pygameMenu.__author__),
          pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -59,7 +57,6 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 surface = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption('PygameMenu Example 2')
 clock = pygame.time.Clock()
-dt = 1 / FPS
 
 # Global variables
 DIFFICULTY = ['EASY']
@@ -93,7 +90,7 @@ def random_color():
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty, font):
+def play_function(difficulty, font, test=False):
     """
     Main game function.
 
@@ -101,8 +98,11 @@ def play_function(difficulty, font):
     :type difficulty: basestring
     :param font: Pygame font
     :type font: pygame._font.Font
+    :param test: Test method, if true only one loop is allowed
+    :type test: bool
     :return: None
     """
+    assert isinstance(difficulty, (tuple, list))
     difficulty = difficulty[0]
     assert isinstance(difficulty, str)
 
@@ -139,7 +139,7 @@ def play_function(difficulty, font):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 264
+                    # Quit this function, then skip to loop of main-menu on line 270
                     return
 
         # Pass events to main_menu
@@ -149,6 +149,10 @@ def play_function(difficulty, font):
         surface.fill(bg_color)
         surface.blit(f, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2))
         pygame.display.flip()
+
+        # If test returns
+        if test:
+            break
 
 
 def main_background():
@@ -190,7 +194,8 @@ play_menu.add_selector('Select difficulty',
                        [('1 - Easy', 'EASY'),
                         ('2 - Medium', 'MEDIUM'),
                         ('3 - Hard', 'HARD')],
-                       onchange=change_difficulty)
+                       onchange=change_difficulty,
+                       selector_id='select_difficulty')
 play_menu.add_option('Return to main menu', pygameMenu.events.BACK)
 
 # About menu
@@ -243,25 +248,42 @@ main_menu.add_option('Quit', pygameMenu.events.EXIT)
 # Configure main menu
 main_menu.set_fps(FPS)
 
+
 # -----------------------------------------------------------------------------
 # Main loop
 # -----------------------------------------------------------------------------
-while True:
+def main(test=False):
+    """
+    Main program.
 
-    # Tick
-    clock.tick(FPS)
+    :param test: Indicate function is being tested
+    :type test: bool
+    :return: None
+    """
+    while True:
 
-    # Paint background
-    main_background()
+        # Tick
+        clock.tick(FPS)
 
-    # Application events
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            exit()
+        # Paint background
+        main_background()
 
-    # Main menu
-    main_menu.mainloop(events)
+        # Application events
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
 
-    # Flip surface
-    pygame.display.flip()
+        # Main menu
+        main_menu.mainloop(events, disable_loop=test)
+
+        # Flip surface
+        pygame.display.flip()
+
+        # At first loop returns
+        if test:
+            break
+
+
+if __name__ == '__main__':
+    main()

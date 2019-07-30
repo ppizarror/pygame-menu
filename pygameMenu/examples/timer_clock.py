@@ -3,7 +3,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE 1
+EXAMPLE - TIMER CLOCK
 Example file, timer clock with in-menu options.
 
 License:
@@ -34,15 +34,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from random import randrange
 import datetime
 import os
-
-# Import pygame
-import pygame
+import pygame.examples.aliens
 import pygameMenu
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
+ABOUT = ['pygameMenu {0}'.format(pygameMenu.version.ver),
          'Author: {0}'.format(pygameMenu.__author__),
          pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
@@ -241,36 +239,53 @@ main_menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
 main_menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
 main_menu.add_option('Exit', pygameMenu.events.EXIT)  # Add exit function
 
+
 # -----------------------------------------------------------------------------
 # Main loop
 # -----------------------------------------------------------------------------
-while True:
+def main(test=False):
+    """
+    Main program.
 
-    # Tick clock
-    clock.tick(FPS)
-    timer[0] += dt
+    :param test: Indicate function is being tested
+    :type test: bool
+    :return: None
+    """
+    while True:
 
-    # Paint background
-    surface.fill(COLOR_BACKGROUND)
+        # Tick clock
+        clock.tick(FPS)
+        timer[0] += dt
 
-    # Application events
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                main_menu.enable()
+        # Paint background
+        surface.fill(COLOR_BACKGROUND)
 
-    # Draw timer
-    time_string = str(datetime.timedelta(seconds=int(timer[0])))
-    time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
-    time_blit_size = time_blit.get_size()
-    surface.blit(time_blit, (
-        W_SIZE / 2 - time_blit_size[0] / 2, H_SIZE / 2 - time_blit_size[1] / 2))
+        # Application events
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main_menu.enable()
 
-    # Execute main from principal menu if is enabled
-    main_menu.mainloop(events)
+        # Draw timer
+        time_string = str(datetime.timedelta(seconds=int(timer[0])))
+        time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
+        time_blit_size = time_blit.get_size()
+        surface.blit(time_blit, (
+            W_SIZE / 2 - time_blit_size[0] / 2, H_SIZE / 2 - time_blit_size[1] / 2))
 
-    # Flip surface
-    pygame.display.flip()
+        # Execute main from principal menu if is enabled
+        main_menu.mainloop(events, disable_loop=test)
+
+        # Flip surface
+        pygame.display.flip()
+
+        # At first loop returns
+        if test:
+            break
+
+
+if __name__ == '__main__':
+    main()

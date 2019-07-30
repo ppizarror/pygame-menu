@@ -43,6 +43,7 @@ class Button(Widget):
 
     def __init__(self,
                  label,
+                 button_id='',
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -53,6 +54,8 @@ class Button(Widget):
 
         :param label: Text of the button
         :type label: basestring
+        :param button_id: Button ID
+        :type button_id: basestring
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -61,8 +64,11 @@ class Button(Widget):
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        super(Button, self).__init__(onchange=onchange, onreturn=onreturn,
-                                     args=args, kwargs=kwargs)  # Button has no ID
+        super(Button, self).__init__(widget_id=button_id,
+                                     onchange=onchange,
+                                     onreturn=onreturn,
+                                     args=args,
+                                     kwargs=kwargs)
         self._label = label
 
     def _apply_font(self):
