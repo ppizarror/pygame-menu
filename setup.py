@@ -59,9 +59,10 @@ setup(
     install_requires=requirements,
     license=pygameMenu.__license__,
     long_description=long_description,
-    python_requires='>=2.7',
     name='pygame-menu',
     packages=find_packages(exclude=["test"]),
+    platforms=['any'],
+    python_requires='>=2.7',
     url=pygameMenu.__url__,
     version=pygameMenu.__version__
 )
