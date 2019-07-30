@@ -1,5 +1,6 @@
+
 pygame-menu
-==============
+===========
 
 | Written for both Python 2.7+ and 3.4+
 
