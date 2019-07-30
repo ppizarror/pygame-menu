@@ -1,27 +1,28 @@
 pygame-menu
 ==============
 
-| Written for both Python 2.X and 3.X
+| Written for both Python 2.7+ and 3.4+
 
 Source repo on `github <https://github.com/ppizarror/pygame-menu>`__
 
 Introduction
 ------------
 
-Pygame-menu is a Python Pygame library for create menus, it supports
-selectors, items and texts menus with many options to customize.
+Pygame-menu is a python-pygame library for creating menus, it supports
+selectors, buttons and texts menus with many options to customize.
 
 Install Instructions
 --------------------
 
-Pygame Toolbox can be downloaded via pip. Simply run pip install pygame-menu.
+Pygame-menu can be downloaded via pip. Simply run pip install pygame-menu.
 
 Dependencies
 ~~~~~~~~~~~~
 
 This library is dependant on the following
 
--  `Pygame <http://www.pygame.org/download.shtml>`__
+- `Pygame <http://www.pygame.org/download.shtml>`__
+- `pyperclip <https://pypi.org/project/pyperclip/>`__
 
 Contributors
 ------------

@@ -93,8 +93,12 @@ class TextMenu(Menu):
         assert text_margin >= 0, 'Text margin must be greater or equal than zero'
 
         # Super call
-        super(TextMenu, self).__init__(surface, window_width, window_height,
-                                       font, title, **kwargs)
+        super(TextMenu, self).__init__(surface,
+                                       window_width,
+                                       window_height,
+                                       font,
+                                       title,
+                                       **kwargs)
 
         # Store configuration
         self._draw_text_region_x = draw_text_region_x
@@ -134,7 +138,10 @@ class TextMenu(Menu):
         if self._size <= 1:
             dy = -0.5 * (self._fsize + self._opt_dy)
             self._opt_posy += dy
-        return super(TextMenu, self).add_option(element_name, element, *args, **kwargs)
+        return super(TextMenu, self).add_option(element_name,
+                                                element,
+                                                *args,
+                                                **kwargs)
 
     def draw(self):
         """

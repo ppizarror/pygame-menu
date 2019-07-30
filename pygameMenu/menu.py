@@ -346,13 +346,16 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
         self._check_id_duplicated(option_id)
 
-        widget.set_font(self._font, self._fsize,
-                        self._font_color, self._sel_color)
+        widget.set_font(self._font,
+                        self._fsize,
+                        self._font_color,
+                        self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick,
+                            self._mouse)
         widget.set_alignment(kwargs.pop('align', self._widget_align))
 
         self._option.append(widget)
@@ -425,13 +428,16 @@ class Menu(object):
         self._check_id_duplicated(selector_id)
 
         # Configure widget
-        widget.set_font(self._font, self._fsize,
-                        self._font_color, self._sel_color)
+        widget.set_font(self._font,
+                        self._fsize,
+                        self._font_color,
+                        self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick,
+                            self._mouse)
         widget.set_alignment(align)
 
         # Store widget
@@ -529,13 +535,16 @@ class Menu(object):
         self._check_id_duplicated(textinput_id)
 
         # Configure widget
-        widget.set_font(self._font, self._fsize,
-                        self._font_color, self._sel_color)
+        widget.set_font(self._font,
+                        self._fsize,
+                        self._font_color,
+                        self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick,
+                            self._mouse)
         widget.set_alignment(align)
 
         # Store widget
@@ -633,7 +642,7 @@ class Menu(object):
 
     def draw(self):
         """
-        Draw menu to surface.
+        Draw menu to the active surface.
 
         :return: None
         """

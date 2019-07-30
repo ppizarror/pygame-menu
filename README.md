@@ -162,6 +162,7 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :-: | :--| :--: | :--: |
     | align | Button alignment | str | locals.ALIGN_CENTER |
+    | option_id | Option identifier | str | "" |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 

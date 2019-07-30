@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from pygameMenu.locals import POSITION_NORTHWEST as _POSITION_NORTHWEST
 
 """
-Menu object configuration.
+Menu object configuration
 """
 MENU_ALPHA = 90  # Alpha of menu color, 0: Opaque, 255: Transparent
 MENU_BGCOLOR = (0, 0, 0)  # Background color of Menu
@@ -55,7 +55,7 @@ MENU_TITLE_BG_COLOR = (170, 65, 50)  # Background color
 MENU_WIDTH = 600  # Width of Menu (px)
 
 """
-TextMenu configuration.
+TextMenu configuration
 """
 MENU_FONT_TEXT_SIZE = 25  # Text size
 TEXT_DRAW_X = 2.5  # X-Axis margin of text (%)
