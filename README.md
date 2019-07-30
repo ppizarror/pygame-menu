@@ -61,7 +61,7 @@ Pygame-menu can be installed via pip. Simply run:
 pip install pygame-menu
 ```
 
-Currently python 2.7+ and 3.4+ (3.4, 3.5, 3.6) are supported.
+Currently python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
 ## Import
 
