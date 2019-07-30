@@ -32,8 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup, find_packages
-from pygameMenu import __author__, __description__, __email__, __url__
-from pygameMenu.version import ver
+import pygameMenu
 
 # Load readme
 with open('README.rst') as f:
@@ -47,22 +46,22 @@ with open('requirements.txt') as f:
 
 # Setup library
 setup(
-    author=__author__,
-    author_email=__email__,
+    author=pygameMenu.__author__,
+    author_email=pygameMenu.__email__,
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: pygame'
     ],
-    description=__description__,
+    description=pygameMenu.__description__,
     include_package_data=True,
     install_requires=requirements,
-    license='MIT',
+    license=pygameMenu.__license__,
     long_description=long_description,
     python_requires='>=2.7',
     name='pygame-menu',
     packages=find_packages(exclude=["test"]),
-    url=__url__,
-    version=ver
+    url=pygameMenu.__url__,
+    version=pygameMenu.__version__
 )
