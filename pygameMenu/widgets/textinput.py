@@ -37,9 +37,23 @@ from pygameMenu.widgets.widget import Widget
 import pygameMenu.controls as _ctrl
 import pygameMenu.locals as _locals
 
+
+class PyperclipException(RuntimeError):
+    """
+    Pyperclip exception trown by pyperclip.
+    """
+    pass
+
+
 try:
     from pyperclip import copy, paste
-except ImportError:
+
+    _test = paste()  # Test pasting
+
+# If user does not have pyperclip installed or
+# Pyperclip could not find a copy/paste mechanism in the system
+except ImportError or PyperclipException:
+
     # noinspection PyUnusedLocal
     def copy(text):
         """
@@ -1065,7 +1079,9 @@ class TextInput(Widget):
             self._remove_selection()
 
         # Paste text in cursor
-        text = paste().strip()
+        text = paste()
+
+        text = text.strip()
         for i in ['\n', '\r']:
             text = text.replace(i, '')
 
