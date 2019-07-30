@@ -18,7 +18,7 @@
 <a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
-</div><br/>
+</div><br />
 
 Python library that can create a simple Menu for pygame application, supports:
 
@@ -29,28 +29,28 @@ Python library that can create a simple Menu for pygame application, supports:
 
 Examples:
 
-#### Normal Button menu
+#### Normal button menu
 
 <p align="center">
-    <img src="https://ppizarror.com/resources/images/pygame-menu/cap1.PNG" width="60%" >
+    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example1.gif" width="60%" >
 </p>
 
-#### Text menu
+#### Textual menus
 
 <p align="center">
-    <img src="https://ppizarror.com/resources/images/pygame-menu/cap2.PNG" width="60%"  >
+    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example2.gif" width="60%"  >
 </p>
 
-#### Small submenu
+#### Mouse support
 
 <p align="center">
-    <img src="https://ppizarror.com/resources/images/pygame-menu/cap3.PNG" width="60%" >
+    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example3.gif" width="60%" >
 </p>
 
 #### Different inputs
 
 <p align="center">
-    <img src="https://ppizarror.com/resources/images/pygame-menu/cap4.PNG" width="60%" >
+    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example4.gif" width="60%" >
 </p>
 
 ## Install

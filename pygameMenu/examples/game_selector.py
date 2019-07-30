@@ -37,7 +37,7 @@ import pygame
 import pygameMenu
 
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
-         'Author: {0}'.format(pygameMenu.__author__),
+         'Author: @{0}'.format(pygameMenu.__author__),
          pygameMenu.locals.TEXT_NEWLINE,
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BACKGROUND = (128, 0, 128)
@@ -107,11 +107,11 @@ def play_function(difficulty, font, test=False):
     assert isinstance(difficulty, str)
 
     if difficulty == 'EASY':
-        f = font.render('Playing as a baby', 1, COLOR_WHITE)
+        f = font.render('Playing as a baby (easy)', 1, COLOR_WHITE)
     elif difficulty == 'MEDIUM':
-        f = font.render('Playing as a normie', 1, COLOR_WHITE)
+        f = font.render('Playing as a kid (medium)', 1, COLOR_WHITE)
     elif difficulty == 'HARD':
-        f = font.render('Playing as a champion', 1, COLOR_WHITE)
+        f = font.render('Playing as a champion (hard)', 1, COLOR_WHITE)
     else:
         raise Exception('Unknown difficulty {0}'.format(difficulty))
 
@@ -139,7 +139,7 @@ def play_function(difficulty, font, test=False):
                 if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 270
+                    # Quit this function, then skip to loop of main-menu on line 277
                     return
 
         # Pass events to main_menu
