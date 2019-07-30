@@ -44,4 +44,31 @@ class WidgetsTest(unittest.TestCase):
         """
         Test selector widget.
         """
-        pass
+        selector = self.menu.add_selector('selector',
+                                          [('1 - Easy', 'EASY'),
+                                           ('2 - Medium', 'MEDIUM'),
+                                           ('3 - Hard', 'HARD')],
+                                          default=1)
+        selector.draw(surface)
+        selector.selected = False
+        selector.draw(surface)
+
+        # Test events
+        selector.update(PygameUtils.key(0, keydown=True, testmode=False))
+        selector.update(PygameUtils.key(pygameMenu.controls.KEY_LEFT, keydown=True))
+        selector.update(PygameUtils.key(pygameMenu.controls.KEY_RIGHT, keydown=True))
+        selector.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
+        selector.update(PygameUtils.joy_key(pygameMenu.controls.JOY_LEFT))
+        selector.update(PygameUtils.joy_key(pygameMenu.controls.JOY_RIGHT))
+        selector.update(PygameUtils.joy_motion(1, 0))
+        selector.update(PygameUtils.joy_motion(-1, 0))
+        click_pos = PygameUtils.get_middle_rect(selector.get_rect())
+        selector.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+
+        # Update elements
+        new_elements = [('4 - Easy', 'EASY'),
+                        ('5 - Medium', 'MEDIUM'),
+                        ('6 - Hard', 'HARD')]
+        selector.update_elements(new_elements)
+        selector.set_value('6 - Hard')
+        self.assertRaises(ValueError, None)

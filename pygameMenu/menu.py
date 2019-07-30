@@ -736,7 +736,7 @@ class Menu(object):
 
         :param event: Key press event
         :type event: pygame.event.EventType
-        :return: True if any key is pressed
+        :return: True if a key is pressed
         :rtype: bool
         """
         # If the system detects that any key event has been pressed but
@@ -744,18 +744,18 @@ class Menu(object):
         # flag
         bad_event = not (True in _pygame.key.get_pressed())
         if bad_event:
+            if 'test' in event.dict and event.dict['test']:
+                return True
             ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
             _pygame.event.post(ev)
         return not bad_event
 
-    def _main(self, events=None, test_event=False):
+    def _main(self, events=None):
         """
         Main function of the loop.
 
         :param events: Pygame events
         :type events: list
-        :param test_event: Disable event check
-        :type test_event: bool
         :return: True if mainloop must be stopped
         :rtype: bool
         """
@@ -793,7 +793,7 @@ class Menu(object):
                 elif event.type == _pygame.locals.KEYDOWN:
 
                     # Check key event is valid
-                    if not self._check_key_pressed_valid(event) and not test_event:
+                    if not self._check_key_pressed_valid(event):
                         continue
 
                     if event.key == _ctrl.KEY_MOVE_DOWN:

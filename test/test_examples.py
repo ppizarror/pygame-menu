@@ -30,11 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 from test._utils import *
-import pygame
 
 # Imports
 import pygameMenu.examples.timer_clock as example1
-import pygameMenu.examples.game_difficulty_selector as example2
+import pygameMenu.examples.game_selector as example2
 import pygameMenu.examples.multi_input as example3
 
 

@@ -138,44 +138,44 @@ class MenuTest(unittest.TestCase):
                 first_button = button
 
         # Create a event in pygame
-        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True), test_event=True)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu._get_actual_index(), 1)
 
         # Move down twice
         for i in range(2):
-            self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_DOWN, keydown=True), test_event=True)
+            self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu._get_actual_index(), 4)
-        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True), test_event=True)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu._get_actual_index(), 0)
 
         # Press enter, button should trigger and call function
         self.assertEqual(button.apply(), 'the value')
-        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True), test_event=True)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
 
         # Other
-        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_CLOSE_MENU, keydown=True), test_event=True)
-        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True), test_event=True)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_CLOSE_MENU, keydown=True))
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True))
 
         # Check index is the same as before
         self.assertEqual(self.menu._get_actual_index(), 0)
 
         # Check joy
-        self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_UP), test_event=True)
+        self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_UP))
         self.assertEqual(self.menu._get_actual_index(), 1)
-        self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_DOWN), test_event=True)
+        self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_DOWN))
         self.assertEqual(self.menu._get_actual_index(), 0)
-        self.menu._main(PygameUtils.joy_motion(1, 1), test_event=True)
+        self.menu._main(PygameUtils.joy_motion(1, 1))
         self.assertEqual(self.menu._get_actual_index(), 1)
-        self.menu._main(PygameUtils.joy_motion(1, -1), test_event=True)
+        self.menu._main(PygameUtils.joy_motion(1, -1))
         self.assertEqual(self.menu._get_actual_index(), 0)
-        self.menu._main(PygameUtils.joy_motion(1, -1), test_event=True)
+        self.menu._main(PygameUtils.joy_motion(1, -1))
         self.assertEqual(self.menu._get_actual_index(), 4)
 
         # Check mouse, get last widget
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
-        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]), test_event=True)
+        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         click_pos = PygameUtils.get_middle_rect(first_button.get_rect())
-        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]), test_event=True)
+        self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
 
     def test_input_data(self):
         """

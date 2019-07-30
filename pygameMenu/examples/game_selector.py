@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE - GAME DIFFICULTY SELECTOR
-Game menu with 3 difficulty options.
+EXAMPLE - GAME SELECTOR
+Game with 3 difficulty options.
 
 License:
 -------------------------------------------------------------------------------

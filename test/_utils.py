@@ -53,7 +53,7 @@ class PygameUtils(object):
     """
 
     @staticmethod
-    def joy_motion(x=0.0, y=0.0, inlist=True):
+    def joy_motion(x=0.0, y=0.0, inlist=True, testmode=True):
         """
         Create a pygame joy controller motion event.
 
@@ -63,31 +63,33 @@ class PygameUtils(object):
         :type y: float
         :param inlist: Return event in a list
         :type inlist: bool
+        :param testmode: Key event is in test mode
+        :type testmode: bool
         :return: Event
         :rtype: pygame.event.Event
         """
         if x != 0 and y != 0:
-            return [PygameUtils.joy_motion(x=x, y=0, inlist=False),
-                    PygameUtils.joy_motion(x=0, y=y, inlist=False)]
+            return [PygameUtils.joy_motion(x=x, y=0, inlist=False, testmode=testmode),
+                    PygameUtils.joy_motion(x=0, y=y, inlist=False, testmode=testmode)]
         event_obj = None
         if x != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
-                                           {"value": x,
-                                            "axis": pygameMenu.controls.JOY_AXIS_X
-                                            }
-                                           )
+                                           {'value': x,
+                                            'axis': pygameMenu.controls.JOY_AXIS_X,
+                                            'test': testmode
+                                            })
         if y != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
-                                           {"value": y,
-                                            "axis": pygameMenu.controls.JOY_AXIS_Y
-                                            }
-                                           )
+                                           {'value': y,
+                                            'axis': pygameMenu.controls.JOY_AXIS_Y,
+                                            'test': testmode
+                                            })
         if inlist:
             event_obj = [event_obj]
         return event_obj
 
     @staticmethod
-    def joy_key(key, inlist=True):
+    def joy_key(key, inlist=True, testmode=True):
         """
         Create a pygame joy controller key event.
 
@@ -95,16 +97,21 @@ class PygameUtils(object):
         :type key: bool
         :param inlist: Return event in a list
         :type inlist: bool
+        :param testmode: Key event is in test mode
+        :type testmode: bool
         :return: Event
         :rtype: pygame.event.Event
         """
-        event_obj = pygame.event.Event(pygame.JOYHATMOTION, {"value": key})
+        event_obj = pygame.event.Event(pygame.JOYHATMOTION,
+                                       {'value': key,
+                                        'test': testmode
+                                        })
         if inlist:
             event_obj = [event_obj]
         return event_obj
 
     @staticmethod
-    def key(key, inlist=True, keydown=False, keyup=False):
+    def key(key, inlist=True, keydown=False, keyup=False, testmode=True):
         """
         Create a keyboard event.
 
@@ -116,6 +123,8 @@ class PygameUtils(object):
         :type keydown: bool
         :param keyup: Event is keyup
         :type keyup: bool
+        :param testmode: Key event is in test mode
+        :type testmode: bool
         :return: Event
         :rtype: pygame.event.Event
         """
@@ -128,7 +137,10 @@ class PygameUtils(object):
             event = pygame.KEYDOWN
         if keyup:
             event = pygame.KEYUP
-        event_obj = pygame.event.Event(event, {"key": key})
+        event_obj = pygame.event.Event(event,
+                                       {'key': key,
+                                        'test': testmode
+                                        })
         if inlist:
             event_obj = [event_obj]
         return event_obj
@@ -147,7 +159,10 @@ class PygameUtils(object):
         :return: Event
         :rtype: pygame.event.Event
         """
-        event_obj = pygame.event.Event(pygame.MOUSEBUTTONUP, {"pos": [float(x), float(y)]})
+        event_obj = pygame.event.Event(pygame.MOUSEBUTTONUP,
+                                       {'pos': [float(x), float(y)],
+                                        'test': True
+                                        })
         if inlist:
             event_obj = [event_obj]
         return event_obj

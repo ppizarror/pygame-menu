@@ -139,16 +139,6 @@ class Selector(Widget):
             color = self._font_color
         self._surface = self.render_string(string, color)
 
-    def set_selection_format(self, s):
-        """
-        Change the text format.
-
-        :param s: Selection text
-        :type s: basestring
-        :return: None
-        """
-        self._sformat = s
-
     def set_value(self, text):
         """
         Set the current value of the selector.
