@@ -55,6 +55,6 @@ class PygameMenuVersion(tuple):
     patch = property(lambda self: self[2])
 
 
-ver = "2.0.0"
-vernum = PygameMenuVersion(2, 0, 0)
+ver = "2.0.1"
+vernum = PygameMenuVersion(2, 0, 1)
 rev = ""
