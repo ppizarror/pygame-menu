@@ -31,10 +31,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Import libraries
+import sys
+
+sys.path.insert(0, '../../')
+
 from random import randrange
 import datetime
 import os
-import pygame.examples.aliens
+import pygame
 import pygameMenu
 
 # -----------------------------------------------------------------------------

@@ -31,8 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Import libraries
-from random import randrange
+import sys
+
+sys.path.insert(0, '../../')
+
 import os
+from random import randrange
 import pygame
 import pygameMenu
 
