@@ -71,6 +71,20 @@ Import of this library is similar as pygame:
 import pygameMenu
 ```
 
+## Library structure
+
+| Module | Description |
+| :--: | :--: |
+| *pygameMenu.config* | Default configuration of Menus |
+| *pygameMenu.controls* | Control definition, constants, etc. |
+| *pygameMenu.events* | Events definition, constants, etc. |
+| *pygameMenu.font* | Menu font management |
+| *pygameMenu.locals* | Menu constants |
+| pygameMenu.Menu | Menu class |
+| *pygameMenu.sound* | Sound management |
+| pygameMenu.TextMenu | TextMenu class |
+| *pygameMenu.version* | Version of the library |
+
 ## Usage
 
 ### Creating menus
@@ -86,7 +100,7 @@ import pygameMenu
     Parameters are the following:
 
     | Param | Description | Type | Default |
-    | :-: | :-- | :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | surface | Pygame surface object | Pygame Surface | - |
     | window_width | Window width size (px)| int | - |
     | window_height | Window height size (px) |int | - |
@@ -136,7 +150,7 @@ import pygameMenu
     This class inherites from Menu, so the parameters are the same, except the following extra parameters:  
 
     | Param | Description | Type | Default |
-    | :-: | :--| :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | draw_text_region_x | X-Axis drawing region of the text | int | TEXT_DRAW_X |
     | text_align | Text default alignment | string | locals.ALIGN_LEFT |
     | text_color | Text color | tuple | TEXT_FONT_COLOR |
@@ -152,7 +166,7 @@ import pygameMenu
     Adds an *option* to the menu (buttons).
 
     | Param | Description | Type | Default |
-    | :-: | :-- | :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | element_name | String on menu entry | str | *Required* |
     | element | Menu object (Menu, function or Menu-Event) supported | PymenuAction, function, Menu | *Required* |
     | *args | Additional arguments | - | - |
@@ -161,7 +175,7 @@ import pygameMenu
     Additional keyword arguments:
 
     | Param | Description | Type | Default |
-    | :-: | :--| :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | align | Button alignment | str | locals.ALIGN_CENTER |
     | option_id | Option identifier | str | "" |
 
@@ -193,7 +207,7 @@ import pygameMenu
     Add a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
     | Param | Description | Type | Default |
-    | :-: | :-- | :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | title | String on menu entry | str | *Required* |
     | values | Value list, list of tuples | list | *Required* |
     | selector_id | Selector identification | str | "" |
@@ -251,7 +265,7 @@ import pygameMenu
     Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
 
     | Param | Description | Type | Default |
-    | :-: | :-- | :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | title | Label string on menu entry | str | *Required* |
     | textinput_id | Text input identificator | str | "" |
     | default | Default value to display | str | "" |
@@ -469,7 +483,7 @@ import pygameMenu
 ### Menu events
 
 | Event | Description |
-| :-: | :-- |
+| :--: | :-- |
 | MENU_BACK | Go back on menu|
 | MENU_CLOSE | Close menu|
 | MENU_DISABLE_CLOSE | Disable close menu|
@@ -484,6 +498,8 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
 - **Sound**
 
+    This class creates a basic sound engine.
+
     ```python
     pygameMenu.sound.Sound(uniquechannel, frequency, size, channels, buffer, devicename, allowedchanges)
     ```
@@ -491,7 +507,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
     Parameters are the following:
 
     | Param | Description | Type | Default |
-    | :-: | :-- | :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | uniquechannel | Force the channel to be unique, this is setted at the moment of creation of the object | bool | True |
     | frequency | Frequency of sounds | int | 22050 |
     | size | Size of sample | int | -16 |
@@ -536,7 +552,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
     Set a sound file to a sound type.
 
     | Param | Description | Type | Default |
-    | :-: | :-- | :--: | :--: |
+    | :--: | :-- | :--: | :--: |
     | sound | Sound type | str | - |
     | file | Sound file | str | - |
     | volume | Volume of the sound | float | 0.5 |
@@ -547,7 +563,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
     Sounds types are the following:
 
     | Type | Description |
-    | :-: | :-- |
+    | :--: | :-- |
     | SOUND_TYPE_CLICK_MOUSE | Mouse click |
     | SOUND_TYPE_CLOSE_MENU | A menu is closed |
     | SOUND_TYPE_ERROR | Generic error |
@@ -636,7 +652,7 @@ print(pygame.font.get_fonts())
 Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 | File | Description |
-| :-: | :-- |
+| :--: | :-- |
 | pygameMenu.config | Configure default parameter of Menu and TextMenu class |
 | pygameMenu.controls | Configure default key-events of Menus and widgets |
 
