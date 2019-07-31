@@ -77,3 +77,19 @@ class SoundTest(unittest.TestCase):
         self.sound.play_key_add()
         self.sound.play_key_del()
         self.sound.play_open_menu()
+
+    def test_sound_menu(self):
+        """
+        Test sounds in menu.
+        """
+        menu = PygameMenuUtils.generic_menu()
+        submenu = PygameMenuUtils.generic_menu()
+
+        menu.add_option('submenu', submenu)
+        button = menu.add_option('button', lambda: None)
+        menu.set_sound(self.sound, True)
+        self.assertEqual(button.sound, self.sound)
+
+        # This will remove the sound engine
+        menu.set_sound(None, True)
+        self.assertNotEqual(button.sound, self.sound)

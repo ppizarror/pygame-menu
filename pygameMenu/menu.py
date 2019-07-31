@@ -867,10 +867,12 @@ class Menu(object):
         """
         Check menu initialization.
 
-        :return: None
+        :return: True if menu is initialized, raise Exception if not
+        :rtype: bool
         """
         if self._top is None:
             raise Exception('The menu has not been initialized yet, try using mainloop function')
+        return True
 
     def mainloop(self, events=None, disable_loop=False):
         """
@@ -989,7 +991,7 @@ class Menu(object):
         Set sound engine to a menu.
 
         :param sound: Sound object
-        :type sound: pygameMenu.sound.Sound
+        :type sound: pygameMenu.sound.Sound, NoneType
         :param recursive: Set the sound engine to all submenus
         :type recursive: bool
         :return: None
