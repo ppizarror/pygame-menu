@@ -1267,7 +1267,10 @@ class TextInput(Widget):
 
                     # Ctrl+C copy
                     if event.key == _pygame.K_c:
-                        return self._copy()
+                        copy_status = self._copy()
+                        if not copy_status:
+                            self.sound.play_event_error()
+                        return copy_status
 
                     # Ctrl+V paste
                     elif event.key == _pygame.K_v:
