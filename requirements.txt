@@ -1,2 +1,2 @@
-pygame>=1.9.5
+pygame>=1.9.4
 pyperclip

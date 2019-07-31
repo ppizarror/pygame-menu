@@ -38,6 +38,7 @@ import time as _time
 # Import pygame and base audio mixer
 from pygame import error as _pygame_error
 from pygame import mixer as _mixer
+from pygame import vernum as _pygame_version
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE as _AUDIO_ALLOW_CHANNELS_CHANGE
@@ -119,11 +120,33 @@ class Sound(object):
 
         # Initialize sounds if not initialized
         if _mixer.get_init() is None or force_init:
-            _mixer.init(frequency=frequency,
-                        size=size,
-                        channels=channels,
-                        buffer=buffer,
-                        devicename=devicename)
+
+            # Check pygame version
+            version_major, _, version_minor = _pygame_version
+
+            # <= 1.9.4
+            if version_major == 1 and version_minor <= 4:
+                _mixer.init(frequency=frequency,
+                            size=size,
+                            channels=channels,
+                            buffer=buffer)
+
+            # <2.0.0 & >= 1.9.5
+            elif version_major == 1 and version_minor > 4:
+                _mixer.init(frequency=frequency,
+                            size=size,
+                            channels=channels,
+                            buffer=buffer,
+                            devicename=devicename)
+
+            # >= 2.0.0
+            elif version_major > 1:
+                _mixer.init(frequency=frequency,
+                            size=size,
+                            channels=channels,
+                            buffer=buffer,
+                            devicename=devicename,
+                            allowedchanges=allowedchanges)
 
         # Channel where a sound is played
         self._channel = None  # type: _mixer.ChannelType
