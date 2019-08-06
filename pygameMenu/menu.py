@@ -297,6 +297,10 @@ class Menu(object):
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._menubar.set_font(font_title, font_size_title,
                                bg_color_title, self._font_color)
+        self._menubar.set_shadow(enabled=self._option_shadow,
+                                 color=_cfg.MENU_SHADOW_COLOR,
+                                 position=self._option_shadow_position,
+                                 offset=self._option_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
 
         # Selected option
@@ -1134,3 +1138,12 @@ class Menu(object):
                 if widget:
                     return widget
         return None
+
+    def get_selected_widget(self):
+        """
+        Return the currently selected widget.
+
+        :return: Widget object
+        :rtype: pygameMenu.widgets.widget.Widget
+        """
+        return self._top._actual._option[self._top._actual._index]
