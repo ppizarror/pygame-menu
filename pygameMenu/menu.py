@@ -914,22 +914,7 @@ class Menu(object):
         :rtype: dict
         """
         assert isinstance(recursive, bool), 'recursive must be a boolean'
-        return self._get_input_data(recursive=recursive, depth=depth)
 
-    def _get_input_data(self, recursive, depth):
-        """
-        Return input data as a dict.
-
-        With ``recursive=True``: it looks for a widget inside the current menu
-        and all sub-menus.
-
-        :param recursive: Look in menu and sub-menus
-        :type recursive: bool
-        :param depth: Depth menu when using recursive
-        :type depth: int
-        :return: Input dict
-        :rtype: dict
-        """
         data = {}
         for widget in self._option:
             try:

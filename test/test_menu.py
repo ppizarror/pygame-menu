@@ -141,6 +141,16 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
         self.assertEqual(self.menu.get_widget('deep_selector', recursive=True), deep_selector)
 
+    # noinspection PyArgumentEqualDefault
+    def test_get_selected_widget(self):
+        """
+        Tests get current widget.
+        """
+        self.menu.clear()
+
+        widget = self.menu.add_text_input('test', 'some_id')
+        self.assertEqual(widget, self.menu.get_selected_widget())
+
     def test_events(self):
         """
         Test key events.
