@@ -111,7 +111,7 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def key(key, char='', inlist=True, keydown=False, keyup=False, testmode=True):
+    def key(key, char=' ', inlist=True, keydown=False, keyup=False, testmode=True):
         """
         Create a keyboard event.
 

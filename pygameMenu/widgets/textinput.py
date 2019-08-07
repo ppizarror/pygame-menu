@@ -177,7 +177,6 @@ class TextInput(Widget):
             _ctrl.KEY_MOVE_DOWN,
             _ctrl.KEY_MOVE_UP,
             _pygame.K_CAPSLOCK,
-            _pygame.K_ESCAPE,
             _pygame.K_LCTRL,
             _pygame.K_LSHIFT,
             _pygame.K_NUMLOCK,
@@ -847,9 +846,14 @@ class TextInput(Widget):
         # Text does not have ellipsis, infered position is correct
         else:
             self._cursor_position = cursor_pos
+            if self._maxwidth != 0:  # Update renderbox
+                self._cursor_position += self._renderbox[0]
+                self._renderbox[2] = cursor_pos
+                self._update_maxlimit_renderbox()
 
         if self._selection_mouse_first_position == -1:
-            if self._selection_active:
+            if self._selection_active:  # Unselect and select again
+                self._unselect_text()
                 self._selection_mouse_first_position = self._cursor_position
         else:
             a = self._selection_mouse_first_position
@@ -1408,6 +1412,11 @@ class TextInput(Widget):
                 elif event.key == _ctrl.KEY_APPLY:
                     self.sound.play_open_menu()
                     self.apply()
+                    self._unselect_text()
+                    updated = True
+
+                # Escape
+                elif event.key == _pygame.K_ESCAPE:
                     self._unselect_text()
                     updated = True
 

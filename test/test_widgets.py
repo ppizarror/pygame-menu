@@ -124,14 +124,14 @@ class WidgetsTest(unittest.TestCase):
 
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
-        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygame.K_DELETE, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygame.K_LEFT, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygame.K_END, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygame.K_HOME, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True, char=' '))
-        textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True, char=' '))
+        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True,))
+        textinput.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        textinput.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        textinput.update(PygameUtils.key(pygame.K_END, keydown=True))
+        textinput.update(PygameUtils.key(pygame.K_HOME, keydown=True))
+        textinput.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
+        textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()
 
         # Type
@@ -151,6 +151,7 @@ class WidgetsTest(unittest.TestCase):
         textinput._select_all()
         self.assertEqual(textinput._get_selected_text(), 'test')
         textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput.update(PygameUtils.key(pygame.K_ESCAPE, keydown=True))
 
         # Now the value must be t
         self.assertEqual(textinput._get_selected_text(), '')
