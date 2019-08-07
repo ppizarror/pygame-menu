@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-TEST EXAMPLES
-Test example files.
+TEST VERSION
+Test version management.
 
 License:
 -------------------------------------------------------------------------------
@@ -31,37 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 from test._utils import *
 
-# Imports
-import pygameMenu.examples.timer_clock as example1
-import pygameMenu.examples.game_selector as example2
-import pygameMenu.examples.multi_input as example3
 
+class VersionTest(unittest.TestCase):
 
-class ExamplesTest(unittest.TestCase):
-
-    @staticmethod
-    def test_example_timer_clock():
+    def test_version(self):
         """
-        Test timer clock example.
+        Test version.
         """
-        example1.main(True)
-        example1.mainmenu_background()
-        example1.reset_timer()
-
-    @staticmethod
-    def test_example_difficulty_selector():
-        """
-        Test multi-input example.
-        """
-        example2.main(True)
-        font = PygameMenuUtils.load_font(PygameMenuUtils.random_font(), 5)
-        example2.play_function(['EASY'], font, test=True)
-        example2.play_function(['MEDIUM'], font, test=True)
-        example2.play_function(['HARD'], font, test=True)
-
-    @staticmethod
-    def test_example_multi_input():
-        """
-        Test multi-input example.
-        """
-        example3.main(True)
+        self.assert_(isinstance(pygameMenu.version.ver, str))
+        self.assert_(isinstance(repr(pygameMenu.version.vernum), str))
+        self.assert_(isinstance(str(pygameMenu.version.vernum), str))
