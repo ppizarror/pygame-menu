@@ -48,22 +48,16 @@ class ExamplesTest(unittest.TestCase):
         example1.mainmenu_background()
         example1.reset_timer()
 
-    def test_example_difficulty_selector(self):
+    @staticmethod
+    def test_example_difficulty_selector():
         """
         Test multi-input example.
         """
         example2.main(True)
         font = PygameMenuUtils.load_font(PygameMenuUtils.random_font(), 5)
         example2.play_function(['EASY'], font, test=True)
-
-        # Find
-        menu_inputs = example2.play_menu.get_input_data(recursive=True)
-        keys = menu_inputs.keys()
-        self.assert_('select_difficulty' in keys)
-        selector = example2.play_menu.get_widget('select_difficulty', True)
-        selector.update([])
-        selector.left()
-        selector.apply()
+        example2.play_function(['MEDIUM'], font, test=True)
+        example2.play_function(['HARD'], font, test=True)
 
     @staticmethod
     def test_example_multi_input():
