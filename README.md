@@ -656,6 +656,16 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 | pygameMenu.config | Configure default parameter of Menu and TextMenu class |
 | pygameMenu.controls | Configure default key-events of Menus and widgets |
 
+## Examples
+
+To run the examples simply execute this commands in a terminal:
+
+```bash
+py -m pygameMenu.examples.game_selector
+py -m pygameMenu.examples.multi_input
+py -m pygameMenu.examples.timer_clock
+```
+
 ## Author
 
 [Pablo Pizarro R.](https://ppizarror.com) | 2017-2019
