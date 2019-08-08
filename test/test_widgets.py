@@ -124,7 +124,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
-        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True,))
+        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True, ))
         textinput.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
@@ -156,3 +156,8 @@ class WidgetsTest(unittest.TestCase):
         # Now the value must be t
         self.assertEqual(textinput._get_selected_text(), '')
         self.assertEqual(textinput.get_value(), 't')
+
+        # Update mouse
+        for i in range(50):
+            textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput._update_cursor_mouse(50)
