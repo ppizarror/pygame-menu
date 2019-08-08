@@ -89,7 +89,7 @@ class MenuTest(unittest.TestCase):
         it changed to submenu 2, and so on...
         """
         self.assertEqual(self.menu.get_title(), 'mainmenu')
-        self.assertEqual(self.menu.get_title(True), 'submenu 1')
+        self.assertEqual(self.menu.get_title(True), 'submenu 10')
         self.assertEqual(menu.get_title(), 'submenu 10')
 
         """

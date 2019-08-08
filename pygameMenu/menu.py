@@ -571,7 +571,7 @@ class Menu(object):
         :return: None
         """
         self._check_menu_initialized()
-        if self._top._actual._prev is not None:
+        if self._top._prev is not None:
             self.reset(1)
         else:
             self._close()
@@ -597,7 +597,7 @@ class Menu(object):
         """
         if self._top is None:
             return 0
-        prev = self._top._actual._prev
+        prev = self._top._prev
         depth = 0
         while True:
             if prev is not None:
@@ -1020,33 +1020,6 @@ class Menu(object):
         if depth > 0:
             self.reset(depth)
 
-    def reset(self, total):
-        """
-        Reset the menu.
-
-        :param total: How many menus to reset (1: back)
-        :type total: int
-        :return: None
-        """
-        self._check_menu_initialized()
-        assert isinstance(self._top._actual, Menu)
-        assert isinstance(total, int), 'total must be an integer'
-        assert total > 0, 'total must be greater than zero'
-
-        i = 0
-        while True:
-            if self._top._actual._prev is not None:
-                prev = self._top._actual._prev
-                self._top._actual = prev[1]
-                self._top._actual._prev = prev[0]  # Eventually will reach None
-                i += 1
-                if i == total:
-                    break
-            else:
-                break
-
-        self._select(self._top._actual._index)
-
     def _get_actual_index(self):
         """
         Get actual selected option.
@@ -1077,9 +1050,36 @@ class Menu(object):
         self._check_menu_initialized()
         actual = self
         menu._top = self._top
-        self._top._actual._actual = menu._actual
-        self._top._actual._prev = [self._top._actual._prev, actual]
+        self._top._actual = menu._actual
+        self._top._prev = [self._top._prev, actual]
         self._select(0)
+
+    def reset(self, total):
+        """
+        Reset the menu.
+
+        :param total: How many menus to reset (1: back)
+        :type total: int
+        :return: None
+        """
+        self._check_menu_initialized()
+        assert isinstance(self._top._actual, Menu)
+        assert isinstance(total, int), 'total must be an integer'
+        assert total > 0, 'total must be greater than zero'
+
+        i = 0
+        while True:
+            if self._top._prev is not None:
+                prev = self._top._prev
+                self._top._actual = prev[1]
+                self._top._prev = prev[0]  # Eventually will reach None
+                i += 1
+                if i == total:
+                    break
+            else:
+                break
+
+        self._select(self._top._actual._index)
 
     def _select(self, index):
         """
