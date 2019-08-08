@@ -666,6 +666,13 @@ py -m pygameMenu.examples.multi_input
 py -m pygameMenu.examples.timer_clock
 ```
 
+Also, examples can be imported as follows:
+
+```python
+from pygameMenu.examples.example import main
+main()
+```
+
 ## Author
 
 [Pablo Pizarro R.](https://ppizarror.com) | 2017-2019
