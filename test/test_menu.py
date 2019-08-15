@@ -151,7 +151,7 @@ class MenuTest(unittest.TestCase):
         widget = self.menu.add_text_input('test', 'some_id')
         self.assertEqual(widget, self.menu.get_selected_widget())
 
-    def test_events(self):
+    def test_generic_events(self):
         """
         Test key events.
         """
@@ -208,6 +208,19 @@ class MenuTest(unittest.TestCase):
         self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         click_pos = PygameUtils.get_middle_rect(first_button.get_rect())
         self.menu._main(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+
+    def test_back_event(self):
+        """
+        Test back event.
+        """
+        self.menu.clear()
+        self.assertEqual(self.menu._get_depth(), 0)
+        menu = PygameMenuUtils.generic_menu('submenu')
+        button = self.menu.add_option('open', menu)
+        button.apply()
+        self.assertEqual(self.menu._get_depth(), 1)
+        self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True))  # go back
+        self.assertEqual(self.menu._get_depth(), 0)
 
     def test_mouse_empty_submenu(self):
         """
