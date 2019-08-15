@@ -824,7 +824,7 @@ class Menu(object):
                     elif event.key == _ctrl.KEY_MOVE_UP:
                         self._select(self._actual._index + 1)
                         self._sounds.play_key_add()
-                    elif event.key == _ctrl.KEY_BACK and self._actual._prev is not None:
+                    elif event.key == _ctrl.KEY_BACK and self._top._prev is not None:
                         self._sounds.play_close_menu()
                         self.reset(1)
                     elif event.key == _ctrl.KEY_CLOSE_MENU and not self._closelocked:
