@@ -17,3 +17,6 @@
 build/*
 dist
 build.bat
+
+# Other example files
+other/
