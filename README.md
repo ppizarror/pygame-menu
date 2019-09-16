@@ -1,6 +1,6 @@
 <h1 align="center">
-  <a href="https://ppizarror.com/pygame-menu/" title="Pygame Menu">
-    <img alt="Pygame Menu" src="https://ppizarror.com/resources/other/python.png" width="200px" height="200px" />
+  <a href="https://github.ppizarror.com/pygame-menu/" title="Pygame Menu">
+    <img alt="Pygame Menu" src="https://res.ppizarror.com/resources/other/python.png" width="200px" height="200px" />
   </a>
   <br /><br />
   Pygame Menu</h1>
@@ -32,25 +32,25 @@ Examples:
 #### Normal button menu
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example1.gif" width="60%" >
+    <img src="https://res.ppizarror.com/images/pygame-menu/example1.gif" width="60%" >
 </p>
 
 #### Textual menus
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example2.gif" width="60%"  >
+    <img src="https://res.ppizarror.com/images/pygame-menu/example2.gif" width="60%"  >
 </p>
 
 #### Mouse support
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example3.gif" width="60%" >
+    <img src="https://res.ppizarror.com/images/pygame-menu/example3.gif" width="60%" >
 </p>
 
 #### Different inputs
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/ppizarror/ppizarror.github.io/master/resources/images/pygame-menu/example4.gif" width="60%" >
+    <img src="https://res.ppizarror.com/images/pygame-menu/example4.gif" width="60%" >
 </p>
 
 ## Install
