@@ -1,7 +1,5 @@
 <h1 align="center">
-  <a href="https://github.ppizarror.com/pygame-menu/" title="Pygame Menu">
-    <img alt="Pygame Menu" src="https://res.ppizarror.com/other/python.png" width="200px" height="200px" />
-  </a>
+  <img alt="Pygame Menu" src="https://res.ppizarror.com/other/python.png" width="200px" height="200px" />
   <br /><br />
   Pygame Menu</h1>
 
