@@ -482,11 +482,11 @@ import pygameMenu
 
 | Event | Description |
 | :--: | :-- |
-| MENU_BACK | Go back on menu|
-| MENU_CLOSE | Close menu|
-| MENU_DISABLE_CLOSE | Disable close menu|
-| MENU_EXIT | Close application
-| MENU_RESET | Reset menu |
+| BACK | Go back on menu|
+| CLOSE | Close menu|
+| DISABLE_CLOSE | Disable close menu|
+| EXIT | Close application
+| RESET | Reset menu |
 
 This events must be imported from *pygameMenu.events*.
 
