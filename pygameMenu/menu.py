@@ -834,9 +834,9 @@ class Menu(object):
 
                 elif self._joystick and event.type == _pygame.JOYHATMOTION:
                     if event.value == _ctrl.JOY_UP:
-                        self._select(self._actual._index + 1)
-                    elif event.value == _ctrl.JOY_DOWN:
                         self._select(self._actual._index - 1)
+                    elif event.value == _ctrl.JOY_DOWN:
+                        self._select(self._actual._index + 1)
 
                 elif self._joystick and event.type == _pygame.JOYAXISMOTION:
                     if event.axis == _ctrl.JOY_AXIS_Y and event.value < -_ctrl.JOY_DEADZONE:
