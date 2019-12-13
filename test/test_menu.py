@@ -193,7 +193,7 @@ class MenuTest(unittest.TestCase):
 
         # Check joy
         self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_UP))
-        self.assertEqual(self.menu._get_actual_index(), 1)
+        self.assertEqual(self.menu._get_actual_index(), 4)
         self.menu._main(PygameUtils.joy_key(pygameMenu.controls.JOY_DOWN))
         self.assertEqual(self.menu._get_actual_index(), 0)
         self.menu._main(PygameUtils.joy_motion(1, 1))

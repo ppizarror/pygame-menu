@@ -213,7 +213,7 @@ class TextInput(Widget):
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
-        self._cursor_switch_ms = 500  # /|\
+        self._cursor_switch_ms = 500
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # History of editions
@@ -325,8 +325,8 @@ class TextInput(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y))
 
         # Draw cursor
-        if self.selected and self._cursor_surface and (
-                self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
+        if self.selected and self._cursor_surface and \
+                (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
             surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
@@ -369,9 +369,9 @@ class TextInput(Widget):
         if not self._selection_enabled:
             return
 
-        if self._selection_active and (
-                self._last_selection_render[0] != self._selection_box[0] or self._last_selection_render[1] !=
-                self._selection_box[1]) or force:
+        if self._selection_active and \
+                (self._last_selection_render[0] != self._selection_box[0] or self._last_selection_render[1] !=
+                 self._selection_box[1]) or force:
 
             # If there's no limit
             pos = [0, 0]

@@ -157,40 +157,35 @@ class Selector(Widget):
         updated = False
         for event in events:  # type: _pygame.event.EventType
 
-            if event.type == _pygame.KEYDOWN:
-
-                # Check key is valid
+            if event.type == _pygame.KEYDOWN:  # Check key is valid
                 if not self.check_key_pressed_valid(event):
                     continue
 
-                if event.key == _ctrl.KEY_LEFT:
-                    self.sound.play_key_add()
-                    self.left()
-                    updated = True
-                elif event.key == _ctrl.KEY_RIGHT:
-                    self.sound.play_key_add()
-                    self.right()
-                    updated = True
-                elif event.key == _ctrl.KEY_APPLY:
-                    self.sound.play_open_menu()
-                    self.apply(*self._elements[self._index][1:])
-                    updated = True
+            # Events
+            keydown = event.type == _pygame.KEYDOWN
+            joy_hatmotion = self.joystick_enabled and event.type == _pygame.JOYHATMOTION
+            joy_axismotion = self.joystick_enabled and event.type == _pygame.JOYAXISMOTION
+            joy_button_down = self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN
 
-            elif self.joystick_enabled and event.type == _pygame.JOYHATMOTION:
-                if event.value == _ctrl.JOY_LEFT:
-                    self.left()
-                    updated = True
-                elif event.value == _ctrl.JOY_RIGHT:
-                    self.right()
-                    updated = True
+            if keydown and event.key == _ctrl.KEY_LEFT or \
+                    joy_hatmotion and event.value == _ctrl.JOY_LEFT or \
+                    joy_axismotion and event.axis == _ctrl.JOY_AXIS_X and event.value < _ctrl.JOY_DEADZONE:
+                self.sound.play_key_add()
+                self.left()
+                updated = True
 
-            elif self.joystick_enabled and event.type == _pygame.JOYAXISMOTION:
-                if event.axis == _ctrl.JOY_AXIS_X and event.value < _ctrl.JOY_DEADZONE:
-                    self.left()
-                    updated = True
-                if event.axis == _ctrl.JOY_AXIS_X and event.value > -_ctrl.JOY_DEADZONE:
-                    self.right()
-                    updated = True
+            elif keydown and event.key == _ctrl.KEY_RIGHT or \
+                    joy_hatmotion and event.value == _ctrl.JOY_RIGHT or \
+                    joy_axismotion and event.axis == _ctrl.JOY_AXIS_X and event.value > -_ctrl.JOY_DEADZONE:
+                self.sound.play_key_add()
+                self.right()
+                updated = True
+
+            elif keydown and event.key == _ctrl.KEY_APPLY or \
+                    joy_button_down and event.button == _ctrl.JOY_BUTTON_SELECT:
+                self.sound.play_open_menu()
+                self.apply(*self._elements[self._index][1:])
+                updated = True
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
                 if self._rect.collidepoint(*event.pos):
