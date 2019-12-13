@@ -684,3 +684,5 @@ Special greetings to:
 ## License
 
 This project is licensed under MIT [https://opensource.org/licenses/MIT/](https://opensource.org/licenses/MIT/)
+
+[![Run on Repl.it](https://repl.it/badge/github/ppizarror/pygame-menu)](https://repl.it/github/ppizarror/pygame-menu)
