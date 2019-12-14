@@ -159,8 +159,7 @@ def main(test=False):
                                  menu_color_title=(0, 0, 0),
                                  menu_height=int(H_SIZE * 0.65),
                                  menu_width=600,
-                                 # If this menu closes (ESC) back to main
-                                 onclose=pygameMenu.events.RESET,
+                                 onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
                                  option_shadow=True,
                                  rect_width=4,
                                  title='Timer Menu',
