@@ -321,6 +321,11 @@ class Widget(object):
         :type antialias: bool
         :return: None
         """
+        assert isinstance(font, str)
+        assert isinstance(font_size, int)
+        assert isinstance(color, tuple)
+        assert isinstance(selected_color, tuple)
+        assert isinstance(antialias, bool)
         self._font = _fonts.get_font(font, font_size)
         self._font_size = font_size
         self._font_color = color

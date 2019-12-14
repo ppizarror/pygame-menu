@@ -113,7 +113,7 @@ import pygameMenu
     | draw_select | Draw a rectangle around selected item (bool) | bool | MENU_SELECTED_DRAW |
     | enabled | Menu is enabled by default or not | bool | True |
     | font_color | Color of font | tuple | MENU_FONT_COLOR |
-    | font_size | Font size | int | MENU_FONT_SIZE |
+    | font_size | Font size of menu widgets | int | MENU_FONT_SIZE |
     | font_size_title | Font size of the title | int | MENU_FONT_SIZE_TITLE |
     | font_title | Alternative font of the title | str | None |
     | fps | Fps limit of the menu, 0: no limit | int,float | 0 |
@@ -175,6 +175,7 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | align | Button alignment | str | locals.ALIGN_CENTER |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
     | option_id | Option identifier | str | "" |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
@@ -194,10 +195,10 @@ import pygameMenu
 
     ```python
     menu = pygameMenu.Menu(surface, window...)
-    menu.add_option(timer_menu.get_title(), timer_menu)         # Add timer submenu
-    menu.add_option(help_menu.get_title(), help_menu)           # Add help submenu
-    menu.add_option(about_menu.get_title(), about_menu)         # Add about submenu
-    menu.add_option('Exit', pygameMenu.events.MENU_EXIT) # Add exit function
+    menu.add_option(timer_menu.get_title(), timer_menu)         # Adds timer submenu
+    menu.add_option(help_menu.get_title(), help_menu)           # Adds help submenu
+    menu.add_option(about_menu.get_title(), about_menu)         # Adds about submenu
+    menu.add_option('Exit', pygameMenu.events.MENU_EXIT)        # Adds exit function
     ```
 
 - *add_selector(title, values, selector_id, default, align, onchange, onreturn, \*\*kwargs)*
@@ -211,6 +212,7 @@ import pygameMenu
     | selector_id | Selector identification | str | "" |
     | default | Default index of the displayed option | int | 0 |
     | align | Widget alignment | str | locals.ALIGN_CENTER |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
     | onchange | Function that executes when change the value of selector | function | None |
     | onreturn | Function that executes when pressing return button on selected item | function | None |
     | **kwargs | Additional arguments | - | - |
@@ -272,6 +274,7 @@ import pygameMenu
     | maxchar | Maximum length of string, if 0 there's no limit | int | 0 |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
     | align | Text input alignment | str | locals.ALIGN_CENTER |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
     | enable_selection | Enables text selection | bool |
     | password | Input is displayed as a password | bool | False |
     | onchange | Function that executes when change the value of text input | function | None |

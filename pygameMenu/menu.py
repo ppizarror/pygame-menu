@@ -219,8 +219,11 @@ class Menu(object):
 
         # Store configuration
         self._bgfun = bgfun
-        self._bgcolor = (menu_color[0], menu_color[1], menu_color[2],
-                         int(255 * (1 - (100 - menu_alpha) / 100.0)))
+        self._bgcolor = (menu_color[0],
+                         menu_color[1],
+                         menu_color[2],
+                         int(255 * (1 - (100 - menu_alpha) / 100.0))
+                         )
 
         self._drawselrect = draw_select
         self._font_color = font_color
@@ -262,6 +265,7 @@ class Menu(object):
 
         # Load fonts
         self._font = _fonts.get_font(font, self._fsize)
+        self._font_name = font
 
         # Position of menu
         self._posx = (window_width - self._width) / 2
@@ -269,7 +273,8 @@ class Menu(object):
         self._bgrect = [(self._posx, self._posy),
                         (self._posx + self._width, self._posy),
                         (self._posx + self._width, self._posy + self._height),
-                        (self._posx, self._posy + self._height)]
+                        (self._posx, self._posy + self._height)
+                        ]
         self._draw_regionx = draw_region_x
         self._draw_regiony = draw_region_y
 
@@ -290,13 +295,22 @@ class Menu(object):
         self._mouse_visible = mouse_visible
 
         # Create menu bar
-        self._menubar = _widgets.MenuBar(title, self._width, back_box, None, self._back)
-        self._menubar.set_title(title, title_offsetx, title_offsety)
-        font_title = _fonts.get_font(font_title or font, font_size_title)
-        bg_color_title = (menu_color_title[0], menu_color_title[1], menu_color_title[2],
+        self._menubar = _widgets.MenuBar(title,
+                                         self._width,
+                                         back_box,
+                                         None,
+                                         self._back)
+        self._menubar.set_title(title,
+                                title_offsetx,
+                                title_offsety)
+        bg_color_title = (menu_color_title[0],
+                          menu_color_title[1],
+                          menu_color_title[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
-        self._menubar.set_font(font_title, font_size_title,
-                               bg_color_title, self._font_color)
+        self._menubar.set_font(font_title or font,
+                               font_size_title,
+                               bg_color_title,
+                               self._font_color)
         self._menubar.set_shadow(enabled=self._option_shadow,
                                  color=_cfg.MENU_SHADOW_COLOR,
                                  position=self._option_shadow_position,
@@ -314,8 +328,9 @@ class Menu(object):
         """
         Add option (button) to menu.
 
-        kwargs:
+        kwargs (Optional):
             - align         Widget alignment
+            - font_size     Font size of the widget
             - option_id     Option ID
 
         :param element_name: Name of the element
@@ -333,9 +348,14 @@ class Menu(object):
         option_id = kwargs.pop('option_id', '')
         assert isinstance(option_id, str), 'ID must be a string'
 
+        # Get font size
+        font_size = kwargs.pop('font_size', self._fsize)
+        assert isinstance(font_size, int)
+        assert font_size > 0, 'font_size must be greater than zero'
+
         self._size += 1
         if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
+            dy = -font_size / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
         # If element is a Menu
@@ -356,8 +376,8 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
         self._check_id_duplicated(option_id)
 
-        widget.set_font(self._font,
-                        self._fsize,
+        widget.set_font(self._font_name,
+                        font_size,
                         self._font_color,
                         self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
@@ -380,6 +400,7 @@ class Menu(object):
                      selector_id='',
                      default=0,
                      align='',
+                     font_size=0,
                      onchange=None,
                      onreturn=None,
                      **kwargs
@@ -406,6 +427,8 @@ class Menu(object):
         :type default: int
         :param align: Widget alignment
         :type align: basestring
+        :param font_size: Font size of the widget
+        :type font_size: int
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
@@ -414,6 +437,13 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
+
+        if align == '':
+            align = self._widget_align
+
+        if font_size == 0:
+            font_size = self._fsize
+
         # Check value list
         for vl in values:
             assert len(vl) >= 1, \
@@ -424,22 +454,27 @@ class Menu(object):
         assert isinstance(selector_id, str), 'ID must be a string'
         assert isinstance(default, int), 'default must be integer'
         assert isinstance(align, str), 'align must be a string'
-        if align == '':
-            align = self._widget_align
+        assert isinstance(font_size, int)
+        assert font_size > 0, 'font_size must be greater than zero'
 
         self._size += 1
         if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
+            dy = -font_size / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
         # Create widget
-        widget = _widgets.Selector(title, values, selector_id, default,
-                                   onchange, onreturn, **kwargs)
+        widget = _widgets.Selector(title,
+                                   values,
+                                   selector_id,
+                                   default,
+                                   onchange,
+                                   onreturn,
+                                   **kwargs)
         self._check_id_duplicated(selector_id)
 
         # Configure widget
-        widget.set_font(self._font,
-                        self._fsize,
+        widget.set_font(self._font_name,
+                        font_size,
                         self._font_color,
                         self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
@@ -466,6 +501,7 @@ class Menu(object):
                        maxchar=0,
                        maxwidth=0,
                        align='',
+                       font_size=0,
                        enable_selection=True,
                        password=False,
                        onchange=None,
@@ -497,6 +533,8 @@ class Menu(object):
         :type maxwidth: int
         :param align: Widget alignment
         :type align: basestring
+        :param font_size: Font size of the widget
+        :type font_size: int
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
         :param password: Text input is a password
@@ -516,11 +554,16 @@ class Menu(object):
         if align == '':
             align = self._widget_align
 
+        if font_size == 0:
+            font_size = self._fsize
+
         # Check data
         assert isinstance(textinput_id, str), 'ID must be a string'
         assert isinstance(input_type, str), 'input_type must be a string'
         assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(align, str), 'align must be a string'
+        assert isinstance(font_size, int)
+        assert font_size > 0, 'font_size must be greater than zero'
         assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
 
         assert isinstance(maxchar, int), 'maxchar must be integer'
@@ -545,8 +588,8 @@ class Menu(object):
         self._check_id_duplicated(textinput_id)
 
         # Configure widget
-        widget.set_font(self._font,
-                        self._fsize,
+        widget.set_font(self._font_name,
+                        font_size,
                         self._font_color,
                         self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
