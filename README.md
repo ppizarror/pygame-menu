@@ -78,9 +78,9 @@ import pygameMenu
 | *pygameMenu.events* | Events definition, constants, etc. |
 | *pygameMenu.font* | Menu font management |
 | *pygameMenu.locals* | Menu constants |
-| pygameMenu.Menu | Menu class |
+| *pygameMenu.Menu* | Menu class |
 | *pygameMenu.sound* | Sound management |
-| pygameMenu.TextMenu | TextMenu class |
+| *pygameMenu.TextMenu* | TextMenu class |
 | *pygameMenu.version* | Version of the library |
 
 ## Usage
@@ -676,7 +676,7 @@ main()
 
 ## Author
 
-[Pablo Pizarro R.](https://ppizarror.com) | 2017-2019
+[Pablo Pizarro R.](https://ppizarror.com) | 2017-2020
 
 ### Contributors
 
