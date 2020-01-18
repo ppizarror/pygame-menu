@@ -70,6 +70,9 @@ _SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key_add')
 _SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_delete')
 _SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 
+# Stores global reference that marks sounds as initialized
+SOUND_INITIALIZED = [False]
+
 
 # noinspection PyTypeChecker
 class Sound(object):
@@ -119,34 +122,44 @@ class Sound(object):
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if _mixer.get_init() is None or force_init:
+        if (_mixer.get_init() is None and SOUND_INITIALIZED[0] is False) or force_init:
+
+            # Set sound as initialized globally
+            SOUND_INITIALIZED[0] = True
 
             # Check pygame version
             version_major, _, version_minor = _pygame_version
 
-            # <= 1.9.4
-            if version_major == 1 and version_minor <= 4:
-                _mixer.init(frequency=frequency,
-                            size=size,
-                            channels=channels,
-                            buffer=buffer)
+            # noinspection PyBroadException
+            try:
+                # <= 1.9.4
+                if version_major == 1 and version_minor <= 4:
+                    _mixer.init(frequency=frequency,
+                                size=size,
+                                channels=channels,
+                                buffer=buffer)
 
-            # <2.0.0 & >= 1.9.5
-            elif version_major == 1 and version_minor > 4:  # lgtm [py/redundant-comparison]
-                _mixer.init(frequency=frequency,
-                            size=size,
-                            channels=channels,
-                            buffer=buffer,
-                            devicename=devicename)
+                # <2.0.0 & >= 1.9.5
+                elif version_major == 1 and version_minor > 4:  # lgtm [py/redundant-comparison]
+                    _mixer.init(frequency=frequency,
+                                size=size,
+                                channels=channels,
+                                buffer=buffer,
+                                devicename=devicename)
 
-            # >= 2.0.0
-            elif version_major > 1:
-                _mixer.init(frequency=frequency,
-                            size=size,
-                            channels=channels,
-                            buffer=buffer,
-                            devicename=devicename,
-                            allowedchanges=allowedchanges)
+                # >= 2.0.0
+                elif version_major > 1:
+                    _mixer.init(frequency=frequency,
+                                size=size,
+                                channels=channels,
+                                buffer=buffer,
+                                devicename=devicename,
+                                allowedchanges=allowedchanges)
+
+            except Exception as e:
+                print('Sound error: ' + str(e))
+            except _pygame_error as e:
+                print('Sound engine could not be initialized, pygame error: ' + str(e))
 
         # Channel where a sound is played
         self._channel = None  # type: _mixer.ChannelType
@@ -300,18 +313,20 @@ class Sound(object):
 
         # If the previous sound is the same and has not ended (max 20% overlap)
         if sound['type'] != self._last_play or time - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
-            if self._uniquechannel:  # Stop the current channel if it's unique
-                channel.stop()
-            channel.play(sound['file'],
-                         loops=sound['loops'],
-                         maxtime=sound['maxtime'],
-                         fade_ms=sound['fade_ms']
-                         )
+            try:
+                if self._uniquechannel:  # Stop the current channel if it's unique
+                    channel.stop()
+                channel.play(sound['file'],
+                             loops=sound['loops'],
+                             maxtime=sound['maxtime'],
+                             fade_ms=sound['fade_ms']
+                             )
+            except _pygame_error:  # Ignore errors
+                pass
 
         # Store last execution
         self._last_play = sound['type']
         self._last_time = time
-
         return True
 
     def play_click_mouse(self):
@@ -369,7 +384,10 @@ class Sound(object):
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
             return
-        channel.stop()
+        try:
+            channel.stop()
+        except _pygame_error:
+            pass
 
     def pause(self):
         """
@@ -378,7 +396,10 @@ class Sound(object):
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
             return
-        channel.pause()
+        try:
+            channel.pause()
+        except _pygame_error:
+            pass
 
     def unpause(self):
         """
@@ -387,7 +408,10 @@ class Sound(object):
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
             return
-        channel.unpause()
+        try:
+            channel.unpause()
+        except _pygame_error:
+            pass
 
     def get_channel_info(self):
         """
