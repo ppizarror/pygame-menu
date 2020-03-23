@@ -285,8 +285,10 @@ class Menu(object):
 
         # Init joystick
         self._joystick = joystick_enabled
-        if self._joystick and not _pygame.joystick.get_init():
-            _pygame.joystick.init()
+        self._joystick = joystick_enabled
+        if self._joystick:
+            if not _pygame.joystick.get_init():
+                _pygame.joystick.init()
             for i in range(_pygame.joystick.get_count()):
                 _pygame.joystick.Joystick(i).init()
 
