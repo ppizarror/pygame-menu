@@ -46,10 +46,10 @@ class MenuTest(unittest.TestCase):
         Test menu enable/disable feature.
         """
         menu = PygameMenuUtils.generic_menu()
-        self.assert_(menu.is_disabled())
+        self.assertTrue(menu.is_disabled())
         menu.enable()
-        self.assert_(menu.is_enabled())
-        self.assert_(not menu.is_disabled())
+        self.assertTrue(menu.is_enabled())
+        self.assertTrue(not menu.is_disabled())
 
         # Intialize and close
         menu.mainloop()
@@ -59,7 +59,7 @@ class MenuTest(unittest.TestCase):
         """
         Test initialization of the menu.
         """
-        self.assert_(self.menu._check_menu_initialized())
+        self.assertTrue(self.menu._check_menu_initialized())
         menu_not_initializated = PygameMenuUtils.generic_menu()
         self.assertRaises(Exception, lambda: menu_not_initializated._check_menu_initialized())
 
@@ -80,7 +80,7 @@ class MenuTest(unittest.TestCase):
             menu_prev = menu
         self.menu.draw()
 
-        self.assert_(self.menu != menu)
+        self.assertTrue(self.menu != menu)
         self.assertEqual(menu._get_depth(), 10)
         self.assertEqual(self.menu._get_depth(), 10)
 

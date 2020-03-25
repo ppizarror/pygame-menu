@@ -39,7 +39,7 @@ class FontTest(unittest.TestCase):
         Load a font from a file.
         """
         font = PygameMenuUtils.get_font(pygameMenu.font.FONT_8BIT, 5)
-        self.assert_(font is not None)
+        self.assertTrue(font is not None)
         self.assertEqual(font, pygameMenu.font.get_font(font, 5))
         self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('', 0))
         self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('sys', 0))
@@ -50,7 +50,7 @@ class FontTest(unittest.TestCase):
         """
         font_sys = PygameMenuUtils.random_system_font()
         font = PygameMenuUtils.get_font(font_sys, 5)
-        self.assert_(font is not None)
+        self.assertTrue(font is not None)
 
         # Modify the system font and load, this will raise an exception
         font_sys_bad = font_sys[:-1]

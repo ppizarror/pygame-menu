@@ -74,7 +74,6 @@ class WidgetsTest(unittest.TestCase):
                         ('6 - Hard', 'HARD')]
         selector.update_elements(new_elements)
         selector.set_value('6 - Hard')
-        self.assertRaises(ValueError, None)
 
     def test_textinput(self):
         """
