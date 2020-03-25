@@ -318,6 +318,7 @@ class Menu(object):
                                  position=self._option_shadow_position,
                                  offset=self._option_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
+        self._menubar.set_menu(self)
 
         # Selected option
         self._selected_inflate_x = 16
@@ -598,8 +599,7 @@ class Menu(object):
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick,
-                            self._mouse)
+        widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
 
         # Store widget
