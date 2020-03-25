@@ -141,16 +141,31 @@ class MenuBar(Widget):
                                           self._polygon_pos[1][1] + 3,
                                           cross_size, cross_size)
 
-        self._backbox_pos = (
-            (self._backbox_rect.left + 5, self._backbox_rect.centery),
-            (self._backbox_rect.centerx, self._backbox_rect.top + 5),
-            (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
-            (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
-            (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
-            (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
-            (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
-            (self._backbox_rect.left + 5, self._backbox_rect.centery)
-        )
+        if not self._menu or not self._menu._top._prev:
+            # Make a cross for top menu
+            self._backbox_pos = (
+                (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+                (self._backbox_rect.centerx, self._backbox_rect.centery),
+                (self._backbox_rect.right - 4, self._backbox_rect.top + 4),
+                (self._backbox_rect.centerx, self._backbox_rect.centery),
+                (self._backbox_rect.right - 4, self._backbox_rect.bottom - 4),
+                (self._backbox_rect.centerx, self._backbox_rect.centery),
+                (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
+                (self._backbox_rect.centerx, self._backbox_rect.centery),
+                (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+            )
+        else:
+            # Make a back arrow for sub-menus
+            self._backbox_pos = (
+                (self._backbox_rect.left + 5, self._backbox_rect.centery),
+                (self._backbox_rect.centerx, self._backbox_rect.top + 5),
+                (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
+                (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
+                (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
+                (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
+                (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
+                (self._backbox_rect.left + 5, self._backbox_rect.centery)
+            )
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
