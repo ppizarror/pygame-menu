@@ -303,13 +303,16 @@ class Menu(object):
                                          back_box,
                                          None,
                                          self._back)
-        self._menubar.set_title(title,
-                                title_offsetx,
-                                title_offsety)
+        self._menubar.set_menu(self)
+
+        # Configure widget
         bg_color_title = (menu_color_title[0],
                           menu_color_title[1],
                           menu_color_title[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
+        self._menubar.set_title(title,
+                                title_offsetx,
+                                title_offsety)
         self._menubar.set_font(font_title or font,
                                font_size_title,
                                bg_color_title,
@@ -319,7 +322,6 @@ class Menu(object):
                                  position=self._option_shadow_position,
                                  offset=self._option_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
-        self._menubar.set_menu(self)
 
         # Selected option
         self._selected_inflate_x = 16
@@ -386,8 +388,10 @@ class Menu(object):
             widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
+        widget.set_menu(self)
         self._check_id_duplicated(option_id)
 
+        # Configure widget
         widget.set_font(self._font_name,
                         font_size,
                         self._font_color,
@@ -482,6 +486,7 @@ class Menu(object):
                                    onchange,
                                    onreturn,
                                    **kwargs)
+        widget.set_menu(self)
         self._check_id_duplicated(selector_id)
 
         # Configure widget
