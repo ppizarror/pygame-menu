@@ -159,7 +159,7 @@ import pygameMenu
 
 **Menu** and **TextMenu** have the next functions:
 
-- *add_option(element_name, element, \*args)*
+- *add_button(element_name, element, \*args)*
 
     Adds an *option* to the menu (buttons).
 
@@ -187,18 +187,18 @@ import pygameMenu
         pass
 
     help_menu = pygameMenu.TextMenu(surface, window...)
-    help_menu.add_option('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
-    help_menu.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
+    help_menu.add_button('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
+    help_menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
 
     Another example:
 
     ```python
     menu = pygameMenu.Menu(surface, window...)
-    menu.add_option(timer_menu.get_title(), timer_menu)         # Adds timer submenu
-    menu.add_option(help_menu.get_title(), help_menu)           # Adds help submenu
-    menu.add_option(about_menu.get_title(), about_menu)         # Adds about submenu
-    menu.add_option('Exit', pygameMenu.events.MENU_EXIT)        # Adds exit function
+    menu.add_button(timer_menu.get_title(), timer_menu)         # Adds timer submenu
+    menu.add_button(help_menu.get_title(), help_menu)           # Adds help submenu
+    menu.add_button(about_menu.get_title(), about_menu)         # Adds about submenu
+    menu.add_button('Exit', pygameMenu.events.MENU_EXIT)        # Adds exit function
     ```
 
 - *add_selector(title, values, selector_id, default, align, onchange, onreturn, \*\*kwargs)*
@@ -255,9 +255,9 @@ import pygameMenu
                             write_on_console=True # Optional change_color_bg param
                             )
 
-    timer_menu.add_option('Reset timer', reset_timer)
-    timer_menu.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
-    timer_menu.add_option('Close Menu', pygameMenu.events.MENU_CLOSE)
+    timer_menu.add_button('Reset timer', reset_timer)
+    timer_menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
+    timer_menu.add_button('Close Menu', pygameMenu.events.MENU_CLOSE)
     ```
 
 - *add_text_input(title, textinput_id, default, input_type, input_underline, maxchar, maxwidth, align, enable_selection, onchange, onreturn, \*\*kwargs)*
@@ -301,7 +301,7 @@ import pygameMenu
     settings_menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
     settings_menu.add_text_input('Some long text: ', maxwidth=15)
 
-    settings_menu.add_option('Return to main menu', pygameMenu.events.MENU_BACK)
+    settings_menu.add_button('Return to main menu', pygameMenu.events.MENU_BACK)
     ```
 
 - *add_line(text)*
@@ -321,7 +321,7 @@ import pygameMenu
         menu_help.add_line(line) # Add line
     ...
 
-    menu_help.add_option('Return to Menu', pygameMenu.events.MENU_BACK)
+    menu_help.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
 
 - *clear()*

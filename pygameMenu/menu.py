@@ -35,6 +35,7 @@ from sys import exit
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
 import types
+import warnings
 
 from pygameMenu.sound import Sound as _Sound
 import pygameMenu.config as _cfg
@@ -327,9 +328,17 @@ class Menu(object):
         # FPS of the menu
         self.set_fps(fps)
 
-    def add_option(self, element_name, element, *args, **kwargs):
+    def add_option(self, *args, **kwargs):
         """
-        Add option (button) to menu.
+        Add option to menu. Deprecated method.
+        """
+        warnings.warn("Menu.add_option is deprecated, use Menu.add_button instead",
+                      DeprecationWarning)
+        return self.add_button(*args, **kwargs)
+
+    def add_button(self, element_name, element, *args, **kwargs):
+        """
+        Add button to menu.
 
         kwargs (Optional):
             - align         Widget alignment

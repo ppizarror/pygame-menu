@@ -209,8 +209,8 @@ def main(test=False):
         for k in data.keys():
             print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
 
-    settings_menu.add_option('Store data', data_fun)  # Call function
-    settings_menu.add_option('Return to main menu', pygameMenu.events.BACK,
+    settings_menu.add_button('Store data', data_fun)  # Call function
+    settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                              align=pygameMenu.locals.ALIGN_CENTER)
 
     # Main menu
@@ -234,11 +234,11 @@ def main(test=False):
                                 )
     main_menu.set_fps(FPS)
 
-    main_menu.add_option('Settings', settings_menu)
+    main_menu.add_button('Settings', settings_menu)
     main_menu.add_selector('Menu sounds',
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
-    main_menu.add_option('Quit', pygameMenu.events.EXIT)
+    main_menu.add_button('Quit', pygameMenu.events.EXIT)
 
     assert main_menu.get_widget('first_name', recursive=True) is wid1
     assert main_menu.get_widget('last_name', recursive=True) is wid2
