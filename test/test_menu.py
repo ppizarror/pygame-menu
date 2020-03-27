@@ -46,10 +46,10 @@ class MenuTest(unittest.TestCase):
         Test menu enable/disable feature.
         """
         menu = PygameMenuUtils.generic_menu()
-        self.assert_(menu.is_disabled())
+        self.assertTrue(menu.is_disabled())
         menu.enable()
-        self.assert_(menu.is_enabled())
-        self.assert_(not menu.is_disabled())
+        self.assertTrue(menu.is_enabled())
+        self.assertTrue(not menu.is_disabled())
 
         # Intialize and close
         menu.mainloop()
@@ -59,7 +59,7 @@ class MenuTest(unittest.TestCase):
         """
         Test initialization of the menu.
         """
-        self.assert_(self.menu._check_menu_initialized())
+        self.assertTrue(self.menu._check_menu_initialized())
         menu_not_initializated = PygameMenuUtils.generic_menu()
         self.assertRaises(Exception, lambda: menu_not_initializated._check_menu_initialized())
 
@@ -75,12 +75,12 @@ class MenuTest(unittest.TestCase):
         menu = None
         for i in range(1, 11):
             menu = PygameMenuUtils.generic_menu('submenu {0}'.format(i))
-            button = menu_prev.add_option('open', menu)
+            button = menu_prev.add_button('open', menu)
             button.apply()
             menu_prev = menu
         self.menu.draw()
 
-        self.assert_(self.menu != menu)
+        self.assertTrue(self.menu != menu)
         self.assertEqual(menu._get_depth(), 10)
         self.assertEqual(self.menu._get_depth(), 10)
 
@@ -130,7 +130,7 @@ class MenuTest(unittest.TestCase):
         prev_menu = self.menu
         for i in range(11):
             menu = PygameMenuUtils.generic_menu()
-            prev_menu.add_option('menu', menu)
+            prev_menu.add_button('menu', menu)
             prev_menu = menu
 
         # Add a deep input
@@ -165,7 +165,7 @@ class MenuTest(unittest.TestCase):
         button = None
         first_button = None
         for i in range(5):
-            button = self.menu.add_option('button', _some_event)
+            button = self.menu.add_button('button', _some_event)
             if i == 0:
                 first_button = button
 
@@ -216,7 +216,7 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
         self.assertEqual(self.menu._get_depth(), 0)
         menu = PygameMenuUtils.generic_menu('submenu')
-        button = self.menu.add_option('open', menu)
+        button = self.menu.add_button('open', menu)
         button.apply()
         self.assertEqual(self.menu._get_depth(), 1)
         self.menu._main(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True))  # go back
@@ -229,11 +229,11 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
 
         submenu = PygameMenuUtils.generic_menu()  # 1 option
-        submenu.add_option('button', lambda: None)
+        submenu.add_button('button', lambda: None)
 
-        self.menu.add_option('button', lambda: None)
-        self.menu.add_option('button', lambda: None)
-        button = self.menu.add_option('button', submenu)
+        self.menu.add_button('button', lambda: None)
+        self.menu.add_button('button', lambda: None)
+        button = self.menu.add_button('button', submenu)
         self.menu.draw()
 
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
@@ -261,7 +261,7 @@ class MenuTest(unittest.TestCase):
         # Add input to a submenu
         submenu = PygameMenuUtils.generic_menu()
         submenu.add_text_input('text', 'id4', 'thewidget')
-        self.menu.add_option('submenu', submenu)
+        self.menu.add_button('submenu', submenu)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id4'], 'thewidget')
 
@@ -269,7 +269,7 @@ class MenuTest(unittest.TestCase):
         # should raise an exception
         subsubmenu = PygameMenuUtils.generic_menu()
         subsubmenu.add_text_input('text', 'id4', 'repeateddata')
-        submenu.add_option('submenu', subsubmenu)
+        submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(True))
 
     @staticmethod
@@ -291,7 +291,7 @@ class MenuTest(unittest.TestCase):
                                    window_width=W_SIZE
                                    )
         menu.mainloop()
-        menu.add_option('Return to Menu', pygameMenu.events.BACK)
+        menu.add_button('Return to Menu', pygameMenu.events.BACK)
         for m in ['a', 'b', 'c', 'd', 'e']:
             menu.add_line(m)
         menu.draw()

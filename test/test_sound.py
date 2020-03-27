@@ -85,8 +85,8 @@ class SoundTest(unittest.TestCase):
         menu = PygameMenuUtils.generic_menu()
         submenu = PygameMenuUtils.generic_menu()
 
-        menu.add_option('submenu', submenu)
-        button = menu.add_option('button', lambda: None)
+        menu.add_button('submenu', submenu)
+        button = menu.add_button('button', lambda: None)
         menu.set_sound(self.sound, True)
         self.assertEqual(button.sound, self.sound)
 

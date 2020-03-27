@@ -38,6 +38,6 @@ class VersionTest(unittest.TestCase):
         """
         Test version.
         """
-        self.assert_(isinstance(pygameMenu.version.ver, str))
-        self.assert_(isinstance(repr(pygameMenu.version.vernum), str))
-        self.assert_(isinstance(str(pygameMenu.version.vernum), str))
+        self.assertTrue(isinstance(pygameMenu.version.ver, str))
+        self.assertTrue(isinstance(repr(pygameMenu.version.vernum), str))
+        self.assertTrue(isinstance(str(pygameMenu.version.vernum), str))

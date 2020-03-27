@@ -169,7 +169,7 @@ def main(test=False):
                                  )
 
     # Add options
-    timer_menu.add_option('Reset timer', reset_timer)
+    timer_menu.add_button('Reset timer', reset_timer)
 
     # Adds a selector (element that can handle functions)
     timer_menu.add_selector('Change bgcolor',
@@ -187,9 +187,9 @@ def main(test=False):
                             # Optional parameters to change_color_bg function
                             write_on_console=True
                             )
-    timer_menu.add_option('Update game object', TestCallClassMethod().update_game_settings)
-    timer_menu.add_option('Return to Menu', pygameMenu.events.BACK)
-    timer_menu.add_option('Close Menu', pygameMenu.events.CLOSE)
+    timer_menu.add_button('Update game object', TestCallClassMethod().update_game_settings)
+    timer_menu.add_button('Return to Menu', pygameMenu.events.BACK)
+    timer_menu.add_button('Close Menu', pygameMenu.events.CLOSE)
 
     # Help menu
     help_menu = pygameMenu.TextMenu(surface,
@@ -206,7 +206,7 @@ def main(test=False):
                                     window_height=H_SIZE,
                                     window_width=W_SIZE
                                     )
-    help_menu.add_option('Return to Menu', pygameMenu.events.BACK)
+    help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in HELP:
         help_menu.add_line(m)
 
@@ -227,7 +227,7 @@ def main(test=False):
                                      window_height=H_SIZE,
                                      window_width=W_SIZE
                                      )
-    about_menu.add_option('Return to Menu', pygameMenu.events.BACK)
+    about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in ABOUT:
         about_menu.add_line(m)
     about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
@@ -246,10 +246,10 @@ def main(test=False):
                                 window_width=W_SIZE
                                 )
 
-    main_menu.add_option(timer_menu.get_title(), timer_menu)  # Add timer submenu
-    main_menu.add_option(help_menu.get_title(), help_menu)  # Add help submenu
-    main_menu.add_option(about_menu.get_title(), about_menu)  # Add about submenu
-    main_menu.add_option('Exit', pygameMenu.events.EXIT)  # Add exit function
+    main_menu.add_button(timer_menu.get_title(), timer_menu)  # Add timer submenu
+    main_menu.add_button(help_menu.get_title(), help_menu)  # Add help submenu
+    main_menu.add_button(about_menu.get_title(), about_menu)  # Add about submenu
+    main_menu.add_button('Exit', pygameMenu.events.EXIT)  # Add exit function
 
     # -------------------------------------------------------------------------
     # Main loop

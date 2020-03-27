@@ -231,9 +231,9 @@ def main(test=False):
                                    window_height=WINDOW_SIZE[1],
                                    window_width=WINDOW_SIZE[0]
                                    )
-    play_submenu.add_option('Back', pygameMenu.events.BACK)
+    play_submenu.add_button('Back', pygameMenu.events.BACK)
 
-    play_menu.add_option('Start',  # When pressing return -> play(DIFFICULTY[0], font)
+    play_menu.add_button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
                          play_function,
                          DIFFICULTY,
                          pygame.font.Font(pygameMenu.font.FONT_FRANCHISE, 30))
@@ -243,8 +243,8 @@ def main(test=False):
                             ('3 - Hard', 'HARD')],
                            onchange=change_difficulty,
                            selector_id='select_difficulty')
-    play_menu.add_option('Another menu', play_submenu)
-    play_menu.add_option('Return to main menu', pygameMenu.events.BACK)
+    play_menu.add_button('Another menu', play_submenu)
+    play_menu.add_button('Return to main menu', pygameMenu.events.BACK)
 
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
@@ -269,7 +269,7 @@ def main(test=False):
     for m in ABOUT:
         about_menu.add_line(m)
     about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
-    about_menu.add_option('Return to menu', pygameMenu.events.BACK)
+    about_menu.add_button('Return to menu', pygameMenu.events.BACK)
 
     # Main menu
     main_menu = pygameMenu.Menu(surface,
@@ -289,9 +289,9 @@ def main(test=False):
                                 window_width=WINDOW_SIZE[0]
                                 )
 
-    main_menu.add_option('Play', play_menu)
-    main_menu.add_option('About', about_menu)
-    main_menu.add_option('Quit', pygameMenu.events.EXIT)
+    main_menu.add_button('Play', play_menu)
+    main_menu.add_button('About', about_menu)
+    main_menu.add_button('Quit', pygameMenu.events.EXIT)
 
     # Configure main menu
     main_menu.set_fps(FPS)
