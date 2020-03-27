@@ -102,6 +102,7 @@ class Widget(object):
         self._shadow_color = _cfg.MENU_SHADOW_COLOR
         self._shadow_offset = _cfg.MENU_SHADOW_OFFSET
         self._shadow_position = _cfg.MENU_SHADOW_POSITION
+        self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
 
         # Public attributs
@@ -377,14 +378,16 @@ class Widget(object):
         """
         Set the alignment of the widget.
 
-        :param align: Widget align, could be ALIGN_LEFT/CENTER/RIGHT
+        :param align: Widget align, could be ALIGN_LEFT/CENTER/RIGHT/TOP/BOTTOM
         :type align: basestring
         :return: None
         """
         align = str(align)
         if align not in [_locals.ALIGN_LEFT,
                          _locals.ALIGN_CENTER,
-                         _locals.ALIGN_RIGHT]:
+                         _locals.ALIGN_RIGHT,
+                         _locals.ALIGN_TOP,
+                         _locals.ALIGN_BOTTOM]:
             raise ValueError('Incorrect alignment of the widget')
         self._alignment = align
 

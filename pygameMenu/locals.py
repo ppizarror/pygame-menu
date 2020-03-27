@@ -34,6 +34,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ALIGN_CENTER = '__pygameMenu_align_center__'
 ALIGN_LEFT = '__pygameMenu_align_left__'
 ALIGN_RIGHT = '__pygameMenu_align_right__'
+ALIGN_TOP = '__pygameMenu_align_top__'
+ALIGN_BOTTOM = '__pygameMenu_align_bottom__'
 
 # Input data type
 INPUT_FLOAT = '__pygameMenu_input_float__'

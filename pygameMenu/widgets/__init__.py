@@ -35,6 +35,7 @@ from pygameMenu.widgets.button import Button
 from pygameMenu.widgets.menubar import MenuBar
 from pygameMenu.widgets.selector import Selector
 from pygameMenu.widgets.textinput import TextInput
+from pygameMenu.widgets.scrollbar import ScrollBar
 
 # Widget type
 from pygameMenu.widgets.widget import WidgetType
