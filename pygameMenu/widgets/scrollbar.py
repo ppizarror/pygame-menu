@@ -46,12 +46,11 @@ class ScrollBar(Widget):
 
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
-           TODO: move by click not yet implemented
     """
 
     def __init__(self,
                  length,
-                 world_length,
+                 values_range,
                  orientation=_locals.ORIENTATION_HORIZONTAL,
                  slider_pad=0,
                  slider_color=(210, 120, 200),
@@ -63,7 +62,7 @@ class ScrollBar(Widget):
                  **kwargs):
 
         assert isinstance(length, (int, float))
-        assert isinstance(world_length, (int, float))
+        assert isinstance(values_range, (tuple, list))
         assert isinstance(slider_pad, (int, float))
         assert isinstance(page_ctrl_thick, (int, float))
         assert page_ctrl_thick - 2 * slider_pad >= 2, "slider shall be visible"
@@ -72,6 +71,7 @@ class ScrollBar(Widget):
                                         onreturn=onreturn,
                                         args=args,
                                         kwargs=kwargs)
+        self._values_range = values_range
         self._scrolling = False
         self._orientation = 0
         self._opp_orientation = int(not self._orientation)
@@ -85,8 +85,7 @@ class ScrollBar(Widget):
         self._slider_color = slider_color
         self._slider_position = 0
 
-        self.world_length = world_length
-        self.ratio = 1.0 * self._page_ctrl_length / self.world_length
+        self._ratio = None  # Calculated when slider rect is known
 
         self.set_orientation(orientation)
 
@@ -103,6 +102,18 @@ class ScrollBar(Widget):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
+    def get_maximum(self):
+        """
+        Return the greatest acceptable value.
+        """
+        return self._values_range[1]
+
+    def get_minimum(self):
+        """
+        Return the smallest acceptable value.
+        """
+        return self._values_range[0]
+
     def get_orientation(self):
         """
         Return the scroll bar orentation.
@@ -114,18 +125,23 @@ class ScrollBar(Widget):
 
     def get_value(self):
         """
-        Return the position of the slider from 0 to world length.
+        Return the value according to the slider position.
 
         :return: position in pixels
         :rtype: int
         """
-        return self._slider_position
+        value = self._ratio * self._slider_position + self._values_range[0]
+
+        # Correction due to value scaling
+        value = max(self._values_range[0], value)
+        value = min(self._values_range[1], value)
+        return value
 
     def _render(self):
         """
         See upper class doc.
         """
-        # Draw page control
+        # Render page control
         self._surface = _pygame.Surface(self._rect.size)
         self._surface.fill(self._page_ctrl_color)
 
@@ -151,21 +167,21 @@ class ScrollBar(Widget):
         :return: True is scroll position has changed
         :rtype: bool
         """
-        if not pixels or self.ratio >= 1:
+        if not pixels or self._ratio < 1:
             return False
 
         axis = self._orientation
-        move = max(pixels,
-                   self._rect.topleft[axis] - self._slider_rect.topleft[axis] + self._slider_pad)
-        move = min(move,
-                   self._rect.bottomright[axis] - self._slider_rect.bottomright[axis] - self._slider_pad)
+        space_before = self._rect.topleft[axis] - self._slider_rect.topleft[axis] + self._slider_pad
+        move = max(pixels, space_before)
+        space_after = self._rect.bottomright[axis] - self._slider_rect.bottomright[axis] - self._slider_pad
+        move = min(move, space_after)
         if not move:
             return False
 
         move_pos = [0, 0]
         move_pos[axis] = move
         self._slider_rect.move_ip(move_pos)
-        self._slider_position += move / self.ratio
+        self._slider_position += move
         return True
 
     def set_orientation(self, orientation):
@@ -190,23 +206,29 @@ class ScrollBar(Widget):
         setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
 
         self._slider_rect = _pygame.Rect(self._rect)
-        if self.ratio < 1:  # World is greater than ScrollBar length
-            setattr(self._slider_rect, dims[self._orientation],
-                    getattr(self._rect, dims[self._orientation]) * self.ratio)
+        value_range = self._values_range[1] - self._values_range[0]
+        if value_range > self._page_ctrl_length:
+            # Values range is greater than ScrollBar length
+            slider_length = 1.0 * getattr(self._rect, dims[self._orientation]) * self._page_ctrl_length / value_range
+            setattr(self._slider_rect, dims[self._orientation], slider_length)
+            self._ratio = 1.0 * value_range / (self._page_ctrl_length - slider_length)
+        else:
+            # Slider length equal to page control length
+            self._ratio = 1.0 * value_range / self._page_ctrl_length
 
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def set_value(self, value):
         """
-        Set the position of the slider to a value from 0 to world length.
+        Set the value and update the position of the slider accordingly.
 
-        :param value: position of the "real" world
+        :param value: value in the values_range
         :type value: int
         :return: None
         """
-        assert value >= 0 and value <= self.world_length
-        pixels = (value - self._slider_position) * self.ratio
-        self._scroll(pixels)
+        assert value >= self._values_range[0] and value <= self._values_range[1]
+        pixels = 1.0 * (value - self._values_range[0]) / self._ratio
+        self._scroll(round(pixels - self._slider_position))
 
     def update(self, events):
         """
@@ -221,10 +243,22 @@ class ScrollBar(Widget):
 
             elif event.type is _pygame.MOUSEBUTTONDOWN:
                 mousex, mousey = event.pos
+                print("totototootototo", event.pos)
                 topleftx, toplefty = self._rect.topleft
-                # _slider_rect origin is related to the widget surface
+                # The _slider_rect origin is related to the widget surface
                 if self._slider_rect.collidepoint((mousex - topleftx, mousey - toplefty)):
+                    # Initialize scrolling
                     self._scrolling = True
+
+                elif self._rect.collidepoint(event.pos):
+
+                    # Moves towards the click by one "page" (= slider length without pad)
+                    pos = (self._slider_rect.x, self._slider_rect.y)
+                    step = self._slider_rect.size[self._orientation] + 2 * self._slider_pad
+                    direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
+                    if self._scroll(direction * step):
+                        self.change()
+                        updated = True
 
             elif event.type is _pygame.MOUSEBUTTONUP:
                 self._scrolling = False
