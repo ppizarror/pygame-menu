@@ -30,6 +30,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 from test._utils import *
+import pygame
+from pygameMenu import locals as _locals
+from pygameMenu.widgets import ScrollBar
 
 
 class WidgetsTest(unittest.TestCase):
@@ -43,7 +46,7 @@ class WidgetsTest(unittest.TestCase):
 
     def test_selector(self):
         """
-        Test selector widget.
+        Test Selector widget.
         """
         selector = self.menu.add_selector('selector',
                                           [('1 - Easy', 'EASY'),
@@ -77,7 +80,7 @@ class WidgetsTest(unittest.TestCase):
 
     def test_textinput(self):
         """
-        Test textinput widget.
+        Test TextInput widget.
         """
 
         # Assert bad settings
@@ -160,3 +163,42 @@ class WidgetsTest(unittest.TestCase):
         for i in range(50):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
+
+    def test_scrollbar(self):
+        """
+        Test ScrollBar widget.
+            """
+        screen_size = self.menu._surface.get_size()
+        world = PygameMenuUtils.get_large_surface()
+
+        # Vertical right scrollbar
+        thick = 80
+        length = screen_size[1]
+        world_length = (50, world.get_height())
+        orientation = _locals.ORIENTATION_VERTICAL
+        x, y = screen_size[0] - thick, 0
+
+        sb = ScrollBar(length,
+                       world_length,
+                       orientation,
+                       slider_pad=2,
+                       slider_color=(210, 120, 200),
+                       page_ctrl_thick=thick,
+                       page_ctrl_color=(235, 235, 230))
+
+        sb.set_shadow(enabled=True,
+                      color=(245, 245, 245),
+                      position=_locals.POSITION_SOUTHEAST,
+                      offset=2)
+
+        sb.set_position(x, y)
+
+        self.assertEqual(sb.get_orientation(), _locals.ORIENTATION_VERTICAL)
+        self.assertEqual(sb.get_minimum(), world_length[0])
+        self.assertEqual(sb.get_maximum(), world_length[1])
+
+        sb.set_value(80)
+        self.assertAlmostEqual(sb.get_value(), 80, delta=2)  # Scaling delta
+
+        sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(sb.get_value(), 50)

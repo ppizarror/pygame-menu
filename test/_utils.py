@@ -150,7 +150,7 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def mouse_click(x, y, inlist=True):
+    def mouse_click(x, y, inlist=True, evtype=pygame.MOUSEBUTTONUP):
         """
         Generate a mouse click event.
 
@@ -160,10 +160,12 @@ class PygameUtils(object):
         :type y: int, float
         :param inlist: Return event in a list
         :type inlist: bool
+        :param evtype: event type
+        :type evtype: int
         :return: Event
         :rtype: pygame.event.Event
         """
-        event_obj = pygame.event.Event(pygame.MOUSEBUTTONUP,
+        event_obj = pygame.event.Event(evtype,
                                        {'pos': [float(x), float(y)],
                                         'test': True
                                         })
@@ -287,3 +289,12 @@ class PygameMenuUtils(object):
                                window_height=H_SIZE,
                                window_width=W_SIZE
                                )
+
+    @staticmethod
+    def get_large_surface():
+        world = pygame.Surface((W_SIZE * 2, H_SIZE * 3))
+        world.fill((200, 200, 200))
+        for x in range(100, world.get_width(), 200):
+            for y in range(100, world.get_height(), 200):
+                pygame.draw.circle(world, (225, 34, 43), (x, y), 100, 10)
+        return world
