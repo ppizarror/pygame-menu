@@ -142,10 +142,9 @@ class ScrollBar(Widget):
         else:
             _pygame.draw.rect(self._surface, self._slider_color, self._slider_rect, 0)
 
-    def scroll(self, pixels):
+    def _scroll(self, pixels):
         """Moves the slider based on mouse events relatif change along axis.
-        Called internally by update(). The slider travel is limited to page
-        control length.
+        The slider travel is limited to page control length.
 
         :param pixels: number of pixels to scroll
         :type pixels: int
@@ -201,12 +200,13 @@ class ScrollBar(Widget):
         """
         Set the position of the slider to a value from 0 to world length.
 
-        :param value: position of the "real" world (pixels)
+        :param value: position of the "real" world
         :type value: int
         :return: None
         """
         assert value >= 0 and value <= self.world_length
-        self._slider_position = value
+        pixels = (value - self._slider_position) * self.ratio
+        self._scroll(pixels)
 
     def update(self, events):
         """
@@ -215,7 +215,7 @@ class ScrollBar(Widget):
         updated = False
         for event in events:  # type: _pygame.event.EventType
             if event.type is _pygame.MOUSEMOTION and self._scrolling:
-                if self.scroll(event.rel[self._orientation]):
+                if self._scroll(event.rel[self._orientation]):
                     self.change()
                     updated = True
 

@@ -563,6 +563,9 @@ class Widget(object):
         """
         Set the value.
 
+        .. warning:: This method shall not fire the callbacks as it is
+                     called programatically (avoid possible loops).
+
         :param value: Value to be set on the widget
         :type value: Object
         :return: None
@@ -572,7 +575,8 @@ class Widget(object):
 
     def update(self, events):
         """
-        Update internal varibale according to the given events list.
+        Update internal varibale according to the given events list
+        and fire the callbacks.
 
         :param events: List of pygame events
         :type events: list
