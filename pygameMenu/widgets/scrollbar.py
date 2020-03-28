@@ -52,7 +52,7 @@ class ScrollBar(Widget):
     def __init__(self,
                  length,
                  world_length,
-                 exclude=(0, 0, 0, 0),
+                 orientation=_locals.ORIENTATION_HORIZONTAL,
                  slider_pad=0,
                  slider_color=(210, 120, 200),
                  page_ctrl_thick=20,
@@ -73,10 +73,8 @@ class ScrollBar(Widget):
                                         args=args,
                                         kwargs=kwargs)
         self._scrolling = False
-        self._diff = [0, 0]
-        self._orientation = 0  # O: Horizontal, 1: Vertical
+        self._orientation = 0
         self._opp_orientation = int(not self._orientation)
-        self._exclude = _pygame.Rect(exclude)
 
         self._page_ctrl_length = length
         self._page_ctrl_thick = page_ctrl_thick
@@ -90,7 +88,7 @@ class ScrollBar(Widget):
         self.world_length = world_length
         self.ratio = 1.0 * self._page_ctrl_length / self.world_length
 
-        self._render_rects()
+        self.set_orientation(orientation)
 
     def _apply_font(self):
         """
@@ -105,31 +103,23 @@ class ScrollBar(Widget):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
+    def get_orientation(self):
+        """
+        Return the scroll bar orentation.
+        """
+        if self._orientation == 0:
+            return _locals.ORIENTATION_HORIZONTAL
+        else:
+            return _locals.ORIENTATION_VERTICAL
+
     def get_value(self):
         """
         Return the position of the slider from 0 to world length.
+
+        :return: position in pixels
+        :rtype: int
         """
         return self._slider_position
-
-    def _render_rects(self):
-        """
-        Recalculate the page control and the slider sizes.
-        """
-        if self._alignment in (_locals.ALIGN_TOP, _locals.ALIGN_BOTTOM):
-            self._orientation = 0  # Horizontal
-        else:
-            self._orientation = 1  # Vertical
-        self._opp_orientation = int(not self._orientation)
-
-        dims = ('width', 'height')
-        setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
-        setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
-
-        self._slider_rect = _pygame.Rect(self._rect)
-        setattr(self._slider_rect, dims[self._orientation],
-                getattr(self._rect, dims[self._orientation]) * self.ratio)
-
-        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def _render(self):
         """
@@ -159,37 +149,61 @@ class ScrollBar(Widget):
 
         :param pixels: number of pixels to scroll
         :type pixels: int
+        :return: True is scroll position has changed
+        :rtype: bool
+        """
+        if not pixels or self.ratio >= 1:
+            return False
+
+        axis = self._orientation
+        move = max(pixels,
+                   self._rect.topleft[axis] - self._slider_rect.topleft[axis] + self._slider_pad)
+        move = min(move,
+                   self._rect.bottomright[axis] - self._slider_rect.bottomright[axis] - self._slider_pad)
+        if not move:
+            return False
+
+        move_pos = [0, 0]
+        move_pos[axis] = move
+        self._slider_rect.move_ip(move_pos)
+        self._slider_position += move / self.ratio
+        return True
+
+    def set_orientation(self, orientation):
+        """
+        Set the scroll bar orentation to vertical or horizontal.
+
+        :param align: Widget orentation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+        :type align: basestring
         :return: None
         """
-        if pixels:
-            axis = self._orientation
-            slider_move = max(pixels,
-                              self._rect.topleft[axis] - self._slider_rect.topleft[axis] + self._slider_pad)
-            slider_move = min(slider_move,
-                              self._rect.bottomright[axis] - self._slider_rect.bottomright[axis] - self._slider_pad)
-            slider_moves = [0, 0]
-            slider_moves[axis] = slider_move
-            self._slider_rect.move_ip(slider_moves)
-            self._slider_position += slider_move / self.ratio
+        if orientation == _locals.ORIENTATION_HORIZONTAL:
+            self._orientation = 0
+        elif orientation == _locals.ORIENTATION_VERTICAL:
+            self._orientation = 1
+        else:
+            raise ValueError('Incorrect orientation of the widget')
 
-    def set_alignment(self, align):
-        """
-        See upper class doc.
-        """
-        super(ScrollBar, self).set_alignment(align)
-        self._render_rects()
+        self._opp_orientation = int(not self._orientation)
 
-    def set_position(self, posx, posy):
-        """
-        See upper class doc.
-        """
-        super(ScrollBar, self).set_position(posx, posy)
-        self._slider_rect.x = posx
-        self._slider_rect.y = posy
+        dims = ('width', 'height')
+        setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
+        setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
+
+        self._slider_rect = _pygame.Rect(self._rect)
+        if self.ratio < 1:  # World is greater than ScrollBar length
+            setattr(self._slider_rect, dims[self._orientation],
+                    getattr(self._rect, dims[self._orientation]) * self.ratio)
+
+        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def set_value(self, value):
         """
         Set the position of the slider to a value from 0 to world length.
+
+        :param value: position of the "real" world (pixels)
+        :type value: int
+        :return: None
         """
         assert value >= 0 and value <= self.world_length
         self._slider_position = value
@@ -201,14 +215,16 @@ class ScrollBar(Widget):
         updated = False
         for event in events:  # type: _pygame.event.EventType
             if event.type is _pygame.MOUSEMOTION and self._scrolling:
-                self.scroll(event.rel[self._orientation])
-                self.change()
-                updated = True
+                if self.scroll(event.rel[self._orientation]):
+                    self.change()
+                    updated = True
 
-            elif event.type is _pygame.MOUSEBUTTONDOWN and (
-                self._slider_rect.move(self._diff).collidepoint(event.pos) and not (
-                    self._exclude.collidepoint(event.pos))):
-                self._scrolling = True
+            elif event.type is _pygame.MOUSEBUTTONDOWN:
+                mousex, mousey = event.pos
+                topleftx, toplefty = self._rect.topleft
+                # _slider_rect origin is related to the widget surface
+                if self._slider_rect.collidepoint((mousex - topleftx, mousey - toplefty)):
+                    self._scrolling = True
 
             elif event.type is _pygame.MOUSEBUTTONUP:
                 self._scrolling = False
