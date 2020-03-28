@@ -243,7 +243,6 @@ class ScrollBar(Widget):
 
             elif event.type is _pygame.MOUSEBUTTONDOWN:
                 mousex, mousey = event.pos
-                print("totototootototo", event.pos)
                 topleftx, toplefty = self._rect.topleft
                 # The _slider_rect origin is related to the widget surface
                 if self._slider_rect.collidepoint((mousex - topleftx, mousey - toplefty)):
@@ -251,7 +250,6 @@ class ScrollBar(Widget):
                     self._scrolling = True
 
                 elif self._rect.collidepoint(event.pos):
-
                     # Moves towards the click by one "page" (= slider length without pad)
                     pos = (self._slider_rect.x, self._slider_rect.y)
                     step = self._slider_rect.size[self._orientation] + 2 * self._slider_pad

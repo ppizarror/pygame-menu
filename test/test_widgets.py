@@ -168,7 +168,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test ScrollBar widget.
             """
-        screen_size = self.menu._surface.get_size()
+        screen_size = surface.get_size()
         world = PygameMenuUtils.get_large_surface()
 
         # Vertical right scrollbar
@@ -202,3 +202,5 @@ class WidgetsTest(unittest.TestCase):
 
         sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(sb.get_value(), 50)
+
+        sb.draw(surface)
