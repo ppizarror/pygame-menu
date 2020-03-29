@@ -34,6 +34,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ALIGN_CENTER = '__pygameMenu_align_center__'
 ALIGN_LEFT = '__pygameMenu_align_left__'
 ALIGN_RIGHT = '__pygameMenu_align_right__'
+ALIGN_TOP = '__pygameMenu_align_top__'
+ALIGN_BOTTOM = '__pygameMenu_align_bottom__'
 
 # Input data type
 INPUT_FLOAT = '__pygameMenu_input_float__'
@@ -49,6 +51,10 @@ POSITION_SOUTHEAST = '__pygameMenu_position_southeast__'
 POSITION_SOUTH = '__pygameMenu_position_south__'
 POSITION_SOUTHWEST = '__pygameMenu_position_southwest__'
 POSITION_WEST = '__pygameMenu_position_west__'
+
+# Orientation
+ORIENTATION_HORIZONTAL = '__pygameMenu_orientation_horizontal__'
+ORIENTATION_VERTICAL = '__pygameMenu_orientation_vertical__'
 
 # Other
 TEXT_NEWLINE = ''  # Text newline on TextMenu object
