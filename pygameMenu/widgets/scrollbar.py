@@ -269,12 +269,12 @@ class ScrollBar(Widget):
         """
         updated = False
         for event in events:  # type: _pygame.event.EventType
-            if event.type is _pygame.MOUSEMOTION and self._scrolling:
+            if self.mouse_enabled and event.type is _pygame.MOUSEMOTION and self._scrolling:
                 if self._scroll(event.rel[self._orientation]):
                     self.change()
                     updated = True
 
-            elif event.type is _pygame.MOUSEBUTTONDOWN:
+            elif self.mouse_enabled and event.type is _pygame.MOUSEBUTTONDOWN:
                 mousex, mousey = event.pos
                 topleftx, toplefty = self._rect.topleft
 
@@ -291,7 +291,7 @@ class ScrollBar(Widget):
                         self.change()
                         updated = True
 
-            elif event.type is _pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type is _pygame.MOUSEBUTTONUP:
                 self._scrolling = False
 
         return updated
