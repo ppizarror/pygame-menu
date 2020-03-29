@@ -174,12 +174,13 @@ class WidgetsTest(unittest.TestCase):
         # Vertical right scrollbar
         thick = 80
         length = screen_size[1]
-        world_length = (50, world.get_height())
+        world_range = (50, world.get_height())
+        world_length = world_range[1] - world_range[0]
         orientation = _locals.ORIENTATION_VERTICAL
         x, y = screen_size[0] - thick, 0
 
         sb = ScrollBar(length,
-                       world_length,
+                       world_range,
                        orientation,
                        slider_pad=2,
                        slider_color=(210, 120, 200),
@@ -194,13 +195,16 @@ class WidgetsTest(unittest.TestCase):
         sb.set_position(x, y)
 
         self.assertEqual(sb.get_orientation(), _locals.ORIENTATION_VERTICAL)
-        self.assertEqual(sb.get_minimum(), world_length[0])
-        self.assertEqual(sb.get_maximum(), world_length[1])
+        self.assertEqual(sb.get_minimum(), world_range[0])
+        self.assertEqual(sb.get_maximum(), world_range[1])
 
         sb.set_value(80)
         self.assertAlmostEqual(sb.get_value(), 80, delta=2)  # Scaling delta
 
         sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(sb.get_value(), 50)
+
+        sb.set_page_step(length)
+        self.assertAlmostEqual(sb.get_page_step(), length, delta=2)  # Scaling delta
 
         sb.draw(surface)
