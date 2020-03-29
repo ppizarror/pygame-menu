@@ -83,41 +83,39 @@ def main():
     screen.fill((120, 90, 130))
 
     pygame.display.set_caption("ScrollBar")
-    thick = 20
+    thick_h = 20
+    thick_v = 40
 
     # Horizontal ScrollBar
-    sb_h = ScrollBar(scr_size[0] - thick,
-                     (50, world.get_width() - scr_size[0] + thick),
-                     _locals.ORIENTATION_HORIZONTAL,
-                     2,
-                     (200, 200, 200),
-                     thick,
-                     (240, 240, 240),
+    sb_h = ScrollBar(scr_size[0] - thick_v,
+                     (50, world.get_width() - scr_size[0] + thick_v),
+                     slider_pad=2,
+                     page_ctrl_thick=thick_h,
                      onchange=h_changed)
     sb_h.set_shadow(enabled=True,
                     color=_cfg.MENU_SHADOW_COLOR,
                     position=_locals.POSITION_SOUTHEAST,
                     offset=_cfg.MENU_SHADOW_OFFSET)
     sb_h.set_controls(False, True)
-    sb_h.set_position(0, scr_size[1] - thick)
-    sb_h.set_page_step(scr_size[0] - thick)
+    sb_h.set_position(0, scr_size[1] - thick_h)
+    sb_h.set_page_step(scr_size[0] - thick_v)
 
     # Vertical ScrollBar
-    sb_v = ScrollBar(scr_size[1] - thick,
-                     (0, world.get_height() - scr_size[1] + thick),
+    sb_v = ScrollBar(scr_size[1] - thick_h,
+                     (0, world.get_height() - scr_size[1] + thick_h),
                      _locals.ORIENTATION_VERTICAL,
-                     2,
-                     (200, 200, 200),
-                     thick,
-                     (240, 240, 240),
+                     6,
+                     (135, 193, 180),
+                     thick_v,
+                     (253, 246, 220),
                      onchange=v_changed)
     sb_v.set_shadow(enabled=True,
-                    color=_cfg.MENU_SHADOW_COLOR,
-                    position=_locals.POSITION_SOUTHEAST,
-                    offset=_cfg.MENU_SHADOW_OFFSET)
+                    color=(52, 54, 56),
+                    position=_locals.POSITION_NORTHWEST,
+                    offset=4)
     sb_v.set_controls(False, True)
-    sb_v.set_position(scr_size[0] - thick, 0)
-    sb_v.set_page_step(scr_size[1] - thick)
+    sb_v.set_position(scr_size[0] - thick_v, 0)
+    sb_v.set_page_step(scr_size[1] - thick_h)
 
     # -------------------------------------------------------------------------
     # Main loop
@@ -141,7 +139,7 @@ def main():
         sb_v.draw(screen)
 
         trunc_world_orig = (sb_h.get_value(), sb_v.get_value())
-        trunc_world = (scr_size[0] - thick, scr_size[1] - thick)
+        trunc_world = (scr_size[0] - thick_v, scr_size[1] - thick_h)
 
         screen.blit(world, (0, 0), (trunc_world_orig, trunc_world))
         pygame.display.update()

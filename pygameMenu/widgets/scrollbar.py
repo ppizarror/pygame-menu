@@ -53,9 +53,9 @@ class ScrollBar(Widget):
                  values_range,
                  orientation=_locals.ORIENTATION_HORIZONTAL,
                  slider_pad=0,
-                 slider_color=(210, 120, 200),
+                 slider_color=(200, 200, 200),
                  page_ctrl_thick=20,
-                 page_ctrl_color=(235, 235, 230),
+                 page_ctrl_color=(235, 235, 235),
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -167,12 +167,12 @@ class ScrollBar(Widget):
         # Render slider
         if self._shadow:
             lit_rect = _pygame.Rect(self._slider_rect)
-            slider_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
-            shadow_rect = lit_rect.inflate(-self._shadow_offset / 2, -self._shadow_offset / 2)
+            slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
+            shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
             shadow_rect = shadow_rect.move(self._shadow_tuple[0] / 2, self._shadow_tuple[1] / 2)
 
-            _pygame.draw.rect(self._surface, self._font_color, lit_rect, int(self._shadow_offset / 2))
-            _pygame.draw.rect(self._surface, self._shadow_color, shadow_rect, int(self._shadow_offset / 2))
+            _pygame.draw.rect(self._surface, self._font_color, lit_rect, 0)
+            _pygame.draw.rect(self._surface, self._shadow_color, shadow_rect, 0)
             _pygame.draw.rect(self._surface, self._slider_color, slider_rect, 0)
         else:
             _pygame.draw.rect(self._surface, self._slider_color, self._slider_rect, 0)
