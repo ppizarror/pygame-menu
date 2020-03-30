@@ -348,7 +348,7 @@ import pygameMenu
 
     ```python
     menu = pygameMenu.Menu(...)
-    menu.disable()
+    menu.draw()
     ```
 
 - *enable()*
