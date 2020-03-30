@@ -76,7 +76,6 @@ class TextInput(Widget):
 
     def __init__(self,
                  label='',
-                 default='',
                  textinput_id='',
                  input_type=_locals.INPUT_TEXT,
                  input_underline='',
@@ -102,8 +101,6 @@ class TextInput(Widget):
 
         :param label: Input label text
         :type label: basestring
-        :param default: Initial value to be displayed
-        :type default: basestring, int, float
         :param textinput_id: ID of the text input
         :type textinput_id: basestring
         :param input_type: Type of data
@@ -143,7 +140,6 @@ class TextInput(Widget):
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        assert isinstance(default, (str, int, float))
         assert isinstance(textinput_id, str)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
@@ -253,13 +249,6 @@ class TextInput(Widget):
         self._maxwidthsize = 0  # Updated in font
         self._password = password
         self._password_char = password_char
-
-        # If password is active no default value should exist
-        if self._password and default != '':
-            raise ValueError('default value must be empty if the input is a password')
-
-        # Set default value
-        self.set_value(default)
 
     def _apply_font(self):
         """
@@ -759,8 +748,9 @@ class TextInput(Widget):
 
                 biggest = 0
                 for char in curr_string:
-                    accum_size += self._keychar_size[char]
-                    biggest = max(biggest, self._keychar_size[char])
+                    _char_size = self._get_char_size(char)
+                    accum_size += _char_size
+                    biggest = max(biggest, _char_size)
 
                 if self._ellipsis_right():
                     accum_size += self._ellipsis_size
@@ -882,12 +872,13 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
+        assert isinstance(text, (str, int, float))
         if self._check_input_type(text):
-            default = str(text)
-            self._input_string = default
-            for i in range(len(default) + 1):
+            _default = str(text)
+            self._input_string = _default
+            for i in range(len(_default) + 1):
                 self._move_cursor_right()
-            self._update_input_string(default)
+            self._update_input_string(_default)
         else:
             raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
 
@@ -1076,6 +1067,17 @@ class TextInput(Widget):
             self._update_input_string('')
             self._cursor_render = True  # Due to manually updating renderbox
 
+    def _get_char_size(self, char):
+        """
+        Return char size in pixels.
+
+        :param char: Char
+        """
+        if char in self._keychar_size.keys():
+            return self._keychar_size[char]
+        self._keychar_size[char] = self.font_render_string(char).get_size()[0]
+        return self._keychar_size[char]
+
     def _paste(self):
         """
         Paste text from clipboard.
@@ -1124,7 +1126,7 @@ class TextInput(Widget):
             # Update char size
             for char in new_string:
                 if char not in self._keychar_size:
-                    self._keychar_size[char] = self.font_render_string(char).get_size()[0]
+                    self._get_char_size(char)  # This updates the self._keychar_size variable
 
             self.sound.play_key_add()
             self._input_string = new_string  # For a purpose of computing render_box
@@ -1458,8 +1460,8 @@ class TextInput(Widget):
                         if lkey > 0:
 
                             # Update char size
-                            if event.unicode not in self._keychar_size:
-                                self._keychar_size[event.unicode] = self.font_render_string(event.unicode).get_size()[0]
+                            if event.unicode not in self._keychar_size.values():
+                                self._get_char_size(event.unicode)  # This updates keychar size data
                             self._last_char = event.unicode
 
                             # Update string

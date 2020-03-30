@@ -189,6 +189,8 @@ def main(test=False):
                                  password=True,
                                  textinput_id='pass',
                                  input_underline='_')
+    settings_menu.add_text_input('Holis ', textinput_id='id1', maxwidth=10, maxchar=20, default="ABCDEFG",
+                                 input_underline='_')
 
     # Create selector with 3 difficulty options
     settings_menu.add_selector('Select difficulty',
