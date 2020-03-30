@@ -43,7 +43,7 @@ def make_world(width, height):
     :param height: Height in pixels
     :return: World surface
     """
-    world = pygame.Surface((width, height))
+    world = pygame.Surface((width, height))  # lgtm [py/call/wrong-arguments]
     world.fill((200, 200, 200))
 
     color = [70, 20, 20]

@@ -177,6 +177,7 @@ def main(test=False):
     settings_menu.add_text_input('Your age: ',
                                  default=25,
                                  maxchar=3,
+                                 maxwidth=3,
                                  textinput_id='age',
                                  input_type=pygameMenu.locals.INPUT_INT,
                                  enable_selection=False)

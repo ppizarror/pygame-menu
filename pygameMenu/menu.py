@@ -582,15 +582,18 @@ class Menu(object):
         assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
         assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
-
         assert isinstance(maxchar, int), 'maxchar must be integer'
         assert maxchar >= 0, 'maxchar must be greater or equal than zero'
         assert isinstance(maxwidth, int), 'maxwidth must be an integer'
         assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
+        assert isinstance(default, (str, int, float))
+
+        # If password is active no default value should exist
+        if password and default != '':
+            raise ValueError('default value must be empty if the input is a password')
 
         # Create widget
         widget = _widgets.TextInput(title,
-                                    default,
                                     textinput_id=textinput_id,
                                     maxchar=maxchar,
                                     maxwidth=maxwidth,
@@ -615,6 +618,9 @@ class Menu(object):
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
+
+        # Set default value
+        widget.set_value(default)
 
         # Store widget
         self._option.append(widget)

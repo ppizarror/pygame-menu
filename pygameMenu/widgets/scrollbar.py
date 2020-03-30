@@ -162,7 +162,7 @@ class ScrollBar(Widget):
         See upper class doc.
         """
         # Render page control
-        self._surface = _pygame.Surface(self._rect.size)
+        self._surface = _pygame.Surface(self._rect.size)  # lgtm [py/call/wrong-arguments]
         self._surface.fill(self._page_ctrl_color)
 
         # Render slider
