@@ -629,6 +629,95 @@ class Menu(object):
 
         return widget
 
+    def add_color_rgb(self,
+                      title,
+                      color_id='',
+                      default='',
+                      input_underline='_',
+                      align='',
+                      font_size=0,
+                      onchange=None,
+                      onreturn=None,
+                      **kwargs
+                      ):
+        """
+        Add a color widget with RGB channels from 0-255. Includes a preview
+        box that renders the given color.
+
+        And functions onchange and onreturn does
+            onchange(current_text, **kwargs)
+            onreturn(current_text, **kwargs)
+
+        :param title: Title of the color input
+        :type title: basestring
+        :param color_id: ID of the color input
+        :type color_id: basestring
+        :param default: Default value to display
+        :type default: basestring, int, float
+        :param input_underline: Underline character
+        :type input_underline: basestring
+        :param align: Widget alignment
+        :type align: basestring
+        :param font_size: Font size of the widget
+        :type font_size: int
+        :param onchange: Function when changing the selector
+        :type onchange: function, NoneType
+        :param onreturn: Function when pressing return button
+        :type onreturn: function, NoneType
+        :param kwargs: Aditional keyword-parameters
+        :return: Widget object
+        :rtype: pygameMenu.widgets.color_rgb.ColorRGB
+        """
+        self._size += 1
+        if self._size > 1:
+            dy = -self._fsize / 2 - self._opt_dy / 2
+            self._opt_posy += dy
+        if align == '':
+            align = self._widget_align
+
+        if font_size == 0:
+            font_size = self._fsize
+
+        # Check data
+        assert isinstance(color_id, str), 'ID must be a string'
+        assert isinstance(input_underline, str), 'input_underline must be a string'
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(font_size, int)
+        assert font_size > 0, 'font_size must be greater than zero'
+        assert isinstance(default, (str, int, float))
+
+        # Create widget
+        widget = _widgets.ColorRGB(title,
+                                   colorrgb_id=color_id,
+                                   input_underline=input_underline,
+                                   onchange=onchange,
+                                   onreturn=onreturn,
+                                   **kwargs)
+        widget.set_menu(self)
+        self._check_id_duplicated(color_id)
+
+        # Configure widget
+        widget.set_font(self._font_name,
+                        font_size,
+                        self._font_color,
+                        self._sel_color)
+        widget.set_shadow(enabled=self._option_shadow,
+                          color=_cfg.MENU_SHADOW_COLOR,
+                          position=self._option_shadow_position,
+                          offset=self._option_shadow_offset)
+        widget.set_controls(self._joystick, self._mouse)
+        widget.set_alignment(align)
+
+        # Set default value
+        widget.set_value(default)
+
+        # Store widget
+        self._option.append(widget)
+        if len(self._option) == 1:
+            widget.set_selected()
+
+        return widget
+
     def _back(self):
         """
         Go to previous menu or close if top menu is currently displayed.

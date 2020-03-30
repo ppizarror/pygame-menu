@@ -279,6 +279,8 @@ class TextInput(Widget):
         """
         self._input_string = ''
         self._cursor_position = 0
+        self._renderbox = [0, 0, 0]
+        self._delete()
 
     def get_value(self):
         """

@@ -32,10 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Import widgets
 from pygameMenu.widgets.button import Button
+from pygameMenu.widgets.color_rgb import ColorRGB
 from pygameMenu.widgets.menubar import MenuBar
+from pygameMenu.widgets.scrollbar import ScrollBar
 from pygameMenu.widgets.selector import Selector
 from pygameMenu.widgets.textinput import TextInput
-from pygameMenu.widgets.scrollbar import ScrollBar
 
 # Widget type
 from pygameMenu.widgets.widget import WidgetType

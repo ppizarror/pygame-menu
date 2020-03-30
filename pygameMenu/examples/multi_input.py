@@ -190,6 +190,7 @@ def main(test=False):
                                  password=True,
                                  textinput_id='pass',
                                  input_underline='_')
+    settings_menu.add_color_rgb('Color: ')
 
     # Create selector with 3 difficulty options
     settings_menu.add_selector('Select difficulty',
