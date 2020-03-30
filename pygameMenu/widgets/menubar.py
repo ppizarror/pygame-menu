@@ -141,6 +141,7 @@ class MenuBar(Widget):
                                           self._polygon_pos[1][1] + 3,
                                           cross_size, cross_size)
 
+        # noinspection PyProtectedMember
         if not self._menu or not self._menu._top._prev:
             # Make a cross for top menu
             self._backbox_pos = (

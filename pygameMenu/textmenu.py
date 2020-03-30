@@ -82,7 +82,7 @@ class TextMenu(Menu):
         :param kwargs: Aditional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
-            isinstance(draw_text_region_x, float)
+               isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
         assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)
@@ -158,7 +158,7 @@ class TextMenu(Menu):
             # Check text align
             if self._text_align == _locals.ALIGN_CENTER:
                 text_dx = -int(self._width * (self._draw_text_region_x / 100.0)) + \
-                    self._width / 2 - text_width / 2
+                          self._width / 2 - text_width / 2
             elif self._text_align == _locals.ALIGN_LEFT:
                 text_dx = 0
             elif self._text_align == _locals.ALIGN_RIGHT:

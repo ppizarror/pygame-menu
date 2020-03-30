@@ -38,6 +38,11 @@ from pygameMenu.widgets import ScrollBar
 
 
 def make_world(width, height):
+    """
+    :param width: Width in pixels
+    :param height: Height in pixels
+    :return: World surface
+    """
     world = pygame.Surface((width, height))
     world.fill((200, 200, 200))
 
@@ -66,14 +71,23 @@ def make_world(width, height):
 
 
 def h_changed(value):
+    """
+    :param value: Value data
+    """
     print("Horizontal position changed:", value)
 
 
 def v_changed(value):
+    """
+    :param value: Value data
+    """
     print("Vertical position changed:", value)
 
 
 def main():
+    """
+    Main function
+    """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
 
@@ -92,11 +106,10 @@ def main():
                      slider_pad=2,
                      page_ctrl_thick=thick_h,
                      onchange=h_changed)
-    sb_h.set_shadow(enabled=True,
-                    color=_cfg.MENU_SHADOW_COLOR,
+    sb_h.set_shadow(color=_cfg.MENU_SHADOW_COLOR,
                     position=_locals.POSITION_SOUTHEAST,
                     offset=_cfg.MENU_SHADOW_OFFSET)
-    sb_h.set_controls(False, True)
+    sb_h.set_controls(False)
     sb_h.set_position(0, scr_size[1] - thick_h)
     sb_h.set_page_step(scr_size[0] - thick_v)
 
@@ -109,18 +122,16 @@ def main():
                      thick_v,
                      (253, 246, 220),
                      onchange=v_changed)
-    sb_v.set_shadow(enabled=True,
-                    color=(52, 54, 56),
+    sb_v.set_shadow(color=(52, 54, 56),
                     position=_locals.POSITION_NORTHWEST,
                     offset=4)
-    sb_v.set_controls(False, True)
+    sb_v.set_controls(False)
     sb_v.set_position(scr_size[0] - thick_v, 0)
     sb_v.set_page_step(scr_size[1] - thick_h)
 
     # -------------------------------------------------------------------------
     # Main loop
     # -------------------------------------------------------------------------
-
     while True:
         event = pygame.event.wait()
 

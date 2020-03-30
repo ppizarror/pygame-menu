@@ -35,6 +35,7 @@ from pygameMenu.widgets.widget import Widget
 import pygameMenu.locals as _locals
 
 
+# noinspection PyTypeChecker
 class ScrollBar(Widget):
     """
     A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control.
@@ -139,7 +140,7 @@ class ScrollBar(Widget):
         page control surface.
         """
         return self._page_ctrl_step * (self._values_range[1] - self._values_range[0]) / \
-            (self._page_ctrl_length - self._slider_length)
+               (self._page_ctrl_length - self._slider_length)
 
     def get_value(self):
         """
@@ -148,8 +149,8 @@ class ScrollBar(Widget):
         :return: position in pixels
         :rtype: int
         """
-        value = self._values_range[0] + self._slider_position *\
-            (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._slider_length)
+        value = self._values_range[0] + self._slider_position * \
+                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._slider_length)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -171,11 +172,11 @@ class ScrollBar(Widget):
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
             shadow_rect = shadow_rect.move(self._shadow_tuple[0] / 2, self._shadow_tuple[1] / 2)
 
-            _pygame.draw.rect(self._surface, self._font_color, lit_rect, 0)
-            _pygame.draw.rect(self._surface, self._shadow_color, shadow_rect, 0)
-            _pygame.draw.rect(self._surface, self._slider_color, slider_rect, 0)
+            _pygame.draw.rect(self._surface, self._font_color, lit_rect)
+            _pygame.draw.rect(self._surface, self._shadow_color, shadow_rect)
+            _pygame.draw.rect(self._surface, self._slider_color, slider_rect)
         else:
-            _pygame.draw.rect(self._surface, self._slider_color, self._slider_rect, 0)
+            _pygame.draw.rect(self._surface, self._slider_color, self._slider_rect)
 
     def _scroll(self, pixels):
         """Moves the slider based on mouse events relatif change along axis.
@@ -199,7 +200,7 @@ class ScrollBar(Widget):
 
         move_pos = [0, 0]
         move_pos[axis] = move
-        self._slider_rect.move_ip(move_pos)
+        self._slider_rect.move_ip(*move_pos)
         self._slider_position += move
         return True
 
@@ -207,8 +208,8 @@ class ScrollBar(Widget):
         """
         Set the scroll bar orentation to vertical or horizontal.
 
-        :param align: Widget orentation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
-        :type align: basestring
+        :param orientation: Widget orentation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+        :type orientation: basestring
         :return: None
         """
         if orientation == _locals.ORIENTATION_HORIZONTAL:
@@ -233,7 +234,7 @@ class ScrollBar(Widget):
         :type value: int
         :return: None
         """
-        assert value > 0 and value < self._values_range[1] - self._values_range[0]
+        assert 0 < value < self._values_range[1] - self._values_range[0]
 
         # Slider lenght shall represent the same ratio
         self._slider_length = round(1.0 * self._page_ctrl_length * value /
@@ -252,10 +253,10 @@ class ScrollBar(Widget):
         :type value: int
         :return: None
         """
-        assert value >= self._values_range[0] and value <= self._values_range[1]
+        assert self._values_range[0] <= value <= self._values_range[1]
 
-        pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._slider_length) /\
-            (self._values_range[1] - self._values_range[0])
+        pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._slider_length) / \
+                 (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)
@@ -279,7 +280,7 @@ class ScrollBar(Widget):
                 topleftx, toplefty = self._rect.topleft
 
                 # The _slider_rect origin is related to the widget surface
-                if self._slider_rect.collidepoint((mousex - topleftx, mousey - toplefty)):
+                if self._slider_rect.collidepoint(mousex - topleftx, mousey - toplefty):
                     # Initialize scrolling
                     self._scrolling = True
 
