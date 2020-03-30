@@ -177,6 +177,7 @@ def main(test=False):
     settings_menu.add_text_input('Your age: ',
                                  default=25,
                                  maxchar=3,
+                                 maxwidth=3,
                                  textinput_id='age',
                                  input_type=pygameMenu.locals.INPUT_INT,
                                  enable_selection=False)
@@ -188,8 +189,6 @@ def main(test=False):
                                  maxchar=6,
                                  password=True,
                                  textinput_id='pass',
-                                 input_underline='_')
-    settings_menu.add_text_input('Holis ', textinput_id='id1', maxwidth=10, maxchar=20, default="ABCDEFG",
                                  input_underline='_')
 
     # Create selector with 3 difficulty options

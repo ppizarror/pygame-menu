@@ -89,8 +89,8 @@ class TextInput(Widget):
                  onreturn=None,
                  password=False,
                  password_char='*',
-                 repeat_keys_initial_ms=400,
-                 repeat_keys_interval_ms=40,
+                 repeat_keys_initial_ms=450,
+                 repeat_keys_interval_ms=80,
                  repeat_mouse_interval_ms=100,
                  selection_color=(30, 30, 30),
                  text_ellipsis='...',
@@ -633,29 +633,29 @@ class TextInput(Widget):
         self._cursor_render = True
         if self._maxwidth == 0:
             return
-        ls = len(self._input_string)
+        len_string = len(self._input_string)
 
         # Move cursor to end
         if end:
-            self._renderbox[0] = max(0, ls - self._maxwidth)
-            self._renderbox[1] = ls
-            self._renderbox[2] = min(ls, self._maxwidth)
+            self._renderbox[0] = max(0, len_string - self._maxwidth)
+            self._renderbox[1] = len_string
+            self._renderbox[2] = min(len_string, self._maxwidth)
             return
 
         # Move cursor to start
         if start:
             self._renderbox[0] = 0
-            self._renderbox[1] = min(ls, self._maxwidth)
+            self._renderbox[1] = min(len_string, self._maxwidth)
             self._renderbox[2] = 0
             return
 
         # Check limits
-        if left < 0 and ls == 0:
+        if left < 0 and len_string == 0:
             return
 
         # If no overflow
-        if ls <= self._maxwidth:
-            if right < 0 and self._renderbox[2] == ls:  # If del at the end of string
+        if len_string <= self._maxwidth:
+            if right < 0 and self._renderbox[2] == len_string:  # If del at the end of string
                 return
             if left < 0 and self._renderbox[2] == 0:  # If cursor is at beginning
                 return
@@ -680,7 +680,7 @@ class TextInput(Widget):
                 # If user deletes something and it is in the end
                 if right < 0:  # del
                     if self._ellipsis_left():
-                        if (self._renderbox[1] - 1) == ls:  # At the end
+                        if (self._renderbox[1] - 1) == len_string:  # At the end
                             self._renderbox[2] -= right
 
                 # If the user writes, move renderbox
@@ -697,7 +697,6 @@ class TextInput(Widget):
                     self._renderbox[1] += left
 
             if not addition:  # Move inner (left/right)
-
                 self._renderbox[2] += right
                 self._renderbox[2] += left
 
@@ -712,18 +711,18 @@ class TextInput(Widget):
                     update_maxwidth = False
 
                 # If cursor is at limit
-                if self._renderbox[1] > ls or self._renderbox[0] < 0:
+                if self._renderbox[1] > len_string or self._renderbox[0] < 0:
                     if self._renderbox[2] != self._maxwidth - 1:
                         update_maxwidth = False
 
             # Apply string limits
-            self._renderbox[1] = max(self._maxwidth, min(self._renderbox[1], ls))
+            self._renderbox[1] = max(self._maxwidth, min(self._renderbox[1], len_string))
             self._renderbox[0] = self._renderbox[1] - self._maxwidth
 
         # Apply limits
         self._renderbox[0] = max(0, self._renderbox[0])
-        self._renderbox[1] = max(0, self._renderbox[1])
-        self._renderbox[2] = max(0, min(self._renderbox[2], min(self._maxwidth, ls)))
+        self._renderbox[1] = min(max(0, self._renderbox[1]), len_string)
+        self._renderbox[2] = max(0, min(self._renderbox[2], min(self._maxwidth, len_string)))
 
         if update_maxwidth:
             self._update_maxlimit_renderbox()
@@ -878,6 +877,7 @@ class TextInput(Widget):
             self._input_string = _default
             for i in range(len(_default) + 1):
                 self._move_cursor_right()
+                self._update_renderbox(right=1, addition=True)
             self._update_input_string(_default)
         else:
             raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
@@ -1460,7 +1460,7 @@ class TextInput(Widget):
                         if lkey > 0:
 
                             # Update char size
-                            if event.unicode not in self._keychar_size.values():
+                            if event.unicode not in self._keychar_size.keys():
                                 self._get_char_size(event.unicode)  # This updates keychar size data
                             self._last_char = event.unicode
 
@@ -1468,8 +1468,8 @@ class TextInput(Widget):
                             self.sound.play_key_add()
                             self._cursor_position += 1  # Some are empty, e.g. K_UP
                             self._input_string = new_string  # Only here this is changed (due to renderbox update)
-                            self._update_renderbox(right=1, addition=True)
                             self._update_input_string(new_string)
+                            self._update_renderbox(right=1, addition=True)
                             self.change()
                             updated = True
 
