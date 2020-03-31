@@ -25,7 +25,34 @@ Python library that can create a simple menu for pygame application, supports:
 3. Lists of values (selectors) that can trigger functions when pressing return or changing the value
 4. Input text
 
-Examples:
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Examples:](#examples)
+    - [Normal button menu](#normal-button-menu)
+    - [Textual menus](#textual-menus)
+    - [Mouse support](#mouse-support)
+    - [Different inputs](#different-inputs)
+- [Install](#install)
+- [Import](#import)
+- [Library structure](#library-structure)
+- [Usage](#usage)
+  - [Creating menus](#creating-menus)
+  - [Adding options and entries to menus](#adding-options-and-entries-to-menus)
+  - [Menu events](#menu-events)
+  - [Sounds](#sounds)
+  - [Configuration values](#configuration-values)
+    - [Alignment](#alignment)
+    - [Data type](#data-type)
+    - [Shadow position](#shadow-position)
+  - [Using fonts](#using-fonts)
+- [Other configurations](#other-configurations)
+- [Examples](#examples-1)
+- [Author](#author)
+  - [Contributors](#contributors)
+- [License](#license)
+
+## Examples:
 
 #### Normal button menu
 
