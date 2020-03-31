@@ -629,20 +629,21 @@ class Menu(object):
 
         return widget
 
-    def add_color_rgb(self,
-                      title,
-                      color_id='',
-                      default='',
-                      input_underline='_',
-                      align='',
-                      font_size=0,
-                      onchange=None,
-                      onreturn=None,
-                      **kwargs
-                      ):
+    def _add_color_rgb(self,
+                       title,
+                       color_id='',
+                       default='',
+                       input_underline='_',
+                       align='',
+                       font_size=0,
+                       onchange=None,
+                       onreturn=None,
+                       **kwargs
+                       ):
         """
         Add a color widget with RGB channels from 0-255. Includes a preview
-        box that renders the given color.
+        box that renders the given color. (Work in Progress)
+        TODO: Implement multiple text inputs and display color
 
         And functions onchange and onreturn does
             onchange(current_text, **kwargs)
