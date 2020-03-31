@@ -351,7 +351,7 @@ class Menu(object):
         :type element_name: basestring
         :param element: Object
         :type element: Menu, _PymenuAction, function
-        :param args: Aditional arguments used by a function
+        :param args: Additional arguments used by a function
         :param kwargs: Additional keyword arguments
         :return: Widget object
         :rtype: pygameMenu.widgets.button.Button
@@ -449,7 +449,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
-        :param kwargs: Aditional parameters
+        :param kwargs: Additional parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
@@ -560,7 +560,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
-        :param kwargs: Aditional keyword-parameters
+        :param kwargs: Additional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
@@ -665,7 +665,7 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
-        :param kwargs: Aditional keyword-parameters
+        :param kwargs: Additional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.color_rgb.ColorRGB
         """
@@ -1081,12 +1081,12 @@ class Menu(object):
             for menu in self._submenus:
                 data_submenu = menu.get_input_data(recursive=recursive, depth=depth)
 
-                # Check if there is a colission between keys
+                # Check if there is a collision between keys
                 data_keys = data.keys()
                 subdata_keys = data_submenu.keys()
                 for key in subdata_keys:  # type: str
                     if key in data_keys:
-                        msg = 'Colission between widget data ID="{0}" at depth={1}'.format(key, depth)
+                        msg = 'Collision between widget data ID="{0}" at depth={1}'.format(key, depth)
                         raise ValueError(msg)
 
                 # Update data
