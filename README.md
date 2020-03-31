@@ -118,7 +118,7 @@ import pygameMenu
     | font_title | Alternative font of the title | str | None |
     | fps | Fps limit of the menu, 0: no limit | int,float | 0 |
     | joystick_enabled | Enable joystick support | bool | True |
-    | menu_alpha | Alpha of background (0=tansparent, 100=opaque) | int | MENU_ALPHA |
+    | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | MENU_ALPHA |
     | menu_color | Menu color | tuple | MENU_BGCOLOR |
     | menu_color_title | Background color of title | tuple | MENU_TITLE_BG_COLOR |
     | menu_height | Height of menu (px) | int | MENU_HEIGHT |
@@ -127,10 +127,10 @@ import pygameMenu
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
     | option_margin | Margin of each element in menu (px) | int | MENU_OPTION_MARGIN |
-    | option_shadow | Indicate if a shadow is drawn on ech option | bool | MENU_OPTION_SHADOW |
+    | option_shadow | Indicate if a shadow is drawn on each option | bool | MENU_OPTION_SHADOW |
     | option_shadow_offset | Offset of option text shadow | int | MENU_SHADOW_OFFSET |
     | option_shadow_position | Position of shadow | string | MENU_SHADOW_POSITION |
-    | rect_width | Border with of rectangle around a seleted item | int | MENU_SELECTED_WIDTH |
+    | rect_width | Border width of rectangle around a selected item | int | MENU_SELECTED_WIDTH |
     | title_offsetx | Offset x-position of title (px) | int | 0 |
     | title_offsety | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.ALIGN_CENTER |
@@ -145,7 +145,7 @@ import pygameMenu
     pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
     ```
 
-    This class inherites from Menu, so the parameters are the same, except the following extra parameters:  
+    This class inherits from Menu, so the parameters are the same, except the following extra parameters:  
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
@@ -335,7 +335,7 @@ import pygameMenu
 
 - *disable(closelocked)*
 
-    Disable Menu (doest check events and draw on surface). If *closelocked* is *True* all the locked pened submenus are closed too.
+    Disable Menu (doesn't check events and draw on surface). If *closelocked* is *True* all the locked pened submenus are closed too.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -380,7 +380,7 @@ import pygameMenu
 - *get_input_data(recursive=False, depth=0)*
 
     Get input data from a menu. The results are given as a dict object, keys are the ID of each element.
-    If recursive, the data will contain inputs from sub-menus; *depth* defines the depth of each input. It's used only as a informative value by now.
+    If recursive, the data will contain inputs from sub-menus; *depth* defines the depth of each input. It's used only as an informative value by now.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -441,7 +441,7 @@ import pygameMenu
     ```python
     menu = pygameMenu.Menu(...)
 
-    # Main aplication
+    # Main application
     while True:
 
         # Application events
@@ -495,7 +495,7 @@ This events must be imported from *pygameMenu.events*.
 
 ### Sounds
 
-A basic sound engine can be created using *Sound* class imported from *pygameMenu.sound*. The sound engine can be customized setting a sound file to several sounds defined by a type. For example, buttons or keys.
+A basic sound engine can be created using *Sound* class imported from *pygameMenu.sound*. The sound engine can be customized by setting a sound file to several sounds defined by a type. For example, buttons or keys.
 
 - **Sound**
 
@@ -509,7 +509,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
-    | uniquechannel | Force the channel to be unique, this is setted at the moment of creation of the object | bool | True |
+    | uniquechannel | Force the channel to be unique, this is set at the moment of creation of the object | bool | True |
     | frequency | Frequency of sounds | int | 22050 |
     | size | Size of sample | int | -16 |
     | channels | Number of channels by default | int | 2 |
