@@ -222,6 +222,8 @@ class ColorInput(TextInput):
                                     return False
                                 if _num != str(int(_num)) and key == '0':  # User adds 0 at left, example: 12 -> 012
                                     return False
+                                if len(_num) > 3:  # Number like 0XXX
+                                    return False
 
         # Update
         updated = super(ColorInput, self).update(events)
