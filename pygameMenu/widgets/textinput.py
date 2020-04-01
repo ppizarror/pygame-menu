@@ -247,7 +247,6 @@ class TextInput(Widget):
                 assert isinstance(_char, str), 'Element "{0}" of valid_chars must be a string'.format(_char)
                 assert len(_char) == 1, 'Element "{0}" of valid_chars must be character'.format(_char)
         self._valid_chars = valid_chars
-        print(self._valid_chars)
 
         # Other
         self._copy_paste_enabled = enable_copy_paste

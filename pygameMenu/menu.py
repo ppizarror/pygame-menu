@@ -616,7 +616,7 @@ class Menu(object):
         :type onreturn: function, NoneType
         :param kwargs: Additional keyword-parameters
         :return: Widget object
-        :rtype: pygameMenu.widgets.colorinput.ColorRGB
+        :rtype: pygameMenu.widgets.colorinput.ColorInput
         """
         assert isinstance(align, str), 'align must be a string'
         assert isinstance(default, (str, tuple))

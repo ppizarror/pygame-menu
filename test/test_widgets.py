@@ -78,6 +78,17 @@ class WidgetsTest(unittest.TestCase):
         selector.update_elements(new_elements)
         selector.set_value('6 - Hard')
 
+    def test_colorinput(self):
+        """
+        Test ColorInput widget.
+        """
+        self.assertRaises(ValueError,
+                          lambda: self.menu.add_color_input('title',
+                                                            color_type='none'))
+
+        widget = self.menu.add_color_input('title', color_type='rgb')
+        widget.set_value('123,234,55')
+
     def test_textinput(self):
         """
         Test TextInput widget.
