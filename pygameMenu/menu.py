@@ -388,9 +388,18 @@ class Menu(object):
             widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
-        widget.set_menu(self)
-        self._check_id_duplicated(option_id)
+        self.configure_widget(font_size, option_id, widget)
+        widget.set_alignment(kwargs.pop('align', self._widget_align))
 
+        self._option.append(widget)
+        if len(self._option) == 1:
+            widget.set_selected()
+
+        return widget
+
+    def configure_widget(self, font_size, id, widget):
+        widget.set_menu(self)
+        self._check_id_duplicated(id)
         # Configure widget
         widget.set_font(self._font_name,
                         font_size,
@@ -402,13 +411,6 @@ class Menu(object):
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick,
                             self._mouse)
-        widget.set_alignment(kwargs.pop('align', self._widget_align))
-
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-
-        return widget
 
     def add_selector(self,
                      title,
@@ -486,20 +488,7 @@ class Menu(object):
                                    onchange,
                                    onreturn,
                                    **kwargs)
-        widget.set_menu(self)
-        self._check_id_duplicated(selector_id)
-
-        # Configure widget
-        widget.set_font(self._font_name,
-                        font_size,
-                        self._font_color,
-                        self._sel_color)
-        widget.set_shadow(enabled=self._option_shadow,
-                          color=_cfg.MENU_SHADOW_COLOR,
-                          position=self._option_shadow_position,
-                          offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick,
-                            self._mouse)
+        self.configure_widget(font_size, selector_id, widget)
         widget.set_alignment(align)
 
         # Store widget
@@ -604,19 +593,7 @@ class Menu(object):
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
-        widget.set_menu(self)
-        self._check_id_duplicated(textinput_id)
-
-        # Configure widget
-        widget.set_font(self._font_name,
-                        font_size,
-                        self._font_color,
-                        self._sel_color)
-        widget.set_shadow(enabled=self._option_shadow,
-                          color=_cfg.MENU_SHADOW_COLOR,
-                          position=self._option_shadow_position,
-                          offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        self.configure_widget(font_size, textinput_id, widget)
         widget.set_alignment(align)
 
         # Set default value
@@ -694,19 +671,7 @@ class Menu(object):
                                    onchange=onchange,
                                    onreturn=onreturn,
                                    **kwargs)
-        widget.set_menu(self)
-        self._check_id_duplicated(color_id)
-
-        # Configure widget
-        widget.set_font(self._font_name,
-                        font_size,
-                        self._font_color,
-                        self._sel_color)
-        widget.set_shadow(enabled=self._option_shadow,
-                          color=_cfg.MENU_SHADOW_COLOR,
-                          position=self._option_shadow_position,
-                          offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
+        self.configure_widget(font_size, color_id, widget)
         widget.set_alignment(align)
 
         # Set default value
