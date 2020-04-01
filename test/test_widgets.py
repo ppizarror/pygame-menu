@@ -105,8 +105,8 @@ class WidgetsTest(unittest.TestCase):
                                                            default='bad'))
 
         # Create text input widget
-        textinput = self.menu.add_text_input('title', password=True, input_underline='_')
-        textinput.set_value('new_value')
+        textinput = self.menu.add_text_input('title', input_underline='_')
+        textinput.set_value('new_value')  # No error
         textinput.selected = False
         textinput.draw(surface)
         textinput.selected = True
@@ -114,6 +114,18 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), 'new_value')
         textinput.clear()
         self.assertEqual(textinput.get_value(), '')
+
+        passwordinput = self.menu.add_text_input('title', password=True, input_underline='_')
+        self.assertRaises(ValueError,  # Password cannot be setted
+                          lambda: passwordinput.set_value('new_value'))
+        passwordinput.set_value('')  # No error
+        passwordinput.selected = False
+        passwordinput.draw(surface)
+        passwordinput.selected = True
+        passwordinput.draw(surface)
+        self.assertEqual(passwordinput.get_value(), '')
+        passwordinput.clear()
+        self.assertEqual(passwordinput.get_value(), '')
 
         # Create selection box
         string = 'the text'
@@ -126,7 +138,6 @@ class WidgetsTest(unittest.TestCase):
         textinput.draw(surface)
 
         textinput = self.menu.add_text_input('title',
-                                             password=True,
                                              input_underline='_',
                                              maxwidth=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
@@ -136,7 +147,6 @@ class WidgetsTest(unittest.TestCase):
         textinput._cut()
 
         textinput_nocopy = self.menu.add_text_input('title',
-                                                    password=True,
                                                     input_underline='_',
                                                     maxwidth=20,
                                                     enable_copy_paste=False)
