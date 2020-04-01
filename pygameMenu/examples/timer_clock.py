@@ -276,8 +276,7 @@ def main(test=False):
         time_string = str(datetime.timedelta(seconds=int(timer[0])))
         time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
         time_blit_size = time_blit.get_size()
-        surface.blit(time_blit, (
-            W_SIZE / 2 - time_blit_size[0] / 2, H_SIZE / 2 - time_blit_size[1] / 2))
+        surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
 
         # Execute main from principal menu if is enabled
         main_menu.mainloop(events, disable_loop=test)
