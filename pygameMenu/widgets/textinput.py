@@ -80,6 +80,7 @@ class TextInput(Widget):
                  input_type=_locals.INPUT_TEXT,
                  input_underline='',
                  cursor_color=(0, 0, 0),
+                 enable_copy_paste=True,
                  enable_selection=True,
                  history=50,
                  maxchar=0,
@@ -109,6 +110,8 @@ class TextInput(Widget):
         :type input_underline: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param enable_copy_paste: Enables copy, paste and cut
+        :type enable_copy_paste: bool
         :param enable_selection: Enables selection of text
         :type enable_selection: tuple
         :param history: Maximum number of editions stored
@@ -144,6 +147,7 @@ class TextInput(Widget):
         assert isinstance(input_type, str), 'input_type must be a string'
         assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(cursor_color, tuple)
+        assert isinstance(enable_copy_paste, bool), 'enable_copy_paste must be a boolean'
         assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
         assert isinstance(history, int)
         assert isinstance(maxchar, int), 'maxchar must be integer'
@@ -234,6 +238,7 @@ class TextInput(Widget):
         self._selection_surface = None  # type: _pygame.SurfaceType
 
         # Other
+        self._copy_paste_enabled = enable_copy_paste
         self._first_render = True
         self._input_type = input_type
         self._input_underline = input_underline
@@ -1280,6 +1285,9 @@ class TextInput(Widget):
 
                     # Ctrl+C copy
                     if event.key == _pygame.K_c:
+                        if not self._copy_paste_enabled:
+                            self.sound.play_event_error()
+                            return
                         copy_status = self._copy()
                         if not copy_status:
                             self.sound.play_event_error()
@@ -1287,6 +1295,9 @@ class TextInput(Widget):
 
                     # Ctrl+V paste
                     elif event.key == _pygame.K_v:
+                        if not self._copy_paste_enabled:
+                            self.sound.play_event_error()
+                            return
                         return self._paste()
 
                     # Ctrl+Z undo
@@ -1307,11 +1318,17 @@ class TextInput(Widget):
 
                     # Ctrl+X cut
                     elif event.key == _pygame.K_x:
+                        if not self._copy_paste_enabled:
+                            self.sound.play_event_error()
+                            return
                         self.sound.play_key_del()
                         return self._cut()
 
                     # Ctrl+A select all
                     elif event.key == _pygame.K_a:
+                        if not self._selection_enabled:
+                            self.sound.play_event_error()
+                            return
                         self._select_all()
                         return False
 

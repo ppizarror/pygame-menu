@@ -114,6 +114,7 @@ class ColorInput(TextInput):
                                          input_type=_input_type,
                                          input_underline=input_underline,
                                          cursor_color=cursor_color,
+                                         enable_copy_paste=False,
                                          enable_selection=False,
                                          history=0,
                                          maxchar=_maxchar,

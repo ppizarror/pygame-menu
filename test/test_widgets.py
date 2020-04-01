@@ -124,6 +124,16 @@ class WidgetsTest(unittest.TestCase):
         textinput._paste()
         textinput._cut()
 
+        textinput_nocopy = self.menu.add_text_input('title',
+                                                    password=True,
+                                                    input_underline='_',
+                                                    maxwidth=20,
+                                                    enable_copy_paste=False)
+        textinput_nocopy.set_value('this cannot be copied')
+        textinput_nocopy._copy()
+        textinput_nocopy._paste()
+        textinput_nocopy._cut()
+
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
         textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True, ))
@@ -175,7 +185,7 @@ class WidgetsTest(unittest.TestCase):
         thick = 80
         length = screen_size[1]
         world_range = (50, world.get_height())
-        world_length = world_range[1] - world_range[0]
+        # world_length = world_range[1] - world_range[0]
         orientation = _locals.ORIENTATION_VERTICAL
         x, y = screen_size[0] - thick, 0
 
@@ -187,8 +197,7 @@ class WidgetsTest(unittest.TestCase):
                        page_ctrl_thick=thick,
                        page_ctrl_color=(235, 235, 230))
 
-        sb.set_shadow(enabled=True,
-                      color=(245, 245, 245),
+        sb.set_shadow(color=(245, 245, 245),
                       position=_locals.POSITION_SOUTHEAST,
                       offset=2)
 

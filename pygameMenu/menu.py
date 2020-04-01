@@ -479,6 +479,7 @@ class Menu(object):
                        maxwidth=0,
                        align='',
                        font_size=0,
+                       enable_copy_paste=True,
                        enable_selection=True,
                        password=False,
                        onchange=None,
@@ -512,6 +513,8 @@ class Menu(object):
         :type align: basestring
         :param font_size: Font size of the widget
         :type font_size: int
+        :param enable_copy_paste: Enable text copy, paste and cut
+        :type enable_copy_paste: bool
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
         :param password: Text input is a password
@@ -549,6 +552,7 @@ class Menu(object):
                                     maxwidth=maxwidth,
                                     input_type=input_type,
                                     input_underline=input_underline,
+                                    enable_copy_paste=enable_copy_paste,
                                     enable_selection=enable_selection,
                                     password=password,
                                     onchange=onchange,
