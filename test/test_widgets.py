@@ -87,7 +87,9 @@ class WidgetsTest(unittest.TestCase):
                                                             color_type='none'))
 
         widget = self.menu.add_color_input('title', color_type='rgb')
-        widget.set_value('123,234,55')
+        widget.set_value((123, 234, 55))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('0,0,0'))
 
     def test_textinput(self):
         """
