@@ -95,6 +95,7 @@ class TextInput(Widget):
                  repeat_mouse_interval_ms=100,
                  selection_color=(30, 30, 30),
                  text_ellipsis='...',
+                 valid_chars=None,
                  **kwargs
                  ):
         """
@@ -140,6 +141,8 @@ class TextInput(Widget):
         :type selection_color: tuple
         :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
         :type text_ellipsis: basestring
+        :param valid_chars: List of chars that are valid, None if all chars are valid
+        :type valid_chars: list
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
@@ -150,10 +153,9 @@ class TextInput(Widget):
         assert isinstance(enable_copy_paste, bool), 'enable_copy_paste must be a boolean'
         assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
         assert isinstance(history, int)
+        assert isinstance(valid_chars, (type(None), list))
         assert isinstance(maxchar, int), 'maxchar must be integer'
-        assert maxchar >= 0, 'maxchar must be greater or equal than zero'
         assert isinstance(maxwidth, int), 'maxwidth must be an integer'
-        assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
         assert isinstance(repeat_keys_initial_ms, int)
@@ -236,6 +238,16 @@ class TextInput(Widget):
         self._selection_position = [0, 0]  # (x,y)
         self._selection_render = False
         self._selection_surface = None  # type: _pygame.SurfaceType
+
+        # List of valid chars
+        if valid_chars is not None:
+            for ch in range(len(valid_chars)):
+                _char = str(valid_chars[ch])
+                valid_chars[ch] = _char
+                assert isinstance(_char, str), 'Element "{0}" of valid_chars must be a string'.format(_char)
+                assert len(_char) == 1, 'Element "{0}" of valid_chars must be character'.format(_char)
+        self._valid_chars = valid_chars
+        print(self._valid_chars)
 
         # Other
         self._copy_paste_enabled = enable_copy_paste
@@ -1482,6 +1494,11 @@ class TextInput(Widget):
                     # If unwanted escape sequences
                     event_escaped = repr(event.unicode)
                     if '\\r' in event_escaped:
+                        return False
+
+                    # Check if char is valid
+                    if self._valid_chars is not None and event.unicode not in self._valid_chars:
+                        self.sound.play_event_error()
                         return False
 
                     # If data is valid

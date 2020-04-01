@@ -484,6 +484,7 @@ class Menu(object):
                        password=False,
                        onchange=None,
                        onreturn=None,
+                       valid_chars=None,
                        **kwargs
                        ):
         """
@@ -523,6 +524,8 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param valid_chars: List of chars to be ignored, None if no chars are invalid
+        :type valid_chars: list
         :param kwargs: Additional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.textinput.TextInput
@@ -554,6 +557,7 @@ class Menu(object):
                                     input_underline=input_underline,
                                     enable_copy_paste=enable_copy_paste,
                                     enable_selection=enable_selection,
+                                    valid_chars=valid_chars,
                                     password=password,
                                     onchange=onchange,
                                     onreturn=onreturn,

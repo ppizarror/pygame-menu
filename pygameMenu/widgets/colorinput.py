@@ -101,10 +101,13 @@ class ColorInput(TextInput):
         color_type = color_type.lower()
         if color_type == 'rgb':
             _maxchar = 11  # RRR,GGG,BBB
+            valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_comma]
         elif color_type == 'hex':
             _maxchar = 7  # #XXYYZZ
+            valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '#', '0', '1', '2', '3', '4',
+                           '5', '6', '7', '8', '9']
         else:
-            raise ValueError('color type can be "rgb" or "hex"')
+            raise ValueError('color type must be "rgb" or "hex"')
 
         _input_type = _locals.INPUT_TEXT
         _maxwidth = 0
@@ -125,4 +128,6 @@ class ColorInput(TextInput):
                                          repeat_keys_initial_ms=repeat_keys_initial_ms,
                                          repeat_keys_interval_ms=repeat_keys_interval_ms,
                                          repeat_mouse_interval_ms=repeat_mouse_interval_ms,
-                                         kwargs=kwargs)
+                                         valid_chars=valid_chars,
+                                         kwargs=kwargs,
+                                         )
