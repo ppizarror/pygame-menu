@@ -35,6 +35,9 @@ from pygameMenu.widgets.textinput import TextInput
 import pygameMenu.locals as _locals
 import pygame as _pygame
 
+_TYPE_HEX = 'hex'
+_TYPE_RGB = 'rgb'
+
 
 # noinspection PyTypeChecker
 class ColorInput(TextInput):
@@ -45,7 +48,7 @@ class ColorInput(TextInput):
     def __init__(self,
                  label='',
                  colorinput_id='',
-                 color_type='rgb',
+                 color_type=_TYPE_RGB,
                  input_comma=',',
                  input_underline='_',
                  cursor_color=(0, 0, 0),
@@ -100,15 +103,15 @@ class ColorInput(TextInput):
 
         _maxchar = 0
         self._color_type = color_type.lower()
-        if self._color_type == 'rgb':
+        if self._color_type == _TYPE_RGB:
             _maxchar = 11  # RRR,GGG,BBB
             self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_comma]
-        elif self._color_type == 'hex':
+        elif self._color_type == _TYPE_HEX:
             _maxchar = 7  # #XXYYZZ
             self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '#', '0', '1', '2', '3',
                                  '4', '5', '6', '7', '8', '9']
         else:
-            raise ValueError('color type must be "rgb" or "hex"')
+            raise ValueError('color type must be "{0}" or "{1}"'.format(_TYPE_HEX, _TYPE_RGB))
 
         _input_type = _locals.INPUT_TEXT
         _maxwidth = 0
@@ -137,6 +140,29 @@ class ColorInput(TextInput):
         self._comma = input_comma
         self._comma2 = input_comma + input_comma
 
+    def set_value(self, text):
+        """
+        See upper class doc.
+        """
+        if text == '':
+            super(ColorInput, self).set_value('')
+            return
+        _color = ''
+        if self._color_type == _TYPE_RGB:
+            assert isinstance(text, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
+            assert len(text) == 3, 'Tuple must contain only 3 colors, R, G, B'
+            r, g, b = text
+            assert isinstance(r, int), 'Red color must be an integer'
+            assert isinstance(g, int), 'Blue color must be an integer'
+            assert isinstance(b, int), 'Green color must be an integer'
+            assert 0 <= r <= 255, 'Red color must be between 0 and 255'
+            assert 0 <= g <= 255, 'Blue color must be between 0 and 255'
+            assert 0 <= b <= 255, 'Green color must be between 0 and 255'
+            _color = '{0},{1},{2}'.format(r, g, b)
+        elif self._color_type == _TYPE_HEX:
+            pass
+        super(ColorInput, self).set_value(_color)
+
     def update(self, events):
         """
         See upper class doc.
@@ -146,7 +172,7 @@ class ColorInput(TextInput):
         _disable_remove_comma = True
 
         key = ''  # Pressed key
-        if self._color_type == 'rgb':
+        if self._color_type == _TYPE_RGB:
             for event in events:  # type: _pygame.event.EventType
                 if event.type == _pygame.KEYDOWN:
 
@@ -229,7 +255,7 @@ class ColorInput(TextInput):
         updated = super(ColorInput, self).update(events)
 
         # After
-        if self._color_type == 'rgb':
+        if self._color_type == _TYPE_RGB:
             _total_commas = 0
             for _ch in _input:
                 if _ch == self._comma:

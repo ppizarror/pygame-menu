@@ -600,7 +600,7 @@ class Menu(object):
         :type color_type: basestring
         :param color_id: ID of the color input
         :type color_id: basestring
-        :param default: Default value to display
+        :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
         :type default: basestring, tuple
         :param input_comma: Divisor between RGB channels
         :type input_comma: basestring
