@@ -1286,11 +1286,17 @@ class TextInput(Widget):
 
                     # Ctrl+Z undo
                     elif event.key == _pygame.K_z:
+                        if self._max_history == 0:
+                            self.sound.play_event_error()
+                            return
                         self.sound.play_key_del()
                         return self._undo()
 
                     # Ctrl+Y redo
                     elif event.key == _pygame.K_y:
+                        if self._max_history == 0:
+                            self.sound.play_event_error()
+                            return
                         self.sound.play_key_add()
                         return self._redo()
 

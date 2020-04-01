@@ -588,19 +588,19 @@ class Menu(object):
 
         return widget
 
-    def _add_color_rgb(self,
-                       title,
-                       color_id='',
-                       default='',
-                       input_underline='_',
-                       align='',
-                       font_size=0,
-                       onchange=None,
-                       onreturn=None,
-                       **kwargs
-                       ):
+    def _add_color(self,
+                   title,
+                   color_id='',
+                   default='',
+                   input_underline='_',
+                   align='',
+                   font_size=0,
+                   onchange=None,
+                   onreturn=None,
+                   **kwargs
+                   ):
         """
-        Add a color widget with RGB channels from 0-255. Includes a preview
+        Add a color widget with RGB or Hex format. Includes a preview
         box that renders the given color. (Work in Progress)
         TODO: Implement multiple text inputs and display color
 
@@ -626,7 +626,7 @@ class Menu(object):
         :type onreturn: function, NoneType
         :param kwargs: Additional keyword-parameters
         :return: Widget object
-        :rtype: pygameMenu.widgets.color_rgb.ColorRGB
+        :rtype: pygameMenu.widgets.colorinput.ColorRGB
         """
         self._size += 1
         if self._size > 1:
