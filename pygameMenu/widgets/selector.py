@@ -71,6 +71,16 @@ class Selector(Widget):
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
 
+        # Check element list
+        for vl in elements:
+            assert len(vl) >= 1, \
+                'Length of each element in value list must be greater than 1'
+            assert isinstance(vl[0], str), \
+                'First element of value list component must be a string'
+        assert default < len(elements), 'default position should be lower than number of values'
+        assert isinstance(selector_id, str), 'ID must be a string'
+        assert isinstance(default, int), 'default must be an integer'
+
         super(Selector, self).__init__(widget_id=selector_id,
                                        onchange=onchange,
                                        onreturn=onreturn,

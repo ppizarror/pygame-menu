@@ -334,7 +334,7 @@ class Menu(object):
         """
         Add option to menu. Deprecated method.
         """
-        warnings.warn("Menu.add_option is deprecated, use Menu.add_button instead",
+        warnings.warn('Menu.add_option is deprecated, use Menu.add_button instead',
                       DeprecationWarning)
         return self.add_button(*args, **kwargs)
 
@@ -439,26 +439,14 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(font_size, int)
 
         if align == '':
             align = self._widget_align
-
         if font_size == 0:
             font_size = self._fsize
-
-        # Check value list
-        for vl in values:
-            assert len(vl) >= 1, \
-                'Length of each element in value list must be greater than 1'
-            assert isinstance(vl[0], str), \
-                'First element of value list component must be a string'
-        assert default < len(values), 'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'ID must be a string'
-        assert isinstance(default, int), 'default must be integer'
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-
         self._size += 1
         if self._size > 1:
             dy = -font_size / 2 - self._opt_dy / 2
@@ -536,29 +524,19 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
+        assert isinstance(default, (str, int, float))
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(font_size, int)
+
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
         if align == '':
             align = self._widget_align
-
         if font_size == 0:
             font_size = self._fsize
-
-        # Check data
-        assert isinstance(textinput_id, str), 'ID must be a string'
-        assert isinstance(input_type, str), 'input_type must be a string'
-        assert isinstance(input_underline, str), 'input_underline must be a string'
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-        assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
-        assert isinstance(maxchar, int), 'maxchar must be integer'
-        assert maxchar >= 0, 'maxchar must be greater or equal than zero'
-        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
-        assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
-        assert isinstance(default, (str, int, float))
 
         # If password is active no default value should exist
         if password and default != '':
@@ -577,8 +555,6 @@ class Menu(object):
                                     onreturn=onreturn,
                                     **kwargs)
         self._configure_widget(widget, font_size, align)
-
-        # Set default value
         widget.set_value(default)
 
         # Store widget
@@ -634,23 +610,19 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.colorinput.ColorRGB
         """
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(default, (str, tuple))
+        assert isinstance(font_size, int)
+
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
         if align == '':
             align = self._widget_align
-
         if font_size == 0:
             font_size = self._fsize
-
-        # Check data
-        assert isinstance(color_id, str), 'ID must be a string'
-        assert isinstance(input_underline, str), 'input_underline must be a string'
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-        assert isinstance(default, (str, tuple))
 
         # Create widget
         widget = _widgets.ColorInput(label=title,
@@ -662,8 +634,6 @@ class Menu(object):
                                      onreturn=onreturn,
                                      **kwargs)
         self._configure_widget(widget, font_size, align)
-
-        # Set default value
         widget.set_value(default)
 
         # Store widget

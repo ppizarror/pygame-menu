@@ -83,10 +83,10 @@ class ColorInput(TextInput):
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        assert isinstance(colorinput_id, str)
-        assert isinstance(color_type, str)
-        assert isinstance(input_comma, str)
-        assert isinstance(input_underline, str)
+        assert isinstance(colorinput_id, str), 'ID must be a string'
+        assert isinstance(color_type, str), 'color_type must be a string'
+        assert isinstance(input_comma, str), 'input_comma must be a string'
+        assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(cursor_color, tuple)
         assert isinstance(repeat_keys_initial_ms, int)
         assert isinstance(repeat_keys_interval_ms, int)

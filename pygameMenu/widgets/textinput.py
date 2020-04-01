@@ -140,13 +140,16 @@ class TextInput(Widget):
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        assert isinstance(textinput_id, str)
-        assert isinstance(input_type, str)
-        assert isinstance(input_underline, str)
+        assert isinstance(textinput_id, str), 'ID must be a string'
+        assert isinstance(input_type, str), 'input_type must be a string'
+        assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(cursor_color, tuple)
+        assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
         assert isinstance(history, int)
-        assert isinstance(maxchar, int)
-        assert isinstance(maxwidth, int)
+        assert isinstance(maxchar, int), 'maxchar must be integer'
+        assert maxchar >= 0, 'maxchar must be greater or equal than zero'
+        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
+        assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
         assert isinstance(repeat_keys_initial_ms, int)
