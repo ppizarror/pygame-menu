@@ -388,29 +388,13 @@ class Menu(object):
             widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
-        self.configure_widget(font_size, option_id, widget)
-        widget.set_alignment(kwargs.pop('align', self._widget_align))
+        self._configure_widget(widget, font_size, kwargs.pop('align', self._widget_align))
 
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
 
         return widget
-
-    def configure_widget(self, font_size, id, widget):
-        widget.set_menu(self)
-        self._check_id_duplicated(id)
-        # Configure widget
-        widget.set_font(self._font_name,
-                        font_size,
-                        self._font_color,
-                        self._sel_color)
-        widget.set_shadow(enabled=self._option_shadow,
-                          color=_cfg.MENU_SHADOW_COLOR,
-                          position=self._option_shadow_position,
-                          offset=self._option_shadow_offset)
-        widget.set_controls(self._joystick,
-                            self._mouse)
 
     def add_selector(self,
                      title,
@@ -488,8 +472,7 @@ class Menu(object):
                                    onchange,
                                    onreturn,
                                    **kwargs)
-        self.configure_widget(font_size, selector_id, widget)
-        widget.set_alignment(align)
+        self._configure_widget(widget, font_size, align)
 
         # Store widget
         self._option.append(widget)
@@ -593,8 +576,7 @@ class Menu(object):
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
-        self.configure_widget(font_size, textinput_id, widget)
-        widget.set_alignment(align)
+        self._configure_widget(widget, font_size, align)
 
         # Set default value
         widget.set_value(default)
@@ -671,8 +653,7 @@ class Menu(object):
                                    onchange=onchange,
                                    onreturn=onreturn,
                                    **kwargs)
-        self.configure_widget(font_size, color_id, widget)
-        widget.set_alignment(align)
+        self._configure_widget(widget, font_size, align)
 
         # Set default value
         widget.set_value(default)
@@ -708,25 +689,6 @@ class Menu(object):
             if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
-    def _get_depth(self):
-        """
-        Find menu depth.
-
-        :return: Depth
-        :rtype: int
-        """
-        if self._top is None:
-            return 0
-        prev = self._top._prev
-        depth = 0
-        while True:
-            if prev is not None:
-                prev = prev[0]
-                depth += 1
-            else:
-                break
-        return depth
-
     def _close(self, closelocked=True):
         """
         Execute close callbacks and disable the menu.
@@ -759,6 +721,43 @@ class Menu(object):
                 onclose()
 
         return close
+
+    def _configure_widget(self, widget, font_size, alignment):
+        """
+        Update the given widget with the parameters defined at
+        the menu level.
+        """
+        widget.set_menu(self)
+        self._check_id_duplicated(widget.get_id())
+        widget.set_font(self._font_name,
+                        font_size,
+                        self._font_color,
+                        self._sel_color)
+        widget.set_shadow(enabled=self._option_shadow,
+                          color=_cfg.MENU_SHADOW_COLOR,
+                          position=self._option_shadow_position,
+                          offset=self._option_shadow_offset)
+        widget.set_controls(self._joystick, self._mouse)
+        widget.set_alignment(alignment)
+
+    def _get_depth(self):
+        """
+        Find menu depth.
+
+        :return: Depth
+        :rtype: int
+        """
+        if self._top is None:
+            return 0
+        prev = self._top._prev
+        depth = 0
+        while True:
+            if prev is not None:
+                prev = prev[0]
+                depth += 1
+            else:
+                break
+        return depth
 
     def disable(self, closelocked=True):
         """
