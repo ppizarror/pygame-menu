@@ -465,12 +465,12 @@ class Menu(object):
             self._opt_posy += dy
 
         # Create widget
-        widget = _widgets.Selector(title,
-                                   values,
-                                   selector_id,
-                                   default,
-                                   onchange,
-                                   onreturn,
+        widget = _widgets.Selector(label=title,
+                                   elements=values,
+                                   selector_id=selector_id,
+                                   default=default,
+                                   onchange=onchange,
+                                   onreturn=onreturn,
                                    **kwargs)
         self._configure_widget(widget, font_size, align)
 
@@ -565,7 +565,7 @@ class Menu(object):
             raise ValueError('default value must be empty if the input is a password')
 
         # Create widget
-        widget = _widgets.TextInput(title,
+        widget = _widgets.TextInput(label=title,
                                     textinput_id=textinput_id,
                                     maxchar=maxchar,
                                     maxwidth=maxwidth,
@@ -588,17 +588,19 @@ class Menu(object):
 
         return widget
 
-    def _add_color(self,
-                   title,
-                   color_id='',
-                   default='',
-                   input_underline='_',
-                   align='',
-                   font_size=0,
-                   onchange=None,
-                   onreturn=None,
-                   **kwargs
-                   ):
+    def add_color_input(self,
+                        title,
+                        color_type='',
+                        color_id='',
+                        default='',
+                        input_comma=',',
+                        input_underline='_',
+                        align='',
+                        font_size=0,
+                        onchange=None,
+                        onreturn=None,
+                        **kwargs
+                        ):
         """
         Add a color widget with RGB or Hex format. Includes a preview
         box that renders the given color. (Work in Progress)
@@ -610,10 +612,14 @@ class Menu(object):
 
         :param title: Title of the color input
         :type title: basestring
+        :param color_type: Type of the color input, can be "rgb" or "hex"
+        :type color_type: basestring
         :param color_id: ID of the color input
         :type color_id: basestring
         :param default: Default value to display
-        :type default: basestring, int, float
+        :type default: basestring, tuple
+        :param input_comma: Divisor between RGB channels
+        :type input_comma: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
         :param align: Widget alignment
@@ -644,15 +650,17 @@ class Menu(object):
         assert isinstance(align, str), 'align must be a string'
         assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-        assert isinstance(default, (str, int, float))
+        assert isinstance(default, (str, tuple))
 
         # Create widget
-        widget = _widgets.ColorRGB(title,
-                                   colorrgb_id=color_id,
-                                   input_underline=input_underline,
-                                   onchange=onchange,
-                                   onreturn=onreturn,
-                                   **kwargs)
+        widget = _widgets.ColorInput(label=title,
+                                     colorinput_id=color_id,
+                                     color_type=color_type,
+                                     input_comma=input_comma,
+                                     input_underline=input_underline,
+                                     onchange=onchange,
+                                     onreturn=onreturn,
+                                     **kwargs)
         self._configure_widget(widget, font_size, align)
 
         # Set default value

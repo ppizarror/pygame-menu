@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from pygameMenu.widgets.textinput import TextInput
+import pygameMenu.locals as _locals
 
 
 # noinspection PyTypeChecker
@@ -42,7 +43,9 @@ class ColorInput(TextInput):
 
     def __init__(self,
                  label='',
-                 colorrgb_id='',
+                 colorinput_id='',
+                 color_type='rgb',
+                 input_comma=',',
                  input_underline='_',
                  cursor_color=(0, 0, 0),
                  onchange=None,
@@ -57,9 +60,13 @@ class ColorInput(TextInput):
 
         :param label: Input label text
         :type label: basestring
-        :param colorrgb_id: ID of the text input
-        :type colorrgb_id: basestring
-        :param input_underline: Character drawn under each number input (rgb channels)
+        :param colorinput_id: ID of the text input
+        :type colorinput_id: basestring
+        :param color_type: Type of color input (rgb, hex)
+        :type color_type: basestring
+        :param input_comma: Divisor between RGB channels
+        :type input_comma: basestring
+        :param input_underline: Character drawn under each number input
         :type input_underline: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
@@ -76,30 +83,45 @@ class ColorInput(TextInput):
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        assert isinstance(colorrgb_id, str)
+        assert isinstance(colorinput_id, str)
+        assert isinstance(color_type, str)
+        assert isinstance(input_comma, str)
         assert isinstance(input_underline, str)
         assert isinstance(cursor_color, tuple)
         assert isinstance(repeat_keys_initial_ms, int)
         assert isinstance(repeat_keys_interval_ms, int)
         assert isinstance(repeat_mouse_interval_ms, int)
 
-        super(ColorInput, self).__init__(label='',
-                                         textinput_id='',
-                                         input_type=_locals.INPUT_TEXT,
-                                         input_underline='',
-                                         cursor_color=(0, 0, 0),
+        if len(input_comma) != 1:
+            raise ValueError('input_comma must be a single char')
+        if len(input_comma) == 0:
+            raise ValueError('input_comma cannot be empty')
+
+        _maxchar = 0
+        color_type = color_type.lower()
+        if color_type == 'rgb':
+            _maxchar = 11  # RRR,GGG,BBB
+        elif color_type == 'hex':
+            _maxchar = 7  # #XXYYZZ
+        else:
+            raise ValueError('color type can be "rgb" or "hex"')
+
+        _input_type = _locals.INPUT_TEXT
+        _maxwidth = 0
+        _password = False
+        super(ColorInput, self).__init__(label=label,
+                                         textinput_id=colorinput_id,
+                                         input_type=_input_type,
+                                         input_underline=input_underline,
+                                         cursor_color=cursor_color,
                                          enable_selection=False,
                                          history=0,
-                                         maxchar=0,
-                                         maxwidth=0,
-                                         maxwidth_dynamically_update=True,
-                                         onchange=None,
-                                         onreturn=None,
-                                         password=False,
-                                         password_char='*',
-                                         repeat_keys_initial_ms=450,
-                                         repeat_keys_interval_ms=80,
-                                         repeat_mouse_interval_ms=100,
-                                         selection_color=(30, 30, 30),
-                                         text_ellipsis='...',
+                                         maxchar=_maxchar,
+                                         maxwidth=_maxwidth,  # Disabled
+                                         onchange=onchange,
+                                         onreturn=onreturn,
+                                         password=_password,
+                                         repeat_keys_initial_ms=repeat_keys_initial_ms,
+                                         repeat_keys_interval_ms=repeat_keys_interval_ms,
+                                         repeat_mouse_interval_ms=repeat_mouse_interval_ms,
                                          kwargs=kwargs)

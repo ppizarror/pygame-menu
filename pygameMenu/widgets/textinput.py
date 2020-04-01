@@ -115,7 +115,7 @@ class TextInput(Widget):
         :type history: int
         :param maxchar: Maximum length of input
         :type maxchar: int
-        :param maxwidth: Maximum size of the text to be displayed (overflow)
+        :param maxwidth: Maximum size of the text to be displayed (overflow), if 0 this feature is disabled
         :type maxwidth: int
         :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
         :type maxwidth_dynamically_update: bool
@@ -135,7 +135,7 @@ class TextInput(Widget):
         :type repeat_mouse_interval_ms: float, int
         :param selection_color: Selection box color
         :type selection_color: tuple
-        :param text_ellipsis: Ellipsis text when overflow occurs
+        :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
         :type text_ellipsis: basestring
         :param kwargs: Optional keyword-arguments for callbacks
         """
@@ -883,6 +883,8 @@ class TextInput(Widget):
             self._update_input_string(_default)
         else:
             raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
+        self._update_renderbox()  # Updates cursor
+        self._render()  # Renders the selection box
 
     def _check_input_size(self):
         """
@@ -1476,7 +1478,7 @@ class TextInput(Widget):
                             self.sound.play_key_add()
                             self._cursor_position += 1  # Some are empty, e.g. K_UP
                             self._input_string = new_string  # Only here this is changed (due to renderbox update)
-                            self._update_input_string(new_string)
+                            self._update_input_string(new_string)  # Update the string and the history
                             self._update_renderbox(right=1, addition=True)
                             self.change()
                             updated = True

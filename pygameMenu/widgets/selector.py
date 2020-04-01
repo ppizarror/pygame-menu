@@ -41,7 +41,7 @@ class Selector(Widget):
     """
 
     def __init__(self,
-                 title,
+                 label,
                  elements,
                  selector_id='',
                  default=0,
@@ -52,8 +52,8 @@ class Selector(Widget):
         """
         Description of the specific paramaters (see Widget class for generic ones):
 
-        :param title: Title of the selector
-        :type title: basestring
+        :param label: Selector label text
+        :type label: basestring
         :param elements: Elements of the selector
         :type elements: list
         :param selector_id: ID of the selector
@@ -66,7 +66,7 @@ class Selector(Widget):
         :type onreturn: function, NoneType
         :param kwargs: Optional keyword-arguments for callbacks
         """
-        assert isinstance(title, str)
+        assert isinstance(label, str)
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
@@ -78,7 +78,7 @@ class Selector(Widget):
 
         self._elements = elements
         self._index = 0
-        self._label = title
+        self._label = label
         self._labelsize = 0
         self._sformat = '{0} < {1} >'
 
