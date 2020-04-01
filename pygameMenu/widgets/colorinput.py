@@ -178,7 +178,6 @@ class ColorInput(TextInput):
                                 + key
                                 + self._input_string[self._cursor_position:]
                         )
-                        print('NEW', _new_string, self._input_string)
 
                         # Cannot be comma at first
                         if len(_input) == 0 and key == self._comma:
@@ -218,10 +217,9 @@ class ColorInput(TextInput):
                                 _num = _new_string[_pos_before:_pos_after].replace(',', '')
                                 if _num == '':
                                     _num = '0'
-                                print(_num, str(int(_num)))
+
                                 if int(_num) > 255:  # Number exceeds 25X
                                     return False
-
                                 if _num != str(int(_num)) and key == '0':  # User adds 0 at left, example: 12 -> 012
                                     return False
 
