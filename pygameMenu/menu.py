@@ -334,8 +334,8 @@ class Menu(object):
         """
         Add option to menu. Deprecated method.
         """
-        warnings.warn('Menu.add_option is deprecated, use Menu.add_button instead',
-                      DeprecationWarning)
+        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
+        warnings.warn(_msg, DeprecationWarning)
         return self.add_button(*args, **kwargs)
 
     def add_button(self, element_name, element, *args, **kwargs):
@@ -574,10 +574,10 @@ class Menu(object):
 
     def add_color_input(self,
                         title,
-                        color_type='',
                         color_id='',
+                        color_type='',
                         default='',
-                        input_comma=',',
+                        input_separator=',',
                         input_underline='_',
                         align='',
                         font_size=0,
@@ -588,8 +588,7 @@ class Menu(object):
                         ):
         """
         Add a color widget with RGB or Hex format. Includes a preview
-        box that renders the given color. (Work in Progress)
-        TODO: Implement multiple text inputs and display color
+        box that renders the given color.
 
         And functions onchange and onreturn does
             onchange(current_text, **kwargs)
@@ -597,14 +596,14 @@ class Menu(object):
 
         :param title: Title of the color input
         :type title: basestring
-        :param color_type: Type of the color input, can be "rgb" or "hex"
-        :type color_type: basestring
         :param color_id: ID of the color input
         :type color_id: basestring
+        :param color_type: Type of the color input, can be "rgb" or "hex"
+        :type color_type: basestring
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
         :type default: basestring, tuple
-        :param input_comma: Divisor between RGB channels
-        :type input_comma: basestring
+        :param input_separator: Divisor between RGB channels, not valid in HEX format
+        :type input_separator: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
         :param align: Widget alignment
@@ -639,7 +638,7 @@ class Menu(object):
         widget = _widgets.ColorInput(label=title,
                                      colorinput_id=color_id,
                                      color_type=color_type,
-                                     input_comma=input_comma,
+                                     input_separator=input_separator,
                                      input_underline=input_underline,
                                      onchange=onchange,
                                      onreturn=onreturn,

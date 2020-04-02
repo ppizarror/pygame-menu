@@ -228,7 +228,7 @@ import pygameMenu
     menu.add_button('Exit', pygameMenu.events.MENU_EXIT)        # Adds exit function
     ```
 
-- *add_selector(title, values, selector_id, default, align, onchange, onreturn, \*\*kwargs)*
+- *add_selector(title, values, selector_id, default, align, font_size, onchange, onreturn, \*\*kwargs)*
 
     Add a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
@@ -287,7 +287,7 @@ import pygameMenu
     timer_menu.add_button('Close Menu', pygameMenu.events.MENU_CLOSE)
     ```
 
-- *add_text_input(title, textinput_id, default, input_type, input_underline, maxchar, maxwidth, align, enable_selection, onchange, onreturn, \*\*kwargs)*
+- *add_text_input(title, textinput_id, default, input_type, input_underline, maxchar, maxwidth, align, font_size, enable_copy_paste, enable_selection, password, onchange, onreturn, valid_chars, \*\*kwargs)*
 
     Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
 
@@ -302,10 +302,12 @@ import pygameMenu
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
     | align | Text input alignment | str | locals.ALIGN_CENTER |
     | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | enable_copy_paste | Enables copy, paste and cut | bool | True |
     | enable_selection | Enables text selection | bool |
     | password | Input is displayed as a password | bool | False |
     | onchange | Function that executes when change the value of text input | function | None |
     | onreturn | Function that executes when pressing return button | function | None |
+    | valid_chars | List of valid characters, if None all chars are valid | list[str], None |
     | **kwargs | Additional arguments | - | - |
 
     Check possible alignment or data type in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
@@ -329,6 +331,45 @@ import pygameMenu
     settings_menu.add_text_input('Some long text: ', maxwidth=15)
 
     settings_menu.add_button('Return to main menu', pygameMenu.events.MENU_BACK)
+    ```
+
+- *add_color_input(title, color_id, color_type, default, input_separator, input_underline, align, font_size, onchange, onreturn, previsualization_width, \*\*kwargs)*
+
+    Adds a color widget with RGB or Hex format. Includes a preview box that renders the given color.
+
+    | Param | Description | Type | Default |
+    | :--: | :-- | :--: | :--: |
+    | title | Label string on menu entry | str | *Required* |
+    | color_id | Color input identificator | str | "" |
+    | color_type | Type of the color, can be "rgb" or "hex" | str | "" |
+    | default | Default value of the color | str (hex), tuple (r,gb,) | "" |
+    | input_separator | Character used to separate channels in RGB format | str | "," |
+    | input_underline | Char underline of the input | str | "" |
+    | align | Text input alignment | str | locals.ALIGN_CENTER |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | onchange | Function that executes when change the value of text input | function | None |
+    | onreturn | Function that executes when pressing return button | function | None |
+    | previsualization_width | Width of the previsualization of the color, scale of the widget height | int,float | 3 |
+    | **kwargs | Additional arguments | - | - |
+
+    Check possible alignment or data type in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
+
+    Example:
+
+    ```python
+    def check_color_value(value):
+        """
+        This function tests the color input value.
+        :param value: The widget value (tuple)
+        :return: None
+        """
+        print('New color: {0}'.format(color))
+
+    settings_menu = pygameMenu.Menu(...)
+
+    settings_menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
+    settings_menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
+    settings_menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
     ```
 
 - *add_line(text)*
