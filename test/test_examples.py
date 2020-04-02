@@ -70,6 +70,6 @@ class ExamplesTest(unittest.TestCase):
     @staticmethod
     def test_example_scroll_bar():
         """
-        Test multi-input example.
+        Test scroll bar example.
         """
         example4.main(test=True)
