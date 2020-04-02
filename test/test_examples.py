@@ -35,6 +35,7 @@ from test._utils import *
 import pygameMenu.examples.timer_clock as example1
 import pygameMenu.examples.game_selector as example2
 import pygameMenu.examples.multi_input as example3
+import pygameMenu.examples.scroll_bar as example4
 
 
 class ExamplesTest(unittest.TestCase):
@@ -44,7 +45,7 @@ class ExamplesTest(unittest.TestCase):
         """
         Test timer clock example.
         """
-        example1.main(True)
+        example1.main(test=True)
         example1.mainmenu_background()
         example1.reset_timer()
 
@@ -53,7 +54,7 @@ class ExamplesTest(unittest.TestCase):
         """
         Test multi-input example.
         """
-        example2.main(True)
+        example2.main(test=True)
         font = PygameMenuUtils.load_font(PygameMenuUtils.random_font(), 5)
         example2.play_function(['EASY'], font, test=True)
         example2.play_function(['MEDIUM'], font, test=True)
@@ -64,4 +65,11 @@ class ExamplesTest(unittest.TestCase):
         """
         Test multi-input example.
         """
-        example3.main(True)
+        example3.main(test=True)
+
+    @staticmethod
+    def test_example_scroll_bar():
+        """
+        Test multi-input example.
+        """
+        example4.main(test=True)

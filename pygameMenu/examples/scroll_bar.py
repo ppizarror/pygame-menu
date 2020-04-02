@@ -84,9 +84,11 @@ def v_changed(value):
     print("Vertical position changed:", value)
 
 
-def main():
+def main(test=False):
     """
-    Main function
+    Main function.
+
+    :param test: If test, mainloop breaks at first iteration
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
@@ -154,6 +156,10 @@ def main():
 
         screen.blit(world, (0, 0), (trunc_world_orig, trunc_world))
         pygame.display.update()
+
+        # At first loop returns
+        if test:
+            break
 
 
 if __name__ == '__main__':

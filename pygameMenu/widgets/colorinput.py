@@ -153,6 +153,18 @@ class ColorInput(TextInput):
         self._prev_render_width = None
         self._prev_size = prev_size
 
+    def clear(self):
+        """
+        Clear the current text.
+
+        :return: None
+        """
+        super(ColorInput, self).clear()
+        self._prev_surface = None
+        if self._color_type == _TYPE_HEX:
+            super(ColorInput, self).set_value('#')
+        self.change()
+
     def set_value(self, text):
         """
         See upper class doc.
@@ -175,7 +187,7 @@ class ColorInput(TextInput):
             assert 0 <= b <= 255, 'Green color must be between 0 and 255'
             _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._comma)
         elif self._color_type == _TYPE_HEX:
-            text = str(text)
+            text = str(text).strip()
             if text == '':
                 _color = '#'
             else:
@@ -192,12 +204,11 @@ class ColorInput(TextInput):
                 for ch in text:
                     if ch == '#':
                         count_hash += 1
-                if count_hash == 1 and text[0] != '#':
-                    raise ValueError('Color format must be "#RRGGBB"')
+                if count_hash == 1:
+                    assert text[0] == '#', 'Color format must be "#RRGGBB"'
                 if count_hash == 0:
                     text = '#' + text
-                assert count_hash <= 1 or len(
-                    text) != 7, 'Color invalid, only formats "#RRGGBB" and "RRGGBB" are allowed'
+                assert len(text) == 7, 'Color invalid, only formats "#RRGGBB" and "RRGGBB" are allowed'
                 _color = text
 
         super(ColorInput, self).set_value(_color)
@@ -208,7 +219,7 @@ class ColorInput(TextInput):
         """
         if self._color_type == _TYPE_RGB:
             _color = self._input_string.split(self._comma)
-            if len(_color) != 3:
+            if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
                 return int(_color[0]), int(_color[1]), int(_color[2])
             # raise ValueError('Invalid color format, R, G and B channels must be provided')
         elif self._color_type == _TYPE_HEX:
@@ -223,30 +234,10 @@ class ColorInput(TextInput):
         Changes the color of the previsualization box.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: pygame.surface.SurfaceType, None
         """
-        r = -1
-        g = -1
-        b = -1
-
-        # Validate the color
-        if self._color_type == _TYPE_RGB:
-            _color = self._input_string.split(self._comma)
-            if len(_color) != 3:
-                return
-            if _color[0] == '' or _color[1] == '' or _color[2] == '':
-                return
-            r = int(_color[0])
-            g = int(_color[1])
-            b = int(_color[2])
-        elif self._color_type == _TYPE_HEX:
-            if len(self._input_string) != 7:
-                return
-            _color = self._input_string[1:]
-            r, g, b = tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
-
-        # If invalid color (-1)
-        if r == -1 or g == -1 or b == -1:
+        r, g, b = self.get_value()
+        if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color
             self._prev_surface = None
             return
 
@@ -260,9 +251,10 @@ class ColorInput(TextInput):
             self._last_b = b
 
         # Draw the surface
-        surface.blit(self._prev_surface,
-                     (self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10,
-                      self._rect.y - 1))
+        if surface is not None:
+            _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
+            _posy = self._rect.y
+            surface.blit(self._prev_surface, (_posx, _posy))
 
     def get_rect(self):
         """
