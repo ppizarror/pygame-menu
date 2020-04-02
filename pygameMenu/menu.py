@@ -536,15 +536,7 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
-        self._size += 1
-        if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-        if align == '':
-            align = self._widget_align
-
-        if font_size == 0:
-            font_size = self._fsize
+        align, font_size = self.set_initial_values(align, font_size)
 
         # Check data
         assert isinstance(textinput_id, str), 'ID must be a string'
@@ -588,6 +580,17 @@ class Menu(object):
 
         return widget
 
+    def set_initial_values(self, align, font_size):
+        self._size += 1
+        if self._size > 1:
+            dy = -self._fsize / 2 - self._opt_dy / 2
+            self._opt_posy += dy
+        if align == '':
+            align = self._widget_align
+        if font_size == 0:
+            font_size = self._fsize
+        return align, font_size
+
     def _add_color_rgb(self,
                        title,
                        color_id='',
@@ -628,15 +631,7 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.color_rgb.ColorRGB
         """
-        self._size += 1
-        if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-        if align == '':
-            align = self._widget_align
-
-        if font_size == 0:
-            font_size = self._fsize
+        align, font_size = self.set_initial_values(align, font_size)
 
         # Check data
         assert isinstance(color_id, str), 'ID must be a string'
