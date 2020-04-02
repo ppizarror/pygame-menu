@@ -574,8 +574,8 @@ class Menu(object):
 
     def add_color_input(self,
                         title,
+                        color_type,
                         color_id='',
-                        color_type='',
                         default='',
                         input_separator=',',
                         input_underline='_',
@@ -596,10 +596,10 @@ class Menu(object):
 
         :param title: Title of the color input
         :type title: basestring
-        :param color_id: ID of the color input
-        :type color_id: basestring
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: basestring
+        :param color_id: ID of the color input
+        :type color_id: basestring
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
         :type default: basestring, tuple
         :param input_separator: Divisor between RGB channels, not valid in HEX format
