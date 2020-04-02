@@ -31,10 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import math as _math
+
 import pygame as _pygame
-from pygameMenu.widgets.widget import Widget
+
 import pygameMenu.controls as _ctrl
 import pygameMenu.locals as _locals
+from pygameMenu.utils import check_key_pressed_valid
+from pygameMenu.widgets.widget import Widget
 
 try:
     # noinspection PyProtectedMember
@@ -1366,7 +1369,7 @@ class TextInput(Widget):
             if event.type == _pygame.KEYDOWN:
 
                 # Check if any key is pressed, if True the event is invalid
-                if not self.check_key_pressed_valid(event):
+                if not check_key_pressed_valid(event):
                     continue
 
                 self._cursor_visible = True  # So the user sees where he writes
