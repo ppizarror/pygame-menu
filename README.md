@@ -333,15 +333,15 @@ import pygameMenu
     settings_menu.add_button('Return to main menu', pygameMenu.events.MENU_BACK)
     ```
 
-- *add_color_input(title, color_id, color_type, default, input_separator, input_underline, align, font_size, onchange, onreturn, previsualization_width, \*\*kwargs)*
+- *add_color_input(title, color_type, color_id, default, input_separator, input_underline, align, font_size, onchange, onreturn, previsualization_width, \*\*kwargs)*
 
     Adds a color widget with RGB or Hex format. Includes a preview box that renders the given color.
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | title | Label string on menu entry | str | *Required* |
+    | color_type | Type of the color, can be "rgb" or "hex" | str | *Required* |
     | color_id | Color input identificator | str | "" |
-    | color_type | Type of the color, can be "rgb" or "hex" | str | "" |
     | default | Default value of the color | str (hex), tuple (r,gb,) | "" |
     | input_separator | Character used to separate channels in RGB format | str | "," |
     | input_underline | Char underline of the input | str | "" |
