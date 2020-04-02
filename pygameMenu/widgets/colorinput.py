@@ -138,7 +138,7 @@ class ColorInput(TextInput):
                                          repeat_keys_interval_ms=repeat_keys_interval_ms,
                                          repeat_mouse_interval_ms=repeat_mouse_interval_ms,
                                          valid_chars=self._valid_chars,
-                                         kwargs=kwargs,
+                                         **kwargs
                                          )
 
         # Store inner variables
@@ -209,13 +209,13 @@ class ColorInput(TextInput):
         if self._color_type == _TYPE_RGB:
             _color = self._input_string.split(self._comma)
             if len(_color) != 3:
-                raise ValueError('Invalid color format, R, G and B channels must be provided')
-            return int(_color[0]), int(_color[1]), int(_color[2])
+                return int(_color[0]), int(_color[1]), int(_color[2])
+            # raise ValueError('Invalid color format, R, G and B channels must be provided')
         elif self._color_type == _TYPE_HEX:
-            if len(self._input_string) != 7:
-                raise ValueError('Invalid color format, color must be "#XXXXXX"')
-            _color = self._input_string[1:]
-            return tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
+            if len(self._input_string) == 7:
+                _color = self._input_string[1:]
+                return tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
+            # raise ValueError('Invalid color format, color must be "#XXXXXX"')
         return -1, -1, -1
 
     def _previsualize_color(self, surface):
@@ -412,6 +412,6 @@ class ColorInput(TextInput):
             if key == '0' and len(self._input_string) == self._cursor_position and _total_commas < 2 and \
                     (len(self._input_string) == 1 or
                      (len(self._input_string) > 2 and self._input_string[self._cursor_position - 2] == self._comma)):
-                self._push_key_input(self._comma, sounds=False)
+                self._push_key_input(self._comma, sounds=False)  # This calls .onchange()
 
         return updated
