@@ -235,7 +235,8 @@ def main(test=False):
 
     # Test colors
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
-    more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0))
+    more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_comma='-')
+    more_settings_menu.add_color_input('Color in Hex: ', color_type='hex')
 
     more_settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                                   align=pygameMenu.locals.ALIGN_CENTER)

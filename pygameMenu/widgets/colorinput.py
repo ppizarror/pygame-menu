@@ -54,6 +54,7 @@ class ColorInput(TextInput):
                  cursor_color=(0, 0, 0),
                  onchange=None,
                  onreturn=None,
+                 prev_size=3,
                  repeat_keys_initial_ms=450,
                  repeat_keys_interval_ms=80,
                  repeat_mouse_interval_ms=100,
@@ -78,6 +79,8 @@ class ColorInput(TextInput):
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
         :type onreturn: function, NoneType
+        :param prev_size: Width of the previsualization box in terms of the height of the widget
+        :type prev_size: int, float
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :type repeat_keys_initial_ms: float, int
         :param repeat_keys_interval_ms: Interval between key press repetition when held
@@ -95,11 +98,13 @@ class ColorInput(TextInput):
         assert isinstance(repeat_keys_initial_ms, int)
         assert isinstance(repeat_keys_interval_ms, int)
         assert isinstance(repeat_mouse_interval_ms, int)
+        assert isinstance(prev_size, (int, float))
 
         if len(input_comma) != 1:
             raise ValueError('input_comma must be a single char')
         if len(input_comma) == 0:
             raise ValueError('input_comma cannot be empty')
+        assert prev_size > 0, 'previsualization width must be greater than zero'
 
         _maxchar = 0
         self._color_type = color_type.lower()
@@ -108,7 +113,7 @@ class ColorInput(TextInput):
             self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_comma]
         elif self._color_type == _TYPE_HEX:
             _maxchar = 7  # #XXYYZZ
-            self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '#', '0', '1', '2', '3',
+            self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '0', '1', '2', '3', '#',
                                  '4', '5', '6', '7', '8', '9']
         else:
             raise ValueError('color type must be "{0}" or "{1}"'.format(_TYPE_HEX, _TYPE_RGB))
@@ -140,15 +145,25 @@ class ColorInput(TextInput):
         self._comma = input_comma
         self._comma2 = input_comma + input_comma
 
+        # Previsualization surface, if -1 previsualization does not show
+        self._last_r = -1
+        self._last_g = -1
+        self._last_b = -1
+        self._prev_surface = None
+        self._prev_render_width = None
+        self._prev_size = prev_size
+
     def set_value(self, text):
         """
         See upper class doc.
+        Widget always returns a tuple of (r,g,b)
         """
-        if text == '':
-            super(ColorInput, self).set_value('')
-            return
         _color = ''
+
         if self._color_type == _TYPE_RGB:
+            if text == '':
+                super(ColorInput, self).set_value('')
+                return
             assert isinstance(text, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
             assert len(text) == 3, 'Tuple must contain only 3 colors, R, G, B'
             r, g, b = text
@@ -158,10 +173,115 @@ class ColorInput(TextInput):
             assert 0 <= r <= 255, 'Red color must be between 0 and 255'
             assert 0 <= g <= 255, 'Blue color must be between 0 and 255'
             assert 0 <= b <= 255, 'Green color must be between 0 and 255'
-            _color = '{0},{1},{2}'.format(r, g, b)
+            _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._comma)
         elif self._color_type == _TYPE_HEX:
-            pass
+            text = str(text)
+            if text == '':
+                _color = '#'
+            else:
+
+                # Remove all invalid chars
+                _valid_text = ''
+                for ch in text:
+                    if ch in self._valid_chars:
+                        _valid_text += ch
+                text = _valid_text
+
+                # Check if the color is valid
+                count_hash = 0
+                for ch in text:
+                    if ch == '#':
+                        count_hash += 1
+                if count_hash == 1 and text[0] != '#':
+                    raise ValueError('Color format must be "#RRGGBB"')
+                if count_hash == 0:
+                    text = '#' + text
+                assert count_hash <= 1 or len(
+                    text) != 7, 'Color invalid, only formats "#RRGGBB" and "RRGGBB" are allowed'
+                _color = text
+
         super(ColorInput, self).set_value(_color)
+
+    def get_value(self):
+        """
+        See upper class doc.
+        """
+        if self._color_type == _TYPE_RGB:
+            _color = self._input_string.split(self._comma)
+            if len(_color) != 3:
+                raise ValueError('Invalid color format, R, G and B channels must be provided')
+            return int(_color[0]), int(_color[1]), int(_color[2])
+        elif self._color_type == _TYPE_HEX:
+            if len(self._input_string) != 7:
+                raise ValueError('Invalid color format, color must be "#XXXXXX"')
+            _color = self._input_string[1:]
+            return tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
+        return -1, -1, -1
+
+    def _previsualize_color(self, surface):
+        """
+        Changes the color of the previsualization box.
+
+        :param surface: Surface to draw
+        :type surface: pygame.surface.SurfaceType
+        """
+        r = -1
+        g = -1
+        b = -1
+
+        # Validate the color
+        if self._color_type == _TYPE_RGB:
+            _color = self._input_string.split(self._comma)
+            if len(_color) != 3:
+                return
+            if _color[0] == '' or _color[1] == '' or _color[2] == '':
+                return
+            r = int(_color[0])
+            g = int(_color[1])
+            b = int(_color[2])
+        elif self._color_type == _TYPE_HEX:
+            if len(self._input_string) != 7:
+                return
+            _color = self._input_string[1:]
+            r, g, b = tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
+
+        # If invalid color (-1)
+        if r == -1 or g == -1 or b == -1:
+            self._prev_surface = None
+            return
+
+        # If previsualization surface is None or the color changed
+        if self._last_r != r or self._last_b != b or self._last_g != g or self._prev_surface is None:
+            self._prev_surface = _pygame.Surface((self._prev_size * self._rect.height, self._rect.height))
+            self._prev_surface.fill((r, g, b))
+            self._last_r = r
+            self._last_g = g
+            self._last_b = b
+
+        # Draw the surface
+        surface.blit(self._prev_surface,
+                     (self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10,
+                      self._rect.y - 1))
+
+    def get_rect(self):
+        """
+        Return the Rect object, this updates the width of the rect depending if
+        the previsualization box is active.
+
+        :return: pygame.Rect
+        :rtype: pygame.rect.RectType
+        """
+        self._render()
+        self._rect.width, self._rect.height = self._surface.get_size()
+        self._rect.width += self._prev_size * self._rect.height
+        return self._rect
+
+    def draw(self, surface):
+        """
+        See upper class doc.
+        """
+        super(ColorInput, self).draw(surface)
+        self._previsualize_color(surface)
 
     def update(self, events):
         """
@@ -250,6 +370,37 @@ class ColorInput(TextInput):
                                     return False
                                 if len(_num) > 3:  # Number like 0XXX
                                     return False
+
+        elif self._color_type == _TYPE_HEX:
+            for event in events:  # type: _pygame.event.EventType
+                if event.type == _pygame.KEYDOWN:
+
+                    # Check if any key is pressed, if True the event is invalid
+                    if not self.check_key_pressed_valid(event):
+                        return True
+
+                    # Backspace button, delete text from right
+                    if event.key == _pygame.K_BACKSPACE:
+                        if _curpos == 1:
+                            return True
+
+                    # Delete button, delete text from left
+                    elif event.key == _pygame.K_DELETE:
+                        if _curpos == 0:
+                            return True
+
+                    # Verify only on user key input, the rest of events are checked by TextInput on super call
+                    key = str(event.unicode)
+                    if key in self._valid_chars:
+                        _new_string = (
+                                self._input_string[:self._cursor_position]
+                                + key
+                                + self._input_string[self._cursor_position:]
+                        )
+                        if key == '#':
+                            return True
+                        if _curpos == 0:
+                            return True
 
         # Update
         updated = super(ColorInput, self).update(events)

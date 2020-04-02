@@ -583,6 +583,7 @@ class Menu(object):
                         font_size=0,
                         onchange=None,
                         onreturn=None,
+                        previsualization_width=3,
                         **kwargs
                         ):
         """
@@ -614,6 +615,8 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param previsualization_width: Previsualization width as a factor of the height
+        :type previsualization_width: float, int
         :param kwargs: Additional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.colorinput.ColorInput
@@ -640,6 +643,7 @@ class Menu(object):
                                      input_underline=input_underline,
                                      onchange=onchange,
                                      onreturn=onreturn,
+                                     prev_size=previsualization_width,
                                      **kwargs)
         self._configure_widget(widget, font_size, align)
         widget.set_value(default)
