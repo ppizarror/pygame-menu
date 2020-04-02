@@ -235,7 +235,7 @@ def main(test=False):
 
     # Test colors
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
-    more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_comma='-')
+    more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_separator='-')
 
     def print_color(color):
         """

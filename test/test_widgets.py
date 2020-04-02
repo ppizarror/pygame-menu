@@ -78,13 +78,11 @@ class WidgetsTest(unittest.TestCase):
         selector.update_elements(new_elements)
         selector.set_value('6 - Hard')
 
+    # noinspection PyArgumentEqualDefault
     def test_colorinput(self):
         """
         Test ColorInput widget.
         """
-        self.assertRaises(ValueError,
-                          lambda: self.menu.add_color_input('title',
-                                                            color_type='none'))
 
         def _assert_invalid_color(_widget):
             """
@@ -110,7 +108,7 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(_b, cb)
 
         # Base rgb
-        widget = self.menu.add_color_input('title', color_type='rgb')
+        widget = self.menu.add_color_input('title', color_type='rgb', input_separator=',')
         widget.set_value((123, 234, 55))
         self.assertRaises(AssertionError,
                           lambda: widget.set_value('0,0,0'))
@@ -120,8 +118,16 @@ class WidgetsTest(unittest.TestCase):
                           lambda: widget.set_value((255, 255, -255)))
         _assert_color(widget, 123, 234, 55)
 
+        # Test separator
+        widget = self.menu.add_color_input('color', color_type='rgb', input_separator='+')
+        widget.set_value((34, 12, 12))
+        self.assertEqual(widget._input_string, '34+12+12')
+        for i in range(10):
+            self.assertRaises(AssertionError,
+                              lambda: self.menu.add_color_input('title', color_type='rgb', input_separator=str(i)))
+
         # Empty rgb
-        widget = self.menu.add_color_input('color', color_type='rgb')
+        widget = self.menu.add_color_input('color', color_type='rgb', input_separator=',')
 
         widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
         widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))

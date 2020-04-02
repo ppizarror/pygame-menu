@@ -49,7 +49,7 @@ class ColorInput(TextInput):
                  label='',
                  colorinput_id='',
                  color_type=_TYPE_RGB,
-                 input_comma=',',
+                 input_separator=',',
                  input_underline='_',
                  cursor_color=(0, 0, 0),
                  onchange=None,
@@ -69,8 +69,8 @@ class ColorInput(TextInput):
         :type colorinput_id: basestring
         :param color_type: Type of color input (rgb, hex)
         :type color_type: basestring
-        :param input_comma: Divisor between RGB channels
-        :type input_comma: basestring
+        :param input_separator: Divisor between RGB channels
+        :type input_separator: basestring
         :param input_underline: Character drawn under each number input
         :type input_underline: basestring
         :param cursor_color: Color of cursor
@@ -92,7 +92,7 @@ class ColorInput(TextInput):
         assert isinstance(label, str)
         assert isinstance(colorinput_id, str), 'ID must be a string'
         assert isinstance(color_type, str), 'color_type must be a string'
-        assert isinstance(input_comma, str), 'input_comma must be a string'
+        assert isinstance(input_separator, str), 'input_separator must be a string (char)'
         assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(cursor_color, tuple)
         assert isinstance(repeat_keys_initial_ms, int)
@@ -100,17 +100,20 @@ class ColorInput(TextInput):
         assert isinstance(repeat_mouse_interval_ms, int)
         assert isinstance(prev_size, (int, float))
 
-        if len(input_comma) != 1:
-            raise ValueError('input_comma must be a single char')
-        if len(input_comma) == 0:
-            raise ValueError('input_comma cannot be empty')
+        if len(input_separator) != 1:
+            raise ValueError('input_separator must be a single char')
+        if len(input_separator) == 0:
+            raise ValueError('input_separator cannot be empty')
         assert prev_size > 0, 'previsualization width must be greater than zero'
+
+        assert input_separator not in ['0', '1', '2', '3', '4', '5', '6', '7', '8',
+                                       '9'], 'input_separator cannot be a number'
 
         _maxchar = 0
         self._color_type = color_type.lower()
         if self._color_type == _TYPE_RGB:
             _maxchar = 11  # RRR,GGG,BBB
-            self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_comma]
+            self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_separator]
         elif self._color_type == _TYPE_HEX:
             _maxchar = 7  # #XXYYZZ
             self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '0', '1', '2', '3', '#',
@@ -142,8 +145,7 @@ class ColorInput(TextInput):
                                          )
 
         # Store inner variables
-        self._comma = input_comma
-        self._comma2 = input_comma + input_comma
+        self._separator = input_separator
 
         # Previsualization surface, if -1 previsualization does not show
         self._last_r = -1
@@ -185,7 +187,7 @@ class ColorInput(TextInput):
             assert 0 <= r <= 255, 'Red color must be between 0 and 255'
             assert 0 <= g <= 255, 'Blue color must be between 0 and 255'
             assert 0 <= b <= 255, 'Green color must be between 0 and 255'
-            _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._comma)
+            _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
         elif self._color_type == _TYPE_HEX:
             text = str(text).strip()
             if text == '':
@@ -217,7 +219,7 @@ class ColorInput(TextInput):
         See upper class doc.
         """
         if self._color_type == _TYPE_RGB:
-            _color = self._input_string.split(self._comma)
+            _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
                 return int(_color[0]), int(_color[1]), int(_color[2])
             # raise ValueError('Invalid color format, R, G and B channels must be provided')
@@ -281,7 +283,7 @@ class ColorInput(TextInput):
         """
         _input = self._input_string
         _curpos = self._cursor_position
-        _disable_remove_comma = True
+        _disable_remove_separator = True
 
         key = ''  # Pressed key
         if self._color_type == _TYPE_RGB:
@@ -292,19 +294,19 @@ class ColorInput(TextInput):
                     if not self.check_key_pressed_valid(event):
                         return True
 
-                    if _disable_remove_comma and len(_input) > 0 and len(_input) > _curpos and (
-                            self._comma2 not in _input or
-                            _input[_curpos] == self._comma and len(_input) == _curpos + 1
+                    if _disable_remove_separator and len(_input) > 0 and len(_input) > _curpos and (
+                            '{0}{0}'.format(self._separator) not in _input or
+                            _input[_curpos] == self._separator and len(_input) == _curpos + 1
                     ):
 
                         # Backspace button, delete text from right
                         if event.key == _pygame.K_BACKSPACE:
-                            if len(_input) >= 1 and _input[_curpos - 1] == self._comma:
+                            if len(_input) >= 1 and _input[_curpos - 1] == self._separator:
                                 return True
 
                         # Delete button, delete text from left
                         elif event.key == _pygame.K_DELETE:
-                            if _input[_curpos] == self._comma:
+                            if _input[_curpos] == self._separator:
                                 return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
@@ -317,37 +319,33 @@ class ColorInput(TextInput):
                                 + self._input_string[self._cursor_position:]
                         )
 
-                        # Cannot be comma at first
-                        if len(_input) == 0 and key == self._comma:
+                        # Cannot be separator at first
+                        if len(_input) == 0 and key == self._separator:
                             return False
 
                         if len(_input) > 1:
 
-                            # Check commas
-                            if key == self._comma:
+                            # Check separators
+                            if key == self._separator:
 
-                                # if _input[_curpos - 1] == self._comma or \
-                                #         len(_input) > _curpos and _input[_curpos] == self._comma:
-                                #     return False
-
-                                # If more than 2 commas
-                                _total_commas = 0
+                                # If more than 2 separators
+                                _total_separator = 0
                                 for _ch in _input:
-                                    if _ch == self._comma:
-                                        _total_commas += 1
-                                if _total_commas >= 2:
+                                    if _ch == self._separator:
+                                        _total_separator += 1
+                                if _total_separator >= 2:
                                     return False
 
-                            # Check the number between the current comma, this number must be between 0-255
-                            if key != self._comma:
+                            # Check the number between the current separators, this number must be between 0-255
+                            if key != self._separator:
                                 _pos_before = 0
                                 _pos_after = 0
                                 for _i in range(_curpos):
-                                    if _new_string[_curpos - _i - 1] == self._comma:
+                                    if _new_string[_curpos - _i - 1] == self._separator:
                                         _pos_before = _curpos - _i
                                         break
                                 for _i in range(len(_new_string) - _curpos):
-                                    if _new_string[_curpos + _i] == self._comma:
+                                    if _new_string[_curpos + _i] == self._separator:
                                         _pos_after = _curpos + _i
                                         break
                                 if _pos_after == 0:
@@ -394,15 +392,16 @@ class ColorInput(TextInput):
 
         # After
         if self._color_type == _TYPE_RGB:
-            _total_commas = 0
+            _total_separator = 0
             for _ch in _input:
-                if _ch == self._comma:
-                    _total_commas += 1
+                if _ch == self._separator:
+                    _total_separator += 1
 
-            # Adds auto commas
-            if key == '0' and len(self._input_string) == self._cursor_position and _total_commas < 2 and \
+            # Adds auto separator
+            if key == '0' and len(self._input_string) == self._cursor_position and _total_separator < 2 and \
                     (len(self._input_string) == 1 or
-                     (len(self._input_string) > 2 and self._input_string[self._cursor_position - 2] == self._comma)):
-                self._push_key_input(self._comma, sounds=False)  # This calls .onchange()
+                     (len(self._input_string) > 2 and self._input_string[
+                         self._cursor_position - 2] == self._separator)):
+                self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
 
         return updated
