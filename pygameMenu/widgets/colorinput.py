@@ -191,7 +191,6 @@ class ColorInput(TextInput):
             if text == '':
                 _color = '#'
             else:
-
                 # Remove all invalid chars
                 _valid_text = ''
                 for ch in text:
@@ -253,7 +252,7 @@ class ColorInput(TextInput):
         # Draw the surface
         if surface is not None:
             _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
-            _posy = self._rect.y
+            _posy = self._rect.y - 1
             surface.blit(self._prev_surface, (_posx, _posy))
 
     def get_rect(self):
