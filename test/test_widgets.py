@@ -78,6 +78,167 @@ class WidgetsTest(unittest.TestCase):
         selector.update_elements(new_elements)
         selector.set_value('6 - Hard')
 
+    def test_colorinput(self):
+        """
+        Test ColorInput widget.
+        """
+        self.assertRaises(ValueError,
+                          lambda: self.menu.add_color_input('title',
+                                                            color_type='none'))
+
+        def _assert_invalid_color(_widget):
+            """
+            Assert that the widget color is invalid.
+            :param _widget: Widget object
+            """
+            _r, _g, _b = _widget.get_value()
+            self.assertEqual(_r, -1)
+            self.assertEqual(_g, -1)
+            self.assertEqual(_b, -1)
+
+        def _assert_color(_widget, cr, cg, cb):
+            """
+            Assert that the widget color is invalid.
+            :param _widget: Widget object
+            :param cr: Red channel, number between 0 and 255
+            :param cg: Green channel, number between 0 and 255
+            :param cb: Blue channel, number between 0 and 255
+            """
+            _r, _g, _b = _widget.get_value()
+            self.assertEqual(_r, cr)
+            self.assertEqual(_g, cg)
+            self.assertEqual(_b, cb)
+
+        # Base rgb
+        widget = self.menu.add_color_input('title', color_type='rgb')
+        widget.set_value((123, 234, 55))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('0,0,0'))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value((255, 0,)))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value((255, 255, -255)))
+        _assert_color(widget, 123, 234, 55)
+
+        # Empty rgb
+        widget = self.menu.add_color_input('color', color_type='rgb')
+
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
+        self.assertEqual(widget._cursor_position, 0)
+        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        self.assertEqual(widget._cursor_position, 0)
+        _assert_invalid_color(widget)
+
+        # Write secuence: 2 -> 25 -> 25, -> 25,0,
+        # The comma after the zero must be atomatically setted
+        widget.update(PygameUtils.key(pygame.K_2, keydown=True, char='2'))
+        widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
+        widget.update(PygameUtils.key(pygame.K_COMMA, keydown=True, char=','))
+        self.assertEqual(widget._input_string, '25,')
+        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        self.assertEqual(widget._input_string, '25,0,')
+        _assert_invalid_color(widget)
+
+        # Now, secuence: 25,0,c -> 25c,0, with cursor c
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        self.assertEqual(widget._cursor_position, 2)
+
+        # Secuence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
+        # That should be cancelled because 2555 > 255
+        widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
+        self.assertEqual(widget._input_string, '255,0,')
+        widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
+        self.assertEqual(widget._input_string, '255,0,')
+
+        # Invalid left zeros, try to write 255,0, -> 255,00, but that should be disabled
+        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        self.assertEqual(widget._input_string, '255,0,')
+
+        # Second comma cannot be deleted because there's a number between ,0,
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(widget._input_string, '255,0,')
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        self.assertEqual(widget._input_string, '255,0,')
+
+        # Current cursor is at 255c,0,
+        # Now right comma and 0 can be deleted
+        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(widget._input_string, '255,')
+
+        # Fill with zeros, then number with 2 consecutive 0 types must be 255,0,0
+        # Commas should be inserted automatically
+        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        self.assertEqual(widget._input_string, '255,0,0')
+        _assert_color(widget, 255, 0, 0)
+
+        # At this state, user cannot add more zeros at right
+        for i in range(5):
+            widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        self.assertEqual(widget._input_string, '255,0,0')
+
+        widget.clear()
+        self.assertEqual(widget._input_string, '')
+
+        # Assert invalid defaults rgb
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', default=(255, 255,)))
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', default=(255, 255)))
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
+
+        # Assert hex widget
+        widget = self.menu.add_color_input('title', color_type='hex')
+        self.assertEqual(widget._input_string, '#')
+        self.assertEqual(widget._cursor_position, 1)
+        _assert_invalid_color(widget)
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('#FF'))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('#FFFFF<'))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('#FFFFF'))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('#F'))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('FFFFF'))
+        self.assertRaises(AssertionError,
+                          lambda: widget.set_value('F'))
+        widget.set_value('FF00FF')
+        _assert_color(widget, 255, 0, 255)
+        widget.set_value('#12FfAa')
+        _assert_color(widget, 18, 255, 170)
+        widget.set_value('   59C1e5')
+        _assert_color(widget, 89, 193, 229)
+        widget.clear()
+        self.assertEqual(widget._input_string, '#')  # This cannot be empty
+        self.assertEqual(widget._cursor_position, 1)
+
+        # In hex widget # cannot be deleted
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        self.assertEqual(widget._cursor_position, 1)
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        self.assertEqual(widget._input_string, '#')
+        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
+        for i in range(10):
+            widget.update(PygameUtils.key(pygame.K_f, keydown=True, char='f'))
+        self.assertEqual(widget._input_string, '#ffffff')
+        _assert_color(widget, 255, 255, 255)
+        widget._previsualize_color(surface=None)
+
     def test_textinput(self):
         """
         Test TextInput widget.
@@ -94,8 +255,8 @@ class WidgetsTest(unittest.TestCase):
                                                            default='bad'))
 
         # Create text input widget
-        textinput = self.menu.add_text_input('title', password=True, input_underline='_')
-        textinput.set_value('new_value')
+        textinput = self.menu.add_text_input('title', input_underline='_')
+        textinput.set_value('new_value')  # No error
         textinput.selected = False
         textinput.draw(surface)
         textinput.selected = True
@@ -103,6 +264,18 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), 'new_value')
         textinput.clear()
         self.assertEqual(textinput.get_value(), '')
+
+        passwordinput = self.menu.add_text_input('title', password=True, input_underline='_')
+        self.assertRaises(ValueError,  # Password cannot be setted
+                          lambda: passwordinput.set_value('new_value'))
+        passwordinput.set_value('')  # No error
+        passwordinput.selected = False
+        passwordinput.draw(surface)
+        passwordinput.selected = True
+        passwordinput.draw(surface)
+        self.assertEqual(passwordinput.get_value(), '')
+        passwordinput.clear()
+        self.assertEqual(passwordinput.get_value(), '')
 
         # Create selection box
         string = 'the text'
@@ -115,7 +288,6 @@ class WidgetsTest(unittest.TestCase):
         textinput.draw(surface)
 
         textinput = self.menu.add_text_input('title',
-                                             password=True,
                                              input_underline='_',
                                              maxwidth=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
@@ -124,9 +296,18 @@ class WidgetsTest(unittest.TestCase):
         textinput._paste()
         textinput._cut()
 
+        textinput_nocopy = self.menu.add_text_input('title',
+                                                    input_underline='_',
+                                                    maxwidth=20,
+                                                    enable_copy_paste=False)
+        textinput_nocopy.set_value('this cannot be copied')
+        textinput_nocopy._copy()
+        textinput_nocopy._paste()
+        textinput_nocopy._cut()
+
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
-        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True, ))
+        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
@@ -175,7 +356,7 @@ class WidgetsTest(unittest.TestCase):
         thick = 80
         length = screen_size[1]
         world_range = (50, world.get_height())
-        world_length = world_range[1] - world_range[0]
+        # world_length = world_range[1] - world_range[0]
         orientation = _locals.ORIENTATION_VERTICAL
         x, y = screen_size[0] - thick, 0
 
@@ -187,8 +368,7 @@ class WidgetsTest(unittest.TestCase):
                        page_ctrl_thick=thick,
                        page_ctrl_color=(235, 235, 230))
 
-        sb.set_shadow(enabled=True,
-                      color=(245, 245, 245),
+        sb.set_shadow(color=(245, 245, 245),
                       position=_locals.POSITION_SOUTHEAST,
                       offset=2)
 

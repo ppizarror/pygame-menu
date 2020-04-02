@@ -84,9 +84,11 @@ def v_changed(value):
     print("Vertical position changed:", value)
 
 
-def main():
+def main(test=False):
     """
-    Main function
+    Main function.
+
+    :param test: If test, mainloop breaks at first iteration
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
@@ -128,32 +130,42 @@ def main():
     sb_v.set_controls(False)
     sb_v.set_position(scr_size[0] - thick_v, 0)
     sb_v.set_page_step(scr_size[1] - thick_h)
+    clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
     # Main loop
     # -------------------------------------------------------------------------
     while True:
-        event = pygame.event.wait()
 
-        if event.type is pygame.QUIT:
-            break
+        # Clock tick
+        clock.tick(60)
 
-        if event.type is pygame.KEYDOWN and event.key == pygame.K_h:
-            sb_h.set_value(100)
+        # Application events
+        events = pygame.event.get()
+        for event in events:
+            if event.type is pygame.QUIT:
+                exit()
 
-        if event.type is pygame.KEYDOWN and event.key == pygame.K_v:
-            sb_v.set_value(200)
+            if event.type is pygame.KEYDOWN and event.key == pygame.K_h:
+                sb_h.set_value(100)
 
-        sb_h.update([event])
-        sb_h.draw(screen)
-        sb_v.update([event])
-        sb_v.draw(screen)
+            if event.type is pygame.KEYDOWN and event.key == pygame.K_v:
+                sb_v.set_value(200)
+
+            sb_h.update([event])
+            sb_h.draw(screen)
+            sb_v.update([event])
+            sb_v.draw(screen)
 
         trunc_world_orig = (sb_h.get_value(), sb_v.get_value())
         trunc_world = (scr_size[0] - thick_v, scr_size[1] - thick_h)
 
         screen.blit(world, (0, 0), (trunc_world_orig, trunc_world))
         pygame.display.update()
+
+        # At first loop returns
+        if test:
+            break
 
 
 if __name__ == '__main__':

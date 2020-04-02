@@ -53,5 +53,4 @@ class FontTest(unittest.TestCase):
         self.assertTrue(font is not None)
 
         # Modify the system font and load, this will raise an exception
-        font_sys_bad = font_sys[:-1]
-        self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font(font_sys_bad, 5))
+        self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('invalid font', 5))

@@ -80,6 +80,7 @@ class TextInput(Widget):
                  input_type=_locals.INPUT_TEXT,
                  input_underline='',
                  cursor_color=(0, 0, 0),
+                 enable_copy_paste=True,
                  enable_selection=True,
                  history=50,
                  maxchar=0,
@@ -94,6 +95,7 @@ class TextInput(Widget):
                  repeat_mouse_interval_ms=100,
                  selection_color=(30, 30, 30),
                  text_ellipsis='...',
+                 valid_chars=None,
                  **kwargs
                  ):
         """
@@ -109,13 +111,15 @@ class TextInput(Widget):
         :type input_underline: basestring
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
+        :param enable_copy_paste: Enables copy, paste and cut
+        :type enable_copy_paste: bool
         :param enable_selection: Enables selection of text
         :type enable_selection: tuple
         :param history: Maximum number of editions stored
         :type history: int
         :param maxchar: Maximum length of input
         :type maxchar: int
-        :param maxwidth: Maximum size of the text to be displayed (overflow)
+        :param maxwidth: Maximum size of the text to be displayed (overflow), if 0 this feature is disabled
         :type maxwidth: int
         :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
         :type maxwidth_dynamically_update: bool
@@ -135,18 +139,23 @@ class TextInput(Widget):
         :type repeat_mouse_interval_ms: float, int
         :param selection_color: Selection box color
         :type selection_color: tuple
-        :param text_ellipsis: Ellipsis text when overflow occurs
+        :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
         :type text_ellipsis: basestring
+        :param valid_chars: List of chars that are valid, None if all chars are valid
+        :type valid_chars: list
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        assert isinstance(textinput_id, str)
-        assert isinstance(input_type, str)
-        assert isinstance(input_underline, str)
+        assert isinstance(textinput_id, str), 'ID must be a string'
+        assert isinstance(input_type, str), 'input_type must be a string'
+        assert isinstance(input_underline, str), 'input_underline must be a string'
         assert isinstance(cursor_color, tuple)
+        assert isinstance(enable_copy_paste, bool), 'enable_copy_paste must be a boolean'
+        assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
         assert isinstance(history, int)
-        assert isinstance(maxchar, int)
-        assert isinstance(maxwidth, int)
+        assert isinstance(valid_chars, (type(None), list))
+        assert isinstance(maxchar, int), 'maxchar must be integer'
+        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
         assert isinstance(repeat_keys_initial_ms, int)
@@ -230,7 +239,18 @@ class TextInput(Widget):
         self._selection_render = False
         self._selection_surface = None  # type: _pygame.SurfaceType
 
+        # List of valid chars
+        if valid_chars is not None:
+            for ch in range(len(valid_chars)):
+                _char = str(valid_chars[ch])
+                valid_chars[ch] = _char
+                assert isinstance(_char, str), 'Element "{0}" of valid_chars must be a string'.format(_char)
+                assert len(_char) == 1, 'Element "{0}" of valid_chars must be character'.format(_char)
+            assert len(valid_chars) > 0, 'valid_chars list must contain at least 1 element'
+        self._valid_chars = valid_chars
+
         # Other
+        self._copy_paste_enabled = enable_copy_paste
         self._first_render = True
         self._input_type = input_type
         self._input_underline = input_underline
@@ -247,7 +267,7 @@ class TextInput(Widget):
         self._maxwidth_base = maxwidth
         self._maxwidth_update = maxwidth_dynamically_update
         self._maxwidthsize = 0  # Updated in font
-        self._password = password
+        self._password = password  # True/False
         self._password_char = password_char
 
     def _apply_font(self):
@@ -281,6 +301,7 @@ class TextInput(Widget):
         self._cursor_position = 0
         self._renderbox = [0, 0, 0]
         self._delete()
+        self.change()
 
     def get_value(self):
         """
@@ -873,9 +894,20 @@ class TextInput(Widget):
         """
         See upper class doc.
         """
+        if self._password and text != '':
+            raise ValueError('value cannot be set in password type')
         assert isinstance(text, (str, int, float))
         if self._check_input_type(text):
             _default = str(text)
+
+            # Filter valid chars
+            if self._valid_chars is not None:
+                _default_valid = ''
+                for ch in _default:
+                    if ch in self._valid_chars:
+                        _default_valid += ch
+                _default = _default_valid
+
             self._input_string = _default
             for i in range(len(_default) + 1):
                 self._move_cursor_right()
@@ -883,6 +915,8 @@ class TextInput(Widget):
             self._update_input_string(_default)
         else:
             raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
+        self._update_renderbox()  # Updates cursor
+        self._render()  # Renders the selection box
 
     def _check_input_size(self):
         """
@@ -1109,6 +1143,16 @@ class TextInput(Widget):
         if text == '':
             return False
 
+        # Remove invalid chars
+        if self._valid_chars is not None:
+            valid_text = ''
+            for ch in text:
+                if ch in self._valid_chars:
+                    valid_text += ch
+            text = valid_text
+            if text == '':
+                return False
+
         # Cut string (if limit does exists)
         text_end = len(text)
         if self._maxchar != 0:
@@ -1248,6 +1292,69 @@ class TextInput(Widget):
         self._render_selection_box(True)
         self._selection_active = False
 
+    def _push_key_input(self, keychar, sounds=True):
+        """
+        Insert a key in the cursor position.
+
+        :param keychar: Char to be inserted
+        :type keychar: str
+        :param sounds: Use widget sounds
+        :type sounds: bool
+        :return: If False the event loop breaks
+        :rtype: bool
+        """
+        # If selected text
+        if self._selection_surface:
+            self._remove_selection()
+
+        # Check input exceeded the limit returns
+        if self._check_input_size():
+            if sounds:
+                self.sound.play_event_error()
+            return False
+
+        # If no special key is pressed, add unicode of key to input_string
+        new_string = (
+                self._input_string[:self._cursor_position]
+                + keychar
+                + self._input_string[self._cursor_position:]
+        )
+
+        # If unwanted escape sequences
+        event_escaped = repr(keychar)
+        if '\\r' in event_escaped:
+            return False
+
+        # Check if char is valid
+        if self._valid_chars is not None and keychar not in self._valid_chars:
+            if sounds:
+                self.sound.play_event_error()
+            return False
+
+        # If data is valid
+        if self._check_input_type(new_string):
+            lkey = len(keychar)
+            if lkey > 0:
+
+                # Update char size
+                if keychar not in self._keychar_size.keys():
+                    self._get_char_size(keychar)  # This updates keychar size data
+                self._last_char = keychar
+
+                # Update string
+                if sounds:
+                    self.sound.play_key_add()
+                self._cursor_position += 1  # Some are empty, e.g. K_UP
+                self._input_string = new_string  # Only here this is changed (due to renderbox update)
+                self._update_input_string(new_string)  # Update the string and the history
+                self._update_renderbox(right=1, addition=True)
+                self.change()
+                return True
+        else:
+            if sounds:
+                self.sound.play_event_error()
+        return False
+
     def update(self, events):
         """
         See upper class doc.
@@ -1275,6 +1382,9 @@ class TextInput(Widget):
 
                     # Ctrl+C copy
                     if event.key == _pygame.K_c:
+                        if not self._copy_paste_enabled:
+                            self.sound.play_event_error()
+                            return
                         copy_status = self._copy()
                         if not copy_status:
                             self.sound.play_event_error()
@@ -1282,25 +1392,40 @@ class TextInput(Widget):
 
                     # Ctrl+V paste
                     elif event.key == _pygame.K_v:
+                        if not self._copy_paste_enabled:
+                            self.sound.play_event_error()
+                            return
                         return self._paste()
 
                     # Ctrl+Z undo
                     elif event.key == _pygame.K_z:
+                        if self._max_history == 0:
+                            self.sound.play_event_error()
+                            return
                         self.sound.play_key_del()
                         return self._undo()
 
                     # Ctrl+Y redo
                     elif event.key == _pygame.K_y:
+                        if self._max_history == 0:
+                            self.sound.play_event_error()
+                            return
                         self.sound.play_key_add()
                         return self._redo()
 
                     # Ctrl+X cut
                     elif event.key == _pygame.K_x:
+                        if not self._copy_paste_enabled:
+                            self.sound.play_event_error()
+                            return
                         self.sound.play_key_del()
                         return self._cut()
 
                     # Ctrl+A select all
                     elif event.key == _pygame.K_a:
+                        if not self._selection_enabled:
+                            self.sound.play_event_error()
+                            return
                         self._select_all()
                         return False
 
@@ -1434,52 +1559,12 @@ class TextInput(Widget):
 
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys:
-
-                    # If selected text
-                    if self._selection_surface:
-                        self._remove_selection()
-
-                    # Check input exceeded the limit returns
-                    if self._check_input_size():
-                        self.sound.play_event_error()
+                    if not self._push_key_input(event.unicode):  # Error in char, not valid or string limit exceeds
                         break
-
-                    # If no special key is pressed, add unicode of key to input_string
-                    new_string = (
-                            self._input_string[:self._cursor_position]
-                            + event.unicode
-                            + self._input_string[self._cursor_position:]
-                    )
-
-                    # If unwanted escape sequences
-                    event_escaped = repr(event.unicode)
-                    if '\\r' in event_escaped:
-                        return False
-
-                    # If data is valid
-                    if self._check_input_type(new_string):
-                        lkey = len(event.unicode)
-                        if lkey > 0:
-
-                            # Update char size
-                            if event.unicode not in self._keychar_size.keys():
-                                self._get_char_size(event.unicode)  # This updates keychar size data
-                            self._last_char = event.unicode
-
-                            # Update string
-                            self.sound.play_key_add()
-                            self._cursor_position += 1  # Some are empty, e.g. K_UP
-                            self._input_string = new_string  # Only here this is changed (due to renderbox update)
-                            self._update_input_string(new_string)
-                            self._update_renderbox(right=1, addition=True)
-                            self.change()
-                            updated = True
-
-                    else:
-                        self.sound.play_event_error()
+                    updated = True
 
             elif event.type == _pygame.KEYUP:
-                # *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
+                # Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
 

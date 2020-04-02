@@ -334,7 +334,7 @@ class Menu(object):
         """
         Add option to menu. Deprecated method.
         """
-        warnings.warn("Menu.add_option is deprecated, use Menu.add_button instead",
+        warnings.warn('Menu.add_option is deprecated, use Menu.add_button instead',
                       DeprecationWarning)
         return self.add_button(*args, **kwargs)
 
@@ -439,38 +439,26 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(font_size, int)
 
         if align == '':
             align = self._widget_align
-
         if font_size == 0:
             font_size = self._fsize
-
-        # Check value list
-        for vl in values:
-            assert len(vl) >= 1, \
-                'Length of each element in value list must be greater than 1'
-            assert isinstance(vl[0], str), \
-                'First element of value list component must be a string'
-        assert default < len(values), 'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'ID must be a string'
-        assert isinstance(default, int), 'default must be integer'
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-
         self._size += 1
         if self._size > 1:
             dy = -font_size / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
         # Create widget
-        widget = _widgets.Selector(title,
-                                   values,
-                                   selector_id,
-                                   default,
-                                   onchange,
-                                   onreturn,
+        widget = _widgets.Selector(label=title,
+                                   elements=values,
+                                   selector_id=selector_id,
+                                   default=default,
+                                   onchange=onchange,
+                                   onreturn=onreturn,
                                    **kwargs)
         self._configure_widget(widget, font_size, align)
 
@@ -491,10 +479,12 @@ class Menu(object):
                        maxwidth=0,
                        align='',
                        font_size=0,
+                       enable_copy_paste=True,
                        enable_selection=True,
                        password=False,
                        onchange=None,
                        onreturn=None,
+                       valid_chars=None,
                        **kwargs
                        ):
         """
@@ -524,6 +514,8 @@ class Menu(object):
         :type align: basestring
         :param font_size: Font size of the widget
         :type font_size: int
+        :param enable_copy_paste: Enable text copy, paste and cut
+        :type enable_copy_paste: bool
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
         :param password: Text input is a password
@@ -532,53 +524,45 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param valid_chars: List of chars to be ignored, None if no chars are invalid
+        :type valid_chars: list
         :param kwargs: Additional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
+        assert isinstance(default, (str, int, float))
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(font_size, int)
+
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
         if align == '':
             align = self._widget_align
-
         if font_size == 0:
             font_size = self._fsize
-
-        # Check data
-        assert isinstance(textinput_id, str), 'ID must be a string'
-        assert isinstance(input_type, str), 'input_type must be a string'
-        assert isinstance(input_underline, str), 'input_underline must be a string'
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-        assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
-        assert isinstance(maxchar, int), 'maxchar must be integer'
-        assert maxchar >= 0, 'maxchar must be greater or equal than zero'
-        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
-        assert maxwidth >= 0, 'maxwidth must be greater or equal than zero'
-        assert isinstance(default, (str, int, float))
 
         # If password is active no default value should exist
         if password and default != '':
             raise ValueError('default value must be empty if the input is a password')
 
         # Create widget
-        widget = _widgets.TextInput(title,
+        widget = _widgets.TextInput(label=title,
                                     textinput_id=textinput_id,
                                     maxchar=maxchar,
                                     maxwidth=maxwidth,
                                     input_type=input_type,
                                     input_underline=input_underline,
+                                    enable_copy_paste=enable_copy_paste,
                                     enable_selection=enable_selection,
+                                    valid_chars=valid_chars,
                                     password=password,
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
         self._configure_widget(widget, font_size, align)
-
-        # Set default value
         widget.set_value(default)
 
         # Store widget
@@ -588,19 +572,22 @@ class Menu(object):
 
         return widget
 
-    def _add_color_rgb(self,
-                       title,
-                       color_id='',
-                       default='',
-                       input_underline='_',
-                       align='',
-                       font_size=0,
-                       onchange=None,
-                       onreturn=None,
-                       **kwargs
-                       ):
+    def add_color_input(self,
+                        title,
+                        color_type='',
+                        color_id='',
+                        default='',
+                        input_comma=',',
+                        input_underline='_',
+                        align='',
+                        font_size=0,
+                        onchange=None,
+                        onreturn=None,
+                        previsualization_width=3,
+                        **kwargs
+                        ):
         """
-        Add a color widget with RGB channels from 0-255. Includes a preview
+        Add a color widget with RGB or Hex format. Includes a preview
         box that renders the given color. (Work in Progress)
         TODO: Implement multiple text inputs and display color
 
@@ -610,10 +597,14 @@ class Menu(object):
 
         :param title: Title of the color input
         :type title: basestring
+        :param color_type: Type of the color input, can be "rgb" or "hex"
+        :type color_type: basestring
         :param color_id: ID of the color input
         :type color_id: basestring
-        :param default: Default value to display
-        :type default: basestring, int, float
+        :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
+        :type default: basestring, tuple
+        :param input_comma: Divisor between RGB channels
+        :type input_comma: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
         :param align: Widget alignment
@@ -624,38 +615,37 @@ class Menu(object):
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param previsualization_width: Previsualization width as a factor of the height
+        :type previsualization_width: float, int
         :param kwargs: Additional keyword-parameters
         :return: Widget object
-        :rtype: pygameMenu.widgets.color_rgb.ColorRGB
+        :rtype: pygameMenu.widgets.colorinput.ColorInput
         """
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(default, (str, tuple))
+        assert isinstance(font_size, int)
+
         self._size += 1
         if self._size > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
         if align == '':
             align = self._widget_align
-
         if font_size == 0:
             font_size = self._fsize
-
-        # Check data
-        assert isinstance(color_id, str), 'ID must be a string'
-        assert isinstance(input_underline, str), 'input_underline must be a string'
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
-        assert isinstance(default, (str, int, float))
 
         # Create widget
-        widget = _widgets.ColorRGB(title,
-                                   colorrgb_id=color_id,
-                                   input_underline=input_underline,
-                                   onchange=onchange,
-                                   onreturn=onreturn,
-                                   **kwargs)
+        widget = _widgets.ColorInput(label=title,
+                                     colorinput_id=color_id,
+                                     color_type=color_type,
+                                     input_comma=input_comma,
+                                     input_underline=input_underline,
+                                     onchange=onchange,
+                                     onreturn=onreturn,
+                                     prev_size=previsualization_width,
+                                     **kwargs)
         self._configure_widget(widget, font_size, align)
-
-        # Set default value
         widget.set_value(default)
 
         # Store widget

@@ -47,11 +47,12 @@ __author__ = 'ppizarror'
 __contributors__ = [
     'anxuae',
     'asierrayk',
+    'eforgacs',
     'i96751414',
     'ironsmile',
     'maditnerd',
     'Rifqi31',
-    'thisIsMikeKane'
+    'thisIsMikeKane',
 ]
 __copyright__ = 'Copyright 2017-2020 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'

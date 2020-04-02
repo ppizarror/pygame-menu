@@ -214,6 +214,41 @@ def main(test=False):
     settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                              align=pygameMenu.locals.ALIGN_CENTER)
 
+    # More settings
+    more_settings_menu = pygameMenu.Menu(surface,
+                                         bgfun=main_background,
+                                         color_selected=COLOR_WHITE,
+                                         font=pygameMenu.font.FONT_HELVETICA,
+                                         font_color=COLOR_BLACK,
+                                         font_size=25,
+                                         font_size_title=50,
+                                         menu_alpha=100,
+                                         menu_color=MENU_BACKGROUND_COLOR,
+                                         menu_height=int(WINDOW_SIZE[1] * 0.85),
+                                         menu_width=int(WINDOW_SIZE[0] * 0.9),
+                                         onclose=pygameMenu.events.DISABLE_CLOSE,
+                                         title='More Settings',
+                                         widget_alignment=pygameMenu.locals.ALIGN_LEFT,
+                                         window_height=WINDOW_SIZE[1],
+                                         window_width=WINDOW_SIZE[0]
+                                         )
+
+    # Test colors
+    more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
+    more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_comma='-')
+
+    def print_color(color):
+        """
+        Test onchange/onreturn.
+        :param color: Color tuple
+        """
+        print('Returned color: ', color)
+
+    more_settings_menu.add_color_input('Color in Hex: ', color_type='hex', onreturn=print_color)
+
+    more_settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
+                                  align=pygameMenu.locals.ALIGN_CENTER)
+
     # Main menu
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
@@ -236,6 +271,7 @@ def main(test=False):
     main_menu.set_fps(FPS)
 
     main_menu.add_button('Settings', settings_menu)
+    main_menu.add_button('More Settings!', more_settings_menu)
     main_menu.add_selector('Menu sounds',
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
