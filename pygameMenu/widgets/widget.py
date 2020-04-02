@@ -30,16 +30,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
 from uuid import uuid4
 
-from pygameMenu.sound import Sound as _Sound
+import pygame as _pygame
+
 import pygameMenu.config as _cfg
-import pygameMenu.locals as _locals
 import pygameMenu.font as _fonts
+import pygameMenu.locals as _locals
+from pygameMenu.sound import Sound as _Sound
 
 
 # noinspection PyTypeChecker
+
+
 class Widget(object):
     """
     Widget abstract class.
@@ -413,27 +416,6 @@ class Widget(object):
             self._focus()
         else:
             self._blur()
-
-    @staticmethod
-    def check_key_pressed_valid(event):
-        """
-        Checks if the pressed key is valid.
-
-        :param event: Key press event
-        :type event: pygame.event.EventType
-        :return: True if a key is pressed
-        :rtype: bool
-        """
-        # If the system detects that any key event has been pressed but
-        # there's not any key pressed then this method raises a KEYUP
-        # flag
-        bad_event = not (True in _pygame.key.get_pressed())
-        if bad_event:
-            if 'test' in event.dict and event.dict['test']:
-                return True
-            ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
-            _pygame.event.post(ev)
-        return not bad_event
 
     def _focus(self):
         """

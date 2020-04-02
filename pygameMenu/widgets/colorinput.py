@@ -30,10 +30,11 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
-
-from pygameMenu.widgets.textinput import TextInput
-import pygameMenu.locals as _locals
 import pygame as _pygame
+
+import pygameMenu.locals as _locals
+from pygameMenu.utils import check_key_pressed_valid
+from pygameMenu.widgets.textinput import TextInput
 
 _TYPE_HEX = 'hex'
 _TYPE_RGB = 'rgb'
@@ -289,7 +290,7 @@ class ColorInput(TextInput):
                 if event.type == _pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
-                    if not self.check_key_pressed_valid(event):
+                    if not check_key_pressed_valid(event):
                         return True
 
                     if _disable_remove_comma and len(_input) > 0 and len(_input) > _curpos and (
@@ -368,7 +369,7 @@ class ColorInput(TextInput):
                 if event.type == _pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
-                    if not self.check_key_pressed_valid(event):
+                    if not check_key_pressed_valid(event):
                         return True
 
                     # Backspace button, delete text from right

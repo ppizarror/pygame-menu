@@ -31,19 +31,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Library imports
-from sys import exit
-import pygame as _pygame
-import pygame.gfxdraw as _gfxdraw
 import types
 import warnings
+from sys import exit
 
-from pygameMenu.sound import Sound as _Sound
+import pygame as _pygame
+import pygame.gfxdraw as _gfxdraw
+
 import pygameMenu.config as _cfg
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 import pygameMenu.widgets as _widgets
+from pygameMenu.sound import Sound as _Sound
+from pygameMenu.utils import check_key_pressed_valid
 
 
 # noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker,PyUnresolvedReferences
@@ -857,27 +859,6 @@ class Menu(object):
         """
         return self._enabled
 
-    @staticmethod
-    def _check_key_pressed_valid(event):
-        """
-        Checks if the pressed key is valid.
-
-        :param event: Key press event
-        :type event: pygame.event.EventType
-        :return: True if a key is pressed
-        :rtype: bool
-        """
-        # If the system detects that any key event has been pressed but
-        # there's not any key pressed then this method raises a KEYUP
-        # flag
-        bad_event = not (True in _pygame.key.get_pressed())
-        if bad_event:
-            if 'test' in event.dict and event.dict['test']:
-                return True
-            ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
-            _pygame.event.post(ev)
-        return not bad_event
-
     def _main(self, events=None):
         """
         Main function of the loop.
@@ -924,7 +905,7 @@ class Menu(object):
                 elif event.type == _pygame.locals.KEYDOWN:
 
                     # Check key event is valid
-                    if not self._check_key_pressed_valid(event):
+                    if not check_key_pressed_valid(event):
                         continue
 
                     if event.key == _ctrl.KEY_MOVE_DOWN:
