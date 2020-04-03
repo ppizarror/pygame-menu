@@ -167,7 +167,8 @@ class PygameUtils(object):
         """
         event_obj = pygame.event.Event(evtype,
                                        {'pos': [float(x), float(y)],
-                                        'test': True
+                                        'test': True,
+                                        'button': 3
                                         })
         if inlist:
             event_obj = [event_obj]
