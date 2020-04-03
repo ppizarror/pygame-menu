@@ -30,10 +30,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Library imports
+import sys
 import types
 import warnings
-from sys import exit
 
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
@@ -251,7 +250,6 @@ class Menu(object):
         self._frame = 0
         self._index = 0  # Selected index
         self._onclose = onclose  # Function that calls after closing menu
-        self._size = 0  # Menu total elements
         self._sounds = _Sound()
 
         # Menu widgets
@@ -332,14 +330,6 @@ class Menu(object):
         # FPS of the menu
         self.set_fps(fps)
 
-    def add_option(self, *args, **kwargs):
-        """
-        Add option to menu. Deprecated method.
-        """
-        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
-        warnings.warn(_msg, DeprecationWarning)
-        return self.add_button(*args, **kwargs)
-
     def add_button(self, element_name, element, *args, **kwargs):
         """
         Add button to menu.
@@ -369,11 +359,6 @@ class Menu(object):
         assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
 
-        self._size += 1
-        if self._size > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
         # If element is a Menu
         if isinstance(element, Menu):
             self._submenus.append(element)
@@ -395,8 +380,100 @@ class Menu(object):
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
+        elif len(self._option) > 1:
+            dy = -font_size / 2 - self._opt_dy / 2
+            self._opt_posy += dy
 
         return widget
+
+    def add_color_input(self,
+                        title,
+                        color_type,
+                        color_id='',
+                        default='',
+                        input_separator=',',
+                        input_underline='_',
+                        align='',
+                        font_size=0,
+                        onchange=None,
+                        onreturn=None,
+                        previsualization_width=3,
+                        **kwargs
+                        ):
+        """
+        Add a color widget with RGB or Hex format. Includes a preview
+        box that renders the given color.
+
+        And functions onchange and onreturn does
+            onchange(current_text, **kwargs)
+            onreturn(current_text, **kwargs)
+
+        :param title: Title of the color input
+        :type title: basestring
+        :param color_type: Type of the color input, can be "rgb" or "hex"
+        :type color_type: basestring
+        :param color_id: ID of the color input
+        :type color_id: basestring
+        :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
+        :type default: basestring, tuple
+        :param input_separator: Divisor between RGB channels, not valid in HEX format
+        :type input_separator: basestring
+        :param input_underline: Underline character
+        :type input_underline: basestring
+        :param align: Widget alignment
+        :type align: basestring
+        :param font_size: Font size of the widget
+        :type font_size: int
+        :param onchange: Function when changing the selector
+        :type onchange: function, NoneType
+        :param onreturn: Function when pressing return button
+        :type onreturn: function, NoneType
+        :param previsualization_width: Previsualization width as a factor of the height
+        :type previsualization_width: float, int
+        :param kwargs: Additional keyword-parameters
+        :return: Widget object
+        :rtype: pygameMenu.widgets.colorinput.ColorInput
+        """
+        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(default, (str, tuple))
+        assert isinstance(font_size, int)
+
+        if align == '':
+            align = self._widget_align
+        if font_size == 0:
+            font_size = self._fsize
+        assert font_size > 0, 'font_size must be greater than zero'
+
+        # Create widget
+        widget = _widgets.ColorInput(label=title,
+                                     colorinput_id=color_id,
+                                     color_type=color_type,
+                                     input_separator=input_separator,
+                                     input_underline=input_underline,
+                                     onchange=onchange,
+                                     onreturn=onreturn,
+                                     prev_size=previsualization_width,
+                                     **kwargs)
+        self._configure_widget(widget, font_size, align)
+        widget.set_value(default)
+
+        # Store widget
+        self._option.append(widget)
+        if len(self._option) == 1:
+            widget.set_selected()
+        elif len(self._option) > 1:
+            dy = -self._fsize / 2 - self._opt_dy / 2
+            self._opt_posy += dy
+
+        return widget
+
+    def add_option(self, *args, **kwargs):
+        """
+        Add option to menu. Deprecated method.
+        """
+        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
+        warnings.warn(_msg, DeprecationWarning)
+        return self.add_button(*args, **kwargs)
 
     def add_selector(self,
                      title,
@@ -449,10 +526,6 @@ class Menu(object):
         if font_size == 0:
             font_size = self._fsize
         assert font_size > 0, 'font_size must be greater than zero'
-        self._size += 1
-        if self._size > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
 
         # Create widget
         widget = _widgets.Selector(label=title,
@@ -468,6 +541,9 @@ class Menu(object):
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
+        elif len(self._option) > 1:
+            dy = -font_size / 2 - self._opt_dy / 2
+            self._opt_posy += dy
 
         return widget
 
@@ -536,10 +612,6 @@ class Menu(object):
         assert isinstance(align, str), 'align must be a string'
         assert isinstance(font_size, int)
 
-        self._size += 1
-        if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
         if align == '':
             align = self._widget_align
         if font_size == 0:
@@ -571,88 +643,9 @@ class Menu(object):
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
-
-        return widget
-
-    def add_color_input(self,
-                        title,
-                        color_type,
-                        color_id='',
-                        default='',
-                        input_separator=',',
-                        input_underline='_',
-                        align='',
-                        font_size=0,
-                        onchange=None,
-                        onreturn=None,
-                        previsualization_width=3,
-                        **kwargs
-                        ):
-        """
-        Add a color widget with RGB or Hex format. Includes a preview
-        box that renders the given color.
-
-        And functions onchange and onreturn does
-            onchange(current_text, **kwargs)
-            onreturn(current_text, **kwargs)
-
-        :param title: Title of the color input
-        :type title: basestring
-        :param color_type: Type of the color input, can be "rgb" or "hex"
-        :type color_type: basestring
-        :param color_id: ID of the color input
-        :type color_id: basestring
-        :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
-        :type default: basestring, tuple
-        :param input_separator: Divisor between RGB channels, not valid in HEX format
-        :type input_separator: basestring
-        :param input_underline: Underline character
-        :type input_underline: basestring
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
-        :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
-        :param previsualization_width: Previsualization width as a factor of the height
-        :type previsualization_width: float, int
-        :param kwargs: Additional keyword-parameters
-        :return: Widget object
-        :rtype: pygameMenu.widgets.colorinput.ColorInput
-        """
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(default, (str, tuple))
-        assert isinstance(font_size, int)
-
-        self._size += 1
-        if self._size > 1:
+        elif len(self._option) > 1:
             dy = -self._fsize / 2 - self._opt_dy / 2
             self._opt_posy += dy
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
-
-        # Create widget
-        widget = _widgets.ColorInput(label=title,
-                                     colorinput_id=color_id,
-                                     color_type=color_type,
-                                     input_separator=input_separator,
-                                     input_underline=input_underline,
-                                     onchange=onchange,
-                                     onreturn=onreturn,
-                                     prev_size=previsualization_width,
-                                     **kwargs)
-        self._configure_widget(widget, font_size, align)
-        widget.set_value(default)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
 
         return widget
 
@@ -838,7 +831,7 @@ class Menu(object):
         :return: None
         """
         _pygame.quit()
-        exit()
+        sys.exit()
 
     def is_disabled(self):
         """
@@ -1180,10 +1173,10 @@ class Menu(object):
         """
         self._check_menu_initialized()
         actual = self._top._actual
-        if actual._size == 0:
+        if len(actual._option) == 0:
             return
         actual._option[actual._index].set_selected(False)
-        actual._index = index % actual._size
+        actual._index = index % len(actual._option)
         actual._option[actual._index].set_selected()
 
     def get_widget(self, widget_id, recursive=False):
