@@ -536,10 +536,7 @@ class Menu(object):
         assert isinstance(align, str), 'align must be a string'
         assert isinstance(font_size, int)
 
-        self._size += 1
-        if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
+        self._update_widget_global_position()
         if align == '':
             align = self._widget_align
         if font_size == 0:
@@ -626,10 +623,7 @@ class Menu(object):
         assert isinstance(default, (str, tuple))
         assert isinstance(font_size, int)
 
-        self._size += 1
-        if self._size > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
+        self._update_widget_global_position()
         if align == '':
             align = self._widget_align
         if font_size == 0:
@@ -655,6 +649,12 @@ class Menu(object):
             widget.set_selected()
 
         return widget
+
+    def _update_widget_global_position(self):
+        self._size += 1
+        if self._size > 1:
+            dy = -self._fsize / 2 - self._opt_dy / 2
+            self._opt_posy += dy
 
     def _back(self):
         """
