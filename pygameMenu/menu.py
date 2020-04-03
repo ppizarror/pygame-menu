@@ -375,16 +375,19 @@ class Menu(object):
             widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
+
+        # Configure and add the button
         self._configure_widget(widget, font_size, kwargs.pop('align', self._widget_align))
-
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        self._append_widget(widget, font_size)
         return widget
+
+    def add_option(self, *args, **kwargs):
+        """
+        Add option to menu. Deprecated method.
+        """
+        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
+        warnings.warn(_msg, DeprecationWarning)
+        return self.add_button(*args, **kwargs)
 
     def add_color_input(self,
                         title,
@@ -444,7 +447,6 @@ class Menu(object):
             font_size = self._fsize
         assert font_size > 0, 'font_size must be greater than zero'
 
-        # Create widget
         widget = _widgets.ColorInput(label=title,
                                      colorinput_id=color_id,
                                      color_type=color_type,
@@ -455,25 +457,9 @@ class Menu(object):
                                      prev_size=previsualization_width,
                                      **kwargs)
         self._configure_widget(widget, font_size, align)
-        widget.set_value(default)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        widget.set_value(default)  # Must be after configuring the font_size
+        self._append_widget(widget, font_size)
         return widget
-
-    def add_option(self, *args, **kwargs):
-        """
-        Add option to menu. Deprecated method.
-        """
-        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
-        warnings.warn(_msg, DeprecationWarning)
-        return self.add_button(*args, **kwargs)
 
     def add_selector(self,
                      title,
@@ -527,7 +513,6 @@ class Menu(object):
             font_size = self._fsize
         assert font_size > 0, 'font_size must be greater than zero'
 
-        # Create widget
         widget = _widgets.Selector(label=title,
                                    elements=values,
                                    selector_id=selector_id,
@@ -536,15 +521,7 @@ class Menu(object):
                                    onreturn=onreturn,
                                    **kwargs)
         self._configure_widget(widget, font_size, align)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        self._append_widget(widget, font_size)
         return widget
 
     def add_text_input(self,
@@ -622,7 +599,6 @@ class Menu(object):
         if password and default != '':
             raise ValueError('default value must be empty if the input is a password')
 
-        # Create widget
         widget = _widgets.TextInput(label=title,
                                     textinput_id=textinput_id,
                                     maxchar=maxchar,
@@ -638,15 +614,7 @@ class Menu(object):
                                     **kwargs)
         self._configure_widget(widget, font_size, align)
         widget.set_value(default)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        self._append_widget(widget, font_size)
         return widget
 
     def _back(self):
@@ -723,6 +691,21 @@ class Menu(object):
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(alignment)
+
+    def _append_widget(self, widget, font_size):
+        """
+        Append the widget to the option lists.
+
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.widget.Widget
+        """
+        # Store widget
+        self._option.append(widget)
+        if len(self._option) == 1:
+            widget.set_selected()
+        elif len(self._option) > 1:
+            dy = -font_size / 2 - self._opt_dy / 2
+            self._opt_posy += dy
 
     def _get_depth(self):
         """
