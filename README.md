@@ -394,7 +394,7 @@ import pygameMenu
 
 - *clear()*
 
-    Performs a full resets and clears all the widgets.
+    Performs a full reset, and clears all the widgets.
 
     ```python
     menu = pygameMenu.Menu(...)
