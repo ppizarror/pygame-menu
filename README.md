@@ -3,7 +3,7 @@
   <br /><br />
   Pygame Menu</h1>
 
-<p align="center">Menu for pygame, simple, lightweight and easy to use</p>
+<p align="center">Menu for pygame. Simple, lightweight and easy to use</p>
 
 <div align="left">
 <a href="https://ppizarror.com"><img alt="@ppizarror" src="https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg" /></a>
@@ -18,7 +18,7 @@
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 </div><br />
 
-Python library that can create a simple menu for pygame application, supports:
+Python library that can create a simple menu for the pygame application. Supports:
 
 1. Textual menus
 2. Buttons
@@ -86,11 +86,11 @@ Pygame-menu can be installed via pip. Simply run:
 pip install pygame-menu
 ```
 
-Currently python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
+Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
 ## Import
 
-Import of this library is similar as pygame:
+Import of this library is similar to pygame:
 
 ```python
 import pygameMenu
@@ -162,7 +162,7 @@ import pygameMenu
     | title_offsety | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.ALIGN_CENTER |
 
-    Check widget alignment and shadow position possible values in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
+    Check the possible values for the widget alignment and shadow position in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
 - **TextMenu**
 
@@ -172,7 +172,7 @@ import pygameMenu
     pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
     ```
 
-    This class inherits from Menu, so the parameters are the same, except the following extra parameters:  
+    This class inherits from Menu, so the parameters are the same, except for the following extra parameters:  
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
@@ -230,7 +230,7 @@ import pygameMenu
 
 - *add_selector(title, values, selector_id, default, align, font_size, onchange, onreturn, \*\*kwargs)*
 
-    Add a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
+    Adds a *selector* to the menu: several options with values and two functions that are executed when the selector is changed left/right (**onchange**) or *Return key* is pressed on the element (**onreturn**).
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
@@ -289,7 +289,7 @@ import pygameMenu
 
 - *add_text_input(title, textinput_id, default, input_type, input_underline, maxchar, maxwidth, align, font_size, enable_copy_paste, enable_selection, password, onchange, onreturn, valid_chars, \*\*kwargs)*
 
-    Add a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing *Return key* on the element.
+    Adds a *text input* to menu: several options with values and two functions that execute when updating the text in the text entry and pressing the *Return key* on the element.
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
@@ -374,7 +374,7 @@ import pygameMenu
 
 - *add_line(text)*
 
-    Adds a new line on **TextMenu** object.
+    Adds a new line on the **TextMenu** object.
 
     Example:
 
@@ -394,7 +394,7 @@ import pygameMenu
 
 - *clear()*
 
-    Full reset and clear all the widgets.
+    Performs a full resets and clears all the widgets.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -403,7 +403,7 @@ import pygameMenu
 
 - *disable(closelocked)*
 
-    Disable Menu (doesn't check events and draw on surface). If *closelocked* is *True* all the locked pened submenus are closed too.
+    Disables Menu (doesn't check events and draw on the surface). If *closelocked* is *True*, all the locked penned submenus are closed too.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -412,7 +412,7 @@ import pygameMenu
 
 - *draw()*
 
-    Draw Menu on surface.
+    Draws Menu on surface.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -421,7 +421,7 @@ import pygameMenu
 
 - *enable()*
 
-    Enable Menu (can check events and draw).
+    Enables Menu (can check events and draw).
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -430,7 +430,7 @@ import pygameMenu
 
 - *full_reset()*
 
-    Reset the menu back to the origin.
+    Resets the menu back to the origin.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -439,7 +439,7 @@ import pygameMenu
 
 - *get_fps()*
 
-    Get the current frames per second of the Menu.
+    Gets the current frames per second of the Menu.
 
     ```python
     fps = main_menu.get_fps() # -> 60.0
@@ -447,8 +447,8 @@ import pygameMenu
 
 - *get_input_data(recursive=False, depth=0)*
 
-    Get input data from a menu. The results are given as a dict object, keys are the ID of each element.
-    If recursive, the data will contain inputs from sub-menus; *depth* defines the depth of each input. It's used only as an informative value by now.
+    Gets input data from a menu. The results are given as a dict object; the keys are the ID of each element.
+    If recursive, the data will contain inputs from sub-menus; *depth* defines the depth of each input. It's used only as an informative value for now.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -457,7 +457,7 @@ import pygameMenu
 
 - *get_position()*
 
-    Returns menu position as a tuple *(x1, y1, x2, y2)*, where *(x1, y1)* is the top-left position and *(x2, y2)* is the bottom-right position.
+    Returns the menu position as a tuple *(x1, y1, x2, y2)*, where *(x1, y1)* is the top-left position and *(x2, y2)* is the bottom-right position.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -466,7 +466,7 @@ import pygameMenu
 
 - *get_title()*
 
-    Get the title of the menu.
+    Gets the title of the menu.
 
     ```python
     menu = pygameMenu.Menu(..., title='Menu title', ...)
@@ -475,7 +475,7 @@ import pygameMenu
 
 - *get_widget(widget_id, recursive=False)*
 
-    Get widget object from its ID.
+    Gets the widget object from its ID.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -484,7 +484,7 @@ import pygameMenu
 
 - *is_disabled()*
 
-    Check if the menu is disabled.
+    Checks if the menu is disabled.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -494,7 +494,7 @@ import pygameMenu
 
 - *is_enabled()*
 
-    Check if the menu is enabled.
+    Checks if the menu is enabled.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -504,7 +504,7 @@ import pygameMenu
 
 - *mainloop(events=None)*
 
-    Main loop of menu, on this function Menu can handle exceptions and draw. If parameter **dopause** is enabled then Menu pauses application and checks Events.
+    Main loop of menu. In this function, the Menu can handle exceptions and draw. If parameter **dopause** is enabled, then Menu pauses the application and checks Events.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -521,7 +521,7 @@ import pygameMenu
 
 - *reset(total)*
 
-    Reset the menu (back) a certain number of times (*total*).
+    Resets the menu (back) a certain number of times (*total*).
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -530,7 +530,7 @@ import pygameMenu
 
 - *set_fps(fps, recursive=True)*
 
-    Set the fps limit of the menu, if *recursive* is True the limit is applied to all submenus.
+    Sets the FPS limit of the menu. If *recursive* is True, the limit is applied to all submenus.
 
     ```python
     menu = pygameMenu.Menu(...)
@@ -539,7 +539,7 @@ import pygameMenu
 
 - *set_sound(sound, recursive=False)*
 
-    Adds a sound engine to the menu, if *recursive* the sound is applied to all submenus.
+    Adds a sound engine to the menu. If *recursive*, the sound is applied to all submenus.
 
     ```python
     sound = pygameMenu.sound.Sound()
@@ -559,11 +559,11 @@ import pygameMenu
 | EXIT | Close application
 | RESET | Reset menu |
 
-This events must be imported from *pygameMenu.events*.
+These events must be imported from *pygameMenu.events*.
 
 ### Sounds
 
-A basic sound engine can be created using *Sound* class imported from *pygameMenu.sound*. The sound engine can be customized by setting a sound file to several sounds defined by a type. For example, buttons or keys.
+A basic sound engine can be created using the *Sound* class, imported from *pygameMenu.sound*. The sound engine can be customized by setting a sound file to several sounds defined by a type. For example, buttons or keys.
 
 - **Sound**
 
@@ -587,7 +587,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
 - *get_channel()*
 
-    Get the channel of the sound engine.
+    Gets the channel of the sound engine.
 
     ```python
     sound = pygameMenu.sound.Sound(...)
@@ -596,7 +596,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
 - *get_channel_info()*
 
-    Get the current channel information of the sound engine.
+    Gets the current channel information of the sound engine.
 
     ```python
     sound = pygameMenu.sound.Sound(...)
@@ -605,7 +605,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
 - *load_example_sounds(volume=0.5)*
 
-    Load the example sounds provided by the package.
+    Loads the example sounds provided by the package.
 
     ```python
     sound = pygameMenu.sound.Sound(...)
@@ -614,11 +614,11 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
 - *pause()*
 
-    Pause the current channel.
+    Pauses the current channel.
 
 - *set_sound(sound, file, volume, loops, maxtime, fade_ms)*
 
-    Set a sound file to a sound type.
+    Sets a sound file to a sound type.
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
@@ -629,7 +629,7 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
     | maxtime | Max playing time of the sound | int | 0 |
     | fade_ms | Fading ms | int | 0 |
 
-    Sounds types are the following:
+    Sound types are the following:
 
     | Type | Description |
     | :--: | :-- |
@@ -650,11 +650,11 @@ A basic sound engine can be created using *Sound* class imported from *pygameMen
 
 - *stop()*
 
-    Stop the current channel.
+    Stops the current channel.
 
 - *unpause()*
 
-    Unpause the current channel.
+    Unpauses the current channel.
 
 ### Configuration values
 
@@ -685,7 +685,7 @@ The different configuration values must be loaded from *pygameMenu.locals*.
 
 ### Using fonts
 
-Also this library has some fonts to use, to load a font run this code:
+This library also has some fonts to use. To load a font, run this code:
 
 ```python
 import pygameMenu
@@ -709,7 +709,7 @@ Available embedded fonts (*FONT_NAME*):
 - **OPEN_SANS**
 - **PT_SERIF**
 
-System fonts can also be used. Available system fonts can be listed using the following command in a python shell:
+System fonts can also be used. The available system fonts can be listed using the following command in a python shell:
 
 ```python
 import pygame
@@ -718,7 +718,7 @@ print(pygame.font.get_fonts())
 
 ## Other configurations
 
-Default parameters of *Menu* and *TextMenu* are stored on the following files:
+The default parameters of *Menu* and *TextMenu* are stored in the following files:
 
 | File | Description |
 | :--: | :-- |
@@ -727,7 +727,7 @@ Default parameters of *Menu* and *TextMenu* are stored on the following files:
 
 ## Examples
 
-To run the examples simply execute this commands in a terminal:
+To run the examples, simply execute these commands in a terminal:
 
 ```bash
 py -m pygameMenu.examples.game_selector
@@ -735,7 +735,7 @@ py -m pygameMenu.examples.multi_input
 py -m pygameMenu.examples.timer_clock
 ```
 
-Also, examples can be imported as follows:
+The examples can also be imported as follows:
 
 ```python
 from pygameMenu.examples.example import main
