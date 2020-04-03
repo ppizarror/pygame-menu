@@ -32,73 +32,72 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import pygame
-from pygameMenu.scrollarea import ScrollArea
+import pygameMenu
+from functools import partial
+
+H_SIZE = 600  # Height of window size
+W_SIZE = 800  # Width of window size
+COLOR_BACKGROUND = (128, 0, 128)
 
 
-def make_world(width, height):
-    world = pygame.Surface((width, height))  # pylint: disable-msg=E1121
-    world.fill((200, 200, 200))
-
-    color = [70, 20, 20]
-    maxx = len(list(range(100, width, 200)))
-    maxy = len(list(range(100, height, 200)))
-    numberx = 0
-    for x in range(100, width, 200):
-        numbery = 0
-        for y in range(100, height, 200):
-            if numberx in (0, maxx - 1) or numbery in (0, maxy - 1):
-                # White circles to delimite world boundaries
-                pygame.draw.circle(world, (255, 255, 255), (x, y), 100, 10)
-            else:
-                pygame.draw.circle(world, color, (x, y), 100, 10)
-                if color[0] + 15 < 255:
-                    color[0] += 15
-                elif color[1] + 15 < 255:
-                    color[1] += 15
-                else:
-                    color[2] += 15
-            numbery += 1
-        numberx += 1
-
-    return world
+def on_button_click(button_id):
+    print("Hello from button {}".format(button_id))
 
 
-def main():
+def paint_background(surface):
+    surface.fill(COLOR_BACKGROUND)
+
+
+def make_long_menu(surface):
+    # Main menu, pauses execution of the application
+    menu = pygameMenu.Menu(surface,
+                           bgfun=partial(paint_background, surface),
+                           enabled=False,
+                           font=pygameMenu.font.FONT_NEVIS,
+                           menu_alpha=90,
+                           onclose=pygameMenu.events.CLOSE,
+                           title='Main Menu',
+                           window_height=H_SIZE,
+                           window_width=W_SIZE
+                           )
+    label = "Button n°{}"
+    for i in range(1, 10):
+        txt = label.format(i)
+        menu.add_button(txt, on_button_click, i)
+    menu.add_button('Exit', pygameMenu.events.EXIT)
+    return menu
+
+
+def main(test=False):
     """
     Main function
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
 
-    scr_size = (400, 600)
-    screen = pygame.display.set_mode(scr_size)
-    world = make_world(scr_size[0] * 3, scr_size[1] * 4)
+    # Create window
+    screen = pygame.display.set_mode((W_SIZE, H_SIZE))
+    pygame.display.set_caption('Example - Scrolling Menu')
 
-    screen.fill((120, 90, 130))
-
-    pygame.display.set_caption("ScrollArea")
-    bg = pygame.Surface(scr_size).convert()
-
-    sp = ScrollArea(world,
-                    scr_size[0],
-                    scr_size[1],
-                    shadow=True)
+    # Create menu
+    menu = make_long_menu(screen)
 
     # -------------------------------------------------------------------------
     # Main loop
     # -------------------------------------------------------------------------
     while True:
-        event = pygame.event.wait()
+        # Paint background
+        paint_background(screen)
 
-        if event.type is pygame.QUIT:
-            break
+        # Execute main from principal menu if is enabled
+        menu.mainloop(disable_loop=test)
 
-        sp.update([event])
-        sp.draw(bg)
-
-        screen.blit(bg, (0, 0))
-
+        # Flip surface
         pygame.display.update()
+
+        # At first loop returns
+        if test:
+            break
 
 
 if __name__ == '__main__':
