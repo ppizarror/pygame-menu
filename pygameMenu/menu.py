@@ -349,15 +349,8 @@ class Menu(object):
         :rtype: pygameMenu.widgets.button.Button
         """
         assert isinstance(element_name, str), 'element_name must be a string'
-
-        # Get id
         option_id = kwargs.pop('option_id', '')
         assert isinstance(option_id, str), 'ID must be a string'
-
-        # Get font size
-        font_size = kwargs.pop('font_size', self._fsize)
-        assert isinstance(font_size, int)
-        assert font_size > 0, 'font_size must be greater than zero'
 
         # If element is a Menu
         if isinstance(element, Menu):
@@ -375,16 +368,19 @@ class Menu(object):
             widget = _widgets.Button(element_name, option_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
-        self._configure_widget(widget, font_size, kwargs.pop('align', self._widget_align))
 
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        # Configure and add the button
+        self._configure_widget(widget, kwargs.pop('font_size', self._fsize), kwargs.pop('align', self._widget_align))
+        self._append_widget(widget)
         return widget
+
+    def add_option(self, *args, **kwargs):
+        """
+        Add option to menu. Deprecated method.
+        """
+        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
+        warnings.warn(_msg, DeprecationWarning)
+        return self.add_button(*args, **kwargs)
 
     def add_color_input(self,
                         title,
@@ -434,17 +430,7 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.colorinput.ColorInput
         """
-        assert isinstance(align, str), 'align must be a string'
         assert isinstance(default, (str, tuple))
-        assert isinstance(font_size, int)
-
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
-
-        # Create widget
         widget = _widgets.ColorInput(label=title,
                                      colorinput_id=color_id,
                                      color_type=color_type,
@@ -456,24 +442,8 @@ class Menu(object):
                                      **kwargs)
         self._configure_widget(widget, font_size, align)
         widget.set_value(default)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        self._append_widget(widget)
         return widget
-
-    def add_option(self, *args, **kwargs):
-        """
-        Add option to menu. Deprecated method.
-        """
-        _msg = 'Menu.add_option is deprecated, use Menu.add_button instead. This feature will be deleted in v3.0'
-        warnings.warn(_msg, DeprecationWarning)
-        return self.add_button(*args, **kwargs)
 
     def add_selector(self,
                      title,
@@ -518,16 +488,6 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
-
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
-
-        # Create widget
         widget = _widgets.Selector(label=title,
                                    elements=values,
                                    selector_id=selector_id,
@@ -536,15 +496,7 @@ class Menu(object):
                                    onreturn=onreturn,
                                    **kwargs)
         self._configure_widget(widget, font_size, align)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        self._append_widget(widget)
         return widget
 
     def add_text_input(self,
@@ -609,20 +561,11 @@ class Menu(object):
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
         assert isinstance(default, (str, int, float))
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
-
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
 
         # If password is active no default value should exist
         if password and default != '':
             raise ValueError('default value must be empty if the input is a password')
 
-        # Create widget
         widget = _widgets.TextInput(label=title,
                                     textinput_id=textinput_id,
                                     maxchar=maxchar,
@@ -638,15 +581,7 @@ class Menu(object):
                                     **kwargs)
         self._configure_widget(widget, font_size, align)
         widget.set_value(default)
-
-        # Store widget
-        self._option.append(widget)
-        if len(self._option) == 1:
-            widget.set_selected()
-        elif len(self._option) > 1:
-            dy = -self._fsize / 2 - self._opt_dy / 2
-            self._opt_posy += dy
-
+        self._append_widget(widget)
         return widget
 
     def _back(self):
@@ -706,23 +641,56 @@ class Menu(object):
 
         return close
 
-    def _configure_widget(self, widget, font_size, alignment):
+    def _configure_widget(self, widget, font_size=0, align=''):
         """
         Update the given widget with the parameters defined at
         the menu level.
+
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.widget.Widget
+        :param font_size: Widget font size
+        :type font_size: int
+        :param align: Widget alignment
+        :type align: str
         """
+        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(font_size, int), 'font_size must be an integer'
+        assert isinstance(align, str), 'align must be a string'
+
+        if align == '':
+            align = self._widget_align
+        if font_size == 0:
+            font_size = self._fsize
+        assert font_size > 0, 'font_size must be greater than zero'
+
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(self._font_name,
-                        font_size,
-                        self._font_color,
-                        self._sel_color)
+        widget.set_font(font=self._font_name,
+                        font_size=font_size,
+                        color=self._font_color,
+                        selected_color=self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(alignment)
+        widget.set_alignment(align)
+
+    def _append_widget(self, widget):
+        """
+        Append the widget to the option lists.
+
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.widget.Widget
+        """
+        assert isinstance(widget, _widgets.WidgetType)
+        _widget_font_size = widget.get_font_info()['size']
+        self._option.append(widget)
+        if len(self._option) == 1:
+            widget.set_selected()
+        elif len(self._option) > 1:
+            dy = -_widget_font_size / 2 - self._opt_dy / 2
+            self._opt_posy += dy
 
     def _get_depth(self):
         """

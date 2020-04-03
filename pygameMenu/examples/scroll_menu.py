@@ -41,7 +41,7 @@ COLOR_BACKGROUND = (128, 0, 128)
 
 
 def on_button_click(button_id):
-    print("Hello from button {}".format(button_id))
+    print('Hello from button {}'.format(button_id))
 
 
 def paint_background(surface):
@@ -50,22 +50,22 @@ def paint_background(surface):
 
 def make_long_menu(surface):
     # Main menu, pauses execution of the application
-    menu = pygameMenu.Menu(surface,
-                           bgfun=partial(paint_background, surface),
-                           enabled=False,
-                           font=pygameMenu.font.FONT_NEVIS,
-                           menu_alpha=90,
-                           onclose=pygameMenu.events.CLOSE,
-                           title='Main Menu',
-                           window_height=H_SIZE,
-                           window_width=W_SIZE
-                           )
-    label = "Button n°{}"
+    _menu = pygameMenu.Menu(surface,
+                            bgfun=partial(paint_background, surface),
+                            enabled=False,
+                            font=pygameMenu.font.FONT_NEVIS,
+                            menu_alpha=90,
+                            onclose=pygameMenu.events.CLOSE,
+                            title='Main Menu',
+                            window_height=H_SIZE,
+                            window_width=W_SIZE
+                            )
+    label = 'Button n°{}'
     for i in range(1, 10):
         txt = label.format(i)
-        menu.add_button(txt, on_button_click, i)
-    menu.add_button('Exit', pygameMenu.events.EXIT)
-    return menu
+        _menu.add_button(txt, on_button_click, i)
+    _menu.add_button('Exit', pygameMenu.events.EXIT)
+    return _menu
 
 
 def main(test=False):
@@ -86,18 +86,19 @@ def main(test=False):
     # Main loop
     # -------------------------------------------------------------------------
     while True:
+
+        # At first loop returns
+        if test:
+            break
+
         # Paint background
         paint_background(screen)
 
         # Execute main from principal menu if is enabled
         menu.mainloop(disable_loop=test)
 
-        # Flip surface
-        pygame.display.update()
-
-        # At first loop returns
-        if test:
-            break
+        # Update surface
+        pygame.display.flip()
 
 
 if __name__ == '__main__':

@@ -351,6 +351,7 @@ class WidgetsTest(unittest.TestCase):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
 
+    # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):
         """
         Test ScrollBar widget.

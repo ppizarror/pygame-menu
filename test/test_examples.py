@@ -36,6 +36,7 @@ import pygameMenu.examples.timer_clock as example1
 import pygameMenu.examples.game_selector as example2
 import pygameMenu.examples.multi_input as example3
 import pygameMenu.examples.scroll_bar as example4
+import pygameMenu.examples.scroll_menu as example5
 
 
 class ExamplesTest(unittest.TestCase):
@@ -73,3 +74,10 @@ class ExamplesTest(unittest.TestCase):
         Test scroll bar example.
         """
         example4.main(test=True)
+
+    @staticmethod
+    def test_example_scroll_menu():
+        """
+        Test scroll menu example.
+        """
+        example5.main(test=True)

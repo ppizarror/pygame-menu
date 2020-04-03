@@ -65,7 +65,6 @@ class Widget(object):
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
-
         assert isinstance(widget_id, str)
         if onchange:
             assert callable(onchange), 'onchange must be a function or None'
@@ -75,44 +74,45 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._alignment = _locals.ALIGN_CENTER
-        self._fps = 0
-        self._id = str(widget_id)
+        self._alignment = _locals.ALIGN_CENTER  # type: str
+        self._fps = 0  # type: int
+        self._id = widget_id  # type: str
         self._last_selected_surface = None  # type: _pygame.SurfaceType
         self._selected_rect = None  # type: _pygame.rect.RectType
-        self._rect = _pygame.Rect(0, 0, 0, 0)
-        self._render_string_cache = 0
-        self._render_string_cache_surface = None
+        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
+        self._render_string_cache = 0  # type: int
+        self._render_string_cache_surface = None  # type: _pygame.SurfaceType
         self._surface = None  # type: _pygame.SurfaceType
 
-        self._args = args or []
-        self._kwargs = kwargs or {}
-        self._on_change = onchange
-        self._on_return = onreturn
+        self._args = args or []  # type: list
+        self._kwargs = kwargs or {}  # type: dict
+        self._on_change = onchange  # type: callable
+        self._on_return = onreturn  # type: callable
 
         # Menu reference
         self._menu = None
 
         # Modified in set_font() method
-        self._font = _cfg.MENU_FONT_SIZE_TITLE
-        self._font_size = _cfg.MENU_FONT_SIZE
-        self._font_color = _cfg.MENU_FONT_COLOR
-        self._font_selected_color = _cfg.MENU_SELECTEDCOLOR
-        self._font_antialias = True
+        self._font = None  # type: _pygame.font.Font
+        self._font_name = _cfg.MENU_FONT_SIZE_TITLE  # type: str
+        self._font_size = _cfg.MENU_FONT_SIZE  # type: int
+        self._font_color = _cfg.MENU_FONT_COLOR  # type: tuple
+        self._font_selected_color = _cfg.MENU_SELECTEDCOLOR  # type: tuple
+        self._font_antialias = True  # type: bool
 
         # Text shadow
-        self._shadow = _cfg.MENU_OPTION_SHADOW
-        self._shadow_color = _cfg.MENU_SHADOW_COLOR
-        self._shadow_offset = _cfg.MENU_SHADOW_OFFSET
-        self._shadow_position = _cfg.MENU_SHADOW_POSITION
+        self._shadow = _cfg.MENU_OPTION_SHADOW  # type: bool
+        self._shadow_color = _cfg.MENU_SHADOW_COLOR  # type: tuple
+        self._shadow_offset = _cfg.MENU_SHADOW_OFFSET  # type: int
+        self._shadow_position = _cfg.MENU_SHADOW_POSITION  # type: str
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
 
         # Public attributs
-        self.joystick_enabled = True
-        self.mouse_enabled = True
-        self.selected = False
-        self.sound = _Sound()
+        self.joystick_enabled = True  # type: bool
+        self.mouse_enabled = True  # type: bool
+        self.selected = False  # type: bool
+        self.sound = _Sound()  # type: _Sound
 
     def apply(self, *args):
         """
@@ -330,12 +330,28 @@ class Widget(object):
         assert isinstance(color, tuple)
         assert isinstance(selected_color, tuple)
         assert isinstance(antialias, bool)
+        self._font_name = font
         self._font = _fonts.get_font(font, font_size)
         self._font_size = font_size
         self._font_color = color
         self._font_selected_color = selected_color
         self._font_antialias = antialias
         self._apply_font()
+
+    def get_font_info(self):
+        """
+        Return a dict with the information of the widget font.
+
+        :return: dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
+        :rtype: dict
+        """
+        return {
+            'size': self._font_size,
+            'name': self._font_name,
+            'color': self._font_color,
+            'selected_color': self._font_selected_color,
+            'antialias': self._font_antialias,
+        }
 
     def set_menu(self, menu):
         """
