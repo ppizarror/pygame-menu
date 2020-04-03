@@ -118,6 +118,7 @@ def main(test=False):
     # Vertical ScrollBar
     sb_v = ScrollBar(scr_size[1] - thick_h,
                      (0, world.get_height() - scr_size[1] + thick_h),
+                     '',
                      _locals.ORIENTATION_VERTICAL,
                      6,
                      (135, 193, 180),
