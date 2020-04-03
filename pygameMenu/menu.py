@@ -378,7 +378,7 @@ class Menu(object):
 
         # Configure and add the button
         self._configure_widget(widget, font_size, kwargs.pop('align', self._widget_align))
-        self._append_widget(widget, font_size)
+        self._append_widget(widget)
         return widget
 
     def add_option(self, *args, **kwargs):
@@ -457,8 +457,8 @@ class Menu(object):
                                      prev_size=previsualization_width,
                                      **kwargs)
         self._configure_widget(widget, font_size, align)
-        widget.set_value(default)  # Must be after configuring the font_size
-        self._append_widget(widget, font_size)
+        widget.set_value(default)
+        self._append_widget(widget)
         return widget
 
     def add_selector(self,
@@ -521,7 +521,7 @@ class Menu(object):
                                    onreturn=onreturn,
                                    **kwargs)
         self._configure_widget(widget, font_size, align)
-        self._append_widget(widget, font_size)
+        self._append_widget(widget)
         return widget
 
     def add_text_input(self,
@@ -614,7 +614,7 @@ class Menu(object):
                                     **kwargs)
         self._configure_widget(widget, font_size, align)
         widget.set_value(default)
-        self._append_widget(widget, font_size)
+        self._append_widget(widget)
         return widget
 
     def _back(self):
@@ -678,13 +678,23 @@ class Menu(object):
         """
         Update the given widget with the parameters defined at
         the menu level.
+
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.widget.Widget
+        :param font_size: Widget font size
+        :type font_size: int
+        :param alignment: Widget alignment
+        :type alignment: str
         """
+        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(font_size, int)
+        assert isinstance(alignment, str)
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(self._font_name,
-                        font_size,
-                        self._font_color,
-                        self._sel_color)
+        widget.set_font(font=self._font_name,
+                        font_size=font_size,
+                        color=self._font_color,
+                        selected_color=self._sel_color)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
@@ -692,19 +702,20 @@ class Menu(object):
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(alignment)
 
-    def _append_widget(self, widget, font_size):
+    def _append_widget(self, widget):
         """
         Append the widget to the option lists.
 
         :param widget: Widget object
         :type widget: pygameMenu.widgets.widget.Widget
         """
-        # Store widget
+        assert isinstance(widget, _widgets.WidgetType)
+        _widget_font_size = widget.get_font_info()['size']
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
         elif len(self._option) > 1:
-            dy = -font_size / 2 - self._opt_dy / 2
+            dy = -_widget_font_size / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
     def _get_depth(self):
