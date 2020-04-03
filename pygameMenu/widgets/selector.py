@@ -88,11 +88,11 @@ class Selector(Widget):
                                        onreturn=onreturn,
                                        kwargs=kwargs)
 
-        self._elements = elements
-        self._index = 0
-        self._label = label
-        self._labelsize = 0
-        self._sformat = '{0} < {1} >'
+        self._elements = elements  # type: list
+        self._index = 0  # type: int
+        self._label = label  # type: str
+        self._labelsize = 0  # type: int
+        self._sformat = '{0} < {1} >'  # type: str
 
         # Apply default item
         default %= len(self._elements)

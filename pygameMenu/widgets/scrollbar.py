@@ -62,35 +62,34 @@ class ScrollBar(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
-
         assert isinstance(length, (int, float))
         assert isinstance(values_range, (tuple, list))
-        assert values_range[1] > values_range[0], "Minimum value first is expected"
+        assert values_range[1] > values_range[0], 'minimum value first is expected'
         assert isinstance(slider_pad, (int, float))
         assert isinstance(page_ctrl_thick, (int, float))
-        assert page_ctrl_thick - 2 * slider_pad >= 2, "slider shall be visible"
+        assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
         super(ScrollBar, self).__init__(widget_id=scrollbar_id,
                                         onchange=onchange,
                                         onreturn=onreturn,
                                         args=args,
                                         kwargs=kwargs)
-        self._values_range = list(values_range)
-        self._scrolling = False
-        self._orientation = 0
-        self._opp_orientation = int(not self._orientation)
+        self._values_range = list(values_range)  # type: list
+        self._scrolling = False  # type: bool
+        self._orientation = 0  # type: int
+        self._opp_orientation = int(not self._orientation)  # type: int
 
-        self._page_ctrl_length = length
-        self._page_ctrl_thick = page_ctrl_thick
-        self._page_ctrl_color = page_ctrl_color
+        self._page_ctrl_length = length  # type: int
+        self._page_ctrl_thick = page_ctrl_thick  # type: (int,float)
+        self._page_ctrl_color = page_ctrl_color  # type: tuple
 
         self._slider_rect = None  # type: _pygame.rect.RectType
-        self._slider_pad = slider_pad
-        self._slider_color = slider_color
-        self._slider_position = 0
+        self._slider_pad = slider_pad  # type: (int,float)
+        self._slider_color = slider_color  # type: tuple
+        self._slider_position = 0  # type: int
         self._slider_length = None  # type: int
 
-        self._single_step = 20
+        self._single_step = 20  # type: int
         self._page_step = None  # type: int
 
         if values_range[1] - values_range[0] > length:
@@ -154,7 +153,7 @@ class ScrollBar(Widget):
         page control surface.
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-            (self._page_ctrl_length - self._slider_length)
+               (self._page_ctrl_length - self._slider_length)
 
     def get_value(self):
         """
@@ -164,7 +163,7 @@ class ScrollBar(Widget):
         :rtype: int
         """
         value = self._values_range[0] + self._slider_position * \
-            (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._slider_length)
+                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._slider_length)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -206,10 +205,10 @@ class ScrollBar(Widget):
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
-            self._slider_rect.move(self._rect.topleft).topleft[axis] + self._slider_pad
+                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
         space_after = self._rect.bottomright[axis] - \
-            self._slider_rect.move(self._rect.topleft).bottomright[axis] - self._slider_pad
+                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
         if not move:
             return False
@@ -293,7 +292,7 @@ class ScrollBar(Widget):
         assert self._values_range[0] <= value <= self._values_range[1]
 
         pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._slider_length) / \
-            (self._values_range[1] - self._values_range[0])
+                 (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)
@@ -321,11 +320,11 @@ class ScrollBar(Widget):
                         updated = True
                 else:
                     # The _slider_rect origin is related to the widget surface
-                    if self._slider_rect.move(self._rect.topleft).collidepoint(event.pos):
+                    if self._slider_rect.move(*self._rect.topleft).collidepoint(event.pos):
                         # Initialize scrolling
                         self._scrolling = True
 
-                    elif self._rect.collidepoint(event.pos):
+                    elif self._rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
                         pos = (self._slider_rect.x, self._slider_rect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1

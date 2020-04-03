@@ -78,14 +78,14 @@ class MenuBar(Widget):
                                       kwargs=kwargs
                                       )
 
-        self._backbox = back_box
+        self._backbox = back_box  # type: bool
         self._backbox_pos = None  # type: tuple
         self._backbox_rect = None  # type: _pygame.rect.RectType
-        self._label = label
-        self._offsetx = 0
-        self._offsety = 0
+        self._label = label  # type: str
+        self._offsetx = 0  # type: int
+        self._offsety = 0  # type: int
         self._polygon_pos = None  # type: tuple
-        self._width = width
+        self._width = width  # type: (int,float)
 
     def _apply_font(self):
         """
