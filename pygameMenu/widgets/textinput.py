@@ -219,17 +219,17 @@ class TextInput(Widget):
         self._cursor_offset = -1
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
-        self._cursor_surface = None
+        self._cursor_surface = None  # type: _pygame.Surface
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
-        self._cursor_switch_ms = 500
+        self._cursor_switch_ms = 500  # type: int
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # History of editions
-        self._history = []
-        self._history_cursor = []
-        self._history_renderbox = []
+        self._history = []  # type: list
+        self._history_cursor = []  # type: list
+        self._history_renderbox = []  # type: list
         self._history_index = 0  # Index at which the new editions are added
-        self._max_history = history
+        self._max_history = history  # type: int
 
         # Text selection
         self._last_selection_render = [0, 0]
@@ -240,7 +240,7 @@ class TextInput(Widget):
         self._selection_mouse_first_position = -1
         self._selection_position = [0, 0]  # (x,y)
         self._selection_render = False
-        self._selection_surface = None  # type: _pygame.SurfaceType
+        self._selection_surface = None  # type: _pygame.Surface
 
         # List of valid chars
         if valid_chars is not None:
@@ -253,25 +253,25 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Other
-        self._copy_paste_enabled = enable_copy_paste
-        self._first_render = True
-        self._input_type = input_type
-        self._input_underline = input_underline
-        self._input_underline_size = 0
-        self._keychar_size = {'': 0}
-        self._label = label
-        self._label_size = 0
-        self._last_char = ''
-        self._last_rendered_string = '__pygameMenu__last_render_string__'
-        self._last_rendered_surface = None
+        self._copy_paste_enabled = enable_copy_paste  # type: bool
+        self._first_render = True  # type: bool
+        self._input_type = input_type  # type: str
+        self._input_underline = input_underline  # type: bool
+        self._input_underline_size = 0  # type: int
+        self._keychar_size = {'': 0}  # type: dict
+        self._label = label  # type: str
+        self._label_size = 0  # type: int
+        self._last_char = ''  # type: str
+        self._last_rendered_string = '__pygameMenu__last_render_string__'  # type: str
+        self._last_rendered_surface = None  # type: _pygame.Surface
         self._last_rendered_surface_underline_width = 0
-        self._maxchar = maxchar
+        self._maxchar = maxchar  # type: int
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
-        self._maxwidth_base = maxwidth
-        self._maxwidth_update = maxwidth_dynamically_update
+        self._maxwidth_base = maxwidth  # type: int
+        self._maxwidth_update = maxwidth_dynamically_update  # type: bool
         self._maxwidthsize = 0  # Updated in font
         self._password = password  # True/False
-        self._password_char = password_char
+        self._password_char = password_char  # type: str
 
     def _apply_font(self):
         """

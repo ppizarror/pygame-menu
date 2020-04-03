@@ -111,7 +111,7 @@ class ColorInput(TextInput):
                                        '9'], 'input_separator cannot be a number'
 
         _maxchar = 0
-        self._color_type = color_type.lower()
+        self._color_type = color_type.lower()  # type: str
         if self._color_type == _TYPE_RGB:
             _maxchar = 11  # RRR,GGG,BBB
             self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_separator]
@@ -146,15 +146,14 @@ class ColorInput(TextInput):
                                          )
 
         # Store inner variables
-        self._separator = input_separator
+        self._separator = input_separator  # type: str
 
         # Previsualization surface, if -1 previsualization does not show
-        self._last_r = -1
-        self._last_g = -1
-        self._last_b = -1
-        self._prev_surface = None
-        self._prev_render_width = None
-        self._prev_size = prev_size
+        self._last_r = -1  # type: int
+        self._last_g = -1  # type: int
+        self._last_b = -1  # type: int
+        self._prev_surface = None  # type: _pygame.Surface
+        self._prev_size = prev_size  # type: int
 
     def clear(self):
         """
