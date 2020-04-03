@@ -349,15 +349,8 @@ class Menu(object):
         :rtype: pygameMenu.widgets.button.Button
         """
         assert isinstance(element_name, str), 'element_name must be a string'
-
-        # Get id
         option_id = kwargs.pop('option_id', '')
         assert isinstance(option_id, str), 'ID must be a string'
-
-        # Get font size
-        font_size = kwargs.pop('font_size', self._fsize)
-        assert isinstance(font_size, int)
-        assert font_size > 0, 'font_size must be greater than zero'
 
         # If element is a Menu
         if isinstance(element, Menu):
@@ -377,7 +370,7 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         # Configure and add the button
-        self._configure_widget(widget, font_size, kwargs.pop('align', self._widget_align))
+        self._configure_widget(widget, kwargs.pop('font_size', self._fsize), kwargs.pop('align', self._widget_align))
         self._append_widget(widget)
         return widget
 
@@ -437,16 +430,7 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.colorinput.ColorInput
         """
-        assert isinstance(align, str), 'align must be a string'
         assert isinstance(default, (str, tuple))
-        assert isinstance(font_size, int)
-
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
-
         widget = _widgets.ColorInput(label=title,
                                      colorinput_id=color_id,
                                      color_type=color_type,
@@ -504,15 +488,6 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
         """
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
-
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
-
         widget = _widgets.Selector(label=title,
                                    elements=values,
                                    selector_id=selector_id,
@@ -586,14 +561,6 @@ class Menu(object):
         :rtype: pygameMenu.widgets.textinput.TextInput
         """
         assert isinstance(default, (str, int, float))
-        assert isinstance(align, str), 'align must be a string'
-        assert isinstance(font_size, int)
-
-        if align == '':
-            align = self._widget_align
-        if font_size == 0:
-            font_size = self._fsize
-        assert font_size > 0, 'font_size must be greater than zero'
 
         # If password is active no default value should exist
         if password and default != '':
@@ -674,7 +641,7 @@ class Menu(object):
 
         return close
 
-    def _configure_widget(self, widget, font_size, alignment):
+    def _configure_widget(self, widget, font_size=0, align=''):
         """
         Update the given widget with the parameters defined at
         the menu level.
@@ -683,12 +650,19 @@ class Menu(object):
         :type widget: pygameMenu.widgets.widget.Widget
         :param font_size: Widget font size
         :type font_size: int
-        :param alignment: Widget alignment
-        :type alignment: str
+        :param align: Widget alignment
+        :type align: str
         """
         assert isinstance(widget, _widgets.WidgetType)
-        assert isinstance(font_size, int)
-        assert isinstance(alignment, str)
+        assert isinstance(font_size, int), 'font_size must be an integer'
+        assert isinstance(align, str), 'align must be a string'
+
+        if align == '':
+            align = self._widget_align
+        if font_size == 0:
+            font_size = self._fsize
+        assert font_size > 0, 'font_size must be greater than zero'
+
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
         widget.set_font(font=self._font_name,
@@ -700,7 +674,7 @@ class Menu(object):
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(alignment)
+        widget.set_alignment(align)
 
     def _append_widget(self, widget):
         """
