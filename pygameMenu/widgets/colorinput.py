@@ -62,7 +62,7 @@ class ColorInput(TextInput):
                  **kwargs
                  ):
         """
-        Description of the specific paramaters (see Widget class for generic ones):
+        Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Input label text
         :type label: basestring

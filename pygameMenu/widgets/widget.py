@@ -116,8 +116,8 @@ class Widget(object):
 
     def apply(self, *args):
         """
-        Run 'on_return' callaback when return event. A callback function
-        recieves the following arguments:
+        Run 'on_return' callback when return event. A callback function
+        receives the following arguments:
 
             callback_func( value, *args, *widget._args, **widget._kwargs )
 
@@ -140,8 +140,8 @@ class Widget(object):
 
     def change(self, *args):
         """
-        Run 'on_change' callaback after change event is triggered. A callback function
-        recieves the following arguments:
+        Run 'on_change' callback after change event is triggered. A callback function
+        receives the following arguments:
 
             callback_func( value, *args, *widget._args, **widget._kwargs )
 
@@ -562,7 +562,7 @@ class Widget(object):
         Set the value.
 
         .. warning:: This method shall not fire the callbacks as it is
-                     called programatically (avoid possible loops).
+                     called programmatically (avoid possible loops).
 
         :param value: Value to be set on the widget
         :type value: Object
@@ -573,7 +573,7 @@ class Widget(object):
 
     def update(self, events):
         """
-        Update internal varibale according to the given events list
+        Update internal variable according to the given events list
         and fire the callbacks.
 
         :param events: List of pygame events

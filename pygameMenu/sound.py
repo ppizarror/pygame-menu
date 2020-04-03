@@ -92,7 +92,7 @@ class Sound(object):
         """
         Constructor.
 
-        :param uniquechannel: Force the channel to be unique, this is setted at the moment of creation of the object
+        :param uniquechannel: Force the channel to be unique, this is set at the moment of creation of the object
         :type uniquechannel: bool
         :param frequency: Frequency of sounds
         :type frequency: int
@@ -196,10 +196,10 @@ class Sound(object):
         """
         channel = _mixer.find_channel()
         if self._uniquechannel:  # If the channel is unique
-            if self._channel is None:  # If the channel has not been setted
+            if self._channel is None:  # If the channel has not been set
                 self._channel = channel
         else:
-            self._channel = channel  # Store the avaiable channel
+            self._channel = channel  # Store the available channel
         return self._channel
 
     def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
@@ -303,7 +303,7 @@ class Sound(object):
         if not sound:
             return False
 
-        # Find an avaiable channel
+        # Find an available channel
         channel = self.get_channel()  # This will set the channel if it's None
         if channel is None:  # The sound can't be played because all channels are busy
             return False

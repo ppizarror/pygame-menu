@@ -66,7 +66,7 @@ except ImportError:
 
     class PyperclipException(RuntimeError):
         """
-        Pyperclip exception trown by pyperclip.
+        Pyperclip exception thrown by pyperclip.
         """
         pass
 
@@ -102,7 +102,7 @@ class TextInput(Widget):
                  **kwargs
                  ):
         """
-        Description of the specific paramaters (see Widget class for generic ones):
+        Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Input label text
         :type label: basestring
@@ -130,7 +130,7 @@ class TextInput(Widget):
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
         :type onreturn: function, NoneType
-        :param password: Input string is displayed as a pasword
+        :param password: Input string is displayed as a password
         :type password: bool
         :param password_char: Character used by password type
         :type password_char: basestring
@@ -477,7 +477,7 @@ class TextInput(Widget):
         if string != self._last_rendered_string or updated:
             menu = self.get_menu()
 
-            # Calculate total avaiable space
+            # Calculate total available space
             current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
             _, _, menu_width, _ = menu.get_position()
             space_between_label = menu_width - self._label_size - self._rect.x
@@ -700,7 +700,7 @@ class TextInput(Widget):
             if addition:  # If text is added
                 if right < 0 and self._renderbox[2] == self._maxwidth:  # If press del at the end of string
                     return
-                if left < 0 and self._renderbox[2] == 0:  # If backspace at begining of string
+                if left < 0 and self._renderbox[2] == 0:  # If backspace at beginning of string
                     return
 
                 # If user deletes something and it is in the end
@@ -717,7 +717,7 @@ class TextInput(Widget):
                     self._renderbox[2] += right
 
                 if left < 0:
-                    if self._renderbox[0] == 0:  # If cursor is at the begining
+                    if self._renderbox[0] == 0:  # If cursor is at the beginning
                         self._renderbox[2] += left
                     self._renderbox[0] += left
                     self._renderbox[1] += left
@@ -858,7 +858,7 @@ class TextInput(Widget):
             self._renderbox[2] = cursor_pos
             self._update_maxlimit_renderbox()
 
-        # Text does not have ellipsis, infered position is correct
+        # Text does not have ellipsis, inferred position is correct
         else:
             self._cursor_position = cursor_pos
             if self._maxwidth != 0:  # Update renderbox

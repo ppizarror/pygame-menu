@@ -52,7 +52,7 @@ class MenuBar(Widget):
                  **kwargs
                  ):
         """
-        Description of the specific paramaters (see Widget class for generic ones):
+        Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Title of the menu
         :type label: basestring

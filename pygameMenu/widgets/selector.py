@@ -52,7 +52,7 @@ class Selector(Widget):
                  **kwargs
                  ):
         """
-        Description of the specific paramaters (see Widget class for generic ones):
+        Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Selector label text
         :type label: basestring
