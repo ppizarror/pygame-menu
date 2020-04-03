@@ -894,15 +894,19 @@ class Menu(object):
                     if event.axis == _ctrl.JOY_AXIS_Y and event.value > _ctrl.JOY_DEADZONE:
                         self._select(self._actual._index + 1)
 
-                elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                    self._sounds.play_click_mouse()
+                elif self._mouse and event.type == _pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
                         if widget.get_rect().collidepoint(*event.pos):
                             self._select(index)
-                            widget.update(events)  # This option can change the current menu to a submenu
-                            break_mainloop = True  # It is updated
-                            break
+
+                elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
+                    self._sounds.play_click_mouse()
+                    widget = self._actual._option[self._actual._index]
+                    if widget.get_rect().collidepoint(*event.pos):
+                        widget.update(events)  # This option can change the current menu to a submenu
+                        break_mainloop = True  # It is updated
+                        break
 
         # A widget has closed the menu
         if not self._top._enabled:
