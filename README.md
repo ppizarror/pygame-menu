@@ -403,7 +403,7 @@ import pygameMenu
 
 - *disable(closelocked)*
 
-    Disables Menu (doesn't check events and draw on the surface). If *closelocked* is *True*, all the locked penned submenus are closed too.
+    Disables Menu (doesn't check events and draw on the surface). If *closelocked* is *True*, all the locked submenus are closed too.
 
     ```python
     menu = pygameMenu.Menu(...)
