@@ -362,12 +362,12 @@ class WidgetsTest(unittest.TestCase):
         thick = 80
         length = screen_size[1]
         world_range = (50, world.get_height())
-        # world_length = world_range[1] - world_range[0]
         orientation = _locals.ORIENTATION_VERTICAL
         x, y = screen_size[0] - thick, 0
 
         sb = ScrollBar(length,
                        world_range,
+                       '',
                        orientation,
                        slider_pad=2,
                        slider_color=(210, 120, 200),

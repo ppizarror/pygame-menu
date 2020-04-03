@@ -82,7 +82,7 @@ class TextMenu(Menu):
         :param kwargs: Aditional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
-               isinstance(draw_text_region_x, float)
+            isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
         assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)
@@ -117,6 +117,20 @@ class TextMenu(Menu):
         self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
         self._opt_posy -= self._textdy / 2 + self._font_textsize / 2
 
+    def add_button(self, *args, **kwargs):
+        """
+        See upper class doc.
+        """
+        self._update_top_margin()
+        return super(TextMenu, self).add_button(*args, **kwargs)
+
+    def add_color_input(self, *args, **kwargs):
+        """
+        See upper class doc.
+        """
+        self._update_top_margin()
+        return super(TextMenu, self).add_color_input(*args, **kwargs)
+
     def add_line(self, text):
         """
         Add line of text.
@@ -131,17 +145,19 @@ class TextMenu(Menu):
         dy = -self._font_textsize / 2 - self._textdy / 2
         self._opt_posy += dy
 
-    def add_button(self, element_name, element, *args, **kwargs):
+    def add_selector(self, *args, **kwargs):
         """
         See upper class doc.
         """
-        if self._size <= 1:
-            dy = -0.5 * (self._fsize + self._opt_dy)
-            self._opt_posy += dy
-        return super(TextMenu, self).add_button(element_name,
-                                                element,
-                                                *args,
-                                                **kwargs)
+        self._update_top_margin()
+        return super(TextMenu, self).add_selector(*args, **kwargs)
+
+    def add_text_input(self, *args, **kwargs):
+        """
+        See upper class doc.
+        """
+        self._update_top_margin()
+        return super(TextMenu, self).add_text_input(*args, **kwargs)
 
     def draw(self):
         """
@@ -195,3 +211,11 @@ class TextMenu(Menu):
         ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
 
         return xccord, ycoord
+
+    def _update_top_margin(self):
+        """Update the starting veritcal position if for the
+        2 first options.
+        """
+        if len(self._option) <= 1:
+            dy = -0.5 * (self._fsize + self._opt_dy)
+            self._opt_posy += dy
