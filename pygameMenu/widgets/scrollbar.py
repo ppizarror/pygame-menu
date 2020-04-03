@@ -141,7 +141,7 @@ class ScrollBar(Widget):
 
     def get_orientation(self):
         """
-        Return the scroll bar orentation.
+        Return the scroll bar orientation.
         """
         if self._orientation == 0:
             return _locals.ORIENTATION_HORIZONTAL
@@ -193,7 +193,7 @@ class ScrollBar(Widget):
             _pygame.draw.rect(self._surface, self._slider_color, self._slider_rect)
 
     def _scroll(self, pixels):
-        """Moves the slider based on mouse events relatif change along axis.
+        """Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
 
         :param pixels: number of pixels to scroll
@@ -240,9 +240,9 @@ class ScrollBar(Widget):
 
     def set_orientation(self, orientation):
         """
-        Set the scroll bar orentation to vertical or horizontal.
+        Set the scroll bar orientation to vertical or horizontal.
 
-        :param orientation: Widget orentation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+        :param orientation: Widget orientation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
         :type orientation: basestring
         :return: None
         """
@@ -270,7 +270,7 @@ class ScrollBar(Widget):
         """
         assert 0 < value <= self._values_range[1] - self._values_range[0]
 
-        # Slider lenght shall represent the same ratio
+        # Slider length shall represent the same ratio
         self._slider_length = round(1.0 * self._page_ctrl_length * value /
                                     (self._values_range[1] - self._values_range[0]))
 

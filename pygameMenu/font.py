@@ -37,7 +37,7 @@ import pygame.font as _font
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
 __fontdir = '{0}/fonts/{1}.ttf'
 
-# Avaiable fonts
+# Available fonts
 FONT_8BIT = __fontdir.format(__actualpath, '8bit')
 FONT_BEBAS = __fontdir.format(__actualpath, 'bebas')
 FONT_COMIC_NEUE = __fontdir.format(__actualpath, 'comic_neue')
@@ -77,7 +77,7 @@ def get_font(name, size):
             font_name = name
             name = _font.match_font(font_name)
 
-            if name is None:  # Show system avaiable fonts
+            if name is None:  # Show system available fonts
                 from difflib import SequenceMatcher
                 from random import randrange
                 system_fonts = _font.get_fonts()
@@ -123,7 +123,7 @@ def get_font(name, size):
         except IOError:
             pass
 
-        # If font was not loadad throw an exception
+        # If font was not loaded throw an exception
         if font is None:
             raise IOError('Font file "{0}" cannot be loaded'.format(font))
         return font
