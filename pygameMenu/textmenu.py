@@ -79,7 +79,7 @@ class TextMenu(Menu):
         :type text_fontsize: int
         :param text_margin: Line margin
         :type text_margin: int
-        :param kwargs: Aditional parameters
+        :param kwargs: Additional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
             isinstance(draw_text_region_x, float)
@@ -213,7 +213,7 @@ class TextMenu(Menu):
         return xccord, ycoord
 
     def _update_top_margin(self):
-        """Update the starting veritcal position if for the
+        """Update the starting vertical position if for the
         2 first options.
         """
         if len(self._option) <= 1:
