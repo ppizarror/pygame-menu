@@ -109,10 +109,10 @@ class Widget(object):
         self._create_shadow_tuple()
 
         # Public attributes
-        self.joystick_enabled = True
-        self.mouse_enabled = True
-        self.selected = False
-        self.sound = _Sound()
+        self.joystick_enabled = True  # type: bool
+        self.mouse_enabled = True  # type: bool
+        self.selected = False  # type: bool
+        self.sound = _Sound()  # type: _Sound
 
     def apply(self, *args):
         """
