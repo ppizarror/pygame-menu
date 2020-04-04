@@ -122,6 +122,12 @@ class WidgetsTest(unittest.TestCase):
         widget = self.menu.add_color_input('color', color_type='rgb', input_separator='+')
         widget.set_value((34, 12, 12))
         self.assertEqual(widget._input_string, '34+12+12')
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', input_separator=''))
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', input_separator='  '))
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='unknown'))
         for i in range(10):
             self.assertRaises(AssertionError,
                               lambda: self.menu.add_color_input('title', color_type='rgb', input_separator=str(i)))
@@ -193,6 +199,8 @@ class WidgetsTest(unittest.TestCase):
         for i in range(5):
             widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
+        widget._previsualize_color(self.menu._surface)
+        widget.get_rect()
 
         widget.clear()
         self.assertEqual(widget._input_string, '')
@@ -295,8 +303,10 @@ class WidgetsTest(unittest.TestCase):
 
         textinput = self.menu.add_text_input('title',
                                              input_underline='_',
-                                             maxwidth=20)
+                                             maxchar=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
+        print(textinput.get_value())
+        textinput._undo()
         textinput.draw(surface)
         textinput._copy()
         textinput._paste()

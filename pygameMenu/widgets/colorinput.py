@@ -101,14 +101,12 @@ class ColorInput(TextInput):
         assert isinstance(repeat_mouse_interval_ms, int)
         assert isinstance(prev_size, (int, float))
 
-        if len(input_separator) != 1:
-            raise ValueError('input_separator must be a single char')
-        if len(input_separator) == 0:
-            raise ValueError('input_separator cannot be empty')
+        assert len(input_separator) == 1, 'input_separator must be a single char'
+        assert len(input_separator) != 0, 'input_separator cannot be empty'
         assert prev_size > 0, 'previsualization width must be greater than zero'
-
         assert input_separator not in ['0', '1', '2', '3', '4', '5', '6', '7', '8',
                                        '9'], 'input_separator cannot be a number'
+        assert color_type in [_TYPE_HEX, _TYPE_RGB], 'color type must be "{0}" or "{1}"'.format(_TYPE_HEX, _TYPE_RGB)
 
         _maxchar = 0
         self._color_type = color_type.lower()  # type: str
@@ -119,8 +117,6 @@ class ColorInput(TextInput):
             _maxchar = 7  # #XXYYZZ
             self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '0', '1', '2', '3', '#',
                                  '4', '5', '6', '7', '8', '9']
-        else:
-            raise ValueError('color type must be "{0}" or "{1}"'.format(_TYPE_HEX, _TYPE_RGB))
 
         _input_type = _locals.INPUT_TEXT
         _maxwidth = 0

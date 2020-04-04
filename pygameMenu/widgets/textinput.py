@@ -1609,11 +1609,14 @@ class TextInput(Widget):
                 self._keyrepeat_counters[key][0] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
-                # noinspection PyArgumentList
-                _pygame.event.post(_pygame.event.Event(_pygame.KEYDOWN,
-                                                       key=event_key,
-                                                       unicode=event_unicode)
-                                   )
+                try:
+                    # noinspection PyArgumentList
+                    _pygame.event.post(_pygame.event.Event(_pygame.KEYDOWN,
+                                                           key=event_key,
+                                                           unicode=event_unicode)
+                                       )
+                except _pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
+                    pass
 
         # Update self._cursor_visible
         self._cursor_ms_counter += time_clock
