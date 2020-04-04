@@ -243,6 +243,9 @@ class Menu(object):
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if rows is not None:
             assert rows >= 1, 'number of rows must be greater or equal than 1'
+            assert columns >= 1, 'if rows greater than 1 then columns must be equal or greater than 1'
+        if columns > 1:
+            assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
 
         # Store configuration
         self._bgfun = bgfun
@@ -674,6 +677,12 @@ class Menu(object):
         :type widget: pygameMenu.widgets.widget.Widget
         """
         assert isinstance(widget, _widgets.WidgetType)
+
+        if self._columns > 1:
+            _max_elements = self._columns * self._rows
+            _msg = 'total elements cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
+            assert len(self._option) + 1 <= _max_elements, _msg
+
         _widget_font_size = widget.get_font_info()['size']
         self._option.append(widget)
         _totals = len(self._option)

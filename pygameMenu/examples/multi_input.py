@@ -254,24 +254,23 @@ def main(test=False):
     button_column_menu = pygameMenu.Menu(surface,
                                          bgfun=main_background,
                                          color_selected=COLOR_WHITE,
-                                         font=pygameMenu.font.FONT_HELVETICA,
+                                         font=pygameMenu.font.FONT_COMIC_NEUE,
                                          font_color=COLOR_BLACK,
                                          font_size=25,
-                                         font_size_title=50,
-                                         menu_alpha=100,
+                                         font_size_title=40,
                                          menu_color=MENU_BACKGROUND_COLOR,
-                                         menu_height=int(WINDOW_SIZE[1] * 0.50),
+                                         menu_height=int(WINDOW_SIZE[1] * 0.45),
                                          menu_width=int(WINDOW_SIZE[0] * 0.9),
                                          onclose=pygameMenu.events.DISABLE_CLOSE,
-                                         title='More Settings',
-                                         widget_alignment=pygameMenu.locals.ALIGN_RIGHT,
+                                         title='Columns',
                                          window_height=WINDOW_SIZE[1],
                                          window_width=WINDOW_SIZE[0],
                                          columns=2,
-                                         rows=2,
+                                         rows=3,
                                          )
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
+    button_column_menu.add_button('Return to main menu', pygameMenu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
