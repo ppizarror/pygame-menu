@@ -97,10 +97,10 @@ def update_menu_sound(value, enabled):
     global sound
     if enabled:
         main_menu.set_sound(sound, recursive=True)
-        print('Menu sound were enabled')
+        print('Menu sounds were enabled')
     else:
         main_menu.set_sound(None, recursive=True)
-        print('Menu sound were disabled')
+        print('Menu sounds were disabled')
 
 
 def main(test=False):
