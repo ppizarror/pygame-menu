@@ -78,10 +78,10 @@ class MenuBar(Widget):
                                       kwargs=kwargs
                                       )
 
-        self._backbox = back_box  # type: bool
+        self._backbox = back_box
         self._backbox_pos = None  # type: tuple
         self._backbox_rect = None  # type: _pygame.rect.RectType
-        self._label = label  # type: str
+        self._label = label
         self._offsetx = 0  # type: int
         self._offsety = 0  # type: int
         self._polygon_pos = None  # type: tuple
@@ -142,7 +142,7 @@ class MenuBar(Widget):
                                           cross_size, cross_size)
 
         # noinspection PyProtectedMember
-        if not self._menu or not self._menu._top._prev:
+        if not self._menu or not self._menu._top or not self._menu._top._prev:
             # Make a cross for top menu
             self._backbox_pos = (
                 (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
@@ -183,7 +183,6 @@ class MenuBar(Widget):
         assert isinstance(title, str)
         assert isinstance(offsetx, int)
         assert isinstance(offsety, int)
-
         self._label = title
         self._offsety = offsety
         self._offsetx = offsetx

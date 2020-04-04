@@ -272,6 +272,24 @@ class MenuTest(unittest.TestCase):
         submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(True))
 
+    def test_columns_menu(self):
+        """
+        Test menu columns behaviour.
+        """
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=10))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
+
+        # Assert append more options than number of rows*columns
+        _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
+        for _ in range(8):
+            _column_menu.add_button('test', pygameMenu.events.BACK)
+        _column_menu.mainloop()
+        _column_menu._left()
+        _column_menu._right()
+        _column_menu.draw()
+        self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
+
     @staticmethod
     def test_textmenu():
         """
@@ -285,7 +303,7 @@ class MenuTest(unittest.TestCase):
                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
                                    option_shadow=True,
                                    option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
-                                   text_align=pygameMenu.locals.ALIGN_CENTER,
+                                   text_align=pygameMenu.locals.ALIGN_RIGHT,
                                    title='Help',
                                    window_height=H_SIZE,
                                    window_width=W_SIZE

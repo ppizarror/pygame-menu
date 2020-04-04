@@ -111,6 +111,27 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
+    def keydown_mod_ctrl(key, inlist=True):
+        """
+        Create a mod ctrl keydown event (Ctrl+Key).
+
+        :param key: Key to press
+        :type key: int
+        :param inlist: Return event in a list
+        :type inlist: bool
+        :return: Event
+        :rtype: pygame.event.Event
+        """
+        pygame.key.set_mods(pygame.KMOD_CTRL)
+        event_obj = pygame.event.Event(pygame.KEYDOWN,
+                                       {'key': key,
+                                        'test': True,
+                                        })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
+
+    @staticmethod
     def key(key, char=' ', inlist=True, keydown=False, keyup=False, testmode=True):
         """
         Create a keyboard event.
@@ -271,12 +292,19 @@ class PygameMenuUtils(object):
         return fonts[random.randrange(0, len(fonts))]
 
     @staticmethod
-    def generic_menu(title=''):
+    def generic_menu(title='', columns=1, rows=None, *args, **kwargs):
         """
         Generate a generic test menu.
 
         :param title: Menu title
         :type title: basestring
+        :param columns: Number of columns
+        :type columns: int
+        :param rows: Number of rows
+        :type rows: int,None
+        :param args: Additional args
+        :param kwargs: Additional key parameters
+        :type kwargs: dict
         :return: Menu
         :rtype: pygameMenu.Menu
         """
@@ -288,11 +316,18 @@ class PygameMenuUtils(object):
                                menu_alpha=90,
                                title=title,
                                window_height=H_SIZE,
-                               window_width=W_SIZE
+                               window_width=W_SIZE,
+                               columns=columns,
+                               rows=rows,
+                               *args,
+                               **kwargs
                                )
 
     @staticmethod
     def get_large_surface():
+        """
+        Create a large surface to tst scrolls.
+        """
         world = pygame.Surface((W_SIZE * 2, H_SIZE * 3))
         world.fill((200, 200, 200))
         for x in range(100, world.get_width(), 200):

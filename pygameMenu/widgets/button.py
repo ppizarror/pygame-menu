@@ -69,7 +69,7 @@ class Button(Widget):
                                      args=args,
                                      kwargs=kwargs
                                      )
-        self._label = label  # type: str
+        self._label = label
 
     def _apply_font(self):
         """

@@ -57,7 +57,7 @@ class TextMenu(Menu):
                  **kwargs
                  ):
         """
-        TextMenu constructor.
+        TextMenu constructor. Columns and rows not supported.
 
         :param surface: Pygame surface object
         :type surface: pygame.surface.SurfaceType
@@ -82,7 +82,7 @@ class TextMenu(Menu):
         :param kwargs: Additional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
-            isinstance(draw_text_region_x, float)
+               isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
         assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)
@@ -91,6 +91,11 @@ class TextMenu(Menu):
         assert draw_text_region_x >= 0, 'draw_text_region_x of the text must be greater or equal than zero'
         assert text_fontsize > 0, 'text_fontsize must be greater than zero'
         assert text_margin >= 0, 'text_margin must be greater or equal than zero'
+
+        # Columns and rows not supported in textmenu
+        _kwkeys = kwargs.keys()
+        assert not ('rows' in _kwkeys or 'columns' in _kwkeys or 'column_weights' in _kwkeys or
+                    'force_fit_text' in _kwkeys), 'columns and rows not supported in TextMenu'
 
         # Super call
         super(TextMenu, self).__init__(surface,
@@ -115,7 +120,7 @@ class TextMenu(Menu):
 
         # Position of text
         self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
-        self._opt_posy -= self._textdy / 2 + self._font_textsize / 2
+        self._option_posy -= self._textdy / 2 + self._font_textsize / 2
 
     def add_button(self, *args, **kwargs):
         """
@@ -131,20 +136,6 @@ class TextMenu(Menu):
         self._update_top_margin()
         return super(TextMenu, self).add_color_input(*args, **kwargs)
 
-    def add_line(self, text):
-        """
-        Add line of text.
-
-        :param text: Line text
-        :type text: str
-        :return: None
-        """
-        assert isinstance(text, str), 'line text must be a string'
-        text = text.strip()
-        self._text.append(text)
-        dy = -self._font_textsize / 2 - self._textdy / 2
-        self._opt_posy += dy
-
     def add_selector(self, *args, **kwargs):
         """
         See upper class doc.
@@ -158,6 +149,20 @@ class TextMenu(Menu):
         """
         self._update_top_margin()
         return super(TextMenu, self).add_text_input(*args, **kwargs)
+
+    def add_line(self, text):
+        """
+        Add line of text.
+
+        :param text: Line text
+        :type text: str
+        :return: None
+        """
+        assert isinstance(text, str), 'line text must be a string'
+        text = text.strip()
+        self._text.append(text)
+        dy = -self._font_textsize / 2 - self._textdy / 2
+        self._option_posy += dy
 
     def draw(self):
         """
@@ -183,7 +188,7 @@ class TextMenu(Menu):
             else:
                 text_dx = 0
 
-            ycoords = self._opt_posy + self._textdy + dy * (self._font_textsize + self._textdy)
+            ycoords = self._option_posy + self._textdy + dy * (self._font_textsize + self._textdy)
             ycoords -= self._font_textsize / 2
 
             self._surface.blit(text, (self._pos_text_x + text_dx, ycoords))
@@ -207,15 +212,15 @@ class TextMenu(Menu):
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        xccord = self._opt_posx + option_dx
-        ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
+        xccord = self._column_posx[0] + option_dx
+        ycoord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
 
         return xccord, ycoord
 
     def _update_top_margin(self):
-        """Update the starting vertical position if for the
-        2 first options.
+        """
+        Update the starting vertical position.
         """
         if len(self._option) <= 1:
             dy = -0.5 * (self._fsize + self._opt_dy)
-            self._opt_posy += dy
+            self._option_posy += dy

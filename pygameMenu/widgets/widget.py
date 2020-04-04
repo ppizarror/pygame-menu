@@ -31,9 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from uuid import uuid4
-
 import pygame as _pygame
-
 import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
@@ -41,8 +39,6 @@ from pygameMenu.sound import Sound as _Sound
 
 
 # noinspection PyTypeChecker
-
-
 class Widget(object):
     """
     Widget abstract class.
@@ -76,13 +72,14 @@ class Widget(object):
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER  # type: str
         self._fps = 0  # type: int
-        self._id = widget_id  # type: str
+        self._id = widget_id
         self._last_selected_surface = None  # type: _pygame.SurfaceType
         self._selected_rect = None  # type: _pygame.rect.RectType
         self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
         self._render_string_cache = 0  # type: int
         self._render_string_cache_surface = None  # type: _pygame.SurfaceType
         self._surface = None  # type: _pygame.SurfaceType
+        self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
         self._kwargs = kwargs or {}  # type: dict
@@ -210,6 +207,17 @@ class Widget(object):
                           rect,
                           border_width)
 
+    def set_max_width(self, w):
+        """
+        Set widget max width (column support) if force_fit_text is enabled.
+
+        :param w: Width in px, None if max width is disabled
+        :type w: int,float,None
+        """
+        if w is not None:
+            assert isinstance(w, (int, float))
+        self._max_width = w
+
     def get_rect(self):
         """
         Return the Rect object.
@@ -301,7 +309,11 @@ class Widget(object):
             if self._shadow:
                 text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
                 surface.blit(text_bg, self._shadow_tuple)
+
             surface.blit(text, (0, 0))
+
+            if self._max_width is not None and surface.get_size()[0] > self._max_width:
+                surface = _pygame.transform.smoothscale(surface, (self._max_width, surface.get_size()[1]))
 
             self._render_string_cache = render_hash
             self._render_string_cache_surface = surface

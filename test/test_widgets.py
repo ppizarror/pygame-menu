@@ -122,6 +122,12 @@ class WidgetsTest(unittest.TestCase):
         widget = self.menu.add_color_input('color', color_type='rgb', input_separator='+')
         widget.set_value((34, 12, 12))
         self.assertEqual(widget._input_string, '34+12+12')
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', input_separator=''))
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='rgb', input_separator='  '))
+        self.assertRaises(AssertionError,
+                          lambda: self.menu.add_color_input('title', color_type='unknown'))
         for i in range(10):
             self.assertRaises(AssertionError,
                               lambda: self.menu.add_color_input('title', color_type='rgb', input_separator=str(i)))
@@ -193,6 +199,8 @@ class WidgetsTest(unittest.TestCase):
         for i in range(5):
             widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
+        widget._previsualize_color(self.menu._surface)
+        widget.get_rect()
 
         widget.clear()
         self.assertEqual(widget._input_string, '')
@@ -293,15 +301,26 @@ class WidgetsTest(unittest.TestCase):
         textinput._unselect_text()
         textinput.draw(surface)
 
+        # Test maxchar and undo/redo
         textinput = self.menu.add_text_input('title',
                                              input_underline='_',
-                                             maxwidth=20)
+                                             maxchar=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
+        self.assertEqual(textinput.get_value(), 'eater than the limit')  # same as maxchar
+        self.assertEqual(textinput._cursor_position, 20)
+        textinput._undo()  # This must set default at ''
+        self.assertEqual(textinput.get_value(), '')
+        textinput._redo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')
         textinput.draw(surface)
         textinput._copy()
         textinput._paste()
         textinput._cut()
+        self.assertEqual(textinput.get_value(), '')
+        textinput._undo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')
 
+        # Test copy/paste
         textinput_nocopy = self.menu.add_text_input('title',
                                                     input_underline='_',
                                                     maxwidth=20,
@@ -333,11 +352,32 @@ class WidgetsTest(unittest.TestCase):
         textinput.update(PygameUtils.key(pygame.K_a, keyup=True, char='a'))
         self.assertEqual(textinput.get_value(), 'test')  # The text we typed
 
+        # Ctrl events
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_c))  # copy
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_v))  # paste
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        self.assertEqual(textinput.get_value(), 'tes')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_y))  # redo
+        self.assertEqual(textinput.get_value(), 'test')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_x))  # cut
+        self.assertEqual(textinput.get_value(), '')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        self.assertEqual(textinput.get_value(), 'test')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_y))  # redo
+        self.assertEqual(textinput.get_value(), '')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        self.assertEqual(textinput.get_value(), 'test')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_a))  # select all
+
         # Test selection, if user selects all and types anything the selected
         # text must be destroyed
         textinput._unselect_text()
         self.assertEqual(textinput._get_selected_text(), '')
         textinput._select_all()
+        self.assertEqual(textinput._get_selected_text(), 'test')
+        textinput._unselect_text()
+        self.assertEqual(textinput._get_selected_text(), '')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_a))
         self.assertEqual(textinput._get_selected_text(), 'test')
         textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput.update(PygameUtils.key(pygame.K_ESCAPE, keydown=True))
@@ -350,6 +390,8 @@ class WidgetsTest(unittest.TestCase):
         for i in range(50):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
+        textinput._cursor_render = True
+        textinput._render_cursor()
 
     # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):

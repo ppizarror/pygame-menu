@@ -161,6 +161,10 @@ import pygameMenu
     | title_offsetx | Offset x-position of title (px) | int | 0 |
     | title_offsety | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.ALIGN_CENTER |
+    | columns | Number of columns in menu | int | 1 |
+    | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
+    | column_weights | Tuple representing the width of each column, None if percentage is equal| tuple | None |
+    | force_fit_text | Force text fitting on each menu option in multiple columns | bool | False |
 
     Check the possible values for the widget alignment and shadow position in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
