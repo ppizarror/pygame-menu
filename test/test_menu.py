@@ -284,6 +284,8 @@ class MenuTest(unittest.TestCase):
         _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             _column_menu.add_button('test', pygameMenu.events.BACK)
+        _column_menu._left()
+        _column_menu._right()
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
 
     @staticmethod
@@ -299,7 +301,7 @@ class MenuTest(unittest.TestCase):
                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
                                    option_shadow=True,
                                    option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
-                                   text_align=pygameMenu.locals.ALIGN_CENTER,
+                                   text_align=pygameMenu.locals.ALIGN_RIGHT,
                                    title='Help',
                                    window_height=H_SIZE,
                                    window_width=W_SIZE
