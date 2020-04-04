@@ -246,6 +246,7 @@ class Menu(object):
         else:
             if columns == 1:
                 assert rows is None, 'rows must be None if there is only 1 column'
+                rows = 1e6  # Set rows as a big number
 
         self._actual = self  # Actual menu
         self._bgfun = bgfun
@@ -305,8 +306,10 @@ class Menu(object):
 
         # Option position
         self._option_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy  # type: int
+        self._column_posx = [int(self._width * (self._draw_regionx / 100.0) + self._posx)]
+        self._column_widths = [self._width]
 
-        # Columns support
+        # Calculate _column_posx and _column_widths if there's more than 1 column
         if columns > 1:
             if column_weights is None:
                 column_weights = tuple(1 for _ in range(columns))
@@ -323,9 +326,7 @@ class Menu(object):
                 cumulative += column_weights[i] / s
             self._option_posx = self._column_posx[0]
             self._column_widths = tuple(int(self._width * column_weights[i] / s) for i in range(columns))
-        else:
-            self._option_posx = int(self._width * (self._draw_regionx / 100.0) + self._posx)
-            self._column_widths = [self._width]
+
         self._column_spacing = int(self._width / columns)  # type: int
         self._columns = columns
         self._force_fit_text = force_fit_text
@@ -818,30 +819,21 @@ class Menu(object):
         """
         rect = self._option[index].get_rect()
         align = self._option[index].get_alignment()
-
-        # Get global width displacement based on column index
-        if self._columns > 1:
-            _window_width = self._column_widths[index // self._rows]
-        else:
-            _window_width = self._column_widths[0]
-
+        
         # Calculate alignment
+        _column_width = self._column_widths[int(index // self._rows)] # if column=1 then (column width)=(menu width)
         if align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif align == _locals.ALIGN_LEFT:
-            option_dx = -_window_width / 2 + self._selected_inflate_x
+            option_dx = -_column_width / 2 + self._selected_inflate_x
         elif align == _locals.ALIGN_RIGHT:
-            option_dx = _window_width / 2 - rect.width - self._selected_inflate_x
+            option_dx = _column_width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        if self._columns == 1:
-            xccord = self._option_posx + option_dx
-            ycoord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy
-        else:
-            xccord = self._column_posx[index // self._rows] + option_dx
-            ycoord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
+        xccord = self._column_posx[int(index // self._rows)] + option_dx
+        ycoord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
         return xccord, ycoord
 
     def enable(self):
