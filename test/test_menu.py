@@ -284,8 +284,10 @@ class MenuTest(unittest.TestCase):
         _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             _column_menu.add_button('test', pygameMenu.events.BACK)
+        _column_menu.mainloop()
         _column_menu._left()
         _column_menu._right()
+        _column_menu.draw()
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
 
     @staticmethod
