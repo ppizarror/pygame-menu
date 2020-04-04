@@ -317,6 +317,8 @@ class WidgetsTest(unittest.TestCase):
         textinput._paste()
         textinput._cut()
         self.assertEqual(textinput.get_value(), '')
+        textinput._undo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')
 
         # Test copy/paste
         textinput_nocopy = self.menu.add_text_input('title',
@@ -350,11 +352,32 @@ class WidgetsTest(unittest.TestCase):
         textinput.update(PygameUtils.key(pygame.K_a, keyup=True, char='a'))
         self.assertEqual(textinput.get_value(), 'test')  # The text we typed
 
+        # Ctrl events
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_c))  # copy
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_v))  # paste
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        self.assertEqual(textinput.get_value(), 'tes')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_y))  # redo
+        self.assertEqual(textinput.get_value(), 'test')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_x))  # cut
+        self.assertEqual(textinput.get_value(), '')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        self.assertEqual(textinput.get_value(), 'test')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_y))  # redo
+        self.assertEqual(textinput.get_value(), '')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        self.assertEqual(textinput.get_value(), 'test')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_a))  # select all
+
         # Test selection, if user selects all and types anything the selected
         # text must be destroyed
         textinput._unselect_text()
         self.assertEqual(textinput._get_selected_text(), '')
         textinput._select_all()
+        self.assertEqual(textinput._get_selected_text(), 'test')
+        textinput._unselect_text()
+        self.assertEqual(textinput._get_selected_text(), '')
+        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_a))
         self.assertEqual(textinput._get_selected_text(), 'test')
         textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput.update(PygameUtils.key(pygame.K_ESCAPE, keydown=True))

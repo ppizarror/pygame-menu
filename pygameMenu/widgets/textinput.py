@@ -1380,11 +1380,16 @@ class TextInput(Widget):
                 self._last_key = event.key
 
                 # If none exist, create counter for that key:
-                if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys:
+                if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys and \
+                        'unicode' in event.dict:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
                 if _pygame.key.get_mods() & _pygame.KMOD_CTRL:
+
+                    # If test, disable CTRL
+                    if 'test' in event.dict and event.dict['test']:
+                        _pygame.key.set_mods(_pygame.KMOD_NONE)
 
                     # Ctrl+C copy
                     if event.key == _pygame.K_c:

@@ -111,6 +111,27 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
+    def keydown_mod_ctrl(key, inlist=True):
+        """
+        Create a mod ctrl keydown event (Ctrl+Key).
+
+        :param key: Key to press
+        :type key: int
+        :param inlist: Return event in a list
+        :type inlist: bool
+        :return: Event
+        :rtype: pygame.event.Event
+        """
+        pygame.key.set_mods(pygame.KMOD_CTRL)
+        event_obj = pygame.event.Event(pygame.KEYDOWN,
+                                       {'key': key,
+                                        'test': True,
+                                        })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
+
+    @staticmethod
     def key(key, char=' ', inlist=True, keydown=False, keyup=False, testmode=True):
         """
         Create a keyboard event.
