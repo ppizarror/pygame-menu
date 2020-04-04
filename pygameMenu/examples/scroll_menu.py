@@ -35,9 +35,10 @@ import pygame
 import pygameMenu
 from functools import partial
 
+FPS = 60.0
 H_SIZE = 600  # Height of window size
 W_SIZE = 800  # Width of window size
-COLOR_BACKGROUND = (128, 0, 128)
+COLOR_BACKGROUND = (128, 230, 198)
 
 
 def on_button_click(button_id):
@@ -51,17 +52,18 @@ def paint_background(surface):
 def make_long_menu(surface):
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(surface,
+                            font=pygameMenu.font.FONT_COMIC_NEUE,
                             bgfun=partial(paint_background, surface),
-                            enabled=False,
-                            font=pygameMenu.font.FONT_NEVIS,
                             menu_alpha=90,
-                            onclose=pygameMenu.events.CLOSE,
+                            menu_color=(188, 200, 108),
+                            menu_color_title=(100, 130, 98),
+                            onclose=pygameMenu.events.EXIT,
                             title='Main Menu',
                             window_height=H_SIZE,
                             window_width=W_SIZE
                             )
     label = 'Button n°{}'
-    for i in range(1, 10):
+    for i in range(1, 20):
         txt = label.format(i)
         _menu.add_button(txt, on_button_click, i)
     _menu.add_button('Exit', pygameMenu.events.EXIT)
@@ -74,6 +76,7 @@ def main(test=False):
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
+    clock = pygame.time.Clock()
 
     # Create window
     screen = pygame.display.set_mode((W_SIZE, H_SIZE))
@@ -87,9 +90,8 @@ def main(test=False):
     # -------------------------------------------------------------------------
     while True:
 
-        # At first loop returns
-        if test:
-            break
+        # Tick
+        clock.tick(FPS)
 
         # Paint background
         paint_background(screen)
@@ -99,6 +101,10 @@ def main(test=False):
 
         # Update surface
         pygame.display.flip()
+
+        # At first loop returns
+        if test:
+            break
 
 
 if __name__ == '__main__':
