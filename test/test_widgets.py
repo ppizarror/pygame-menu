@@ -301,17 +301,24 @@ class WidgetsTest(unittest.TestCase):
         textinput._unselect_text()
         textinput.draw(surface)
 
+        # Test maxchar and undo/redo
         textinput = self.menu.add_text_input('title',
                                              input_underline='_',
                                              maxchar=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
-        print(textinput.get_value())
-        textinput._undo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')  # same as maxchar
+        self.assertEqual(textinput._cursor_position, 20)
+        textinput._undo()  # This must set default at ''
+        self.assertEqual(textinput.get_value(), '')
+        textinput._redo()
+        self.assertEqual(textinput.get_value(), 'eater than the limit')
         textinput.draw(surface)
         textinput._copy()
         textinput._paste()
         textinput._cut()
+        self.assertEqual(textinput.get_value(), '')
 
+        # Test copy/paste
         textinput_nocopy = self.menu.add_text_input('title',
                                                     input_underline='_',
                                                     maxwidth=20,
@@ -360,6 +367,8 @@ class WidgetsTest(unittest.TestCase):
         for i in range(50):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
+        textinput._cursor_render = True
+        textinput._render_cursor()
 
     # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):

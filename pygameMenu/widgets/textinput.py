@@ -909,6 +909,11 @@ class TextInput(Widget):
                         _default_valid += ch
                 _default = _default_valid
 
+            # Apply maxchar
+            _ls = len(_default)
+            if 0 < self._maxchar < _ls:
+                _default = _default[_ls - self._maxchar:_ls]
+
             self._input_string = _default
             for i in range(len(_default) + 1):
                 self._move_cursor_right()
