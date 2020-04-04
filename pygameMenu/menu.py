@@ -241,45 +241,41 @@ class Menu(object):
         assert window_height > 0 and window_width > 0, \
             'window size must be greater than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
-        if rows is not None:
-            assert rows >= 1, 'number of rows must be greater or equal than 1'
-            assert columns >= 1, 'if rows greater than 1 then columns must be equal or greater than 1'
         if columns > 1:
             assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
+        else:
+            if columns == 1:
+                assert rows is None, 'rows must be None if there is only 1 column'
 
-        # Store configuration
+        self._actual = self  # Actual menu
         self._bgfun = bgfun
         self._bgcolor = (menu_color[0],
                          menu_color[1],
                          menu_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0))
                          )
-
+        self._clock = _pygame.time.Clock()  # Inner clock
+        self._closelocked = False  # Lock close until next mainloop
+        self._dopause = dopause  # Pause or not
         self._drawselrect = draw_select
+        self._enabled = enabled  # Menu is enabled or not
         self._font_color = font_color
+        self._fps = 0  # type: int
+        self._frame = 0  # type: int
         self._fsize = font_size
         self._height = menu_height
+        self._index = 0  # Selected index
+        self._joy_event = 0  # type: int
+        self._onclose = onclose  # Function that calls after closing menu
         self._opt_dy = option_margin
         self._option_shadow = option_shadow
         self._option_shadow_offset = option_shadow_offset
         self._option_shadow_position = option_shadow_position
         self._rect_width = rect_width
         self._sel_color = color_selected
+        self._sounds = _Sound()  # type: _Sound
         self._surface = surface
         self._width = menu_width
-
-        # Inner variables
-        self._actual = self  # Actual menu
-        self._clock = _pygame.time.Clock()  # Inner clock
-        self._closelocked = False  # Lock close until next mainloop
-        self._dopause = dopause  # Pause or not
-        self._enabled = enabled  # Menu is enabled or not
-        self._fps = 0  # type: int
-        self._frame = 0  # type: int
-        self._index = 0  # Selected index
-        self._joy_event = 0  # type: int
-        self._onclose = onclose  # Function that calls after closing menu
-        self._sounds = _Sound()  # type: _Sound
 
         # Menu widgets
         self._option = []  # type: list
