@@ -212,7 +212,7 @@ class TextMenu(Menu):
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        xccord = self._option_posx + option_dx
+        xccord = self._column_posx[0] + option_dx
         ycoord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
 
         return xccord, ycoord

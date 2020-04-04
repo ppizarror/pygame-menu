@@ -819,9 +819,9 @@ class Menu(object):
         """
         rect = self._option[index].get_rect()
         align = self._option[index].get_alignment()
-        
+
         # Calculate alignment
-        _column_width = self._column_widths[int(index // self._rows)] # if column=1 then (column width)=(menu width)
+        _column_width = self._column_widths[int(index // self._rows)]  # if column=1 then (column width)=(menu width)
         if align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif align == _locals.ALIGN_LEFT:
