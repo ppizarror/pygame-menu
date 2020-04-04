@@ -272,6 +272,20 @@ class MenuTest(unittest.TestCase):
         submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(True))
 
+    def test_columns_menu(self):
+        """
+        Test menu columns behaviour.
+        """
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=10))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
+
+        # Assert append more options than number of rows*columns
+        _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
+        for _ in range(8):
+            _column_menu.add_button('test', pygameMenu.events.BACK)
+        self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
+
     @staticmethod
     def test_textmenu():
         """

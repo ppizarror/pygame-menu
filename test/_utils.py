@@ -271,12 +271,19 @@ class PygameMenuUtils(object):
         return fonts[random.randrange(0, len(fonts))]
 
     @staticmethod
-    def generic_menu(title=''):
+    def generic_menu(title='', columns=1, rows=None, *args, **kwargs):
         """
         Generate a generic test menu.
 
         :param title: Menu title
         :type title: basestring
+        :param columns: Number of columns
+        :type columns: int
+        :param rows: Number of rows
+        :type rows: int,None
+        :param args: Additional args
+        :param kwargs: Additional key parameters
+        :type kwargs: dict
         :return: Menu
         :rtype: pygameMenu.Menu
         """
@@ -288,11 +295,18 @@ class PygameMenuUtils(object):
                                menu_alpha=90,
                                title=title,
                                window_height=H_SIZE,
-                               window_width=W_SIZE
+                               window_width=W_SIZE,
+                               columns=columns,
+                               rows=rows,
+                               *args,
+                               **kwargs
                                )
 
     @staticmethod
     def get_large_surface():
+        """
+        Create a large surface to tst scrolls.
+        """
         world = pygame.Surface((W_SIZE * 2, H_SIZE * 3))
         world.fill((200, 200, 200))
         for x in range(100, world.get_width(), 200):
