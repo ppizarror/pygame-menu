@@ -266,7 +266,7 @@ def main(test=False):
                                          window_height=WINDOW_SIZE[1],
                                          window_width=WINDOW_SIZE[0],
                                          columns=2,
-                                         rows=3,
+                                         rows=3
                                          )
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
