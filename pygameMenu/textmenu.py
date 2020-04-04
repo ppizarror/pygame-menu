@@ -169,6 +169,7 @@ class TextMenu(Menu):
         dy = 0
         for line in self._text:
             text = self._fonttext.render(line, 1, self._font_textcolor)
+            print(line)
             text_width = text.get_size()[0]
 
             # Check text align

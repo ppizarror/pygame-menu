@@ -83,6 +83,7 @@ class Widget(object):
         self._render_string_cache = 0  # type: int
         self._render_string_cache_surface = None  # type: _pygame.SurfaceType
         self._surface = None  # type: _pygame.SurfaceType
+        self._max_width = None
 
         self._args = args or []  # type: list
         self._kwargs = kwargs or {}  # type: dict
@@ -209,6 +210,9 @@ class Widget(object):
                           selected_color,
                           rect,
                           border_width)
+                          
+    def set_max_width(self, w):
+        self._max_width = w
 
     def get_rect(self):
         """
@@ -301,7 +305,11 @@ class Widget(object):
             if self._shadow:
                 text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
                 surface.blit(text_bg, self._shadow_tuple)
+                
             surface.blit(text, (0, 0))
+
+            if self._max_width is not None and surface.get_size()[0] > self._max_width:
+                surface = _pygame.transform.smoothscale(surface, (self._max_width, surface.get_size()[1]))
 
             self._render_string_cache = render_hash
             self._render_string_cache_surface = surface

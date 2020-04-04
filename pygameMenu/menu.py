@@ -46,6 +46,15 @@ import pygameMenu.widgets as _widgets
 from pygameMenu.sound import Sound as _Sound
 from pygameMenu.utils import check_key_pressed_valid
 
+JOY_LEFT = 1
+JOY_RIGHT = 2
+JOY_UP = 4
+JOY_DOWN = 8
+JOY_REPEAT_EVENT = _pygame.NUMEVENTS - 1
+
+def get_controls():
+    return _ctrl
+
 
 # noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker,PyUnresolvedReferences
 class Menu(object):
@@ -81,14 +90,18 @@ class Menu(object):
                  mouse_enabled=True,
                  mouse_visible=True,
                  onclose=None,
-                 option_margin=_cfg.MENU_OPTION_MARGIN,
+                 option_margin=8,
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
                  option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
                  option_shadow_position=_cfg.MENU_SHADOW_POSITION,
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
                  title_offsety=0,
-                 widget_alignment=_locals.ALIGN_CENTER
+                 widget_alignment=_locals.ALIGN_CENTER,
+                 columns=1,
+                 rows=None,
+                 column_weights=None,
+                 force_fit_text=False
                  ):
         """
         Menu constructor.
@@ -280,8 +293,25 @@ class Menu(object):
         self._draw_regiony = draw_region_y
 
         # Option position
-        self._opt_posx = int(self._width * (self._draw_regionx / 100.0)) + self._posx
         self._opt_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy
+        if columns > 1:
+            if column_weights is None:
+                column_weights = tuple(1 for i in range(columns))
+            s = float(sum(column_weights[:columns]))
+            cumulative = 0
+            self._column_posx = []
+            for i in range(columns):
+                w = column_weights[i] / s
+                self._column_posx.append( int(self._width * (self._draw_regionx/100.0 + (cumulative+0.5*w-0.5)) + self._posx) )
+                cumulative += column_weights[i] / s
+            self._opt_posx = self._column_posx[0]
+            self._column_widths = tuple( int(self._width*column_weights[i]/s) for i in range(columns) ) 
+        else:
+            self._opt_posx = int(self._width * (self._draw_regionx / 100.0) + self._posx)
+        self._column_spacing = int(self._width / columns)
+        self._columns = columns
+        self._force_fit_text = force_fit_text
+        self._rows = rows
         self._widget_align = widget_alignment
 
         # Init joystick
@@ -329,6 +359,8 @@ class Menu(object):
 
         # FPS of the menu
         self.set_fps(fps)
+        
+        self.joy_event = 0
 
     def add_button(self, element_name, element, *args, **kwargs):
         """
@@ -444,7 +476,7 @@ class Menu(object):
         widget.set_value(default)
         self._append_widget(widget)
         return widget
-
+        
     def add_selector(self,
                      title,
                      values,
@@ -669,6 +701,7 @@ class Menu(object):
                         font_size=font_size,
                         color=self._font_color,
                         selected_color=self._sel_color)
+        widget.set_max_width(self._column_widths[(len(self._option)-1)//self._rows] if self._force_fit_text else None)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
@@ -688,7 +721,7 @@ class Menu(object):
         self._option.append(widget)
         if len(self._option) == 1:
             widget.set_selected()
-        elif len(self._option) > 1:
+        elif len(self._option) > 1 and (self._columns == 1 or len(self._option) <= self._rows):
             dy = -_widget_font_size / 2 - self._opt_dy / 2
             self._opt_posy += dy
 
@@ -777,8 +810,12 @@ class Menu(object):
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        xccord = self._opt_posx + option_dx
-        ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
+        if self._columns == 1:
+            xccord = self._opt_posx + option_dx
+            ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
+        else:
+            xccord = self._column_posx[index // self._rows] + option_dx
+            ycoord = self._opt_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
         return xccord, ycoord
 
     def enable(self):
@@ -819,6 +856,18 @@ class Menu(object):
         """
         return self._enabled
 
+    def _left(self):
+        if self._actual._index >= self._actual._rows:
+            self._select(self._actual._index - self._actual._rows)
+        else:
+            self._select(0)
+                
+    def _right(self):
+        if self._actual._index + self._actual._rows < len(self._actual._option):
+            self._select(self._actual._index + self._actual._rows)
+        else:
+            self._select(len(self._actual._option) - 1)                
+ 
     def _main(self, events=None):
         """
         Main function of the loop.
@@ -854,7 +903,16 @@ class Menu(object):
         # Check others
         else:
             for event in events:  # type: _pygame.event.EventType
-
+                def handle_joy_event():
+                    if self.joy_event & JOY_UP:
+                        self._select(self._actual._index - 1)
+                    if self.joy_event & JOY_DOWN:
+                        self._select(self._actual._index + 1)
+                    if self.joy_event & JOY_LEFT:
+                        self._left()
+                    if self.joy_event & JOY_RIGHT:
+                        self._right()
+            
                 # noinspection PyUnresolvedReferences
                 if event.type == _pygame.locals.QUIT or (
                         event.type == _pygame.KEYDOWN and event.key == _pygame.K_F4 and (
@@ -874,6 +932,12 @@ class Menu(object):
                     elif event.key == _ctrl.KEY_MOVE_UP:
                         self._select(self._actual._index + 1)
                         self._sounds.play_key_add()
+                    elif event.key == _ctrl.KEY_LEFT and self._columns > 1:
+                        self._left()
+                        self._sounds.play_key_add()
+                    elif event.key == _ctrl.KEY_RIGHT and self._columns > 1:
+                        self._right()
+                        self._sounds.play_key_add()
                     elif event.key == _ctrl.KEY_BACK and self._top._prev is not None:
                         self._sounds.play_close_menu()
                         self.reset(1)
@@ -883,26 +947,55 @@ class Menu(object):
                             break_mainloop = True
 
                 elif self._joystick and event.type == _pygame.JOYHATMOTION:
+                    print("hat",event.value)
                     if event.value == _ctrl.JOY_UP:
                         self._select(self._actual._index - 1)
                     elif event.value == _ctrl.JOY_DOWN:
                         self._select(self._actual._index + 1)
-
-                elif self._joystick and event.type == _pygame.JOYAXISMOTION:
-                    if event.axis == _ctrl.JOY_AXIS_Y and event.value < -_ctrl.JOY_DEADZONE:
+                    elif event.value == _ctrl.JOY_LEFT and self._columns > 1:
                         self._select(self._actual._index - 1)
-                    if event.axis == _ctrl.JOY_AXIS_Y and event.value > _ctrl.JOY_DEADZONE:
+                    elif event.value == _ctrl.JOY_RIGHT and self._columns > 1:
                         self._select(self._actual._index + 1)
 
-                elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                    self._sounds.play_click_mouse()
+                elif self._joystick and event.type == _pygame.JOYAXISMOTION:
+                    prev = self.joy_event
+                    self.joy_event = 0
+                    if event.axis == _ctrl.JOY_AXIS_Y and event.value < -_ctrl.JOY_DEADZONE:
+                        self.joy_event |= JOY_UP
+                    if event.axis == _ctrl.JOY_AXIS_Y and event.value > _ctrl.JOY_DEADZONE:
+                        self.joy_event |= JOY_DOWN
+                    if event.axis == _ctrl.JOY_AXIS_X and event.value < -_ctrl.JOY_DEADZONE and self._columns > 1:
+                        self.joy_event |= JOY_LEFT
+                    if event.axis == _ctrl.JOY_AXIS_X and event.value > _ctrl.JOY_DEADZONE and self._columns > 1:
+                        self.joy_event |= JOY_RIGHT
+                    if self.joy_event:
+                        handle_joy_event()
+                        if self.joy_event == prev:
+                            _pygame.time.set_timer(JOY_REPEAT_EVENT, _ctrl.JOY_REPEAT)
+                        else:
+                            _pygame.time.set_timer(JOY_REPEAT_EVENT, _ctrl.JOY_DELAY)
+                    else:
+                        _pygame.time.set_timer(JOY_REPEAT_EVENT, 0)
+                    
+                elif event.type == JOY_REPEAT_EVENT:
+                    if self.joy_event:
+                        handle_joy_event()
+                        _pygame.time.set_timer(JOY_REPEAT_EVENT, _ctrl.JOY_REPEAT)
+                    else:
+                        _pygame.time.set_timer(JOY_REPEAT_EVENT, 0)
+                        
+                elif self._mouse and event.type == _pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
                         if widget.get_rect().collidepoint(*event.pos):
                             self._select(index)
-                            widget.update(events)  # This option can change the current menu to a submenu
-                            break_mainloop = True  # It is updated
-                            break
+
+                elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
+                    widget = self._actual._option[self._actual._index]
+                    if widget.get_rect().collidepoint(*event.pos):
+                        widget.update(events)  # This option can change the current menu to a submenu
+                        break_mainloop = True  # It is updated
+                        break
 
         # A widget has closed the menu
         if not self._top._enabled:

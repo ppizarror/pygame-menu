@@ -39,7 +39,7 @@ import pygameMenu.locals
 import pygameMenu.sound
 import pygameMenu.version
 
-from pygameMenu.menu import Menu
+from pygameMenu.menu import Menu, get_controls
 from pygameMenu.textmenu import TextMenu
 
 # Other

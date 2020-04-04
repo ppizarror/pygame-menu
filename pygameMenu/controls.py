@@ -44,6 +44,8 @@ JOY_DOWN = (0, -1)
 JOY_LEFT = (-1, 0)
 JOY_RIGHT = (1, 0)
 JOY_UP = (0, 1)
+JOY_DELAY = 300
+JOY_REPEAT = 100
 
 # Keyboard events
 KEY_APPLY = __locals.K_RETURN
