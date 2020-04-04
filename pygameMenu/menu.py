@@ -813,13 +813,18 @@ class Menu(object):
         rect = self._option[index].get_rect()
         align = self._option[index].get_alignment()
 
+        # Get global width displacement based on column index
+        _window_width = self._width
+        if self._columns > 1:
+            _window_width = self._column_widths[index // self._rows]
+
         # Calculate alignment
         if align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif align == _locals.ALIGN_LEFT:
-            option_dx = -self._width / 2 + self._selected_inflate_x
+            option_dx = -_window_width / 2 + self._selected_inflate_x
         elif align == _locals.ALIGN_RIGHT:
-            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
+            option_dx = _window_width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
