@@ -82,7 +82,7 @@ class TextMenu(Menu):
         :param kwargs: Additional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
-            isinstance(draw_text_region_x, float)
+               isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
         assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)
@@ -169,7 +169,6 @@ class TextMenu(Menu):
         dy = 0
         for line in self._text:
             text = self._fonttext.render(line, 1, self._font_textcolor)
-            print(line)
             text_width = text.get_size()[0]
 
             # Check text align

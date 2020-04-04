@@ -261,12 +261,11 @@ def main(test=False):
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_height=int(WINDOW_SIZE[1] * 0.7),
                                 menu_width=int(WINDOW_SIZE[0] * 0.8),
-                                # User press ESC button
-                                onclose=pygameMenu.events.EXIT,
+                                onclose=pygameMenu.events.EXIT,  # User press ESC button
                                 option_shadow=False,
                                 title='Main menu',
                                 window_height=WINDOW_SIZE[1],
-                                window_width=WINDOW_SIZE[0]
+                                window_width=WINDOW_SIZE[0],
                                 )
     main_menu.set_fps(FPS)
 
