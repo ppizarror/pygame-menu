@@ -178,9 +178,9 @@ class Menu(object):
         :type columns: int
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
-        :param column_weights: Tuple representing the width of each column, None if percentage is equal to each column
+        :param column_weights: Tuple representing the width of each column, None if percentage is equal
         :type column_weights: tuple, None
-        :param force_fit_text: Force text fitting on each menu option
+        :param force_fit_text: Force text fitting on each menu option in multiple columns
         :type force_fit_text: bool
         """
         assert isinstance(window_width, int)
