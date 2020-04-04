@@ -264,7 +264,7 @@ def main(test=False):
                                      text_fontsize=20,
                                      title='About',
                                      window_height=WINDOW_SIZE[1],
-                                     window_width=WINDOW_SIZE[0]
+                                     window_width=WINDOW_SIZE[0],
                                      )
     for m in ABOUT:
         about_menu.add_line(m)

@@ -31,9 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import math as _math
-
 import pygame as _pygame
-
 import pygameMenu.controls as _ctrl
 import pygameMenu.locals as _locals
 from pygameMenu.utils import check_key_pressed_valid
@@ -200,23 +198,23 @@ class TextInput(Widget):
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
-        self._last_key = 0
+        self._last_key = 0  # type: int
 
         # Mouse handling
-        self._keyrepeat_mouse_ms = 0
+        self._keyrepeat_mouse_ms = 0  # type: int
         self._keyrepeat_mouse_interval_ms = repeat_mouse_interval_ms
-        self._mouse_is_pressed = False
+        self._mouse_is_pressed = False  # type: bool
 
         # Render box (overflow)
         self._ellipsis = text_ellipsis
-        self._ellipsis_size = 0
+        self._ellipsis_size = 0  # type: int
         self._renderbox = [0, 0, 0]  # Left/Right/Inner
 
         # Things cursor:
-        self._clock = _pygame.time.Clock()
+        self._clock = _pygame.time.Clock()  # type: _pygame.time.Clock
         self._cursor_color = cursor_color
-        self._cursor_ms_counter = 0
-        self._cursor_offset = -1
+        self._cursor_ms_counter = 0  # type: int
+        self._cursor_offset = -1  # type: int
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None  # type: _pygame.Surface
@@ -229,7 +227,7 @@ class TextInput(Widget):
         self._history_cursor = []  # type: list
         self._history_renderbox = []  # type: list
         self._history_index = 0  # Index at which the new editions are added
-        self._max_history = history  # type: int
+        self._max_history = history
 
         # Text selection
         self._last_selection_render = [0, 0]
@@ -237,7 +235,7 @@ class TextInput(Widget):
         self._selection_enabled = enable_selection
         self._selection_box = [0, 0]  # [from, to]
         self._selection_color = selection_color
-        self._selection_mouse_first_position = -1
+        self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0, 0]  # (x,y)
         self._selection_render = False
         self._selection_surface = None  # type: _pygame.Surface
@@ -253,25 +251,25 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Other
-        self._copy_paste_enabled = enable_copy_paste  # type: bool
+        self._copy_paste_enabled = enable_copy_paste
         self._first_render = True  # type: bool
-        self._input_type = input_type  # type: str
-        self._input_underline = input_underline  # type: bool
+        self._input_type = input_type
+        self._input_underline = input_underline
         self._input_underline_size = 0  # type: int
         self._keychar_size = {'': 0}  # type: dict
-        self._label = label  # type: str
+        self._label = label
         self._label_size = 0  # type: int
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygameMenu__last_render_string__'  # type: str
         self._last_rendered_surface = None  # type: _pygame.Surface
-        self._last_rendered_surface_underline_width = 0
-        self._maxchar = maxchar  # type: int
+        self._last_rendered_surface_underline_width = 0  # type: int
+        self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
-        self._maxwidth_base = maxwidth  # type: int
-        self._maxwidth_update = maxwidth_dynamically_update  # type: bool
+        self._maxwidth_base = maxwidth
+        self._maxwidth_update = maxwidth_dynamically_update
         self._maxwidthsize = 0  # Updated in font
-        self._password = password  # True/False
-        self._password_char = password_char  # type: str
+        self._password = password
+        self._password_char = password_char
 
     def _apply_font(self):
         """

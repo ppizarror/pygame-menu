@@ -177,7 +177,7 @@ class Menu(object):
         :param columns: Number of columns, by default it's 1
         :type columns: int
         :param rows: Number of rows of each column, None if there's only 1 column
-        :type rows: int, None
+        :type rows: int,None
         :param column_weights: Tuple representing the width of each column, None if percentage is equal to each column
         :type column_weights: tuple, None
         :param force_fit_text: Force text fitting on each menu option
@@ -261,7 +261,6 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
         self._font_color = font_color
         self._fps = 0  # type: int
-        self._frame = 0  # type: int
         self._fsize = font_size
         self._height = menu_height
         self._index = 0  # Selected index
@@ -294,23 +293,26 @@ class Menu(object):
         self._font_name = font
 
         # Position of menu
-        self._posx = (window_width - self._width) / 2
-        self._posy = (window_height - self._height) / 2
+        self._posx = int((window_width - self._width) / 2)  # type: int
+        self._posy = int((window_height - self._height) / 2)  # type: int
         self._bgrect = [(self._posx, self._posy),
                         (self._posx + self._width, self._posy),
                         (self._posx + self._width, self._posy + self._height),
                         (self._posx, self._posy + self._height)
                         ]
-        self._draw_regionx = draw_region_x  # type: int
-        self._draw_regiony = draw_region_y  # type: int
+        self._draw_regionx = draw_region_x
+        self._draw_regiony = draw_region_y
 
         # Option position
-        self._opt_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy
+        self._option_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy  # type: int
 
         # Columns support
         if columns > 1:
             if column_weights is None:
                 column_weights = tuple(1 for _ in range(columns))
+            else:
+                for i in column_weights:
+                    assert i > 0, 'each column weight factor must be greater than zero'
             s = float(sum(column_weights[:columns]))
             cumulative = 0
             self._column_posx = []
@@ -319,15 +321,16 @@ class Menu(object):
                 self._column_posx.append(
                     int(self._width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5)) + self._posx))
                 cumulative += column_weights[i] / s
-            self._opt_posx = self._column_posx[0]
+            self._option_posx = self._column_posx[0]
             self._column_widths = tuple(int(self._width * column_weights[i] / s) for i in range(columns))
         else:
-            self._opt_posx = int(self._width * (self._draw_regionx / 100.0) + self._posx)
+            self._option_posx = int(self._width * (self._draw_regionx / 100.0) + self._posx)
+            self._column_widths = [self._width]
         self._column_spacing = int(self._width / columns)  # type: int
-        self._columns = columns  # type: int
-        self._force_fit_text = force_fit_text  # type: bool
-        self._rows = rows  # type: (int,None)
-        self._widget_align = widget_alignment  # type: str
+        self._columns = columns
+        self._force_fit_text = force_fit_text
+        self._rows = rows
+        self._widget_align = widget_alignment
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -656,8 +659,8 @@ class Menu(object):
                         font_size=font_size,
                         color=self._font_color,
                         selected_color=self._sel_color)
-        widget.set_max_width(
-            self._column_widths[(len(self._option) - 1) // self._rows] if self._force_fit_text else None)
+        if self._force_fit_text:
+            widget.set_max_width(self._column_widths[(len(self._option) - 1) // self._rows])
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
@@ -686,7 +689,7 @@ class Menu(object):
             widget.set_selected()
         elif _totals > 1 and (self._columns == 1 or _totals <= self._rows):
             dy = -_widget_font_size / 2 - self._opt_dy / 2
-            self._opt_posy += dy
+            self._option_posy += dy
 
     def _back(self):
         """
@@ -753,7 +756,7 @@ class Menu(object):
         """
         if self._top is None:
             return 0
-        prev = self._top._prev
+        prev = self._top._prev  # type: list
         depth = 0
         while True:
             if prev is not None:
@@ -779,8 +782,6 @@ class Menu(object):
 
         :return: None
         """
-        self._frame += 1
-
         # Draw background rectangle
         _gfxdraw.filled_polygon(self._surface, self._bgrect, self._bgcolor)
 
@@ -819,9 +820,10 @@ class Menu(object):
         align = self._option[index].get_alignment()
 
         # Get global width displacement based on column index
-        _window_width = self._width
         if self._columns > 1:
             _window_width = self._column_widths[index // self._rows]
+        else:
+            _window_width = self._column_widths[0]
 
         # Calculate alignment
         if align == _locals.ALIGN_CENTER:
@@ -835,11 +837,11 @@ class Menu(object):
         t_dy = -int(rect.height / 2.0)
 
         if self._columns == 1:
-            xccord = self._opt_posx + option_dx
-            ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
+            xccord = self._option_posx + option_dx
+            ycoord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy
         else:
             xccord = self._column_posx[index // self._rows] + option_dx
-            ycoord = self._opt_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
+            ycoord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
         return xccord, ycoord
 
     def enable(self):

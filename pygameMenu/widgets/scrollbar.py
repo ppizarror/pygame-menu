@@ -74,18 +74,18 @@ class ScrollBar(Widget):
                                         onreturn=onreturn,
                                         args=args,
                                         kwargs=kwargs)
-        self._values_range = list(values_range)  # type: list
+        self._values_range = list(values_range)
         self._scrolling = False  # type: bool
         self._orientation = 0  # type: int
         self._opp_orientation = int(not self._orientation)  # type: int
 
-        self._page_ctrl_length = length  # type: int
-        self._page_ctrl_thick = page_ctrl_thick  # type: (int,float)
-        self._page_ctrl_color = page_ctrl_color  # type: tuple
+        self._page_ctrl_length = length
+        self._page_ctrl_thick = page_ctrl_thick
+        self._page_ctrl_color = page_ctrl_color
 
         self._slider_rect = None  # type: _pygame.rect.RectType
-        self._slider_pad = slider_pad  # type: (int,float)
-        self._slider_color = slider_color  # type: tuple
+        self._slider_pad = slider_pad
+        self._slider_color = slider_color
         self._slider_position = 0  # type: int
         self._slider_length = None  # type: int
 

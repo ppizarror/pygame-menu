@@ -30,8 +30,8 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
-import pygame as _pygame
 
+import pygame as _pygame
 import pygameMenu.locals as _locals
 from pygameMenu.utils import check_key_pressed_valid
 from pygameMenu.widgets.textinput import TextInput
@@ -146,7 +146,7 @@ class ColorInput(TextInput):
                                          )
 
         # Store inner variables
-        self._separator = input_separator  # type: str
+        self._separator = input_separator
 
         # Previsualization surface, if -1 previsualization does not show
         self._last_r = -1  # type: int

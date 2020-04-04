@@ -31,9 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from uuid import uuid4
-
 import pygame as _pygame
-
 import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
@@ -41,8 +39,6 @@ from pygameMenu.sound import Sound as _Sound
 
 
 # noinspection PyTypeChecker
-
-
 class Widget(object):
     """
     Widget abstract class.
@@ -76,7 +72,7 @@ class Widget(object):
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER  # type: str
         self._fps = 0  # type: int
-        self._id = widget_id  # type: str
+        self._id = widget_id
         self._last_selected_surface = None  # type: _pygame.SurfaceType
         self._selected_rect = None  # type: _pygame.rect.RectType
         self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
