@@ -46,9 +46,9 @@ class ScrollArea(object):
     """
 
     def __init__(self,
-                 world,
                  menu_width,
                  menu_height,
+                 world=None,
                  scrollbars=(_locals.POSITION_SOUTH, _locals.POSITION_EAST),
                  scrollbar_thick=20,
                  scrollbar_color=(235, 235, 235),
@@ -56,19 +56,17 @@ class ScrollArea(object):
                  scrollbar_slider_color=(200, 200, 200),
                  shadow=_cfg.MENU_OPTION_SHADOW,
                  shadow_color=_cfg.MENU_SHADOW_COLOR,
-                 shadow_offset=_cfg.MENU_SHADOW_OFFSET):
+                 shadow_offset=_cfg.MENU_SHADOW_OFFSET,
+                 shadow_position=_locals.POSITION_SOUTHEAST):
 
-        self._posx = 0
-        self._posy = 0
-        self._width = menu_width
-        self._height = menu_height
+        self._rect = _pygame.Rect(0, 0, menu_width, menu_height)
         self._world = world
         self._scrollbars = []
+        self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
-        self._scrollbar_positions = scrollbars
         self._view_rect = self.get_view_rect()
 
-        for pos in set(self._scrollbar_positions):
+        for pos in self._scrollbar_positions:
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
                 sbar = ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
                                  orientation=_locals.ORIENTATION_VERTICAL,
@@ -77,10 +75,6 @@ class ScrollArea(object):
                                  page_ctrl_thick=scrollbar_thick,
                                  page_ctrl_color=scrollbar_color,
                                  onchange=self._on_vertical_scroll)
-                if pos == _locals.POSITION_WEST:
-                    sbar.set_position(self._view_rect.left - scrollbar_thick, self._view_rect.top)
-                else:
-                    sbar.set_position(self._view_rect.right, self._view_rect.top)
             else:
                 sbar = ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
                                  orientation=_locals.ORIENTATION_HORIZONTAL,
@@ -89,23 +83,53 @@ class ScrollArea(object):
                                  page_ctrl_thick=scrollbar_thick,
                                  page_ctrl_color=scrollbar_color,
                                  onchange=self._on_horizontal_scroll)
-                if pos == _locals.POSITION_NORTH:
-                    sbar.set_position(self._view_rect.left, self._view_rect.top - scrollbar_thick)
-                else:
-                    sbar.set_position(self._view_rect.left, self._view_rect.bottom)
 
             sbar.set_shadow(enabled=shadow,
                             color=shadow_color,
-                            position=_locals.POSITION_SOUTHEAST,
+                            position=shadow_position,
                             offset=shadow_offset)
             sbar.set_controls(False, True)
 
             self._scrollbars.append(sbar)
 
+        self._apply_size_changes()
+
+    def _apply_size_changes(self):
+        self._view_rect = self.get_view_rect()
+        for sbar in self._scrollbars:
+            pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
+            if pos == _locals.POSITION_WEST:
+                sbar.set_position(self._view_rect.left - self._scrollbar_thick, self._view_rect.top)
+            elif pos == _locals.POSITION_EAST:
+                sbar.set_position(self._view_rect.right, self._view_rect.top)
+            elif pos == _locals.POSITION_NORTH:
+                sbar.set_position(self._view_rect.left, self._view_rect.top - self._scrollbar_thick)
+            else:
+                sbar.set_position(self._view_rect.left, self._view_rect.bottom)
+
+            if pos in (_locals.POSITION_NORTH, _locals.POSITION_SOUTH)\
+                    and self.get_hidden_width() != sbar.get_maximum()\
+                    and self.get_hidden_width() != 0:
+                sbar.set_length(self._view_rect.width)
+                sbar.set_maximum(self.get_hidden_width())
+                sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
+                                   (self._view_rect.width + self.get_hidden_width()))
+
+            elif pos in (_locals.POSITION_EAST, _locals.POSITION_WEST)\
+                    and self.get_hidden_height() != sbar.get_maximum()\
+                    and self.get_hidden_height() != 0:
+                sbar.set_length(self._view_rect.height)
+                sbar.set_maximum(self.get_hidden_height())
+                sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
+                                   (self._view_rect.height + self.get_hidden_height()))
+
     def draw(self, surface):
         """
         Called by end user to draw state to the surface.
         """
+        if not self._world:
+            return
+
         offsets = [0, 0]
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
@@ -124,6 +148,8 @@ class ScrollArea(object):
         Return the total width out of the bounds of the the viewable area.
         Zero is returned if the world width is lower than the viewable area.
         """
+        if not self._world:
+            return 0
         return max(0, self._world.get_width() - self._view_rect.width)
 
     def get_hidden_height(self):
@@ -131,50 +157,58 @@ class ScrollArea(object):
         Return the total height out of the bounds of the the viewable area.
         Zero is returned if the world height is lower than the viewable area.
         """
+        if not self._world:
+            return 0
         return max(0, self._world.get_height() - self._view_rect.height)
+
+    def get_rect(self):
+        """
+        Return the Rect object.
+
+        :return: pygame.Rect
+        :rtype: pygame.rect.RectType
+        """
+        return self._rect
 
     def get_view_rect(self):
         """
         Subtract width of scrollbars from area with the given size and return
         the viewable area.
 
+        The viewable area depends on the world size, because scroll bars may
+        or may not be displayed.
+
         :param width: real width of the surface
         :param height: real height of the surface
         """
-        rect = _pygame.Rect(self._posx, self._posy, self._width, self._height)
+        rect = _pygame.Rect(self._rect)
 
-        if _locals.POSITION_NORTH in self._scrollbar_positions\
-                and _locals.POSITION_SOUTH in self._scrollbar_positions:
-            total_height_thick = 2 * self._scrollbar_thick
-        else:
-            total_height_thick = self._scrollbar_thick
+        if not self._world or (self._world.get_width() <= self._rect.width
+                               and self._world.get_height() <= self._rect.height):
+            return rect  # Area is enought large to display world
 
-        if _locals.POSITION_EAST in self._scrollbar_positions\
-                and _locals.POSITION_WEST in self._scrollbar_positions:
-            total_width_thick = 2 * self._scrollbar_thick
-        else:
-            total_width_thick = self._scrollbar_thick
+        if self._world.get_width() - self._rect.width > 0:
+            if _locals.POSITION_NORTH in self._scrollbar_positions:
+                rect.top += self._scrollbar_thick
+                rect.height -= self._scrollbar_thick
+            if _locals.POSITION_SOUTH in self._scrollbar_positions:
+                rect.height -= self._scrollbar_thick
+        if self._world.get_height() - self._rect.height > 0:
+            if _locals.POSITION_WEST in self._scrollbar_positions:
+                rect.left += self._scrollbar_thick
+                rect.width -= self._scrollbar_thick
+            if _locals.POSITION_EAST in self._scrollbar_positions:
+                rect.width -= self._scrollbar_thick
 
-        if _locals.POSITION_NORTH in self._scrollbar_positions\
-                and self._world.get_width() > self._width - total_width_thick:
-            rect.top = self._scrollbar_thick
-            rect.height -= self._scrollbar_thick
-        if _locals.POSITION_SOUTH in self._scrollbar_positions\
-                and self._world.get_width() > self._width - total_width_thick:
-            rect.height -= self._scrollbar_thick
-        if _locals.POSITION_EAST in self._scrollbar_positions\
-                and self._world.get_height() > self._height - total_height_thick:
-            rect.width -= self._scrollbar_thick
-        if _locals.POSITION_WEST in self._scrollbar_positions\
-                and self._world.get_height() > self._height - total_height_thick:
-            rect.left = self._scrollbar_thick
-            rect.width -= self._scrollbar_thick
         return rect
 
     def _on_horizontal_scroll(self, value):
         """
         Call when a horizontal scroll bar as changed to update the
         position of the opposite one if it exists.
+
+        :param value: new position of the slider
+        :type value: float
         """
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL\
@@ -186,6 +220,9 @@ class ScrollArea(object):
         """
         Call when a vertical scroll bar as changed to update the
         position of the opposite one if it exists.
+
+        :param value: new position of the slider
+        :type value: float
         """
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL\
@@ -203,27 +240,23 @@ class ScrollArea(object):
         :type posy: int, float
         :return: None
         """
-        self._posx = posx
-        self._posy = posy
+        self._rect.x = posx
+        self._rect.y = posy
+        self._apply_size_changes()
+
+    def set_world(self, surface):
+        """
+        Update the scrolled surface.
+
+        :param surface: new world surface
+        :type surface: pygame.Surface
+        """
+        self._world = surface
+        self._apply_size_changes()
 
     def update(self, events):
         """
         Called by end user to update scroll state.
         """
-        # Update viewable area if size of the world has changed
-        self._view_rect = self.get_view_rect()
-
         for sbar in self._scrollbars:
-            # Update value range if size of the world has changed
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL\
-                    and self.get_hidden_width() != sbar.get_maximum()\
-                    and self.get_hidden_width() != 0:
-                sbar.set_maximum(self.get_hidden_width())
-
-            elif sbar.get_orientation() == _locals.ORIENTATION_VERTICAL\
-                    and self.get_hidden_height() != sbar.get_maximum()\
-                    and self.get_hidden_height() != 0:
-                sbar.set_maximum(self.get_hidden_height())
-
-            # Update scroll bar according to user events
             sbar.update(events)

@@ -129,8 +129,8 @@ class MenuBar(Widget):
 
         self._polygon_pos = (
             (self._rect.x, self._rect.y),
-            (self._rect.x + self._width, self._rect.y),
-            (self._rect.x + self._width, self._rect.y + self._rect.height * 0.6),
+            (self._rect.x + self._width - 1, self._rect.y),  # -1 for line thickness
+            (self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6),
             (self._rect.x + self._rect.width + 30, self._rect.y + self._rect.height * 0.6),
             (self._rect.x + self._rect.width + 10, self._rect.y + self._rect.height + 5),
             (self._rect.x, self._rect.y + self._rect.height + 5)
