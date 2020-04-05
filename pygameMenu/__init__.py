@@ -56,7 +56,7 @@ __contributors__ = [
 ]
 __copyright__ = 'Copyright 2017-2020 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'
-__email__ = 'pablo.pizarro@ing.uchile.cl'
+__email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu'
 __license__ = 'MIT'
 __url__ = 'https://ppizarror.com/pygame-menu/'
