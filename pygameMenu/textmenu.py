@@ -117,9 +117,9 @@ class TextMenu(Menu):
 
         # Inner variables
         self._text = []
+        self._text_render = {}
 
         # Position of text
-        self._pos_text_x = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
         self._option_posy -= self._textdy / 2 + self._font_textsize / 2
 
     def add_button(self, *args, **kwargs):
@@ -164,35 +164,60 @@ class TextMenu(Menu):
         dy = -self._font_textsize / 2 - self._textdy / 2
         self._option_posy += dy
 
-    def draw(self):
+    def _get_text_render(self, line_number):
         """
-        See upper class doc.
+        Return the rendered surface of a given line.
+
+        :param line_number: Line number
+        :type line_number: int
+        :return: Line surface
+        :rtype: pygame.surface.SurfaceType
         """
-        super(TextMenu, self).draw()
+        assert isinstance(line_number, int)
+        _line_hash = hash(self._text[line_number])
+        if _line_hash not in self._text_render.keys():
+            self._text_render[_line_hash] = self._fonttext.render(self._text[line_number], 1, self._font_textcolor)
+        return self._text_render[_line_hash]
 
-        # Draw text
-        dy = 0
-        for line in self._text:
-            text = self._fonttext.render(line, 1, self._font_textcolor)
-            text_width = text.get_size()[0]
+    def _get_text_width(self, line_number):
+        """
+        Return line rendered surface width.
 
-            # Check text align
-            if self._text_align == _locals.ALIGN_CENTER:
-                text_dx = -int(self._width * (self._draw_text_region_x / 100.0)) + \
-                          self._width / 2 - text_width / 2
-            elif self._text_align == _locals.ALIGN_LEFT:
-                text_dx = 0
-            elif self._text_align == _locals.ALIGN_RIGHT:
-                text_dx = -2 * int(self._width * (self._draw_text_region_x / 100.0)) \
-                          - text_width + self._width
-            else:
-                text_dx = 0
+        :param line_number: Line number
+        :type line_number: int
+        :return: Line surface width
+        :rtype: int
+        """
+        return self._get_text_render(line_number).get_size()[0]
 
-            ycoords = self._option_posy + self._textdy + dy * (self._font_textsize + self._textdy)
-            ycoords -= self._font_textsize / 2
+    def _get_text_pos(self, line_number):
+        """
+        Return line rendered surface width.
 
-            self._surface.blit(text, (self._pos_text_x + text_dx, ycoords))
-            dy += 1
+        :param line_number: Line number
+        :type line_number: int
+        :return: Text position (x,y)
+        :rtype: tuple
+        """
+        assert isinstance(line_number, int)
+        text_width = self._get_text_width(line_number)
+
+        # Check text align
+        if self._text_align == _locals.ALIGN_CENTER:
+            text_dx = -int(self._width * (self._draw_text_region_x / 100.0)) + \
+                      self._width / 2 - text_width / 2
+        elif self._text_align == _locals.ALIGN_LEFT:
+            text_dx = 0
+        elif self._text_align == _locals.ALIGN_RIGHT:
+            text_dx = -2 * int(self._width * (self._draw_text_region_x / 100.0)) \
+                      - text_width + self._width
+        else:
+            text_dx = 0
+
+        x_coord = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
+        y_coord = self._option_posy + self._textdy + line_number * (
+                self._font_textsize + self._textdy) - self._font_textsize / 2
+        return x_coord + text_dx, y_coord
 
     def _get_option_pos(self, index):
         """
@@ -212,10 +237,17 @@ class TextMenu(Menu):
             option_dx = 0
         t_dy = -int(rect.height / 2.0)
 
-        xccord = self._column_posx[0] + option_dx
-        ycoord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
+        x_coord = self._column_posx[0] + option_dx
+        y_coord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
+        return x_coord, y_coord
 
-        return xccord, ycoord
+    def draw(self):
+        """
+        See upper class doc.
+        """
+        super(TextMenu, self).draw()
+        for line in range(len(self._text)):
+            self._surface.blit(self._get_text_render(line), self._get_text_pos(line))
 
     def _update_top_margin(self):
         """
