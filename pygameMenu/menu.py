@@ -777,6 +777,34 @@ class Menu(object):
             self._enabled = False
             self._closelocked = closelocked
 
+    def _get_option_pos(self, index):
+        """
+        Get option position from the option index.
+
+        :param index: Option index
+        :type index: int
+        :return: Position (x,y)
+        :rtype: tuple
+        """
+        rect = self._option[index].get_rect()
+        align = self._option[index].get_alignment()
+
+        # Calculate alignment
+        _column_width = self._column_widths[int(index // self._rows)]  # if column=1 then (column width)=(menu width)
+        if align == _locals.ALIGN_CENTER:
+            option_dx = -int(rect.width / 2.0)
+        elif align == _locals.ALIGN_LEFT:
+            option_dx = -_column_width / 2 + self._selected_inflate_x
+        elif align == _locals.ALIGN_RIGHT:
+            option_dx = _column_width / 2 - rect.width - self._selected_inflate_x
+        else:
+            option_dx = 0
+        t_dy = -int(rect.height / 2.0)
+
+        x_coord = self._column_posx[int(index // self._rows)] + option_dx
+        y_coord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
+        return x_coord, y_coord
+
     def draw(self):
         """
         Draw menu to the active surface.
@@ -807,34 +835,6 @@ class Menu(object):
                                           self._selected_inflate_x,
                                           self._selected_inflate_y,
                                           self._rect_width)
-
-    def _get_option_pos(self, index):
-        """
-        Get option position from the option index.
-
-        :param index: Option index
-        :type index: int
-        :return: Position (x,y)
-        :rtype: tuple
-        """
-        rect = self._option[index].get_rect()
-        align = self._option[index].get_alignment()
-
-        # Calculate alignment
-        _column_width = self._column_widths[int(index // self._rows)]  # if column=1 then (column width)=(menu width)
-        if align == _locals.ALIGN_CENTER:
-            option_dx = -int(rect.width / 2.0)
-        elif align == _locals.ALIGN_LEFT:
-            option_dx = -_column_width / 2 + self._selected_inflate_x
-        elif align == _locals.ALIGN_RIGHT:
-            option_dx = _column_width / 2 - rect.width - self._selected_inflate_x
-        else:
-            option_dx = 0
-        t_dy = -int(rect.height / 2.0)
-
-        xccord = self._column_posx[int(index // self._rows)] + option_dx
-        ycoord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
-        return xccord, ycoord
 
     def enable(self):
         """
