@@ -731,6 +731,8 @@ The default parameters of *Menu* and *TextMenu* are stored in the following file
 
 ## Examples
 
+Several examples can be found at: [https://github.com/ppizarror/pygame-menu/tree/master/pygameMenu/examples](pygameMenu/examples/)
+
 To run the examples, simply execute these commands in a terminal:
 
 ```bash
@@ -739,7 +741,7 @@ py -m pygameMenu.examples.multi_input
 py -m pygameMenu.examples.timer_clock
 ```
 
-The examples can also be imported as follows:
+Them can also be imported as follows:
 
 ```python
 from pygameMenu.examples.example import main
