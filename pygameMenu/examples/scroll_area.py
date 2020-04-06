@@ -44,7 +44,8 @@ H_SIZE = 600  # Height of window size
 COLOR_BACKGROUND = (128, 230, 198)
 LEGEND = "Area {}x{}\nWorld {}x{}\nPress [ESC] to change"
 
-WORLDS = {'1': {'pos': (0, 0),
+WORLDS = {
+          '1': {'pos': (0, 0),
                 'win': (W_SIZE, H_SIZE),
                 'size': (W_SIZE * 2, H_SIZE * 3)},
           '2': {'pos': (200, 100),
@@ -56,6 +57,12 @@ WORLDS = {'1': {'pos': (0, 0),
           '4': {'pos': (350, 250),
                 'win': (W_SIZE // 2, H_SIZE // 2),
                 'size': (W_SIZE // 2, H_SIZE // 2)},
+          '5': {'pos': (200, 200),
+                'win': (W_SIZE // 2, H_SIZE // 2),
+                'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
+          '6': {'pos': (10, 10),
+                'win': (W_SIZE - 300, H_SIZE // 2),
+                'size': (W_SIZE - 200, H_SIZE // 2 - 10)},
           }
 
 
@@ -154,7 +161,8 @@ def main(test=False):
 
         pygame.draw.rect(screen,
                          (20, 89, 20),
-                         area.get_rect(), 0)
+                         # Inflate to see area overflow in case of bug
+                         area.get_rect().inflate(20, 20), 0)
 
         # Application events
         events = pygame.event.get()

@@ -51,18 +51,18 @@ def paint_background(surface):
 
 def make_long_menu(surface):
     # Main menu, pauses execution of the application
-    _menu = pygameMenu.ScrollMenu(surface,
-                                  font=pygameMenu.font.FONT_COMIC_NEUE,
-                                  bgfun=partial(paint_background, surface),
-                                  menu_alpha=80,
-                                  menu_color=(188, 200, 108),
-                                  menu_color_title=(100, 130, 98),
-                                  onclose=pygameMenu.events.EXIT,
-                                  title='Main Menu',
-                                  window_height=H_SIZE,
-                                  window_width=W_SIZE,
-                                  fps=FPS
-                                  )
+    _menu = pygameMenu.Menu(surface,
+                            font=pygameMenu.font.FONT_COMIC_NEUE,
+                            bgfun=partial(paint_background, surface),
+                            menu_alpha=80,
+                            menu_color=(188, 200, 108),
+                            menu_color_title=(100, 130, 98),
+                            onclose=pygameMenu.events.EXIT,
+                            title='Main Menu',
+                            window_height=H_SIZE,
+                            window_width=W_SIZE,
+                            fps=FPS
+                            )
 
     label = 'Button n°{}'
     for i in range(1, 20):
