@@ -51,7 +51,6 @@ except ImportError:
         """
         pass
 
-
     def paste():
         """
         Paste method.
@@ -60,7 +59,6 @@ except ImportError:
         :rtype: basestring
         """
         return ''
-
 
     class PyperclipException(RuntimeError):
         """
@@ -1169,8 +1167,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-                     text[0:text_end] + \
-                     self._input_string[self._cursor_position:len(self._input_string)]
+            text[0:text_end] + \
+            self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):
@@ -1557,8 +1555,10 @@ class TextInput(Widget):
 
                 # Escape
                 elif event.key == _pygame.K_ESCAPE:
-                    self._unselect_text()
-                    updated = True
+                    # Nothing updated if nothing selected
+                    if self._get_selected_text():
+                        self._unselect_text()
+                        updated = True
 
                 # Press lshift, rshift -> selection
                 elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
