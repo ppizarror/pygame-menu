@@ -81,6 +81,7 @@ class MenuBar(Widget):
         self._backbox = back_box
         self._backbox_pos = None  # type: tuple
         self._backbox_rect = None  # type: _pygame.rect.RectType
+        self._bgcolor = None  # type: tuple
         self._label = label
         self._offsetx = 0  # type: int
         self._offsety = 0  # type: int
@@ -98,6 +99,13 @@ class MenuBar(Widget):
         See upper class doc.
         """
         self._render()
+
+        if self._bgcolor:
+            bg = _pygame.Surface((self._width, self._rect.height + 5),
+                                 _pygame.SRCALPHA,
+                                 32)   # lgtm [py/call/wrong-arguments]
+            bg.fill(self._bgcolor)
+            surface.blit(bg, self._rect.topleft)
 
         _gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
 
@@ -167,6 +175,15 @@ class MenuBar(Widget):
                 (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
                 (self._backbox_rect.left + 5, self._backbox_rect.centery)
             )
+
+    def set_background_color(self, color):
+        """
+        Set the color behind the polygon.
+
+        :param color: RGBA color
+        :type color: tuple
+        """
+        self._bgcolor = color
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
