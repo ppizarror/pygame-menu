@@ -38,7 +38,7 @@ from pygameMenu import locals
 from pygameMenu.scrollarea import ScrollArea
 
 
-FPS = 60.0
+FPS = 30.0
 W_SIZE = 800  # Width of window size
 H_SIZE = 600  # Height of window size
 COLOR_BACKGROUND = (128, 230, 198)
@@ -131,10 +131,10 @@ def main(test=False):
 
     area = ScrollArea(W_SIZE,
                       H_SIZE,
-                      # scrollbars=(locals.POSITION_SOUTH,
-                      #             locals.POSITION_EAST,
-                      #             locals.POSITION_WEST,
-                      #             locals.POSITION_NORTH)
+                      scrollbars=(locals.POSITION_SOUTH,
+                                  locals.POSITION_EAST,
+                                  locals.POSITION_WEST,
+                                  locals.POSITION_NORTH)
                       )
 
     worlds = iter_world(area)

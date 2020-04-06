@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
-from pygameMenu.widgets import ScrollBar
+from pygameMenu.widgets import ScrollBar as _ScrollBar
 
 
 class ScrollArea(object):
@@ -68,21 +68,21 @@ class ScrollArea(object):
 
         for pos in self._scrollbar_positions:
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
-                sbar = ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
-                                 orientation=_locals.ORIENTATION_VERTICAL,
-                                 slider_pad=scrollbar_slider_pad,
-                                 slider_color=scrollbar_slider_color,
-                                 page_ctrl_thick=scrollbar_thick,
-                                 page_ctrl_color=scrollbar_color,
-                                 onchange=self._on_vertical_scroll)
+                sbar = _ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
+                                  orientation=_locals.ORIENTATION_VERTICAL,
+                                  slider_pad=scrollbar_slider_pad,
+                                  slider_color=scrollbar_slider_color,
+                                  page_ctrl_thick=scrollbar_thick,
+                                  page_ctrl_color=scrollbar_color,
+                                  onchange=self._on_vertical_scroll)
             else:
-                sbar = ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
-                                 orientation=_locals.ORIENTATION_HORIZONTAL,
-                                 slider_pad=scrollbar_slider_pad,
-                                 slider_color=scrollbar_slider_color,
-                                 page_ctrl_thick=scrollbar_thick,
-                                 page_ctrl_color=scrollbar_color,
-                                 onchange=self._on_horizontal_scroll)
+                sbar = _ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
+                                  orientation=_locals.ORIENTATION_HORIZONTAL,
+                                  slider_pad=scrollbar_slider_pad,
+                                  slider_color=scrollbar_slider_color,
+                                  page_ctrl_thick=scrollbar_thick,
+                                  page_ctrl_color=scrollbar_color,
+                                  onchange=self._on_horizontal_scroll)
 
             sbar.set_shadow(enabled=shadow,
                             color=shadow_color,
