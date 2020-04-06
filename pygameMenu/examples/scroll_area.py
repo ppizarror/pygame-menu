@@ -134,7 +134,8 @@ def main(test=False):
                       scrollbars=(locals.POSITION_SOUTH,
                                   locals.POSITION_EAST,
                                   locals.POSITION_WEST,
-                                  locals.POSITION_NORTH)
+                                  locals.POSITION_NORTH
+                                  )
                       )
 
     worlds = iter_world(area)

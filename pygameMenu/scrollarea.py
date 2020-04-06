@@ -187,18 +187,16 @@ class ScrollArea(object):
                                and self._world.get_height() <= self._rect.height):
             return rect  # Area is enought large to display world
 
-        if self._world.get_width() - self._rect.width > 0:
-            if _locals.POSITION_NORTH in self._scrollbar_positions:
-                rect.top += self._scrollbar_thick
-                rect.height -= self._scrollbar_thick
-            if _locals.POSITION_SOUTH in self._scrollbar_positions:
-                rect.height -= self._scrollbar_thick
-        if self._world.get_height() - self._rect.height > 0:
-            if _locals.POSITION_WEST in self._scrollbar_positions:
-                rect.left += self._scrollbar_thick
-                rect.width -= self._scrollbar_thick
-            if _locals.POSITION_EAST in self._scrollbar_positions:
-                rect.width -= self._scrollbar_thick
+        if _locals.POSITION_NORTH in self._scrollbar_positions:
+            rect.top += self._scrollbar_thick
+            rect.height -= self._scrollbar_thick
+        if _locals.POSITION_SOUTH in self._scrollbar_positions:
+            rect.height -= self._scrollbar_thick
+        if _locals.POSITION_WEST in self._scrollbar_positions:
+            rect.left += self._scrollbar_thick
+            rect.width -= self._scrollbar_thick
+        if _locals.POSITION_EAST in self._scrollbar_positions:
+            rect.width -= self._scrollbar_thick
 
         return rect
 
