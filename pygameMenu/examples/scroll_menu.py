@@ -71,12 +71,12 @@ def make_long_menu(surface):
                                 menu_color=(120, 200, 108),
                                 menu_color_title=(100, 200, 98),
                                 onclose=pygameMenu.events.EXIT,
-                                title='Main Menu',
+                                title='Menu with columns',
                                 window_height=H_SIZE,
                                 window_width=W_SIZE,
                                 fps=FPS,
                                 rows=3,
-                                columns=3,
+                                columns=4
                                 )
 
     _menu.add_button('Rows and Columns', _menu_sub)
@@ -87,7 +87,7 @@ def make_long_menu(surface):
     _menu.add_button('Exit', pygameMenu.events.EXIT)
 
     label = 'Button n°{}'
-    for i in range(1, 8):
+    for i in range(1, 11):
         i += 100
         txt = label.format(i)
         _menu_sub.add_button(txt, on_button_click, i)
