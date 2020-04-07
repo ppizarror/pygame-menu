@@ -77,6 +77,7 @@ def make_long_menu(surface):
     _menu = pygameMenu.Menu(surface,
                             font=pygameMenu.font.FONT_COMIC_NEUE,
                             bgfun=partial(paint_background, surface),
+                            draw_region_y=10,
                             menu_alpha=80,
                             menu_color=(188, 200, 108),
                             menu_color_title=(100, 130, 98),
@@ -125,6 +126,7 @@ def make_long_menu(surface):
             txt = label.format(100 * i)
         _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygameMenu.events.BACK)
+    _menu_sub.center_vertically()
     return _menu
 
 

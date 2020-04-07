@@ -221,7 +221,6 @@ def main(test=False):
     play_submenu = pygameMenu.Menu(surface,
                                    bgfun=main_background,
                                    color_selected=COLOR_WHITE,
-                                   draw_region_y=0,
                                    font=pygameMenu.font.FONT_BEBAS,
                                    font_color=COLOR_BLACK,
                                    font_size=30,
@@ -248,11 +247,13 @@ def main(test=False):
                            selector_id='select_difficulty')
     play_menu.add_button('Another menu', play_submenu)
     play_menu.add_button('Return to main menu', pygameMenu.events.BACK)
+    play_menu.center_vertically()
 
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
                                      bgfun=main_background,
                                      color_selected=COLOR_WHITE,
+                                     draw_region_y=15,
                                      font=pygameMenu.font.FONT_BEBAS,
                                      font_color=COLOR_BLACK,
                                      font_size_title=30,
@@ -278,7 +279,6 @@ def main(test=False):
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
                                 color_selected=COLOR_WHITE,
-                                draw_region_y=21,
                                 font=pygameMenu.font.FONT_BEBAS,
                                 font_color=COLOR_BLACK,
                                 font_size=30,
@@ -296,6 +296,7 @@ def main(test=False):
     main_menu.add_button('Play', play_menu)
     main_menu.add_button('About', about_menu)
     main_menu.add_button('Quit', pygameMenu.events.EXIT)
+    main_menu.center_vertically()
 
     # Configure main menu
     main_menu.set_fps(FPS)

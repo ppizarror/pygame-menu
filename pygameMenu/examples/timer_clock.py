@@ -191,6 +191,7 @@ def main(test=False):
     timer_menu.add_button('Update game object', TestCallClassMethod().update_game_settings)
     timer_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     timer_menu.add_button('Close Menu', pygameMenu.events.CLOSE)
+    timer_menu.center_vertically()
 
     # Help menu
     help_menu = pygameMenu.TextMenu(surface,
@@ -238,7 +239,6 @@ def main(test=False):
     # Main menu, pauses execution of the application
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=mainmenu_background,
-                                draw_region_y=24,
                                 enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
                                 menu_alpha=90,
@@ -254,6 +254,7 @@ def main(test=False):
     main_menu.add_button(help_menu.get_title(), help_menu)  # Add help submenu
     main_menu.add_button(about_menu.get_title(), about_menu)  # Add about submenu
     main_menu.add_button('Exit', pygameMenu.events.EXIT)  # Add exit function
+    main_menu.center_vertically()
 
     # -------------------------------------------------------------------------
     # Main loop

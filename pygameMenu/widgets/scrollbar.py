@@ -119,6 +119,13 @@ class ScrollBar(Widget):
             self.set_page_step((values_range[1] - values_range[0]) / 5.0)  # Arbitrary
         self.set_orientation(orientation)
 
+    def get_page_ctrl_thickness(self):
+        """
+        :return: The page ctrl box thickness.
+        :rtype: int,float
+        """
+        return self._page_ctrl_thick
+
     def _apply_font(self):
         """
         See upper class doc.
@@ -126,6 +133,9 @@ class ScrollBar(Widget):
         pass
 
     def _apply_size_changes(self):
+        """
+        Apply scrollbar changes.
+        """
         dims = ('width', 'height')
         setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
         setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
@@ -337,7 +347,7 @@ class ScrollBar(Widget):
             elif self.mouse_enabled and event.type is _pygame.MOUSEBUTTONDOWN:
                 if event.button in (4, 5) and self._orientation == 1:
                     # Vertical bar: scroll down (4) or up (5)
-                    direction = 1 if event.button == 4 else -1
+                    direction = -1 if event.button == 4 else 1
                     if self._scroll(direction * self._single_step):
                         self.change()
                         updated = True

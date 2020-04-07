@@ -147,7 +147,6 @@ def main(test=False):
     settings_menu = pygameMenu.Menu(surface,
                                     bgfun=main_background,
                                     color_selected=COLOR_WHITE,
-                                    draw_region_y=10,  # This sets the initial y draw region
                                     font=pygameMenu.font.FONT_HELVETICA,
                                     font_color=COLOR_BLACK,
                                     font_size=25,
@@ -212,6 +211,7 @@ def main(test=False):
     settings_menu.add_button('Store data', data_fun)  # Call function
     settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                              align=pygameMenu.locals.ALIGN_CENTER)
+    settings_menu.center_vertically()  # After all widgets added
 
     # -------------------------------------------------------------------------
     # Create menus: More settings
@@ -219,7 +219,7 @@ def main(test=False):
     more_settings_menu = pygameMenu.Menu(surface,
                                          bgfun=main_background,
                                          color_selected=COLOR_WHITE,
-                                         draw_region_y=10,
+                                         draw_region_y=5,
                                          font=pygameMenu.font.FONT_HELVETICA,
                                          font_color=COLOR_BLACK,
                                          font_size=25,
@@ -273,6 +273,7 @@ def main(test=False):
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
     button_column_menu.add_button('Return to main menu', pygameMenu.events.BACK)
+    button_column_menu.center_vertically()
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
@@ -280,6 +281,7 @@ def main(test=False):
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
                                 color_selected=COLOR_WHITE,
+                                draw_region_y=9,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
                                 font_color=COLOR_BLACK,
                                 font_size=30,

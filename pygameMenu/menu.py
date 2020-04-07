@@ -269,8 +269,8 @@ class Menu(object):
         self._option_shadow = option_shadow
         self._option_shadow_offset = option_shadow_offset
         self._option_shadow_position = option_shadow_position
-        self._rect_width = rect_width
-        self._sel_color = color_selected
+        self._selection_border_width = rect_width
+        self._selection_color = color_selected
         self._sounds = _Sound()  # type: _Sound
         self._surface = surface
         self._width = menu_width
@@ -301,9 +301,9 @@ class Menu(object):
                         ]
         self._draw_regionx = draw_region_x
         self._draw_regiony = draw_region_y
+        self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
 
         # Columns and rows
-        self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
         self._columns = columns
         if column_max_width is not None:
             assert len(column_max_width) == columns, 'column_max_width length must be the same as the number of columns'
@@ -314,6 +314,7 @@ class Menu(object):
         else:
             column_max_width = [None for _ in range(columns)]
         self._column_max_width = column_max_width
+        self._column_widths = None  # type: list
         self._force_fit_text = force_fit_text
         self._rows = rows
         self._widget_align = widget_alignment
@@ -433,6 +434,8 @@ class Menu(object):
         :return: Row height
         :rtype: int
         """
+        if self._column_widths is None:
+            self._calculate_column_width()
         max_y = 0
         for index in range(len(self._option)):
             _, y = self._get_option_pos(index)[2:]
@@ -722,7 +725,7 @@ class Menu(object):
         widget.set_font(font=self._font_name,
                         font_size=font_size,
                         color=self._font_color,
-                        selected_color=self._sel_color)
+                        selected_color=self._selection_color)
         if self._force_fit_text:
             widget.set_max_width(self._column_max_width[_col])  # If None nothing happens
         widget.set_shadow(enabled=self._option_shadow,
@@ -860,6 +863,17 @@ class Menu(object):
             self._enabled = False
             self._closelocked = closelocked
 
+    def center_vertically(self):
+        """
+        Update draw_region_y based on the current widgets only if there's no overflow in y axis.
+        """
+        self._build_widget_surface()
+        scroll_vertical = self._scroll.get_actual_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        max_y = self._calculate_row_height() - self._option_offsety
+        available = self._height - self._menubar.get_rect().height - scroll_vertical
+        self._draw_regiony = max(100.0 * (available - max_y) / (2.0 * self._height), 0)
+        self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
+
     def _get_option_pos(self, index):
         """
         Get option position on the widgets surface from the option index.
@@ -882,7 +896,7 @@ class Menu(object):
             dx = _column_width / 2 - rect.width - self._selected_inflate_x
         else:
             dx = 0
-        dy = self._selected_inflate_y - 1  # Adds the inflation box minus the border
+        dy = self._selected_inflate_y + self._selection_border_width - 2  # Adds the inflation box minus the border
 
         x_coord = self._column_posx[int(index // self._rows)] + dx
         y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + dy
@@ -917,10 +931,10 @@ class Menu(object):
             # If selected item then draw a rectangle
             if self._drawselrect and widget.selected:
                 widget.draw_selected_rect(self._widgets_surface,
-                                          self._sel_color,
+                                          self._selection_color,
                                           self._selected_inflate_x,
                                           self._selected_inflate_y,
-                                          self._rect_width)
+                                          self._selection_border_width)
 
         self._scroll.draw(self._surface)
         self._menubar.draw(self._surface)
