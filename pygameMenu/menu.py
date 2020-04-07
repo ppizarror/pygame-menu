@@ -211,7 +211,7 @@ class Menu(object):
         assert isinstance(rect_width, int)
         assert isinstance(columns, int)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(column_max_width, (tuple, type(None)))
+        assert isinstance(column_max_width, (tuple, type(None), (int, float)))
         assert isinstance(force_fit_text, bool)
 
         # Other asserts
@@ -306,6 +306,9 @@ class Menu(object):
         # Columns and rows
         self._columns = columns
         if column_max_width is not None:
+            if isinstance(column_max_width, (int, float)):
+                assert columns == 1, 'column_max_width can be a single number if there is only 1 column'
+                column_max_width = [column_max_width]
             assert len(column_max_width) == columns, 'column_max_width length must be the same as the number of columns'
             for i in column_max_width:
                 assert isinstance(i, type(None)) or isinstance(i, (int, float)), \
@@ -396,11 +399,23 @@ class Menu(object):
                                                      rect.width + self._selected_inflate_x,  # Add selection box
                                                      )
 
-        # If the total weight is less than the window width, scale the columns
+        # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         if 0 < sum(self._column_widths) < self._width:
             scale = self._width / sum(self._column_widths)
             for index in range(self._columns):
                 self._column_widths[index] *= scale
+
+        # If there's no horizontal scroll but there's vertical scroll, substract the thickness of the
+        # vertical scroll to all the columns
+        h_margin = 0  # This margin exists when scroll is discounted
+        # if 0 < sum(self._column_widths) <= self._width:
+        #     if self._calculate_row_height() >= self._height - self._menubar.get_rect().height:
+        #         scroll_v = self._scroll._scrollbar_thick + 2 * self._selected_inflate_x
+        #         for index in range(self._columns):
+        #             self._column_widths[index] -= float(scroll_v) / self._columns
+        #         h_margin = self._selected_inflate_x
+
+        # Final column width
         total_col_width = int(sum(self._column_widths))
 
         if self._columns > 1:
@@ -414,15 +429,15 @@ class Menu(object):
             cumulative = 0
             for i in range(self._columns):
                 w = column_weights[i]
-                self._column_posx.append(
-                    int(total_col_width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5))))
+                posx = int(total_col_width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5)))
+                self._column_posx.append(posx + h_margin)
                 cumulative += w
 
             # The startup position is the first column position
             self._option_posx = self._column_posx[0]
 
         else:
-            self._column_posx = [int(total_col_width * (self._draw_regionx / 100.0))]
+            self._column_posx = [int(total_col_width * (self._draw_regionx / 100.0)) + h_margin]
             self._column_widths = [total_col_width]
 
         return total_col_width
@@ -434,11 +449,9 @@ class Menu(object):
         :return: Row height
         :rtype: int
         """
-        if self._column_widths is None:
-            self._calculate_column_width()
         max_y = 0
         for index in range(len(self._option)):
-            _, y = self._get_option_pos(index)[2:]
+            _, y = self._get_option_pos(index, x=False)[2:]
             max_y = max(max_y, y + self._selected_inflate_y)
         return int(max_y)
 
@@ -726,8 +739,9 @@ class Menu(object):
                         font_size=font_size,
                         color=self._font_color,
                         selected_color=self._selection_color)
-        if self._force_fit_text:
-            widget.set_max_width(self._column_max_width[_col])  # If None nothing happens
+        if self._force_fit_text and self._column_max_width[_col] is not None:
+            selection_dx = self._selected_inflate_x + self._selection_border_width
+            widget.set_max_width(self._column_max_width[_col] - selection_dx)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
@@ -875,32 +889,45 @@ class Menu(object):
         self._draw_regiony = max(100.0 * (available - max_y) / (2.0 * self._height), 0)
         self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
 
-    def _get_option_pos(self, index):
+    def _get_option_pos(self, index, x=True, y=True):
         """
         Get option position on the widgets surface from the option index.
 
         :param index: Option index
         :type index: int
+        :param x: Calculate x position
+        :type x: bool
+        :param y: Calculate y position
+        :type y: bool
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
         """
+        assert len(self._option) > index >= 0, 'index not valid'
+        assert isinstance(index, int), 'index must be an integer'
+        assert isinstance(x, bool) and isinstance(y, bool), 'x and y must be boolean'
+
+        x_coord = 0
+        y_coord = 0
         rect = self._option[index].get_rect()  # type: _pygame.Rect
-        align = self._option[index].get_alignment()
 
-        # Calculate alignment
-        _column_width = self._column_widths[int(index // self._rows)]  # if column=1 then (column width)=(menu width)
-        if align == _locals.ALIGN_CENTER:
-            dx = -int(rect.width / 2.0)
-        elif align == _locals.ALIGN_LEFT:
-            dx = -_column_width / 2 + self._selected_inflate_x
-        elif align == _locals.ALIGN_RIGHT:
-            dx = _column_width / 2 - rect.width - self._selected_inflate_x
-        else:
-            dx = 0
-        dy = self._selected_inflate_y + self._selection_border_width - 2  # Adds the inflation box minus the border
+        # Calculate X position
+        if x:
+            _column_width = self._column_widths[int(index // self._rows)]
+            align = self._option[index].get_alignment()
+            if align == _locals.ALIGN_CENTER:
+                dx = -int(rect.width / 2.0)
+            elif align == _locals.ALIGN_LEFT:
+                dx = -_column_width / 2 + self._selected_inflate_x
+            elif align == _locals.ALIGN_RIGHT:
+                dx = _column_width / 2 - rect.width - self._selected_inflate_x
+            else:
+                dx = 0
+            x_coord = self._column_posx[int(index // self._rows)] + dx
 
-        x_coord = self._column_posx[int(index // self._rows)] + dx
-        y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + dy
+        # Calculate Y position
+        if y:
+            dy = self._selected_inflate_y + self._selection_border_width - 2  # Adds the inflation box minus the border
+            y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + dy
 
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 

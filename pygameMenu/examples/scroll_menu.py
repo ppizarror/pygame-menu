@@ -85,7 +85,9 @@ def make_long_menu(surface):
                             title='Main Menu',
                             window_height=H_SIZE,
                             window_width=W_SIZE,
-                            fps=FPS)
+                            fps=FPS,
+                            menu_width=700,  # px
+                            )
 
     _menu_sub = pygameMenu.Menu(surface,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
@@ -105,7 +107,7 @@ def make_long_menu(surface):
 
     _menu.add_button('Rows and Columns', _menu_sub)
     label1 = 'Button n°{}'
-    label2 = 'Text n°{} : '
+    label2 = 'Text n°{}: '
     for i in range(1, 20):
         if i % 2 == 0:
             _menu.add_button(label1.format(i),
