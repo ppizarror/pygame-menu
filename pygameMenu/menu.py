@@ -865,7 +865,8 @@ class Menu(object):
 
     def center_vertically(self):
         """
-        Update draw_region_y based on the current widgets only if there's no overflow in y axis.
+        Update draw_region_y based on the current widgets.
+        If the height of the widgets is greater than the height of the menu, the drawing region will start at zero.
         """
         self._build_widget_surface()
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
