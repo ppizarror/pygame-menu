@@ -378,7 +378,10 @@ class Menu(object):
         self._widgets_surface = None
         self._scroll = _ScrollArea(self._width,
                                    self._height - self._menubar.get_rect().height,
-                                   area_color=self._bgcolor)
+                                   area_color=self._bgcolor,
+                                   shadow=self._option_shadow,
+                                   shadow_offset=self._option_shadow_offset,
+                                   shadow_position=self._option_shadow_position)
 
         # FPS of the menu
         self.set_fps(fps)

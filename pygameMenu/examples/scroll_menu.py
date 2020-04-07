@@ -61,8 +61,7 @@ def make_long_menu(surface):
                             title='Main Menu',
                             window_height=H_SIZE,
                             window_width=W_SIZE,
-                            fps=FPS
-                            )
+                            fps=FPS)
 
     _menu_sub = pygameMenu.Menu(surface,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
@@ -74,6 +73,7 @@ def make_long_menu(surface):
                                 title='Menu with columns',
                                 window_height=H_SIZE,
                                 window_width=W_SIZE,
+                                option_shadow=True,
                                 fps=FPS,
                                 rows=3,
                                 columns=4
