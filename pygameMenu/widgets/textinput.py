@@ -51,7 +51,6 @@ except ImportError:
         """
         pass
 
-
     def paste():
         """
         Paste method.
@@ -60,7 +59,6 @@ except ImportError:
         :rtype: basestring
         """
         return ''
-
 
     class PyperclipException(RuntimeError):
         """
@@ -477,8 +475,8 @@ class TextInput(Widget):
 
             # Calculate total available space
             current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
-            _, _, menu_width, _ = menu.get_position()
-            space_between_label = menu_width - self._label_size - self._rect.x
+            _, _, posx2, _ = menu.get_position()
+            space_between_label = posx2 - self._label_size - self._rect.x
             char = _math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
 
             # If char limit
@@ -1169,8 +1167,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-                     text[0:text_end] + \
-                     self._input_string[self._cursor_position:len(self._input_string)]
+            text[0:text_end] + \
+            self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

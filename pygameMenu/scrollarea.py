@@ -46,9 +46,10 @@ class ScrollArea(object):
     """
 
     def __init__(self,
-                 menu_width,
-                 menu_height,
+                 area_width,
+                 area_height,
                  world=None,
+                 area_color=None,
                  scrollbars=(_locals.POSITION_SOUTH, _locals.POSITION_EAST),
                  scrollbar_thick=20,
                  scrollbar_color=(235, 235, 235),
@@ -58,14 +59,48 @@ class ScrollArea(object):
                  shadow_color=_cfg.MENU_SHADOW_COLOR,
                  shadow_offset=_cfg.MENU_SHADOW_OFFSET,
                  shadow_position=_locals.POSITION_SOUTHEAST):
+        """
+        Description of the parameters:
 
-        self._rect = _pygame.Rect(0, 0, menu_width, menu_height)
+        :param area_width: Width of scrollable area (px)
+        :type area_width: int
+        :param area_height: Height of scrollable area (px)
+        :type area_height: int
+        :param world: Surface to draw and scroll
+        :type world: pygame.Surface
+        :param area_color: Background color
+        :type area_color: tuple, list, None
+        :param scrollbars: Postions of the scrollbars
+        :type scrollbars: tuple, list
+        :param scrollbar_thick: Scrollbars thickness
+        :type scrollbar_thick: int
+        :param scrollbar_color: Scrollbars color
+        :type scrollbar_color: tuple, list
+        :param scrollbar_slider_pad: Space between slider and scrollbars borders
+        :type scrollbar_slider_pad: int
+        :param scrollbar_slider_color: Color of the sliders
+        :type scrollbar_slider_color: tuple, list
+        :param shadow: Indicate if a shadow is drawn on each scrollbar
+        :type shadow: bool
+        :param shadow_color: Color of the shadow
+        :type shadow_color: tuple, list
+        :param shadow_offset: Offset of shadow
+        :type shadow_offset: int
+        :param shadow_position: Position of shadow
+        :type shadow_position: basestring
+        """
+        self._rect = _pygame.Rect(0, 0, area_width, area_height)
         self._world = world
         self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
-        self._view_rect = self.get_view_rect()
+        self._bg_surface = None
+        if area_color:
+            self._bg_surface = _pygame.Surface((area_width, area_height),
+                                               _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            self._bg_surface.fill(area_color)
 
+        self._view_rect = self.get_view_rect()
         for pos in self._scrollbar_positions:
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
                 sbar = _ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
@@ -130,16 +165,17 @@ class ScrollArea(object):
         if not self._world:
             return
 
-        offsets = [0, 0]
+        if self._bg_surface:
+            surface.blit(self._bg_surface, (self._rect.x, self._rect.y))
+
+        offsets = self.get_offsets()
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
-                    sbar.draw(surface)
-                    offsets[0] = sbar.get_value()
+                    sbar.draw(surface)  # Display scrollbar
             else:
                 if self.get_hidden_height():
-                    sbar.draw(surface)
-                    offsets[1] = sbar.get_value()
+                    sbar.draw(surface)  # Display scrollbar
 
         surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
 
@@ -160,6 +196,20 @@ class ScrollArea(object):
         if not self._world:
             return 0
         return max(0, self._world.get_height() - self._view_rect.height)
+
+    def get_offsets(self):
+        """
+        Return the offset introduced by the scrollbars in the world.
+        """
+        offsets = [0, 0]
+        for sbar in self._scrollbars:
+            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
+                if self.get_hidden_width():
+                    offsets[0] = sbar.get_value()
+            else:
+                if self.get_hidden_height():
+                    offsets[1] = sbar.get_value()
+        return offsets
 
     def get_rect(self):
         """
@@ -271,6 +321,28 @@ class ScrollArea(object):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
+    def scroll_to_rect(self, rect):
+        """
+        Ensure that the given rect is in the viewable area.
+
+        :param rect: Rect in the world surface reference
+        :type rect: pygame.Rect
+        """
+        real_rect = self.to_real_position(rect)
+        if self._view_rect.topleft[0] < real_rect.topleft[0]\
+                and self._view_rect.topleft[1] < real_rect.topleft[1]\
+                and self._view_rect.bottomright[0] > real_rect.bottomright[0]\
+                and self._view_rect.bottomright[1] > real_rect.bottomright[1]:
+            return  # rect is in viewable area
+
+        for sbar in self._scrollbars:
+            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
+                value = min(sbar.get_maximum(), sbar.get_value() + (real_rect.left - self._view_rect.left))
+                sbar.set_value(value)
+            if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and self.get_hidden_height():
+                value = min(sbar.get_maximum(), sbar.get_value() + real_rect.bottom - self._view_rect.bottom)
+                sbar.set_value(value)
+
     def set_position(self, posx, posy):
         """
         Set the position.
@@ -294,6 +366,48 @@ class ScrollArea(object):
         """
         self._world = surface
         self._apply_size_changes()
+
+    def to_real_position(self, virtual):
+        """
+        Return the real position/Rect according to the scroll area origin
+        of a position/Rect in the world surface reference.
+
+        :param virtual: position/Rect in the world surface reference
+        :type virtual: pygame.Rect, tuple, list
+        """
+        assert isinstance(virtual, (_pygame.Rect, tuple, list))
+        offsets = self.get_offsets()
+
+        if isinstance(virtual, _pygame.Rect):
+            rect = _pygame.Rect(virtual)
+            rect.x = self._rect.x + virtual.x - offsets[0]
+            rect.y = self._rect.y + virtual.y - offsets[1]
+            return rect
+
+        x_coord = self._rect.x + virtual[0] - offsets[0]
+        y_coord = self._rect.y + virtual[1] - offsets[1]
+        return x_coord, y_coord
+
+    def to_world_position(self, real):
+        """
+        Return the position/Rect in the world surface reference
+        of a real position/Rect according to the scroll area origin.
+
+        :param real: position/Rect according scroll area origin
+        :type real: pygame.Rect, tuple, list
+        """
+        assert isinstance(real, (_pygame.Rect, tuple, list))
+        offsets = self.get_offsets()
+
+        if isinstance(real, _pygame.Rect):
+            rect = _pygame.Rect(real)
+            rect.x = real.x - self._rect.x + offsets[0]
+            rect.y = real.y - self._rect.y + offsets[1]
+            return rect
+
+        x_coord = real[0] - self._rect.x + offsets[0]
+        y_coord = real[1] - self._rect.y + offsets[1]
+        return x_coord, y_coord
 
     def update(self, events):
         """

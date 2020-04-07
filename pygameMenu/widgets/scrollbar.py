@@ -3,7 +3,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-ScrollArea
+SCROLLBAR
 ScrollBar class, manage the selection in a range of values.
 
 License:
@@ -62,6 +62,26 @@ class ScrollBar(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
+        """
+        Description of the specific parameters (see Widget class for generic ones):
+
+        :param length: Length of the page control
+        :type length: int
+        :param values_range: Min and max values
+        :type values_range: tuple, list
+        :param scrollbar_id: Bar identifier
+        :type scrollbar_id: basestring
+        :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+        :type orientation: basestring
+        :param slider_pad: Space between slider and page control
+        :type slider_pad: int
+        :param slider_color: Color of the slider
+        :type slider_color: tuple, list
+        :param page_ctrl_thick: Page control thickness
+        :type page_ctrl_thick: int
+        :param page_ctrl_color: Page control color
+        :type page_ctrl_color: tuple, list
+        """
         assert isinstance(length, (int, float))
         assert isinstance(values_range, (tuple, list))
         assert values_range[1] > values_range[0], 'minimum value first is expected'
@@ -289,7 +309,8 @@ class ScrollBar(Widget):
         :type value: int
         :return: None
         """
-        assert self._values_range[0] <= value <= self._values_range[1]
+        assert self._values_range[0] <= value <= self._values_range[1],\
+            "{} < {} < {}".format(self._values_range[0], value, self._values_range[1])
 
         pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
             (self._values_range[1] - self._values_range[0])

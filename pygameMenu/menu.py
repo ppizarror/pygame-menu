@@ -44,6 +44,7 @@ import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 import pygameMenu.widgets as _widgets
 from pygameMenu.sound import Sound as _Sound
+from pygameMenu.scrollarea import ScrollArea as _ScrollArea
 from pygameMenu.utils import check_key_pressed_valid
 
 # Joy events
@@ -305,8 +306,8 @@ class Menu(object):
         self._draw_regiony = draw_region_y
 
         # Option position
-        self._option_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy  # type: int
-        self._column_posx = [int(self._width * (self._draw_regionx / 100.0) + self._posx)]
+        self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
+        self._column_posx = [int(self._width * (self._draw_regionx / 100.0))]
         self._column_widths = [self._width]
 
         # Calculate _column_posx and _column_widths if there's more than 1 column
@@ -322,9 +323,8 @@ class Menu(object):
             for i in range(columns):
                 w = column_weights[i] / s
                 self._column_posx.append(
-                    int(self._width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5)) + self._posx))
+                    int(self._width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5))))
                 cumulative += column_weights[i] / s
-            self._option_posx = self._column_posx[0]
             self._column_widths = tuple(int(self._width * column_weights[i] / s) for i in range(columns))
 
         self._column_spacing = int(self._width / columns)  # type: int
@@ -365,6 +365,7 @@ class Menu(object):
                                font_size_title,
                                bg_color_title,
                                self._font_color)
+        self._menubar.set_background_color(self._bgcolor)
         self._menubar.set_shadow(enabled=self._option_shadow,
                                  color=_cfg.MENU_SHADOW_COLOR,
                                  position=self._option_shadow_position,
@@ -374,6 +375,12 @@ class Menu(object):
         # Selected option
         self._selected_inflate_x = 16  # type: int
         self._selected_inflate_y = 6  # type: int
+
+        self._widgets_surface = None
+        self._scroll = _ScrollArea(self._width,
+                                   self._height - self._menubar.get_rect().height,
+                                   area_color=self._bgcolor)
+        self._menubar.set_background_color(self._bgcolor)
 
         # FPS of the menu
         self.set_fps(fps)
@@ -688,9 +695,6 @@ class Menu(object):
         _totals = len(self._option)
         if _totals == 1:
             widget.set_selected()
-        elif _totals > 1 and (self._columns == 1 or _totals <= self._rows):
-            dy = -_widget_font_size / 2 - self._opt_dy / 2
-            self._option_posy += dy
 
     def _back(self):
         """
@@ -703,6 +707,38 @@ class Menu(object):
             self.reset(1)
         else:
             self._close()
+
+    def _build_widget_surface(self):
+        """
+        Create the surface used to draw widgets according the
+        required width and height.
+        """
+        max_x = 0
+        max_y = 0
+        for index in range(len(self._option)):
+            x, y = self._get_option_pos(index)[2:]
+            max_x = max(max_x, x)
+            max_y = max(max_y, y)
+
+        menubar_height = self._menubar.get_rect().height
+        if max_x > self._width and max_y > self._height - menubar_height:
+            width, height = max_x + 20, max_y + 20
+        elif max_x > self._width:
+            # Remove the thick of the scrollbar
+            # to avoid displaying an vertical one
+            width, height = max_x + 20, self._height - menubar_height - 20
+        elif max_y > self._height:
+            # Remove the thick of the scrollbar
+            # to avoid displaying an horizontal one
+            width, height = self._width - 20, max_y + 20
+        else:
+            width, height = self._width, self._height - menubar_height
+
+        self._widgets_surface = _pygame.Surface((width, height),
+                                                _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+
+        self._scroll.set_world(self._widgets_surface)
+        self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -779,11 +815,11 @@ class Menu(object):
 
     def _get_option_pos(self, index):
         """
-        Get option position from the option index.
+        Get option position on the widgets surface from the option index.
 
         :param index: Option index
         :type index: int
-        :return: Position (x,y)
+        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
         """
         rect = self._option[index].get_rect()
@@ -802,8 +838,8 @@ class Menu(object):
         t_dy = -int(rect.height / 2.0)
 
         x_coord = self._column_posx[int(index // self._rows)] + option_dx
-        y_coord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
-        return x_coord, y_coord
+        y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
+        return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):
         """
@@ -811,30 +847,35 @@ class Menu(object):
 
         :return: None
         """
-        # Draw background rectangle
-        _gfxdraw.filled_polygon(self._surface, self._bgrect, self._bgcolor)
+        # The surface may has been erased because the number
+        # of widgets has changed and thus size shall be calculated.
+        if not self._widgets_surface:
+            self._build_widget_surface()
 
         # Update menu bar position
         self._menubar.set_position(self._posx, self._posy)
-        self._menubar.draw(self._surface)
 
         # Draw options (widgets)
+        self._widgets_surface.fill((255, 255, 255, 0))  # Transparent
         for index in range(len(self._option)):
             widget = self._option[index]
 
             # Update widget position
-            widget.set_position(*self._get_option_pos(index))
+            widget.set_position(*self._get_option_pos(index)[:2])
 
             # Draw widget
-            widget.draw(self._surface)
+            widget.draw(self._widgets_surface)
 
             # If selected item then draw a rectangle
             if self._drawselrect and widget.selected:
-                widget.draw_selected_rect(self._surface,
+                widget.draw_selected_rect(self._widgets_surface,
                                           self._sel_color,
                                           self._selected_inflate_x,
                                           self._selected_inflate_y,
                                           self._rect_width)
+
+        self._scroll.draw(self._surface)
+        self._menubar.draw(self._surface)
 
     def enable(self):
         """
@@ -932,6 +973,11 @@ class Menu(object):
             if not self._actual._dopause:
                 break_mainloop = True
 
+        # Process events, check title
+        if self._actual._scroll.update(events):
+            if not self._actual._dopause:
+                break_mainloop = True
+
         # Check selected widget
         elif len(self._actual._option) > 0 and self._actual._option[self._actual._index].update(events):
             if not self._actual._dopause:
@@ -939,7 +985,7 @@ class Menu(object):
 
         # Check others
         else:
-            for event in events:  # type: _pygame.event.EventType
+            for event in events:
 
                 # noinspection PyUnresolvedReferences
                 if event.type == _pygame.locals.QUIT or (
@@ -1014,14 +1060,20 @@ class Menu(object):
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
-                        if widget.get_rect().collidepoint(*event.pos):
+                        # Don't considere the mouse wheel (button 4 & 5)
+                        if event.button in (1, 2, 3) and\
+                                self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                             self._select(index)
 
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
                     self._sounds.play_click_mouse()
                     widget = self._actual._option[self._actual._index]
-                    if widget.get_rect().collidepoint(*event.pos):
-                        widget.update(events)  # This option can change the current menu to a submenu
+                    # Don't considere the mouse wheel (button 4 & 5)
+                    if event.button in (1, 2, 3) and\
+                            self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                        new_event = _pygame.event.Event(event.type, **event.dict)
+                        new_event.pos = self._actual._scroll.to_world_position(event.pos)
+                        widget.update((new_event,))  # This option can change the current menu to a submenu
                         break_mainloop = True  # It is updated
                         break
 
@@ -1111,7 +1163,7 @@ class Menu(object):
 
     def get_position(self):
         """
-        Returns menu position as a tuple.
+        Return menu position as a tuple.
 
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
@@ -1267,6 +1319,7 @@ class Menu(object):
         actual._option[actual._index].set_selected(False)
         actual._index = index % len(actual._option)
         actual._option[actual._index].set_selected()
+        actual._scroll.scroll_to_rect(actual._option[actual._index].get_rect())
 
     def get_widget(self, widget_id, recursive=False):
         """

@@ -82,7 +82,7 @@ class TextMenu(Menu):
         :param kwargs: Additional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
-               isinstance(draw_text_region_x, float)
+            isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
         assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)
@@ -119,37 +119,6 @@ class TextMenu(Menu):
         self._text = []
         self._text_render = {}
 
-        # Position of text
-        self._option_posy -= self._textdy / 2 + self._font_textsize / 2
-
-    def add_button(self, *args, **kwargs):
-        """
-        See upper class doc.
-        """
-        self._update_top_margin()
-        return super(TextMenu, self).add_button(*args, **kwargs)
-
-    def add_color_input(self, *args, **kwargs):
-        """
-        See upper class doc.
-        """
-        self._update_top_margin()
-        return super(TextMenu, self).add_color_input(*args, **kwargs)
-
-    def add_selector(self, *args, **kwargs):
-        """
-        See upper class doc.
-        """
-        self._update_top_margin()
-        return super(TextMenu, self).add_selector(*args, **kwargs)
-
-    def add_text_input(self, *args, **kwargs):
-        """
-        See upper class doc.
-        """
-        self._update_top_margin()
-        return super(TextMenu, self).add_text_input(*args, **kwargs)
-
     def add_line(self, text):
         """
         Add line of text.
@@ -161,8 +130,6 @@ class TextMenu(Menu):
         assert isinstance(text, str), 'line text must be a string'
         text = text.strip()
         self._text.append(text)
-        dy = -self._font_textsize / 2 - self._textdy / 2
-        self._option_posy += dy
 
     def _get_text_render(self, line_number):
         """
@@ -215,7 +182,7 @@ class TextMenu(Menu):
             text_dx = 0
 
         x_coord = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
-        y_coord = self._option_posy + self._textdy + line_number * (
+        y_coord = self._posy + self._option_offsety + self._textdy + line_number * (
                 self._font_textsize + self._textdy) - self._font_textsize / 2
         return x_coord + text_dx, y_coord
 
@@ -235,11 +202,11 @@ class TextMenu(Menu):
             option_dx = self._width / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
-        t_dy = -int(rect.height / 2.0)
+        t_dy = - rect.height
 
         x_coord = self._column_posx[0] + option_dx
-        y_coord = self._option_posy + index * (self._fsize + self._opt_dy) + t_dy + dysum
-        return x_coord, y_coord
+        y_coord = self._option_offsety + index * (self._fsize + self._opt_dy) + t_dy + dysum
+        return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):
         """
@@ -248,11 +215,3 @@ class TextMenu(Menu):
         super(TextMenu, self).draw()
         for line in range(len(self._text)):
             self._surface.blit(self._get_text_render(line), self._get_text_pos(line))
-
-    def _update_top_margin(self):
-        """
-        Update the starting vertical position.
-        """
-        if len(self._option) <= 1:
-            dy = -0.5 * (self._fsize + self._opt_dy)
-            self._option_posy += dy
