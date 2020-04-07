@@ -321,12 +321,14 @@ class ScrollArea(object):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
-    def scroll_to_rect(self, rect):
+    def scroll_to_rect(self, rect, margin=10):
         """
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
         :type rect: pygame.Rect
+        :param margin: Extra margin around the rect
+        :type margin: int
         """
         real_rect = self.to_real_position(rect)
         if self._view_rect.topleft[0] < real_rect.topleft[0]\
@@ -337,10 +339,16 @@ class ScrollArea(object):
 
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
-                value = min(sbar.get_maximum(), sbar.get_value() + (real_rect.left - self._view_rect.left))
+                shortest_move = min(real_rect.left - margin - self._view_rect.left,
+                                    real_rect.right + margin - self._view_rect.right, key=abs)
+                value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
+                value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
             if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and self.get_hidden_height():
-                value = min(sbar.get_maximum(), sbar.get_value() + real_rect.bottom - self._view_rect.bottom)
+                shortest_move = min(real_rect.bottom + margin - self._view_rect.bottom,
+                                    real_rect.top - margin - self._view_rect.top, key=abs)
+                value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
+                value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
 
     def set_position(self, posx, posy):
