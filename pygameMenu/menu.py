@@ -397,7 +397,7 @@ class Menu(object):
                                                      )
 
         # If the total weight is less than the window width, scale the columns
-        if sum(self._column_widths) < self._width:
+        if 0 < sum(self._column_widths) < self._width:
             scale = self._width / sum(self._column_widths)
             for index in range(self._columns):
                 self._column_widths[index] *= scale
