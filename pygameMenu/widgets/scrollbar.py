@@ -114,7 +114,7 @@ class ScrollBar(Widget):
         if values_range[1] - values_range[0] > length:
             self.set_page_step(length)
         else:
-            self.set_page_step((values_range[1] - values_range[0]) / 5)  # Arbitrary
+            self.set_page_step((values_range[1] - values_range[0]) / 5.0)  # Arbitrary
         self.set_orientation(orientation)
 
     def _apply_font(self):
