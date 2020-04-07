@@ -197,6 +197,7 @@ class TextInput(Widget):
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
         self._last_key = 0  # type: int
+        self._absolute_origin = (0, 0)  # To calculate mouse collide point
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0  # type: int
@@ -1586,10 +1587,12 @@ class TextInput(Widget):
                 self._key_is_pressed = False
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 self._selection_active = False
                 self._check_mouse_collide_input(event.pos)
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONDOWN:
+                self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 if self._selection_active:
                     self._unselect_text()
                 self._selection_active = True
@@ -1606,7 +1609,9 @@ class TextInput(Widget):
         if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
             self._keyrepeat_mouse_ms = 0
             if mouse_left:
-                self._check_mouse_collide_input(_pygame.mouse.get_pos())
+                pos = _pygame.mouse.get_pos()
+                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
+                                                 pos[1] - self._absolute_origin[1]))
 
         # Update key counters:
         for key in self._keyrepeat_counters:

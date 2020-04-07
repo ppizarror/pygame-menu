@@ -41,13 +41,16 @@ W_SIZE = 800  # Width of window size
 COLOR_BACKGROUND = (128, 230, 198)
 
 
-def on_button_click(button_id):
+def on_button_click(value=None, text=None):
     """
     Button event on menus.
 
     :param button_id: Button ID
     """
-    print('Hello from button {}'.format(button_id))
+    if not text:
+        print('Hello from {}'.format(value))
+    else:
+        print('Hello from {} with {}'.format(text, value))
 
 
 def paint_background(surface):
@@ -98,10 +101,17 @@ def make_long_menu(surface):
                                 )
 
     _menu.add_button('Rows and Columns', _menu_sub)
-    label = 'Button n°{}'
+    label1 = 'Button n°{}'
+    label2 = 'Text n°{} : '
     for i in range(1, 20):
-        txt = label.format(i)
-        _menu.add_button(txt, on_button_click, i)
+        if i % 2 == 0:
+            _menu.add_button(label1.format(i),
+                             on_button_click,
+                             'button n°{}'.format(i))
+        else:
+            _menu.add_text_input(label2.format(i),
+                                 onchange=on_button_click,
+                                 text='text n°{}'.format(i))
     _menu.add_button('Exit', pygameMenu.events.EXIT)
 
     label = 'Button n°{}'
