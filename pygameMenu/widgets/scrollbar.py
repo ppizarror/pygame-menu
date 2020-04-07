@@ -170,7 +170,7 @@ class ScrollBar(Widget):
         page control surface.
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-            self._page_ctrl_length
+               self._page_ctrl_length
 
     def get_value(self):
         """
@@ -180,7 +180,7 @@ class ScrollBar(Widget):
         :rtype: int
         """
         value = self._values_range[0] + self._slider_position * \
-            (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
+                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -222,10 +222,10 @@ class ScrollBar(Widget):
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
-            self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
+                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
         space_after = self._rect.bottomright[axis] - \
-            self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
+                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
 
         if not move:
@@ -290,7 +290,7 @@ class ScrollBar(Widget):
         :type value: int
         :return: None
         """
-        assert 0 < value, "Page step shall be > 0"
+        assert 0 < value, 'Page step shall be > 0'
 
         # Slider length shall represent the same ratio
         self._page_step = round(1.0 * self._page_ctrl_length * value /
@@ -306,14 +306,14 @@ class ScrollBar(Widget):
         Set the value and update the position of the slider accordingly.
 
         :param value: value in the values_range
-        :type value: int
+        :type value: float
         :return: None
         """
-        assert self._values_range[0] <= value <= self._values_range[1],\
-            "{} < {} < {}".format(self._values_range[0], value, self._values_range[1])
+        assert self._values_range[0] <= value <= self._values_range[1], \
+            '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
         pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
-            (self._values_range[1] - self._values_range[0])
+                 (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)

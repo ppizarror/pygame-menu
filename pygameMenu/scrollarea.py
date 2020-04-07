@@ -45,6 +45,7 @@ class ScrollArea(object):
     scroll bars so that the entire area of the child surface can be viewed.
     """
 
+    # noinspection PyArgumentEqualDefault
     def __init__(self,
                  area_width,
                  area_height,
@@ -123,13 +124,17 @@ class ScrollArea(object):
                             color=shadow_color,
                             position=shadow_position,
                             offset=shadow_offset)
-            sbar.set_controls(False, True)
+            sbar.set_controls(joystick=False,
+                              mouse=True)
 
             self._scrollbars.append(sbar)
 
         self._apply_size_changes()
 
     def _apply_size_changes(self):
+        """
+        Apply size changes to scrollbar.
+        """
         self._view_rect = self.get_view_rect()
         for sbar in self._scrollbars:
             pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
@@ -142,16 +147,16 @@ class ScrollArea(object):
             else:
                 sbar.set_position(self._view_rect.left, self._view_rect.bottom)
 
-            if pos in (_locals.POSITION_NORTH, _locals.POSITION_SOUTH)\
-                    and self.get_hidden_width() != sbar.get_maximum()\
+            if pos in (_locals.POSITION_NORTH, _locals.POSITION_SOUTH) \
+                    and self.get_hidden_width() != sbar.get_maximum() \
                     and self.get_hidden_width() != 0:
                 sbar.set_length(self._view_rect.width)
                 sbar.set_maximum(self.get_hidden_width())
                 sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
                                    (self._view_rect.width + self.get_hidden_width()))
 
-            elif pos in (_locals.POSITION_EAST, _locals.POSITION_WEST)\
-                    and self.get_hidden_height() != sbar.get_maximum()\
+            elif pos in (_locals.POSITION_EAST, _locals.POSITION_WEST) \
+                    and self.get_hidden_height() != sbar.get_maximum() \
                     and self.get_hidden_height() != 0:
                 sbar.set_length(self._view_rect.height)
                 sbar.set_maximum(self.get_hidden_height())
@@ -227,9 +232,6 @@ class ScrollArea(object):
 
         The viewable area depends on the world size, because scroll bars may
         or may not be displayed.
-
-        :param width: real width of the surface
-        :param height: real height of the surface
         """
         rect = _pygame.Rect(self._rect)
 
@@ -238,9 +240,9 @@ class ScrollArea(object):
                                and self._world.get_height() <= self._rect.height):
             return rect
 
-         # All scrollbars: the world is too large
-        if self._world.get_height() > self._rect.height\
-           and self._world.get_width() > self._rect.width:
+        # All scrollbars: the world is too large
+        if self._world.get_height() > self._rect.height \
+                and self._world.get_width() > self._rect.width:
             if _locals.POSITION_WEST in self._scrollbar_positions:
                 rect.left += self._scrollbar_thick
                 rect.width -= self._scrollbar_thick
@@ -302,8 +304,8 @@ class ScrollArea(object):
         :type value: float
         """
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL\
-                    and self.get_hidden_width() != 0\
+            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL \
+                    and self.get_hidden_width() != 0 \
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
@@ -316,8 +318,8 @@ class ScrollArea(object):
         :type value: float
         """
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL\
-                    and self.get_hidden_height() != 0\
+            if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL \
+                    and self.get_hidden_height() != 0 \
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
@@ -331,9 +333,9 @@ class ScrollArea(object):
         :type margin: int
         """
         real_rect = self.to_real_position(rect)
-        if self._view_rect.topleft[0] < real_rect.topleft[0]\
-                and self._view_rect.topleft[1] < real_rect.topleft[1]\
-                and self._view_rect.bottomright[0] > real_rect.bottomright[0]\
+        if self._view_rect.topleft[0] < real_rect.topleft[0] \
+                and self._view_rect.topleft[1] < real_rect.topleft[1] \
+                and self._view_rect.bottomright[0] > real_rect.bottomright[0] \
                 and self._view_rect.bottomright[1] > real_rect.bottomright[1]:
             return  # rect is in viewable area
 

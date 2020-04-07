@@ -116,6 +116,7 @@ def main(test=False):
     sb_h.set_page_step(scr_size[0] - thick_v)
 
     # Vertical ScrollBar
+    # noinspection PyArgumentEqualDefault
     sb_v = ScrollBar(scr_size[1] - thick_h,
                      (0, world.get_height() - scr_size[1] + thick_h),
                      '',

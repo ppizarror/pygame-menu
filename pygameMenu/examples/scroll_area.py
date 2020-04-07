@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE - LONG SCROLLING MENU
-Shows scrolling in menu.
+EXAMPLE - SCROLL AREA
+Shows scroll area widget usage.
 
 License:
 -------------------------------------------------------------------------------
@@ -37,7 +37,6 @@ import pygame
 from pygameMenu import locals
 from pygameMenu.scrollarea import ScrollArea
 
-
 FPS = 30.0
 W_SIZE = 800  # Width of window size
 H_SIZE = 600  # Height of window size
@@ -45,39 +44,37 @@ COLOR_BACKGROUND = (128, 230, 198)
 LEGEND = "Area {}x{}\nWorld {}x{}\nPress [ESC] to change"
 
 WORLDS = {
-          '1': {'pos': (0, 0),
-                'win': (W_SIZE, H_SIZE),
-                'size': (W_SIZE * 2, H_SIZE * 3)},
-          '2': {'pos': (200, 100),
-                'win': (W_SIZE // 2, H_SIZE // 2),
-                'size': (W_SIZE * 2, H_SIZE * 3)},
-          '3': {'pos': (50, 250),
-                'win': (W_SIZE // 2, H_SIZE // 2),
-                'size': (200, 200)},
-          '4': {'pos': (350, 250),
-                'win': (W_SIZE // 2, H_SIZE // 2),
-                'size': (W_SIZE // 2, H_SIZE // 2)},
-          '5': {'pos': (200, 200),
-                'win': (W_SIZE // 2, H_SIZE // 2),
-                'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
-          '6': {'pos': (10, 10),
-                'win': (W_SIZE - 300, H_SIZE // 2),
-                'size': (W_SIZE - 200, H_SIZE // 2 - 10)},
-          }
-
-
-def on_button_click(button_id):
-    print('Hello from button {}'.format(button_id))
-
-
-def paint_background(surface):
-    surface.fill(COLOR_BACKGROUND)
+    '1': {'pos': (0, 0),
+          'win': (W_SIZE, H_SIZE),
+          'size': (W_SIZE * 2, H_SIZE * 3)},
+    '2': {'pos': (200, 100),
+          'win': (W_SIZE // 2, H_SIZE // 2),
+          'size': (W_SIZE * 2, H_SIZE * 3)},
+    '3': {'pos': (50, 250),
+          'win': (W_SIZE // 2, H_SIZE // 2),
+          'size': (200, 200)},
+    '4': {'pos': (350, 250),
+          'win': (W_SIZE // 2, H_SIZE // 2),
+          'size': (W_SIZE // 2, H_SIZE // 2)},
+    '5': {'pos': (200, 200),
+          'win': (W_SIZE // 2, H_SIZE // 2),
+          'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
+    '6': {'pos': (10, 10),
+          'win': (W_SIZE - 300, H_SIZE // 2),
+          'size': (W_SIZE - 200, H_SIZE // 2 - 10)},
+}
 
 
 def make_world(width, height, text=''):
     """
+    Create a test surface.
+
     :param width: Width in pixels
+    :type width: int
     :param height: Height in pixels
+    :type height: int
+    :param text: Text to write
+    :type: basestring
     :return: World surface
     """
     world = pygame.Surface((width, height))  # lgtm [py/call/wrong-arguments]
@@ -110,7 +107,14 @@ def make_world(width, height, text=''):
     return world
 
 
+# noinspection PyProtectedMember
 def iter_world(area):
+    """
+    Iterate through worlds.
+
+    :param area: Scroll area
+    :return:
+    """
     for name in itertools.cycle(WORLDS):
         params = WORLDS[name]
         area._rect.width = params['win'][0]
@@ -157,12 +161,12 @@ def main(test=False):
         clock.tick(FPS)
 
         # Paint background
-        paint_background(screen)
+        screen.fill(COLOR_BACKGROUND)
 
         pygame.draw.rect(screen,
                          (20, 89, 20),
                          # Inflate to see area overflow in case of bug
-                         area.get_rect().inflate(20, 20), 0)
+                         area.get_rect().inflate(20, 20))
 
         # Application events
         events = pygame.event.get()
@@ -174,7 +178,6 @@ def main(test=False):
                     next(worlds)
 
         area.update(events)
-
         area.draw(screen)
 
         # Update surface

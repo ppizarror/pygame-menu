@@ -1061,7 +1061,7 @@ class Menu(object):
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
                         # Don't considere the mouse wheel (button 4 & 5)
-                        if event.button in (1, 2, 3) and\
+                        if event.button in (1, 2, 3) and \
                                 self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                             self._select(index)
 
@@ -1069,7 +1069,7 @@ class Menu(object):
                     self._sounds.play_click_mouse()
                     widget = self._actual._option[self._actual._index]
                     # Don't considere the mouse wheel (button 4 & 5)
-                    if event.button in (1, 2, 3) and\
+                    if event.button in (1, 2, 3) and \
                             self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                         new_event = _pygame.event.Event(event.type, **event.dict)
                         new_event.pos = self._actual._scroll.to_world_position(event.pos)

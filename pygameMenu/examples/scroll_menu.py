@@ -3,7 +3,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE - LONG SCROLLING MENU
+EXAMPLE - SCROLL MENU
 Shows scrolling in menu.
 
 License:
@@ -42,14 +42,32 @@ COLOR_BACKGROUND = (128, 230, 198)
 
 
 def on_button_click(button_id):
+    """
+    Button event on menus.
+
+    :param button_id: Button ID
+    """
     print('Hello from button {}'.format(button_id))
 
 
 def paint_background(surface):
+    """
+    Paints a given surface with background color.
+
+    :param surface: Pygame surface
+    :type surface: pygame.Surface
+    """
     surface.fill(COLOR_BACKGROUND)
 
 
 def make_long_menu(surface):
+    """
+    Create a long scrolling menu.
+
+    :param surface: Pygame active surface of the menu
+    :return: Menu
+    :rtype: pygameMenu.Menu
+    """
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(surface,
                             font=pygameMenu.font.FONT_COMIC_NEUE,
