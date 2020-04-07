@@ -67,9 +67,9 @@ class ScrollArea(object):
         :param area_height: Height of scrollable area (px)
         :type area_height: int
         :param world: Surface to draw and scroll
-        :type world: pygame.Surface
+        :type world: pygame.Surface, NoneType
         :param area_color: Background color
-        :type area_color: tuple, list, None
+        :type area_color: tuple, list, NoneType
         :param scrollbars: Postions of the scrollbars
         :type scrollbars: tuple, list
         :param scrollbar_thick: Scrollbars thickness

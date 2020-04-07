@@ -46,6 +46,7 @@ class MenuBar(Widget):
                  label,
                  width,
                  back_box=False,
+                 bgcolor=None,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -60,6 +61,8 @@ class MenuBar(Widget):
         :type width: int
         :param back_box: Draw a back-box button on header
         :type back_box: bool
+        :param bgcolor: Color behind the polygon (transparent if not given)
+        :type bgcolor: tuple, list
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -81,7 +84,7 @@ class MenuBar(Widget):
         self._backbox = back_box
         self._backbox_pos = None  # type: tuple
         self._backbox_rect = None  # type: _pygame.rect.RectType
-        self._bgcolor = None  # type: tuple
+        self._bgcolor = bgcolor
         self._label = label
         self._offsetx = 0  # type: int
         self._offsety = 0  # type: int
@@ -175,15 +178,6 @@ class MenuBar(Widget):
                 (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
                 (self._backbox_rect.left + 5, self._backbox_rect.centery)
             )
-
-    def set_background_color(self, color):
-        """
-        Set the color behind the polygon.
-
-        :param color: RGBA color
-        :type color: tuple
-        """
-        self._bgcolor = color
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
