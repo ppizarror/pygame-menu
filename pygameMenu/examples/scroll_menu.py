@@ -118,9 +118,12 @@ def make_long_menu(surface):
 
     label = 'Button n°{}'
     for i in range(1, 11):
-        i += 100
-        txt = label.format(i)
-        _menu_sub.add_button(txt, on_button_click, i)
+        # Test large button
+        if i == 5:
+            txt = 'This is a very long button!'
+        else:
+            txt = label.format(100 * i)
+        _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygameMenu.events.BACK)
     return _menu
 

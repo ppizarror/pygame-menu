@@ -195,6 +195,7 @@ def main(test=False):
     # Help menu
     help_menu = pygameMenu.TextMenu(surface,
                                     dopause=False,
+                                    draw_region_y=30,
                                     font=pygameMenu.font.FONT_FRANCHISE,
                                     menu_color=(30, 50, 107),  # Background color
                                     menu_color_title=(120, 45, 30),
@@ -214,6 +215,7 @@ def main(test=False):
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
                                      dopause=False,
+                                     draw_region_y=30,
                                      draw_text_region_x=5,  # 5% margin
                                      font=pygameMenu.font.FONT_NEVIS,
                                      font_size_title=30,
@@ -236,6 +238,7 @@ def main(test=False):
     # Main menu, pauses execution of the application
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=mainmenu_background,
+                                draw_region_y=24,
                                 enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
                                 menu_alpha=90,

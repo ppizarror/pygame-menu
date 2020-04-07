@@ -98,7 +98,7 @@ class Menu(object):
                  widget_alignment=_locals.ALIGN_CENTER,
                  columns=1,
                  rows=None,
-                 column_weights=None,
+                 column_max_width=None,
                  force_fit_text=False,
                  ):
         """
@@ -178,10 +178,8 @@ class Menu(object):
         :type columns: int
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
-        :param column_weights: Tuple representing the width of each column, None if percentage is equal
-        :type column_weights: tuple, None
-        :param force_fit_text: Force text fitting on each menu option in multiple columns
-        :type force_fit_text: bool
+        :param column_max_width: Tuple representing the max width of each column in px, if None the width is calculated automatically
+        :type column_max_width: tuple, None
         """
         assert isinstance(window_width, int)
         assert isinstance(window_height, int)
@@ -213,7 +211,7 @@ class Menu(object):
         assert isinstance(rect_width, int)
         assert isinstance(columns, int)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(column_weights, (tuple, type(None)))
+        assert isinstance(column_max_width, (tuple, type(None)))
         assert isinstance(force_fit_text, bool)
 
         # Other asserts
@@ -307,17 +305,18 @@ class Menu(object):
         # Columns and rows
         self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
         self._columns = columns
-        if column_weights is None:
-            column_weights = tuple(1 for _ in range(columns))
+        if column_max_width is not None:
+            assert len(column_max_width) == columns, 'column_max_width length must be the same as the number of columns'
+            for i in column_max_width:
+                assert isinstance(i, type(None)) or isinstance(i, (int, float)), \
+                    'each column max width can be None (no limit) or an integer/float'
+                assert i > 0 or i is None, 'each column max width must be greater than zero or None'
         else:
-            for i in column_weights:
-                assert i > 0, 'each column weight factor must be greater than zero'
-        self._column_weights = column_weights
+            column_max_width = [None for _ in range(columns)]
+        self._column_max_width = column_max_width
         self._force_fit_text = force_fit_text
         self._rows = rows
         self._widget_align = widget_alignment
-
-        self._calculate_column_widths(self._width)  # At first, the width must be the same as the window
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -358,7 +357,7 @@ class Menu(object):
                                  offset=self._option_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
 
-        # Selected option
+        # Selected option, margin of the selection box
         self._selected_inflate_x = 16  # type: int
         self._selected_inflate_y = 6  # type: int
 
@@ -373,33 +372,72 @@ class Menu(object):
         # FPS of the menu
         self.set_fps(fps)
 
-    def _calculate_column_widths(self, width):
+    def _calculate_column_width(self):
         """
-        Calculate the width of each column (self._column_widths). Each column
-        will have a certain factor of the total width surface area (width param), that factor
-        is stored in column_weigts. If there's only 1 column, then the factor
-        is 100%. If there's multiple columns, for example, a column that has 25%, other
-        50% and the other 25% then column_weigths can be (1, 2, 1) or (0.25, 0.5, 0.25).
-        The sum of all column widths must be equal to the surface width.
+        Calculate the width of each column (self._column_widths). If the max column width is not set
+        the width of the column will be the maximum widget in the column.
 
-        :param width: Surface width, can be the window (no scroll area) or the surface scroll area.
-        :type width: int,float
+        :return: Total width of the columns
+        :rtype: int
         """
-        assert isinstance(width, (int, float))
-        assert width > 0, 'width must be greater than zero'
+        # Compute the available width, that is the surface width minus the max width columns
+        self._column_widths = [0 for _ in range(self._columns)]
+        for i in range(self._columns):
+            if self._column_max_width[i] is not None:
+                self._column_widths[i] = self._column_max_width[i]
+
+        # Update None columns (max width not set)
+        for index in range(len(self._option)):
+            rect = self._option[index].get_rect()  # type: _pygame.Rect
+            col_index = int(index // self._rows)
+            if self._column_max_width[col_index] is None:  # No limit
+                self._column_widths[col_index] = max(self._column_widths[col_index],
+                                                     rect.width + self._selected_inflate_x,  # Add selection box
+                                                     )
+
+        # If the total weight is less than the window width, scale the columns
+        if sum(self._column_widths) < self._width:
+            scale = self._width / sum(self._column_widths)
+            for index in range(self._columns):
+                self._column_widths[index] *= scale
+        total_col_width = int(sum(self._column_widths))
+
         if self._columns > 1:
-            s = float(sum(self._column_weights[:self._columns]))
-            cumulative = 0
+
+            # Calculate column width scale (weights)
+            column_weights = tuple(
+                float(self._column_widths[i]) / max(total_col_width, 1.0) for i in range(self._columns))
+
+            # Calculate the position of each column
             self._column_posx = []
+            cumulative = 0
             for i in range(self._columns):
-                w = self._column_weights[i] / s
+                w = column_weights[i]
                 self._column_posx.append(
-                    int(width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5))))
-                cumulative += self._column_weights[i] / s
-            self._column_widths = tuple(int(width * self._column_weights[i] / s) for i in range(self._columns))
+                    int(total_col_width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5))))
+                cumulative += w
+
+            # The startup position is the first column position
+            self._option_posx = self._column_posx[0]
+
         else:
-            self._column_posx = [int(width * (self._draw_regionx / 100.0))]
-            self._column_widths = [width]
+            self._column_posx = [int(total_col_width * (self._draw_regionx / 100.0))]
+            self._column_widths = [total_col_width]
+
+        return total_col_width
+
+    def _calculate_row_height(self):
+        """
+        Calculate the total height of the rows.
+
+        :return: Row height
+        :rtype: int
+        """
+        max_y = 0
+        for index in range(len(self._option)):
+            _, y = self._get_option_pos(index)[2:]
+            max_y = max(max_y, y + self._selected_inflate_y)
+        return int(max_y)
 
     def add_button(self, element_name, element, *args, **kwargs):
         """
@@ -677,6 +715,8 @@ class Menu(object):
             font_size = self._fsize
         assert font_size > 0, 'font_size must be greater than zero'
 
+        _col = int((len(self._option) - 1) // self._rows)  # Column position
+
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
         widget.set_font(font=self._font_name,
@@ -684,7 +724,7 @@ class Menu(object):
                         color=self._font_color,
                         selected_color=self._sel_color)
         if self._force_fit_text:
-            widget.set_max_width(self._column_widths[(len(self._option) - 1) // self._rows])
+            widget.set_max_width(self._column_max_width[_col])  # If None nothing happens
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
@@ -726,14 +766,10 @@ class Menu(object):
         Create the surface used to draw widgets according the
         required width and height.
         """
-        max_x = 0
-        max_y = 0
-        for index in range(len(self._option)):
-            x, y = self._get_option_pos(index)[2:]
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
-
         menubar_height = self._menubar.get_rect().height
+        max_x = self._calculate_column_width()
+        max_y = self._calculate_row_height()
+
         if max_x > self._width and max_y > self._height - menubar_height:
             width, height = max_x + 20, max_y + 20
         elif max_x > self._width:
@@ -747,7 +783,6 @@ class Menu(object):
         else:
             width, height = self._width, self._height - menubar_height
 
-        self._calculate_column_widths(width)
         self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
         self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
@@ -834,23 +869,24 @@ class Menu(object):
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
         """
-        rect = self._option[index].get_rect()
+        rect = self._option[index].get_rect()  # type: _pygame.Rect
         align = self._option[index].get_alignment()
 
         # Calculate alignment
         _column_width = self._column_widths[int(index // self._rows)]  # if column=1 then (column width)=(menu width)
         if align == _locals.ALIGN_CENTER:
-            option_dx = -int(rect.width / 2.0)
+            dx = -int(rect.width / 2.0)
         elif align == _locals.ALIGN_LEFT:
-            option_dx = -_column_width / 2 + self._selected_inflate_x
+            dx = -_column_width / 2 + self._selected_inflate_x
         elif align == _locals.ALIGN_RIGHT:
-            option_dx = _column_width / 2 - rect.width - self._selected_inflate_x
+            dx = _column_width / 2 - rect.width - self._selected_inflate_x
         else:
-            option_dx = 0
-        t_dy = -int(rect.height / 2.0)
+            dx = 0
+        dy = self._selected_inflate_y - 1  # Adds the inflation box minus the border
 
-        x_coord = self._column_posx[int(index // self._rows)] + option_dx
-        y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
+        x_coord = self._column_posx[int(index // self._rows)] + dx
+        y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + dy
+
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):
