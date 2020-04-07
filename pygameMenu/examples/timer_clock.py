@@ -35,11 +35,12 @@ import sys
 
 sys.path.insert(0, '../../')
 
-from random import randrange
 import datetime
 import os
 import pygame
 import pygameMenu
+
+from random import randrange
 
 # -----------------------------------------------------------------------------
 # Constants and global variables

@@ -30,11 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Library imports
-from pygameMenu.menu import Menu
 import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
+
+from pygameMenu.menu import Menu
 
 
 # noinspection PyProtectedMember

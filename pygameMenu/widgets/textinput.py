@@ -34,7 +34,8 @@ import math as _math
 import pygame as _pygame
 import pygameMenu.controls as _ctrl
 import pygameMenu.locals as _locals
-from pygameMenu.utils import check_key_pressed_valid
+
+from pygameMenu.utils import check_key_pressed_valid, make_surface
 from pygameMenu.widgets.widget import Widget
 
 try:
@@ -51,6 +52,7 @@ except ImportError:
         """
         pass
 
+
     def paste():
         """
         Paste method.
@@ -59,6 +61,7 @@ except ImportError:
         :rtype: basestring
         """
         return ''
+
 
     class PyperclipException(RuntimeError):
         """
@@ -424,8 +427,7 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            new_surface = _pygame.Surface((x, y), _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
-            self._selection_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
+            self._selection_surface = make_surface(x, y)
             self._selection_surface.fill(self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
@@ -501,10 +503,7 @@ class TextInput(Widget):
             new_width = max(self._label_size + underline.get_size()[0],
                             max_width_current,
                             self._last_rendered_surface_underline_width)
-            new_size = (new_width + 1, current_rect.height + 3)
-
-            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
-            new_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
+            new_surface = make_surface(new_width + 1, current_rect.height + 3, alpha=True)
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))
@@ -530,7 +529,7 @@ class TextInput(Widget):
         if self._cursor_surface is None:
             if self._rect.height == 0:  # If menu has not been initialized this error can occur
                 return
-            self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
+            self._cursor_surface = make_surface(int(self._font_size / 20 + 1), self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string
@@ -1167,8 +1166,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-            text[0:text_end] + \
-            self._input_string[self._cursor_position:len(self._input_string)]
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

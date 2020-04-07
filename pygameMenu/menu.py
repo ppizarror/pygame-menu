@@ -35,16 +35,16 @@ import types
 import warnings
 
 import pygame as _pygame
-
 import pygameMenu.config as _cfg
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 import pygameMenu.widgets as _widgets
-from pygameMenu.sound import Sound as _Sound
+
 from pygameMenu.scrollarea import ScrollArea as _ScrollArea
-from pygameMenu.utils import check_key_pressed_valid
+from pygameMenu.sound import Sound as _Sound
+from pygameMenu.utils import check_key_pressed_valid, make_surface
 
 # Joy events
 _JOY_EVENT_LEFT = 1
@@ -734,9 +734,7 @@ class Menu(object):
         else:
             width, height = self._width, self._height - menubar_height
 
-        self._widgets_surface = _pygame.Surface((width, height),  # lgtm [py/call/wrong-arguments]
-                                                _pygame.SRCALPHA, 32)
-
+        self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
         self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
 

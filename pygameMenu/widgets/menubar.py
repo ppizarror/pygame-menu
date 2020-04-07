@@ -32,8 +32,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
-from pygameMenu.widgets.widget import Widget
 import pygameMenu.controls as _ctrl
+
+from pygameMenu.utils import make_surface
+from pygameMenu.widgets.widget import Widget
 
 
 # noinspection PyTypeChecker
@@ -104,8 +106,7 @@ class MenuBar(Widget):
         self._render()
 
         if self._bgcolor:
-            bg = _pygame.Surface((self._width, self._rect.height + 5),  # lgtm [py/call/wrong-arguments]
-                                 _pygame.SRCALPHA, 32)
+            bg = make_surface(self._width, self._rect.height + 5)
             bg.fill(self._bgcolor)
             surface.blit(bg, self._rect.topleft)
 

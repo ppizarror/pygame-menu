@@ -30,12 +30,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from uuid import uuid4
 import pygame as _pygame
 import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
+
 from pygameMenu.sound import Sound as _Sound
+from pygameMenu.utils import make_surface
+from uuid import uuid4
 
 
 # noinspection PyTypeChecker
@@ -301,9 +303,7 @@ class Widget(object):
             text = self.font_render_string(string, color)
 
             # Create surface
-            size = (text.get_width() + 2, text.get_height() + 2)
-            surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
-            surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
+            surface = make_surface(text.get_width() + 2, text.get_height() + 2, alpha=True)
 
             # Draw shadow first
             if self._shadow:

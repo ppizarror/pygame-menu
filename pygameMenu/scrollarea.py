@@ -33,6 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
+
+from pygameMenu.utils import make_surface
 from pygameMenu.widgets import ScrollBar as _ScrollBar
 
 
@@ -96,12 +98,13 @@ class ScrollArea(object):
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
         self._bg_surface = None
+
         if area_color:
-            self._bg_surface = _pygame.Surface((area_width, area_height),  # lgtm [py/call/wrong-arguments]
-                                               _pygame.SRCALPHA, 32)
+            self._bg_surface = make_surface(area_width, area_height)
             self._bg_surface.fill(area_color)
 
         self._view_rect = self.get_view_rect()
+
         for pos in self._scrollbar_positions:
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
                 sbar = _ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),

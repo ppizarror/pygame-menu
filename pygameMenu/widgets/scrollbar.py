@@ -31,8 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-from pygameMenu.widgets.widget import Widget
 import pygameMenu.locals as _locals
+
+from pygameMenu.utils import make_surface
+from pygameMenu.widgets.widget import Widget
 
 
 # noinspection PyTypeChecker
@@ -192,7 +194,7 @@ class ScrollBar(Widget):
         See upper class doc.
         """
         # Render page control
-        self._surface = _pygame.Surface(self._rect.size)  # lgtm [py/call/wrong-arguments]
+        self._surface = make_surface(*self._rect.size)
         self._surface.fill(self._page_ctrl_color)
 
         # Render slider

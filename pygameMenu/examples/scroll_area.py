@@ -34,8 +34,10 @@ import os
 import sys
 import itertools
 import pygame
+
 from pygameMenu import locals
 from pygameMenu.scrollarea import ScrollArea
+from pygameMenu.utils import make_surface
 
 FPS = 30.0
 W_SIZE = 800  # Width of window size
@@ -77,7 +79,7 @@ def make_world(width, height, text=''):
     :type: basestring
     :return: World surface
     """
-    world = pygame.Surface((width, height))  # lgtm [py/call/wrong-arguments]
+    world = make_surface(width, height)
     world.fill((210, 210, 210))
     font = pygame.font.SysFont('arial', 20)
 
