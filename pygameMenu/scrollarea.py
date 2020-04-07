@@ -297,7 +297,7 @@ class ScrollArea(object):
 
         return rect
 
-    def get_actual_scrollbar_thickness(self, orientation):
+    def get_scrollbar_thickness(self, orientation):
         """
         Return the scroll thickness of the area. If it's hidden return zero.
 
@@ -306,8 +306,8 @@ class ScrollArea(object):
         :return: Thickness in px
         :rtype: int
         """
-        if orientation == _locals.ORIENTATION_HORIZONTAL and self._world.get_width() > self._rect.width or \
-                orientation == _locals.ORIENTATION_VERTICAL and self._world.get_height() > self._rect.height:
+        if orientation == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width() > 0 or \
+                orientation == _locals.ORIENTATION_VERTICAL and self.get_hidden_height() > 0:
             return self._scrollbar_thick
         return 0
 

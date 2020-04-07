@@ -868,7 +868,7 @@ class Menu(object):
         Update draw_region_y based on the current widgets only if there's no overflow in y axis.
         """
         self._build_widget_surface()
-        horizontal_scroll = self._scroll.get_actual_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         max_y = self._calculate_row_height() - self._option_offsety
         available = self._height - self._menubar.get_rect().height - horizontal_scroll
         self._draw_regiony = max(100.0 * (available - max_y) / (2.0 * self._height), 0)
