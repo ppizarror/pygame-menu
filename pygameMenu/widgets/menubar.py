@@ -104,9 +104,8 @@ class MenuBar(Widget):
         self._render()
 
         if self._bgcolor:
-            bg = _pygame.Surface((self._width, self._rect.height + 5),
-                                 _pygame.SRCALPHA,
-                                 32)   # lgtm [py/call/wrong-arguments]
+            bg = _pygame.Surface((self._width, self._rect.height + 5),  # lgtm [py/call/wrong-arguments]
+                                 _pygame.SRCALPHA, 32)
             bg.fill(self._bgcolor)
             surface.blit(bg, self._rect.topleft)
 

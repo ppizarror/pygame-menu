@@ -96,8 +96,8 @@ class ScrollArea(object):
         self._scrollbar_thick = scrollbar_thick
         self._bg_surface = None
         if area_color:
-            self._bg_surface = _pygame.Surface((area_width, area_height),
-                                               _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            self._bg_surface = _pygame.Surface((area_width, area_height),  # lgtm [py/call/wrong-arguments]
+                                               _pygame.SRCALPHA, 32)
             self._bg_surface.fill(area_color)
 
         self._view_rect = self.get_view_rect()

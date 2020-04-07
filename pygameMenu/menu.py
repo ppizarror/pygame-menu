@@ -35,7 +35,6 @@ import types
 import warnings
 
 import pygame as _pygame
-import pygame.gfxdraw as _gfxdraw
 
 import pygameMenu.config as _cfg
 import pygameMenu.controls as _ctrl
@@ -689,7 +688,6 @@ class Menu(object):
             _msg = 'total elements cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
             assert len(self._option) + 1 <= _max_elements, _msg
 
-        _widget_font_size = widget.get_font_info()['size']
         self._option.append(widget)
         _totals = len(self._option)
         if _totals == 1:
@@ -733,8 +731,8 @@ class Menu(object):
         else:
             width, height = self._width, self._height - menubar_height
 
-        self._widgets_surface = _pygame.Surface((width, height),
-                                                _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+        self._widgets_surface = _pygame.Surface((width, height),  # lgtm [py/call/wrong-arguments]
+                                                _pygame.SRCALPHA, 32)
 
         self._scroll.set_world(self._widgets_surface)
         self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
