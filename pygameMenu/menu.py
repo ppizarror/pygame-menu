@@ -1085,7 +1085,7 @@ class Menu(object):
                     if event.button in (1, 2, 3) and \
                             self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                         new_event = _pygame.event.Event(event.type, **event.dict)
-                        new_event.dict['origin'] = self._actual._scroll.get_rect().topleft
+                        new_event.dict['origin'] = self._actual._scroll.to_real_position((0, 0))
                         new_event.pos = self._actual._scroll.to_world_position(event.pos)
                         widget.update((new_event,))  # This option can change the current menu to a submenu
                         break_mainloop = True  # It is updated
