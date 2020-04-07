@@ -46,7 +46,8 @@ def on_button_click(value=None, text=None):
     """
     Button event on menus.
 
-    :param button_id: Button ID
+    :param value: Button value
+    :param text: Button text
     """
     if not text:
         print('Hello from {}'.format(value))
