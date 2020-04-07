@@ -304,33 +304,20 @@ class Menu(object):
         self._draw_regionx = draw_region_x
         self._draw_regiony = draw_region_y
 
-        # Option position
+        # Columns and rows
         self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
-        self._column_posx = [int(self._width * (self._draw_regionx / 100.0))]
-        self._column_widths = [self._width]
-
-        # Calculate _column_posx and _column_widths if there's more than 1 column
-        if columns > 1:
-            if column_weights is None:
-                column_weights = tuple(1 for _ in range(columns))
-            else:
-                for i in column_weights:
-                    assert i > 0, 'each column weight factor must be greater than zero'
-            s = float(sum(column_weights[:columns]))
-            cumulative = 0
-            self._column_posx = []
-            for i in range(columns):
-                w = column_weights[i] / s
-                self._column_posx.append(
-                    int(self._width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5))))
-                cumulative += column_weights[i] / s
-            self._column_widths = tuple(int(self._width * column_weights[i] / s) for i in range(columns))
-
-        self._column_spacing = int(self._width / columns)  # type: int
         self._columns = columns
+        if column_weights is None:
+            column_weights = tuple(1 for _ in range(columns))
+        else:
+            for i in column_weights:
+                assert i > 0, 'each column weight factor must be greater than zero'
+        self._column_weights = column_weights
         self._force_fit_text = force_fit_text
         self._rows = rows
         self._widget_align = widget_alignment
+
+        self._calculate_column_widths(self._width)  # At first, the width must be the same as the window
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -385,6 +372,34 @@ class Menu(object):
 
         # FPS of the menu
         self.set_fps(fps)
+
+    def _calculate_column_widths(self, width):
+        """
+        Calculate the width of each column (self._column_widths). Each column
+        will have a certain factor of the total width surface area (width param), that factor
+        is stored in column_weigts. If there's only 1 column, then the factor
+        is 100%. If there's multiple columns, for example, a column that has 25%, other
+        50% and the other 25% then column_weigths can be (1, 2, 1) or (0.25, 0.5, 0.25).
+        The sum of all column widths must be equal to the surface width.
+
+        :param width: Surface width, can be the window (no scroll area) or the surface scroll area.
+        :type width: int,float
+        """
+        assert isinstance(width, (int, float))
+        assert width > 0, 'width must be greater than zero'
+        if self._columns > 1:
+            s = float(sum(self._column_weights[:self._columns]))
+            cumulative = 0
+            self._column_posx = []
+            for i in range(self._columns):
+                w = self._column_weights[i] / s
+                self._column_posx.append(
+                    int(width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5))))
+                cumulative += self._column_weights[i] / s
+            self._column_widths = tuple(int(width * self._column_weights[i] / s) for i in range(self._columns))
+        else:
+            self._column_posx = [int(width * (self._draw_regionx / 100.0))]
+            self._column_widths = [width]
 
     def add_button(self, element_name, element, *args, **kwargs):
         """
@@ -652,7 +667,7 @@ class Menu(object):
         :param align: Widget alignment
         :type align: str
         """
-        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(widget, _widgets.WidgetType), 'widget must be a Widget instance'
         assert isinstance(font_size, int), 'font_size must be an integer'
         assert isinstance(align, str), 'align must be a string'
 
@@ -685,12 +700,10 @@ class Menu(object):
         :type widget: pygameMenu.widgets.widget.Widget
         """
         assert isinstance(widget, _widgets.WidgetType)
-
         if self._columns > 1:
             _max_elements = self._columns * self._rows
             _msg = 'total elements cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
             assert len(self._option) + 1 <= _max_elements, _msg
-
         self._option.append(widget)
         _totals = len(self._option)
         if _totals == 1:
@@ -734,6 +747,7 @@ class Menu(object):
         else:
             width, height = self._width, self._height - menubar_height
 
+        self._calculate_column_widths(width)
         self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
         self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
