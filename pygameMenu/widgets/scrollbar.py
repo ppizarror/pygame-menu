@@ -119,13 +119,6 @@ class ScrollBar(Widget):
             self.set_page_step((values_range[1] - values_range[0]) / 5.0)  # Arbitrary
         self.set_orientation(orientation)
 
-    def get_page_ctrl_thickness(self):
-        """
-        :return: The page ctrl box thickness.
-        :rtype: int,float
-        """
-        return self._page_ctrl_thick
-
     def _apply_font(self):
         """
         See upper class doc.
