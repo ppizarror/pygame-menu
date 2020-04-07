@@ -119,7 +119,6 @@ class ScrollArea(object):
                                   page_ctrl_thick=scrollbar_thick,
                                   page_ctrl_color=scrollbar_color,
                                   onchange=self._on_horizontal_scroll)
-
             sbar.set_shadow(enabled=shadow,
                             color=shadow_color,
                             position=shadow_position,
