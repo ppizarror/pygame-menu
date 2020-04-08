@@ -160,8 +160,8 @@ import pygameMenu
     | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
     | selection_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
     | selection_color | Color of selected item | tuple | config.*MENU_SELECTED_COLOR* |
-    | selection_inflate_margin_x | X margin of selected item inflate box | config.*MENU_SELECTED_EXPLODE_MARGIN_X* |
-    | selection_inflate_margin_y | Y margin of selected item inflate box | config.*MENU_SELECTED_EXPLODE_MARGIN_Y* |
+    | selection_inflate_margin_x | X margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_X* |
+    | selection_inflate_margin_y | Y margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_Y* |
     | title_offset_x | Offset x-position of title (px) | int | 0 |
     | title_offset_y | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.*ALIGN_CENTER* |
