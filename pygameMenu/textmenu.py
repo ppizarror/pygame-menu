@@ -189,9 +189,9 @@ class TextMenu(Menu):
         if self._widget_align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif self._widget_align == _locals.ALIGN_CENTER:
-            option_dx = -self._width / 2 + self._selection_inflate_x
+            option_dx = -self._width / 2 + self._selection_highlight_margin_x
         elif self._widget_align == _locals.ALIGN_CENTER:
-            option_dx = self._width / 2 - rect.width - self._selection_inflate_x
+            option_dx = self._width / 2 - rect.width - self._selection_highlight_margin_x
         else:
             option_dx = 0
         t_dy = - rect.height

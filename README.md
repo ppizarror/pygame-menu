@@ -157,11 +157,11 @@ import pygameMenu
     | option_shadow_offset | Offset of option text shadow | int | config.*MENU_SHADOW_OFFSET* |
     | option_shadow_position | Position of shadow | string | config.*MENU_SHADOW_POSITION* |
     | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
-    | selection_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
     | selection_color | Color of selected item | tuple | config.*MENU_SELECTED_COLOR* |
-    | selection_inflate_enabled | Enable drawing a rectangle around selected item | bool | config.*MENU_SELECTED_DRAW* |
-    | selection_inflate_margin_x | X margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_X* |
-    | selection_inflate_margin_y | Y margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_Y* |
+    | selection_highlight | Enable drawing a rectangle around selected item | bool | config.*MENU_SELECTED_DRAW* |
+    | selection_highlight_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
+    | selection_highlight_margin_x | X margin of selected highlight box | int | config.<br>*MENU_SELECTED_EXPLODE_X* |
+    | selection_highlight_margin_y | Y margin of selected highlight box | int | config.<br>*MENU_SELECTED_EXPLODE_Y* |
     | title_offset_x | Offset x-position of title (px) | int | 0 |
     | title_offset_y | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.*ALIGN_CENTER* |

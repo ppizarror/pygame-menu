@@ -179,9 +179,9 @@ class Widget(object):
         :type surface: pygame.surface.SurfaceType
         :param selected_color: Selected color
         :type selected_color: tuple
-        :param inflatex: Pixels to inflate the rect (x axis)
+        :param inflatex: Pixels to inflate the rect (x axis), used by highlight
         :type inflatex: int
-        :param inflatey: Pixels to inflate the rect (y axis)
+        :param inflatey: Pixels to inflate the rect (y axis), used by highlight
         :type inflatey: int
         :param border_width: Border rect width
         :type border_width: int

@@ -162,7 +162,7 @@ def main(test=False):
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
                                  option_shadow=True,
-                                 selection_border_width=4,
+                                 selection_highlight_border_width=4,
                                  title='Timer Menu',
                                  title_offset_y=5,  # Adds 5px to title vertical position
                                  )

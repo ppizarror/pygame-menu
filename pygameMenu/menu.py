@@ -92,11 +92,11 @@ class Menu(object):
                  option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
                  option_shadow_position=_cfg.MENU_SHADOW_POSITION,
                  rows=None,
-                 selection_border_width=_cfg.MENU_SELECTED_WIDTH,
                  selection_color=_cfg.MENU_SELECTED_COLOR,
-                 selection_inflate_enabled=_cfg.MENU_SELECTED_DRAW,
-                 selection_inflate_margin_x=_cfg.MENU_SELECTED_EXPLODE_X,
-                 selection_inflate_margin_y=_cfg.MENU_SELECTED_EXPLODE_Y,
+                 selection_highlight=_cfg.MENU_SELECTED_DRAW,
+                 selection_highlight_border_width=_cfg.MENU_SELECTED_WIDTH,
+                 selection_highlight_margin_x=_cfg.MENU_SELECTED_EXPLODE_X,
+                 selection_highlight_margin_y=_cfg.MENU_SELECTED_EXPLODE_Y,
                  title_offset_x=0,
                  title_offset_y=0,
                  widget_alignment=_locals.ALIGN_CENTER,
@@ -166,16 +166,16 @@ class Menu(object):
         :type option_shadow_position: basestring
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
-        :param selection_border_width: Border with of rectangle around selected item
-        :type selection_border_width: int
+        :param selection_highlight_border_width: Border with of rectangle around selected item
+        :type selection_highlight_border_width: int
         :param selection_color: Color of selected item
         :type selection_color: tuple
-        :param selection_inflate_enabled: Enable drawing a rectangle around selected item
-        :type selection_inflate_enabled: bool
-        :param selection_inflate_margin_x: X margin of selected item inflate box
-        :type selection_inflate_margin_x: int
-        :param selection_inflate_margin_y: Y margon if selected item inflate box
-        :type selection_inflate_margin_y: int
+        :param selection_highlight: Enable drawing a rectangle around selected item
+        :type selection_highlight: bool
+        :param selection_highlight_margin_x: X margin of selected highlight box
+        :type selection_highlight_margin_x: int
+        :param selection_highlight_margin_y: Y margin of selected highlight box
+        :type selection_highlight_margin_y: int
         :param title_offset_x: Offset x-position of title (px)
         :type title_offset_x: int
         :param title_offset_y: Offset y-position of title (px)
@@ -210,11 +210,11 @@ class Menu(object):
         assert isinstance(option_shadow_offset, int)
         assert isinstance(option_shadow_position, str)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(selection_border_width, int)
         assert isinstance(selection_color, tuple)
-        assert isinstance(selection_inflate_enabled, bool)
-        assert isinstance(selection_inflate_margin_x, int)
-        assert isinstance(selection_inflate_margin_y, int)
+        assert isinstance(selection_highlight, bool)
+        assert isinstance(selection_highlight_border_width, int)
+        assert isinstance(selection_highlight_margin_x, int)
+        assert isinstance(selection_highlight_margin_y, int)
         assert isinstance(title_offset_x, int)
         assert isinstance(title_offset_y, int)
         assert isinstance(widget_alignment, str)
@@ -239,7 +239,6 @@ class Menu(object):
         assert option_margin_y >= 0, \
             'option margin must be greater or equal than zero'
         assert option_offset_x >= 0 and option_offset_y >= 0, 'offset must be greater or equal than zero'
-        assert selection_border_width >= 0, 'rect_width must be greater or equal than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if columns > 1:
             assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
@@ -247,8 +246,9 @@ class Menu(object):
             if columns == 1:
                 assert rows is None, 'rows must be None if there is only 1 column'
                 rows = 1e6  # Set rows as a big number
-        assert selection_inflate_margin_x > 0 and selection_inflate_margin_y > 0, \
-            'selection inflate margin must be greater than zero in both axis'
+        assert selection_highlight_border_width >= 0, 'selection lighlight border width must be greater or equal than zero'
+        assert selection_highlight_margin_x > 0 and selection_highlight_margin_y > 0, \
+            'selection highlight margin must be greater than zero in both axis'
 
         self._actual = self  # Actual menu
         self._bgfun = bgfun
@@ -371,11 +371,11 @@ class Menu(object):
         self._menubar.set_controls(self._joystick, self._mouse)
 
         # Selected option, margin of the selection box
-        self._selection_inflate_enabled = selection_inflate_enabled
-        self._selection_inflate_x = selection_inflate_margin_x * selection_inflate_enabled
-        self._selection_inflate_y = selection_inflate_margin_y * selection_inflate_enabled
-        self._selection_border_width = selection_border_width * selection_inflate_enabled
+        self._selection_border_width = selection_highlight_border_width * selection_highlight
         self._selection_color = selection_color
+        self._selection_highlight = selection_highlight  # Highlight box around selected item
+        self._selection_highlight_margin_x = selection_highlight_margin_x * selection_highlight
+        self._selection_highlight_margin_y = selection_highlight_margin_y * selection_highlight
 
         # Scrolling area
         self._widgets_surface = None
@@ -410,7 +410,8 @@ class Menu(object):
             col_index = int(index // self._rows)
             if self._column_max_width[col_index] is None:  # No limit
                 self._column_widths[col_index] = max(self._column_widths[col_index],
-                                                     rect.width + self._selection_inflate_x,  # Add selection box
+                                                     rect.width + self._selection_highlight_margin_x,
+                                                     # Add selection box
                                                      )
 
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
@@ -743,7 +744,7 @@ class Menu(object):
                         color=self._font_color,
                         selected_color=self._selection_color)
         if self._force_fit_text and self._column_max_width[_col] is not None:
-            selection_dx = self._selection_inflate_x + self._selection_border_width
+            selection_dx = self._selection_highlight_margin_x + self._selection_border_width
             widget.set_max_width(self._column_max_width[_col] - selection_dx)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
@@ -921,16 +922,16 @@ class Menu(object):
             if align == _locals.ALIGN_CENTER:
                 dx = -int(rect.width / 2.0)
             elif align == _locals.ALIGN_LEFT:
-                dx = -_column_width / 2 + self._selection_inflate_x / 2
+                dx = -_column_width / 2 + self._selection_highlight_margin_x / 2
             elif align == _locals.ALIGN_RIGHT:
-                dx = _column_width / 2 - rect.width - self._selection_inflate_x / 2
+                dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
             else:
                 dx = 0
             x_coord = self._option_offset_x + self._column_posx[int(index // self._rows)] + dx
 
         # Calculate Y position
         if y:
-            dy = self._selection_inflate_y + self._selection_border_width - self._selection_inflate_enabled
+            dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
             y_coord = self._option_offset_y + (index % self._rows) * (self._fsize + self._option_margin) + dy
 
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
@@ -961,11 +962,11 @@ class Menu(object):
             widget.draw(self._widgets_surface)
 
             # If selected item then draw a rectangle
-            if self._selection_inflate_enabled and widget.selected:
+            if self._selection_highlight and widget.selected:
                 widget.draw_selected_rect(self._widgets_surface,
                                           self._selection_color,
-                                          self._selection_inflate_x,
-                                          self._selection_inflate_y,
+                                          self._selection_highlight_margin_x,
+                                          self._selection_highlight_margin_y,
                                           self._selection_border_width)
 
         self._scroll.draw(self._surface)
