@@ -135,8 +135,6 @@ import pygameMenu
     | column_max_width | List/Tuple representing the max width of each column in px, None equals no limit | tuple/list | None |
     | columns | Number of columns in menu | int | 1 |
     | dopause | Pause game | bool | True |
-    | draw_region_x | Drawing position of element inside menu (x-axis) as percentage | int | config.*MENU_DRAW_X* |
-    | draw_region_y | Drawing position of element inside menu (y-axis) as percentage | int | config.*MENU_DRAW_Y* |
     | enabled | Menu is enabled by default or not | bool | True |
     | font_color | Color of font | tuple | config.*MENU_FONT_COLOR* |
     | font_size | Font size of menu widgets | int | config.*MENU_FONT_SIZE* |
@@ -152,7 +150,9 @@ import pygameMenu
     | mouse_enabled | Enable mouse support | bool | True |
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
-    | option_margin | Margin of each element in menu (px) | int | config.*MENU_OPTION_MARGIN* |
+    | option_margin_y | Vertical margin of each element in menu (px) | int | config.*MENU_OPTION_MARGIN* |
+    | option_offset_x | X axis offset of options inside menu (px).<br>If value less than 1 use percentage of width | int | 0 |
+    | option_offset_y | Y axis offset of options inside menu (px).<br>If value less than 1 use percentage of height | int | 0 |
     | option_shadow | Indicate if a shadow is drawn on each option | bool | config.*MENU_OPTION_SHADOW* |
     | option_shadow_offset | Offset of option text shadow | int | config.*MENU_SHADOW_OFFSET* |
     | option_shadow_position | Position of shadow | string | config.*MENU_SHADOW_POSITION* |

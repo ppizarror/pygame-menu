@@ -216,7 +216,6 @@ def main(test=False):
     # -------------------------------------------------------------------------
     more_settings_menu = pygameMenu.Menu(surface,
                                          bgfun=main_background,
-                                         draw_region_y=5,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
                                          font_color=COLOR_BLACK,
                                          font_size=25,
@@ -226,6 +225,8 @@ def main(test=False):
                                          menu_height=WINDOW_SIZE[1] * 0.85,
                                          menu_width=WINDOW_SIZE[0] * 0.9,
                                          onclose=pygameMenu.events.DISABLE_CLOSE,
+                                         option_offset_x=5,  # px
+                                         option_offset_y=50,  # px
                                          selection_color=COLOR_WHITE,
                                          title='More Settings',
                                          widget_alignment=pygameMenu.locals.ALIGN_LEFT,
@@ -274,7 +275,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
-                                draw_region_y=9,
+                                option_offset_y=0.09,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
                                 font_color=COLOR_BLACK,
                                 font_size=30,

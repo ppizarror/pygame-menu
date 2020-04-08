@@ -174,9 +174,9 @@ class TextMenu(Menu):
             text_dx = 0
 
         x_coord = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
-        y_coord = self._posy + self._option_offsety + self._textdy + line_number * (
+        y_coord = self._posy + self._textdy + line_number * (
                 self._font_textsize + self._textdy) - self._font_textsize / 2
-        return x_coord + text_dx, y_coord
+        return self._option_offset_x + x_coord + text_dx, self._option_offset_y + y_coord
 
     def _get_option_pos(self, index, x=True, y=True):
         """
@@ -189,15 +189,15 @@ class TextMenu(Menu):
         if self._widget_align == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
         elif self._widget_align == _locals.ALIGN_CENTER:
-            option_dx = -self._width / 2 + self._selected_inflate_x
+            option_dx = -self._width / 2 + self._selection_inflate_x
         elif self._widget_align == _locals.ALIGN_CENTER:
-            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
+            option_dx = self._width / 2 - rect.width - self._selection_inflate_x
         else:
             option_dx = 0
         t_dy = - rect.height
 
-        x_coord = self._column_posx[0] + option_dx
-        y_coord = self._option_offsety + index * (self._fsize + self._opt_dy) + t_dy + dysum
+        x_coord = self._option_offset_x + self._column_posx[0] + option_dx
+        y_coord = self._option_offset_y + index * (self._fsize + self._option_margin) + t_dy + dysum
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):
