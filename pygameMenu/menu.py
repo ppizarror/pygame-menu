@@ -72,7 +72,6 @@ class Menu(object):
                  dopause=True,
                  draw_region_x=_cfg.MENU_DRAW_X,
                  draw_region_y=_cfg.MENU_DRAW_Y,
-                 draw_select=_cfg.MENU_SELECTED_DRAW,
                  enabled=True,
                  font_color=_cfg.MENU_FONT_COLOR,
                  font_size=_cfg.MENU_FONT_SIZE,
@@ -95,6 +94,7 @@ class Menu(object):
                  rows=None,
                  selection_border_width=_cfg.MENU_SELECTED_WIDTH,
                  selection_color=_cfg.MENU_SELECTED_COLOR,
+                 selection_inflate_enabled=_cfg.MENU_SELECTED_DRAW,
                  selection_inflate_margin_x=_cfg.MENU_SELECTED_EXPLODE_X,
                  selection_inflate_margin_y=_cfg.MENU_SELECTED_EXPLODE_Y,
                  title_offset_x=0,
@@ -126,8 +126,6 @@ class Menu(object):
         :type draw_region_x: int
         :param draw_region_y: Drawing position of element inside menu (y-axis)
         :type draw_region_y: int
-        :param draw_select: Draw a rectangle around selected item (bool)
-        :type draw_select: bool
         :param enabled: Menu is enabled by default or not
         :type enabled: bool
         :param fps: FPS of the menu
@@ -172,6 +170,8 @@ class Menu(object):
         :type selection_border_width: int
         :param selection_color: Color of selected item
         :type selection_color: tuple
+        :param selection_inflate_enabled: Draw a rectangle around selected item (bool)
+        :type selection_inflate_enabled: bool
         :param selection_inflate_margin_x: X margin of selected item inflate box
         :type selection_inflate_margin_x: int
         :param selection_inflate_margin_y: Y margon if selected item inflate box
@@ -192,7 +192,7 @@ class Menu(object):
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
-        assert isinstance(draw_select, bool)
+        assert isinstance(selection_inflate_enabled, bool)
         assert isinstance(enabled, bool)
         assert isinstance(font_color, tuple)
         assert isinstance(font_size, int)
@@ -261,7 +261,7 @@ class Menu(object):
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
-        self._drawselrect = draw_select
+        self._drawselrect = selection_inflate_enabled
         self._enabled = enabled  # Menu is enabled or not
         self._font_color = font_color
         self._fps = 0  # type: int
@@ -309,6 +309,7 @@ class Menu(object):
                         ]
         self._draw_regionx = draw_region_x
         self._draw_regiony = draw_region_y
+
         self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
 
         # Columns and rows
