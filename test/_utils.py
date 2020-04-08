@@ -317,8 +317,6 @@ class PygameMenuUtils(object):
                                menu_alpha=90,
                                rows=rows,
                                title=title,
-                               window_height=H_SIZE,
-                               window_width=W_SIZE,
                                *args,
                                **kwargs
                                )

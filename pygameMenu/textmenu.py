@@ -45,8 +45,6 @@ class TextMenu(Menu):
 
     def __init__(self,
                  surface,
-                 window_width,
-                 window_height,
                  font,
                  title,
                  draw_text_region_x=_cfg.TEXT_DRAW_X,
@@ -61,10 +59,6 @@ class TextMenu(Menu):
 
         :param surface: Pygame surface object
         :type surface: pygame.surface.SurfaceType
-        :param window_width: Window width
-        :type window_width: int
-        :param window_height: Window height
-        :type window_height: int
         :param font: Font file direction
         :type font: str
         :param title: Title of the Menu
@@ -99,8 +93,6 @@ class TextMenu(Menu):
 
         # Super call
         super(TextMenu, self).__init__(surface,
-                                       window_width,
-                                       window_height,
                                        font,
                                        title,
                                        **kwargs)
@@ -186,7 +178,7 @@ class TextMenu(Menu):
                 self._font_textsize + self._textdy) - self._font_textsize / 2
         return x_coord + text_dx, y_coord
 
-    def _get_option_pos(self, index):
+    def _get_option_pos(self, index, x=True, y=True):
         """
         See upper class doc.
         """

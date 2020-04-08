@@ -306,8 +306,6 @@ class MenuTest(unittest.TestCase):
                                    option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                    text_align=pygameMenu.locals.ALIGN_RIGHT,
                                    title='Help',
-                                   window_height=H_SIZE,
-                                   window_width=W_SIZE
                                    )
         menu.mainloop()
         menu.add_button('Return to Menu', pygameMenu.events.BACK)
