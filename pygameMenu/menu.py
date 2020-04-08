@@ -68,7 +68,9 @@ class Menu(object):
                  title,
                  back_box=True,
                  bgfun=None,
-                 color_selected=_cfg.MENU_SELECTEDCOLOR,
+                 column_force_fit_text=False,
+                 column_max_width=None,
+                 columns=1,
                  dopause=True,
                  draw_region_x=_cfg.MENU_DRAW_X,
                  draw_region_y=_cfg.MENU_DRAW_Y,
@@ -92,14 +94,14 @@ class Menu(object):
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
                  option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
                  option_shadow_position=_cfg.MENU_SHADOW_POSITION,
-                 rect_width=_cfg.MENU_SELECTED_WIDTH,
-                 title_offsetx=0,
-                 title_offsety=0,
-                 widget_alignment=_locals.ALIGN_CENTER,
-                 columns=1,
                  rows=None,
-                 column_max_width=None,
-                 force_fit_text=False,
+                 selection_border_width=_cfg.MENU_SELECTED_WIDTH,
+                 selection_color=_cfg.MENU_SELECTED_COLOR,
+                 selection_inflate_margin_x=_cfg.MENU_SELECTED_EXPLODE_MARGIN_X,
+                 selection_inflate_margin_y=_cfg.MENU_SELECTED_EXPLODE_MARGIN_Y,
+                 title_offset_x=0,
+                 title_offset_y=0,
+                 widget_alignment=_locals.ALIGN_CENTER,
                  ):
         """
         Menu constructor.
@@ -118,8 +120,12 @@ class Menu(object):
         :type back_box: bool
         :param bgfun: Background drawing function (only if menu pause app)
         :type bgfun: function
-        :param color_selected: Color of selected item
-        :type color_selected: tuple
+        :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
+        :type column_force_fit_text: bool
+        :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
+        :type column_max_width: tuple, None
+        :param columns: Number of columns, by default it's 1
+        :type columns: int
         :param dopause: Pause game
         :type dopause: bool
         :param draw_region_x: Drawing position of element inside menu (x-axis)
@@ -166,27 +172,31 @@ class Menu(object):
         :type option_shadow_offset: int
         :param option_shadow_position: Position of shadow
         :type option_shadow_position: basestring
-        :param rect_width: Border with of rectangle around selected item
-        :type rect_width: int
-        :param title_offsetx: Offset x-position of title (px)
-        :type title_offsetx: int
-        :param title_offsety: Offset y-position of title (px)
-        :type title_offsety: int
-        :param widget_alignment: Default widget alignment
-        :type widget_alignment: basestring
-        :param columns: Number of columns, by default it's 1
-        :type columns: int
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
-        :param column_max_width: Tuple representing the max width of each column in px, if None the width is calculated automatically
-        :type column_max_width: tuple, None
+        :param selection_border_width: Border with of rectangle around selected item
+        :type selection_border_width: int
+        :param selection_color: Color of selected item
+        :type selection_color: tuple
+        :param selection_inflate_margin_x: X margin of selected item inflate box
+        :type selection_inflate_margin_x: int
+        :param selection_inflate_margin_y: Y margon if selected item inflate box
+        :type selection_inflate_margin_y: int
+        :param title_offset_x: Offset x-position of title (px)
+        :type title_offset_x: int
+        :param title_offset_y: Offset y-position of title (px)
+        :type title_offset_y: int
+        :param widget_alignment: Default widget alignment
+        :type widget_alignment: basestring
         """
         assert isinstance(window_width, int)
         assert isinstance(window_height, int)
         assert isinstance(font, str)
         assert isinstance(title, str)
         assert isinstance(back_box, bool)
-        assert isinstance(color_selected, tuple)
+        assert isinstance(column_force_fit_text, bool)
+        assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
+        assert isinstance(columns, int)
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
@@ -208,11 +218,14 @@ class Menu(object):
         assert isinstance(option_shadow, bool)
         assert isinstance(option_shadow_offset, int)
         assert isinstance(option_shadow_position, str)
-        assert isinstance(rect_width, int)
-        assert isinstance(columns, int)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(column_max_width, (tuple, type(None), (int, float)))
-        assert isinstance(force_fit_text, bool)
+        assert isinstance(selection_border_width, int)
+        assert isinstance(selection_color, tuple)
+        assert isinstance(selection_inflate_margin_x, int)
+        assert isinstance(selection_inflate_margin_y, int)
+        assert isinstance(title_offset_x, int)
+        assert isinstance(title_offset_y, int)
+        assert isinstance(widget_alignment, str)
 
         # Other asserts
         if dopause:
@@ -235,7 +248,7 @@ class Menu(object):
             'menu_alpha must be between 0 and 100 (both values included)'
         assert option_margin >= 0, \
             'option margin must be greater or equal than zero'
-        assert rect_width >= 0, 'rect_width must be greater or equal than zero'
+        assert selection_border_width >= 0, 'rect_width must be greater or equal than zero'
         assert window_height > 0 and window_width > 0, \
             'window size must be greater than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
@@ -245,6 +258,8 @@ class Menu(object):
             if columns == 1:
                 assert rows is None, 'rows must be None if there is only 1 column'
                 rows = 1e6  # Set rows as a big number
+        assert selection_inflate_margin_x > 0 and selection_inflate_margin_y > 0, \
+            'selection inflate margin must be greater than zero in both axis'
 
         self._actual = self  # Actual menu
         self._bgfun = bgfun
@@ -269,8 +284,8 @@ class Menu(object):
         self._option_shadow = option_shadow
         self._option_shadow_offset = option_shadow_offset
         self._option_shadow_position = option_shadow_position
-        self._selection_border_width = rect_width
-        self._selection_color = color_selected
+        self._selection_border_width = selection_border_width
+        self._selection_color = selection_color
         self._sounds = _Sound()  # type: _Sound
         self._surface = surface
         self._width = menu_width
@@ -318,7 +333,7 @@ class Menu(object):
             column_max_width = [None for _ in range(columns)]
         self._column_max_width = column_max_width
         self._column_widths = None  # type: list
-        self._force_fit_text = force_fit_text
+        self._force_fit_text = column_force_fit_text
         self._rows = rows
         self._widget_align = widget_alignment
 
@@ -349,8 +364,8 @@ class Menu(object):
                           menu_color_title[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._menubar.set_title(title,
-                                title_offsetx,
-                                title_offsety)
+                                title_offset_x,
+                                title_offset_y)
         self._menubar.set_font(font_title or font,
                                font_size_title,
                                bg_color_title,
@@ -362,16 +377,18 @@ class Menu(object):
         self._menubar.set_controls(self._joystick, self._mouse)
 
         # Selected option, margin of the selection box
-        self._selected_inflate_x = 16  # type: int
-        self._selected_inflate_y = 6  # type: int
+        self._selected_inflate_x = selection_inflate_margin_x  # type: int
+        self._selected_inflate_y = selection_inflate_margin_y  # type: int
 
+        # Scrolling area
         self._widgets_surface = None
         self._scroll = _ScrollArea(self._width,
                                    self._height - self._menubar.get_rect().height,
                                    area_color=self._bgcolor,
                                    shadow=self._option_shadow,
                                    shadow_offset=self._option_shadow_offset,
-                                   shadow_position=self._option_shadow_position)
+                                   shadow_position=self._option_shadow_position,
+                                   )
 
         # FPS of the menu
         self.set_fps(fps)

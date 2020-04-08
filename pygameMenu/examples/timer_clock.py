@@ -162,11 +162,11 @@ def main(test=False):
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
                                  option_shadow=True,
-                                 rect_width=4,
+                                 selection_border_width=4,
                                  title='Timer Menu',
-                                 title_offsety=5,  # Adds 5px to title vertical position
+                                 title_offset_y=5,  # Adds 5px to title vertical position
                                  window_height=H_SIZE,
-                                 window_width=W_SIZE
+                                 window_width=W_SIZE,
                                  )
 
     # Add options
@@ -200,14 +200,13 @@ def main(test=False):
                                     font=pygameMenu.font.FONT_FRANCHISE,
                                     menu_color=(30, 50, 107),  # Background color
                                     menu_color_title=(120, 45, 30),
-                                    # Pressing ESC button does nothing
-                                    onclose=pygameMenu.events.DISABLE_CLOSE,
+                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
                                     option_shadow=True,
                                     option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                     text_align=pygameMenu.locals.ALIGN_CENTER,
                                     title='Help',
                                     window_height=H_SIZE,
-                                    window_width=W_SIZE
+                                    window_width=W_SIZE,
                                     )
     help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in HELP:
@@ -223,13 +222,12 @@ def main(test=False):
                                      font_title=pygameMenu.font.FONT_8BIT,
                                      menu_color_title=COLOR_BLUE,
                                      mouse_visible=False,
-                                     # Disable menu close (ESC button)
-                                     onclose=pygameMenu.events.DISABLE_CLOSE,
+                                     onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
                                      option_shadow=True,
                                      text_fontsize=20,
                                      title='About',
                                      window_height=H_SIZE,
-                                     window_width=W_SIZE
+                                     window_width=W_SIZE,
                                      )
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in ABOUT:
@@ -241,13 +239,13 @@ def main(test=False):
                                 bgfun=mainmenu_background,
                                 enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
-                                menu_alpha=90,
                                 fps=FPS,
+                                menu_alpha=90,
                                 onclose=pygameMenu.events.CLOSE,
                                 title='Main Menu',
-                                title_offsety=5,
+                                title_offset_y=5,
                                 window_height=H_SIZE,
-                                window_width=W_SIZE
+                                window_width=W_SIZE,
                                 )
 
     main_menu.add_button(timer_menu.get_title(), timer_menu)  # Add timer submenu

@@ -96,7 +96,7 @@ class Widget(object):
         self._font_name = _cfg.MENU_FONT_SIZE_TITLE  # type: str
         self._font_size = _cfg.MENU_FONT_SIZE  # type: int
         self._font_color = _cfg.MENU_FONT_COLOR  # type: tuple
-        self._font_selected_color = _cfg.MENU_SELECTEDCOLOR  # type: tuple
+        self._font_selected_color = _cfg.MENU_SELECTED_COLOR  # type: tuple
         self._font_antialias = True  # type: bool
 
         # Text shadow

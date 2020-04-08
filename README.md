@@ -126,45 +126,47 @@ import pygameMenu
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
-    | surface | Pygame surface object | Pygame Surface | - |
-    | window_width | Window width size (px)| int | - |
-    | window_height | Window height size (px) |int | - |
-    | font | Font file dir | str | - |
-    | title | Title of the menu (main title) | str | - |
+    | surface | Pygame surface object | Pygame Surface | *Required* |
+    | window_width | Window width size (px)| int | *Required* |
+    | window_height | Window height size (px) |int | *Required* |
+    | font | Font file dir | str | *Required* |
+    | title | Title of the menu (main title) | str | *Required* |
     | back_box | Draw a back-box button on header | bool | True |
     | bgfun | Background drawing function (only if menupause app) | function | None |
-    | color_selected | Color of selected item | tuple | MENU_SELECTEDCOLOR |
+    | column_force_fit_text | Force text fitting of widgets if the width exceeds the column max width | bool | False |
+    | column_max_width | List/Tuple representing the max width of each column in px, None equals no limit | tuple/list | None |
+    | columns | Number of columns in menu | int | 1 |
     | dopause | Pause game | bool | True |
-    | draw_region_x | Drawing position of element inside menu (x-axis) as percentage | int | MENU_DRAW_X |
-    | draw_region_y | Drawing position of element inside menu (y-axis) as percentage | int | MENU_DRAW_Y |
-    | draw_select | Draw a rectangle around selected item (bool) | bool | MENU_SELECTED_DRAW |
+    | draw_region_x | Drawing position of element inside menu (x-axis) as percentage | int | config.*MENU_DRAW_X* |
+    | draw_region_y | Drawing position of element inside menu (y-axis) as percentage | int | config.*MENU_DRAW_Y* |
+    | draw_select | Draw a rectangle around selected item (bool) | bool | config.*MENU_SELECTED_DRAW* |
     | enabled | Menu is enabled by default or not | bool | True |
-    | font_color | Color of font | tuple | MENU_FONT_COLOR |
-    | font_size | Font size of menu widgets | int | MENU_FONT_SIZE |
-    | font_size_title | Font size of the title | int | MENU_FONT_SIZE_TITLE |
+    | font_color | Color of font | tuple | config.*MENU_FONT_COLOR* |
+    | font_size | Font size of menu widgets | int | config.*MENU_FONT_SIZE* |
+    | font_size_title | Font size of the title | int | config.*MENU_FONT_SIZE_TITLE* |
     | font_title | Alternative font of the title | str | None |
     | fps | Fps limit of the menu, 0: no limit | int,float | 0 |
     | joystick_enabled | Enable joystick support | bool | True |
-    | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | MENU_ALPHA |
-    | menu_color | Menu color | tuple | MENU_BGCOLOR |
-    | menu_color_title | Background color of title | tuple | MENU_TITLE_BG_COLOR |
-    | menu_height | Height of menu (px) | int | MENU_HEIGHT |
-    | menu_width | Width of menu (px) | int | MENU_WIDTH |
+    | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | config.*MENU_ALPHA* |
+    | menu_color | Menu color | tuple | config.*MENU_BGCOLOR* |
+    | menu_color_title | Background color of title | tuple | config.*MENU_TITLE_BG_COLOR* |
+    | menu_height | Height of menu (px) | int | config.*MENU_HEIGHT* |
+    | menu_width | Width of menu (px) | int | config.*MENU_WIDTH* |
     | mouse_enabled | Enable mouse support | bool | True |
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
-    | option_margin | Margin of each element in menu (px) | int | MENU_OPTION_MARGIN |
-    | option_shadow | Indicate if a shadow is drawn on each option | bool | MENU_OPTION_SHADOW |
-    | option_shadow_offset | Offset of option text shadow | int | MENU_SHADOW_OFFSET |
-    | option_shadow_position | Position of shadow | string | MENU_SHADOW_POSITION |
-    | rect_width | Border width of rectangle around a selected item | int | MENU_SELECTED_WIDTH |
-    | title_offsetx | Offset x-position of title (px) | int | 0 |
-    | title_offsety | Offset y-position of title (px) | int | 0 |
-    | widget_alignment | Default widget alignment | string | locals.ALIGN_CENTER |
-    | columns | Number of columns in menu | int | 1 |
+    | option_margin | Margin of each element in menu (px) | int | config.*MENU_OPTION_MARGIN* |
+    | option_shadow | Indicate if a shadow is drawn on each option | bool | config.*MENU_OPTION_SHADOW* |
+    | option_shadow_offset | Offset of option text shadow | int | config.*MENU_SHADOW_OFFSET* |
+    | option_shadow_position | Position of shadow | string | config.*MENU_SHADOW_POSITION* |
     | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
-    | column_weights | Tuple representing the width of each column, None if percentage is equal| tuple | None |
-    | force_fit_text | Force text fitting on each menu option in multiple columns | bool | False |
+    | selection_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
+    | selection_color | Color of selected item | tuple | config.*MENU_SELECTED_COLOR* |
+    | selection_inflate_margin_x | X margin of selected item inflate box | config.*MENU_SELECTED_EXPLODE_MARGIN_X* |
+    | selection_inflate_margin_y | Y margin of selected item inflate box | config.*MENU_SELECTED_EXPLODE_MARGIN_Y* |
+    | title_offset_x | Offset x-position of title (px) | int | 0 |
+    | title_offset_y | Offset y-position of title (px) | int | 0 |
+    | widget_alignment | Default widget alignment | string | locals.*ALIGN_CENTER* |
 
     Check the possible values for the widget alignment and shadow position in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 
@@ -180,11 +182,11 @@ import pygameMenu
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
-    | draw_text_region_x | X-Axis drawing region of the text | int | TEXT_DRAW_X |
-    | text_align | Text default alignment | string | locals.ALIGN_LEFT |
-    | text_color | Text color | tuple | TEXT_FONT_COLOR |
-    | text_fontsize | Text font size | int | MENU_FONT_TEXT_SIZE |
-    | text_margin | Line margin | int | TEXT_MARGIN |
+    | draw_text_region_x | X-Axis drawing region of the text | int | config.*TEXT_DRAW_X* |
+    | text_align | Text default alignment | string | locals.*ALIGN_LEFT* |
+    | text_color | Text color | tuple | config.*TEXT_FONT_COLOR* |
+    | text_fontsize | Text font size | int | config.*MENU_FONT_TEXT_SIZE* |
+    | text_margin | Line margin | int | config.*TEXT_MARGIN* |
 
 ### Adding options and entries to menus
 
@@ -242,7 +244,7 @@ import pygameMenu
     | values | Value list, list of tuples | list | *Required* |
     | selector_id | Selector identification | str | "" |
     | default | Default index of the displayed option | int | 0 |
-    | align | Widget alignment | str | locals.ALIGN_CENTER |
+    | align | Widget alignment | str | locals.*ALIGN_CENTER* |
     | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
     | onchange | Function that executes when change the value of selector | function | None |
     | onreturn | Function that executes when pressing return button on selected item | function | None |
@@ -300,11 +302,11 @@ import pygameMenu
     | title | Label string on menu entry | str | *Required* |
     | textinput_id | Text input identificator | str | "" |
     | default | Default value to display | str | "" |
-    | input_type | Data type of the input | str | locals.INPUT_TEST |
+    | input_type | Data type of the input | str | locals.*INPUT_TEST* |
     | input_underline | Char underline of the input | str | "" |
     | maxchar | Maximum length of string, if 0 there's no limit | int | 0 |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
-    | align | Text input alignment | str | locals.ALIGN_CENTER |
+    | align | Text input alignment | str | locals.*ALIGN_CENTER* |
     | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
     | enable_copy_paste | Enables copy, paste and cut | bool | True |
     | enable_selection | Enables text selection | bool |
@@ -349,7 +351,7 @@ import pygameMenu
     | default | Default value of the color | str (hex), tuple (r,gb,) | "" |
     | input_separator | Character used to separate channels in RGB format | str | "," |
     | input_underline | Char underline of the input | str | "" |
-    | align | Text input alignment | str | locals.ALIGN_CENTER |
+    | align | Text input alignment | str | locals.*ALIGN_CENTER* |
     | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
     | onchange | Function that executes when change the value of text input | function | None |
     | onreturn | Function that executes when pressing return button | function | None |
@@ -394,6 +396,15 @@ import pygameMenu
     ...
 
     menu_help.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
+    ```
+
+- *center_vertically()*
+
+    Centers vertically the menu.
+
+    ```python
+    menu = pygameMenu.Menu(...)
+    menu.center_vertically()
     ```
 
 - *clear()*
@@ -726,8 +737,8 @@ The default parameters of *Menu* and *TextMenu* are stored in the following file
 
 | File | Description |
 | :--: | :-- |
-| pygameMenu.config | Configure default parameter of Menu and TextMenu class |
-| pygameMenu.controls | Configure default key-events of Menus and widgets |
+| pygameMenu.config | Configure default parameters of Menu class |
+| pygameMenu.controls | Configure default key-events of Menu and widgets |
 
 ## Examples
 
@@ -736,6 +747,7 @@ To run the examples, simply execute these commands in a terminal:
 ```bash
 py -m pygameMenu.examples.game_selector
 py -m pygameMenu.examples.multi_input
+py -m pygameMenu.examples.scroll_menu
 py -m pygameMenu.examples.timer_clock
 ```
 
