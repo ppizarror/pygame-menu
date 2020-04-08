@@ -158,15 +158,13 @@ def main(test=False):
                                  menu_alpha=85,
                                  menu_color=(0, 0, 0),  # Background color
                                  menu_color_title=(0, 0, 0),
-                                 menu_height=int(H_SIZE * 0.65),
+                                 menu_height=H_SIZE * 0.65,
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
                                  option_shadow=True,
                                  selection_border_width=4,
                                  title='Timer Menu',
                                  title_offset_y=5,  # Adds 5px to title vertical position
-                                 window_height=H_SIZE,
-                                 window_width=W_SIZE,
                                  )
 
     # Add options
@@ -205,8 +203,6 @@ def main(test=False):
                                     option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                     text_align=pygameMenu.locals.ALIGN_CENTER,
                                     title='Help',
-                                    window_height=H_SIZE,
-                                    window_width=W_SIZE,
                                     )
     help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in HELP:
@@ -226,8 +222,6 @@ def main(test=False):
                                      option_shadow=True,
                                      text_fontsize=20,
                                      title='About',
-                                     window_height=H_SIZE,
-                                     window_width=W_SIZE,
                                      )
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in ABOUT:
@@ -244,8 +238,6 @@ def main(test=False):
                                 onclose=pygameMenu.events.CLOSE,
                                 title='Main Menu',
                                 title_offset_y=5,
-                                window_height=H_SIZE,
-                                window_width=W_SIZE,
                                 )
 
     main_menu.add_button(timer_menu.get_title(), timer_menu)  # Add timer submenu

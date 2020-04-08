@@ -36,10 +36,10 @@ import pygameMenu
 
 from functools import partial
 
-FPS = 15.0
+COLOR_BACKGROUND = (128, 230, 198)
+FPS = 30.0
 H_SIZE = 600  # Height of window size
 W_SIZE = 800  # Width of window size
-COLOR_BACKGROUND = (128, 230, 198)
 
 
 def on_button_click(value=None, text=None):
@@ -85,8 +85,6 @@ def make_long_menu(surface):
                             menu_width=700,  # px
                             onclose=pygameMenu.events.EXIT,
                             title='Main Menu',
-                            window_height=H_SIZE,
-                            window_width=W_SIZE,
                             )
 
     _menu_sub = pygameMenu.Menu(surface,
@@ -101,8 +99,6 @@ def make_long_menu(surface):
                                 option_shadow=True,
                                 rows=3,
                                 title='Menu with columns',
-                                window_height=H_SIZE,
-                                window_width=W_SIZE,
                                 )
 
     _menu.add_button('Rows and Columns', _menu_sub)

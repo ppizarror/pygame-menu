@@ -62,8 +62,6 @@ class Menu(object):
 
     def __init__(self,
                  surface,
-                 window_width,
-                 window_height,
                  font,
                  title,
                  back_box=True,
@@ -97,8 +95,8 @@ class Menu(object):
                  rows=None,
                  selection_border_width=_cfg.MENU_SELECTED_WIDTH,
                  selection_color=_cfg.MENU_SELECTED_COLOR,
-                 selection_inflate_margin_x=_cfg.MENU_SELECTED_EXPLODE_MARGIN_X,
-                 selection_inflate_margin_y=_cfg.MENU_SELECTED_EXPLODE_MARGIN_Y,
+                 selection_inflate_margin_x=_cfg.MENU_SELECTED_EXPLODE_X,
+                 selection_inflate_margin_y=_cfg.MENU_SELECTED_EXPLODE_Y,
                  title_offset_x=0,
                  title_offset_y=0,
                  widget_alignment=_locals.ALIGN_CENTER,
@@ -108,10 +106,6 @@ class Menu(object):
 
         :param surface: Pygame surface
         :type surface: pygame.surface.SurfaceType
-        :param window_width: Window width size (px)
-        :type window_width: int
-        :param window_height: Window height size (px)
-        :type window_height: int
         :param font: Font file path
         :type font: basestring
         :param title: Title of the menu (main title)
@@ -155,9 +149,9 @@ class Menu(object):
         :param menu_color_title: Background color of title
         :type menu_color_title: tuple
         :param menu_height: Height of menu (px)
-        :type menu_height: int
+        :type menu_height: int,float
         :param menu_width: Width of menu (px)
-        :type menu_width: int
+        :type menu_width: int,float
         :param mouse_enabled: Enable/disable mouse click on menu
         :type mouse_enabled: bool
         :param mouse_visible: Set mouse visible on menu
@@ -189,8 +183,6 @@ class Menu(object):
         :param widget_alignment: Default widget alignment
         :type widget_alignment: basestring
         """
-        assert isinstance(window_width, int)
-        assert isinstance(window_height, int)
         assert isinstance(font, str)
         assert isinstance(title, str)
         assert isinstance(back_box, bool)
@@ -210,8 +202,8 @@ class Menu(object):
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_color, tuple)
         assert isinstance(menu_color_title, tuple)
-        assert isinstance(menu_height, int)
-        assert isinstance(menu_width, int)
+        assert isinstance(menu_height, (int, float))
+        assert isinstance(menu_width, (int, float))
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(option_margin, int)
@@ -249,8 +241,6 @@ class Menu(object):
         assert option_margin >= 0, \
             'option margin must be greater or equal than zero'
         assert selection_border_width >= 0, 'rect_width must be greater or equal than zero'
-        assert window_height > 0 and window_width > 0, \
-            'window size must be greater than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if columns > 1:
             assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
@@ -276,7 +266,7 @@ class Menu(object):
         self._font_color = font_color
         self._fps = 0  # type: int
         self._fsize = font_size
-        self._height = menu_height
+        self._height = int(menu_height)
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
         self._onclose = onclose  # Function that calls after closing menu
@@ -288,7 +278,7 @@ class Menu(object):
         self._selection_color = selection_color
         self._sounds = _Sound()  # type: _Sound
         self._surface = surface
-        self._width = menu_width
+        self._width = int(menu_width)
 
         # Menu widgets
         self._option = []  # type: list
@@ -305,6 +295,9 @@ class Menu(object):
         # Load fonts
         self._font = _fonts.get_font(font, self._fsize)  # type: _pygame.font.Font
         self._font_name = font
+
+        # Get window size
+        window_width, window_height = _pygame.display.get_surface().get_size()
 
         # Position of menu
         self._posx = int((window_width - self._width) / 2)  # type: int

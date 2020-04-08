@@ -119,7 +119,7 @@ import pygameMenu
     This class creates a menu.
 
     ```python
-    pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
+    pygameMenu.Menu(surface, font, title, *args) # -> Menu object
     ```
 
     Parameters are the following:
@@ -127,8 +127,6 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | surface | Pygame surface object | Pygame Surface | *Required* |
-    | window_width | Window width size (px)| int | *Required* |
-    | window_height | Window height size (px) |int | *Required* |
     | font | Font file dir | str | *Required* |
     | title | Title of the menu (main title) | str | *Required* |
     | back_box | Draw a back-box button on header | bool | True |
@@ -150,8 +148,8 @@ import pygameMenu
     | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | config.*MENU_ALPHA* |
     | menu_color | Menu color | tuple | config.*MENU_BGCOLOR* |
     | menu_color_title | Background color of title | tuple | config.*MENU_TITLE_BG_COLOR* |
-    | menu_height | Height of menu (px) | int | config.*MENU_HEIGHT* |
-    | menu_width | Width of menu (px) | int | config.*MENU_WIDTH* |
+    | menu_height | Height of menu (px) | int,float | config.*MENU_HEIGHT* |
+    | menu_width | Width of menu (px) | int,float | config.*MENU_WIDTH* |
     | mouse_enabled | Enable mouse support | bool | True |
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
@@ -162,8 +160,8 @@ import pygameMenu
     | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
     | selection_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
     | selection_color | Color of selected item | tuple | config.*MENU_SELECTED_COLOR* |
-    | selection_inflate_margin_x | X margin of selected item inflate box | config.*MENU_SELECTED_EXPLODE_MARGIN_X* |
-    | selection_inflate_margin_y | Y margin of selected item inflate box | config.*MENU_SELECTED_EXPLODE_MARGIN_Y* |
+    | selection_inflate_margin_x | X margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_X* |
+    | selection_inflate_margin_y | Y margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_Y* |
     | title_offset_x | Offset x-position of title (px) | int | 0 |
     | title_offset_y | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.*ALIGN_CENTER* |
@@ -175,7 +173,7 @@ import pygameMenu
      This class creates a textual menu.
 
     ```python
-    pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
+    pygameMenu.TextMenu(surface, font, title, *args) # -> TextMenu object
     ```
 
     This class inherits from Menu, so the parameters are the same, except for the following extra parameters:  
@@ -208,7 +206,7 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | align | Button alignment | str | locals.ALIGN_CENTER |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
     | option_id | Option identifier | str | "" |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
@@ -219,7 +217,7 @@ import pygameMenu
     def fun():
         pass
 
-    help_menu = pygameMenu.TextMenu(surface, window...)
+    help_menu = pygameMenu.TextMenu(surface, ...)
     help_menu.add_button('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
     help_menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
@@ -227,7 +225,7 @@ import pygameMenu
     Another example:
 
     ```python
-    menu = pygameMenu.Menu(surface, window...)
+    menu = pygameMenu.Menu(surface, ...)
     menu.add_button(timer_menu.get_title(), timer_menu)         # Adds timer submenu
     menu.add_button(help_menu.get_title(), help_menu)           # Adds help submenu
     menu.add_button(about_menu.get_title(), about_menu)         # Adds about submenu
@@ -245,9 +243,9 @@ import pygameMenu
     | selector_id | Selector identification | str | "" |
     | default | Default index of the displayed option | int | 0 |
     | align | Widget alignment | str | locals.*ALIGN_CENTER* |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
-    | onchange | Function that executes when change the value of selector | function | None |
-    | onreturn | Function that executes when pressing return button on selected item | function | None |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
+    | onchange | Function executed when changing the value of selector | function | None |
+    | onreturn | Function executed when pressing return button on selected item | function | None |
     | **kwargs | Additional arguments | - | - |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
@@ -307,12 +305,12 @@ import pygameMenu
     | maxchar | Maximum length of string, if 0 there's no limit | int | 0 |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
     | align | Text input alignment | str | locals.*ALIGN_CENTER* |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
     | enable_copy_paste | Enables copy, paste and cut | bool | True |
     | enable_selection | Enables text selection | bool |
     | password | Input is displayed as a password | bool | False |
-    | onchange | Function that executes when change the value of text input | function | None |
-    | onreturn | Function that executes when pressing return button | function | None |
+    | onchange | Function executed when changing the value of text input | function | None |
+    | onreturn | Function executed when pressing return button | function | None |
     | valid_chars | List of valid characters, if None all chars are valid | list[str], None |
     | **kwargs | Additional arguments | - | - |
 
@@ -352,9 +350,9 @@ import pygameMenu
     | input_separator | Character used to separate channels in RGB format | str | "," |
     | input_underline | Char underline of the input | str | "" |
     | align | Text input alignment | str | locals.*ALIGN_CENTER* |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
-    | onchange | Function that executes when change the value of text input | function | None |
-    | onreturn | Function that executes when pressing return button | function | None |
+    | font_size | Font size widget (overrides Menu default) | int | config.*MENU_FONT_SIZE* |
+    | onchange | Function executed when changing the value of text input | function | None |
+    | onreturn | Function executed when pressing return button | function | None |
     | previsualization_width | Width of the previsualization of the color, scale of the widget height | int,float | 3 |
     | **kwargs | Additional arguments | - | - |
 
