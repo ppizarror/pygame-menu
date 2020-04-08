@@ -238,6 +238,7 @@ class Menu(object):
             'menu_alpha must be between 0 and 100 (both values included)'
         assert option_margin_y >= 0, \
             'option margin must be greater or equal than zero'
+        assert option_offset_x >= 0 and option_offset_y >= 0, 'offset must be greater or equal than zero'
         assert selection_border_width >= 0, 'rect_width must be greater or equal than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if columns > 1:
