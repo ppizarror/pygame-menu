@@ -119,7 +119,7 @@ import pygameMenu
     This class creates a menu.
 
     ```python
-    pygameMenu.Menu(surface, window_width, window_height, font, title, *args) # -> Menu object
+    pygameMenu.Menu(surface, font, title, *args) # -> Menu object
     ```
 
     Parameters are the following:
@@ -127,8 +127,6 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | surface | Pygame surface object | Pygame Surface | *Required* |
-    | window_width | Window width size (px)| int | *Required* |
-    | window_height | Window height size (px) |int | *Required* |
     | font | Font file dir | str | *Required* |
     | title | Title of the menu (main title) | str | *Required* |
     | back_box | Draw a back-box button on header | bool | True |
@@ -150,8 +148,8 @@ import pygameMenu
     | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | config.*MENU_ALPHA* |
     | menu_color | Menu color | tuple | config.*MENU_BGCOLOR* |
     | menu_color_title | Background color of title | tuple | config.*MENU_TITLE_BG_COLOR* |
-    | menu_height | Height of menu (px) | int | config.*MENU_HEIGHT* |
-    | menu_width | Width of menu (px) | int | config.*MENU_WIDTH* |
+    | menu_height | Height of menu (px) | int,float | config.*MENU_HEIGHT* |
+    | menu_width | Width of menu (px) | int,float | config.*MENU_WIDTH* |
     | mouse_enabled | Enable mouse support | bool | True |
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
@@ -175,7 +173,7 @@ import pygameMenu
      This class creates a textual menu.
 
     ```python
-    pygameMenu.TextMenu(surface, window_width, window_height, font, title, *args) # -> TextMenu object
+    pygameMenu.TextMenu(surface, font, title, *args) # -> TextMenu object
     ```
 
     This class inherits from Menu, so the parameters are the same, except for the following extra parameters:  
@@ -219,7 +217,7 @@ import pygameMenu
     def fun():
         pass
 
-    help_menu = pygameMenu.TextMenu(surface, window...)
+    help_menu = pygameMenu.TextMenu(surface, ...)
     help_menu.add_button('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
     help_menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
     ```
@@ -227,7 +225,7 @@ import pygameMenu
     Another example:
 
     ```python
-    menu = pygameMenu.Menu(surface, window...)
+    menu = pygameMenu.Menu(surface, ...)
     menu.add_button(timer_menu.get_title(), timer_menu)         # Adds timer submenu
     menu.add_button(help_menu.get_title(), help_menu)           # Adds help submenu
     menu.add_button(about_menu.get_title(), about_menu)         # Adds about submenu
