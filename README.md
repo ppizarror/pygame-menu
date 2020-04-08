@@ -206,7 +206,7 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | align | Button alignment | str | locals.ALIGN_CENTER |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
     | option_id | Option identifier | str | "" |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
@@ -243,7 +243,7 @@ import pygameMenu
     | selector_id | Selector identification | str | "" |
     | default | Default index of the displayed option | int | 0 |
     | align | Widget alignment | str | locals.*ALIGN_CENTER* |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
     | onchange | Function that executes when change the value of selector | function | None |
     | onreturn | Function that executes when pressing return button on selected item | function | None |
     | **kwargs | Additional arguments | - | - |
@@ -305,7 +305,7 @@ import pygameMenu
     | maxchar | Maximum length of string, if 0 there's no limit | int | 0 |
     | maxwidth | Maximum size of the text widget, if 0 there's no limit | int | 0 |
     | align | Text input alignment | str | locals.*ALIGN_CENTER* |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
     | enable_copy_paste | Enables copy, paste and cut | bool | True |
     | enable_selection | Enables text selection | bool |
     | password | Input is displayed as a password | bool | False |
@@ -350,7 +350,7 @@ import pygameMenu
     | input_separator | Character used to separate channels in RGB format | str | "," |
     | input_underline | Char underline of the input | str | "" |
     | align | Text input alignment | str | locals.*ALIGN_CENTER* |
-    | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* default |
+    | font_size | Font size widget (overrides Menu default) | int | config.*MENU_FONT_SIZE* |
     | onchange | Function that executes when change the value of text input | function | None |
     | onreturn | Function that executes when pressing return button | function | None |
     | previsualization_width | Width of the previsualization of the color, scale of the widget height | int,float | 3 |
