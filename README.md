@@ -244,8 +244,8 @@ import pygameMenu
     | default | Default index of the displayed option | int | 0 |
     | align | Widget alignment | str | locals.*ALIGN_CENTER* |
     | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
-    | onchange | Function that executes when change the value of selector | function | None |
-    | onreturn | Function that executes when pressing return button on selected item | function | None |
+    | onchange | Function executed when changing the value of selector | function | None |
+    | onreturn | Function executed when pressing return button on selected item | function | None |
     | **kwargs | Additional arguments | - | - |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
@@ -309,8 +309,8 @@ import pygameMenu
     | enable_copy_paste | Enables copy, paste and cut | bool | True |
     | enable_selection | Enables text selection | bool |
     | password | Input is displayed as a password | bool | False |
-    | onchange | Function that executes when change the value of text input | function | None |
-    | onreturn | Function that executes when pressing return button | function | None |
+    | onchange | Function executed when changing the value of text input | function | None |
+    | onreturn | Function executed when pressing return button | function | None |
     | valid_chars | List of valid characters, if None all chars are valid | list[str], None |
     | **kwargs | Additional arguments | - | - |
 
@@ -351,8 +351,8 @@ import pygameMenu
     | input_underline | Char underline of the input | str | "" |
     | align | Text input alignment | str | locals.*ALIGN_CENTER* |
     | font_size | Font size widget (overrides Menu default) | int | config.*MENU_FONT_SIZE* |
-    | onchange | Function that executes when change the value of text input | function | None |
-    | onreturn | Function that executes when pressing return button | function | None |
+    | onchange | Function executed when changing the value of text input | function | None |
+    | onreturn | Function executed when pressing return button | function | None |
     | previsualization_width | Width of the previsualization of the color, scale of the widget height | int,float | 3 |
     | **kwargs | Additional arguments | - | - |
 
