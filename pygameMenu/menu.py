@@ -35,16 +35,16 @@ import types
 import warnings
 
 import pygame as _pygame
-import pygame.gfxdraw as _gfxdraw
-
 import pygameMenu.config as _cfg
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 import pygameMenu.widgets as _widgets
+
+from pygameMenu.scrollarea import ScrollArea as _ScrollArea
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import check_key_pressed_valid
+from pygameMenu.utils import check_key_pressed_valid, make_surface
 
 # Joy events
 _JOY_EVENT_LEFT = 1
@@ -68,7 +68,9 @@ class Menu(object):
                  title,
                  back_box=True,
                  bgfun=None,
-                 color_selected=_cfg.MENU_SELECTEDCOLOR,
+                 column_force_fit_text=False,
+                 column_max_width=None,
+                 columns=1,
                  dopause=True,
                  draw_region_x=_cfg.MENU_DRAW_X,
                  draw_region_y=_cfg.MENU_DRAW_Y,
@@ -92,14 +94,14 @@ class Menu(object):
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
                  option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
                  option_shadow_position=_cfg.MENU_SHADOW_POSITION,
-                 rect_width=_cfg.MENU_SELECTED_WIDTH,
-                 title_offsetx=0,
-                 title_offsety=0,
-                 widget_alignment=_locals.ALIGN_CENTER,
-                 columns=1,
                  rows=None,
-                 column_weights=None,
-                 force_fit_text=False,
+                 selection_border_width=_cfg.MENU_SELECTED_WIDTH,
+                 selection_color=_cfg.MENU_SELECTED_COLOR,
+                 selection_inflate_margin_x=_cfg.MENU_SELECTED_EXPLODE_MARGIN_X,
+                 selection_inflate_margin_y=_cfg.MENU_SELECTED_EXPLODE_MARGIN_Y,
+                 title_offset_x=0,
+                 title_offset_y=0,
+                 widget_alignment=_locals.ALIGN_CENTER,
                  ):
         """
         Menu constructor.
@@ -118,8 +120,12 @@ class Menu(object):
         :type back_box: bool
         :param bgfun: Background drawing function (only if menu pause app)
         :type bgfun: function
-        :param color_selected: Color of selected item
-        :type color_selected: tuple
+        :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
+        :type column_force_fit_text: bool
+        :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
+        :type column_max_width: tuple, None
+        :param columns: Number of columns, by default it's 1
+        :type columns: int
         :param dopause: Pause game
         :type dopause: bool
         :param draw_region_x: Drawing position of element inside menu (x-axis)
@@ -166,29 +172,31 @@ class Menu(object):
         :type option_shadow_offset: int
         :param option_shadow_position: Position of shadow
         :type option_shadow_position: basestring
-        :param rect_width: Border with of rectangle around selected item
-        :type rect_width: int
-        :param title_offsetx: Offset x-position of title (px)
-        :type title_offsetx: int
-        :param title_offsety: Offset y-position of title (px)
-        :type title_offsety: int
-        :param widget_alignment: Default widget alignment
-        :type widget_alignment: basestring
-        :param columns: Number of columns, by default it's 1
-        :type columns: int
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
-        :param column_weights: Tuple representing the width of each column, None if percentage is equal
-        :type column_weights: tuple, None
-        :param force_fit_text: Force text fitting on each menu option in multiple columns
-        :type force_fit_text: bool
+        :param selection_border_width: Border with of rectangle around selected item
+        :type selection_border_width: int
+        :param selection_color: Color of selected item
+        :type selection_color: tuple
+        :param selection_inflate_margin_x: X margin of selected item inflate box
+        :type selection_inflate_margin_x: int
+        :param selection_inflate_margin_y: Y margon if selected item inflate box
+        :type selection_inflate_margin_y: int
+        :param title_offset_x: Offset x-position of title (px)
+        :type title_offset_x: int
+        :param title_offset_y: Offset y-position of title (px)
+        :type title_offset_y: int
+        :param widget_alignment: Default widget alignment
+        :type widget_alignment: basestring
         """
         assert isinstance(window_width, int)
         assert isinstance(window_height, int)
         assert isinstance(font, str)
         assert isinstance(title, str)
         assert isinstance(back_box, bool)
-        assert isinstance(color_selected, tuple)
+        assert isinstance(column_force_fit_text, bool)
+        assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
+        assert isinstance(columns, int)
         assert isinstance(dopause, bool)
         assert isinstance(draw_region_x, int)
         assert isinstance(draw_region_y, int)
@@ -210,11 +218,14 @@ class Menu(object):
         assert isinstance(option_shadow, bool)
         assert isinstance(option_shadow_offset, int)
         assert isinstance(option_shadow_position, str)
-        assert isinstance(rect_width, int)
-        assert isinstance(columns, int)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(column_weights, (tuple, type(None)))
-        assert isinstance(force_fit_text, bool)
+        assert isinstance(selection_border_width, int)
+        assert isinstance(selection_color, tuple)
+        assert isinstance(selection_inflate_margin_x, int)
+        assert isinstance(selection_inflate_margin_y, int)
+        assert isinstance(title_offset_x, int)
+        assert isinstance(title_offset_y, int)
+        assert isinstance(widget_alignment, str)
 
         # Other asserts
         if dopause:
@@ -237,7 +248,7 @@ class Menu(object):
             'menu_alpha must be between 0 and 100 (both values included)'
         assert option_margin >= 0, \
             'option margin must be greater or equal than zero'
-        assert rect_width >= 0, 'rect_width must be greater or equal than zero'
+        assert selection_border_width >= 0, 'rect_width must be greater or equal than zero'
         assert window_height > 0 and window_width > 0, \
             'window size must be greater than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
@@ -247,6 +258,8 @@ class Menu(object):
             if columns == 1:
                 assert rows is None, 'rows must be None if there is only 1 column'
                 rows = 1e6  # Set rows as a big number
+        assert selection_inflate_margin_x > 0 and selection_inflate_margin_y > 0, \
+            'selection inflate margin must be greater than zero in both axis'
 
         self._actual = self  # Actual menu
         self._bgfun = bgfun
@@ -271,8 +284,8 @@ class Menu(object):
         self._option_shadow = option_shadow
         self._option_shadow_offset = option_shadow_offset
         self._option_shadow_position = option_shadow_position
-        self._rect_width = rect_width
-        self._sel_color = color_selected
+        self._selection_border_width = selection_border_width
+        self._selection_color = selection_color
         self._sounds = _Sound()  # type: _Sound
         self._surface = surface
         self._width = menu_width
@@ -303,33 +316,24 @@ class Menu(object):
                         ]
         self._draw_regionx = draw_region_x
         self._draw_regiony = draw_region_y
+        self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
 
-        # Option position
-        self._option_posy = int(self._height * (self._draw_regiony / 100.0)) + self._posy  # type: int
-        self._column_posx = [int(self._width * (self._draw_regionx / 100.0) + self._posx)]
-        self._column_widths = [self._width]
-
-        # Calculate _column_posx and _column_widths if there's more than 1 column
-        if columns > 1:
-            if column_weights is None:
-                column_weights = tuple(1 for _ in range(columns))
-            else:
-                for i in column_weights:
-                    assert i > 0, 'each column weight factor must be greater than zero'
-            s = float(sum(column_weights[:columns]))
-            cumulative = 0
-            self._column_posx = []
-            for i in range(columns):
-                w = column_weights[i] / s
-                self._column_posx.append(
-                    int(self._width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5)) + self._posx))
-                cumulative += column_weights[i] / s
-            self._option_posx = self._column_posx[0]
-            self._column_widths = tuple(int(self._width * column_weights[i] / s) for i in range(columns))
-
-        self._column_spacing = int(self._width / columns)  # type: int
+        # Columns and rows
         self._columns = columns
-        self._force_fit_text = force_fit_text
+        if column_max_width is not None:
+            if isinstance(column_max_width, (int, float)):
+                assert columns == 1, 'column_max_width can be a single number if there is only 1 column'
+                column_max_width = [column_max_width]
+            assert len(column_max_width) == columns, 'column_max_width length must be the same as the number of columns'
+            for i in column_max_width:
+                assert isinstance(i, type(None)) or isinstance(i, (int, float)), \
+                    'each column max width can be None (no limit) or an integer/float'
+                assert i > 0 or i is None, 'each column max width must be greater than zero or None'
+        else:
+            column_max_width = [None for _ in range(columns)]
+        self._column_max_width = column_max_width
+        self._column_widths = None  # type: list
+        self._force_fit_text = column_force_fit_text
         self._rows = rows
         self._widget_align = widget_alignment
 
@@ -349,6 +353,7 @@ class Menu(object):
         self._menubar = _widgets.MenuBar(title,
                                          self._width,
                                          back_box,
+                                         self._bgcolor,
                                          None,
                                          self._back)
         self._menubar.set_menu(self)
@@ -359,8 +364,8 @@ class Menu(object):
                           menu_color_title[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._menubar.set_title(title,
-                                title_offsetx,
-                                title_offsety)
+                                title_offset_x,
+                                title_offset_y)
         self._menubar.set_font(font_title or font,
                                font_size_title,
                                bg_color_title,
@@ -371,12 +376,101 @@ class Menu(object):
                                  offset=self._option_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
 
-        # Selected option
-        self._selected_inflate_x = 16  # type: int
-        self._selected_inflate_y = 6  # type: int
+        # Selected option, margin of the selection box
+        self._selected_inflate_x = selection_inflate_margin_x  # type: int
+        self._selected_inflate_y = selection_inflate_margin_y  # type: int
+
+        # Scrolling area
+        self._widgets_surface = None
+        self._scroll = _ScrollArea(self._width,
+                                   self._height - self._menubar.get_rect().height,
+                                   area_color=self._bgcolor,
+                                   shadow=self._option_shadow,
+                                   shadow_offset=self._option_shadow_offset,
+                                   shadow_position=self._option_shadow_position,
+                                   )
 
         # FPS of the menu
         self.set_fps(fps)
+
+    def _calculate_column_width(self):
+        """
+        Calculate the width of each column (self._column_widths). If the max column width is not set
+        the width of the column will be the maximum widget in the column.
+
+        :return: Total width of the columns
+        :rtype: int
+        """
+        # Compute the available width, that is the surface width minus the max width columns
+        self._column_widths = [0 for _ in range(self._columns)]
+        for i in range(self._columns):
+            if self._column_max_width[i] is not None:
+                self._column_widths[i] = self._column_max_width[i]
+
+        # Update None columns (max width not set)
+        for index in range(len(self._option)):
+            rect = self._option[index].get_rect()  # type: _pygame.Rect
+            col_index = int(index // self._rows)
+            if self._column_max_width[col_index] is None:  # No limit
+                self._column_widths[col_index] = max(self._column_widths[col_index],
+                                                     rect.width + self._selected_inflate_x,  # Add selection box
+                                                     )
+
+        # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
+        if 0 < sum(self._column_widths) < self._width:
+            scale = self._width / sum(self._column_widths)
+            for index in range(self._columns):
+                self._column_widths[index] *= scale
+
+        # If there's no horizontal scroll but there's vertical scroll, substract the thickness of the
+        # vertical scroll to all the columns
+        h_margin = 0  # This margin exists when scroll is discounted
+        # if 0 < sum(self._column_widths) <= self._width:
+        #     if self._calculate_row_height() >= self._height - self._menubar.get_rect().height:
+        #         scroll_v = self._scroll._scrollbar_thick + 2 * self._selected_inflate_x
+        #         for index in range(self._columns):
+        #             self._column_widths[index] -= float(scroll_v) / self._columns
+        #         h_margin = self._selected_inflate_x
+
+        # Final column width
+        total_col_width = int(sum(self._column_widths))
+
+        if self._columns > 1:
+
+            # Calculate column width scale (weights)
+            column_weights = tuple(
+                float(self._column_widths[i]) / max(total_col_width, 1.0) for i in range(self._columns))
+
+            # Calculate the position of each column
+            self._column_posx = []
+            cumulative = 0
+            for i in range(self._columns):
+                w = column_weights[i]
+                posx = int(total_col_width * (self._draw_regionx / 100.0 + (cumulative + 0.5 * w - 0.5)))
+                self._column_posx.append(posx + h_margin)
+                cumulative += w
+
+            # The startup position is the first column position
+            self._option_posx = self._column_posx[0]
+
+        else:
+            self._column_posx = [int(total_col_width * (self._draw_regionx / 100.0)) + h_margin]
+            self._column_widths = [total_col_width]
+
+        return total_col_width
+
+    def _calculate_row_height(self):
+        """
+        Calculate the total height of the rows.
+
+        :return: Row height
+        :rtype: int
+        """
+        max_y = 0
+        for index in range(len(self._option)):
+            _, y = self._get_option_pos(index, x=False)[2:]
+            max_y = max(max_y, y + self._selected_inflate_y)
+        return int(max_y)
 
     def add_button(self, element_name, element, *args, **kwargs):
         """
@@ -644,7 +738,7 @@ class Menu(object):
         :param align: Widget alignment
         :type align: str
         """
-        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(widget, _widgets.WidgetType), 'widget must be a Widget instance'
         assert isinstance(font_size, int), 'font_size must be an integer'
         assert isinstance(align, str), 'align must be a string'
 
@@ -654,14 +748,17 @@ class Menu(object):
             font_size = self._fsize
         assert font_size > 0, 'font_size must be greater than zero'
 
+        _col = int((len(self._option) - 1) // self._rows)  # Column position
+
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
         widget.set_font(font=self._font_name,
                         font_size=font_size,
                         color=self._font_color,
-                        selected_color=self._sel_color)
-        if self._force_fit_text:
-            widget.set_max_width(self._column_widths[(len(self._option) - 1) // self._rows])
+                        selected_color=self._selection_color)
+        if self._force_fit_text and self._column_max_width[_col] is not None:
+            selection_dx = self._selected_inflate_x + self._selection_border_width
+            widget.set_max_width(self._column_max_width[_col] - selection_dx)
         widget.set_shadow(enabled=self._option_shadow,
                           color=_cfg.MENU_SHADOW_COLOR,
                           position=self._option_shadow_position,
@@ -677,20 +774,14 @@ class Menu(object):
         :type widget: pygameMenu.widgets.widget.Widget
         """
         assert isinstance(widget, _widgets.WidgetType)
-
         if self._columns > 1:
             _max_elements = self._columns * self._rows
             _msg = 'total elements cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
             assert len(self._option) + 1 <= _max_elements, _msg
-
-        _widget_font_size = widget.get_font_info()['size']
         self._option.append(widget)
         _totals = len(self._option)
         if _totals == 1:
             widget.set_selected()
-        elif _totals > 1 and (self._columns == 1 or _totals <= self._rows):
-            dy = -_widget_font_size / 2 - self._opt_dy / 2
-            self._option_posy += dy
 
     def _back(self):
         """
@@ -703,6 +794,32 @@ class Menu(object):
             self.reset(1)
         else:
             self._close()
+
+    def _build_widget_surface(self):
+        """
+        Create the surface used to draw widgets according the
+        required width and height.
+        """
+        menubar_height = self._menubar.get_rect().height
+        max_x = self._calculate_column_width()
+        max_y = self._calculate_row_height()
+
+        if max_x > self._width and max_y > self._height - menubar_height:
+            width, height = max_x + 20, max_y + 20
+        elif max_x > self._width:
+            # Remove the thick of the scrollbar
+            # to avoid displaying an vertical one
+            width, height = max_x + 20, self._height - menubar_height - 20
+        elif max_y > self._height:
+            # Remove the thick of the scrollbar
+            # to avoid displaying an horizontal one
+            width, height = self._width - 20, max_y + 20
+        else:
+            width, height = self._width, self._height - menubar_height
+
+        self._widgets_surface = make_surface(width, height)
+        self._scroll.set_world(self._widgets_surface)
+        self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -777,33 +894,59 @@ class Menu(object):
             self._enabled = False
             self._closelocked = closelocked
 
-    def _get_option_pos(self, index):
+    def center_vertically(self):
         """
-        Get option position from the option index.
+        Update draw_region_y based on the current widgets.
+        If the height of the widgets is greater than the height of the menu, the drawing region will start at zero.
+        """
+        self._build_widget_surface()
+        horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        max_y = self._calculate_row_height() - self._option_offsety
+        available = self._height - self._menubar.get_rect().height - horizontal_scroll
+        self._draw_regiony = max(100.0 * (available - max_y) / (2.0 * self._height), 0)
+        self._option_offsety = int(self._height * (self._draw_regiony / 100.0))
+
+    def _get_option_pos(self, index, x=True, y=True):
+        """
+        Get option position on the widgets surface from the option index.
 
         :param index: Option index
         :type index: int
-        :return: Position (x,y)
+        :param x: Calculate x position
+        :type x: bool
+        :param y: Calculate y position
+        :type y: bool
+        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
         """
-        rect = self._option[index].get_rect()
-        align = self._option[index].get_alignment()
+        assert len(self._option) > index >= 0, 'index not valid'
+        assert isinstance(index, int), 'index must be an integer'
+        assert isinstance(x, bool) and isinstance(y, bool), 'x and y must be boolean'
 
-        # Calculate alignment
-        _column_width = self._column_widths[int(index // self._rows)]  # if column=1 then (column width)=(menu width)
-        if align == _locals.ALIGN_CENTER:
-            option_dx = -int(rect.width / 2.0)
-        elif align == _locals.ALIGN_LEFT:
-            option_dx = -_column_width / 2 + self._selected_inflate_x
-        elif align == _locals.ALIGN_RIGHT:
-            option_dx = _column_width / 2 - rect.width - self._selected_inflate_x
-        else:
-            option_dx = 0
-        t_dy = -int(rect.height / 2.0)
+        x_coord = 0
+        y_coord = 0
+        rect = self._option[index].get_rect()  # type: _pygame.Rect
 
-        x_coord = self._column_posx[int(index // self._rows)] + option_dx
-        y_coord = self._option_posy + (index % self._rows) * (self._fsize + self._opt_dy) + t_dy
-        return x_coord, y_coord
+        # Calculate X position
+        if x:
+            _column_width = self._column_widths[int(index // self._rows)]
+            align = self._option[index].get_alignment()
+            if align == _locals.ALIGN_CENTER:
+                dx = -int(rect.width / 2.0)
+            elif align == _locals.ALIGN_LEFT:
+                dx = -_column_width / 2 + self._selected_inflate_x
+            elif align == _locals.ALIGN_RIGHT:
+                dx = _column_width / 2 - rect.width - self._selected_inflate_x
+            else:
+                dx = 0
+            x_coord = self._column_posx[int(index // self._rows)] + dx
+
+        # Calculate Y position
+        if y:
+            dy = self._selected_inflate_y + self._selection_border_width - 2  # Adds the inflation box minus the border
+            y_coord = self._option_offsety + (index % self._rows) * (self._fsize + self._opt_dy) + dy
+
+        return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):
         """
@@ -811,30 +954,35 @@ class Menu(object):
 
         :return: None
         """
-        # Draw background rectangle
-        _gfxdraw.filled_polygon(self._surface, self._bgrect, self._bgcolor)
+        # The surface may has been erased because the number
+        # of widgets has changed and thus size shall be calculated.
+        if not self._widgets_surface:
+            self._build_widget_surface()
 
         # Update menu bar position
         self._menubar.set_position(self._posx, self._posy)
-        self._menubar.draw(self._surface)
 
         # Draw options (widgets)
+        self._widgets_surface.fill((255, 255, 255, 0))  # Transparent
         for index in range(len(self._option)):
             widget = self._option[index]
 
             # Update widget position
-            widget.set_position(*self._get_option_pos(index))
+            widget.set_position(*self._get_option_pos(index)[:2])
 
             # Draw widget
-            widget.draw(self._surface)
+            widget.draw(self._widgets_surface)
 
             # If selected item then draw a rectangle
             if self._drawselrect and widget.selected:
-                widget.draw_selected_rect(self._surface,
-                                          self._sel_color,
+                widget.draw_selected_rect(self._widgets_surface,
+                                          self._selection_color,
                                           self._selected_inflate_x,
                                           self._selected_inflate_y,
-                                          self._rect_width)
+                                          self._selection_border_width)
+
+        self._scroll.draw(self._surface)
+        self._menubar.draw(self._surface)
 
     def enable(self):
         """
@@ -932,6 +1080,11 @@ class Menu(object):
             if not self._actual._dopause:
                 break_mainloop = True
 
+        # Process events, check title
+        if self._actual._scroll.update(events):
+            if not self._actual._dopause:
+                break_mainloop = True
+
         # Check selected widget
         elif len(self._actual._option) > 0 and self._actual._option[self._actual._index].update(events):
             if not self._actual._dopause:
@@ -939,6 +1092,7 @@ class Menu(object):
 
         # Check others
         else:
+
             for event in events:  # type: _pygame.event.EventType
 
                 # noinspection PyUnresolvedReferences
@@ -1014,14 +1168,21 @@ class Menu(object):
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._actual._option)):
                         widget = self._actual._option[index]
-                        if widget.get_rect().collidepoint(*event.pos):
+                        # Don't considere the mouse wheel (button 4 & 5)
+                        if event.button in (1, 2, 3) and \
+                                self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                             self._select(index)
 
                 elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
                     self._sounds.play_click_mouse()
                     widget = self._actual._option[self._actual._index]
-                    if widget.get_rect().collidepoint(*event.pos):
-                        widget.update(events)  # This option can change the current menu to a submenu
+                    # Don't considere the mouse wheel (button 4 & 5)
+                    if event.button in (1, 2, 3) and \
+                            self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                        new_event = _pygame.event.Event(event.type, **event.dict)
+                        new_event.dict['origin'] = self._actual._scroll.to_real_position((0, 0))
+                        new_event.pos = self._actual._scroll.to_world_position(event.pos)
+                        widget.update((new_event,))  # This option can change the current menu to a submenu
                         break_mainloop = True  # It is updated
                         break
 
@@ -1111,7 +1272,7 @@ class Menu(object):
 
     def get_position(self):
         """
-        Returns menu position as a tuple.
+        Return menu position as a tuple.
 
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
@@ -1267,6 +1428,12 @@ class Menu(object):
         actual._option[actual._index].set_selected(False)
         actual._index = index % len(actual._option)
         actual._option[actual._index].set_selected()
+        if actual._index == 0:
+            # Scroll to the top of the menu
+            rect = _pygame.Rect(0, 0, 10, 10)
+        else:
+            rect = actual._option[actual._index].get_rect()
+        actual._scroll.scroll_to_rect(rect)
 
     def get_widget(self, widget_id, recursive=False):
         """

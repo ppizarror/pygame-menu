@@ -34,7 +34,8 @@ import math as _math
 import pygame as _pygame
 import pygameMenu.controls as _ctrl
 import pygameMenu.locals as _locals
-from pygameMenu.utils import check_key_pressed_valid
+
+from pygameMenu.utils import check_key_pressed_valid, make_surface
 from pygameMenu.widgets.widget import Widget
 
 try:
@@ -197,6 +198,7 @@ class TextInput(Widget):
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
         self._last_key = 0  # type: int
+        self._absolute_origin = (0, 0)  # To calculate mouse collide point
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0  # type: int
@@ -424,8 +426,7 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            new_surface = _pygame.Surface((x, y), _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
-            self._selection_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
+            self._selection_surface = make_surface(x, y)
             self._selection_surface.fill(self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
@@ -475,8 +476,8 @@ class TextInput(Widget):
 
             # Calculate total available space
             current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
-            _, _, menu_width, _ = menu.get_position()
-            space_between_label = menu_width - self._label_size - self._rect.x
+            _, _, posx2, _ = menu.get_position()
+            space_between_label = posx2 - self._label_size - self._rect.x
             char = _math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
 
             # If char limit
@@ -501,10 +502,7 @@ class TextInput(Widget):
             new_width = max(self._label_size + underline.get_size()[0],
                             max_width_current,
                             self._last_rendered_surface_underline_width)
-            new_size = (new_width + 1, current_rect.height + 3)
-
-            new_surface = _pygame.Surface(new_size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
-            new_surface = _pygame.Surface.convert_alpha(new_surface)  # type: _pygame.SurfaceType
+            new_surface = make_surface(new_width + 1, current_rect.height + 3, alpha=True)
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))
@@ -530,7 +528,7 @@ class TextInput(Widget):
         if self._cursor_surface is None:
             if self._rect.height == 0:  # If menu has not been initialized this error can occur
                 return
-            self._cursor_surface = _pygame.Surface((int(self._font_size / 20 + 1), self._rect.height - 2))
+            self._cursor_surface = make_surface(int(self._font_size / 20 + 1), self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string
@@ -1588,10 +1586,12 @@ class TextInput(Widget):
                 self._key_is_pressed = False
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+                self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 self._selection_active = False
                 self._check_mouse_collide_input(event.pos)
 
             elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONDOWN:
+                self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 if self._selection_active:
                     self._unselect_text()
                 self._selection_active = True
@@ -1608,7 +1608,9 @@ class TextInput(Widget):
         if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
             self._keyrepeat_mouse_ms = 0
             if mouse_left:
-                self._check_mouse_collide_input(_pygame.mouse.get_pos())
+                pos = _pygame.mouse.get_pos()
+                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
+                                                 pos[1] - self._absolute_origin[1]))
 
         # Update key counters:
         for key in self._keyrepeat_counters:

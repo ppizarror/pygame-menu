@@ -309,16 +309,16 @@ class PygameMenuUtils(object):
         :rtype: pygameMenu.Menu
         """
         return pygameMenu.Menu(surface,
+                               columns=columns,
                                dopause=False,
                                enabled=False,
                                font=pygameMenu.font.FONT_NEVIS,
                                fps=FPS,
                                menu_alpha=90,
+                               rows=rows,
                                title=title,
                                window_height=H_SIZE,
                                window_width=W_SIZE,
-                               columns=columns,
-                               rows=rows,
                                *args,
                                **kwargs
                                )

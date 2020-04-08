@@ -32,11 +32,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from test._utils import *
 
 # Imports
-import pygameMenu.examples.timer_clock as example1
-import pygameMenu.examples.game_selector as example2
-import pygameMenu.examples.multi_input as example3
-import pygameMenu.examples.scroll_bar as example4
-import pygameMenu.examples.scroll_menu as example5
+import pygameMenu.examples.game_selector as game_selector
+import pygameMenu.examples.multi_input as multi_input
+import pygameMenu.examples.scroll_area as scroll_area
+import pygameMenu.examples.scroll_bar as scroll_bar
+import pygameMenu.examples.scroll_menu as scroll_menu
+import pygameMenu.examples.timer_clock as timer_clock
 
 
 class ExamplesTest(unittest.TestCase):
@@ -46,38 +47,45 @@ class ExamplesTest(unittest.TestCase):
         """
         Test timer clock example.
         """
-        example1.main(test=True)
-        example1.mainmenu_background()
-        example1.reset_timer()
+        timer_clock.main(test=True)
+        timer_clock.mainmenu_background()
+        timer_clock.reset_timer()
 
     @staticmethod
     def test_example_difficulty_selector():
         """
         Test multi-input example.
         """
-        example2.main(test=True)
+        game_selector.main(test=True)
         font = PygameMenuUtils.load_font(PygameMenuUtils.random_font(), 5)
-        example2.play_function(['EASY'], font, test=True)
-        example2.play_function(['MEDIUM'], font, test=True)
-        example2.play_function(['HARD'], font, test=True)
+        game_selector.play_function(['EASY'], font, test=True)
+        game_selector.play_function(['MEDIUM'], font, test=True)
+        game_selector.play_function(['HARD'], font, test=True)
 
     @staticmethod
     def test_example_multi_input():
         """
         Test multi-input example.
         """
-        example3.main(test=True)
+        multi_input.main(test=True)
 
     @staticmethod
     def test_example_scroll_bar():
         """
         Test scroll bar example.
         """
-        example4.main(test=True)
+        scroll_bar.main(test=True)
 
     @staticmethod
     def test_example_scroll_menu():
         """
         Test scroll menu example.
         """
-        example5.main(test=True)
+        scroll_menu.main(test=True)
+
+    @staticmethod
+    def test_example_area_menu():
+        """
+        Test scroll area example.
+        """
+        scroll_area.main(test=True)

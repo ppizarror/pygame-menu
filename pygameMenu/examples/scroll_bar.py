@@ -34,16 +34,20 @@ import os
 import pygame
 import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
+
+from pygameMenu.utils import make_surface
 from pygameMenu.widgets import ScrollBar
 
 
 def make_world(width, height):
     """
+    Create a test surface.
+
     :param width: Width in pixels
     :param height: Height in pixels
     :return: World surface
     """
-    world = pygame.Surface((width, height))  # lgtm [py/call/wrong-arguments]
+    world = make_surface(width, height)
     world.fill((200, 200, 200))
 
     color = [70, 20, 20]
@@ -116,6 +120,7 @@ def main(test=False):
     sb_h.set_page_step(scr_size[0] - thick_v)
 
     # Vertical ScrollBar
+    # noinspection PyArgumentEqualDefault
     sb_v = ScrollBar(scr_size[1] - thick_h,
                      (0, world.get_height() - scr_size[1] + thick_h),
                      '',

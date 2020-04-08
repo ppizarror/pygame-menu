@@ -246,6 +246,7 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
 
         self.menu.add_text_input('text1', 'id1', 1)  # Force to string
+        self.menu.center_vertically()
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id1'], '1')
 

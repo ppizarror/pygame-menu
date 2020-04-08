@@ -32,8 +32,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
-from pygameMenu.widgets.widget import Widget
 import pygameMenu.controls as _ctrl
+
+from pygameMenu.utils import make_surface
+from pygameMenu.widgets.widget import Widget
 
 
 # noinspection PyTypeChecker
@@ -46,6 +48,7 @@ class MenuBar(Widget):
                  label,
                  width,
                  back_box=False,
+                 bgcolor=None,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -60,6 +63,8 @@ class MenuBar(Widget):
         :type width: int
         :param back_box: Draw a back-box button on header
         :type back_box: bool
+        :param bgcolor: Color behind the polygon (transparent if not given)
+        :type bgcolor: tuple, list
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -81,6 +86,7 @@ class MenuBar(Widget):
         self._backbox = back_box
         self._backbox_pos = None  # type: tuple
         self._backbox_rect = None  # type: _pygame.rect.RectType
+        self._bgcolor = bgcolor
         self._label = label
         self._offsetx = 0  # type: int
         self._offsety = 0  # type: int
@@ -98,6 +104,11 @@ class MenuBar(Widget):
         See upper class doc.
         """
         self._render()
+
+        if self._bgcolor:
+            bg = make_surface(self._width, self._rect.height + 5)
+            bg.fill(self._bgcolor)
+            surface.blit(bg, self._rect.topleft)
 
         _gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
 
@@ -129,8 +140,8 @@ class MenuBar(Widget):
 
         self._polygon_pos = (
             (self._rect.x, self._rect.y),
-            (self._rect.x + self._width, self._rect.y),
-            (self._rect.x + self._width, self._rect.y + self._rect.height * 0.6),
+            (self._rect.x + self._width - 1, self._rect.y),  # -1 for line thickness
+            (self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6),
             (self._rect.x + self._rect.width + 30, self._rect.y + self._rect.height * 0.6),
             (self._rect.x + self._rect.width + 10, self._rect.y + self._rect.height + 5),
             (self._rect.x, self._rect.y + self._rect.height + 5)

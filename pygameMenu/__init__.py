@@ -30,13 +30,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Library imports
 import pygameMenu.config
 import pygameMenu.controls
 import pygameMenu.events
 import pygameMenu.font
 import pygameMenu.locals
 import pygameMenu.sound
+import pygameMenu.utils
 import pygameMenu.version
 
 from pygameMenu.menu import Menu

@@ -3,7 +3,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-ScrollArea
+SCROLLBAR
 ScrollBar class, manage the selection in a range of values.
 
 License:
@@ -31,8 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-from pygameMenu.widgets.widget import Widget
 import pygameMenu.locals as _locals
+
+from pygameMenu.utils import make_surface
+from pygameMenu.widgets.widget import Widget
 
 
 # noinspection PyTypeChecker
@@ -62,6 +64,26 @@ class ScrollBar(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
+        """
+        Description of the specific parameters (see Widget class for generic ones):
+
+        :param length: Length of the page control
+        :type length: int
+        :param values_range: Min and max values
+        :type values_range: tuple, list
+        :param scrollbar_id: Bar identifier
+        :type scrollbar_id: basestring
+        :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+        :type orientation: basestring
+        :param slider_pad: Space between slider and page control
+        :type slider_pad: int
+        :param slider_color: Color of the slider
+        :type slider_color: tuple, list
+        :param page_ctrl_thick: Page control thickness
+        :type page_ctrl_thick: int
+        :param page_ctrl_color: Page control color
+        :type page_ctrl_color: tuple, list
+        """
         assert isinstance(length, (int, float))
         assert isinstance(values_range, (tuple, list))
         assert values_range[1] > values_range[0], 'minimum value first is expected'
@@ -87,7 +109,6 @@ class ScrollBar(Widget):
         self._slider_pad = slider_pad
         self._slider_color = slider_color
         self._slider_position = 0  # type: int
-        self._slider_length = None  # type: int
 
         self._single_step = 20  # type: int
         self._page_step = None  # type: int
@@ -95,29 +116,30 @@ class ScrollBar(Widget):
         if values_range[1] - values_range[0] > length:
             self.set_page_step(length)
         else:
-            self.set_page_step((values_range[1] - values_range[0]) / 5)  # Arbitrary
+            self.set_page_step((values_range[1] - values_range[0]) / 5.0)  # Arbitrary
         self.set_orientation(orientation)
-
-    def _apply_size_changes(self):
-        dims = ('width', 'height')
-        setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
-        setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
-        self._slider_rect = _pygame.Rect(0, 0, self._rect.width, self._rect.height)
-        setattr(self._slider_rect, dims[self._orientation], self._slider_length)
-        setattr(self._slider_rect, dims[self._opp_orientation], self._page_ctrl_thick)
-
-        # Update slider position according to the current one
-        pos = ('x', 'y')
-        setattr(self._slider_rect, pos[self._orientation],
-                min(self._slider_position, getattr(self._slider_rect, dims[self._orientation])))
-
-        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def _apply_font(self):
         """
         See upper class doc.
         """
         pass
+
+    def _apply_size_changes(self):
+        """
+        Apply scrollbar changes.
+        """
+        dims = ('width', 'height')
+        setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
+        setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
+        self._slider_rect = _pygame.Rect(0, 0, self._rect.width, self._rect.height)
+        setattr(self._slider_rect, dims[self._orientation], self._page_step)
+        setattr(self._slider_rect, dims[self._opp_orientation], self._page_ctrl_thick)
+
+        # Update slider position according to the current one
+        pos = ('x', 'y')
+        setattr(self._slider_rect, pos[self._orientation], self._slider_position)
+        self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def draw(self, surface):
         """
@@ -153,7 +175,7 @@ class ScrollBar(Widget):
         page control surface.
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-               (self._page_ctrl_length - self._slider_length)
+               self._page_ctrl_length
 
     def get_value(self):
         """
@@ -163,7 +185,7 @@ class ScrollBar(Widget):
         :rtype: int
         """
         value = self._values_range[0] + self._slider_position * \
-                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._slider_length)
+                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -175,7 +197,7 @@ class ScrollBar(Widget):
         See upper class doc.
         """
         # Render page control
-        self._surface = _pygame.Surface(self._rect.size)  # lgtm [py/call/wrong-arguments]
+        self._surface = make_surface(*self._rect.size)
         self._surface.fill(self._page_ctrl_color)
 
         # Render slider
@@ -210,6 +232,7 @@ class ScrollBar(Widget):
         space_after = self._rect.bottomright[axis] - \
                       self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
+
         if not move:
             return False
 
@@ -219,23 +242,28 @@ class ScrollBar(Widget):
         self._slider_position += move
         return True
 
+    def set_length(self, value):
+        """
+        Set the length of the page control area.
+        """
+        assert 0 < value
+        self._page_ctrl_length = value
+        self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
+        self._apply_size_changes()
+
     def set_maximum(self, value):
         """
         Set the greatest acceptable value.
         """
         assert value > self._values_range[0], "Maximum value shall greater than {}".format(self._values_range[0])
-        page_step = self.get_page_step()
         self._values_range[1] = value
-        self.set_page_step(page_step)  # Recalculate slider ratio
 
     def set_minimum(self, value):
         """
         Set the smallest acceptable value.
         """
         assert 0 <= value < self._values_range[1], "Minimum value shall lower than {}".format(self._values_range[1])
-        page_step = self.get_page_step()
         self._values_range[0] = value
-        self.set_page_step(page_step)  # Recalculate slider ratio
 
     def set_orientation(self, orientation):
         """
@@ -267,14 +295,11 @@ class ScrollBar(Widget):
         :type value: int
         :return: None
         """
-        assert 0 < value <= self._values_range[1] - self._values_range[0]
+        assert 0 < value, 'Page step shall be > 0'
 
         # Slider length shall represent the same ratio
-        self._slider_length = round(1.0 * self._page_ctrl_length * value /
-                                    (self._values_range[1] - self._values_range[0]))
-
-        self._page_step = round(1.0 * (self._page_ctrl_length - self._slider_length) *
-                                value / (self._values_range[1] - self._values_range[0]))
+        self._page_step = round(1.0 * self._page_ctrl_length * value /
+                                (self._values_range[1] - self._values_range[0]))
 
         if self._single_step >= self._page_step:
             self._single_step = self._page_step // 2  # Arbitrary to be lower than page step
@@ -286,17 +311,18 @@ class ScrollBar(Widget):
         Set the value and update the position of the slider accordingly.
 
         :param value: value in the values_range
-        :type value: int
+        :type value: float
         :return: None
         """
-        assert self._values_range[0] <= value <= self._values_range[1]
+        assert self._values_range[0] <= value <= self._values_range[1], \
+            '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
-        pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._slider_length) / \
+        pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
                  (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)
-        pixels = min(self._page_ctrl_length - self._slider_length, pixels)
+        pixels = min(self._page_ctrl_length - self._page_step, pixels)
 
         self._scroll(pixels - self._slider_position)
 
@@ -314,7 +340,7 @@ class ScrollBar(Widget):
             elif self.mouse_enabled and event.type is _pygame.MOUSEBUTTONDOWN:
                 if event.button in (4, 5) and self._orientation == 1:
                     # Vertical bar: scroll down (4) or up (5)
-                    direction = 1 if event.button == 4 else -1
+                    direction = -1 if event.button == 4 else 1
                     if self._scroll(direction * self._single_step):
                         self.change()
                         updated = True
@@ -326,7 +352,8 @@ class ScrollBar(Widget):
 
                     elif self._rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
-                        pos = (self._slider_rect.x, self._slider_rect.y)
+                        srect = self._slider_rect.move(*self._rect.topleft)
+                        pos = (srect.x, srect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(direction * self._page_step):
                             self.change()

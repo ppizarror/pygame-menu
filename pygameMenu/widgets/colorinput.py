@@ -33,7 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame as _pygame
 import pygameMenu.locals as _locals
-from pygameMenu.utils import check_key_pressed_valid
+
+from pygameMenu.utils import check_key_pressed_valid, make_surface
 from pygameMenu.widgets.textinput import TextInput
 
 _TYPE_HEX = 'hex'
@@ -241,7 +242,10 @@ class ColorInput(TextInput):
         # If previsualization surface is None or the color changed
         if self._last_r != r or self._last_b != b or self._last_g != g or self._prev_surface is None:
             _width = self._prev_size * self._rect.height
-            self._prev_surface = _pygame.Surface((_width, self._rect.height))  # lgtm [py/call/wrong-arguments]
+            if _width == 0 or self._rect.height == 0:
+                self._prev_surface = None
+                return
+            self._prev_surface = make_surface(_width, self._rect.height)
             self._prev_surface.fill((r, g, b))
             self._last_r = r
             self._last_g = g
