@@ -136,16 +136,17 @@ import pygameMenu
     | columns | Number of columns in menu | int | 1 |
     | dopause | Pause game | bool | True |
     | enabled | Menu is enabled by default or not | bool | True |
-    | font_color | Color of font | tuple | config.*MENU_FONT_COLOR* |
+    | font_color | Color of font | tuple,list | config.*MENU_FONT_COLOR* |
     | font_size | Font size of menu widgets | int | config.*MENU_FONT_SIZE* |
     | font_size_title | Font size of the title | int | config.*MENU_FONT_SIZE_TITLE* |
     | font_title | Alternative font of the title | str | None |
     | fps | Fps limit of the menu, 0: no limit | int,float | 0 |
     | joystick_enabled | Enable joystick support | bool | True |
     | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | config.*MENU_ALPHA* |
-    | menu_color | Menu color | tuple | config.*MENU_BGCOLOR* |
-    | menu_color_title | Background color of title | tuple | config.*MENU_TITLE_BG_COLOR* |
+    | menu_color | Menu color | tuple,list | config.*MENU_BGCOLOR* |
+    | menu_color_title | Background color of title | tuple,list | config.*MENU_TITLE_BG_COLOR* |
     | menu_height | Height of menu (px) | int,float | config.*MENU_HEIGHT* |
+    | menu_shadow_color | Color of the shadow | tuple,list | config.*MENU_SHADOW_COLOR* |
     | menu_width | Width of menu (px) | int,float | config.*MENU_WIDTH* |
     | mouse_enabled | Enable mouse support | bool | True |
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |

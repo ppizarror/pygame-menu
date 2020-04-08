@@ -44,7 +44,7 @@ import pygameMenu.widgets as _widgets
 
 from pygameMenu.scrollarea import ScrollArea as _ScrollArea
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import check_key_pressed_valid, make_surface
+from pygameMenu.utils import *
 
 # Joy events
 _JOY_EVENT_LEFT = 1
@@ -81,6 +81,7 @@ class Menu(object):
                  menu_color=_cfg.MENU_BGCOLOR,
                  menu_color_title=_cfg.MENU_TITLE_BG_COLOR,
                  menu_height=_cfg.MENU_HEIGHT,
+                 menu_shadow_color=_cfg.MENU_SHADOW_COLOR,
                  menu_width=_cfg.MENU_WIDTH,
                  mouse_enabled=True,
                  mouse_visible=True,
@@ -126,8 +127,8 @@ class Menu(object):
         :type enabled: bool
         :param fps: FPS of the menu
         :type fps: int, float
-        :param font_color: Color of font
-        :type font_color: tuple
+        :param font_color: Color of the font
+        :type font_color: tuple,list
         :param font_size: Font size
         :type font_size: int
         :param font_size_title: Font size of the title
@@ -139,11 +140,13 @@ class Menu(object):
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :type menu_alpha: int
         :param menu_color: Menu color
-        :type menu_color: tuple
+        :type menu_color: tuple,list
         :param menu_color_title: Background color of title
-        :type menu_color_title: tuple
+        :type menu_color_title: tuple,list
         :param menu_height: Height of menu (px)
         :type menu_height: int,float
+        :param menu_shadow_color: Color of the shadow
+        :type menu_shadow_color: tuple,list
         :param menu_width: Width of menu (px)
         :type menu_width: int,float
         :param mouse_enabled: Enable/disable mouse click on menu
@@ -169,7 +172,7 @@ class Menu(object):
         :param selection_highlight_border_width: Border with of rectangle around selected item
         :type selection_highlight_border_width: int
         :param selection_color: Color of selected item
-        :type selection_color: tuple
+        :type selection_color: tuple,list
         :param selection_highlight: Enable drawing a rectangle around selected item
         :type selection_highlight: bool
         :param selection_highlight_margin_x: X margin of selected highlight box
@@ -191,14 +194,11 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(dopause, bool)
         assert isinstance(enabled, bool)
-        assert isinstance(font_color, tuple)
         assert isinstance(font_size, int)
         assert isinstance(font_size_title, int)
         assert isinstance(font_title, (str, type(None)))
         assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_alpha, int)
-        assert isinstance(menu_color, tuple)
-        assert isinstance(menu_color_title, tuple)
         assert isinstance(menu_height, (int, float))
         assert isinstance(menu_width, (int, float))
         assert isinstance(mouse_enabled, bool)
@@ -210,7 +210,6 @@ class Menu(object):
         assert isinstance(option_shadow_offset, int)
         assert isinstance(option_shadow_position, str)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(selection_color, tuple)
         assert isinstance(selection_highlight, bool)
         assert isinstance(selection_highlight_border_width, int)
         assert isinstance(selection_highlight_margin_x, int)
@@ -218,6 +217,13 @@ class Menu(object):
         assert isinstance(title_offset_x, int)
         assert isinstance(title_offset_y, int)
         assert isinstance(widget_alignment, str)
+
+        # Assert colors
+        assert_color(font_color, 'font_color')
+        assert_color(menu_color, 'menu_color')
+        assert_color(menu_color_title, 'menu_color_title')
+        assert_color(menu_shadow_color, 'menu_shadow_color')
+        assert_color(selection_color, 'selection_color')
 
         # Other asserts
         if dopause:
@@ -262,11 +268,11 @@ class Menu(object):
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._font_color = font_color
-        self._fps = 0  # type: int
         self._fsize = font_size
         self._height = int(menu_height)
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
+        self._menu_shadow_color = menu_shadow_color
         self._onclose = onclose  # Function that calls after closing menu
         self._option_shadow = option_shadow
         self._option_shadow_offset = option_shadow_offset
@@ -365,7 +371,7 @@ class Menu(object):
                                bg_color_title,
                                self._font_color)
         self._menubar.set_shadow(enabled=self._option_shadow,
-                                 color=_cfg.MENU_SHADOW_COLOR,
+                                 color=self._menu_shadow_color,
                                  position=self._option_shadow_position,
                                  offset=self._option_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
@@ -747,7 +753,7 @@ class Menu(object):
             selection_dx = self._selection_highlight_margin_x + self._selection_border_width
             widget.set_max_width(self._column_max_width[_col] - selection_dx)
         widget.set_shadow(enabled=self._option_shadow,
-                          color=_cfg.MENU_SHADOW_COLOR,
+                          color=self._menu_shadow_color,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
