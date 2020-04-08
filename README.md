@@ -137,7 +137,6 @@ import pygameMenu
     | dopause | Pause game | bool | True |
     | draw_region_x | Drawing position of element inside menu (x-axis) as percentage | int | config.*MENU_DRAW_X* |
     | draw_region_y | Drawing position of element inside menu (y-axis) as percentage | int | config.*MENU_DRAW_Y* |
-    | draw_select | Draw a rectangle around selected item (bool) | bool | config.*MENU_SELECTED_DRAW* |
     | enabled | Menu is enabled by default or not | bool | True |
     | font_color | Color of font | tuple | config.*MENU_FONT_COLOR* |
     | font_size | Font size of menu widgets | int | config.*MENU_FONT_SIZE* |
@@ -160,6 +159,7 @@ import pygameMenu
     | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
     | selection_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
     | selection_color | Color of selected item | tuple | config.*MENU_SELECTED_COLOR* |
+    | selection_inflate_enabled | Enable drawing a rectangle around selected item | bool | config.*MENU_SELECTED_DRAW* |
     | selection_inflate_margin_x | X margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_X* |
     | selection_inflate_margin_y | Y margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_Y* |
     | title_offset_x | Offset x-position of title (px) | int | 0 |

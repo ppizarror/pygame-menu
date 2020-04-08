@@ -170,7 +170,7 @@ class Menu(object):
         :type selection_border_width: int
         :param selection_color: Color of selected item
         :type selection_color: tuple
-        :param selection_inflate_enabled: Draw a rectangle around selected item (bool)
+        :param selection_inflate_enabled: Enable drawing a rectangle around selected item
         :type selection_inflate_enabled: bool
         :param selection_inflate_margin_x: X margin of selected item inflate box
         :type selection_inflate_margin_x: int
