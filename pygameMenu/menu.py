@@ -131,7 +131,7 @@ class Menu(object):
         :type dopause: bool
         :param enabled: Menu is enabled by default or not
         :type enabled: bool
-        :param fps: Maximums FPS (frames per second) of the menu
+        :param fps: Maximum FPS (frames per second)
         :type fps: int, float
         :param joystick_enabled: Enable/disable joystick on menu
         :type joystick_enabled: bool
