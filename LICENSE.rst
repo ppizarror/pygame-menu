@@ -1,6 +1,8 @@
-The MIT License (MIT)
 
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+pygame-menu: a simple, lightweight and easy to use library to build menu with pygame.
+Copyright © 2017-2020 Pablo Pizarro R. pablo@ppizarror.com
+
+The MIT License (MIT)
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),

@@ -2,9 +2,26 @@
 pygame-menu
 ===========
 
-| Written for both Python 2.7+ and 3.4+
+.. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/ppizarror/pygame-menu
+    :alt: Codecov
 
-Source repo on `github <https://github.com/ppizarror/pygame-menu>`__
+.. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
+    :target: https://travis-ci.org/ppizarror/pygame-menu
+    :alt: Travis
+
+.. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts
+    :alt: Total alerts
+
+.. image:: https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python
+    :alt: Language grade: Python
+
+Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
+
+Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ or
+run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
 Introduction
 ------------
@@ -12,41 +29,35 @@ Introduction
 Pygame-menu is a python-pygame library for creating menus, it supports
 selectors, buttons and texts menus with many options to customize.
 
+Comprehensive documentation is available at https://pygame-menu.readthedocs.io .
+
+
 Install Instructions
 --------------------
 
-Pygame-menu can be downloaded via pip. Simply run pip install pygame-menu.
+Pygame-menu can be downloaded via pip. Simply run::
+
+    pip install pygame-menu
 
 Dependencies
-~~~~~~~~~~~~
+------------
 
 This library is dependant on the following
 
-- `Pygame <http://www.pygame.org/download.shtml>`__
-- `pyperclip <https://pypi.org/project/pyperclip/>`__
+- `Pygame <http://www.pygame.org/download.shtml>`_
+- `pyperclip <https://pypi.org/project/pyperclip/>`_
 
 Contributors
 ------------
 
+Core developers:
+
+- `Pablo Pizarro R. <https://ppizarror.com>`_
+
+
+Other contributors:
+
+- `anxuae <https://github.com/anxuae>`_
+
 Ideas and contributions are always welcome. Any found bugs or
 enhancement suggestions should be posted in the issues tab.
-
-Aditional Information
----------------------
-
-Licensing
-~~~~~~~~~
-
-| This project is distributed using the MIT license.
-| For more licensing information read LICENSE on github.
-
-Contact Info:
-~~~~~~~~~~~~~
-
-This project does not have a mailing list and so the issues tab should
-be the first point of contact if wishing to discuss the project. If you
-have questions that you do not feel are relavent to the issues tab or
-just want to let me know what you think about the library, feel free to
-email me.
-
-Email: pablo@ppizarror.com
