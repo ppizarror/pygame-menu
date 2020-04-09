@@ -80,12 +80,12 @@ def make_long_menu(surface):
                             fps=FPS,
                             menu_alpha=80,
                             menu_background_color=(188, 200, 108),
-                            title_background_color=(100, 130, 98),
-                            menu_height=600,
-                            menu_width=700,  # px
+                            menu_height=400,
+                            menu_width=600,  # px
                             onclose=pygameMenu.events.EXIT,
                             option_offset_y=10,
                             title='Main Menu',
+                            title_background_color=(100, 130, 98),
                             )
 
     _menu_sub = pygameMenu.Menu(surface,
@@ -95,13 +95,13 @@ def make_long_menu(surface):
                                 fps=FPS,
                                 menu_alpha=60,
                                 menu_background_color=(120, 200, 108),
-                                title_background_color=(100, 200, 98),
-                                menu_height=600,
-                                menu_width=800,
+                                menu_height=400,
+                                menu_width=600,
                                 onclose=pygameMenu.events.EXIT,
                                 option_shadow=True,
                                 rows=3,
                                 title='Menu with columns',
+                                title_background_color=(100, 200, 98),
                                 )
 
     _menu.add_button('Rows and Columns', _menu_sub)

@@ -44,6 +44,8 @@ class TextMenu(Menu):
 
     def __init__(self,
                  surface,
+                 menu_height,
+                 menu_width,
                  font,
                  title,
                  draw_text_region_x=2.5,
@@ -58,6 +60,10 @@ class TextMenu(Menu):
 
         :param surface: Pygame surface object
         :type surface: pygame.surface.SurfaceType
+        :param menu_height: Height of menu (px)
+        :type menu_height: int,float
+        :param menu_width: Width of menu (px)
+        :type menu_width: int,float
         :param font: Font file direction
         :type font: str
         :param title: Title of the Menu
@@ -92,6 +98,8 @@ class TextMenu(Menu):
 
         # Super call
         super(TextMenu, self).__init__(surface,
+                                       menu_height,
+                                       menu_width,
                                        font,
                                        title,
                                        **kwargs)
@@ -185,18 +193,18 @@ class TextMenu(Menu):
         dysum += 2 * self._textdy + self._font_textsize
 
         rect = self._option[index].get_rect()
-        if self._widget_align == _locals.ALIGN_CENTER:
+        if self._option_alignment == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif self._widget_align == _locals.ALIGN_CENTER:
+        elif self._option_alignment == _locals.ALIGN_CENTER:
             option_dx = -self._width / 2 + self._selection_highlight_margin_x
-        elif self._widget_align == _locals.ALIGN_CENTER:
+        elif self._option_alignment == _locals.ALIGN_CENTER:
             option_dx = self._width / 2 - rect.width - self._selection_highlight_margin_x
         else:
             option_dx = 0
         t_dy = - rect.height
 
         x_coord = self._option_offset_x + self._column_posx[0] + option_dx
-        y_coord = self._option_offset_y + index * (self._fsize + self._option_margin) + t_dy + dysum
+        y_coord = self._option_offset_y + index * (self._option_font_size + self._option_margin) + t_dy + dysum
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):

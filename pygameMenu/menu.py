@@ -37,7 +37,6 @@ import warnings
 import pygame as _pygame
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
-import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 import pygameMenu.widgets as _widgets
 
@@ -79,6 +78,7 @@ class Menu(object):
                  mouse_enabled=True,
                  mouse_visible=True,
                  onclose=None,
+                 option_alignment=_locals.ALIGN_CENTER,
                  option_font_color=(255, 255, 255),
                  option_font_size=30,
                  option_margin_y=15,
@@ -94,14 +94,16 @@ class Menu(object):
                  selection_highlight_border_width=1,
                  selection_highlight_margin_x=16,
                  selection_highlight_margin_y=4,
-                 title_background_color=(160, 160, 160),
+                 title_background_color=None,
                  title_font=None,
-                 title_font_color=(255, 255, 255),
+                 title_font_color=None,
                  title_font_size=40,
                  title_offset_x=0,
                  title_offset_y=0,
+                 title_shadow=False,
                  title_shadow_color=(0, 0, 0),
-                 widget_alignment=_locals.ALIGN_CENTER,
+                 title_shadow_offset=2,
+                 title_shadow_position=_locals.POSITION_NORTHWEST,
                  ):
         """
         Menu constructor.
@@ -138,24 +140,18 @@ class Menu(object):
         :type menu_alpha: int
         :param menu_background_color: Menu background color
         :type menu_background_color: tuple,list
-        :param option_font_color: Color of the font
-        :type option_font_color: tuple,list
-        :param option_font_size: Font size
-        :type option_font_size: int
-        :param option_shadow_color: Color of the shadow
-        :type option_shadow_color: tuple,list
-        :param title_font_size: Font size of the title
-        :type title_font_size: int
-        :param title_font: Alternative font of the title (file path)
-        :type title_font: basestring
-        :param title_background_color: Title background color
-        :type title_background_color: tuple,list
         :param mouse_enabled: Enable/disable mouse click on menu
         :type mouse_enabled: bool
         :param mouse_visible: Set mouse visible on menu
         :type mouse_visible: bool
         :param onclose: Function applied when closing the menu
         :type onclose: function, NoneType
+        :param option_alignment: Default option alignments
+        :type option_alignment: basestring
+        :param option_font_color: Color of the font
+        :type option_font_color: tuple,list
+        :param option_font_size: Font size
+        :type option_font_size: int
         :param option_margin_y: Vertical margin of each element in menu (px)
         :type option_margin_y: int
         :param option_offset_x: X axis offset of options inside menu (px). If value less than 1 use percentage of width
@@ -164,45 +160,64 @@ class Menu(object):
         :type option_offset_y: int,float
         :param option_shadow: Indicate if a shadow is drawn on each option
         :type option_shadow: bool
+        :param option_shadow_color: Color of the shadow
+        :type option_shadow_color: tuple,list
         :param option_shadow_offset: Offset of shadow
         :type option_shadow_offset: int
         :param option_shadow_position: Position of shadow
         :type option_shadow_position: basestring
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
-        :param selection_highlight_border_width: Border with of rectangle around selected item
-        :type selection_highlight_border_width: int
         :param selection_color: Color of selected item
         :type selection_color: tuple,list
         :param selection_highlight: Enable drawing a rectangle around selected item
         :type selection_highlight: bool
+        :param selection_highlight_border_width: Border with of rectangle around selected item
+        :type selection_highlight_border_width: int
         :param selection_highlight_margin_x: X margin of selected highlight box
         :type selection_highlight_margin_x: int
         :param selection_highlight_margin_y: Y margin of selected highlight box
         :type selection_highlight_margin_y: int
+        :param title_background_color: Title background color
+        :type title_background_color: tuple,list
+        :param title_font: Title optional font, if None use the menu default font
+        :type title_font: str,None
+        :param title_font_color: Title font color, if None use the menu option color
+        :type title_font_color: list,tuple,None
+        :param title_font_size: Font size of the title
+        :type title_font_size: int
         :param title_offset_x: Offset x-position of title (px)
         :type title_offset_x: int
         :param title_offset_y: Offset y-position of title (px)
         :type title_offset_y: int
-        :param widget_alignment: Default widget alignment
-        :type widget_alignment: basestring
+        :param title_offset_y: Title shadow color
+        :type title_offset_y: tuple,list
+        :param title_shadow: Enable shadow on title
+        :type title_shadow: bool
+        :param title_shadow_color: Title shadow color
+        :type title_shadow_color: list,tuple
+        :param title_shadow_offset: Offset of shadow on title
+        :type title_shadow_offset: int
+        :param title_shadow_position: Position of the shadow on title
+        :type title_shadow_position: basestring
         """
         assert isinstance(surface, _pygame.Surface)
         assert isinstance(menu_height, (int, float))
         assert isinstance(menu_width, (int, float))
         assert isinstance(font, str)
-        assert isinstance(title, str)
         assert isinstance(back_box, bool)
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
         assert isinstance(columns, int)
         assert isinstance(dopause, bool)
         assert isinstance(enabled, bool)
+        assert isinstance(fps, (int, float))
         assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_alpha, int)
-        assert isinstance(option_font_size, int)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
+        assert isinstance(option_alignment, str)
+        assert isinstance(option_font_size, int)
         assert isinstance(option_margin_y, int)
         assert isinstance(option_offset_x, (int, float))
         assert isinstance(option_offset_y, (int, float))
@@ -214,18 +229,27 @@ class Menu(object):
         assert isinstance(selection_highlight_border_width, int)
         assert isinstance(selection_highlight_margin_x, int)
         assert isinstance(selection_highlight_margin_y, int)
+        assert isinstance(title, str)
         assert isinstance(title_font, (str, type(None)))
         assert isinstance(title_font_size, int)
         assert isinstance(title_offset_x, int)
         assert isinstance(title_offset_y, int)
-        assert isinstance(widget_alignment, str)
+        assert isinstance(title_shadow, bool)
+        assert isinstance(title_shadow_offset, int)
+        assert isinstance(title_shadow_position, str)
 
         # Assert colors
-        assert_color(option_font_color, 'font_color')
-        assert_color(menu_background_color, 'menu_color')
-        assert_color(option_shadow_color, 'menu_shadow_color')
+        if title_background_color is None:
+            title_background_color = menu_background_color
+        if title_font_color is None:
+            title_font_color = option_font_color
+        assert_color(menu_background_color, 'menu_background_color')
+        assert_color(option_font_color, 'option_font_color')
+        assert_color(option_shadow_color, 'option_shadow_color')
         assert_color(selection_color, 'selection_color')
-        assert_color(title_background_color, 'menu_color_title')
+        assert_color(title_background_color, 'title_background_color')
+        assert_color(title_font_color, 'title_font_color')
+        assert_color(title_shadow_color, 'title_shadow_color')
 
         # Other asserts
         if dopause:
@@ -239,14 +263,14 @@ class Menu(object):
             'if pause main execution is enabled then bgfun (Background ' \
             'function drawing) must be defined (not None)'
         assert option_font_size > 0 and title_font_size > 0, \
-            'font sizes must be greater than zero'
+            'option font size and title font size must be greater than zero'
         assert menu_width > 0 and menu_height > 0, \
             'menu width and height must be greater than zero'
         assert 0 <= menu_alpha <= 100, \
-            'menu_alpha must be between 0 and 100 (both values included)'
+            'menu alpha must be between 0 and 100 (both values included)'
         assert option_margin_y >= 0, \
             'option margin must be greater or equal than zero'
-        assert option_offset_x >= 0 and option_offset_y >= 0, 'offset must be greater or equal than zero'
+        assert option_offset_x >= 0 and option_offset_y >= 0, 'option offset must be greater or equal than zero'
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if columns > 1:
             assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
@@ -258,52 +282,36 @@ class Menu(object):
         assert selection_highlight_margin_x > 0 and selection_highlight_margin_y > 0, \
             'selection highlight margin must be greater than zero in both axis'
 
+        _menu_bg_color = (menu_background_color[0],
+                          menu_background_color[1],
+                          menu_background_color[2],
+                          int(255 * (1 - (100 - menu_alpha) / 100.0))
+                          )
+
+        # General properties of the menu
         self._actual = self  # Actual menu
+        self._bgcolor = _menu_bg_color
         self._bgfun = bgfun
-        self._bgcolor = (menu_background_color[0],
-                         menu_background_color[1],
-                         menu_background_color[2],
-                         int(255 * (1 - (100 - menu_alpha) / 100.0))
-                         )
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
-        self._font_color = option_font_color
         self._fps = 0  # Updated in set_fps()
-        self._fsize = option_font_size
         self._height = int(menu_height)
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
-        self._menu_shadow_color = option_shadow_color
         self._onclose = onclose  # Function that calls after closing menu
-        self._option_shadow = option_shadow
-        self._option_shadow_offset = option_shadow_offset
-        self._option_shadow_position = option_shadow_position
         self._sounds = _Sound()  # type: _Sound
         self._surface = surface
         self._width = int(menu_width)
 
-        # Menu widgets
-        self._option = []  # type: list
-
-        # Previous menu
+        # Menu links (pointer to previous and next menus in nested submenus)
         self._prev = None  # type: list
-
-        # Top level menu
         self._top = None  # type: Menu
-
-        # List of all linked menus
         self._submenus = []  # type: list
 
-        # Load fonts
-        self._font = _fonts.get_font(font, self._fsize)  # type: _pygame.font.Font
-        self._font_name = font
-
-        # Get window size
-        window_width, window_height = _pygame.display.get_surface().get_size()
-
         # Position of menu
+        window_width, window_height = _pygame.display.get_surface().get_size()
         self._posx = int((window_width - self._width) / 2)  # type: int
         self._posy = int((window_height - self._height) / 2)  # type: int
         self._bgrect = [(self._posx, self._posy),
@@ -312,17 +320,25 @@ class Menu(object):
                         (self._posx, self._posy + self._height)
                         ]
 
-        # Position of options
+        # Menu widgets / options
         if abs(option_offset_x) < 1:
             option_offset_x *= self._width
         if abs(option_offset_y) < 1:
             option_offset_y *= self._height
+        self._option = []  # type: list
+        self._option_alignment = option_alignment
+        self._option_font_color = option_font_color
+        self._option_font_name = font
+        self._option_font_size = option_font_size
         self._option_margin = option_margin_y
         self._option_offset_x = int(option_offset_x)
         self._option_offset_y = int(option_offset_y)
+        self._option_shadow = option_shadow
+        self._option_shadow_color = option_shadow_color
+        self._option_shadow_offset = option_shadow_offset
+        self._option_shadow_position = option_shadow_position
 
         # Columns and rows
-        self._columns = columns
         if column_max_width is not None:
             if isinstance(column_max_width, (int, float)):
                 assert columns == 1, 'column_max_width can be a single number if there is only 1 column'
@@ -334,11 +350,11 @@ class Menu(object):
                 assert i > 0 or i is None, 'each column max width must be greater than zero or None'
         else:
             column_max_width = [None for _ in range(columns)]
+        self._columns = columns
         self._column_max_width = column_max_width
         self._column_widths = None  # type: list
         self._force_fit_text = column_force_fit_text
         self._rows = rows
-        self._widget_align = widget_alignment
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -352,31 +368,29 @@ class Menu(object):
         self._mouse = mouse_enabled and mouse_visible
         self._mouse_visible = mouse_visible
 
-        # Create menu bar
-        self._menubar = _widgets.MenuBar(title,
-                                         self._width,
-                                         back_box,
-                                         self._bgcolor,
-                                         None,
-                                         self._back)
-        self._menubar.set_menu(self)
-
-        # Configure widget
+        # Create menu bar (title)
         bg_color_title = (title_background_color[0],
                           title_background_color[1],
                           title_background_color[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
+        self._menubar = _widgets.MenuBar(title,
+                                         self._width,
+                                         back_box,
+                                         self._bgcolor,  # bg_color_title is only used behind text
+                                         None,
+                                         self._back)
+        self._menubar.set_menu(self)
         self._menubar.set_title(title,
                                 title_offset_x,
                                 title_offset_y)
-        self._menubar.set_font(title_font or font,
-                               title_font_size,
-                               bg_color_title,
-                               self._font_color)
-        self._menubar.set_shadow(enabled=self._option_shadow,
-                                 color=self._menu_shadow_color,
-                                 position=self._option_shadow_position,
-                                 offset=self._option_shadow_offset)
+        self._menubar.set_font(font=title_font or font,
+                               font_size=title_font_size,
+                               color=bg_color_title,
+                               selected_color=title_font_color)
+        self._menubar.set_shadow(enabled=title_shadow,
+                                 color=title_shadow_color,
+                                 position=title_shadow_position,
+                                 offset=title_shadow_offset)
         self._menubar.set_controls(self._joystick, self._mouse)
 
         # Selected option, margin of the selection box
@@ -508,7 +522,8 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         # Configure and add the button
-        self._configure_widget(widget, kwargs.pop('font_size', self._fsize), kwargs.pop('align', self._widget_align))
+        self._configure_widget(widget, kwargs.pop('font_size', self._option_font_size),
+                               kwargs.pop('align', self._option_alignment))
         self._append_widget(widget)
         return widget
 
@@ -763,24 +778,24 @@ class Menu(object):
         assert isinstance(align, str), 'align must be a string'
 
         if align == '':
-            align = self._widget_align
+            align = self._option_alignment
         if font_size == 0:
-            font_size = self._fsize
+            font_size = self._option_font_size
         assert font_size > 0, 'font_size must be greater than zero'
 
         _col = int((len(self._option) - 1) // self._rows)  # Column position
 
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(font=self._font_name,
+        widget.set_font(font=self._option_font_name,
                         font_size=font_size,
-                        color=self._font_color,
+                        color=self._option_font_color,
                         selected_color=self._selection_color)
         if self._force_fit_text and self._column_max_width[_col] is not None:
             selection_dx = self._selection_highlight_margin_x + self._selection_border_width
             widget.set_max_width(self._column_max_width[_col] - selection_dx)
         widget.set_shadow(enabled=self._option_shadow,
-                          color=self._menu_shadow_color,
+                          color=self._option_shadow_color,
                           position=self._option_shadow_position,
                           offset=self._option_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
@@ -965,7 +980,7 @@ class Menu(object):
         # Calculate Y position
         if y:
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
-            y_coord = self._option_offset_y + (index % self._rows) * (self._fsize + self._option_margin) + dy
+            y_coord = self._option_offset_y + (index % self._rows) * (self._option_font_size + self._option_margin) + dy
 
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 

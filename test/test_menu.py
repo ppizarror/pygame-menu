@@ -297,15 +297,17 @@ class MenuTest(unittest.TestCase):
         Test textual menus.
         """
         menu = pygameMenu.TextMenu(surface,
-                                   font=PygameMenuUtils.random_font(),
                                    dopause=False,
-                                   menu_color=(30, 50, 107),  # Background color
-                                   menu_color_title=(120, 45, 30),
+                                   font=PygameMenuUtils.random_font(),
+                                   menu_background_color=(30, 50, 107),  # Background color
+                                   menu_height=400,
+                                   menu_width=600,
                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
                                    option_shadow=True,
                                    option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                    text_align=pygameMenu.locals.ALIGN_RIGHT,
                                    title='Help',
+                                   title_background_color=(120, 45, 30),
                                    )
         menu.mainloop()
         menu.add_button('Return to Menu', pygameMenu.events.BACK)
