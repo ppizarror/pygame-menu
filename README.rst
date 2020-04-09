@@ -2,9 +2,13 @@
 pygame-menu
 ===========
 
-| Written for both Python 2.7+ and 3.4+
+A simple, lightweight and easy to use library to build menu with pygame.
 
-Source repo on `github <https://github.com/ppizarror/pygame-menu>`__
+Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
+
+Source repo on `github <https://github.com/ppizarror/pygame-menu>`_
+
+Run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>``
 
 Introduction
 ------------
@@ -15,33 +19,35 @@ selectors, buttons and texts menus with many options to customize.
 Install Instructions
 --------------------
 
-Pygame-menu can be downloaded via pip. Simply run pip install pygame-menu.
+Pygame-menu can be downloaded via pip. Simply run::
+
+    pip install pygame-menu.
 
 Dependencies
-~~~~~~~~~~~~
+------------
 
 This library is dependant on the following
 
-- `Pygame <http://www.pygame.org/download.shtml>`__
-- `pyperclip <https://pypi.org/project/pyperclip/>`__
+- `Pygame <http://www.pygame.org/download.shtml>`_
+- `pyperclip <https://pypi.org/project/pyperclip/>`_
 
 Contributors
 ------------
 
+Core developers:
+
+- `Pablo Pizarro R. <https://ppizarror.com>`_
+
+
+Other contributors:
+
+- `anxuae <https://github.com/anxuae>`_
+
 Ideas and contributions are always welcome. Any found bugs or
 enhancement suggestions should be posted in the issues tab.
 
-Aditional Information
----------------------
-
-Licensing
-~~~~~~~~~
-
-| This project is distributed using the MIT license.
-| For more licensing information read LICENSE on github.
-
 Contact Info:
-~~~~~~~~~~~~~
+-------------
 
 This project does not have a mailing list and so the issues tab should
 be the first point of contact if wishing to discuss the project. If you

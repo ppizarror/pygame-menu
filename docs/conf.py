@@ -4,7 +4,7 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Path setup --------------------------------------------------------------
+# -- Path setup ---------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -14,24 +14,26 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import pygameMenu
 
-# -- Project information -----------------------------------------------------
+# -- Project information ------------------------------------------------------
 
 project = 'pygame-menu'
 copyright = '2020, Pablo Pizarro R.'
 author = 'Pablo Pizarro R.'
 
 # The full version, including alpha/beta/rc tags
-release = '2.2.0'
+release = pygameMenu.__version__
 
 
-# -- General configuration ---------------------------------------------------
+# -- General configuration ----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-]
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.intersphinx']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -46,14 +48,44 @@ master_doc = 'index'
 exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
 
 
-# -- Options for HTML output -------------------------------------------------
+# -- Intersphinx configuration ------------------------------------------------
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3.7', None),
+    'pygame': ('https://www.pygame.org/docs', None),
+    }
+
+# -- Options for HTML output --------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_title = '%s %s Documentation' % (project, release)
+
+# -- Options for LaTeX output -------------------------------------------------
+
+latex_elements = {
+    'papersize': 'a4paper',
+    'pointsize': '10pt',
+    'preamble': r'\def\thempfootnote{\arabic{mpfootnote}}',  # workaround sphinx issue #2530
+}
+
+latex_documents = [
+    (
+        'index',                       # source start file
+        '%s.tex' % project,            # target filename
+        '%s Documentation' % project,  # title
+        _setup.__author__,             # author
+        'manual',                      # documentclass
+        True,                          # documents ref'd from toctree only
+        ),
+]
+
+latex_show_pagerefs = True
+latex_show_urls = 'footnote'
