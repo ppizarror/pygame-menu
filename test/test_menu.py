@@ -290,27 +290,3 @@ class MenuTest(unittest.TestCase):
         _column_menu._right()
         _column_menu.draw()
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
-
-    @staticmethod
-    def test_textmenu():
-        """
-        Test textual menus.
-        """
-        menu = pygameMenu.TextMenu(surface,
-                                   dopause=False,
-                                   font=PygameMenuUtils.random_font(),
-                                   menu_background_color=(30, 50, 107),  # Background color
-                                   menu_height=400,
-                                   menu_width=600,
-                                   onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
-                                   text_align=pygameMenu.locals.ALIGN_RIGHT,
-                                   title='Help',
-                                   title_background_color=(120, 45, 30),
-                                   widget_shadow=True,
-                                   widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
-                                   )
-        menu.mainloop()
-        menu.add_button('Return to Menu', pygameMenu.events.BACK)
-        for m in ['a', 'b', 'c', 'd', 'e']:
-            menu.add_line(m)
-        menu.draw()

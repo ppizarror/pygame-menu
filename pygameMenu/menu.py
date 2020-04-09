@@ -1507,8 +1507,10 @@ class Menu(object):
         """
         self._check_menu_initialized()
         actual = self._top._actual
+        if len(actual._widgets) == 0:
+            return
         new_index %= len(actual._widgets)
-        if len(actual._widgets) == 0 or new_index == actual._index:
+        if new_index == actual._index:  # Index has not changed
             return
 
         # Get both widgets
