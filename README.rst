@@ -2,13 +2,11 @@
 pygame-menu
 ===========
 
-A simple, lightweight and easy to use library to build menu with pygame.
-
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
 Source repo on `github <https://github.com/ppizarror/pygame-menu>`_
 
-Run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>``
+Run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
 Introduction
 ------------
@@ -21,7 +19,7 @@ Install Instructions
 
 Pygame-menu can be downloaded via pip. Simply run::
 
-    pip install pygame-menu.
+    pip install pygame-menu
 
 Dependencies
 ------------

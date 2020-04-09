@@ -81,7 +81,7 @@ latex_documents = [
         'index',                       # source start file
         '%s.tex' % project,            # target filename
         '%s Documentation' % project,  # title
-        _setup.__author__,             # author
+        author,                        # author
         'manual',                      # documentclass
         True,                          # documents ref'd from toctree only
         ),
