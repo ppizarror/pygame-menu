@@ -470,7 +470,7 @@ class Widget(object):
         """
         self._shadow = enabled
         if color is not None:
-            assert_color(color, 'color')
+            assert_color(color)
             self._shadow_color = color
         if position is not None:
             assert_position(position)

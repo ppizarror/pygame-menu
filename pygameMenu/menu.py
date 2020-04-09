@@ -78,6 +78,14 @@ class Menu(object):
                  mouse_visible=True,
                  onclose=None,
                  rows=None,
+                 scrollbar_color=(235, 235, 235),
+                 scrollbar_shadow=False,
+                 scrollbar_shadow_color=(0, 0, 0),
+                 scrollbar_shadow_offset=2,
+                 scrollbar_shadow_position=_locals.POSITION_SOUTHEAST,
+                 scrollbar_slider_color=(200, 200, 200),
+                 scrollbar_slider_pad=0,
+                 scrollbar_thick=20,
                  selection_color=(180, 180, 180),
                  selection_highlight=True,
                  selection_highlight_border_width=1,
@@ -147,6 +155,22 @@ class Menu(object):
         :type onclose: function, NoneType
         :param rows: Number of rows of each column, None if there's only 1 column
         :type rows: int,None
+        :param scrollbar_color: Scrollbars color
+        :type scrollbar_color: tuple, list
+        :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
+        :type scrollbar_shadow: bool
+        :param scrollbar_shadow_color: Color of the shadow
+        :type scrollbar_shadow_color: tuple, list
+        :param scrollbar_shadow_offset: Offset of shadow
+        :type scrollbar_shadow_offset: int
+        :param scrollbar_shadow_position: Position of shadow
+        :type scrollbar_shadow_position: basestring
+        :param scrollbar_slider_color: Color of the sliders
+        :type scrollbar_slider_color: tuple, list
+        :param scrollbar_slider_pad: Space between slider and scrollbars borders
+        :type scrollbar_slider_pad: int
+        :param scrollbar_thick: Scrollbars thickness
+        :type scrollbar_thick: int
         :param selection_color: Color of selected item
         :type selection_color: tuple,list
         :param selection_highlight: Enable drawing a rectangle around selected item
@@ -216,6 +240,8 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
+        assert isinstance(scrollbar_shadow, bool)
+        assert isinstance(scrollbar_shadow_offset, int)
         assert isinstance(selection_highlight, bool)
         assert isinstance(selection_highlight_border_width, int)
         assert isinstance(selection_highlight_margin_x, int)
@@ -240,15 +266,19 @@ class Menu(object):
             title_background_color = menu_background_color
         if title_font_color is None:
             title_font_color = widget_font_color
-        assert_color(menu_background_color, 'menu_background_color')
-        assert_color(selection_color, 'selection_color')
-        assert_color(title_background_color, 'title_background_color')
-        assert_color(title_font_color, 'title_font_color')
-        assert_color(title_shadow_color, 'title_shadow_color')
-        assert_color(widget_font_color, 'widget_font_color')
-        assert_color(widget_shadow_color, 'widget_shadow_color')
+        assert_color(menu_background_color)
+        assert_color(scrollbar_color)
+        assert_color(scrollbar_shadow_color)
+        assert_color(scrollbar_slider_color)
+        assert_color(selection_color)
+        assert_color(title_background_color)
+        assert_color(title_font_color)
+        assert_color(title_shadow_color)
+        assert_color(widget_font_color)
+        assert_color(widget_shadow_color)
 
         # Assert positions
+        assert_position(scrollbar_shadow_position)
         assert_position(title_shadow_position)
         assert_position(widget_shadow_position)
 
@@ -275,6 +305,7 @@ class Menu(object):
         # Element size asserts
         assert menu_width > 0 and menu_height > 0, \
             'menu width and height must be greater than zero'
+        assert scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert selection_highlight_border_width >= 0, \
             'selection lighlight border width must be greater or equal than zero'
         assert selection_highlight_margin_x > 0 and selection_highlight_margin_y > 0, \
@@ -406,9 +437,14 @@ class Menu(object):
         self._scroll = _ScrollArea(area_width=self._width,
                                    area_height=self._height - self._menubar.get_rect().height,
                                    area_color=menu_background_color,
-                                   shadow=self._widget_shadow,
-                                   shadow_offset=self._widget_shadow_offset,
-                                   shadow_position=self._widget_shadow_position)
+                                   scrollbar_color=scrollbar_color,
+                                   scrollbar_slider_color=scrollbar_slider_color,
+                                   scrollbar_slider_pad=scrollbar_slider_pad,
+                                   scrollbar_thick=scrollbar_thick,
+                                   shadow=scrollbar_shadow,
+                                   shadow_color=scrollbar_shadow_color,
+                                   shadow_offset=scrollbar_shadow_offset,
+                                   shadow_position=scrollbar_shadow_position)
 
         # Set fps
         self.set_fps(fps)

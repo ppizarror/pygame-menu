@@ -50,18 +50,16 @@ def assert_alignment(align):
         'incorrect alignment value "{0}"'.format(align)
 
 
-def assert_color(color, var_name):
+def assert_color(color):
     """
     Assert that a certain color is valid.
 
     :param color: Object color
-    :param var_name: Name of the variable
-    :type var_name: basestring
     """
     assert isinstance(color, (list, tuple))
-    assert len(color) == 3, '{0} must be a tuple or list of 3 numbers'.format(var_name)
+    assert len(color) == 3, 'color must be a tuple or list of 3 numbers'
     for i in color:
-        assert isinstance(i, int), '{0} element must be a number'.format(var_name)
+        assert isinstance(i, int), '{0} element must be a number'.format(i)
 
 
 def assert_position(position):
