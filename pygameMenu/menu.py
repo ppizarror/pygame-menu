@@ -871,16 +871,22 @@ class Menu(object):
 
         if max_x > self._width and max_y > self._height - menubar_height:
             width, height = max_x + 20, max_y + 20
+            if not self._mouse_visible:
+                self._mouse_visible = True
         elif max_x > self._width:
             # Remove the thick of the scrollbar
             # to avoid displaying an vertical one
             width, height = max_x + 20, self._height - menubar_height - 20
+            self._mouse_visible = self._mouse_visible_default
         elif max_y > self._height:
             # Remove the thick of the scrollbar
             # to avoid displaying an horizontal one
             width, height = self._width - 20, max_y + 20
+            if not self._mouse_visible:
+                self._mouse_visible = True
         else:
             width, height = self._width, self._height - menubar_height
+            self._mouse_visible = self._mouse_visible_default
 
         self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
