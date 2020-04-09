@@ -61,14 +61,3 @@ Other contributors:
 
 Ideas and contributions are always welcome. Any found bugs or
 enhancement suggestions should be posted in the issues tab.
-
-Contact Info:
--------------
-
-This project does not have a mailing list and so the issues tab should
-be the first point of contact if wishing to discuss the project. If you
-have questions that you do not feel are relavent to the issues tab or
-just want to let me know what you think about the library, feel free to
-email me.
-
-Email: pablo@ppizarror.com
