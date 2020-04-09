@@ -71,7 +71,7 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._alignment = _locals.ALIGN_CENTER  # type: str
+        self._alignment = _locals.ALIGN_CENTER
         self._fps = 0  # type: int
         self._id = widget_id
         self._last_selected_surface = None  # type: _pygame.SurfaceType
