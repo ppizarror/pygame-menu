@@ -55,6 +55,3 @@ POSITION_WEST = '__pygameMenu_position_west__'
 # Orientation
 ORIENTATION_HORIZONTAL = '__pygameMenu_orientation_horizontal__'
 ORIENTATION_VERTICAL = '__pygameMenu_orientation_vertical__'
-
-# Other
-TEXT_NEWLINE = ''  # Text newline on TextMenu object

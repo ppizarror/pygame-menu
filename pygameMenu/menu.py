@@ -34,6 +34,7 @@ import sys
 import types
 
 import pygame as _pygame
+import pygameMenu  # docs usage
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.locals as _locals
@@ -381,6 +382,7 @@ class Menu(object):
         self._widget_shadow_color = widget_shadow_color
         self._widget_shadow_offset = widget_shadow_offset
         self._widget_shadow_position = widget_shadow_position
+        self._widget_selected = False  # True if a widget has been selected
 
         # Selected widget
         self._selection_border_width = selection_highlight_border_width * selection_highlight
@@ -407,6 +409,7 @@ class Menu(object):
         # Init mouse
         self._mouse = mouse_enabled and mouse_visible
         self._mouse_visible = mouse_visible
+        self._mouse_visible_default = mouse_visible
 
         # Create menu bar (title)
         self._menubar = _widgets.MenuBar(label=title,
@@ -624,25 +627,26 @@ class Menu(object):
         return widget
 
     def add_label(self,
-                  title,
+                  text,
                   label_id='',
                   align='',
-                  font_size=0, ):
+                  font_size=0,
+                  ):
         """
         Add a simple text to display.
 
-        :param title: Title of the label
-        :type title: basestring
+        :param text: Text to be displayed
+        :type text: basestring
         :param label_id: ID of the label
         :type label_id: basestring
         :param align: Widget alignment
         :type align: basestring
-        :param font_size: Font size of the widget
+        :param font_size: Font size of the text, if zero use default widget font size
         :type font_size: int
         :return: Widget object
         :rtype: pygameMenu.widgets.label.Label
         """
-        widget = _widgets.Label(label=title, label_id=label_id)
+        widget = _widgets.Label(label=text, label_id=label_id)
         self._configure_widget(widget, font_size, align)
         self._append_widget(widget)
         return widget
@@ -836,12 +840,13 @@ class Menu(object):
         assert isinstance(widget, _widgets.WidgetType)
         if self._columns > 1:
             _max_elements = self._columns * self._rows
-            _msg = 'total elements cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
+            _msg = 'total widgets cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
             assert len(self._widgets) + 1 <= _max_elements, _msg
         self._widgets.append(widget)
-        _totals = len(self._widgets)
-        if _totals == 1:
+        if not self._widget_selected and widget.is_selectable:
             widget.set_selected()
+            self._widget_selected = True
+            self._index = len(self._widgets) - 1
 
     def _back(self):
         """
@@ -990,12 +995,17 @@ class Menu(object):
 
         x_coord = 0
         y_coord = 0
-        rect = self._widgets[index].get_rect()  # type: _pygame.Rect
+        widget = self._widgets[index]  # type: _widgets.WidgetType
+        rect = widget.get_rect()  # type: _pygame.Rect
+
+        # Get column and row position
+        _col = int(index // self._rows)
+        _row = index % self._rows
 
         # Calculate X position
         if x:
-            _column_width = self._column_widths[int(index // self._rows)]
-            align = self._widgets[index].get_alignment()
+            _column_width = self._column_widths[_col]
+            align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
                 dx = -int(rect.width / 2.0)
             elif align == _locals.ALIGN_LEFT:
@@ -1004,12 +1014,12 @@ class Menu(object):
                 dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
             else:
                 dx = 0
-            x_coord = self._widget_offset_x + self._column_posx[int(index // self._rows)] + dx
+            x_coord = self._widget_offset_x + self._column_posx[_col] + dx
 
         # Calculate Y position
         if y:
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
-            y_coord = self._widget_offset_y + (index % self._rows) * (self._widget_font_size + self._widget_margin) + dy
+            y_coord = self._widget_offset_y + _row * (self._widget_font_size + self._widget_margin) + dy
 
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
@@ -1481,24 +1491,37 @@ class Menu(object):
 
         self._select(self._top._actual._index)
 
-    def _select(self, index):
+    def _select(self, new_index):
         """
         Select the widget at the given index and unselect others.
 
-        :param index: Widget index
-        :type index: int
+        :param new_index: Widget index
+        :type new_index: int
         :return: None
         """
         self._check_menu_initialized()
         actual = self._top._actual
-        if len(actual._widgets) == 0:
+        new_index %= len(actual._widgets)
+        if len(actual._widgets) == 0 or new_index == actual._index:
             return
-        actual._widgets[actual._index].set_selected(False)
-        actual._index = index % len(actual._widgets)
-        actual._widgets[actual._index].set_selected()
-        rect = actual._widgets[actual._index].get_rect()
-        if actual._index == 0:
-            # Scroll to the top of the menu
+
+        # Get both widgets
+        old_widget = actual._widgets[actual._index]  # type: _widgets.WidgetType
+        new_widget = actual._widgets[new_index]  # type:_widgets.WidgetType
+
+        # If new widget is not selectable
+        if not new_widget.is_selectable:
+            if self._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
+                self._select(new_index + 1)
+                return
+            else:  # No selectable options, quit
+                return
+
+        old_widget.set_selected(False)
+        actual._index = new_index  # Update selected index
+        new_widget.set_selected()
+        rect = new_widget.get_rect()
+        if actual._index == 0:  # Scroll to the top of the menu
             rect = _pygame.Rect(rect.x, 0, rect.width, rect.height)
         actual._scroll.scroll_to_rect(rect)
 

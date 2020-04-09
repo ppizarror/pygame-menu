@@ -46,7 +46,7 @@ from random import randrange
 # -----------------------------------------------------------------------------
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: @{0}'.format(pygameMenu.__author__),
-         pygameMenu.locals.TEXT_NEWLINE,
+         '',  # new line
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -244,26 +244,24 @@ def main(test=False):
     play_menu.center_vertically()
 
     # About menu
-    about_menu = pygameMenu.TextMenu(surface,
-                                     bgfun=main_background,
-                                     font=pygameMenu.font.FONT_BEBAS,
-                                     menu_height=WINDOW_SIZE[1] * 0.6,
-                                     menu_width=WINDOW_SIZE[0] * 0.6,
-                                     onclose=pygameMenu.events.DISABLE_CLOSE,
-                                     selection_color=COLOR_WHITE,
-                                     text_color=COLOR_WHITE,
-                                     text_fontsize=20,
-                                     title='About',
-                                     title_font=pygameMenu.font.FONT_8BIT,
-                                     title_font_color=COLOR_WHITE,
-                                     title_font_size=30,
-                                     widget_font_color=(255, 255, 255),
-                                     widget_offset_y=0.15,  # Percentage of height
-                                     widget_shadow=False,
-                                     )
+    about_menu = pygameMenu.Menu(surface,
+                                 bgfun=main_background,
+                                 font=pygameMenu.font.FONT_BEBAS,
+                                 menu_height=WINDOW_SIZE[1] * 0.6,
+                                 menu_width=WINDOW_SIZE[0] * 0.6,
+                                 onclose=pygameMenu.events.DISABLE_CLOSE,
+                                 selection_color=COLOR_WHITE,
+                                 title='About',
+                                 title_font=pygameMenu.font.FONT_8BIT,
+                                 title_font_color=COLOR_WHITE,
+                                 widget_margin_y=0,
+                                 title_font_size=30,
+                                 widget_font_color=(255, 255, 255),
+                                 widget_offset_y=0.15,  # Percentage of height
+                                 )
     for m in ABOUT:
-        about_menu.add_line(m)
-    about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+        about_menu.add_label(m, align=pygameMenu.locals.ALIGN_LEFT, font_size=20)
+    about_menu.add_label('')
     about_menu.add_button('Return to menu', pygameMenu.events.BACK)
 
     # Main menu

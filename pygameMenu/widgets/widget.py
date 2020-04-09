@@ -107,6 +107,7 @@ class Widget(object):
         self._create_shadow_tuple()
 
         # Public attributes
+        self.is_selectable = True  # type:bool
         self.joystick_enabled = True  # type: bool
         self.mouse_enabled = True  # type: bool
         self.selected = False  # type: bool
