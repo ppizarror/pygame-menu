@@ -36,7 +36,7 @@ import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import make_surface
+from pygameMenu.utils import make_surface, assert_color
 from uuid import uuid4
 
 
@@ -179,9 +179,9 @@ class Widget(object):
         :type surface: pygame.surface.SurfaceType
         :param selected_color: Selected color
         :type selected_color: tuple
-        :param inflatex: Pixels to inflate the rect (x axis)
+        :param inflatex: Pixels to inflate the rect (x axis), used by highlight
         :type inflatex: int
-        :param inflatey: Pixels to inflate the rect (y axis)
+        :param inflatey: Pixels to inflate the rect (y axis), used by highlight
         :type inflatey: int
         :param border_width: Border rect width
         :type border_width: int
@@ -477,6 +477,7 @@ class Widget(object):
         """
         self._shadow = enabled
         if color is not None:
+            assert_color(color, 'color')
             self._shadow_color = color
         if position is not None:
             if position not in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,

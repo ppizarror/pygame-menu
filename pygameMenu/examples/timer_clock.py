@@ -162,7 +162,7 @@ def main(test=False):
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
                                  option_shadow=True,
-                                 selection_border_width=4,
+                                 selection_highlight_border_width=4,
                                  title='Timer Menu',
                                  title_offset_y=5,  # Adds 5px to title vertical position
                                  )
@@ -171,20 +171,16 @@ def main(test=False):
     timer_menu.add_button('Reset timer', reset_timer)
 
     # Adds a selector (element that can handle functions)
-    timer_menu.add_selector('Change bgcolor',
-                            # Values of selector, call to change_color_bg
-                            [('Random', (-1, -1, -1)),
-                             ('Default', (128, 0, 128)),
-                             ('Black', (0, 0, 0)),
-                             ('Blue', COLOR_BLUE)],
-                            # Optional parameter that sets default item of selector
-                            default=1,
-                            # Action when changing element with left/right
-                            onchange=change_color_bg,
-                            # Action when pressing return on an element
-                            onreturn=change_color_bg,
+    timer_menu.add_selector(title='Change bgcolor',
+                            values=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
+                                    ('Default', (128, 0, 128)),
+                                    ('Black', (0, 0, 0)),
+                                    ('Blue', COLOR_BLUE)],
+                            default=1,  # Optional parameter that sets default item of selector
+                            onchange=change_color_bg,  # Action when changing element with left/right
+                            onreturn=change_color_bg,  # Action when pressing return on an element
                             # Optional parameters to change_color_bg function
-                            write_on_console=True
+                            write_on_console=True,
                             )
     timer_menu.add_button('Update game object', TestCallClassMethod().update_game_settings)
     timer_menu.add_button('Return to Menu', pygameMenu.events.BACK)
@@ -194,11 +190,11 @@ def main(test=False):
     # Help menu
     help_menu = pygameMenu.TextMenu(surface,
                                     dopause=False,
-                                    draw_region_y=30,
                                     font=pygameMenu.font.FONT_FRANCHISE,
                                     menu_color=(30, 50, 107),  # Background color
                                     menu_color_title=(120, 45, 30),
                                     onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
+                                    option_offset_y=0.3,  # Percentage of height
                                     option_shadow=True,
                                     option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                     text_align=pygameMenu.locals.ALIGN_CENTER,
@@ -211,7 +207,6 @@ def main(test=False):
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
                                      dopause=False,
-                                     draw_region_y=30,
                                      draw_text_region_x=5,  # 5% margin
                                      font=pygameMenu.font.FONT_NEVIS,
                                      font_size_title=30,
@@ -219,6 +214,7 @@ def main(test=False):
                                      menu_color_title=COLOR_BLUE,
                                      mouse_visible=False,
                                      onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
+                                     option_offset_y=0.3,  # Percentage of height
                                      option_shadow=True,
                                      text_fontsize=20,
                                      title='About',
