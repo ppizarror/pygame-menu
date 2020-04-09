@@ -914,7 +914,11 @@ class Menu(object):
     def center_vertically(self):
         """
         Update draw_region_y based on the current widgets.
-        If the height of the widgets is greater than the height of the menu, the drawing region will start at zero.
+        If the height of the widgets is greater than the height of the menu,
+        the drawing region will start at zero.
+
+        >>> menu = pygameMenu.Menu(...)
+        >>> menu.center_vertically()
         """
         self._build_widget_surface()
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
@@ -1382,6 +1386,9 @@ class Menu(object):
         """
         Full reset menu and clear all widgets.
 
+        >>> menu = pygameMenu.Menu(...)
+        >>> menu.clear()
+        
         :return: None
         """
         self.full_reset()
