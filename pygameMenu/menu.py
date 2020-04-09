@@ -580,6 +580,30 @@ class Menu(object):
         self._append_widget(widget)
         return widget
 
+    def add_label(self,
+                  title,
+                  label_id='',
+                  align='',
+                  font_size=0,):
+        """
+        Add a simple text to display.
+
+        :param title: Title of the label
+        :type title: basestring
+        :param label_id: ID of the label
+        :type label_id: basestring
+        :param align: Widget alignment
+        :type align: basestring
+        :param font_size: Font size of the widget
+        :type font_size: int
+        :return: Widget object
+        :rtype: pygameMenu.widgets.label.Label
+        """
+        widget = _widgets.Label(label=title, label_id=label_id)
+        self._configure_widget(widget, font_size, align)
+        self._append_widget(widget)
+        return widget
+
     def add_selector(self,
                      title,
                      values,
