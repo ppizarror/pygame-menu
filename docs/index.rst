@@ -35,7 +35,7 @@ Here is a basic example of how to create a menu using ``pygame-menu``.
 
 
 .. toctree::
-   :maxdepth: 2:
+   :maxdepth: 2
    :hidden:
    :caption: First steps
 
