@@ -1422,11 +1422,10 @@ class Menu(object):
         actual._option[actual._index].set_selected(False)
         actual._index = index % len(actual._option)
         actual._option[actual._index].set_selected()
+        rect = actual._option[actual._index].get_rect()
         if actual._index == 0:
             # Scroll to the top of the menu
-            rect = _pygame.Rect(0, 0, 10, 10)
-        else:
-            rect = actual._option[actual._index].get_rect()
+            rect = _pygame.Rect(rect.x, 0, rect.width, rect.height)
         actual._scroll.scroll_to_rect(rect)
 
     def get_widget(self, widget_id, recursive=False):
