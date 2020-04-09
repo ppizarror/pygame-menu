@@ -105,6 +105,7 @@ class Menu(object):
                  widget_alignment=_locals.ALIGN_CENTER,
                  widget_font_color=(255, 255, 255),
                  widget_font_size=35,
+                 widget_margin_x=0,
                  widget_margin_y=15,
                  widget_offset_x=0,
                  widget_offset_y=0,
@@ -210,6 +211,8 @@ class Menu(object):
         :type widget_font_color: tuple,list
         :param widget_font_size: Font size
         :type widget_font_size: int
+        :param widget_margin_x: Horizontal margin of each element in menu (px)
+        :type widget_margin_x: int
         :param widget_margin_y: Vertical margin of each element in menu (px)
         :type widget_margin_y: int
         :param widget_offset_x: X axis offset of widgets inside menu (px). If value less than 1 use percentage of width
@@ -256,6 +259,7 @@ class Menu(object):
         assert isinstance(title_shadow_offset, int)
         assert isinstance(widget_alignment, str)
         assert isinstance(widget_font_size, int)
+        assert isinstance(widget_margin_x, int)
         assert isinstance(widget_margin_y, int)
         assert isinstance(widget_offset_x, (int, float))
         assert isinstance(widget_offset_y, (int, float))
@@ -313,8 +317,6 @@ class Menu(object):
             'selection highlight margin must be greater than zero in both axis'
         assert widget_font_size > 0 and title_font_size > 0, \
             'widget font size and title font size must be greater than zero'
-        assert widget_margin_y >= 0, \
-            'widget margin must be greater or equal than zero'
         assert widget_offset_x >= 0 and widget_offset_y >= 0, 'widget offset must be greater or equal than zero'
 
         # Other asserts
@@ -375,7 +377,7 @@ class Menu(object):
         self._widget_font_color = widget_font_color
         self._widget_font_name = font
         self._widget_font_size = widget_font_size
-        self._widget_margin = widget_margin_y
+        self._widget_margin = (widget_margin_x, widget_margin_y)
         self._widget_offset_x = int(widget_offset_x)
         self._widget_offset_y = int(widget_offset_y)
         self._widget_shadow = widget_shadow
@@ -523,9 +525,10 @@ class Menu(object):
         Add button to menu.
 
         kwargs (Optional):
-            - align         Widget alignment
-            - button_id     Widget ID
-            - font_size     Font size of the widget
+            - align         Widget alignment (str)
+            - button_id     Widget ID (str)
+            - font_size     Font size of the widget (int)
+            - margin        Tuple of (x,y) integers
 
         :param element_name: Name of the element
         :type element_name: basestring
@@ -536,7 +539,9 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.button.Button
         """
-        assert isinstance(element_name, str), 'element_name must be a string'
+        assert isinstance(element_name, str)
+
+        # Get ID
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'ID must be a string'
 
@@ -558,20 +563,24 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         # Configure and add the button
-        self._configure_widget(widget, kwargs.pop('font_size', self._widget_font_size),
-                               kwargs.pop('align', self._widget_alignment))
+        self._configure_widget(widget=widget,
+                               align=kwargs.pop('align', self._widget_alignment),
+                               font_size=kwargs.pop('font_size', self._widget_font_size),
+                               margin=kwargs.pop('margin', self._widget_margin),
+                               )
         self._append_widget(widget)
         return widget
 
     def add_color_input(self,
                         title,
                         color_type,
+                        align=None,
                         color_id='',
                         default='',
+                        font_size=None,
                         input_separator=',',
                         input_underline='_',
-                        align='',
-                        font_size=0,
+                        margin=None,
                         onchange=None,
                         onreturn=None,
                         previsualization_width=3,
@@ -589,18 +598,20 @@ class Menu(object):
         :type title: basestring
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
         :param color_id: ID of the color input
         :type color_id: basestring
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
         :type default: basestring, tuple
+        :param font_size: Font size of the widget, if None use default menu widget font size
+        :type font_size: int,None
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :type input_separator: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
@@ -621,16 +632,17 @@ class Menu(object):
                                      onreturn=onreturn,
                                      prev_size=previsualization_width,
                                      **kwargs)
-        self._configure_widget(widget, font_size, align)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
         widget.set_value(default)
         self._append_widget(widget)
         return widget
 
     def add_label(self,
                   text,
+                  align=None,
+                  font_size=None,
                   label_id='',
-                  align='',
-                  font_size=0,
+                  margin=None,
                   ):
         """
         Add a simple text to display.
@@ -639,27 +651,30 @@ class Menu(object):
         :type text: basestring
         :param label_id: ID of the label
         :type label_id: basestring
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the text, if zero use default widget font size
-        :type font_size: int
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param font_size: Font size of the text, if None use default widget font size
+        :type font_size: int,None
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
         :return: Widget object
         :rtype: pygameMenu.widgets.label.Label
         """
         widget = _widgets.Label(label=text, label_id=label_id)
-        self._configure_widget(widget, font_size, align)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
         self._append_widget(widget)
         return widget
 
     def add_selector(self,
                      title,
                      values,
-                     selector_id='',
+                     align=None,
                      default=0,
-                     align='',
-                     font_size=0,
+                     font_size=None,
+                     margin=None,
                      onchange=None,
                      onreturn=None,
+                     selector_id='',
                      **kwargs
                      ):
         """
@@ -678,18 +693,20 @@ class Menu(object):
         :type title: basestring
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
         :type values: list
-        :param selector_id: ID of the selector
-        :type selector_id: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
         :param default: Index of default value to display
         :type default: int
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
+        :param font_size: Font size of the widget, if None use the default menu widget font size
+        :type font_size: int,None
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
+        :param selector_id: ID of the selector
+        :type selector_id: basestring
         :param kwargs: Additional parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.selector.Selector
@@ -701,25 +718,26 @@ class Menu(object):
                                    onchange=onchange,
                                    onreturn=onreturn,
                                    **kwargs)
-        self._configure_widget(widget, font_size, align)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
         self._append_widget(widget)
         return widget
 
     def add_text_input(self,
                        title,
-                       textinput_id='',
+                       align=None,
                        default='',
-                       input_type=_locals.INPUT_TEXT,
-                       input_underline='',
-                       maxchar=0,
-                       maxwidth=0,
-                       align='',
-                       font_size=0,
                        enable_copy_paste=True,
                        enable_selection=True,
-                       password=False,
+                       font_size=None,
+                       input_type=_locals.INPUT_TEXT,
+                       input_underline='',
+                       margin=None,
+                       maxchar=0,
+                       maxwidth=0,
                        onchange=None,
                        onreturn=None,
+                       password=False,
+                       textinput_id='',
                        valid_chars=None,
                        **kwargs
                        ):
@@ -734,32 +752,34 @@ class Menu(object):
 
         :param title: Title of the text input
         :type title: basestring
-        :param textinput_id: ID of the text input
-        :type textinput_id: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
         :param default: Default value to display
         :type default: basestring, int, float
-        :param input_type: Data type of the input
-        :type input_type: basestring
-        :param input_underline: Underline character
-        :type input_underline: basestring
-        :param maxchar: Maximum length of string, if 0 there's no limit
-        :type maxchar: int
-        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
-        :type maxwidth: int
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
         :param enable_copy_paste: Enable text copy, paste and cut
         :type enable_copy_paste: bool
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
+        :param font_size: Font size of the widget, if None use the default menu widget font size
+        :type font_size: int
+        :param input_type: Data type of the input
+        :type input_type: basestring
+        :param input_underline: Underline character
+        :type input_underline: basestring
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
+        :param maxchar: Maximum length of string, if 0 there's no limit
+        :type maxchar: int
+        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
+        :type maxwidth: int
+        :param onchange: Function when changing the selector
+        :type onchange: function,None
+        :param onreturn: Function when pressing return button
+        :type onreturn: function,None
         :param password: Text input is a password
         :type password: bool
-        :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
+        :param textinput_id: ID of the text input
+        :type textinput_id: basestring
         :param valid_chars: List of chars to be ignored, None if no chars are invalid
         :type valid_chars: list
         :param kwargs: Additional keyword-parameters
@@ -785,32 +805,39 @@ class Menu(object):
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
-        self._configure_widget(widget, font_size, align)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
         widget.set_value(default)
         self._append_widget(widget)
         return widget
 
-    def _configure_widget(self, widget, font_size=0, align=''):
+    def _configure_widget(self, widget, align=None, font_size=None, margin=None):
         """
         Update the given widget with the parameters defined at
         the menu level.
 
         :param widget: Widget object
         :type widget: pygameMenu.widgets.widget.Widget
-        :param font_size: Widget font size
-        :type font_size: int
-        :param align: Widget alignment
-        :type align: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param font_size: Widget font size, if None use the default menu widget font size
+        :type font_size: int,None
+        :param margin: Widget vertical margin, if None the default menu widget vertical margin
+        :type margin: tuple,None
         """
-        assert isinstance(widget, _widgets.WidgetType), 'widget must be a Widget instance'
-        assert isinstance(font_size, int), 'font_size must be an integer'
-        assert isinstance(align, str), 'align must be a string'
+        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(align, (str, type(None)))
+        assert isinstance(font_size, (int, type(None)))
+        assert isinstance(margin, (tuple, type(None)))
 
-        if align == '':
+        if align is None or align == '':
             align = self._widget_alignment
-        if font_size == 0:
+        if font_size is None or font_size == 0:
             font_size = self._widget_font_size
         assert font_size > 0, 'font_size must be greater than zero'
+        if margin is None:
+            margin = self._widget_margin
+        else:
+            assert len(margin) == 2, 'margin must be a tuple of 2 elements'
 
         _col = int((len(self._widgets) - 1) // self._rows)  # Column position
 
@@ -829,6 +856,7 @@ class Menu(object):
                           offset=self._widget_shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
+        widget.set_margin(margin[0], margin[1])
 
     def _append_widget(self, widget):
         """
@@ -847,6 +875,7 @@ class Menu(object):
             widget.set_selected()
             self._widget_selected = True
             self._index = len(self._widgets) - 1
+        self._widgets_surface = None  # If added on execution time forces the update of the surface
 
     def _back(self):
         """
@@ -866,6 +895,7 @@ class Menu(object):
         required width and height.
         """
         self._update_column_width()
+
         menubar_height = self._menubar.get_rect().height
         max_x, max_y = self._get_widget_max_position()
 
@@ -985,6 +1015,7 @@ class Menu(object):
     def _get_widget_position(self, index, x=True, y=True):
         """
         Get widget position on the surface from a index position.
+        This can a be a very expensive function.
 
         :param index: Widget index on the list
         :type index: int
@@ -995,9 +1026,9 @@ class Menu(object):
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
         """
+        assert isinstance(index, int)
+        assert isinstance(x, bool) and isinstance(y, bool)
         assert len(self._widgets) > index >= 0, 'index not valid'
-        assert isinstance(index, int), 'index must be an integer'
-        assert isinstance(x, bool) and isinstance(y, bool), 'x and y must be boolean'
 
         x_coord = 0
         y_coord = 0
@@ -1006,7 +1037,7 @@ class Menu(object):
 
         # Get column and row position
         _col = int(index // self._rows)
-        _row = index % self._rows
+        _row = int(index % self._rows)
 
         # Calculate X position
         if x:
@@ -1020,12 +1051,20 @@ class Menu(object):
                 dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
             else:
                 dx = 0
-            x_coord = self._widget_offset_x + self._column_posx[_col] + dx
+
+            x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
 
         # Calculate Y position
         if y:
+
+            # Compute the total height from the current row position to the top of the column
+            ysum = 0
+            for r in range(_row):
+                rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
+                ysum += rwidget.get_font_info()['size'] + rwidget.get_margin()[1]
+
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
-            y_coord = self._widget_offset_y + _row * (self._widget_font_size + self._widget_margin) + dy
+            y_coord = self._widget_offset_y + ysum + dy
 
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
@@ -1326,7 +1365,7 @@ class Menu(object):
         :return: Input dict
         :rtype: dict
         """
-        assert isinstance(recursive, bool), 'recursive must be a boolean'
+        assert isinstance(recursive, bool)
 
         data = {}
         for widget in self._widgets:
@@ -1480,7 +1519,7 @@ class Menu(object):
         """
         self._check_menu_initialized()
         assert isinstance(self._top._actual, Menu)
-        assert isinstance(total, int), 'total must be an integer'
+        assert isinstance(total, int)
         assert total > 0, 'total must be greater than zero'
 
         i = 0
@@ -1549,8 +1588,8 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget
         """
-        assert isinstance(widget_id, str), 'widget_id must be a string'
-        assert isinstance(recursive, bool), 'recursive must be a boolean'
+        assert isinstance(widget_id, str)
+        assert isinstance(recursive, bool)
         for widget in self._widgets:
             if widget.get_id() == widget_id:
                 return widget

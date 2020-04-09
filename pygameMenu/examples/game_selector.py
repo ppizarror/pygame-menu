@@ -254,9 +254,9 @@ def main(test=False):
                                  title='About',
                                  title_font=pygameMenu.font.FONT_8BIT,
                                  title_font_color=COLOR_WHITE,
-                                 widget_margin_y=0,
                                  title_font_size=30,
                                  widget_font_color=(255, 255, 255),
+                                 widget_margin_y=0,
                                  widget_offset_y=0.15,  # Percentage of height
                                  )
     for m in ABOUT:
@@ -274,6 +274,7 @@ def main(test=False):
                                 onclose=pygameMenu.events.DISABLE_CLOSE,
                                 selection_color=COLOR_WHITE,
                                 title='Main menu',
+                                title_background_color=TITLE_BACKGROUND_COLOR,
                                 widget_font_color=COLOR_BLACK,
                                 )
 

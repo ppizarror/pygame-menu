@@ -78,6 +78,7 @@ class Widget(object):
         self._selected_rect = None  # type: _pygame.rect.RectType
         self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
         self._render_string_cache = 0  # type: int
+        self._margin = (0, 0)  # type: tuple
         self._render_string_cache_surface = None  # type: _pygame.SurfaceType
         self._surface = None  # type: _pygame.SurfaceType
         self._max_width = None  # type: (int,float)
@@ -220,11 +221,30 @@ class Widget(object):
             assert isinstance(w, (int, float))
         self._max_width = w
 
+    def get_margin(self):
+        """
+        :return: Widget margin
+        :rtype: tuple
+        """
+        return self._margin
+
+    def set_margin(self, x, y):
+        """
+        Set Widget margin.
+
+        :param x: Margin on x axis
+        :type x: int
+        :param y: Margin on y axis
+        :type y: int
+        :return: None
+        """
+        assert isinstance(x, int)
+        assert isinstance(y, int)
+        self._margin = (x, y)
+
     def get_rect(self):
         """
-        Return the Rect object.
-
-        :return: pygame.Rect
+        :return: Return the Rect object.
         :rtype: pygame.rect.RectType
         """
         self._render()
@@ -244,9 +264,7 @@ class Widget(object):
 
     def get_id(self):
         """
-        Returns widget ID.
-
-        :return: ID
+        :return: Returns widget ID.
         :rtype: basestring
         """
         return self._id

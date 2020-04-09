@@ -52,6 +52,7 @@ except ImportError:
         """
         pass
 
+
     def paste():
         """
         Paste method.
@@ -60,6 +61,7 @@ except ImportError:
         :rtype: basestring
         """
         return ''
+
 
     class PyperclipException(RuntimeError):
         """
@@ -146,16 +148,16 @@ class TextInput(Widget):
         :param kwargs: Optional keyword-arguments for callbacks
         """
         assert isinstance(label, str)
-        assert isinstance(textinput_id, str), 'ID must be a string'
-        assert isinstance(input_type, str), 'input_type must be a string'
-        assert isinstance(input_underline, str), 'input_underline must be a string'
+        assert isinstance(textinput_id, str)
+        assert isinstance(input_type, str)
+        assert isinstance(input_underline, str)
         assert isinstance(cursor_color, tuple)
-        assert isinstance(enable_copy_paste, bool), 'enable_copy_paste must be a boolean'
-        assert isinstance(enable_selection, bool), 'enable_selection must be a boolean'
+        assert isinstance(enable_copy_paste, bool)
+        assert isinstance(enable_selection, bool)
         assert isinstance(history, int)
         assert isinstance(valid_chars, (type(None), list))
-        assert isinstance(maxchar, int), 'maxchar must be integer'
-        assert isinstance(maxwidth, int), 'maxwidth must be an integer'
+        assert isinstance(maxchar, int)
+        assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
         assert isinstance(repeat_keys_initial_ms, int)
@@ -1165,8 +1167,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-            text[0:text_end] + \
-            self._input_string[self._cursor_position:len(self._input_string)]
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):
