@@ -41,11 +41,11 @@ def assert_alignment(align):
     :param align: Align value
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
-    assert align not in [_locals.ALIGN_LEFT,
-                         _locals.ALIGN_CENTER,
-                         _locals.ALIGN_RIGHT,
-                         _locals.ALIGN_TOP,
-                         _locals.ALIGN_BOTTOM], \
+    assert align in [_locals.ALIGN_LEFT,
+                     _locals.ALIGN_CENTER,
+                     _locals.ALIGN_RIGHT,
+                     _locals.ALIGN_TOP,
+                     _locals.ALIGN_BOTTOM], \
         'incorrect alignment value "{0}"'.format(align)
 
 
