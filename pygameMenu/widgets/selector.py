@@ -92,7 +92,7 @@ class Selector(Widget):
         self._index = 0  # type: int
         self._label = label
         self._labelsize = 0  # type: int
-        self._sformat = '{0} < {1} >'  # type: str
+        self._sformat = '{0}< {1} >'  # type: str
 
         # Apply default item
         default %= len(self._elements)
