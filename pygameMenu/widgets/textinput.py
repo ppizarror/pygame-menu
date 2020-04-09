@@ -1299,7 +1299,7 @@ class TextInput(Widget):
         Insert a key in the cursor position.
 
         :param keychar: Char to be inserted
-        :type keychar: str
+        :type keychar: basestring
         :param sounds: Use widget sounds
         :type sounds: bool
         :return: If False the event loop breaks

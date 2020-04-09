@@ -54,6 +54,7 @@ COLOR_WHITE = (255, 255, 255)
 DIFFICULTY = ['EASY']
 FPS = 60.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
+TITLE_BACKGROUND_COLOR = (170, 65, 50)
 WINDOW_SIZE = (640, 480)
 
 clock = None
@@ -203,32 +204,28 @@ def main(test=False):
     play_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
                                 font=pygameMenu.font.FONT_BEBAS,
-                                font_color=COLOR_BLACK,
-                                font_size=30,
-                                menu_alpha=100,
-                                menu_color=MENU_BACKGROUND_COLOR,
+                                menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
                                 menu_width=WINDOW_SIZE[0] * 0.7,
                                 onclose=pygameMenu.events.DISABLE_CLOSE,
-                                option_offset_y=0.17,  # %17 por menu height
-                                option_shadow=False,
                                 selection_color=COLOR_WHITE,
                                 title='Play menu',
+                                title_background_color=TITLE_BACKGROUND_COLOR,
+                                widget_font_color=COLOR_BLACK,
+                                widget_font_size=30,
+                                widget_offset_y=0.17,  # %17 por menu height
                                 )
 
     play_submenu = pygameMenu.Menu(surface,
                                    bgfun=main_background,
                                    font=pygameMenu.font.FONT_BEBAS,
-                                   font_color=COLOR_BLACK,
-                                   font_size=30,
-                                   menu_alpha=100,
-                                   menu_color=MENU_BACKGROUND_COLOR,
+                                   menu_background_color=MENU_BACKGROUND_COLOR,
                                    menu_height=WINDOW_SIZE[1] * 0.5,
                                    menu_width=WINDOW_SIZE[0] * 0.7,
-                                   option_offset_y=50,  # px
-                                   option_shadow=False,
                                    selection_color=COLOR_WHITE,
                                    title='Submenu',
+                                   widget_font_color=COLOR_BLACK,
+                                   widget_offset_y=50,  # px
                                    )
     play_submenu.add_button('Back', pygameMenu.events.BACK)
 
@@ -236,7 +233,7 @@ def main(test=False):
                          play_function,
                          DIFFICULTY,
                          pygame.font.Font(pygameMenu.font.FONT_FRANCHISE, 30))
-    play_menu.add_selector('Select difficulty',
+    play_menu.add_selector('Select difficulty ',
                            [('1 - Easy', 'EASY'),
                             ('2 - Medium', 'MEDIUM'),
                             ('3 - Hard', 'HARD')],
@@ -250,20 +247,19 @@ def main(test=False):
     about_menu = pygameMenu.TextMenu(surface,
                                      bgfun=main_background,
                                      font=pygameMenu.font.FONT_BEBAS,
-                                     font_color=COLOR_BLACK,
-                                     font_size_title=30,
-                                     font_title=pygameMenu.font.FONT_8BIT,
-                                     menu_color=MENU_BACKGROUND_COLOR,
-                                     menu_color_title=COLOR_WHITE,
                                      menu_height=WINDOW_SIZE[1] * 0.6,
                                      menu_width=WINDOW_SIZE[0] * 0.6,
                                      onclose=pygameMenu.events.DISABLE_CLOSE,
-                                     option_offset_y=0.15,  # Percentage of height
-                                     option_shadow=False,
                                      selection_color=COLOR_WHITE,
-                                     text_color=COLOR_BLACK,
+                                     text_color=COLOR_WHITE,
                                      text_fontsize=20,
                                      title='About',
+                                     title_font=pygameMenu.font.FONT_8BIT,
+                                     title_font_color=COLOR_WHITE,
+                                     title_font_size=30,
+                                     widget_font_color=(255, 255, 255),
+                                     widget_offset_y=0.15,  # Percentage of height
+                                     widget_shadow=False,
                                      )
     for m in ABOUT:
         about_menu.add_line(m)
@@ -274,16 +270,13 @@ def main(test=False):
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
                                 font=pygameMenu.font.FONT_BEBAS,
-                                font_color=COLOR_BLACK,
-                                font_size=30,
-                                menu_alpha=100,
-                                menu_color=MENU_BACKGROUND_COLOR,
+                                menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.6,
                                 menu_width=WINDOW_SIZE[0] * 0.6,
                                 onclose=pygameMenu.events.DISABLE_CLOSE,
-                                option_shadow=False,
                                 selection_color=COLOR_WHITE,
                                 title='Main menu',
+                                widget_font_color=COLOR_BLACK,
                                 )
 
     main_menu.add_button('Play', play_menu)

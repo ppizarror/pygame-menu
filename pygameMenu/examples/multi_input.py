@@ -50,6 +50,7 @@ COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 60.0
 MENU_BACKGROUND_COLOR = (228, 100, 36)
+TITLE_BACKGROUND_COLOR = (170, 65, 50)
 WINDOW_SIZE = (640, 480)
 
 sound = None
@@ -147,17 +148,16 @@ def main(test=False):
     settings_menu = pygameMenu.Menu(surface,
                                     bgfun=main_background,
                                     font=pygameMenu.font.FONT_HELVETICA,
-                                    font_color=COLOR_BLACK,
-                                    font_size=25,
-                                    font_size_title=50,
-                                    menu_alpha=100,
-                                    menu_color=MENU_BACKGROUND_COLOR,
+                                    menu_background_color=MENU_BACKGROUND_COLOR,
                                     menu_height=WINDOW_SIZE[1] * 0.85,
                                     menu_width=WINDOW_SIZE[0] * 0.9,
                                     onclose=pygameMenu.events.DISABLE_CLOSE,
                                     selection_color=COLOR_WHITE,
                                     title='Settings',
+                                    title_background_color=TITLE_BACKGROUND_COLOR,
                                     widget_alignment=pygameMenu.locals.ALIGN_LEFT,
+                                    widget_font_color=COLOR_BLACK,
+                                    widget_font_size=25,
                                     )
 
     # Add text inputs with different configurations
@@ -188,7 +188,7 @@ def main(test=False):
                                  input_underline='_')
 
     # Create selector with 3 difficulty options
-    settings_menu.add_selector('Select difficulty',
+    settings_menu.add_selector('Select difficulty ',
                                [('Easy', 'EASY'),
                                 ('Medium', 'MEDIUM'),
                                 ('Hard', 'HARD')],
@@ -217,19 +217,18 @@ def main(test=False):
     more_settings_menu = pygameMenu.Menu(surface,
                                          bgfun=main_background,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
-                                         font_color=COLOR_BLACK,
-                                         font_size=25,
-                                         font_size_title=50,
-                                         menu_alpha=100,
-                                         menu_color=MENU_BACKGROUND_COLOR,
+                                         menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.85,
                                          menu_width=WINDOW_SIZE[0] * 0.9,
                                          onclose=pygameMenu.events.DISABLE_CLOSE,
-                                         option_offset_x=5,  # px
-                                         option_offset_y=50,  # px
                                          selection_color=COLOR_WHITE,
                                          title='More Settings',
+                                         title_background_color=TITLE_BACKGROUND_COLOR,
                                          widget_alignment=pygameMenu.locals.ALIGN_LEFT,
+                                         widget_font_color=COLOR_BLACK,
+                                         widget_font_size=25,
+                                         widget_offset_x=5,  # px
+                                         widget_offset_y=50,  # px
                                          )
 
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
@@ -254,16 +253,16 @@ def main(test=False):
                                          bgfun=main_background,
                                          columns=2,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
-                                         font_color=COLOR_BLACK,
-                                         font_size=25,
-                                         font_size_title=40,
-                                         menu_color=MENU_BACKGROUND_COLOR,
+                                         menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.45,
                                          menu_width=WINDOW_SIZE[0] * 0.9,
                                          onclose=pygameMenu.events.DISABLE_CLOSE,
                                          rows=3,
                                          selection_color=COLOR_WHITE,
                                          title='Columns',
+                                         title_background_color=TITLE_BACKGROUND_COLOR,
+                                         widget_font_color=COLOR_BLACK,
+                                         widget_font_size=25,
                                          )
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
@@ -275,26 +274,24 @@ def main(test=False):
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(surface,
                                 bgfun=main_background,
-                                option_offset_y=0.09,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
-                                font_color=COLOR_BLACK,
-                                font_size=30,
-                                font_size_title=40,
-                                menu_alpha=100,
-                                menu_color=MENU_BACKGROUND_COLOR,
+                                menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
                                 menu_width=WINDOW_SIZE[0] * 0.8,
                                 onclose=pygameMenu.events.EXIT,  # User press ESC button
-                                option_shadow=False,
                                 selection_color=COLOR_WHITE,
                                 title='Main menu',
+                                title_background_color=TITLE_BACKGROUND_COLOR,
+                                widget_font_color=COLOR_BLACK,
+                                widget_font_size=30,
+                                widget_offset_y=0.09,
                                 )
     main_menu.set_fps(FPS)
 
     main_menu.add_button('Settings', settings_menu)
     main_menu.add_button('More Settings', more_settings_menu)
     main_menu.add_button('Menu in columns!', button_column_menu)
-    main_menu.add_selector('Menu sounds',
+    main_menu.add_selector('Menu sounds ',
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
     main_menu.add_button('Quit', pygameMenu.events.EXIT)

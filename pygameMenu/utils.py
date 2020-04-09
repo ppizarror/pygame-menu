@@ -31,20 +31,50 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
+import pygameMenu.locals as _locals
 
 
-def assert_color(color, var_name):
+def assert_alignment(align):
+    """
+    Assert alignment local.
+
+    :param align: Align value
+    :type align: basestring
+    """
+    assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
+    assert align in [_locals.ALIGN_LEFT,
+                     _locals.ALIGN_CENTER,
+                     _locals.ALIGN_RIGHT,
+                     _locals.ALIGN_TOP,
+                     _locals.ALIGN_BOTTOM], \
+        'incorrect alignment value "{0}"'.format(align)
+
+
+def assert_color(color):
     """
     Assert that a certain color is valid.
 
-    :param color: Color object
-    :param var_name: Name of the variable
-    :type var_name: str
+    :param color: Object color
     """
     assert isinstance(color, (list, tuple))
-    assert len(color) == 3, '{0} must be a tuple or list of 3 numbers'.format(var_name)
+    assert len(color) == 3, 'color must be a tuple or list of 3 numbers'
     for i in color:
-        assert isinstance(i, int), '{0} element must be a number'.format(var_name)
+        assert isinstance(i, int), '{0} element must be a number'.format(i)
+
+
+def assert_position(position):
+    """
+    Assert that a certain widget position is valid.
+
+    :param position: Object position
+    :type position: basestring
+    """
+    assert isinstance(position, str)
+    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
+                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
+                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
+                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
+        'invalid position value "{0}"'.format(position)
 
 
 def check_key_pressed_valid(event):

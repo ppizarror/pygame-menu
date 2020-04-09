@@ -31,12 +31,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import make_surface, assert_color
+from pygameMenu.utils import make_surface, assert_alignment, assert_color, assert_position
 from uuid import uuid4
 
 
@@ -72,7 +71,7 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._alignment = _locals.ALIGN_CENTER  # type: str
+        self._alignment = _locals.ALIGN_CENTER
         self._fps = 0  # type: int
         self._id = widget_id
         self._last_selected_surface = None  # type: _pygame.SurfaceType
@@ -93,17 +92,17 @@ class Widget(object):
 
         # Modified in set_font() method
         self._font = None  # type: _pygame.font.Font
-        self._font_name = _cfg.MENU_FONT_SIZE_TITLE  # type: str
-        self._font_size = _cfg.MENU_FONT_SIZE  # type: int
-        self._font_color = _cfg.MENU_FONT_COLOR  # type: tuple
-        self._font_selected_color = _cfg.MENU_SELECTED_COLOR  # type: tuple
+        self._font_name = ''  # type: str
+        self._font_size = 0  # type: int
+        self._font_color = (0, 0, 0)  # type: tuple
+        self._font_selected_color = (0, 0, 0)  # type: tuple
         self._font_antialias = True  # type: bool
 
         # Text shadow
-        self._shadow = _cfg.MENU_OPTION_SHADOW  # type: bool
-        self._shadow_color = _cfg.MENU_SHADOW_COLOR  # type: tuple
-        self._shadow_offset = _cfg.MENU_SHADOW_OFFSET  # type: int
-        self._shadow_position = _cfg.MENU_SHADOW_POSITION  # type: str
+        self._shadow = False  # type: bool
+        self._shadow_color = (0, 0, 0)  # type: tuple
+        self._shadow_offset = 2  # type: int
+        self._shadow_position = _locals.POSITION_NORTHWEST
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
 
@@ -413,13 +412,7 @@ class Widget(object):
         :type align: basestring
         :return: None
         """
-        align = str(align)
-        if align not in [_locals.ALIGN_LEFT,
-                         _locals.ALIGN_CENTER,
-                         _locals.ALIGN_RIGHT,
-                         _locals.ALIGN_TOP,
-                         _locals.ALIGN_BOTTOM]:
-            raise ValueError('Incorrect alignment of the widget')
+        assert_alignment(align)
         self._alignment = align
 
     def get_alignment(self):
@@ -477,14 +470,10 @@ class Widget(object):
         """
         self._shadow = enabled
         if color is not None:
-            assert_color(color, 'color')
+            assert_color(color)
             self._shadow_color = color
         if position is not None:
-            if position not in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
-                                _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
-                                _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                                _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST]:
-                raise ValueError('Incorrect shadow position of the widget')
+            assert_position(position)
             self._shadow_position = position
         if offset is not None:
             try:

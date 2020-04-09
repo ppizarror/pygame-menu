@@ -76,15 +76,16 @@ def make_long_menu(surface):
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(surface,
                             bgfun=partial(paint_background, surface),
-                            option_offset_y=10,
                             font=pygameMenu.font.FONT_COMIC_NEUE,
                             fps=FPS,
                             menu_alpha=80,
-                            menu_color=(188, 200, 108),
-                            menu_color_title=(100, 130, 98),
-                            menu_width=700,  # px
+                            menu_background_color=(188, 200, 108),
+                            menu_height=400,
+                            menu_width=600,  # px
                             onclose=pygameMenu.events.EXIT,
                             title='Main Menu',
+                            title_background_color=(100, 130, 98),
+                            widget_offset_y=10,
                             )
 
     _menu_sub = pygameMenu.Menu(surface,
@@ -93,12 +94,14 @@ def make_long_menu(surface):
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
                                 fps=FPS,
                                 menu_alpha=60,
-                                menu_color=(120, 200, 108),
-                                menu_color_title=(100, 200, 98),
+                                menu_background_color=(120, 200, 108),
+                                menu_height=400,
+                                menu_width=600,
                                 onclose=pygameMenu.events.EXIT,
-                                option_shadow=True,
                                 rows=3,
                                 title='Menu with columns',
+                                title_background_color=(100, 200, 98),
+                                widget_shadow=True,
                                 )
 
     _menu.add_button('Rows and Columns', _menu_sub)
@@ -108,7 +111,7 @@ def make_long_menu(surface):
         if i % 2 == 0:
             _menu.add_button(label1.format(i),
                              on_button_click,
-                             'button n°{}'.format(i))
+                             'Button n°{}'.format(i))
         else:
             _menu.add_text_input(label2.format(i),
                                  onchange=on_button_click,
@@ -142,9 +145,6 @@ def main(test=False):
 
     # Create menu
     menu = make_long_menu(screen)
-
-    print(W_SIZE)
-    print(pygame.display.get_surface().get_size())
 
     # -------------------------------------------------------------------------
     # Main loop

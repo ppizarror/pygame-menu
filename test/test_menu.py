@@ -161,7 +161,7 @@ class MenuTest(unittest.TestCase):
         def _some_event():
             return 'the value'
 
-        # Add some options
+        # Add some widgets
         button = None
         first_button = None
         for i in range(5):
@@ -281,7 +281,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=10))
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
 
-        # Assert append more options than number of rows*columns
+        # Assert append more widgets than number of rows*columns
         _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             _column_menu.add_button('test', pygameMenu.events.BACK)
@@ -297,15 +297,17 @@ class MenuTest(unittest.TestCase):
         Test textual menus.
         """
         menu = pygameMenu.TextMenu(surface,
-                                   font=PygameMenuUtils.random_font(),
                                    dopause=False,
-                                   menu_color=(30, 50, 107),  # Background color
-                                   menu_color_title=(120, 45, 30),
+                                   font=PygameMenuUtils.random_font(),
+                                   menu_background_color=(30, 50, 107),  # Background color
+                                   menu_height=400,
+                                   menu_width=600,
                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
-                                   option_shadow=True,
-                                   option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                    text_align=pygameMenu.locals.ALIGN_RIGHT,
                                    title='Help',
+                                   title_background_color=(120, 45, 30),
+                                   widget_shadow=True,
+                                   widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                    )
         menu.mainloop()
         menu.add_button('Return to Menu', pygameMenu.events.BACK)

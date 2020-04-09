@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
@@ -45,13 +44,15 @@ class TextMenu(Menu):
 
     def __init__(self,
                  surface,
+                 menu_height,
+                 menu_width,
                  font,
                  title,
-                 draw_text_region_x=_cfg.TEXT_DRAW_X,
+                 draw_text_region_x=2.5,
                  text_align=_locals.ALIGN_LEFT,
-                 text_color=_cfg.TEXT_FONT_COLOR,
-                 text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
-                 text_margin=_cfg.TEXT_MARGIN,
+                 text_color=(255, 255, 255),
+                 text_fontsize=15,
+                 text_margin=10,
                  **kwargs
                  ):
         """
@@ -59,10 +60,14 @@ class TextMenu(Menu):
 
         :param surface: Pygame surface object
         :type surface: pygame.surface.SurfaceType
+        :param menu_height: Height of menu (px)
+        :type menu_height: int,float
+        :param menu_width: Width of menu (px)
+        :type menu_width: int,float
         :param font: Font file direction
-        :type font: str
+        :type font: basestring
         :param title: Title of the Menu
-        :type title: str
+        :type title: basestring
         :param draw_text_region_x: X-Axis drawing region of the text
         :type draw_text_region_x: int, float
         :param text_align: Text default alignment
@@ -93,6 +98,8 @@ class TextMenu(Menu):
 
         # Super call
         super(TextMenu, self).__init__(surface,
+                                       menu_height,
+                                       menu_width,
                                        font,
                                        title,
                                        **kwargs)
@@ -116,7 +123,7 @@ class TextMenu(Menu):
         Add line of text.
 
         :param text: Line text
-        :type text: str
+        :type text: basestring
         :return: None
         """
         assert isinstance(text, str), 'line text must be a string'
@@ -176,28 +183,28 @@ class TextMenu(Menu):
         x_coord = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
         y_coord = self._posy + self._textdy + line_number * (
                 self._font_textsize + self._textdy) - self._font_textsize / 2
-        return self._option_offset_x + x_coord + text_dx, self._option_offset_y + y_coord
+        return self._widget_offset_x + x_coord + text_dx, self._widget_offset_y + y_coord
 
-    def _get_option_pos(self, index, x=True, y=True):
+    def _get_widget_position(self, index, x=True, y=True):
         """
         See upper class doc.
         """
         dysum = len(self._text) * (self._font_textsize + self._textdy)
         dysum += 2 * self._textdy + self._font_textsize
 
-        rect = self._option[index].get_rect()
-        if self._widget_align == _locals.ALIGN_CENTER:
+        rect = self._widgets[index].get_rect()
+        if self._widget_alignment == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif self._widget_align == _locals.ALIGN_CENTER:
+        elif self._widget_alignment == _locals.ALIGN_CENTER:
             option_dx = -self._width / 2 + self._selection_highlight_margin_x
-        elif self._widget_align == _locals.ALIGN_CENTER:
+        elif self._widget_alignment == _locals.ALIGN_CENTER:
             option_dx = self._width / 2 - rect.width - self._selection_highlight_margin_x
         else:
             option_dx = 0
         t_dy = - rect.height
 
-        x_coord = self._option_offset_x + self._column_posx[0] + option_dx
-        y_coord = self._option_offset_y + index * (self._fsize + self._option_margin) + t_dy + dysum
+        x_coord = self._widget_offset_x + self._column_posx[0] + option_dx
+        y_coord = self._widget_offset_y + index * (self._widget_font_size + self._widget_margin) + t_dy + dysum
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):

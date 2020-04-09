@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import make_surface
@@ -51,17 +50,18 @@ class ScrollArea(object):
     def __init__(self,
                  area_width,
                  area_height,
-                 world=None,
                  area_color=None,
-                 scrollbars=(_locals.POSITION_SOUTH, _locals.POSITION_EAST),
-                 scrollbar_thick=20,
                  scrollbar_color=(235, 235, 235),
-                 scrollbar_slider_pad=0,
                  scrollbar_slider_color=(200, 200, 200),
-                 shadow=_cfg.MENU_OPTION_SHADOW,
-                 shadow_color=_cfg.MENU_SHADOW_COLOR,
-                 shadow_offset=_cfg.MENU_SHADOW_OFFSET,
-                 shadow_position=_locals.POSITION_SOUTHEAST):
+                 scrollbar_slider_pad=0,
+                 scrollbar_thick=20,
+                 scrollbars=(_locals.POSITION_SOUTH, _locals.POSITION_EAST),
+                 shadow=False,
+                 shadow_color=(0, 0, 0),
+                 shadow_offset=2,
+                 shadow_position=_locals.POSITION_SOUTHEAST,
+                 world=None,
+                 ):
         """
         Description of the parameters:
 
@@ -69,20 +69,18 @@ class ScrollArea(object):
         :type area_width: int
         :param area_height: Height of scrollable area (px)
         :type area_height: int
-        :param world: Surface to draw and scroll
-        :type world: pygame.Surface, NoneType
         :param area_color: Background color
         :type area_color: tuple, list, NoneType
-        :param scrollbars: Postions of the scrollbars
-        :type scrollbars: tuple, list
-        :param scrollbar_thick: Scrollbars thickness
-        :type scrollbar_thick: int
         :param scrollbar_color: Scrollbars color
         :type scrollbar_color: tuple, list
-        :param scrollbar_slider_pad: Space between slider and scrollbars borders
-        :type scrollbar_slider_pad: int
         :param scrollbar_slider_color: Color of the sliders
         :type scrollbar_slider_color: tuple, list
+        :param scrollbar_slider_pad: Space between slider and scrollbars borders
+        :type scrollbar_slider_pad: int
+        :param scrollbar_thick: Scrollbars thickness
+        :type scrollbar_thick: int
+        :param scrollbars: Postions of the scrollbars
+        :type scrollbars: tuple, list
         :param shadow: Indicate if a shadow is drawn on each scrollbar
         :type shadow: bool
         :param shadow_color: Color of the shadow
@@ -91,6 +89,8 @@ class ScrollArea(object):
         :type shadow_offset: int
         :param shadow_position: Position of shadow
         :type shadow_position: basestring
+        :param world: Surface to draw and scroll
+        :type world: pygame.Surface, NoneType
         """
         self._rect = _pygame.Rect(0, 0, area_width, area_height)
         self._world = world

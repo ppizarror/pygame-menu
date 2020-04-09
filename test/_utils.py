@@ -315,6 +315,8 @@ class PygameMenuUtils(object):
                                font=pygameMenu.font.FONT_NEVIS,
                                fps=FPS,
                                menu_alpha=90,
+                               menu_height=400,
+                               menu_width=600,
                                rows=rows,
                                title=title,
                                *args,
