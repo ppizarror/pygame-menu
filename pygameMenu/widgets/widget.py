@@ -35,7 +35,7 @@ import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import *
+from pygameMenu.utils import make_surface, assert_alignment, assert_color, assert_position
 from uuid import uuid4
 
 
@@ -102,7 +102,7 @@ class Widget(object):
         self._shadow = False  # type: bool
         self._shadow_color = (0, 0, 0)  # type: tuple
         self._shadow_offset = 2  # type: int
-        self._shadow_position = _locals.POSITION_NORTHWEST  # type: str
+        self._shadow_position = _locals.POSITION_NORTHWEST
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
 
@@ -473,11 +473,7 @@ class Widget(object):
             assert_color(color, 'color')
             self._shadow_color = color
         if position is not None:
-            if position not in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
-                                _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
-                                _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                                _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST]:
-                raise ValueError('Incorrect shadow position of the widget')
+            assert_position(position)
             self._shadow_position = position
         if offset is not None:
             try:

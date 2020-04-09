@@ -39,6 +39,7 @@ def assert_alignment(align):
     Assert alignment local.
 
     :param align: Align value
+    :type align: basestring
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
     assert align in [_locals.ALIGN_LEFT,
@@ -53,14 +54,29 @@ def assert_color(color, var_name):
     """
     Assert that a certain color is valid.
 
-    :param color: Color object
+    :param color: Object color
     :param var_name: Name of the variable
-    :type var_name: str
+    :type var_name: basestring
     """
     assert isinstance(color, (list, tuple))
     assert len(color) == 3, '{0} must be a tuple or list of 3 numbers'.format(var_name)
     for i in color:
         assert isinstance(i, int), '{0} element must be a number'.format(var_name)
+
+
+def assert_position(position):
+    """
+    Assert that a certain widget position is valid.
+
+    :param position: Object position
+    :type position: basestring
+    """
+    assert isinstance(position, str)
+    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
+                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
+                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
+                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
+        'invalid position value "{0}"'.format(position)
 
 
 def check_key_pressed_valid(event):

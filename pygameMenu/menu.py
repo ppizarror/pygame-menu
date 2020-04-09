@@ -160,7 +160,7 @@ class Menu(object):
         :param title_background_color: Title background color
         :type title_background_color: tuple,list
         :param title_font: Optional title font, if None use the menu default font
-        :type title_font: str,None
+        :type title_font: basestring,None
         :param title_font_color: Title font color, if None use the widget font color
         :type title_font_color: list,tuple,None
         :param title_font_size: Font size of the title
@@ -227,7 +227,6 @@ class Menu(object):
         assert isinstance(title_offset_y, int)
         assert isinstance(title_shadow, bool)
         assert isinstance(title_shadow_offset, int)
-        assert isinstance(title_shadow_position, str)
         assert isinstance(widget_alignment, str)
         assert isinstance(widget_font_size, int)
         assert isinstance(widget_margin_y, int)
@@ -235,7 +234,6 @@ class Menu(object):
         assert isinstance(widget_offset_y, (int, float))
         assert isinstance(widget_shadow, bool)
         assert isinstance(widget_shadow_offset, int)
-        assert isinstance(widget_shadow_position, str)
 
         # Assert colors
         if title_background_color is None:
@@ -249,6 +247,10 @@ class Menu(object):
         assert_color(title_shadow_color, 'title_shadow_color')
         assert_color(widget_font_color, 'widget_font_color')
         assert_color(widget_shadow_color, 'widget_shadow_color')
+
+        # Assert positions
+        assert_position(title_shadow_position)
+        assert_position(widget_shadow_position)
 
         # Column/row asserts
         assert columns >= 1, 'number of columns must be greater or equal than 1'
@@ -761,7 +763,7 @@ class Menu(object):
         :param font_size: Widget font size
         :type font_size: int
         :param align: Widget alignment
-        :type align: str
+        :type align: basestring
         """
         assert isinstance(widget, _widgets.WidgetType), 'widget must be a Widget instance'
         assert isinstance(font_size, int), 'font_size must be an integer'

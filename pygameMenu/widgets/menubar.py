@@ -184,7 +184,7 @@ class MenuBar(Widget):
         Set menu title.
 
         :param title: Menu title
-        :type title: str
+        :type title: basestring
         :param offsetx: Offset x-position of title (px)
         :type offsetx: int
         :param offsety: Offset y-position of title (px)

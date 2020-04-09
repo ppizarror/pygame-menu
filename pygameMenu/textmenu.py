@@ -65,9 +65,9 @@ class TextMenu(Menu):
         :param menu_width: Width of menu (px)
         :type menu_width: int,float
         :param font: Font file direction
-        :type font: str
+        :type font: basestring
         :param title: Title of the Menu
-        :type title: str
+        :type title: basestring
         :param draw_text_region_x: X-Axis drawing region of the text
         :type draw_text_region_x: int, float
         :param text_align: Text default alignment
@@ -123,7 +123,7 @@ class TextMenu(Menu):
         Add line of text.
 
         :param text: Line text
-        :type text: str
+        :type text: basestring
         :return: None
         """
         assert isinstance(text, str), 'line text must be a string'
