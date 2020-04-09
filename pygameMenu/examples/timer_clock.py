@@ -38,9 +38,9 @@ sys.path.insert(0, '../../')
 import datetime
 import os
 import pygame
-import pygameMenu
-
 from random import randrange
+
+import pygameMenu
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -156,8 +156,8 @@ def main(test=False):
                                  dopause=False,
                                  font=pygameMenu.font.FONT_NEVIS,
                                  menu_alpha=85,
-                                 menu_color=(0, 0, 0),  # Background color
-                                 menu_color_title=(0, 0, 0),
+                                 menu_background_color=(0, 0, 0),  # Background color
+                                 title_background_color=(0, 0, 0),
                                  menu_height=H_SIZE * 0.65,
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
@@ -231,6 +231,8 @@ def main(test=False):
                                 font=pygameMenu.font.FONT_NEVIS,
                                 fps=FPS,
                                 menu_alpha=90,
+                                menu_height=600,
+                                menu_width=800,
                                 onclose=pygameMenu.events.CLOSE,
                                 title='Main Menu',
                                 title_offset_y=5,

@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
@@ -47,11 +46,11 @@ class TextMenu(Menu):
                  surface,
                  font,
                  title,
-                 draw_text_region_x=_cfg.TEXT_DRAW_X,
+                 draw_text_region_x=2.5,
                  text_align=_locals.ALIGN_LEFT,
-                 text_color=_cfg.TEXT_FONT_COLOR,
-                 text_fontsize=_cfg.MENU_FONT_TEXT_SIZE,
-                 text_margin=_cfg.TEXT_MARGIN,
+                 text_color=(255, 255, 255),
+                 text_fontsize=15,
+                 text_margin=10,
                  **kwargs
                  ):
         """

@@ -76,14 +76,15 @@ def make_long_menu(surface):
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(surface,
                             bgfun=partial(paint_background, surface),
-                            option_offset_y=10,
                             font=pygameMenu.font.FONT_COMIC_NEUE,
                             fps=FPS,
                             menu_alpha=80,
-                            menu_color=(188, 200, 108),
-                            menu_color_title=(100, 130, 98),
+                            menu_background_color=(188, 200, 108),
+                            title_background_color=(100, 130, 98),
+                            menu_height=600,
                             menu_width=700,  # px
                             onclose=pygameMenu.events.EXIT,
+                            option_offset_y=10,
                             title='Main Menu',
                             )
 
@@ -93,8 +94,10 @@ def make_long_menu(surface):
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
                                 fps=FPS,
                                 menu_alpha=60,
-                                menu_color=(120, 200, 108),
-                                menu_color_title=(100, 200, 98),
+                                menu_background_color=(120, 200, 108),
+                                title_background_color=(100, 200, 98),
+                                menu_height=600,
+                                menu_width=800,
                                 onclose=pygameMenu.events.EXIT,
                                 option_shadow=True,
                                 rows=3,

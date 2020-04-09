@@ -32,9 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import pygame
-import pygameMenu.config as _cfg
-import pygameMenu.locals as _locals
 
+import pygameMenu.locals as _locals
 from pygameMenu.utils import make_surface
 from pygameMenu.widgets import ScrollBar
 
@@ -112,9 +111,9 @@ def main(test=False):
                      slider_pad=2,
                      page_ctrl_thick=thick_h,
                      onchange=h_changed)
-    sb_h.set_shadow(color=_cfg.MENU_SHADOW_COLOR,
+    sb_h.set_shadow(color=(0, 0, 0),
                     position=_locals.POSITION_SOUTHEAST,
-                    offset=_cfg.MENU_SHADOW_OFFSET)
+                    offset=2)
     sb_h.set_controls(False)
     sb_h.set_position(0, scr_size[1] - thick_h)
     sb_h.set_page_step(scr_size[0] - thick_v)

@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-import pygameMenu.config as _cfg
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import make_surface
@@ -58,10 +57,11 @@ class ScrollArea(object):
                  scrollbar_color=(235, 235, 235),
                  scrollbar_slider_pad=0,
                  scrollbar_slider_color=(200, 200, 200),
-                 shadow=_cfg.MENU_OPTION_SHADOW,
-                 shadow_color=_cfg.MENU_SHADOW_COLOR,
-                 shadow_offset=_cfg.MENU_SHADOW_OFFSET,
-                 shadow_position=_locals.POSITION_SOUTHEAST):
+                 shadow=False,
+                 shadow_color=(0, 0, 0),
+                 shadow_offset=2,
+                 shadow_position=_locals.POSITION_SOUTHEAST,
+                 ):
         """
         Description of the parameters:
 

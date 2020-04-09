@@ -35,7 +35,6 @@ import types
 import warnings
 
 import pygame as _pygame
-import pygameMenu.config as _cfg
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.font as _fonts
@@ -62,6 +61,8 @@ class Menu(object):
 
     def __init__(self,
                  surface,
+                 menu_height,
+                 menu_width,
                  font,
                  title,
                  back_box=True,
@@ -71,35 +72,35 @@ class Menu(object):
                  columns=1,
                  dopause=True,
                  enabled=True,
-                 font_color=_cfg.MENU_FONT_COLOR,
-                 font_size=_cfg.MENU_FONT_SIZE,
-                 font_size_title=_cfg.MENU_FONT_SIZE_TITLE,
-                 font_title=None,
                  fps=0,
                  joystick_enabled=True,
-                 menu_alpha=_cfg.MENU_ALPHA,
-                 menu_color=_cfg.MENU_BGCOLOR,
-                 menu_color_title=_cfg.MENU_TITLE_BG_COLOR,
-                 menu_height=_cfg.MENU_HEIGHT,
-                 menu_shadow_color=_cfg.MENU_SHADOW_COLOR,
-                 menu_width=_cfg.MENU_WIDTH,
+                 menu_alpha=100,
+                 menu_background_color=(0, 0, 0),
                  mouse_enabled=True,
                  mouse_visible=True,
                  onclose=None,
-                 option_margin_y=_cfg.MENU_OPTION_MARGIN,
+                 option_font_color=(255, 255, 255),
+                 option_font_size=30,
+                 option_margin_y=15,
                  option_offset_x=0,
                  option_offset_y=0,
-                 option_shadow=_cfg.MENU_OPTION_SHADOW,
-                 option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
-                 option_shadow_position=_cfg.MENU_SHADOW_POSITION,
+                 option_shadow=False,
+                 option_shadow_color=(0, 0, 0),
+                 option_shadow_offset=2,
+                 option_shadow_position=_locals.POSITION_NORTHWEST,
                  rows=None,
-                 selection_color=_cfg.MENU_SELECTED_COLOR,
-                 selection_highlight=_cfg.MENU_SELECTED_DRAW,
-                 selection_highlight_border_width=_cfg.MENU_SELECTED_WIDTH,
-                 selection_highlight_margin_x=_cfg.MENU_SELECTED_EXPLODE_X,
-                 selection_highlight_margin_y=_cfg.MENU_SELECTED_EXPLODE_Y,
+                 selection_color=(180, 180, 180),
+                 selection_highlight=True,
+                 selection_highlight_border_width=1,
+                 selection_highlight_margin_x=16,
+                 selection_highlight_margin_y=4,
+                 title_background_color=(160, 160, 160),
+                 title_font=None,
+                 title_font_color=(255, 255, 255),
+                 title_font_size=40,
                  title_offset_x=0,
                  title_offset_y=0,
+                 title_shadow_color=(0, 0, 0),
                  widget_alignment=_locals.ALIGN_CENTER,
                  ):
         """
@@ -107,6 +108,10 @@ class Menu(object):
 
         :param surface: Pygame surface
         :type surface: pygame.surface.SurfaceType
+        :param menu_height: Height of menu (px)
+        :type menu_height: int,float
+        :param menu_width: Width of menu (px)
+        :type menu_width: int,float
         :param font: Font file path
         :type font: basestring
         :param title: Title of the menu (main title)
@@ -125,30 +130,26 @@ class Menu(object):
         :type dopause: bool
         :param enabled: Menu is enabled by default or not
         :type enabled: bool
-        :param fps: FPS of the menu
+        :param fps: Maximums FPS (frames per second) of the menu
         :type fps: int, float
-        :param font_color: Color of the font
-        :type font_color: tuple,list
-        :param font_size: Font size
-        :type font_size: int
-        :param font_size_title: Font size of the title
-        :type font_size_title: int
-        :param font_title: Alternative font of the title (file path)
-        :type font_title: basestring
         :param joystick_enabled: Enable/disable joystick on menu
         :type joystick_enabled: bool
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :type menu_alpha: int
-        :param menu_color: Menu color
-        :type menu_color: tuple,list
-        :param menu_color_title: Background color of title
-        :type menu_color_title: tuple,list
-        :param menu_height: Height of menu (px)
-        :type menu_height: int,float
-        :param menu_shadow_color: Color of the shadow
-        :type menu_shadow_color: tuple,list
-        :param menu_width: Width of menu (px)
-        :type menu_width: int,float
+        :param menu_background_color: Menu background color
+        :type menu_background_color: tuple,list
+        :param option_font_color: Color of the font
+        :type option_font_color: tuple,list
+        :param option_font_size: Font size
+        :type option_font_size: int
+        :param option_shadow_color: Color of the shadow
+        :type option_shadow_color: tuple,list
+        :param title_font_size: Font size of the title
+        :type title_font_size: int
+        :param title_font: Alternative font of the title (file path)
+        :type title_font: basestring
+        :param title_background_color: Title background color
+        :type title_background_color: tuple,list
         :param mouse_enabled: Enable/disable mouse click on menu
         :type mouse_enabled: bool
         :param mouse_visible: Set mouse visible on menu
@@ -186,6 +187,9 @@ class Menu(object):
         :param widget_alignment: Default widget alignment
         :type widget_alignment: basestring
         """
+        assert isinstance(surface, _pygame.Surface)
+        assert isinstance(menu_height, (int, float))
+        assert isinstance(menu_width, (int, float))
         assert isinstance(font, str)
         assert isinstance(title, str)
         assert isinstance(back_box, bool)
@@ -194,13 +198,9 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(dopause, bool)
         assert isinstance(enabled, bool)
-        assert isinstance(font_size, int)
-        assert isinstance(font_size_title, int)
-        assert isinstance(font_title, (str, type(None)))
         assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_alpha, int)
-        assert isinstance(menu_height, (int, float))
-        assert isinstance(menu_width, (int, float))
+        assert isinstance(option_font_size, int)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(option_margin_y, int)
@@ -214,16 +214,18 @@ class Menu(object):
         assert isinstance(selection_highlight_border_width, int)
         assert isinstance(selection_highlight_margin_x, int)
         assert isinstance(selection_highlight_margin_y, int)
+        assert isinstance(title_font, (str, type(None)))
+        assert isinstance(title_font_size, int)
         assert isinstance(title_offset_x, int)
         assert isinstance(title_offset_y, int)
         assert isinstance(widget_alignment, str)
 
         # Assert colors
-        assert_color(font_color, 'font_color')
-        assert_color(menu_color, 'menu_color')
-        assert_color(menu_color_title, 'menu_color_title')
-        assert_color(menu_shadow_color, 'menu_shadow_color')
+        assert_color(option_font_color, 'font_color')
+        assert_color(menu_background_color, 'menu_color')
+        assert_color(option_shadow_color, 'menu_shadow_color')
         assert_color(selection_color, 'selection_color')
+        assert_color(title_background_color, 'menu_color_title')
 
         # Other asserts
         if dopause:
@@ -236,10 +238,10 @@ class Menu(object):
         assert dopause and bgfun is not None or not dopause and bgfun is None, \
             'if pause main execution is enabled then bgfun (Background ' \
             'function drawing) must be defined (not None)'
-        assert font_size > 0 and font_size_title > 0, \
+        assert option_font_size > 0 and title_font_size > 0, \
             'font sizes must be greater than zero'
         assert menu_width > 0 and menu_height > 0, \
-            'menu size must be greater than zero'
+            'menu width and height must be greater than zero'
         assert 0 <= menu_alpha <= 100, \
             'menu_alpha must be between 0 and 100 (both values included)'
         assert option_margin_y >= 0, \
@@ -258,21 +260,22 @@ class Menu(object):
 
         self._actual = self  # Actual menu
         self._bgfun = bgfun
-        self._bgcolor = (menu_color[0],
-                         menu_color[1],
-                         menu_color[2],
+        self._bgcolor = (menu_background_color[0],
+                         menu_background_color[1],
+                         menu_background_color[2],
                          int(255 * (1 - (100 - menu_alpha) / 100.0))
                          )
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
-        self._font_color = font_color
-        self._fsize = font_size
+        self._font_color = option_font_color
+        self._fps = 0  # Updated in set_fps()
+        self._fsize = option_font_size
         self._height = int(menu_height)
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
-        self._menu_shadow_color = menu_shadow_color
+        self._menu_shadow_color = option_shadow_color
         self._onclose = onclose  # Function that calls after closing menu
         self._option_shadow = option_shadow
         self._option_shadow_offset = option_shadow_offset
@@ -359,15 +362,15 @@ class Menu(object):
         self._menubar.set_menu(self)
 
         # Configure widget
-        bg_color_title = (menu_color_title[0],
-                          menu_color_title[1],
-                          menu_color_title[2],
+        bg_color_title = (title_background_color[0],
+                          title_background_color[1],
+                          title_background_color[2],
                           int(255 * (1 - (100 - menu_alpha) / 100.0)))
         self._menubar.set_title(title,
                                 title_offset_x,
                                 title_offset_y)
-        self._menubar.set_font(font_title or font,
-                               font_size_title,
+        self._menubar.set_font(title_font or font,
+                               title_font_size,
                                bg_color_title,
                                self._font_color)
         self._menubar.set_shadow(enabled=self._option_shadow,
@@ -584,7 +587,7 @@ class Menu(object):
                   title,
                   label_id='',
                   align='',
-                  font_size=0,):
+                  font_size=0, ):
         """
         Add a simple text to display.
 

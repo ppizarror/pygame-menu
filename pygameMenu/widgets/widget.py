@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
-import pygameMenu.config as _cfg
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
@@ -93,17 +92,17 @@ class Widget(object):
 
         # Modified in set_font() method
         self._font = None  # type: _pygame.font.Font
-        self._font_name = _cfg.MENU_FONT_SIZE_TITLE  # type: str
-        self._font_size = _cfg.MENU_FONT_SIZE  # type: int
-        self._font_color = _cfg.MENU_FONT_COLOR  # type: tuple
-        self._font_selected_color = _cfg.MENU_SELECTED_COLOR  # type: tuple
+        self._font_name = ''  # type: str
+        self._font_size = 0  # type: int
+        self._font_color = (0, 0, 0)  # type: tuple
+        self._font_selected_color = (0, 0, 0)  # type: tuple
         self._font_antialias = True  # type: bool
 
         # Text shadow
-        self._shadow = _cfg.MENU_OPTION_SHADOW  # type: bool
-        self._shadow_color = _cfg.MENU_SHADOW_COLOR  # type: tuple
-        self._shadow_offset = _cfg.MENU_SHADOW_OFFSET  # type: int
-        self._shadow_position = _cfg.MENU_SHADOW_POSITION  # type: str
+        self._shadow = False  # type: bool
+        self._shadow_color = (0, 0, 0)  # type: tuple
+        self._shadow_offset = 2  # type: int
+        self._shadow_position = _locals.POSITION_NORTHWEST  # type: str
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
 
