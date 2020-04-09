@@ -34,6 +34,4 @@ TODO: general description
 .. module:: pygameMenu.menu
 
 .. autoclass:: Menu(...)
-    :members: center_vertically, clear, disable, enable, full_reset, get_fps,
-              get_input_data, get_position, get_title, get_widget, is_disabled,
-              is_enabled, mainloop, set_fps, set_sound, 
+    :members:
