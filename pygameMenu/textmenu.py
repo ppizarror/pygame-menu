@@ -183,28 +183,28 @@ class TextMenu(Menu):
         x_coord = int(self._width * (self._draw_text_region_x / 100.0)) + self._posx
         y_coord = self._posy + self._textdy + line_number * (
                 self._font_textsize + self._textdy) - self._font_textsize / 2
-        return self._option_offset_x + x_coord + text_dx, self._option_offset_y + y_coord
+        return self._widget_offset_x + x_coord + text_dx, self._widget_offset_y + y_coord
 
-    def _get_option_pos(self, index, x=True, y=True):
+    def _get_widget_position(self, index, x=True, y=True):
         """
         See upper class doc.
         """
         dysum = len(self._text) * (self._font_textsize + self._textdy)
         dysum += 2 * self._textdy + self._font_textsize
 
-        rect = self._option[index].get_rect()
-        if self._option_alignment == _locals.ALIGN_CENTER:
+        rect = self._widgets[index].get_rect()
+        if self._widget_alignment == _locals.ALIGN_CENTER:
             option_dx = -int(rect.width / 2.0)
-        elif self._option_alignment == _locals.ALIGN_CENTER:
+        elif self._widget_alignment == _locals.ALIGN_CENTER:
             option_dx = -self._width / 2 + self._selection_highlight_margin_x
-        elif self._option_alignment == _locals.ALIGN_CENTER:
+        elif self._widget_alignment == _locals.ALIGN_CENTER:
             option_dx = self._width / 2 - rect.width - self._selection_highlight_margin_x
         else:
             option_dx = 0
         t_dy = - rect.height
 
-        x_coord = self._option_offset_x + self._column_posx[0] + option_dx
-        y_coord = self._option_offset_y + index * (self._option_font_size + self._option_margin) + t_dy + dysum
+        x_coord = self._widget_offset_x + self._column_posx[0] + option_dx
+        y_coord = self._widget_offset_y + index * (self._widget_font_size + self._widget_margin) + t_dy + dysum
         return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
 
     def draw(self):

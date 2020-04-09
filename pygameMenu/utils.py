@@ -31,6 +31,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame as _pygame
+import pygameMenu.locals as _locals
+
+
+def assert_alignment(align):
+    """
+    Assert alignment local.
+
+    :param align: Align value
+    """
+    assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
+    assert align not in [_locals.ALIGN_LEFT,
+                         _locals.ALIGN_CENTER,
+                         _locals.ALIGN_RIGHT,
+                         _locals.ALIGN_TOP,
+                         _locals.ALIGN_BOTTOM], \
+        'incorrect alignment value "{0}"'.format(align)
 
 
 def assert_color(color, var_name):

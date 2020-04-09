@@ -38,7 +38,7 @@ Python library that can create a simple menu for the pygame application. Support
 - [Library structure](#library-structure)
 - [Usage](#usage)
   - [Creating menus](#creating-menus)
-  - [Adding options and entries to menus](#adding-options-and-entries-to-menus)
+  - [Adding widgets and entries to menus](#adding-widgets-and-entries-to-menus)
   - [Menu events](#menu-events)
   - [Sounds](#sounds)
   - [Configuration values](#configuration-values)
@@ -187,13 +187,13 @@ import pygameMenu
     | text_fontsize | Text font size | int | config.*MENU_FONT_TEXT_SIZE* |
     | text_margin | Line margin | int | config.*TEXT_MARGIN* |
 
-### Adding options and entries to menus
+### Adding widgets and entries to menus
 
 **Menu** and **TextMenu** have the next functions:
 
 - *add_button(element_name, element, \*args)*
 
-    Adds an *option* to the menu (buttons).
+    Adds a *widget* to the menu (buttons).
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |

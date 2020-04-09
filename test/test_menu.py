@@ -303,11 +303,11 @@ class MenuTest(unittest.TestCase):
                                    menu_height=400,
                                    menu_width=600,
                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
-                                   option_shadow=True,
-                                   option_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                    text_align=pygameMenu.locals.ALIGN_RIGHT,
                                    title='Help',
                                    title_background_color=(120, 45, 30),
+                                   widget_shadow=True,
+                                   widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                    )
         menu.mainloop()
         menu.add_button('Return to Menu', pygameMenu.events.BACK)

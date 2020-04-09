@@ -83,9 +83,9 @@ def make_long_menu(surface):
                             menu_height=400,
                             menu_width=600,  # px
                             onclose=pygameMenu.events.EXIT,
-                            option_offset_y=10,
                             title='Main Menu',
                             title_background_color=(100, 130, 98),
+                            widget_offset_y=10,
                             )
 
     _menu_sub = pygameMenu.Menu(surface,
@@ -98,10 +98,10 @@ def make_long_menu(surface):
                                 menu_height=400,
                                 menu_width=600,
                                 onclose=pygameMenu.events.EXIT,
-                                option_shadow=True,
                                 rows=3,
                                 title='Menu with columns',
                                 title_background_color=(100, 200, 98),
+                                widget_shadow=True,
                                 )
 
     _menu.add_button('Rows and Columns', _menu_sub)
@@ -111,7 +111,7 @@ def make_long_menu(surface):
         if i % 2 == 0:
             _menu.add_button(label1.format(i),
                              on_button_click,
-                             'button n°{}'.format(i))
+                             'Button n°{}'.format(i))
         else:
             _menu.add_text_input(label2.format(i),
                                  onchange=on_button_click,

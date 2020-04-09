@@ -35,7 +35,7 @@ import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import make_surface, assert_color
+from pygameMenu.utils import *
 from uuid import uuid4
 
 
@@ -412,13 +412,7 @@ class Widget(object):
         :type align: basestring
         :return: None
         """
-        align = str(align)
-        if align not in [_locals.ALIGN_LEFT,
-                         _locals.ALIGN_CENTER,
-                         _locals.ALIGN_RIGHT,
-                         _locals.ALIGN_TOP,
-                         _locals.ALIGN_BOTTOM]:
-            raise ValueError('Incorrect alignment of the widget')
+        assert_alignment(align)
         self._alignment = align
 
     def get_alignment(self):
