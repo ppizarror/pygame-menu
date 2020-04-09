@@ -146,9 +146,6 @@ def main(test=False):
     # Create menu
     menu = make_long_menu(screen)
 
-    print(W_SIZE)
-    print(pygame.display.get_surface().get_size())
-
     # -------------------------------------------------------------------------
     # Main loop
     # -------------------------------------------------------------------------
