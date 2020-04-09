@@ -300,13 +300,15 @@ class Menu(object):
             'menu alpha must be between 0 and 100 (both values included)'
         assert_alignment(widget_alignment)
 
+        # Update background color
+        menu_background_color = (menu_background_color[0],
+                                 menu_background_color[1],
+                                 menu_background_color[2],
+                                 int(255 * (1 - (100 - menu_alpha) / 100.0))
+                                 )
+
         # General properties of the menu
-        self._bgcolor = (menu_background_color[0],
-                         menu_background_color[1],
-                         menu_background_color[2],
-                         int(255 * (1 - (100 - menu_alpha) / 100.0))
-                         )
-        self._bgfun = bgfun
+        self._background_function = bgfun
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._dopause = dopause  # Pause or not
@@ -330,11 +332,6 @@ class Menu(object):
         window_width, window_height = _pygame.display.get_surface().get_size()
         self._posx = int((window_width - self._width) / 2)  # type: int
         self._posy = int((window_height - self._height) / 2)  # type: int
-        self._bgrect = [(self._posx, self._posy),
-                        (self._posx + self._width, self._posy),
-                        (self._posx + self._width, self._posy + self._height),
-                        (self._posx, self._posy + self._height)
-                        ]
 
         # Menu widgets
         if abs(widget_offset_x) < 1:
@@ -384,7 +381,7 @@ class Menu(object):
         self._menubar = _widgets.MenuBar(label=title,
                                          width=self._width,
                                          back_box=back_box,
-                                         bgcolor=self._bgcolor,  # bg_color_title is only used behind text
+                                         bgcolor=menu_background_color,  # bg_color_title is only used behind text
                                          onchange=None,
                                          onreturn=self._back)
         self._menubar.set_menu(self)
@@ -408,7 +405,7 @@ class Menu(object):
         self._widgets_surface = None
         self._scroll = _ScrollArea(area_width=self._width,
                                    area_height=self._height - self._menubar.get_rect().height,
-                                   area_color=self._bgcolor,
+                                   area_color=menu_background_color,
                                    shadow=self._widget_shadow,
                                    shadow_offset=self._widget_shadow_offset,
                                    shadow_position=self._widget_shadow_position)
@@ -1098,7 +1095,7 @@ class Menu(object):
         _pygame.mouse.set_visible(self._actual._mouse_visible)
 
         if self._actual._dopause:  # If menu pauses game then apply function
-            self._bgfun()
+            self._background_function()
 
         # Clock tick
         self._actual._clock.tick(self._fps)
