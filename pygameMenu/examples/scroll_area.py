@@ -167,8 +167,8 @@ def main(test=False):
 
         pygame.draw.rect(screen,
                          (20, 89, 20),
-                         # Inflate to see area overflow in case of bug
-                         area.get_rect().inflate(20, 20))
+                         area.get_rect().inflate(20, 20),  # Inflate to see area overflow in case of bug
+                         )
 
         # Application events
         events = pygame.event.get()

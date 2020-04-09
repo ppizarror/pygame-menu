@@ -135,33 +135,34 @@ import pygameMenu
     | column_max_width | List/Tuple representing the max width of each column in px, None equals no limit | tuple/list | None |
     | columns | Number of columns in menu | int | 1 |
     | dopause | Pause game | bool | True |
-    | draw_region_x | Drawing position of element inside menu (x-axis) as percentage | int | config.*MENU_DRAW_X* |
-    | draw_region_y | Drawing position of element inside menu (y-axis) as percentage | int | config.*MENU_DRAW_Y* |
-    | draw_select | Draw a rectangle around selected item (bool) | bool | config.*MENU_SELECTED_DRAW* |
     | enabled | Menu is enabled by default or not | bool | True |
-    | font_color | Color of font | tuple | config.*MENU_FONT_COLOR* |
+    | font_color | Color of font | tuple,list | config.*MENU_FONT_COLOR* |
     | font_size | Font size of menu widgets | int | config.*MENU_FONT_SIZE* |
     | font_size_title | Font size of the title | int | config.*MENU_FONT_SIZE_TITLE* |
     | font_title | Alternative font of the title | str | None |
     | fps | Fps limit of the menu, 0: no limit | int,float | 0 |
     | joystick_enabled | Enable joystick support | bool | True |
     | menu_alpha | Alpha of background (0=transparent, 100=opaque) | int | config.*MENU_ALPHA* |
-    | menu_color | Menu color | tuple | config.*MENU_BGCOLOR* |
-    | menu_color_title | Background color of title | tuple | config.*MENU_TITLE_BG_COLOR* |
+    | menu_color | Menu color | tuple,list | config.*MENU_BGCOLOR* |
+    | menu_color_title | Background color of title | tuple,list | config.*MENU_TITLE_BG_COLOR* |
     | menu_height | Height of menu (px) | int,float | config.*MENU_HEIGHT* |
+    | menu_shadow_color | Color of the shadow | tuple,list | config.*MENU_SHADOW_COLOR* |
     | menu_width | Width of menu (px) | int,float | config.*MENU_WIDTH* |
     | mouse_enabled | Enable mouse support | bool | True |
     | mouse_visible | Mouse visible or not, if not *mouse_enabled* wil be disabled | True |
     | onclose | Event that applies when closing menufunction | PymenuAction | None |
-    | option_margin | Margin of each element in menu (px) | int | config.*MENU_OPTION_MARGIN* |
+    | option_margin_y | Vertical margin of each element in menu (px) | int | config.*MENU_OPTION_MARGIN* |
+    | option_offset_x | X axis offset of options inside menu (px).<br>If value less than 1 use percentage of width | int | 0 |
+    | option_offset_y | Y axis offset of options inside menu (px).<br>If value less than 1 use percentage of height | int | 0 |
     | option_shadow | Indicate if a shadow is drawn on each option | bool | config.*MENU_OPTION_SHADOW* |
     | option_shadow_offset | Offset of option text shadow | int | config.*MENU_SHADOW_OFFSET* |
     | option_shadow_position | Position of shadow | string | config.*MENU_SHADOW_POSITION* |
     | rows | Number of rows at each column, None if only there's 1 column | int,None | None |
-    | selection_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
     | selection_color | Color of selected item | tuple | config.*MENU_SELECTED_COLOR* |
-    | selection_inflate_margin_x | X margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_X* |
-    | selection_inflate_margin_y | Y margin of selected item inflate box | int | config.<br>*MENU_SELECTED_INFLATE_Y* |
+    | selection_highlight | Enable drawing a rectangle around selected item | bool | config.*MENU_SELECTED_DRAW* |
+    | selection_highlight_border_width | Border width of rectangle around a selected item | int | config.*MENU_SELECTED_WIDTH* |
+    | selection_highlight_margin_x | X margin of selected highlight box | int | config.<br>*MENU_SELECTED_EXPLODE_X* |
+    | selection_highlight_margin_y | Y margin of selected highlight box | int | config.<br>*MENU_SELECTED_EXPLODE_Y* |
     | title_offset_x | Offset x-position of title (px) | int | 0 |
     | title_offset_y | Offset y-position of title (px) | int | 0 |
     | widget_alignment | Default widget alignment | string | locals.*ALIGN_CENTER* |
