@@ -8,7 +8,6 @@ Common usage
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    _source/menu
    _source/add_widgets
@@ -40,7 +39,6 @@ they could be used has it to design custom menu layout.
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: Widgets API:
 
    _source/widget_button
    _source/widget_colorinput
@@ -56,7 +54,6 @@ About pygame-menu
 
 .. toctree::
    :maxdepth: 2
-   :caption: About pygame-menu:
 
    _source/license
 

@@ -2,6 +2,22 @@
 pygame-menu
 ===========
 
+.. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/ppizarror/pygame-menu
+    :alt: Codecov
+
+.. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
+    :target: https://travis-ci.org/ppizarror/pygame-menu
+    :alt: Travis
+
+.. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts
+    :alt: Total alerts
+
+.. image:: https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python
+    :alt: Language grade: Python
+
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
 Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ or
@@ -12,6 +28,9 @@ Introduction
 
 Pygame-menu is a python-pygame library for creating menus, it supports
 selectors, buttons and texts menus with many options to customize.
+
+Comprehensive documentation is available at https://pygame-menu.readthedocs.io .
+
 
 Install Instructions
 --------------------
