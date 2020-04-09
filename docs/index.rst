@@ -12,6 +12,7 @@ Common usage
 
    _source/menu
    _source/add_widgets
+   _source/gallery
 
 
 Widgets API
@@ -53,12 +54,11 @@ they could be used has it to design custom menu layout.
 About pygame-menu
 =================
 
-   .. toctree::
-      :maxdepth: 2
-      :caption: About pygame-menu:
+.. toctree::
+   :maxdepth: 2
+   :caption: About pygame-menu:
 
-      _source/gallery
-      _source/license
+   _source/license
 
 
 Indices and tables
