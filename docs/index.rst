@@ -1,6 +1,6 @@
 :orphan:
 
-.. include:: ../README
+.. include:: ../README.rst
 
 Table of Contents
 =================

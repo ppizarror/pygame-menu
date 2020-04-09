@@ -38,7 +38,7 @@ extensions = ['sphinx.ext.autodoc',
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-# The document name of the “master” document, that is, the document that
+# The document name of the "master" document, that is, the document that
 # contains the root toctree directive. Default is 'index'.
 master_doc = 'index'
 
@@ -88,4 +88,5 @@ latex_documents = [
 ]
 
 latex_show_pagerefs = True
+
 latex_show_urls = 'footnote'
