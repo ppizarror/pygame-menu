@@ -4,9 +4,8 @@ pygame-menu
 
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
-Source repo on `github <https://github.com/ppizarror/pygame-menu>`_
-
-Run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
+Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ or
+run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
 Introduction
 ------------

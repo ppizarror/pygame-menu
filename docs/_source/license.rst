@@ -9,4 +9,4 @@ Copyright © 2017-2020 Pablo Pizarro R. pablo@ppizarror.com
 
 .. include:: ../../LICENSE.rst
 
-`Full license <https://opensource.org/licenses/MIT>`
+`Full license <https://opensource.org/licenses/MIT>`_
