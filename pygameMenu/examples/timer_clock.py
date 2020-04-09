@@ -171,7 +171,7 @@ def main(test=False):
     timer_menu.add_button('Reset timer', reset_timer)
 
     # Adds a selector (element that can handle functions)
-    timer_menu.add_selector(title='Change bgcolor',
+    timer_menu.add_selector(title='Change color ',
                             values=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
                                     ('Default', (128, 0, 128)),
                                     ('Black', (0, 0, 0)),
@@ -244,6 +244,7 @@ def main(test=False):
                                 title='Main Menu',
                                 title_background_color=(170, 65, 50),
                                 title_offset_y=5,
+                                widget_font_size=40,
                                 )
 
     main_menu.add_button(timer_menu.get_title(), timer_menu)  # Add timer submenu

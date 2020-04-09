@@ -188,7 +188,7 @@ def main(test=False):
                                  input_underline='_')
 
     # Create selector with 3 difficulty options
-    settings_menu.add_selector('Select difficulty',
+    settings_menu.add_selector('Select difficulty ',
                                [('Easy', 'EASY'),
                                 ('Medium', 'MEDIUM'),
                                 ('Hard', 'HARD')],
@@ -283,6 +283,7 @@ def main(test=False):
                                 title='Main menu',
                                 title_background_color=TITLE_BACKGROUND_COLOR,
                                 widget_font_color=COLOR_BLACK,
+                                widget_font_size=30,
                                 widget_offset_y=0.09,
                                 )
     main_menu.set_fps(FPS)
@@ -290,7 +291,7 @@ def main(test=False):
     main_menu.add_button('Settings', settings_menu)
     main_menu.add_button('More Settings', more_settings_menu)
     main_menu.add_button('Menu in columns!', button_column_menu)
-    main_menu.add_selector('Menu sounds',
+    main_menu.add_selector('Menu sounds ',
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
     main_menu.add_button('Quit', pygameMenu.events.EXIT)

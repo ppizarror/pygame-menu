@@ -212,6 +212,7 @@ def main(test=False):
                                 title='Play menu',
                                 title_background_color=TITLE_BACKGROUND_COLOR,
                                 widget_font_color=COLOR_BLACK,
+                                widget_font_size=30,
                                 widget_offset_y=0.17,  # %17 por menu height
                                 )
 
@@ -232,7 +233,7 @@ def main(test=False):
                          play_function,
                          DIFFICULTY,
                          pygame.font.Font(pygameMenu.font.FONT_FRANCHISE, 30))
-    play_menu.add_selector('Select difficulty',
+    play_menu.add_selector('Select difficulty ',
                            [('1 - Easy', 'EASY'),
                             ('2 - Medium', 'MEDIUM'),
                             ('3 - Hard', 'HARD')],
