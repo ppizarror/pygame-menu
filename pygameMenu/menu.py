@@ -486,8 +486,8 @@ class Menu(object):
 
         kwargs (Optional):
             - align         Widget alignment
+            - button_id     Widget ID
             - font_size     Font size of the widget
-            - widget_id     Widget ID
 
         :param element_name: Name of the element
         :type element_name: basestring
@@ -499,23 +499,23 @@ class Menu(object):
         :rtype: pygameMenu.widgets.button.Button
         """
         assert isinstance(element_name, str), 'element_name must be a string'
-        widget_id = kwargs.pop('widget_id', '')
-        assert isinstance(widget_id, str), 'ID must be a string'
+        button_id = kwargs.pop('button_id', '')
+        assert isinstance(button_id, str), 'ID must be a string'
 
         # If element is a Menu
         if isinstance(element, Menu):
             self._submenus.append(element)
-            widget = _widgets.Button(element_name, widget_id, None, self._open, element)
+            widget = _widgets.Button(element_name, button_id, None, self._open, element)
         # If element is a PyMenuAction
         elif element == _events.BACK:  # Back to menu
-            widget = _widgets.Button(element_name, widget_id, None, self.reset, 1)
+            widget = _widgets.Button(element_name, button_id, None, self.reset, 1)
         elif element == _events.CLOSE:  # Close menu
-            widget = _widgets.Button(element_name, widget_id, None, self._close, False)
+            widget = _widgets.Button(element_name, button_id, None, self._close, False)
         elif element == _events.EXIT:  # Exit program
-            widget = _widgets.Button(element_name, widget_id, None, self._exit)
+            widget = _widgets.Button(element_name, button_id, None, self._exit)
         # If element is a function
         elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
-            widget = _widgets.Button(element_name, widget_id, None, element, *args)
+            widget = _widgets.Button(element_name, button_id, None, element, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 

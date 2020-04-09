@@ -161,7 +161,7 @@ class MenuTest(unittest.TestCase):
         def _some_event():
             return 'the value'
 
-        # Add some options
+        # Add some widgets
         button = None
         first_button = None
         for i in range(5):
@@ -281,7 +281,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=10))
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
 
-        # Assert append more options than number of rows*columns
+        # Assert append more widgets than number of rows*columns
         _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             _column_menu.add_button('test', pygameMenu.events.BACK)

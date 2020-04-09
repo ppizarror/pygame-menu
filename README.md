@@ -207,8 +207,8 @@ import pygameMenu
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
     | align | Button alignment | str | locals.ALIGN_CENTER |
+    | button_id | Option identifier | str | "" |
     | font_size | Font size widget (overrides Menu default) | int | Menu *font_size* |
-    | option_id | Option identifier | str | "" |
 
     Check possible alignment in [configuration](https://github.com/ppizarror/pygame-menu#configuration-values).
 

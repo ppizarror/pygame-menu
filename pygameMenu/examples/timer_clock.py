@@ -167,7 +167,7 @@ def main(test=False):
                                  widget_shadow=True,
                                  )
 
-    # Add options
+    # Add widgets
     timer_menu.add_button('Reset timer', reset_timer)
 
     # Adds a selector (element that can handle functions)
