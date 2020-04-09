@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGETS
-Widgets elements that can be added to the menu.
+LABEL
+Label class, to add simple text to the menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,14 +30,55 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import widgets
-from pygameMenu.widgets.button import Button
-from pygameMenu.widgets.colorinput import ColorInput
-from pygameMenu.widgets.label import Label
-from pygameMenu.widgets.menubar import MenuBar
-from pygameMenu.widgets.scrollbar import ScrollBar
-from pygameMenu.widgets.selector import Selector
-from pygameMenu.widgets.textinput import TextInput
+from pygameMenu.widgets.widget import Widget
 
-# Widget type
-from pygameMenu.widgets.widget import WidgetType
+
+class Label(Widget):
+    """
+    Label widget.
+    """
+
+    def __init__(self, label, label_id=''):
+        """
+        Description of the specific parameters (see Widget class for generic ones):
+
+        :param label: Text of the button
+        :type label: basestring
+        :param label_id: Button ID
+        :type label_id: basestring
+        """
+        assert isinstance(label, str)
+        super(Label, self).__init__(widget_id=label_id)
+        self._label = label
+
+    def _apply_font(self):
+        """
+        See upper class doc.
+        """
+        pass
+
+    def draw(self, surface):
+        """
+        See upper class doc.
+        """
+        self._render()
+        surface.blit(self._surface, self._rect.topleft)
+
+    def draw_selected_rect(self, *args, **kwargs):
+        """
+        See upper class doc.
+        """
+        pass  # Nothing to select
+
+    def _render(self):
+        """
+        See upper class doc.
+        """
+        # Can not be selected
+        self._surface = self.render_string(self._label, self._font_color)
+
+    def update(self, events):
+        """
+        See upper class doc.
+        """
+        return False
