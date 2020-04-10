@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import sys
+import textwrap
 import types
 
 import pygame as _pygame
@@ -677,17 +678,13 @@ class Menu(object):
         else:
             self._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
-            while True:
-                widget.append(self.add_label(title=title[:max_char],
+            for line in textwrap.wrap(title, max_char):
+                widget.append(self.add_label(title=line,
                                              align=align,
                                              font_size=font_size,
                                              label_id=label_id + '+' + str(len(widget) + 1),
                                              max_char=max_char,
                                              margin=margin))
-                if len(title) <= max_char:
-                    break
-                title = title[max_char:]
-
         return widget
 
     def add_selector(self,
