@@ -6,41 +6,49 @@
 First steps
 ===========
 
-Here is a basic example of how to create a menu using ``pygame-menu``.
+Making games using :py:mod:`pygame` is really cool, but most of game
+(or application) require end-user configuration. Create complex GUI
+object to display a menu can be painful. That why :py:mod:`pygame-menu`
+was designe.
+
+Here is a basic example of how to create a menu:
+
+1. Make your imports
+
+    .. code-block:: python
+
+        import pygame
+        import pygameMenu
+
+2. Initialize pygame
+
+    .. code-block:: python
+
+        pygame.init()
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        surface = pygame.display.set_mode((400, 600))
+
+3. Make your menu
 
 .. code-block:: python
 
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-    surface = pygame.display.set_mode((400, 600))
-
-    menu = pygameMenu.Menu(surface,
-                           pygameMenu.font.FONT_BEBAS,
+    menu = pygameMenu.Menu(surface, pygameMenu.font.FONT_BEBAS,
                            "My first menu")
 
-    while True:
+3. Run your menu
 
-        # Application events
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                exit()
+.. code-block:: python
 
-        # Main menu
-        menu.mainloop(events)
-
-        # Flip surface
-        pygame.display.flip()
-
+    menu.mainloop(events)
 
 .. toctree::
    :maxdepth: 2
    :hidden:
    :caption: First steps
 
-   _source/menu
+   _source/create_menu
    _source/add_widgets
+   _source/add_sounds
    _source/gallery
 
 

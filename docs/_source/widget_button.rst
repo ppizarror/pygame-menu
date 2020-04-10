@@ -5,5 +5,6 @@
 Button
 ======
 
-.. autoclass:: Button(...)
+.. autoclass:: Button
     :members:
+    :inherited-members:

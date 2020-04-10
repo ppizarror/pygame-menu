@@ -7,3 +7,4 @@ Selector
 
 .. autoclass:: Selector(...)
     :members:
+    :inherited-members:
