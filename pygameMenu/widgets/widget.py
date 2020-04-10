@@ -90,6 +90,7 @@ class Widget(object):
 
         # Menu reference
         self._menu = None
+        self._menu_widget_position_needs_update = False
 
         # Modified in set_font() method
         self._font = None  # type: _pygame.font.Font
@@ -316,6 +317,14 @@ class Widget(object):
         :rtype: pygame.surface.SurfaceType
         """
         render_hash = self._hash_variables(string, color)
+
+        # Check if the size of the string changed, if so, menu widget position must change
+        last_width, last_height = (0, 0)
+        if self._render_string_cache_surface is not None:
+            last_width = self._render_string_cache_surface.get_size()[0]
+            last_height = self._render_string_cache_surface.get_size()[1]
+
+        # If the render surface must change
         if render_hash != self._render_string_cache:  # If render changed
 
             text = self.font_render_string(string, color)
@@ -329,15 +338,35 @@ class Widget(object):
                 surface.blit(text_bg, self._shadow_tuple)
 
             surface.blit(text, (0, 0))
+            new_width = surface.get_size()[0]
+            new_height = surface.get_size()[1]
 
-            if self._max_width is not None and surface.get_size()[0] > self._max_width:
-                surface = _pygame.transform.smoothscale(surface, (self._max_width, surface.get_size()[1]))
+            if self._max_width is not None and new_width > self._max_width:
+                surface = _pygame.transform.smoothscale(surface, (self._max_width, new_height))
 
             self._render_string_cache = render_hash
-            self._render_string_cache_surface = surface
+            self._render_string_cache_surface = surface  # type: _pygame.Surface
+
+            # If the size of the widget change then the menu widget position must be updated
+            if new_width != last_width or new_height != last_height:
+                self._menu_widget_position_needs_update = True
 
         # Return rendered surface
         return self._render_string_cache_surface
+
+    def position_updated(self):
+        """
+        Checks if the widget width/height has changed because events. If so, return true and
+        set the status of the widget (menu widget position needs update) as false. This method
+        is used by .update() from Menu class.
+
+        :return: True if the widget position has changed by events after the rendering.
+        :rtype: bool
+        """
+        if self._menu_widget_position_needs_update:
+            self._menu_widget_position_needs_update = False
+            return True
+        return False
 
     def set_font(self, font, font_size, color, selected_color, antialias=True):
         """

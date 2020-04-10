@@ -887,6 +887,9 @@ class Menu(object):
         """
         Update the position dict for each widget.
         """
+        if self._column_widths is None:
+            self._update_column_width()
+
         # Update title position
         self._menubar.set_position(self._posx, self._posy)
 
@@ -941,7 +944,6 @@ class Menu(object):
         Create the surface used to draw widgets according the
         required width and height.
         """
-        self._update_column_width()
         self._update_widget_position()
 
         menubar_height = self._menubar.get_rect().height
@@ -1180,6 +1182,9 @@ class Menu(object):
         # Clock tick
         self._actual._clock.tick(self._fps)
 
+        # Check if the position of the widget has changed after the events
+        widget_position_changed = False
+
         # Process events, check title
         if self._actual._menubar.update(events):
             break_mainloop = True
@@ -1285,12 +1290,21 @@ class Menu(object):
                         new_event.dict['origin'] = self._actual._scroll.to_real_position((0, 0))
                         new_event.pos = self._actual._scroll.to_world_position(event.pos)
                         widget.update((new_event,))  # This widget can change the current menu to a submenu
+                        widget_position_changed = widget_position_changed or widget.position_updated()
                         break_mainloop = True  # It is updated
                         break
+
+        # Check if the position has changed
+        if len(self._actual._widgets) > 0:
+            widget_position_changed = widget_position_changed or self._actual._widgets[
+                self._actual._index].position_updated()
+        if widget_position_changed:
+            self._update_widget_position()
 
         # A widget has closed the menu
         if self._top is not None and not self._top._enabled:
             break_mainloop = True
+
         self._closelocked = False
         return break_mainloop
 
