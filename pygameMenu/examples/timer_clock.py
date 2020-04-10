@@ -47,7 +47,7 @@ import pygameMenu
 # -----------------------------------------------------------------------------
 ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: @{0}'.format(pygameMenu.__author__),
-         pygameMenu.locals.TEXT_NEWLINE,
+         '',
          'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BLUE = (12, 12, 200)
 COLOR_BACKGROUND = [128, 0, 128]
@@ -188,48 +188,44 @@ def main(test=False):
     timer_menu.center_vertically()
 
     # Help menu
-    help_menu = pygameMenu.TextMenu(surface,
-                                    dopause=False,
-                                    font=pygameMenu.font.FONT_FRANCHISE,
-                                    menu_background_color=(30, 50, 107),  # Background color
-                                    menu_height=600,  # Fullscreen
-                                    menu_width=800,
-                                    onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
-                                    text_align=pygameMenu.locals.ALIGN_CENTER,
-                                    text_fontsize=35,
-                                    title='Help',
-                                    title_background_color=(120, 45, 30),
-                                    title_font_size=60,
-                                    widget_font_size=45,
-                                    widget_offset_y=0.3,  # Percentage of height
-                                    widget_shadow=True,
-                                    widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
-                                    )
-    help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
+    help_menu = pygameMenu.Menu(surface,
+                                dopause=False,
+                                font=pygameMenu.font.FONT_FRANCHISE,
+                                menu_background_color=(30, 50, 107),  # Background color
+                                menu_height=600,  # Fullscreen
+                                menu_width=800,
+                                onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
+                                title='Help',
+                                title_background_color=(120, 45, 30),
+                                title_font_size=60,
+                                widget_font_size=45,
+                                widget_offset_y=0.2,  # Percentage of height (30%)
+                                widget_shadow=True,
+                                widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
+                                )
     for m in HELP:
-        help_menu.add_line(m)
+        help_menu.add_label(m, align=pygameMenu.locals.ALIGN_CENTER)
+    help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # About menu
-    about_menu = pygameMenu.TextMenu(surface,
-                                     dopause=False,
-                                     draw_text_region_x=5,  # 5% margin
-                                     font=pygameMenu.font.FONT_NEVIS,
-                                     menu_height=400,
-                                     menu_width=600,
-                                     mouse_visible=False,
-                                     onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
-                                     text_fontsize=20,
-                                     title='About',
-                                     title_background_color=COLOR_BLUE,
-                                     title_font=pygameMenu.font.FONT_8BIT,
-                                     title_font_size=30,
-                                     widget_offset_y=0.3,  # Percentage of height
-                                     widget_shadow=True,
-                                     )
-    about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
+    about_menu = pygameMenu.Menu(surface,
+                                 dopause=False,
+                                 font=pygameMenu.font.FONT_NEVIS,
+                                 menu_height=400,
+                                 menu_width=600,
+                                 mouse_visible=False,
+                                 onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
+                                 title='About',
+                                 title_background_color=COLOR_BLUE,
+                                 title_font=pygameMenu.font.FONT_8BIT,
+                                 title_font_size=30,
+                                 widget_offset_y=0.14,  # Percentage of height
+                                 widget_shadow=True,
+                                 )
     for m in ABOUT:
-        about_menu.add_line(m)
-    about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+        about_menu.add_label(m, margin=(0, 0))
+    about_menu.add_label('')
+    about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # Main menu, pauses execution of the application
     main_menu = pygameMenu.Menu(surface,

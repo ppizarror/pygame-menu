@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from test._utils import *
 import pygame
 from pygameMenu import locals as _locals
-from pygameMenu.widgets import ScrollBar
+from pygameMenu.widgets import ScrollBar, WidgetType
 
 
 class WidgetsTest(unittest.TestCase):
@@ -252,6 +252,28 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget._input_string, '#ffffff')
         _assert_color(widget, 255, 255, 255)
         widget._previsualize_color(surface=None)
+
+    def test_label(self):
+        """
+        Test label widget.
+        """
+        label = self.menu.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+                                    'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
+                                    'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+                                    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
+                                    'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in '
+                                    'culpa qui officia deserunt mollit anim id est laborum.',
+                                    max_char=33,
+                                    margin=(3, 5),
+                                    align=_locals.ALIGN_LEFT,
+                                    font_size=3)
+        self.assertEqual(len(label), 15)
+        _w = label[0]  # type: WidgetType
+        self.assertFalse(_w.is_selectable)
+        self.assertEqual(_w.get_margin()[0], 3)
+        self.assertEqual(_w.get_margin()[1], 5)
+        self.assertEqual(_w.get_alignment(), _locals.ALIGN_LEFT)
+        self.assertEqual(_w.get_font_info()['size'], 3)
 
     def test_textinput(self):
         """

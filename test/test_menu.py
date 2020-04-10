@@ -122,7 +122,7 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
 
-        widget = self.menu.add_text_input('test', 'some_id')
+        widget = self.menu.add_text_input('test', textinput_id='some_id')
         widget_found = self.menu.get_widget('some_id')
         self.assertEqual(widget, widget_found)
 
@@ -134,8 +134,8 @@ class MenuTest(unittest.TestCase):
             prev_menu = menu
 
         # Add a deep input
-        deep_widget = prev_menu.add_text_input('title', 'deep_id')
-        deep_selector = prev_menu.add_selector('selector', [('0', 0), ('1', 1)], 'deep_selector', default=1)
+        deep_widget = prev_menu.add_text_input('title', textinput_id='deep_id')
+        deep_selector = prev_menu.add_selector('selector', [('0', 0), ('1', 1)], selector_id='deep_selector', default=1)
 
         self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
@@ -148,7 +148,7 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
 
-        widget = self.menu.add_text_input('test', 'some_id')
+        widget = self.menu.add_text_input('test', default='some_id')
         self.assertEqual(widget, self.menu.get_selected_widget())
 
     def test_generic_events(self):
@@ -245,23 +245,23 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
 
-        self.menu.add_text_input('text1', 'id1', 1)  # Force to string
+        self.menu.add_text_input('text1', textinput_id='id1', default=1)  # Force to string
         self.menu.center_vertically()
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id1'], '1')
 
-        self.menu.add_text_input('text1', 'id2', 1.5, input_type=pygameMenu.locals.INPUT_INT)
+        self.menu.add_text_input('text1', textinput_id='id2', default=1.5, input_type=pygameMenu.locals.INPUT_INT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id2'], 1)  # Cast to int
-        self.assertRaises(ValueError, lambda: self.menu.add_text_input('text1', 'id1', 1))
+        self.assertRaises(ValueError, lambda: self.menu.add_text_input('text1', textinput_id='id1', default=1))
 
-        self.menu.add_text_input('text1', 'id3', 1.5, input_type=pygameMenu.locals.INPUT_FLOAT)
+        self.menu.add_text_input('text1', textinput_id='id3', default=1.5, input_type=pygameMenu.locals.INPUT_FLOAT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id3'], 1.5)  # Correct
 
         # Add input to a submenu
         submenu = PygameMenuUtils.generic_menu()
-        submenu.add_text_input('text', 'id4', 'thewidget')
+        submenu.add_text_input('text', textinput_id='id4', default='thewidget')
         self.menu.add_button('submenu', submenu)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id4'], 'thewidget')
@@ -269,7 +269,7 @@ class MenuTest(unittest.TestCase):
         # Add a submenu within submenu with a repeated id, menu.get_input_data
         # should raise an exception
         subsubmenu = PygameMenuUtils.generic_menu()
-        subsubmenu.add_text_input('text', 'id4', 'repeateddata')
+        subsubmenu.add_text_input('text', textinput_id='id4', default='repeateddata')
         submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(True))
 
@@ -278,7 +278,9 @@ class MenuTest(unittest.TestCase):
         Test menu columns behaviour.
         """
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=0))
-        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=10))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=-10))
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
 
         # Assert append more widgets than number of rows*columns
@@ -290,27 +292,3 @@ class MenuTest(unittest.TestCase):
         _column_menu._right()
         _column_menu.draw()
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
-
-    @staticmethod
-    def test_textmenu():
-        """
-        Test textual menus.
-        """
-        menu = pygameMenu.TextMenu(surface,
-                                   dopause=False,
-                                   font=PygameMenuUtils.random_font(),
-                                   menu_background_color=(30, 50, 107),  # Background color
-                                   menu_height=400,
-                                   menu_width=600,
-                                   onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
-                                   text_align=pygameMenu.locals.ALIGN_RIGHT,
-                                   title='Help',
-                                   title_background_color=(120, 45, 30),
-                                   widget_shadow=True,
-                                   widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
-                                   )
-        menu.mainloop()
-        menu.add_button('Return to Menu', pygameMenu.events.BACK)
-        for m in ['a', 'b', 'c', 'd', 'e']:
-            menu.add_line(m)
-        menu.draw()

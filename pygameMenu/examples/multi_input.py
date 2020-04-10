@@ -42,10 +42,6 @@ import pygameMenu
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
-         'Author: @{0}'.format(pygameMenu.__author__),
-         pygameMenu.locals.TEXT_NEWLINE,
-         'Email: {0}'.format(pygameMenu.__email__)]
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 60.0

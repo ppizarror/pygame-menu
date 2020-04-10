@@ -31,9 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import sys
+import textwrap
 import types
+from uuid import uuid4
 
 import pygame as _pygame
+import pygameMenu  # docs usage
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.locals as _locals
@@ -104,6 +107,7 @@ class Menu(object):
                  widget_alignment=_locals.ALIGN_CENTER,
                  widget_font_color=(255, 255, 255),
                  widget_font_size=35,
+                 widget_margin_x=0,
                  widget_margin_y=15,
                  widget_offset_x=0,
                  widget_offset_y=0,
@@ -209,6 +213,8 @@ class Menu(object):
         :type widget_font_color: tuple,list
         :param widget_font_size: Font size
         :type widget_font_size: int
+        :param widget_margin_x: Horizontal margin of each element in menu (px)
+        :type widget_margin_x: int
         :param widget_margin_y: Vertical margin of each element in menu (px)
         :type widget_margin_y: int
         :param widget_offset_x: X axis offset of widgets inside menu (px). If value less than 1 use percentage of width
@@ -255,6 +261,7 @@ class Menu(object):
         assert isinstance(title_shadow_offset, int)
         assert isinstance(widget_alignment, str)
         assert isinstance(widget_font_size, int)
+        assert isinstance(widget_margin_x, int)
         assert isinstance(widget_margin_y, int)
         assert isinstance(widget_offset_x, (int, float))
         assert isinstance(widget_offset_y, (int, float))
@@ -288,8 +295,10 @@ class Menu(object):
             assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
         else:
             if columns == 1:
-                assert rows is None, 'rows must be None if there is only 1 column'
-                rows = 1e6  # Set rows as a big number
+                if rows is None:
+                    rows = 1e6  # Set rows as a big number
+                else:
+                    assert rows > 0, 'number of rows must be greater than 1'
         if column_max_width is not None:
             if isinstance(column_max_width, (int, float)):
                 assert columns == 1, 'column_max_width can be a single number if there is only 1 column'
@@ -312,8 +321,6 @@ class Menu(object):
             'selection highlight margin must be greater than zero in both axis'
         assert widget_font_size > 0 and title_font_size > 0, \
             'widget font size and title font size must be greater than zero'
-        assert widget_margin_y >= 0, \
-            'widget margin must be greater or equal than zero'
         assert widget_offset_x >= 0 and widget_offset_y >= 0, 'widget offset must be greater or equal than zero'
 
         # Other asserts
@@ -374,13 +381,14 @@ class Menu(object):
         self._widget_font_color = widget_font_color
         self._widget_font_name = font
         self._widget_font_size = widget_font_size
-        self._widget_margin = widget_margin_y
+        self._widget_margin = (widget_margin_x, widget_margin_y)
         self._widget_offset_x = int(widget_offset_x)
         self._widget_offset_y = int(widget_offset_y)
         self._widget_shadow = widget_shadow
         self._widget_shadow_color = widget_shadow_color
         self._widget_shadow_offset = widget_shadow_offset
         self._widget_shadow_position = widget_shadow_position
+        self._widget_selected = False  # True if a widget has been selected
 
         # Selected widget
         self._selection_border_width = selection_highlight_border_width * selection_highlight
@@ -407,6 +415,7 @@ class Menu(object):
         # Init mouse
         self._mouse = mouse_enabled and mouse_visible
         self._mouse_visible = mouse_visible
+        self._mouse_visible_default = mouse_visible
 
         # Create menu bar (title)
         self._menubar = _widgets.MenuBar(label=title,
@@ -448,6 +457,396 @@ class Menu(object):
 
         # Set fps
         self.set_fps(fps)
+
+    def add_button(self, element_name, element, *args, **kwargs):
+        """
+        Add button to menu.
+
+        kwargs (Optional):
+            - align         Widget alignment (str)
+            - button_id     Widget ID (str)
+            - font_size     Font size of the widget (int)
+            - margin        Tuple of (x,y) integers
+
+        :param element_name: Name of the element
+        :type element_name: basestring
+        :param element: Object
+        :type element: Menu, _PymenuAction, function
+        :param args: Additional arguments used by a function
+        :param kwargs: Additional keyword arguments
+        :return: Widget object
+        :rtype: pygameMenu.widgets.button.Button
+        """
+        assert isinstance(element_name, str)
+
+        # Get ID
+        button_id = kwargs.pop('button_id', '')
+        assert isinstance(button_id, str), 'ID must be a string'
+
+        # If element is a Menu
+        if isinstance(element, Menu):
+            self._submenus.append(element)
+            widget = _widgets.Button(element_name, button_id, None, self._open, element)
+        # If element is a PyMenuAction
+        elif element == _events.BACK:  # Back to menu
+            widget = _widgets.Button(element_name, button_id, None, self.reset, 1)
+        elif element == _events.CLOSE:  # Close menu
+            widget = _widgets.Button(element_name, button_id, None, self._close, False)
+        elif element == _events.EXIT:  # Exit program
+            widget = _widgets.Button(element_name, button_id, None, self._exit)
+        # If element is a function
+        elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
+            widget = _widgets.Button(element_name, button_id, None, element, *args)
+        else:
+            raise ValueError('Element must be a Menu, a PymenuAction or a function')
+
+        # Configure and add the button
+        self._configure_widget(widget=widget,
+                               align=kwargs.pop('align', self._widget_alignment),
+                               font_size=kwargs.pop('font_size', self._widget_font_size),
+                               margin=kwargs.pop('margin', self._widget_margin),
+                               )
+        self._append_widget(widget)
+        return widget
+
+    def add_color_input(self,
+                        title,
+                        color_type,
+                        align=None,
+                        color_id='',
+                        default='',
+                        font_size=None,
+                        input_separator=',',
+                        input_underline='_',
+                        margin=None,
+                        onchange=None,
+                        onreturn=None,
+                        previsualization_width=3,
+                        **kwargs
+                        ):
+        """
+        Add a color widget with RGB or Hex format. Includes a preview
+        box that renders the given color.
+
+        And functions onchange and onreturn does
+            onchange(current_text, **kwargs)
+            onreturn(current_text, **kwargs)
+
+        :param title: Title of the color input
+        :type title: basestring
+        :param color_type: Type of the color input, can be "rgb" or "hex"
+        :type color_type: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param color_id: ID of the color input
+        :type color_id: basestring
+        :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
+        :type default: basestring, tuple
+        :param font_size: Font size of the widget, if None use default menu widget font size
+        :type font_size: int,None
+        :param input_separator: Divisor between RGB channels, not valid in HEX format
+        :type input_separator: basestring
+        :param input_underline: Underline character
+        :type input_underline: basestring
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
+        :param onchange: Function when changing the selector
+        :type onchange: function, NoneType
+        :param onreturn: Function when pressing return button
+        :type onreturn: function, NoneType
+        :param previsualization_width: Previsualization width as a factor of the height
+        :type previsualization_width: float, int
+        :param kwargs: Additional keyword-parameters
+        :return: Widget object
+        :rtype: pygameMenu.widgets.colorinput.ColorInput
+        """
+        assert isinstance(default, (str, tuple))
+        widget = _widgets.ColorInput(label=title,
+                                     colorinput_id=color_id,
+                                     color_type=color_type,
+                                     input_separator=input_separator,
+                                     input_underline=input_underline,
+                                     onchange=onchange,
+                                     onreturn=onreturn,
+                                     prev_size=previsualization_width,
+                                     **kwargs)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        widget.set_value(default)
+        self._append_widget(widget)
+        return widget
+
+    def add_label(self,
+                  title,
+                  align=None,
+                  font_size=None,
+                  label_id='',
+                  max_char=0,
+                  margin=None,
+                  ):
+        """
+        Add a simple text to display.
+
+        :param title: Text to be displayed
+        :type title: basestring
+        :param label_id: ID of the label
+        :type label_id: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param font_size: Font size of the text, if None use default widget font size
+        :type font_size: int,None
+        :param max_char: If text length exeeds this limit then split the text and add another label, if 0 there's no limit
+        :type max_char: int
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
+        :return: Widget object
+        :rtype: pygameMenu.widgets.label.Label
+        """
+        assert isinstance(label_id, str)
+        assert isinstance(max_char, int)
+        assert max_char >= 0, 'max characters cannot be negative'
+        if len(label_id) == 0:
+            label_id = str(uuid4())  # If wrap
+
+        # If no overflow
+        if len(title) <= max_char or max_char == 0:
+            widget = _widgets.Label(label=title, label_id=label_id)
+            self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+            self._append_widget(widget)
+        else:
+            self._check_id_duplicated(label_id)  # Before adding + LEN
+            widget = []
+            for line in textwrap.wrap(title, max_char):
+                widget.append(self.add_label(title=line,
+                                             align=align,
+                                             font_size=font_size,
+                                             label_id=label_id + '+' + str(len(widget) + 1),
+                                             max_char=max_char,
+                                             margin=margin))
+        return widget
+
+    def add_selector(self,
+                     title,
+                     values,
+                     align=None,
+                     default=0,
+                     font_size=None,
+                     margin=None,
+                     onchange=None,
+                     onreturn=None,
+                     selector_id='',
+                     **kwargs
+                     ):
+        """
+        Add a selector to menu: several options with values and two functions
+        that execute when changing the selector (left/right) and pressing
+        return button on the element.
+
+        Values of the selector are like:
+            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
+
+        And functions onchange and onreturn does
+            onchange(a, b, c..., **kwargs)
+            onreturn(a, b, c..., **kwargs)
+
+        :param title: Title of the selector
+        :type title: basestring
+        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
+        :type values: list
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param default: Index of default value to display
+        :type default: int
+        :param font_size: Font size of the widget, if None use the default menu widget font size
+        :type font_size: int,None
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
+        :param onchange: Function when changing the selector
+        :type onchange: function, NoneType
+        :param onreturn: Function when pressing return button
+        :type onreturn: function, NoneType
+        :param selector_id: ID of the selector
+        :type selector_id: basestring
+        :param kwargs: Additional parameters
+        :return: Widget object
+        :rtype: pygameMenu.widgets.selector.Selector
+        """
+        widget = _widgets.Selector(label=title,
+                                   elements=values,
+                                   selector_id=selector_id,
+                                   default=default,
+                                   onchange=onchange,
+                                   onreturn=onreturn,
+                                   **kwargs)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._append_widget(widget)
+        return widget
+
+    def add_text_input(self,
+                       title,
+                       align=None,
+                       default='',
+                       enable_copy_paste=True,
+                       enable_selection=True,
+                       font_size=None,
+                       input_type=_locals.INPUT_TEXT,
+                       input_underline='',
+                       margin=None,
+                       maxchar=0,
+                       maxwidth=0,
+                       onchange=None,
+                       onreturn=None,
+                       password=False,
+                       textinput_id='',
+                       valid_chars=None,
+                       **kwargs
+                       ):
+        """
+        Add a text input to menu: free text area and two functions
+        that execute when changing the text and pressing return button
+        on the element.
+
+        And functions onchange and onreturn does
+            onchange(current_text, **kwargs)
+            onreturn(current_text, **kwargs)
+
+        :param title: Title of the text input
+        :type title: basestring
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param default: Default value to display
+        :type default: basestring, int, float
+        :param enable_copy_paste: Enable text copy, paste and cut
+        :type enable_copy_paste: bool
+        :param enable_selection: Enable text selection on input
+        :type enable_selection: bool
+        :param font_size: Font size of the widget, if None use the default menu widget font size
+        :type font_size: int
+        :param input_type: Data type of the input
+        :type input_type: basestring
+        :param input_underline: Underline character
+        :type input_underline: basestring
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple,None
+        :param maxchar: Maximum length of string, if 0 there's no limit
+        :type maxchar: int
+        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
+        :type maxwidth: int
+        :param onchange: Function when changing the selector
+        :type onchange: function,None
+        :param onreturn: Function when pressing return button
+        :type onreturn: function,None
+        :param password: Text input is a password
+        :type password: bool
+        :param textinput_id: ID of the text input
+        :type textinput_id: basestring
+        :param valid_chars: List of chars to be ignored, None if no chars are invalid
+        :type valid_chars: list
+        :param kwargs: Additional keyword-parameters
+        :return: Widget object
+        :rtype: pygameMenu.widgets.textinput.TextInput
+        """
+        assert isinstance(default, (str, int, float))
+
+        # If password is active no default value should exist
+        if password and default != '':
+            raise ValueError('default value must be empty if the input is a password')
+
+        widget = _widgets.TextInput(label=title,
+                                    textinput_id=textinput_id,
+                                    maxchar=maxchar,
+                                    maxwidth=maxwidth,
+                                    input_type=input_type,
+                                    input_underline=input_underline,
+                                    enable_copy_paste=enable_copy_paste,
+                                    enable_selection=enable_selection,
+                                    valid_chars=valid_chars,
+                                    password=password,
+                                    onchange=onchange,
+                                    onreturn=onreturn,
+                                    **kwargs)
+        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        widget.set_value(default)
+        self._append_widget(widget)
+        return widget
+
+    def _configure_widget(self, widget, align=None, font_size=None, margin=None):
+        """
+        Update the given widget with the parameters defined at
+        the menu level.
+
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.widget.Widget
+        :param align: Widget alignment, if None use default menu widget alignment
+        :type align: basestring,None
+        :param font_size: Widget font size, if None use the default menu widget font size
+        :type font_size: int,None
+        :param margin: Widget vertical margin, if None the default menu widget vertical margin
+        :type margin: tuple,None
+        """
+        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(align, (str, type(None)))
+        assert isinstance(font_size, (int, type(None)))
+        assert isinstance(margin, (tuple, type(None)))
+
+        if align is None or align == '':
+            align = self._widget_alignment
+        if font_size is None or font_size == 0:
+            font_size = self._widget_font_size
+        assert font_size > 0, 'font_size must be greater than zero'
+        if margin is None:
+            margin = self._widget_margin
+        else:
+            assert len(margin) == 2, 'margin must be a tuple of 2 elements'
+
+        _col = int((len(self._widgets) - 1) // self._rows)  # Column position
+
+        widget.set_menu(self)
+        self._check_id_duplicated(widget.get_id())
+        widget.set_font(font=self._widget_font_name,
+                        font_size=font_size,
+                        color=self._widget_font_color,
+                        selected_color=self._selection_color)
+        if self._force_fit_text and self._column_max_width[_col] is not None:
+            selection_dx = self._selection_highlight_margin_x + self._selection_border_width
+            widget.set_max_width(self._column_max_width[_col] - selection_dx)
+        widget.set_shadow(enabled=self._widget_shadow,
+                          color=self._widget_shadow_color,
+                          position=self._widget_shadow_position,
+                          offset=self._widget_shadow_offset)
+        widget.set_controls(self._joystick, self._mouse)
+        widget.set_alignment(align)
+        widget.set_margin(margin[0], margin[1])
+
+    def _append_widget(self, widget):
+        """
+        Add a widget to the list.
+
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.widget.Widget
+        """
+        assert isinstance(widget, _widgets.WidgetType)
+        if self._columns > 1:
+            _max_elements = self._columns * self._rows
+            _msg = 'total widgets cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
+            assert len(self._widgets) + 1 <= _max_elements, _msg
+        self._widgets.append(widget)
+        if not self._widget_selected and widget.is_selectable:
+            widget.set_selected()
+            self._widget_selected = True
+            self._index = len(self._widgets) - 1
+        self._widgets_surface = None  # If added on execution time forces the update of the surface
+
+    def _back(self):
+        """
+        Go to previous menu or close if top menu is currently displayed.
+
+        :return: None
+        """
+        self._check_menu_initialized()
+        if self._top._prev is not None:
+            self.reset(1)
+        else:
+            self._close()
 
     def _update_column_width(self):
         """
@@ -502,6 +901,46 @@ class Menu(object):
 
         return total_col_width
 
+    def _update_widget_position(self):
+        """
+        Update the position dict for each widget.
+        """
+        # Update title position
+        self._menubar.set_position(self._posx, self._posy)
+
+        # Update appended widgets
+        for index in range(len(self._widgets)):
+            widget = self._widgets[index]  # type: _widgets.WidgetType
+            rect = widget.get_rect()  # type: _pygame.Rect
+
+            # Get column and row position
+            _col = int(index // self._rows)
+            _row = int(index % self._rows)
+
+            # Calculate X position
+            _column_width = self._column_widths[_col]
+            align = widget.get_alignment()
+            if align == _locals.ALIGN_CENTER:
+                dx = -int(rect.width / 2.0)
+            elif align == _locals.ALIGN_LEFT:
+                dx = -_column_width / 2 + self._selection_highlight_margin_x / 2
+            elif align == _locals.ALIGN_RIGHT:
+                dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
+            else:
+                dx = 0
+            x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
+
+            # Calculate Y position
+            ysum = 0  # Compute the total height from the current row position to the top of the column
+            for r in range(_row):
+                rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
+                ysum += rwidget.get_font_info()['size'] + rwidget.get_margin()[1]
+            dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
+            y_coord = self._widget_offset_y + ysum + dy
+
+            # Update the position of the widget
+            widget.set_position(x_coord, y_coord)
+
     def _get_widget_max_position(self):
         """
         :return: Returns the lower rightmost position of each widgets in menu.
@@ -509,351 +948,11 @@ class Menu(object):
         """
         max_x = -1e6
         max_y = -1e6
-        for index in range(len(self._widgets)):
-            x, y = self._get_widget_position(index)[2:]
+        for widget in self._widgets:
+            _, _, x, y = widget.get_position()  # Use only bottom right position
             max_x = max(max_x, x)
             max_y = max(max_y, y)
         return int(max_x), int(max_y)
-
-    def add_button(self, element_name, element, *args, **kwargs):
-        """
-        Add button to menu.
-
-        kwargs (Optional):
-            - align         Widget alignment
-            - button_id     Widget ID
-            - font_size     Font size of the widget
-
-        :param element_name: Name of the element
-        :type element_name: basestring
-        :param element: Object
-        :type element: Menu, _PymenuAction, function
-        :param args: Additional arguments used by a function
-        :param kwargs: Additional keyword arguments
-        :return: Widget object
-        :rtype: pygameMenu.widgets.button.Button
-        """
-        assert isinstance(element_name, str), 'element_name must be a string'
-        button_id = kwargs.pop('button_id', '')
-        assert isinstance(button_id, str), 'ID must be a string'
-
-        # If element is a Menu
-        if isinstance(element, Menu):
-            self._submenus.append(element)
-            widget = _widgets.Button(element_name, button_id, None, self._open, element)
-        # If element is a PyMenuAction
-        elif element == _events.BACK:  # Back to menu
-            widget = _widgets.Button(element_name, button_id, None, self.reset, 1)
-        elif element == _events.CLOSE:  # Close menu
-            widget = _widgets.Button(element_name, button_id, None, self._close, False)
-        elif element == _events.EXIT:  # Exit program
-            widget = _widgets.Button(element_name, button_id, None, self._exit)
-        # If element is a function
-        elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
-            widget = _widgets.Button(element_name, button_id, None, element, *args)
-        else:
-            raise ValueError('Element must be a Menu, a PymenuAction or a function')
-
-        # Configure and add the button
-        self._configure_widget(widget, kwargs.pop('font_size', self._widget_font_size),
-                               kwargs.pop('align', self._widget_alignment))
-        self._append_widget(widget)
-        return widget
-
-    def add_color_input(self,
-                        title,
-                        color_type,
-                        color_id='',
-                        default='',
-                        input_separator=',',
-                        input_underline='_',
-                        align='',
-                        font_size=0,
-                        onchange=None,
-                        onreturn=None,
-                        previsualization_width=3,
-                        **kwargs
-                        ):
-        """
-        Add a color widget with RGB or Hex format. Includes a preview
-        box that renders the given color.
-
-        And functions onchange and onreturn does
-            onchange(current_text, **kwargs)
-            onreturn(current_text, **kwargs)
-
-        :param title: Title of the color input
-        :type title: basestring
-        :param color_type: Type of the color input, can be "rgb" or "hex"
-        :type color_type: basestring
-        :param color_id: ID of the color input
-        :type color_id: basestring
-        :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
-        :type default: basestring, tuple
-        :param input_separator: Divisor between RGB channels, not valid in HEX format
-        :type input_separator: basestring
-        :param input_underline: Underline character
-        :type input_underline: basestring
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
-        :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
-        :param previsualization_width: Previsualization width as a factor of the height
-        :type previsualization_width: float, int
-        :param kwargs: Additional keyword-parameters
-        :return: Widget object
-        :rtype: pygameMenu.widgets.colorinput.ColorInput
-        """
-        assert isinstance(default, (str, tuple))
-        widget = _widgets.ColorInput(label=title,
-                                     colorinput_id=color_id,
-                                     color_type=color_type,
-                                     input_separator=input_separator,
-                                     input_underline=input_underline,
-                                     onchange=onchange,
-                                     onreturn=onreturn,
-                                     prev_size=previsualization_width,
-                                     **kwargs)
-        self._configure_widget(widget, font_size, align)
-        widget.set_value(default)
-        self._append_widget(widget)
-        return widget
-
-    def add_label(self,
-                  title,
-                  label_id='',
-                  align='',
-                  font_size=0, ):
-        """
-        Add a simple text to display.
-
-        :param title: Title of the label
-        :type title: basestring
-        :param label_id: ID of the label
-        :type label_id: basestring
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
-        :return: Widget object
-        :rtype: pygameMenu.widgets.label.Label
-        """
-        widget = _widgets.Label(label=title, label_id=label_id)
-        self._configure_widget(widget, font_size, align)
-        self._append_widget(widget)
-        return widget
-
-    def add_selector(self,
-                     title,
-                     values,
-                     selector_id='',
-                     default=0,
-                     align='',
-                     font_size=0,
-                     onchange=None,
-                     onreturn=None,
-                     **kwargs
-                     ):
-        """
-        Add a selector to menu: several options with values and two functions
-        that execute when changing the selector (left/right) and pressing
-        return button on the element.
-
-        Values of the selector are like:
-            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
-
-        And functions onchange and onreturn does
-            onchange(a, b, c..., **kwargs)
-            onreturn(a, b, c..., **kwargs)
-
-        :param title: Title of the selector
-        :type title: basestring
-        :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
-        :type values: list
-        :param selector_id: ID of the selector
-        :type selector_id: basestring
-        :param default: Index of default value to display
-        :type default: int
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
-        :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
-        :param kwargs: Additional parameters
-        :return: Widget object
-        :rtype: pygameMenu.widgets.selector.Selector
-        """
-        widget = _widgets.Selector(label=title,
-                                   elements=values,
-                                   selector_id=selector_id,
-                                   default=default,
-                                   onchange=onchange,
-                                   onreturn=onreturn,
-                                   **kwargs)
-        self._configure_widget(widget, font_size, align)
-        self._append_widget(widget)
-        return widget
-
-    def add_text_input(self,
-                       title,
-                       textinput_id='',
-                       default='',
-                       input_type=_locals.INPUT_TEXT,
-                       input_underline='',
-                       maxchar=0,
-                       maxwidth=0,
-                       align='',
-                       font_size=0,
-                       enable_copy_paste=True,
-                       enable_selection=True,
-                       password=False,
-                       onchange=None,
-                       onreturn=None,
-                       valid_chars=None,
-                       **kwargs
-                       ):
-        """
-        Add a text input to menu: free text area and two functions
-        that execute when changing the text and pressing return button
-        on the element.
-
-        And functions onchange and onreturn does
-            onchange(current_text, **kwargs)
-            onreturn(current_text, **kwargs)
-
-        :param title: Title of the text input
-        :type title: basestring
-        :param textinput_id: ID of the text input
-        :type textinput_id: basestring
-        :param default: Default value to display
-        :type default: basestring, int, float
-        :param input_type: Data type of the input
-        :type input_type: basestring
-        :param input_underline: Underline character
-        :type input_underline: basestring
-        :param maxchar: Maximum length of string, if 0 there's no limit
-        :type maxchar: int
-        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
-        :type maxwidth: int
-        :param align: Widget alignment
-        :type align: basestring
-        :param font_size: Font size of the widget
-        :type font_size: int
-        :param enable_copy_paste: Enable text copy, paste and cut
-        :type enable_copy_paste: bool
-        :param enable_selection: Enable text selection on input
-        :type enable_selection: bool
-        :param password: Text input is a password
-        :type password: bool
-        :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
-        :param valid_chars: List of chars to be ignored, None if no chars are invalid
-        :type valid_chars: list
-        :param kwargs: Additional keyword-parameters
-        :return: Widget object
-        :rtype: pygameMenu.widgets.textinput.TextInput
-        """
-        assert isinstance(default, (str, int, float))
-
-        # If password is active no default value should exist
-        if password and default != '':
-            raise ValueError('default value must be empty if the input is a password')
-
-        widget = _widgets.TextInput(label=title,
-                                    textinput_id=textinput_id,
-                                    maxchar=maxchar,
-                                    maxwidth=maxwidth,
-                                    input_type=input_type,
-                                    input_underline=input_underline,
-                                    enable_copy_paste=enable_copy_paste,
-                                    enable_selection=enable_selection,
-                                    valid_chars=valid_chars,
-                                    password=password,
-                                    onchange=onchange,
-                                    onreturn=onreturn,
-                                    **kwargs)
-        self._configure_widget(widget, font_size, align)
-        widget.set_value(default)
-        self._append_widget(widget)
-        return widget
-
-    def _configure_widget(self, widget, font_size=0, align=''):
-        """
-        Update the given widget with the parameters defined at
-        the menu level.
-
-        :param widget: Widget object
-        :type widget: pygameMenu.widgets.widget.Widget
-        :param font_size: Widget font size
-        :type font_size: int
-        :param align: Widget alignment
-        :type align: basestring
-        """
-        assert isinstance(widget, _widgets.WidgetType), 'widget must be a Widget instance'
-        assert isinstance(font_size, int), 'font_size must be an integer'
-        assert isinstance(align, str), 'align must be a string'
-
-        if align == '':
-            align = self._widget_alignment
-        if font_size == 0:
-            font_size = self._widget_font_size
-        assert font_size > 0, 'font_size must be greater than zero'
-
-        _col = int((len(self._widgets) - 1) // self._rows)  # Column position
-
-        widget.set_menu(self)
-        self._check_id_duplicated(widget.get_id())
-        widget.set_font(font=self._widget_font_name,
-                        font_size=font_size,
-                        color=self._widget_font_color,
-                        selected_color=self._selection_color)
-        if self._force_fit_text and self._column_max_width[_col] is not None:
-            selection_dx = self._selection_highlight_margin_x + self._selection_border_width
-            widget.set_max_width(self._column_max_width[_col] - selection_dx)
-        widget.set_shadow(enabled=self._widget_shadow,
-                          color=self._widget_shadow_color,
-                          position=self._widget_shadow_position,
-                          offset=self._widget_shadow_offset)
-        widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(align)
-
-    def _append_widget(self, widget):
-        """
-        Add a widget to the list.
-
-        :param widget: Widget object
-        :type widget: pygameMenu.widgets.widget.Widget
-        """
-        assert isinstance(widget, _widgets.WidgetType)
-        if self._columns > 1:
-            _max_elements = self._columns * self._rows
-            _msg = 'total elements cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
-            assert len(self._widgets) + 1 <= _max_elements, _msg
-        self._widgets.append(widget)
-        _totals = len(self._widgets)
-        if _totals == 1:
-            widget.set_selected()
-
-    def _back(self):
-        """
-        Go to previous menu or close if top menu is currently displayed.
-
-        :return: None
-        """
-        self._check_menu_initialized()
-        if self._top._prev is not None:
-            self.reset(1)
-        else:
-            self._close()
 
     def _build_widget_surface(self):
         """
@@ -861,21 +960,29 @@ class Menu(object):
         required width and height.
         """
         self._update_column_width()
+        self._update_widget_position()
+
         menubar_height = self._menubar.get_rect().height
         max_x, max_y = self._get_widget_max_position()
 
         if max_x > self._width and max_y > self._height - menubar_height:
             width, height = max_x + 20, max_y + 20
+            if not self._mouse_visible:
+                self._mouse_visible = True
         elif max_x > self._width:
             # Remove the thick of the scrollbar
             # to avoid displaying an vertical one
             width, height = max_x + 20, self._height - menubar_height - 20
+            self._mouse_visible = self._mouse_visible_default
         elif max_y > self._height:
             # Remove the thick of the scrollbar
             # to avoid displaying an horizontal one
             width, height = self._width - 20, max_y + 20
+            if not self._mouse_visible:
+                self._mouse_visible = True
         else:
             width, height = self._width, self._height - menubar_height
+            self._mouse_visible = self._mouse_visible_default
 
         self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
@@ -970,48 +1077,7 @@ class Menu(object):
         available = self._height - self._menubar.get_rect().height - horizontal_scroll
         new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
         self._widget_offset_y = int(self._height * new_pos)
-
-    def _get_widget_position(self, index, x=True, y=True):
-        """
-        Get widget position on the surface from a index position.
-
-        :param index: Widget index on the list
-        :type index: int
-        :param x: Calculate x position
-        :type x: bool
-        :param y: Calculate y position
-        :type y: bool
-        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
-        :rtype: tuple
-        """
-        assert len(self._widgets) > index >= 0, 'index not valid'
-        assert isinstance(index, int), 'index must be an integer'
-        assert isinstance(x, bool) and isinstance(y, bool), 'x and y must be boolean'
-
-        x_coord = 0
-        y_coord = 0
-        rect = self._widgets[index].get_rect()  # type: _pygame.Rect
-
-        # Calculate X position
-        if x:
-            _column_width = self._column_widths[int(index // self._rows)]
-            align = self._widgets[index].get_alignment()
-            if align == _locals.ALIGN_CENTER:
-                dx = -int(rect.width / 2.0)
-            elif align == _locals.ALIGN_LEFT:
-                dx = -_column_width / 2 + self._selection_highlight_margin_x / 2
-            elif align == _locals.ALIGN_RIGHT:
-                dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
-            else:
-                dx = 0
-            x_coord = self._widget_offset_x + self._column_posx[int(index // self._rows)] + dx
-
-        # Calculate Y position
-        if y:
-            dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
-            y_coord = self._widget_offset_y + (index % self._rows) * (self._widget_font_size + self._widget_margin) + dy
-
-        return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
+        self._build_widget_surface()  # Rebuild
 
     def draw(self):
         """
@@ -1024,22 +1090,13 @@ class Menu(object):
         if not self._widgets_surface:
             self._build_widget_surface()
 
-        # Update menu bar position
-        self._menubar.set_position(self._posx, self._posy)
+        # Fill the scrolling surface
+        self._widgets_surface.fill((255, 255, 255, 0))
 
         # Draw widgets
-        self._widgets_surface.fill((255, 255, 255, 0))  # Transparent
-        for index in range(len(self._widgets)):
-            widget = self._widgets[index]
-
-            # Update widget position
-            widget.set_position(*self._get_widget_position(index)[:2])
-
-            # Draw widget
+        for widget in self._widgets:
             widget.draw(self._widgets_surface)
-
-            # If selected item then draw a rectangle
-            if self._selection_highlight and widget.selected:
+            if self._selection_highlight and widget.selected:  # If selected draw a rectangle
                 widget.draw_selected_rect(self._widgets_surface,
                                           self._selection_color,
                                           self._selection_highlight_margin_x,
@@ -1310,7 +1367,7 @@ class Menu(object):
         :return: Input dict
         :rtype: dict
         """
-        assert isinstance(recursive, bool), 'recursive must be a boolean'
+        assert isinstance(recursive, bool)
 
         data = {}
         for widget in self._widgets:
@@ -1464,7 +1521,7 @@ class Menu(object):
         """
         self._check_menu_initialized()
         assert isinstance(self._top._actual, Menu)
-        assert isinstance(total, int), 'total must be an integer'
+        assert isinstance(total, int)
         assert total > 0, 'total must be greater than zero'
 
         i = 0
@@ -1481,24 +1538,39 @@ class Menu(object):
 
         self._select(self._top._actual._index)
 
-    def _select(self, index):
+    def _select(self, new_index):
         """
         Select the widget at the given index and unselect others.
 
-        :param index: Widget index
-        :type index: int
+        :param new_index: Widget index
+        :type new_index: int
         :return: None
         """
         self._check_menu_initialized()
         actual = self._top._actual
         if len(actual._widgets) == 0:
             return
-        actual._widgets[actual._index].set_selected(False)
-        actual._index = index % len(actual._widgets)
-        actual._widgets[actual._index].set_selected()
-        rect = actual._widgets[actual._index].get_rect()
-        if actual._index == 0:
-            # Scroll to the top of the menu
+        new_index %= len(actual._widgets)
+        if new_index == actual._index:  # Index has not changed
+            return
+
+        # Get both widgets
+        old_widget = actual._widgets[actual._index]  # type: _widgets.WidgetType
+        new_widget = actual._widgets[new_index]  # type:_widgets.WidgetType
+
+        # If new widget is not selectable
+        if not new_widget.is_selectable:
+            if self._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
+                self._select(new_index + 1)
+                return
+            else:  # No selectable options, quit
+                return
+
+        old_widget.set_selected(False)
+        actual._index = new_index  # Update selected index
+        new_widget.set_selected()
+        rect = new_widget.get_rect()
+        if actual._index == 0:  # Scroll to the top of the menu
             rect = _pygame.Rect(rect.x, 0, rect.width, rect.height)
         actual._scroll.scroll_to_rect(rect)
 
@@ -1518,8 +1590,8 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget
         """
-        assert isinstance(widget_id, str), 'widget_id must be a string'
-        assert isinstance(recursive, bool), 'recursive must be a boolean'
+        assert isinstance(widget_id, str)
+        assert isinstance(recursive, bool)
         for widget in self._widgets:
             if widget.get_id() == widget_id:
                 return widget

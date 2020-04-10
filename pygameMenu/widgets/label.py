@@ -50,6 +50,7 @@ class Label(Widget):
         assert isinstance(label, str)
         super(Label, self).__init__(widget_id=label_id)
         self._label = label
+        self.is_selectable = False
 
     def _apply_font(self):
         """
@@ -74,7 +75,6 @@ class Label(Widget):
         """
         See upper class doc.
         """
-        # Can not be selected
         self._surface = self.render_string(self._label, self._font_color)
 
     def update(self, events):
