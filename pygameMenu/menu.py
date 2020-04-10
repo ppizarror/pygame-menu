@@ -71,7 +71,6 @@ class Menu(object):
                  column_max_width=None,
                  columns=1,
                  enabled=True,
-                 fps=0,
                  joystick_enabled=True,
                  menu_alpha=100,
                  menu_background_color=(0, 0, 0),
@@ -135,8 +134,6 @@ class Menu(object):
         :type columns: int
         :param enabled: Menu is enabled by default or not
         :type enabled: bool
-        :param fps: Maximum FPS (frames per second)
-        :type fps: int, float
         :param joystick_enabled: Enable/disable joystick on menu
         :type joystick_enabled: bool
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
@@ -230,7 +227,6 @@ class Menu(object):
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
-        assert isinstance(fps, (int, float))
         assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(mouse_enabled, bool)
@@ -329,7 +325,6 @@ class Menu(object):
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._enabled = enabled  # Menu is enabled or not
-        self._fps = 0  # Updated in set_fps()
         self._height = int(menu_height)
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
@@ -431,9 +426,6 @@ class Menu(object):
                                    shadow_color=scrollbar_shadow_color,
                                    shadow_offset=scrollbar_shadow_offset,
                                    shadow_position=scrollbar_shadow_position)
-
-        # Set fps
-        self.set_fps(fps)
 
     def add_button(self, element_name, element, *args, **kwargs):
         """
@@ -1162,9 +1154,6 @@ class Menu(object):
         # Update mouse
         _pygame.mouse.set_visible(self._actual._mouse_visible)
 
-        # Clock tick
-        self._actual._clock.tick(self._fps)
-
         # Check if the position of the widget has changed after the events
         widget_position_changed = False
 
@@ -1302,7 +1291,7 @@ class Menu(object):
             raise Exception('The menu has not been initialized yet, try using mainloop function')
         return True
 
-    def mainloop(self, surface, bgfun, disable_loop=False):
+    def mainloop(self, surface, bgfun, disable_loop=False, fps_limit=0):
         """
         Main function of menu.
 
@@ -1312,21 +1301,27 @@ class Menu(object):
         :type bgfun: function
         :param disable_loop: Disable infinite loop waiting for events
         :type disable_loop: bool
+        :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
+        :type fps_limit: int,float
         :return: None
         """
         assert isinstance(surface, _pygame.Surface)
         assert callable(bgfun), 'background function must be callable (a function)'
         assert isinstance(disable_loop, bool)
+        assert isinstance(fps_limit, (int, float))
+        assert fps_limit >= 0, 'fps limit cannot be negative'
 
         # Store the reference of the menu (if user moves through submenus)
         self._top = self
 
-        if not self.is_enabled():
+        if not self._top.is_enabled():
             return
         while True:
+            if fps_limit > 0:
+                self._actual._clock.tick(fps_limit)
             bgfun()
             break_mainloop = self.update(events=_pygame.event.get())
-            if self._top._enabled:
+            if not self._top.is_enabled():  # As event can change the status of the menu, this has to be checked twice
                 self._actual.draw(surface=surface)
             _pygame.display.flip()
             if break_mainloop or disable_loop:
@@ -1388,26 +1383,6 @@ class Menu(object):
         :rtype: float
         """
         return self._clock.get_fps()
-
-    def set_fps(self, fps, recursive=True):
-        """
-        Set the frames per second limit of the menu.
-
-        :param fps: FPS
-        :type fps: float, int
-        :param recursive: Set FPS to all the submenus
-        :type recursive: bool
-        :return: None
-        """
-        assert isinstance(fps, (float, int))
-        assert isinstance(recursive, bool)
-        assert fps >= 0, 'fps must be equal or greater than zero'
-        self._fps = float(fps)
-        for widget in self._widgets:
-            widget.set_fps(fps)
-        if recursive:
-            for menu in self._submenus:
-                menu.set_fps(fps, recursive=True)
 
     def set_sound(self, sound, recursive=False):
         """

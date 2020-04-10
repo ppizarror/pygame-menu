@@ -274,7 +274,6 @@ def main(test=False):
                                 widget_font_size=30,
                                 widget_offset_y=0.09,
                                 )
-    main_menu.set_fps(FPS)
 
     main_menu.add_button('Settings', settings_menu)
     main_menu.add_button('More Settings', more_settings_menu)
@@ -300,7 +299,7 @@ def main(test=False):
         main_background()
 
         # Main menu
-        main_menu.mainloop(surface, main_background, disable_loop=test)
+        main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
 
         # Flip surface
         pygame.display.flip()

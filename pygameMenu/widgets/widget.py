@@ -72,7 +72,6 @@ class Widget(object):
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER
-        self._fps = 0  # type: int
         self._id = str(widget_id)
         self._last_selected_surface = None  # type: _pygame.SurfaceType
         self._selected_rect = None  # type: _pygame.rect.RectType
@@ -545,16 +544,6 @@ class Widget(object):
         # Create shadow tuple position
         self._create_shadow_tuple()
 
-    def set_fps(self, fps):
-        """
-        Set the FPS limit of the widget.
-
-        :param fps: FPS (Frames Per Second) limit of the widget
-        :type fps: float, int
-        :return: None
-        """
-        self._fps = float(fps)
-
     def set_sound(self, sound):
         """
         Set sound engine to the widget.
@@ -564,15 +553,6 @@ class Widget(object):
         :return: None
         """
         self.sound = sound
-
-    def get_fps(self):
-        """
-        Return the FPS limit of the widget.
-
-        :return: FPS limit
-        :rtype: float
-        """
-        return self._fps
 
     def _create_shadow_tuple(self):
         """

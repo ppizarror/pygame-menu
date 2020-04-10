@@ -275,9 +275,6 @@ def main(test=False):
     main_menu.add_button('Quit', pygameMenu.events.EXIT)
     main_menu.center_vertically()
 
-    # Configure main menu
-    main_menu.set_fps(FPS)
-
     # -------------------------------------------------------------------------
     # Main loop
     # -------------------------------------------------------------------------
@@ -296,7 +293,7 @@ def main(test=False):
                 exit()
 
         # Main menu
-        main_menu.mainloop(surface, main_background, disable_loop=test)
+        main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
 
         # Flip surface
         pygame.display.flip()

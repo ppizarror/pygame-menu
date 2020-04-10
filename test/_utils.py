@@ -34,6 +34,7 @@ import pygame
 import pygameMenu
 import random
 
+# noinspection PyUnresolvedReferences
 from pygameMenu.utils import dummy_function
 
 # noinspection PyUnresolvedReferences
@@ -313,7 +314,6 @@ class PygameMenuUtils(object):
         return pygameMenu.Menu(columns=columns,
                                enabled=False,
                                font=pygameMenu.font.FONT_NEVIS,
-                               fps=FPS,
                                menu_alpha=90,
                                menu_height=400,
                                menu_width=600,

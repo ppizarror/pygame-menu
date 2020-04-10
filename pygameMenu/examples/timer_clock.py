@@ -224,7 +224,6 @@ def main(test=False):
     # Main menu, pauses execution of the application
     main_menu = pygameMenu.Menu(enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
-                                fps=FPS,
                                 menu_alpha=90,
                                 menu_height=400,
                                 menu_width=600,
