@@ -377,6 +377,7 @@ class Menu(object):
         if abs(widget_offset_y) < 1:
             widget_offset_y *= self._height
         self._widgets = []  # type: list
+        self._widgets_position = {}  # Tuple of widget position, key: widget id
         self._widget_alignment = widget_alignment
         self._widget_font_color = widget_font_color
         self._widget_font_name = font
@@ -457,72 +458,6 @@ class Menu(object):
 
         # Set fps
         self.set_fps(fps)
-
-    def _update_column_width(self):
-        """
-        Update the width of each column (self._column_widths). If the max column width is not set
-        the width of the column will be the maximum widget in the column.
-
-        :return: Total width of the columns
-        :rtype: int
-        """
-        # Compute the available width, that is the surface width minus the max width columns
-        self._column_widths = [0 for _ in range(self._columns)]
-        for i in range(self._columns):
-            if self._column_max_width[i] is not None:
-                self._column_widths[i] = self._column_max_width[i]
-
-        # Update None columns (max width not set)
-        for index in range(len(self._widgets)):
-            rect = self._widgets[index].get_rect()  # type: _pygame.Rect
-            col_index = int(index // self._rows)
-            if self._column_max_width[col_index] is None:  # No limit
-                self._column_widths[col_index] = max(self._column_widths[col_index],
-                                                     rect.width + self._selection_highlight_margin_x,
-                                                     # Add selection box
-                                                     )
-
-        # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
-        if 0 < sum(self._column_widths) < self._width:
-            scale = self._width / sum(self._column_widths)
-            for index in range(self._columns):
-                self._column_widths[index] *= scale
-
-        # Final column width
-        total_col_width = int(sum(self._column_widths))
-
-        if self._columns > 1:
-
-            # Calculate column width scale (weights)
-            column_weights = tuple(
-                float(self._column_widths[i]) / max(total_col_width, 1.0) for i in range(self._columns))
-
-            # Calculate the position of each column
-            self._column_posx = []
-            cumulative = 0
-            for i in range(self._columns):
-                w = column_weights[i]
-                self._column_posx.append(int(total_col_width * (cumulative + 0.5 * w)))
-                cumulative += w
-
-        else:
-            self._column_posx = [int(total_col_width * 0.5)]
-            self._column_widths = [total_col_width]
-
-        return total_col_width
-
-    def _get_widget_max_position(self):
-        """
-        :return: Returns the lower rightmost position of each widgets in menu.
-        :rtype: tuple
-        """
-        max_x = -1e6
-        max_y = -1e6
-        for index in range(len(self._widgets)):
-            x, y = self._get_widget_position(index)[2:]
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
-        return int(max_x), int(max_y)
 
     def add_button(self, element_name, element, *args, **kwargs):
         """
@@ -914,12 +849,115 @@ class Menu(object):
         else:
             self._close()
 
+    def _update_column_width(self):
+        """
+        Update the width of each column (self._column_widths). If the max column width is not set
+        the width of the column will be the maximum widget in the column.
+
+        :return: Total width of the columns
+        :rtype: int
+        """
+        # Compute the available width, that is the surface width minus the max width columns
+        self._column_widths = [0 for _ in range(self._columns)]
+        for i in range(self._columns):
+            if self._column_max_width[i] is not None:
+                self._column_widths[i] = self._column_max_width[i]
+
+        # Update None columns (max width not set)
+        for index in range(len(self._widgets)):
+            rect = self._widgets[index].get_rect()  # type: _pygame.Rect
+            col_index = int(index // self._rows)
+            if self._column_max_width[col_index] is None:  # No limit
+                self._column_widths[col_index] = max(self._column_widths[col_index],
+                                                     rect.width + self._selection_highlight_margin_x,
+                                                     # Add selection box
+                                                     )
+
+        # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
+        if 0 < sum(self._column_widths) < self._width:
+            scale = self._width / sum(self._column_widths)
+            for index in range(self._columns):
+                self._column_widths[index] *= scale
+
+        # Final column width
+        total_col_width = int(sum(self._column_widths))
+
+        if self._columns > 1:
+
+            # Calculate column width scale (weights)
+            column_weights = tuple(
+                float(self._column_widths[i]) / max(total_col_width, 1.0) for i in range(self._columns))
+
+            # Calculate the position of each column
+            self._column_posx = []
+            cumulative = 0
+            for i in range(self._columns):
+                w = column_weights[i]
+                self._column_posx.append(int(total_col_width * (cumulative + 0.5 * w)))
+                cumulative += w
+
+        else:
+            self._column_posx = [int(total_col_width * 0.5)]
+            self._column_widths = [total_col_width]
+
+        return total_col_width
+
+    def _update_widget_position(self):
+        """
+        Update the position dict for each widget.
+        """
+        for index in range(len(self._widgets)):
+            widget = self._widgets[index]  # type: _widgets.WidgetType
+            rect = widget.get_rect()  # type: _pygame.Rect
+
+            # Get column and row position
+            _col = int(index // self._rows)
+            _row = int(index % self._rows)
+
+            # Calculate X position
+            _column_width = self._column_widths[_col]
+            align = widget.get_alignment()
+            if align == _locals.ALIGN_CENTER:
+                dx = -int(rect.width / 2.0)
+            elif align == _locals.ALIGN_LEFT:
+                dx = -_column_width / 2 + self._selection_highlight_margin_x / 2
+            elif align == _locals.ALIGN_RIGHT:
+                dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
+            else:
+                dx = 0
+            x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
+
+            # Calculate Y position
+            ysum = 0  # Compute the total height from the current row position to the top of the column
+            for r in range(_row):
+                rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
+                ysum += rwidget.get_font_info()['size'] + rwidget.get_margin()[1]
+            dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
+            y_coord = self._widget_offset_y + ysum + dy
+
+            # Store in dict
+            self._widgets_position[widget.get_id()] = (x_coord, y_coord, x_coord + rect.width, y_coord + rect.height)
+
+    def _get_widget_max_position(self):
+        """
+        :return: Returns the lower rightmost position of each widgets in menu.
+        :rtype: tuple
+        """
+        max_x = -1e6
+        max_y = -1e6
+        for widget in self._widgets:
+            x, y = self._widgets_position[widget.get_id()][2:]
+            max_x = max(max_x, x)
+            max_y = max(max_y, y)
+        return int(max_x), int(max_y)
+
     def _build_widget_surface(self):
         """
         Create the surface used to draw widgets according the
         required width and height.
         """
         self._update_column_width()
+        self._update_widget_position()
 
         menubar_height = self._menubar.get_rect().height
         max_x, max_y = self._get_widget_max_position()
@@ -1036,62 +1074,7 @@ class Menu(object):
         available = self._height - self._menubar.get_rect().height - horizontal_scroll
         new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
         self._widget_offset_y = int(self._height * new_pos)
-
-    def _get_widget_position(self, index, x=True, y=True):
-        """
-        Get widget position on the surface from a index position.
-        This can a be a very expensive function.
-
-        :param index: Widget index on the list
-        :type index: int
-        :param x: Calculate x position
-        :type x: bool
-        :param y: Calculate y position
-        :type y: bool
-        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
-        :rtype: tuple
-        """
-        assert isinstance(index, int)
-        assert isinstance(x, bool) and isinstance(y, bool)
-        assert len(self._widgets) > index >= 0, 'index not valid'
-
-        x_coord = 0
-        y_coord = 0
-        widget = self._widgets[index]  # type: _widgets.WidgetType
-        rect = widget.get_rect()  # type: _pygame.Rect
-
-        # Get column and row position
-        _col = int(index // self._rows)
-        _row = int(index % self._rows)
-
-        # Calculate X position
-        if x:
-            _column_width = self._column_widths[_col]
-            align = widget.get_alignment()
-            if align == _locals.ALIGN_CENTER:
-                dx = -int(rect.width / 2.0)
-            elif align == _locals.ALIGN_LEFT:
-                dx = -_column_width / 2 + self._selection_highlight_margin_x / 2
-            elif align == _locals.ALIGN_RIGHT:
-                dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
-            else:
-                dx = 0
-
-            x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
-
-        # Calculate Y position
-        if y:
-
-            # Compute the total height from the current row position to the top of the column
-            ysum = 0
-            for r in range(_row):
-                rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
-                ysum += rwidget.get_font_info()['size'] + rwidget.get_margin()[1]
-
-            dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
-            y_coord = self._widget_offset_y + ysum + dy
-
-        return x_coord, y_coord, x_coord + rect.width, y_coord + rect.height
+        self._build_widget_surface()  # Rebuild
 
     def draw(self):
         """
@@ -1109,11 +1092,10 @@ class Menu(object):
 
         # Draw widgets
         self._widgets_surface.fill((255, 255, 255, 0))  # Transparent
-        for index in range(len(self._widgets)):
-            widget = self._widgets[index]
+        for widget in self._widgets:
 
             # Update widget position
-            widget.set_position(*self._get_widget_position(index)[:2])
+            widget.set_position(*self._widgets_position[widget.get_id()][:2])
 
             # Draw widget
             widget.draw(self._widgets_surface)
