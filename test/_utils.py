@@ -310,8 +310,7 @@ class PygameMenuUtils(object):
         :return: Menu
         :rtype: pygameMenu.Menu
         """
-        return pygameMenu.Menu(surface,
-                               columns=columns,
+        return pygameMenu.Menu(columns=columns,
                                enabled=False,
                                font=pygameMenu.font.FONT_NEVIS,
                                fps=FPS,

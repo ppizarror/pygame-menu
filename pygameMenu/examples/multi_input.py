@@ -141,8 +141,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Settings
     # -------------------------------------------------------------------------
-    settings_menu = pygameMenu.Menu(surface,
-                                    font=pygameMenu.font.FONT_HELVETICA,
+    settings_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_HELVETICA,
                                     menu_background_color=MENU_BACKGROUND_COLOR,
                                     menu_height=WINDOW_SIZE[1] * 0.85,
                                     menu_width=WINDOW_SIZE[0] * 0.9,
@@ -209,8 +208,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: More settings
     # -------------------------------------------------------------------------
-    more_settings_menu = pygameMenu.Menu(surface,
-                                         font=pygameMenu.font.FONT_COMIC_NEUE,
+    more_settings_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
                                          menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.85,
                                          menu_width=WINDOW_SIZE[0] * 0.9,
@@ -243,8 +241,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Column buttons
     # -------------------------------------------------------------------------
-    button_column_menu = pygameMenu.Menu(surface,
-                                         columns=2,
+    button_column_menu = pygameMenu.Menu(columns=2,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
                                          menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.45,
@@ -265,8 +262,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Main menu
     # -------------------------------------------------------------------------
-    main_menu = pygameMenu.Menu(surface,
-                                font=pygameMenu.font.FONT_COMIC_NEUE,
+    main_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
                                 menu_width=WINDOW_SIZE[0] * 0.8,

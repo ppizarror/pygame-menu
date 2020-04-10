@@ -42,7 +42,6 @@ class WidgetsTest(unittest.TestCase):
         Setup sound engine.
         """
         self.menu = PygameMenuUtils.generic_menu()
-        self.menu.update()
 
     def test_selector(self):
         """
@@ -199,7 +198,7 @@ class WidgetsTest(unittest.TestCase):
         for i in range(5):
             widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
-        widget._previsualize_color(self.menu._surface)
+        widget._previsualize_color(surface)
         widget.get_rect()
 
         widget.clear()

@@ -201,8 +201,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
 
     # Play menu
-    play_menu = pygameMenu.Menu(surface,
-                                font=pygameMenu.font.FONT_BEBAS,
+    play_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_BEBAS,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
                                 menu_width=WINDOW_SIZE[0] * 0.7,
@@ -215,8 +214,7 @@ def main(test=False):
                                 widget_offset_y=0.17,  # %17 por menu height
                                 )
 
-    play_submenu = pygameMenu.Menu(surface,
-                                   font=pygameMenu.font.FONT_BEBAS,
+    play_submenu = pygameMenu.Menu(font=pygameMenu.font.FONT_BEBAS,
                                    menu_background_color=MENU_BACKGROUND_COLOR,
                                    menu_height=WINDOW_SIZE[1] * 0.5,
                                    menu_width=WINDOW_SIZE[0] * 0.7,
@@ -242,8 +240,7 @@ def main(test=False):
     play_menu.center_vertically()
 
     # About menu
-    about_menu = pygameMenu.Menu(surface,
-                                 font=pygameMenu.font.FONT_BEBAS,
+    about_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_BEBAS,
                                  menu_height=WINDOW_SIZE[1] * 0.6,
                                  menu_width=WINDOW_SIZE[0] * 0.6,
                                  onclose=pygameMenu.events.DISABLE_CLOSE,
@@ -262,8 +259,7 @@ def main(test=False):
     about_menu.add_button('Return to menu', pygameMenu.events.BACK)
 
     # Main menu
-    main_menu = pygameMenu.Menu(surface,
-                                font=pygameMenu.font.FONT_BEBAS,
+    main_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_BEBAS,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.6,
                                 menu_width=WINDOW_SIZE[0] * 0.6,
@@ -300,7 +296,7 @@ def main(test=False):
                 exit()
 
         # Main menu
-        main_menu.mainloop(surface, main_background, events, disable_loop=test)
+        main_menu.mainloop(surface, main_background, disable_loop=test)
 
         # Flip surface
         pygame.display.flip()

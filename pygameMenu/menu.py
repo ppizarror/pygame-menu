@@ -62,7 +62,6 @@ class Menu(object):
     """
 
     def __init__(self,
-                 surface,
                  menu_height,
                  menu_width,
                  font,
@@ -118,8 +117,6 @@ class Menu(object):
         """
         Menu constructor.
 
-        :param surface: Pygame surface
-        :type surface: pygame.surface.SurfaceType
         :param menu_height: Height of menu (px)
         :type menu_height: int,float
         :param menu_width: Width of menu (px)
@@ -225,7 +222,6 @@ class Menu(object):
         :param widget_shadow_position: Position of shadow
         :type widget_shadow_position: basestring
         """
-        assert isinstance(surface, _pygame.Surface)
         assert isinstance(menu_height, (int, float))
         assert isinstance(menu_width, (int, float))
         assert isinstance(font, str)
@@ -339,7 +335,6 @@ class Menu(object):
         self._joy_event = 0  # type: int
         self._onclose = onclose  # Function that calls after closing menu
         self._sounds = _Sound()  # type: _Sound
-        self._surface = surface
         self._width = int(menu_width)
 
         # Menu links (pointer to previous and next menus in nested submenus)
@@ -1098,7 +1093,7 @@ class Menu(object):
 
         :return: None
         """
-        if self.is_disabled():
+        if not self._enabled:
             self._enabled = True
             self._closelocked = True
 
@@ -1111,15 +1106,6 @@ class Menu(object):
         """
         _pygame.quit()
         sys.exit()
-
-    def is_disabled(self):
-        """
-        Returns false/true if menu is disabled or not.
-
-        :return: True if the menu is disabled
-        :rtype: bool
-        """
-        return not self.is_enabled()
 
     def is_enabled(self):
         """
@@ -1165,16 +1151,13 @@ class Menu(object):
         """
         Update the status of the menu using external events.
 
-        :param events: Pygame events
+        :param events: Pygame events as a list
         :type events: list
         :return: True if mainloop must be stopped
         :rtype: bool
         """
-        assert isinstance(events, (list, type(None)))
-
+        assert isinstance(events, list)
         break_mainloop = False
-        if events is None:
-            events = _pygame.event.get()
 
         # Update mouse
         _pygame.mouse.set_visible(self._actual._mouse_visible)
@@ -1319,7 +1302,7 @@ class Menu(object):
             raise Exception('The menu has not been initialized yet, try using mainloop function')
         return True
 
-    def mainloop(self, surface, bgfun, events=None, disable_loop=False):
+    def mainloop(self, surface, bgfun, disable_loop=False):
         """
         Main function of menu.
 
@@ -1327,25 +1310,22 @@ class Menu(object):
         :type surface: pygame.surface.SurfaceType
         :param bgfun: Background function called on each loop iteration before drawing the menu
         :type bgfun: function
-        :param events: Menu events
-        :type events: list
         :param disable_loop: Disable infinite loop waiting for events
         :type disable_loop: bool
         :return: None
         """
         assert isinstance(surface, _pygame.Surface)
         assert callable(bgfun), 'background function must be callable (a function)'
-        assert isinstance(events, (list, type(None)))
         assert isinstance(disable_loop, bool)
 
         # Store the reference of the menu (if user moves through submenus)
         self._top = self
 
-        if self.is_disabled():
+        if not self.is_enabled():
             return
         while True:
             bgfun()
-            break_mainloop = self.update()
+            break_mainloop = self.update(events=_pygame.event.get())
             if self._top._enabled:
                 self._actual.draw(surface=surface)
             _pygame.display.flip()

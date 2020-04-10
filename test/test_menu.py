@@ -46,10 +46,10 @@ class MenuTest(unittest.TestCase):
         Test menu enable/disable feature.
         """
         menu = PygameMenuUtils.generic_menu()
-        self.assertTrue(menu.is_disabled())
+        self.assertTrue(not menu.is_enabled())
         menu.enable()
         self.assertTrue(menu.is_enabled())
-        self.assertTrue(not menu.is_disabled())
+        self.assertFalse(not menu.is_enabled())
 
         # Initialize and close
         menu.mainloop(surface, bgfun=dummy_function, disable_loop=True)

@@ -152,8 +152,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
 
     # Timer
-    timer_menu = pygameMenu.Menu(surface,
-                                 font=pygameMenu.font.FONT_NEVIS,
+    timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
                                  menu_alpha=85,
                                  menu_background_color=(0, 0, 0),  # Background color
                                  menu_height=H_SIZE * 0.65,
@@ -187,8 +186,7 @@ def main(test=False):
     timer_menu.center_vertically()
 
     # Help menu
-    help_menu = pygameMenu.Menu(surface,
-                                font=pygameMenu.font.FONT_FRANCHISE,
+    help_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_FRANCHISE,
                                 menu_background_color=(30, 50, 107),  # Background color
                                 menu_height=600,  # Fullscreen
                                 menu_width=800,
@@ -206,8 +204,7 @@ def main(test=False):
     help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # About menu
-    about_menu = pygameMenu.Menu(surface,
-                                 font=pygameMenu.font.FONT_NEVIS,
+    about_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
                                  menu_height=400,
                                  menu_width=600,
                                  mouse_visible=False,
@@ -225,8 +222,7 @@ def main(test=False):
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # Main menu, pauses execution of the application
-    main_menu = pygameMenu.Menu(surface,
-                                enabled=False,
+    main_menu = pygameMenu.Menu(enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
                                 fps=FPS,
                                 menu_alpha=90,
@@ -273,7 +269,7 @@ def main(test=False):
         surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
 
         # Execute main from principal menu if is enabled
-        main_menu.mainloop(surface=surface, bgfun=mainmenu_background, events=events, disable_loop=test)
+        main_menu.mainloop(surface=surface, bgfun=mainmenu_background, disable_loop=test)
 
         # Flip surface
         pygame.display.flip()
@@ -284,4 +280,4 @@ def main(test=False):
 
 
 if __name__ == '__main__':
-    main(test=True)
+    main()
