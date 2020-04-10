@@ -563,7 +563,7 @@ class Widget(object):
         """
         Set the value.
 
-        .. warning:: This method shall not fire the callbacks as it is
+        .. warning:: This method does not fire the callbacks as it is
                      called programmatically (avoid possible loops).
 
         :param value: Value to be set on the widget

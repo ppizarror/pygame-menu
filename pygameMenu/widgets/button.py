@@ -39,6 +39,17 @@ from pygameMenu.widgets.widget import Widget
 class Button(Widget):
     """
     Button widget.
+
+    :param label: Text of the button
+    :type label: basestring
+    :param button_id: Button ID
+    :type button_id: basestring
+    :param onchange: Callback when changing the selector
+    :type onchange: function, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: function, NoneType
+    :param args: Optional arguments for callbacks
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -49,20 +60,6 @@ class Button(Widget):
                  *args,
                  **kwargs
                  ):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param label: Text of the button
-        :type label: basestring
-        :param button_id: Button ID
-        :type button_id: basestring
-        :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
-        :param args: Optional arguments for callbacks
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(label, str)
         super(Button, self).__init__(widget_id=button_id,
                                      onchange=onchange,
@@ -73,22 +70,13 @@ class Button(Widget):
         self._label = label
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         pass
 
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         if self.selected:
             color = self._font_selected_color
         else:
@@ -96,9 +84,6 @@ class Button(Widget):
         self._surface = self.render_string(self._label, color)
 
     def update(self, events):
-        """
-        See upper class doc.
-        """
         updated = False
         for event in events:  # type: _pygame.event.EventType
 

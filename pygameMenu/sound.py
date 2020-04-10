@@ -189,10 +189,10 @@ class Sound(object):
 
     def get_channel(self):
         """
-        Get the current channel.
+        Return the channel of the sound engine.
 
         :return: Channel
-        :rtype: pygame.mixer.Channel
+        :rtype: :py:class:`pygame.mixer.Channel`
         """
         channel = _mixer.find_channel()
         if self._uniquechannel:  # If the channel is unique
@@ -204,7 +204,7 @@ class Sound(object):
 
     def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
         """
-        Set a particular sound.
+        Link a sound file to a sound type.
 
         :param sound: Sound type
         :type sound: basestring
@@ -271,7 +271,7 @@ class Sound(object):
 
     def load_example_sounds(self, volume=0.5):
         """
-        Load example sounds.
+        Load the example sounds provided by the package.
 
         :param volume: Volume of the sound, (0-1)
         :type volume: float
@@ -379,7 +379,7 @@ class Sound(object):
 
     def stop(self):
         """
-        Stop sound of the channel.
+        Stop the current the channel.
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
@@ -391,7 +391,7 @@ class Sound(object):
 
     def pause(self):
         """
-        Pause channel.
+        Pause the current channel.
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
@@ -415,7 +415,10 @@ class Sound(object):
 
     def get_channel_info(self):
         """
-        Get the current channel information.
+        Return the current channel information of the sound engine.
+
+        :return: a info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
+        :rtype: dict
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         data = {}

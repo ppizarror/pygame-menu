@@ -53,8 +53,118 @@ _JOY_EVENT_REPEAT = _pygame.NUMEVENTS - 1
 
 # noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker
 class Menu(object):
+
     """
     Menu object.
+
+    :param surface: Pygame surface
+    :type surface: pygame.surface.SurfaceType
+    :param menu_height: Height of menu (px)
+    :type menu_height: int,float
+    :param menu_width: Width of menu (px)
+    :type menu_width: int,float
+    :param font: Font file path
+    :type font: basestring
+    :param title: Title of the menu (main title)
+    :type title: basestring
+    :param back_box: Draw a back-box button on header
+    :type back_box: bool
+    :param bgfun: Background drawing function (only if menu pause app)
+    :type bgfun: function
+    :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
+    :type column_force_fit_text: bool
+    :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
+    :type column_max_width: tuple, None
+    :param columns: Number of columns, by default it's 1
+    :type columns: int
+    :param dopause: Pause game
+    :type dopause: bool
+    :param enabled: Menu is enabled by default or not
+    :type enabled: bool
+    :param fps: Maximum FPS (frames per second)
+    :type fps: int, float
+    :param joystick_enabled: Enable/disable joystick on menu
+    :type joystick_enabled: bool
+    :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
+    :type menu_alpha: int
+    :param menu_background_color: Menu background color
+    :type menu_background_color: tuple,list
+    :param mouse_enabled: Enable/disable mouse click on menu
+    :type mouse_enabled: bool
+    :param mouse_visible: Set mouse visible on menu
+    :type mouse_visible: bool
+    :param onclose: Function applied when closing the menu
+    :type onclose: function, NoneType
+    :param rows: Number of rows of each column, None if there's only 1 column
+    :type rows: int,None
+    :param scrollbar_color: Scrollbars color
+    :type scrollbar_color: tuple, list
+    :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
+    :type scrollbar_shadow: bool
+    :param scrollbar_shadow_color: Color of the shadow
+    :type scrollbar_shadow_color: tuple, list
+    :param scrollbar_shadow_offset: Offset of shadow
+    :type scrollbar_shadow_offset: int
+    :param scrollbar_shadow_position: Position of shadow
+    :type scrollbar_shadow_position: basestring
+    :param scrollbar_slider_color: Color of the sliders
+    :type scrollbar_slider_color: tuple, list
+    :param scrollbar_slider_pad: Space between slider and scrollbars borders
+    :type scrollbar_slider_pad: int
+    :param scrollbar_thick: Scrollbars thickness
+    :type scrollbar_thick: int
+    :param selection_color: Color of selected item
+    :type selection_color: tuple,list
+    :param selection_highlight: Enable drawing a rectangle around selected item
+    :type selection_highlight: bool
+    :param selection_highlight_border_width: Border with of rectangle around selected item
+    :type selection_highlight_border_width: int
+    :param selection_highlight_margin_x: X margin of selected highlight box
+    :type selection_highlight_margin_x: int
+    :param selection_highlight_margin_y: Y margin of selected highlight box
+    :type selection_highlight_margin_y: int
+    :param title_background_color: Title background color
+    :type title_background_color: tuple,list
+    :param title_font: Optional title font, if None use the menu default font
+    :type title_font: basestring,None
+    :param title_font_color: Title font color, if None use the widget font color
+    :type title_font_color: list,tuple,None
+    :param title_font_size: Font size of the title
+    :type title_font_size: int
+    :param title_offset_x: Offset x-position of title (px)
+    :type title_offset_x: int
+    :param title_offset_y: Offset y-position of title (px)
+    :type title_offset_y: int
+    :param title_offset_y: Title shadow color
+    :type title_offset_y: tuple,list
+    :param title_shadow: Enable shadow on title
+    :type title_shadow: bool
+    :param title_shadow_color: Title shadow color
+    :type title_shadow_color: list,tuple
+    :param title_shadow_offset: Offset of shadow on title
+    :type title_shadow_offset: int
+    :param title_shadow_position: Position of the shadow on title
+    :type title_shadow_position: basestring
+    :param widget_alignment: Widget default alignment
+    :type widget_alignment: basestring
+    :param widget_font_color: Color of the font
+    :type widget_font_color: tuple,list
+    :param widget_font_size: Font size
+    :type widget_font_size: int
+    :param widget_margin_y: Vertical margin of each element in menu (px)
+    :type widget_margin_y: int
+    :param widget_offset_x: X axis offset of widgets inside menu (px). If value less than 1 use percentage of width
+    :type widget_offset_x: int,float
+    :param widget_offset_y: Y axis offset of widgets inside menu (px). If value less than 1 use percentage of height
+    :type widget_offset_y: int,float
+    :param widget_shadow: Indicate if a shadow is drawn on each widget
+    :type widget_shadow: bool
+    :param widget_shadow_color: Color of the shadow
+    :type widget_shadow_color: tuple,list
+    :param widget_shadow_offset: Offset of shadow
+    :type widget_shadow_offset: int
+    :param widget_shadow_position: Position of shadow
+    :type widget_shadow_position: basestring
     """
 
     def __init__(self,
@@ -114,115 +224,6 @@ class Menu(object):
                  ):
         """
         Menu constructor.
-
-        :param surface: Pygame surface
-        :type surface: pygame.surface.SurfaceType
-        :param menu_height: Height of menu (px)
-        :type menu_height: int,float
-        :param menu_width: Width of menu (px)
-        :type menu_width: int,float
-        :param font: Font file path
-        :type font: basestring
-        :param title: Title of the menu (main title)
-        :type title: basestring
-        :param back_box: Draw a back-box button on header
-        :type back_box: bool
-        :param bgfun: Background drawing function (only if menu pause app)
-        :type bgfun: function
-        :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
-        :type column_force_fit_text: bool
-        :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
-        :type column_max_width: tuple, None
-        :param columns: Number of columns, by default it's 1
-        :type columns: int
-        :param dopause: Pause game
-        :type dopause: bool
-        :param enabled: Menu is enabled by default or not
-        :type enabled: bool
-        :param fps: Maximum FPS (frames per second)
-        :type fps: int, float
-        :param joystick_enabled: Enable/disable joystick on menu
-        :type joystick_enabled: bool
-        :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
-        :type menu_alpha: int
-        :param menu_background_color: Menu background color
-        :type menu_background_color: tuple,list
-        :param mouse_enabled: Enable/disable mouse click on menu
-        :type mouse_enabled: bool
-        :param mouse_visible: Set mouse visible on menu
-        :type mouse_visible: bool
-        :param onclose: Function applied when closing the menu
-        :type onclose: function, NoneType
-        :param rows: Number of rows of each column, None if there's only 1 column
-        :type rows: int,None
-        :param scrollbar_color: Scrollbars color
-        :type scrollbar_color: tuple, list
-        :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
-        :type scrollbar_shadow: bool
-        :param scrollbar_shadow_color: Color of the shadow
-        :type scrollbar_shadow_color: tuple, list
-        :param scrollbar_shadow_offset: Offset of shadow
-        :type scrollbar_shadow_offset: int
-        :param scrollbar_shadow_position: Position of shadow
-        :type scrollbar_shadow_position: basestring
-        :param scrollbar_slider_color: Color of the sliders
-        :type scrollbar_slider_color: tuple, list
-        :param scrollbar_slider_pad: Space between slider and scrollbars borders
-        :type scrollbar_slider_pad: int
-        :param scrollbar_thick: Scrollbars thickness
-        :type scrollbar_thick: int
-        :param selection_color: Color of selected item
-        :type selection_color: tuple,list
-        :param selection_highlight: Enable drawing a rectangle around selected item
-        :type selection_highlight: bool
-        :param selection_highlight_border_width: Border with of rectangle around selected item
-        :type selection_highlight_border_width: int
-        :param selection_highlight_margin_x: X margin of selected highlight box
-        :type selection_highlight_margin_x: int
-        :param selection_highlight_margin_y: Y margin of selected highlight box
-        :type selection_highlight_margin_y: int
-        :param title_background_color: Title background color
-        :type title_background_color: tuple,list
-        :param title_font: Optional title font, if None use the menu default font
-        :type title_font: basestring,None
-        :param title_font_color: Title font color, if None use the widget font color
-        :type title_font_color: list,tuple,None
-        :param title_font_size: Font size of the title
-        :type title_font_size: int
-        :param title_offset_x: Offset x-position of title (px)
-        :type title_offset_x: int
-        :param title_offset_y: Offset y-position of title (px)
-        :type title_offset_y: int
-        :param title_offset_y: Title shadow color
-        :type title_offset_y: tuple,list
-        :param title_shadow: Enable shadow on title
-        :type title_shadow: bool
-        :param title_shadow_color: Title shadow color
-        :type title_shadow_color: list,tuple
-        :param title_shadow_offset: Offset of shadow on title
-        :type title_shadow_offset: int
-        :param title_shadow_position: Position of the shadow on title
-        :type title_shadow_position: basestring
-        :param widget_alignment: Widget default alignment
-        :type widget_alignment: basestring
-        :param widget_font_color: Color of the font
-        :type widget_font_color: tuple,list
-        :param widget_font_size: Font size
-        :type widget_font_size: int
-        :param widget_margin_y: Vertical margin of each element in menu (px)
-        :type widget_margin_y: int
-        :param widget_offset_x: X axis offset of widgets inside menu (px). If value less than 1 use percentage of width
-        :type widget_offset_x: int,float
-        :param widget_offset_y: Y axis offset of widgets inside menu (px). If value less than 1 use percentage of height
-        :type widget_offset_y: int,float
-        :param widget_shadow: Indicate if a shadow is drawn on each widget
-        :type widget_shadow: bool
-        :param widget_shadow_color: Color of the shadow
-        :type widget_shadow_color: tuple,list
-        :param widget_shadow_offset: Offset of shadow
-        :type widget_shadow_offset: int
-        :param widget_shadow_position: Position of shadow
-        :type widget_shadow_position: basestring
         """
         assert isinstance(surface, _pygame.Surface)
         assert isinstance(menu_height, (int, float))
@@ -946,7 +947,8 @@ class Menu(object):
 
     def disable(self, closelocked=True):
         """
-        Disable the menu.
+        Disables the menu (doesn't check events and draw on the surface).
+        If *closelocked* is *True*, all the locked submenus are closed too.
 
         :return: None
         """
@@ -959,9 +961,6 @@ class Menu(object):
         Update draw_region_y based on the current widgets.
         If the height of the widgets is greater than the height of the menu,
         the drawing region will start at zero.
-
-        >>> menu = pygameMenu.Menu(...)
-        >>> menu.center_vertically()
         """
         self._build_widget_surface()
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
@@ -1051,7 +1050,7 @@ class Menu(object):
 
     def enable(self):
         """
-        Enables the menu.
+        Enables Menu (can check events and draw).
 
         :return: None
         """
@@ -1071,7 +1070,7 @@ class Menu(object):
 
     def is_disabled(self):
         """
-        Returns false/true if menu is disabled or not.
+        Return True if menu is disabled else False is returned.
 
         :return: True if the menu is disabled
         :rtype: bool
@@ -1080,7 +1079,7 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Returns true/false if menu is enabled or not.
+        Returns True if menu is enabled else False is returned.
 
         :return: True if the menu is enabled
         :rtype: bool
@@ -1277,7 +1276,22 @@ class Menu(object):
 
     def mainloop(self, events=None, disable_loop=False):
         """
-        Main function of menu.
+        Main loop of menu. In this function, the menu handle exceptions and draw.
+        If ``dopause`=True, then menu pauses the application and checks Events
+        itself.
+
+        .. code-block:: python
+
+            menu = pygameMenu.Menu(...)
+
+            # Main application
+            while True:
+
+                # Application events
+                events = pygame.event.get()
+
+                # Menu loop
+                menu.mainloop() # If onpause=True then an infinite-loop is triggered on this line
 
         :param events: Menu events
         :type events: list
@@ -1298,16 +1312,16 @@ class Menu(object):
 
     def get_input_data(self, recursive=False, depth=0):
         """
-        Return input data as a dict.
+        Return input data from a menu. The results are given as a dict object.
+        The keys are the ID of each element.
 
-        With ``recursive=True``: it looks for a widget inside the current menu
-        and all sub-menus.
+        With ``recursive=True``: it collect also data inside the all sub-menus.
 
         :param recursive: Look in menu and sub-menus
         :type recursive: bool
-        :param depth: Depth of the input data, by default it's zero
+        :param depth: Depth of the input data
         :type depth: int
-        :return: Input dict
+        :return: Input dict e.g.: {'id1': value, 'id2': value, ...}
         :rtype: dict
         """
         assert isinstance(recursive, bool), 'recursive must be a boolean'
@@ -1337,7 +1351,8 @@ class Menu(object):
 
     def get_position(self):
         """
-        Return menu position as a tuple.
+        Return menu position as a tuple *(x1, y1, x2, y2)*, where *(x1, y1)*
+        is the top-left position and *(x2, y2)* is the bottom-right position.
 
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
@@ -1346,7 +1361,7 @@ class Menu(object):
 
     def get_fps(self):
         """
-        Return the frames per second of the menu.
+        Return the current frames per second of the menu.
 
         :return: FPS
         :rtype: float
@@ -1355,7 +1370,8 @@ class Menu(object):
 
     def set_fps(self, fps, recursive=True):
         """
-        Set the frames per second limit of the menu.
+        Set the FPS limit of the menu. If ``recursive=True``, the limit is
+        applied to all submenus.
 
         :param fps: FPS
         :type fps: float, int
@@ -1375,10 +1391,11 @@ class Menu(object):
 
     def set_sound(self, sound, recursive=False):
         """
-        Set sound engine to a menu.
+        Add a sound engine to the menu. If ``recursive=True``, the sound is
+        applied to all submenus.
 
         :param sound: Sound object
-        :type sound: pygameMenu.sound.Sound, NoneType
+        :type sound: :py:class:`pygameMenu.sound.Sound`, NoneType
         :param recursive: Set the sound engine to all submenus
         :type recursive: bool
         :return: None
@@ -1397,7 +1414,7 @@ class Menu(object):
         """
         Return title of the menu.
 
-        :param current: Get the current title of the menu object (if a submenu has been opened)
+        :param current: If True, return the title of currently displayed menu
         :type current: bool
         :return: Title
         :rtype: basestring
@@ -1409,7 +1426,7 @@ class Menu(object):
 
     def full_reset(self):
         """
-        Reset to the first menu.
+        Reset the menu back to the first opened menu.
 
         :return: None
         """
@@ -1430,9 +1447,6 @@ class Menu(object):
         """
         Full reset menu and clear all widgets.
 
-        >>> menu = pygameMenu.Menu(...)
-        >>> menu.clear()
-        
         :return: None
         """
         self.full_reset()
@@ -1456,9 +1470,9 @@ class Menu(object):
 
     def reset(self, total):
         """
-        Reset the menu.
+        Go back in menu history a certain number of times.
 
-        :param total: How many menus to reset (1: back)
+        :param total: How many menus to go back
         :type total: int
         :return: None
         """
@@ -1506,7 +1520,7 @@ class Menu(object):
         """
         Return the widget with the given ID.
 
-        With ``recursive=True``: it looks for a widget inside the current menu
+        With ``recursive=True``: it looks for a widget in the current menu
         and all sub-menus.
 
         None is returned if no widget found.
