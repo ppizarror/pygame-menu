@@ -322,6 +322,7 @@ class Menu(object):
                                  )
 
         # General properties of the menu
+        self._background_function = None  # Function used in .draw(), only changed by mainloop bgfun parameter
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
         self._enabled = enabled  # Menu is enabled or not
@@ -1063,6 +1064,10 @@ class Menu(object):
         if not self._widgets_surface:
             self._build_widget_surface()
 
+        # Fill the background if the function exists (mainloop)
+        if self._background_function is not None:
+            self._background_function()
+
         # Fill the scrolling surface
         self._widgets_surface.fill((255, 255, 255, 0))
 
@@ -1316,14 +1321,15 @@ class Menu(object):
 
         if not self._top.is_enabled():
             return
+        self._actual._background_function = bgfun
         while True:
             self._actual._clock.tick(fps_limit)
-            bgfun()
             break_mainloop = self.update(events=_pygame.event.get())
             if self._top.is_enabled():  # As event can change the status of the menu, this has to be checked twice
                 self._actual.draw(surface=surface)
             _pygame.display.flip()
             if break_mainloop or disable_loop:
+                self._actual._background_function = None
                 return
 
     def get_input_data(self, recursive=False, depth=0):

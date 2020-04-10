@@ -155,7 +155,7 @@ def main(test=False):
     timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
                                  menu_alpha=85,
                                  menu_background_color=(0, 0, 0),  # Background color
-                                 menu_height=H_SIZE * 0.65,
+                                 menu_height=400,
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
                                  selection_highlight_border_width=4,
