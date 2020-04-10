@@ -1329,17 +1329,14 @@ class Menu(object):
 
         if self.is_disabled():
             return
-        if not disable_loop:
-            while True:
-                bgfun()
-                break_mainloop = self.update()
-                if self._top._enabled:
-                    self._actual.draw(surface=surface)
-                _pygame.display.flip()
-                if break_mainloop:
-                    return
-        else:
-            self.update(events=events)
+        while True:
+            bgfun()
+            break_mainloop = self.update()
+            if self._top._enabled:
+                self._actual.draw(surface=surface)
+            _pygame.display.flip()
+            if break_mainloop or disable_loop:
+                return
 
     def get_input_data(self, recursive=False, depth=0):
         """

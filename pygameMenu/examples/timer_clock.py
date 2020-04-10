@@ -153,7 +153,6 @@ def main(test=False):
 
     # Timer
     timer_menu = pygameMenu.Menu(surface,
-                                 dopause=False,
                                  font=pygameMenu.font.FONT_NEVIS,
                                  menu_alpha=85,
                                  menu_background_color=(0, 0, 0),  # Background color
@@ -189,7 +188,6 @@ def main(test=False):
 
     # Help menu
     help_menu = pygameMenu.Menu(surface,
-                                dopause=False,
                                 font=pygameMenu.font.FONT_FRANCHISE,
                                 menu_background_color=(30, 50, 107),  # Background color
                                 menu_height=600,  # Fullscreen
@@ -209,7 +207,6 @@ def main(test=False):
 
     # About menu
     about_menu = pygameMenu.Menu(surface,
-                                 dopause=False,
                                  font=pygameMenu.font.FONT_NEVIS,
                                  menu_height=400,
                                  menu_width=600,
@@ -229,7 +226,6 @@ def main(test=False):
 
     # Main menu, pauses execution of the application
     main_menu = pygameMenu.Menu(surface,
-                                bgfun=mainmenu_background,
                                 enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
                                 fps=FPS,
@@ -277,7 +273,7 @@ def main(test=False):
         surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
 
         # Execute main from principal menu if is enabled
-        main_menu.mainloop(events, disable_loop=test)
+        main_menu.mainloop(surface=surface, bgfun=mainmenu_background, events=events, disable_loop=test)
 
         # Flip surface
         pygame.display.flip()
@@ -288,4 +284,4 @@ def main(test=False):
 
 
 if __name__ == '__main__':
-    main()
+    main(test=True)

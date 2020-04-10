@@ -39,7 +39,7 @@ class MenuTest(unittest.TestCase):
         Test setup.
         """
         self.menu = PygameMenuUtils.generic_menu('mainmenu')
-        self.menu.mainloop()
+        self.menu.mainloop(surface, bgfun=dummy_function)
 
     def test_enabled(self):
         """
@@ -52,7 +52,7 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(not menu.is_disabled())
 
         # Initialize and close
-        menu.mainloop()
+        menu.mainloop(surface, bgfun=dummy_function)
         menu._close()
 
     def test_initialization(self):
@@ -78,7 +78,7 @@ class MenuTest(unittest.TestCase):
             button = menu_prev.add_button('open', menu)
             button.apply()
             menu_prev = menu
-        self.menu.draw()
+        self.menu.draw(surface)
 
         self.assertTrue(self.menu != menu)
         self.assertEqual(menu._get_depth(), 10)
@@ -234,7 +234,7 @@ class MenuTest(unittest.TestCase):
         self.menu.add_button('button', lambda: None)
         self.menu.add_button('button', lambda: None)
         button = self.menu.add_button('button', submenu)
-        self.menu.draw()
+        self.menu.draw(surface)
 
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
         self.menu.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
@@ -287,8 +287,8 @@ class MenuTest(unittest.TestCase):
         _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             _column_menu.add_button('test', pygameMenu.events.BACK)
-        _column_menu.mainloop()
+        _column_menu.mainloop(surface, bgfun=dummy_function)
         _column_menu._left()
         _column_menu._right()
-        _column_menu.draw()
+        _column_menu.draw(surface)
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item

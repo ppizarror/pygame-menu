@@ -107,8 +107,8 @@ def play_function(difficulty, font, test=False):
     assert isinstance(difficulty, str)
 
     # Define globals
-    global main_menu
-    global clock
+    global main_menu  # type: pygameMenu.Menu
+    global clock  # type:pygame.time.Clock
 
     if difficulty == 'EASY':
         f = font.render('Playing as a baby (easy)', 1, COLOR_WHITE)
@@ -147,7 +147,7 @@ def play_function(difficulty, font, test=False):
                     return
 
         # Pass events to main_menu
-        main_menu.mainloop(events)
+        main_menu.update(events)
 
         # Continue playing
         surface.fill(bg_color)

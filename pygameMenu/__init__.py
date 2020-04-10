@@ -35,7 +35,6 @@ import pygameMenu.events
 import pygameMenu.font
 import pygameMenu.locals
 import pygameMenu.sound
-import pygameMenu.utils
 import pygameMenu.version
 
 from pygameMenu.menu import Menu
