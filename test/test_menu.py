@@ -52,7 +52,7 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(not menu.is_disabled())
 
         # Initialize and close
-        menu.mainloop(surface, bgfun=dummy_function)
+        menu.mainloop(surface, bgfun=dummy_function, disable_loop=True)
         menu._close()
 
     def test_initialization(self):

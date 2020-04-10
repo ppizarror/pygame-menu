@@ -42,7 +42,7 @@ class WidgetsTest(unittest.TestCase):
         Setup sound engine.
         """
         self.menu = PygameMenuUtils.generic_menu()
-        self.menu.mainloop()
+        self.menu.update()
 
     def test_selector(self):
         """
@@ -53,7 +53,7 @@ class WidgetsTest(unittest.TestCase):
                                            ('2 - Medium', 'MEDIUM'),
                                            ('3 - Hard', 'HARD')],
                                           default=1)
-        self.menu.draw()
+        self.menu.draw(surface)
 
         selector.draw(surface)
         selector.selected = False

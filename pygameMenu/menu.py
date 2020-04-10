@@ -1289,7 +1289,7 @@ class Menu(object):
                         break
 
         # A widget has closed the menu
-        if not self._top._enabled:
+        if self._top is not None and not self._top._enabled:
             break_mainloop = True
         self._closelocked = False
         return break_mainloop
