@@ -20,8 +20,8 @@ pygame-menu
 
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
-Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ or
-run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
+Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ ,
+and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
 Introduction
 ------------
@@ -35,14 +35,24 @@ Comprehensive documentation is available at https://pygame-menu.readthedocs.io .
 Install Instructions
 --------------------
 
-Pygame-menu can be downloaded via pip. Simply run::
+Pygame-menu can be installed via pip. Simply run::
 
-    pip install pygame-menu
+    $> pip install pygame-menu
+
+To build the documentation from git repository:
+
+.. code-block:: bash
+
+    $> clone https://github.com/ppizarror/pygame-menu
+    $> cd pygame-menu
+    $> pip install -e .[doc]
+    $> cd docs
+    $> make html
 
 Dependencies
 ------------
 
-This library is dependant on the following
+This library is dependent on the following
 
 - `Pygame <http://www.pygame.org/download.shtml>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_

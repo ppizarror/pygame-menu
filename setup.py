@@ -45,10 +45,22 @@ with open('requirements.txt') as f:
         requirements.append(line.strip())
 
 # Setup library
-setup(
-    author=pygameMenu.__author__,
-    author_email=pygameMenu.__email__,
-    classifiers=[
+setup(name='pygame-menu',
+      version=pygameMenu.__version__,
+      author=pygameMenu.__author__,
+      author_email=pygameMenu.__email__,
+      description=pygameMenu.__description__,
+      long_description=long_description,
+      url=pygameMenu.__url__,
+      project_urls={
+        'Bug Tracker': pygameMenu.__url_bug_tracker__,
+        'Documentation': pygameMenu.__url_documentation__,
+        'Source Code': pygameMenu.__url_source_code__,
+          },
+      license=pygameMenu.__license__,
+      platforms=['any'],
+      keywords=pygameMenu.__keywords__,
+      classifiers=[
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
@@ -63,22 +75,12 @@ setup(
         'Topic :: Multimedia',
         'Topic :: Software Development :: Libraries :: pygame',
         'Topic :: Text Processing',
-    ],
-    description=pygameMenu.__description__,
-    include_package_data=True,
-    install_requires=requirements,
-    keywords=pygameMenu.__keywords__,
-    license=pygameMenu.__license__,
-    long_description=long_description,
-    name='pygame-menu',
-    packages=find_packages(exclude=["test"]),
-    platforms=['any'],
-    project_urls={
-        'Bug Tracker': pygameMenu.__url_bug_tracker__,
-        'Documentation': pygameMenu.__url_documentation__,
-        'Source Code': pygameMenu.__url_source_code__,
-    },
-    python_requires='>=2.7',
-    url=pygameMenu.__url__,
-    version=pygameMenu.__version__
-)
+          ],
+      include_package_data=True,
+      packages=find_packages(exclude=["test"]),
+      install_requires=requirements,
+      extras_require={
+                        'doc': ['sphinx', 'sphinx-rtd-theme'],
+                     },
+      python_requires='>=2.7',
+      )
