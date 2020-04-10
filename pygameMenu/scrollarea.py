@@ -306,9 +306,10 @@ class ScrollArea(object):
         :return: Thickness in px
         :rtype: int
         """
-        if orientation == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width() > 0 or \
-                orientation == _locals.ORIENTATION_VERTICAL and self.get_hidden_height() > 0:
-            return self._scrollbar_thick
+        if orientation == _locals.ORIENTATION_HORIZONTAL:
+            return self._rect.height - self._view_rect.height
+        elif orientation == _locals.ORIENTATION_VERTICAL:
+            return self._rect.width - self._view_rect.width
         return 0
 
     def _on_horizontal_scroll(self, value):
