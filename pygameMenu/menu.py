@@ -377,7 +377,6 @@ class Menu(object):
         if abs(widget_offset_y) < 1:
             widget_offset_y *= self._height
         self._widgets = []  # type: list
-        self._widgets_position = {}  # Tuple of widget position, key: widget id
         self._widget_alignment = widget_alignment
         self._widget_font_color = widget_font_color
         self._widget_font_name = font
@@ -906,6 +905,10 @@ class Menu(object):
         """
         Update the position dict for each widget.
         """
+        # Update title position
+        self._menubar.set_position(self._posx, self._posy)
+
+        # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]  # type: _widgets.WidgetType
             rect = widget.get_rect()  # type: _pygame.Rect
@@ -935,8 +938,8 @@ class Menu(object):
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
             y_coord = self._widget_offset_y + ysum + dy
 
-            # Store in dict
-            self._widgets_position[widget.get_id()] = (x_coord, y_coord, x_coord + rect.width, y_coord + rect.height)
+            # Update the position of the widget
+            widget.set_position(x_coord, y_coord)
 
     def _get_widget_max_position(self):
         """
@@ -946,7 +949,7 @@ class Menu(object):
         max_x = -1e6
         max_y = -1e6
         for widget in self._widgets:
-            x, y = self._widgets_position[widget.get_id()][2:]
+            _, _, x, y = widget.get_position()  # Use only bottom right position
             max_x = max(max_x, x)
             max_y = max(max_y, y)
         return int(max_x), int(max_y)
@@ -1087,21 +1090,11 @@ class Menu(object):
         if not self._widgets_surface:
             self._build_widget_surface()
 
-        # Update menu bar position
-        self._menubar.set_position(self._posx, self._posy)
-
         # Draw widgets
         self._widgets_surface.fill((255, 255, 255, 0))  # Transparent
         for widget in self._widgets:
-
-            # Update widget position
-            widget.set_position(*self._widgets_position[widget.get_id()][:2])
-
-            # Draw widget
             widget.draw(self._widgets_surface)
-
-            # If selected item then draw a rectangle
-            if self._selection_highlight and widget.selected:
+            if self._selection_highlight and widget.selected:  # If selected draw a rectangle
                 widget.draw_selected_rect(self._widgets_surface,
                                           self._selection_color,
                                           self._selection_highlight_margin_x,

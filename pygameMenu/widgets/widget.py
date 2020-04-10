@@ -423,6 +423,16 @@ class Widget(object):
         self._rect.x = posx
         self._rect.y = posy
 
+    def get_position(self):
+        """
+        Return a tuple containing the top left and bottom right positions in
+        the format of (x leftmost, y uppermost, x rightmost, y lowermost).
+
+        :return: Tuple of 4 elements
+        :rtype: tuple
+        """
+        return self._rect.x, self._rect.y, self._rect.x + self._rect.width, self._rect.y + self._rect.height
+
     def set_alignment(self, align):
         """
         Set the alignment of the widget.
