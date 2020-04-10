@@ -50,9 +50,9 @@ class Selector(Widget):
     :param default: Index of default element to display
     :type default: int
     :param onchange: Callback when changing the selector
-    :type onchange: function, NoneType
+    :type onchange: callable, NoneType
     :param onreturn: Callback when pressing return button
-    :type onreturn: function, NoneType
+    :type onreturn: callable, NoneType
     :param kwargs: Optional keyword-arguments for callbacks
     """
 

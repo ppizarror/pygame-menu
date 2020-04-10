@@ -3,6 +3,7 @@
 .. include:: ../README.rst
 
 
+===========
 First steps
 ===========
 
@@ -15,31 +16,32 @@ Here is a basic example of how to create a menu:
 
 1. Make your imports
 
-    .. code-block:: python
+.. code-block:: python
 
-        import pygame
-        import pygameMenu
+    import pygame
+    import pygameMenu
 
 2. Initialize pygame
 
-    .. code-block:: python
+.. code-block:: python
 
-        pygame.init()
-        os.environ['SDL_VIDEO_CENTERED'] = '1'
-        surface = pygame.display.set_mode((400, 600))
+    pygame.init()
+    os.environ['SDL_VIDEO_CENTERED'] = '1'
+    surface = pygame.display.set_mode((400, 600))
 
 3. Make your menu
 
 .. code-block:: python
 
-    menu = pygameMenu.Menu(surface, pygameMenu.font.FONT_BEBAS,
-                           "My first menu")
+    menu = pygameMenu.Menu(surface, pygameMenu.font.FONT_BEBAS, "My first menu")
 
 3. Run your menu
 
 .. code-block:: python
 
-    menu.mainloop(events)
+    menu.mainloop(surface)
+
+**Interested?** :ref:`Go deeper in menu design <Creating menus>`.
 
 .. toctree::
    :maxdepth: 2
@@ -52,6 +54,7 @@ Here is a basic example of how to create a menu:
    _source/gallery
 
 
+===========
 Widgets API
 ===========
 
@@ -72,12 +75,13 @@ they could be used has it to design custom menu layout.
    _source/widget_textinput
 
 
+=================
 About pygame-menu
 =================
 
 This project does not have a mailing list and so the issues tab should
 be the first point of contact if wishing to discuss the project. If you
-have questions that you do not feel are relavent to the issues tab or
+have questions that you do not feel are relevant to the issues tab or
 just want to let me know what you think about the library, feel free to
 email me.
 
@@ -91,6 +95,7 @@ Author email: pablo@ppizarror.com
    _source/license
 
 
+==================
 Indices and tables
 ==================
 

@@ -45,9 +45,9 @@ class Button(Widget):
     :param button_id: Button ID
     :type button_id: basestring
     :param onchange: Callback when changing the selector
-    :type onchange: function, NoneType
+    :type onchange: callable, NoneType
     :param onreturn: Callback when pressing return button
-    :type onreturn: function, NoneType
+    :type onreturn: callable, NoneType
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword-arguments for callbacks
     """

@@ -52,9 +52,9 @@ class MenuBar(Widget):
     :param bgcolor: Color behind the polygon (transparent if not given)
     :type bgcolor: tuple, list
     :param onchange: Callback when changing the selector
-    :type onchange: function, NoneType
+    :type onchange: callable, NoneType
     :param onreturn: Callback when pressing return button
-    :type onreturn: function, NoneType
+    :type onreturn: callable, NoneType
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword-arguments for callbacks
     """

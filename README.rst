@@ -68,7 +68,6 @@ Core developers:
 
 - `Pablo Pizarro R. <https://ppizarror.com>`_
 
-
 Other contributors:
 
 - `anxuae <https://github.com/anxuae>`_

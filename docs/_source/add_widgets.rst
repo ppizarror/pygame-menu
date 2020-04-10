@@ -1,6 +1,4 @@
 
-.. module:: pygameMenu.menu
-
 ==============
 Adding widgets
 ==============
@@ -10,7 +8,7 @@ Label
 
 A label is used to display a text.
 
-.. automethod:: Menu.add_label
+.. automethod:: pygameMenu.menu.Menu.add_label
 
 **Example:**
 
@@ -30,7 +28,7 @@ Button
 
 A button is a text that fire action when the user trigger it.
 
-.. automethod:: Menu.add_button
+.. automethod:: pygameMenu.menu.Menu.add_button
 
 **Example:**
 
@@ -57,7 +55,7 @@ Selector
 
 A selector gives the possibility choose a value in a list.
 
-.. automethod:: Menu.add_selector
+.. automethod:: pygameMenu.menu.Menu.add_selector
 
 **Example:**
 
@@ -104,7 +102,7 @@ Text Input
 
 A text input permits to enter a string using a keyboard.
 
-.. automethod:: Menu.add_text_input
+.. automethod:: pygameMenu.menu.Menu.add_text_input
 
 **Example:**
 
@@ -135,7 +133,7 @@ A color input is similar as a text input but with a limited choice of
 characters to enter a RGB value of HEX decimal one. There is also a
 area to display the current color.
 
-.. automethod:: Menu.add_color_input
+.. automethod:: pygameMenu.menu.Menu.add_color_input
 
 **Example:**
 

@@ -66,6 +66,10 @@ class ScrollBar(Widget):
     :type page_ctrl_thick: int
     :param page_ctrl_color: Page control color
     :type page_ctrl_color: tuple, list
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
     """
 
     def __init__(self,

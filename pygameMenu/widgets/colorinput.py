@@ -59,9 +59,9 @@ class ColorInput(TextInput):
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
     :param onchange: Callback when changing the selector
-    :type onchange: function, NoneType
+    :type onchange: callable, NoneType
     :param onreturn: Callback when pressing return button
-    :type onreturn: function, NoneType
+    :type onreturn: callable, NoneType
     :param prev_size: Width of the previsualization box in terms of the height of the widget
     :type prev_size: int, float
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held

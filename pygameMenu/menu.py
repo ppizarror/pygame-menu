@@ -528,8 +528,8 @@ class Menu(object):
         box that renders the given color.
 
         And functions onchange and onreturn does
-            onchange(current_text, **kwargs)
-            onreturn(current_text, **kwargs)
+            onchange(current_text, \*\*kwargs)
+            onreturn(current_text, \*\*kwargs)
 
         :param title: Title of the color input
         :type title: basestring
@@ -644,8 +644,8 @@ class Menu(object):
             values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
 
         And functions onchange and onreturn does
-            onchange(a, b, c..., **kwargs)
-            onreturn(a, b, c..., **kwargs)
+            onchange(a, b, c..., \*\*kwargs)
+            onreturn(a, b, c..., \*\*kwargs)
 
         :param title: Title of the selector
         :type title: basestring
@@ -705,8 +705,8 @@ class Menu(object):
         on the element.
 
         And functions onchange and onreturn does
-            onchange(current_text, **kwargs)
-            onreturn(current_text, **kwargs)
+            onchange(current_text, \*\*kwargs)
+            onreturn(current_text, \*\*kwargs)
 
         :param title: Title of the text input
         :type title: basestring
@@ -1332,24 +1332,14 @@ class Menu(object):
     def mainloop(self, events=None, disable_loop=False):
         """
         Main loop of menu. In this function, the menu handle exceptions and draw.
-        If ``dopause`=True, then menu pauses the application and checks Events
-        itself.
+        The menu pauses the application and checks :py:mod:`pygame` events itself.
 
         .. code-block:: python
 
             menu = pygameMenu.Menu(...)
 
-            # Main application
-            while True:
+            menu.mainloop(surface)
 
-                # Application events
-                events = pygame.event.get()
-
-                # Menu loop
-                menu.mainloop() # If onpause=True then an infinite-loop is triggered on this line
-
-        :param events: Menu events
-        :type events: list
         :param disable_loop: Disable infinite loop waiting for events
         :type disable_loop: bool
         :return: None
