@@ -140,7 +140,7 @@ def play_function(difficulty, font, test=False):
             if e.type == pygame.QUIT:
                 exit()
             elif e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_ESCAPE and main_menu.is_disabled():
+                if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
                     # Quit this function, then skip to loop of main-menu on line 317

@@ -257,18 +257,12 @@ class ColorInput(TextInput):
             _posy = self._rect.y - 1
             surface.blit(self._prev_surface, (_posx, _posy))
 
-    def get_rect(self):
+    def _render(self):
         """
-        Return the Rect object, this updates the width of the rect depending if
-        the previsualization box is active.
-
-        :return: pygame.Rect
-        :rtype: pygame.rect.RectType
+        See upper class doc.
         """
-        self._render()
-        self._rect.width, self._rect.height = self._surface.get_size()
-        self._rect.width += self._prev_size * self._rect.height
-        return self._rect
+        super(ColorInput, self)._render()
+        self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
 
     def draw(self, surface):
         """

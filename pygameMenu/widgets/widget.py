@@ -79,13 +79,15 @@ class Widget(object):
         self._render_string_cache = 0  # type: int
         self._margin = (0, 0)  # type: tuple
         self._render_string_cache_surface = None  # type: _pygame.SurfaceType
-        self._surface = None  # type: _pygame.SurfaceType
         self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
         self._kwargs = kwargs or {}  # type: dict
         self._on_change = onchange  # type: callable
         self._on_return = onreturn  # type: callable
+
+        # Surface of the widget
+        self._surface = None  # type: _pygame.SurfaceType
 
         # Menu reference
         self._menu = None
@@ -192,7 +194,6 @@ class Widget(object):
         rect = self._selected_rect
 
         if self._last_selected_surface != self._surface:  # If surface changed
-            self._last_selected_surface = self._surface
             self._selected_rect = self._rect.copy()
 
             # Inflate rect
@@ -203,6 +204,7 @@ class Widget(object):
 
             # Update rect
             rect = self._selected_rect
+            self._last_selected_surface = self._surface
 
         # Draw rect
         _pygame.draw.rect(surface,
@@ -248,7 +250,6 @@ class Widget(object):
         :rtype: pygame.rect.RectType
         """
         self._render()
-        self._rect.width, self._rect.height = self._surface.get_size()
         return self._rect
 
     def get_value(self):
@@ -353,7 +354,7 @@ class Widget(object):
         # Return rendered surface
         return self._render_string_cache_surface
 
-    def position_updated(self):
+    def surface_needs_update(self):
         """
         Checks if the widget width/height has changed because events. If so, return true and
         set the status of the widget (menu widget position needs update) as false. This method
@@ -450,6 +451,7 @@ class Widget(object):
         """
         self._rect.x = posx
         self._rect.y = posy
+        self._last_selected_surface = None
 
     def get_position(self):
         """

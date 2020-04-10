@@ -134,8 +134,6 @@ class MenuBar(Widget):
         See upper class doc.
         """
         self._surface = self.render_string(self._label, self._font_selected_color)
-
-        # Usually done in get_rect(), but can not be called here because it call _render() itself
         self._rect.width, self._rect.height = self._surface.get_size()
 
         self._polygon_pos = (

@@ -76,6 +76,7 @@ class Label(Widget):
         See upper class doc.
         """
         self._surface = self.render_string(self._label, self._font_color)
+        self._rect.width, self._rect.height = self._surface.get_size()
 
     def update(self, events):
         """

@@ -373,6 +373,9 @@ class TextInput(Widget):
         # Update last rendered
         self._last_rendered_string = string
 
+        # Update the size of the render
+        self._rect.width, self._rect.height = self._surface.get_size()
+
     def _render_selection_box(self, force=False):
         """
         Render selected text.

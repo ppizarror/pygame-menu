@@ -1064,28 +1064,28 @@ class Menu(object):
 
         # The surface may has been erased because the number
         # of widgets has changed and thus size shall be calculated.
-        if not self._widgets_surface:
-            self._build_widget_surface()
+        if not self._actual._widgets_surface:
+            self._actual._build_widget_surface()
 
         # Fill the background if the function exists (mainloop)
-        if self._background_function is not None:
-            self._background_function()
+        if self._actual._background_function is not None:
+            self._actual._background_function()
 
         # Fill the scrolling surface
-        self._widgets_surface.fill((255, 255, 255, 0))
+        self._actual._widgets_surface.fill((255, 255, 255, 0))
 
         # Draw widgets
-        for widget in self._widgets:
-            widget.draw(self._widgets_surface)
-            if self._selection_highlight and widget.selected:  # If selected draw a rectangle
-                widget.draw_selected_rect(self._widgets_surface,
-                                          self._selection_color,
-                                          self._selection_highlight_margin_x,
-                                          self._selection_highlight_margin_y,
-                                          self._selection_border_width)
+        for widget in self._actual._widgets:
+            widget.draw(self._actual._widgets_surface)
+            if self._actual._selection_highlight and widget.selected:  # If selected draw a rectangle
+                widget.draw_selected_rect(self._actual._widgets_surface,
+                                          self._actual._selection_color,
+                                          self._actual._selection_highlight_margin_x,
+                                          self._actual._selection_highlight_margin_y,
+                                          self._actual._selection_border_width)
 
-        self._scroll.draw(surface)
-        self._menubar.draw(surface)
+        self._actual._scroll.draw(surface)
+        self._actual._menubar.draw(surface)
 
     def enable(self):
         """
@@ -1159,12 +1159,14 @@ class Menu(object):
         # NOTE: For usage, all Menu accesors must be "self._actual"
         assert isinstance(events, list)
         break_mainloop = False
+        if self._top is None:
+            self._top = self
 
         # Update mouse
         _pygame.mouse.set_visible(self._actual._mouse_visible)
 
-        # Check if the position of the widget has changed after the events
-        widget_position_changed = False
+        # Surface needs an update
+        menu_surface_needs_update = False
 
         # Process events, check title
         if self._actual._menubar.update(events):
@@ -1271,16 +1273,16 @@ class Menu(object):
                         new_event.dict['origin'] = self._actual._scroll.to_real_position((0, 0))
                         new_event.pos = self._actual._scroll.to_world_position(event.pos)
                         widget.update((new_event,))  # This widget can change the current menu to a submenu
-                        widget_position_changed = widget_position_changed or widget.position_updated()
+                        menu_surface_needs_update = menu_surface_needs_update or widget.surface_needs_update()
                         break_mainloop = True  # It is updated
                         break
 
         # Check if the position has changed
         if len(self._actual._widgets) > 0:
-            widget_position_changed = widget_position_changed or self._actual._widgets[
-                self._actual._index].position_updated()
-        if widget_position_changed:
-            self._update_widget_position()
+            menu_surface_needs_update = menu_surface_needs_update or self._actual._widgets[
+                self._actual._index].surface_needs_update()
+        if menu_surface_needs_update:
+            self._actual._widgets_surface = None
 
         # A widget has closed the menu
         if self._actual is not None and not self._actual._enabled:
@@ -1329,9 +1331,9 @@ class Menu(object):
         self._actual._background_function = bgfun
         while True:
             self._actual._clock.tick(fps_limit)
-            break_mainloop = self.update(events=_pygame.event.get())
+            break_mainloop = self.update(events=_pygame.event.get())  # Public methods do not use _actual
             if self._actual._enabled:  # As event can change the status of the menu, this has to be checked twice
-                self._actual.draw(surface=surface)
+                self.draw(surface=surface)
             _pygame.display.flip()
             if break_mainloop or disable_loop:
                 self._actual._background_function = None
