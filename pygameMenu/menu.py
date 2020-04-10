@@ -1317,11 +1317,10 @@ class Menu(object):
         if not self._top.is_enabled():
             return
         while True:
-            if fps_limit > 0:
-                self._actual._clock.tick(fps_limit)
+            self._actual._clock.tick(fps_limit)
             bgfun()
             break_mainloop = self.update(events=_pygame.event.get())
-            if not self._top.is_enabled():  # As event can change the status of the menu, this has to be checked twice
+            if self._top.is_enabled():  # As event can change the status of the menu, this has to be checked twice
                 self._actual.draw(surface=surface)
             _pygame.display.flip()
             if break_mainloop or disable_loop:
