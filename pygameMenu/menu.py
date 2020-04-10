@@ -33,6 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import sys
 import textwrap
 import types
+from uuid import uuid4
 
 import pygame as _pygame
 import pygameMenu  # docs usage
@@ -669,6 +670,8 @@ class Menu(object):
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
         assert max_char >= 0, 'max characters cannot be negative'
+        if len(label_id) == 0:
+            label_id = str(uuid4())  # If wrap
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:

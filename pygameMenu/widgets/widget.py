@@ -73,7 +73,7 @@ class Widget(object):
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER
         self._fps = 0  # type: int
-        self._id = widget_id
+        self._id = str(widget_id)
         self._last_selected_surface = None  # type: _pygame.SurfaceType
         self._selected_rect = None  # type: _pygame.rect.RectType
         self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
