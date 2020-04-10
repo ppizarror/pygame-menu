@@ -440,5 +440,9 @@ class ScrollArea(object):
         """
         Called by end user to update scroll state.
         """
+        updated = [0, 0]
         for sbar in self._scrollbars:
-            sbar.update(events)
+            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and not updated[0]:
+                updated[0] = sbar.update(events)
+            elif sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and not updated[1]:
+                updated[1] = sbar.update(events)
