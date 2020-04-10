@@ -1090,8 +1090,10 @@ class Menu(object):
         if not self._widgets_surface:
             self._build_widget_surface()
 
+        # Fill the scrolling surface
+        self._widgets_surface.fill((255, 255, 255, 0))
+
         # Draw widgets
-        self._widgets_surface.fill((255, 255, 255, 0))  # Transparent
         for widget in self._widgets:
             widget.draw(self._widgets_surface)
             if self._selection_highlight and widget.selected:  # If selected draw a rectangle
