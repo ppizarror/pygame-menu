@@ -78,6 +78,7 @@ class MenuTest(unittest.TestCase):
             button = menu_prev.add_button('open', menu)
             button.apply()
             menu_prev = menu
+        self.menu.enable()
         self.menu.draw(surface)
 
         self.assertTrue(self.menu != menu)
@@ -227,6 +228,7 @@ class MenuTest(unittest.TestCase):
         Test mouse event where the following submenu has less elements.
         """
         self.menu.clear()
+        self.menu.enable()
 
         submenu = PygameMenuUtils.generic_menu()  # 1 option
         submenu.add_button('button', lambda: None)
@@ -234,7 +236,7 @@ class MenuTest(unittest.TestCase):
         self.menu.add_button('button', lambda: None)
         self.menu.add_button('button', lambda: None)
         button = self.menu.add_button('button', submenu)
-        self.menu.draw(surface)
+        self.assertRaises(self.menu.draw(surface))
 
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
         self.menu.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
@@ -290,5 +292,8 @@ class MenuTest(unittest.TestCase):
         _column_menu.mainloop(surface, bgfun=dummy_function)
         _column_menu._left()
         _column_menu._right()
-        _column_menu.draw(surface)
+        _column_menu.enable()
+        self.assertRaises(_column_menu.draw(surface))
+        _column_menu.enable()
+        self.assertRaises(_column_menu.draw(surface))
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item

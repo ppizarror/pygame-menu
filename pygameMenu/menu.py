@@ -1029,7 +1029,7 @@ class Menu(object):
 
         :return: None
         """
-        if self.is_enabled():
+        if self._enabled:
             self._enabled = False
             self._closelocked = closelocked
 
@@ -1059,6 +1059,9 @@ class Menu(object):
         :type surface: pygame.surface.SurfaceType
         :return: None
         """
+        if not self._enabled:
+            raise RuntimeError('Menu is not enabled, it cannot be drawn')
+
         # The surface may has been erased because the number
         # of widgets has changed and thus size shall be calculated.
         if not self._widgets_surface:
@@ -1153,6 +1156,7 @@ class Menu(object):
         :return: True if mainloop must be stopped
         :rtype: bool
         """
+        # NOTE: For usage, all Menu accesors must be "self._actual"
         assert isinstance(events, list)
         break_mainloop = False
 
@@ -1279,7 +1283,7 @@ class Menu(object):
             self._update_widget_position()
 
         # A widget has closed the menu
-        if self._top is not None and not self._top._enabled:
+        if self._actual is not None and not self._actual._enabled:
             break_mainloop = True
 
         self._closelocked = False
@@ -1319,13 +1323,14 @@ class Menu(object):
         # Store the reference of the menu (if user moves through submenus)
         self._top = self
 
-        if not self._top.is_enabled():
+        # NOTE: For menu accesor, use only _actual, as the menu pointer can change through the execution
+        if not self._actual._enabled:
             return
         self._actual._background_function = bgfun
         while True:
             self._actual._clock.tick(fps_limit)
             break_mainloop = self.update(events=_pygame.event.get())
-            if self._top.is_enabled():  # As event can change the status of the menu, this has to be checked twice
+            if self._actual._enabled:  # As event can change the status of the menu, this has to be checked twice
                 self._actual.draw(surface=surface)
             _pygame.display.flip()
             if break_mainloop or disable_loop:

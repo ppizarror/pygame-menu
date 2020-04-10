@@ -52,6 +52,7 @@ class WidgetsTest(unittest.TestCase):
                                            ('2 - Medium', 'MEDIUM'),
                                            ('3 - Hard', 'HARD')],
                                           default=1)
+        self.menu.enable()
         self.menu.draw(surface)
 
         selector.draw(surface)
