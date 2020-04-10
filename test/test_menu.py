@@ -278,7 +278,9 @@ class MenuTest(unittest.TestCase):
         Test menu columns behaviour.
         """
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=0))
-        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=10))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=-10))
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
 
         # Assert append more widgets than number of rows*columns

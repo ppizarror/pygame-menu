@@ -293,8 +293,10 @@ class Menu(object):
             assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
         else:
             if columns == 1:
-                assert rows is None, 'rows must be None if there is only 1 column'
-                rows = 1e6  # Set rows as a big number
+                if rows is None:
+                    rows = 1e6  # Set rows as a big number
+                else:
+                    assert rows > 0, 'number of rows must be greater than 1'
         if column_max_width is not None:
             if isinstance(column_max_width, (int, float)):
                 assert columns == 1, 'column_max_width can be a single number if there is only 1 column'
@@ -638,31 +640,54 @@ class Menu(object):
         return widget
 
     def add_label(self,
-                  text,
+                  title,
                   align=None,
                   font_size=None,
                   label_id='',
+                  max_char=0,
                   margin=None,
                   ):
         """
         Add a simple text to display.
 
-        :param text: Text to be displayed
-        :type text: basestring
+        :param title: Text to be displayed
+        :type title: basestring
         :param label_id: ID of the label
         :type label_id: basestring
         :param align: Widget alignment, if None use default menu widget alignment
         :type align: basestring,None
         :param font_size: Font size of the text, if None use default widget font size
         :type font_size: int,None
+        :param max_char: If text length exeeds this limit then split the text and add another label, if 0 there's no limit
+        :type max_char: int
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple,None
         :return: Widget object
         :rtype: pygameMenu.widgets.label.Label
         """
-        widget = _widgets.Label(label=text, label_id=label_id)
-        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
-        self._append_widget(widget)
+        assert isinstance(label_id, str)
+        assert isinstance(max_char, int)
+        assert max_char >= 0, 'max characters cannot be negative'
+
+        # If no overflow
+        if len(title) <= max_char or max_char == 0:
+            widget = _widgets.Label(label=title, label_id=label_id)
+            self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+            self._append_widget(widget)
+        else:
+            self._check_id_duplicated(label_id)  # Before adding + LEN
+            widget = []
+            while True:
+                widget.append(self.add_label(title=title[:max_char],
+                                             align=align,
+                                             font_size=font_size,
+                                             label_id=label_id + '+' + str(len(widget) + 1),
+                                             max_char=max_char,
+                                             margin=margin))
+                if len(title) <= max_char:
+                    break
+                title = title[max_char:]
+
         return widget
 
     def add_selector(self,

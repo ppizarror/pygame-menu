@@ -199,13 +199,13 @@ def main(test=False):
                                 title_background_color=(120, 45, 30),
                                 title_font_size=60,
                                 widget_font_size=45,
-                                widget_offset_y=0.3,  # Percentage of height
+                                widget_offset_y=0.2,  # Percentage of height (30%)
                                 widget_shadow=True,
                                 widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
                                 )
-    help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     for m in HELP:
         help_menu.add_label(m, align=pygameMenu.locals.ALIGN_CENTER)
+    help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # About menu
     about_menu = pygameMenu.Menu(surface,
@@ -219,11 +219,11 @@ def main(test=False):
                                  title_background_color=COLOR_BLUE,
                                  title_font=pygameMenu.font.FONT_8BIT,
                                  title_font_size=30,
-                                 widget_offset_y=0.3,  # Percentage of height
+                                 widget_offset_y=0.14,  # Percentage of height
                                  widget_shadow=True,
                                  )
     for m in ABOUT:
-        about_menu.add_label(m)
+        about_menu.add_label(m, margin=(0, 0))
     about_menu.add_label('')
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 

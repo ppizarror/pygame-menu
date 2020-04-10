@@ -104,7 +104,20 @@ def make_long_menu(surface):
                                 widget_shadow=True,
                                 )
 
+    _menu_text = pygameMenu.Menu(surface,
+                                 bgfun=partial(paint_background, surface),
+                                 font=pygameMenu.font.FONT_COMIC_NEUE,
+                                 fps=FPS,
+                                 menu_alpha=60,
+                                 menu_height=400,
+                                 menu_width=600,
+                                 onclose=pygameMenu.events.EXIT,
+                                 title='Text with scroll',
+                                 title_background_color=(25, 25, 25),
+                                 )
+
     _menu.add_button('Rows and Columns', _menu_sub)
+    _menu.add_button('Text scrolled', _menu_text)
     label1 = 'Button n°{}'
     label2 = 'Text n°{}: '
     for i in range(1, 20):
@@ -128,6 +141,16 @@ def make_long_menu(surface):
         _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygameMenu.events.BACK)
     _menu_sub.center_vertically()
+
+    _menu_text.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+                         'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
+                         'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+                         'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
+                         'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in '
+                         'culpa qui officia deserunt mollit anim id est laborum.',
+                         max_char=33,
+                         align=pygameMenu.locals.ALIGN_LEFT,
+                         margin=(0, -1))
     return _menu
 
 
