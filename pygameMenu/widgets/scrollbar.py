@@ -334,10 +334,10 @@ class ScrollBar(Widget):
         for event in events:  # type: _pygame.event.EventType
             if event.type == _pygame.KEYDOWN and self._orientation == 1\
                     and event.key in (_pygame.K_PAGEUP, _pygame.K_PAGEDOWN):
-                    direction = 1 if event.key == _pygame.K_PAGEDOWN else -1
-                    if self._scroll(direction * self._page_step):
-                        self.change()
-                        updated = True
+                direction = 1 if event.key == _pygame.K_PAGEDOWN else -1
+                if self._scroll(direction * self._page_step):
+                    self.change()
+                    updated = True
 
             elif self.mouse_enabled and event.type is _pygame.MOUSEMOTION and self._scrolling:
                 if self._scroll(event.rel[self._orientation]):
