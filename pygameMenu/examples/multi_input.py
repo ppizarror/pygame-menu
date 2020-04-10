@@ -142,7 +142,6 @@ def main(test=False):
     # Create menus: Settings
     # -------------------------------------------------------------------------
     settings_menu = pygameMenu.Menu(surface,
-                                    bgfun=main_background,
                                     font=pygameMenu.font.FONT_HELVETICA,
                                     menu_background_color=MENU_BACKGROUND_COLOR,
                                     menu_height=WINDOW_SIZE[1] * 0.85,
@@ -211,7 +210,6 @@ def main(test=False):
     # Create menus: More settings
     # -------------------------------------------------------------------------
     more_settings_menu = pygameMenu.Menu(surface,
-                                         bgfun=main_background,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
                                          menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.85,
@@ -246,7 +244,6 @@ def main(test=False):
     # Create menus: Column buttons
     # -------------------------------------------------------------------------
     button_column_menu = pygameMenu.Menu(surface,
-                                         bgfun=main_background,
                                          columns=2,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
                                          menu_background_color=MENU_BACKGROUND_COLOR,
@@ -269,7 +266,6 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(surface,
-                                bgfun=main_background,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
@@ -308,7 +304,7 @@ def main(test=False):
         main_background()
 
         # Main menu
-        main_menu.mainloop(disable_loop=test)
+        main_menu.mainloop(surface, main_background, disable_loop=test)
 
         # Flip surface
         pygame.display.flip()

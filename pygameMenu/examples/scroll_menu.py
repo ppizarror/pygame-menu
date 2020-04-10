@@ -75,7 +75,6 @@ def make_long_menu(surface):
     """
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(surface,
-                            bgfun=partial(paint_background, surface),
                             font=pygameMenu.font.FONT_COMIC_NEUE,
                             fps=FPS,
                             menu_alpha=80,
@@ -89,7 +88,6 @@ def make_long_menu(surface):
                             )
 
     _menu_sub = pygameMenu.Menu(surface,
-                                bgfun=partial(paint_background, surface),
                                 columns=4,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
                                 fps=FPS,
@@ -105,7 +103,6 @@ def make_long_menu(surface):
                                 )
 
     _menu_text = pygameMenu.Menu(surface,
-                                 bgfun=partial(paint_background, surface),
                                  font=pygameMenu.font.FONT_COMIC_NEUE,
                                  fps=FPS,
                                  menu_alpha=60,
@@ -181,7 +178,9 @@ def main(test=False):
         paint_background(screen)
 
         # Execute main from principal menu if is enabled
-        menu.mainloop(disable_loop=test)
+        menu.mainloop(surface=screen,
+                      bgfun=partial(paint_background, screen),
+                      disable_loop=test)
 
         # Update surface
         pygame.display.flip()

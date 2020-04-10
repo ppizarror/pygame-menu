@@ -44,7 +44,8 @@ import pygameMenu.widgets as _widgets
 
 from pygameMenu.scrollarea import ScrollArea as _ScrollArea
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import *
+from pygameMenu.utils import assert_color, assert_position, assert_alignment, make_surface, \
+    check_key_pressed_valid
 
 # Joy events
 _JOY_EVENT_LEFT = 1
@@ -67,11 +68,9 @@ class Menu(object):
                  font,
                  title,
                  back_box=True,
-                 bgfun=None,
                  column_force_fit_text=False,
                  column_max_width=None,
                  columns=1,
-                 dopause=True,
                  enabled=True,
                  fps=0,
                  joystick_enabled=True,
@@ -131,16 +130,12 @@ class Menu(object):
         :type title: basestring
         :param back_box: Draw a back-box button on header
         :type back_box: bool
-        :param bgfun: Background drawing function (only if menu pause app)
-        :type bgfun: function
         :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
         :type column_force_fit_text: bool
         :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
         :type column_max_width: tuple, None
         :param columns: Number of columns, by default it's 1
         :type columns: int
-        :param dopause: Pause game
-        :type dopause: bool
         :param enabled: Menu is enabled by default or not
         :type enabled: bool
         :param fps: Maximum FPS (frames per second)
@@ -238,7 +233,6 @@ class Menu(object):
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
         assert isinstance(columns, int)
-        assert isinstance(dopause, bool)
         assert isinstance(enabled, bool)
         assert isinstance(fps, (int, float))
         assert isinstance(joystick_enabled, bool)
@@ -324,16 +318,6 @@ class Menu(object):
         assert widget_offset_x >= 0 and widget_offset_y >= 0, 'widget offset must be greater or equal than zero'
 
         # Other asserts
-        if dopause:
-            assert callable(bgfun), \
-                'bgfun must be a function (or None if menu does not pause ' \
-                'execution of the application)'
-        else:
-            assert isinstance(bgfun, type(None)), \
-                'bgfun must be None if menu does not pause execution of the application'
-        assert dopause and bgfun is not None or not dopause and bgfun is None, \
-            'if pause main execution is enabled then bgfun (Background ' \
-            'function drawing) must be defined (not None)'
         assert 0 <= menu_alpha <= 100, \
             'menu alpha must be between 0 and 100 (both values included)'
         assert_alignment(widget_alignment)
@@ -346,10 +330,8 @@ class Menu(object):
                                  )
 
         # General properties of the menu
-        self._background_function = bgfun
         self._clock = _pygame.time.Clock()  # Inner clock
         self._closelocked = False  # Lock close until next mainloop
-        self._dopause = dopause  # Pause or not
         self._enabled = enabled  # Menu is enabled or not
         self._fps = 0  # Updated in set_fps()
         self._height = int(menu_height)
@@ -1079,10 +1061,12 @@ class Menu(object):
         self._widget_offset_y = int(self._height * new_pos)
         self._build_widget_surface()  # Rebuild
 
-    def draw(self):
+    def draw(self, surface):
         """
         Draw menu to the active surface.
 
+        :param surface: Pygame surface to draw the menu
+        :type surface: pygame.surface.SurfaceType
         :return: None
         """
         # The surface may has been erased because the number
@@ -1103,8 +1087,8 @@ class Menu(object):
                                           self._selection_highlight_margin_y,
                                           self._selection_border_width)
 
-        self._scroll.draw(self._surface)
-        self._menubar.draw(self._surface)
+        self._scroll.draw(surface)
+        self._menubar.draw(surface)
 
     def enable(self):
         """
@@ -1175,15 +1159,17 @@ class Menu(object):
         if self._joy_event & _JOY_EVENT_RIGHT:
             self._right()
 
-    def _main(self, events=None):
+    def update(self, events=None):
         """
-        Main function of the loop.
+        Update the status of the menu using external events.
 
         :param events: Pygame events
         :type events: list
         :return: True if mainloop must be stopped
         :rtype: bool
         """
+        assert isinstance(events, (list, type(None)))
+
         break_mainloop = False
         if events is None:
             events = _pygame.event.get()
@@ -1191,26 +1177,20 @@ class Menu(object):
         # Update mouse
         _pygame.mouse.set_visible(self._actual._mouse_visible)
 
-        if self._actual._dopause:  # If menu pauses game then apply function
-            self._background_function()
-
         # Clock tick
         self._actual._clock.tick(self._fps)
 
         # Process events, check title
         if self._actual._menubar.update(events):
-            if not self._actual._dopause:
-                break_mainloop = True
+            break_mainloop = True
 
         # Process events, check title
         if self._actual._scroll.update(events):
-            if not self._actual._dopause:
-                break_mainloop = True
+            break_mainloop = True
 
         # Check selected widget
         elif len(self._actual._widgets) > 0 and self._actual._widgets[self._actual._index].update(events):
-            if not self._actual._dopause:
-                break_mainloop = True
+            break_mainloop = True
 
         # Check others
         else:
@@ -1311,14 +1291,7 @@ class Menu(object):
         # A widget has closed the menu
         if not self._top._enabled:
             break_mainloop = True
-
-        # Draw content
-        else:
-            self._actual.draw()
-
-        _pygame.display.flip()
         self._closelocked = False
-
         return break_mainloop
 
     def _check_menu_initialized(self):
@@ -1332,26 +1305,41 @@ class Menu(object):
             raise Exception('The menu has not been initialized yet, try using mainloop function')
         return True
 
-    def mainloop(self, events=None, disable_loop=False):
+    def mainloop(self, surface, bgfun, events=None, disable_loop=False):
         """
         Main function of menu.
 
+        :param surface: Pygame surface to draw the menu
+        :type surface: pygame.surface.SurfaceType
+        :param bgfun: Background function called on each loop iteration before drawing the menu
+        :type bgfun: function
         :param events: Menu events
         :type events: list
         :param disable_loop: Disable infinite loop waiting for events
         :type disable_loop: bool
         :return: None
         """
+        assert isinstance(surface, _pygame.Surface)
+        assert callable(bgfun), 'background function must be callable (a function)'
+        assert isinstance(events, (list, type(None)))
+        assert isinstance(disable_loop, bool)
+
+        # Store the reference of the menu (if user moves through submenus)
         self._top = self
 
         if self.is_disabled():
             return
-        if self._actual._dopause and not disable_loop:
+        if not disable_loop:
             while True:
-                if self._main():
+                bgfun()
+                break_mainloop = self.update()
+                if self._top._enabled:
+                    self._actual.draw(surface=surface)
+                _pygame.display.flip()
+                if break_mainloop:
                     return
         else:
-            self._main(events)
+            self.update(events=events)
 
     def get_input_data(self, recursive=False, depth=0):
         """

@@ -202,7 +202,6 @@ def main(test=False):
 
     # Play menu
     play_menu = pygameMenu.Menu(surface,
-                                bgfun=main_background,
                                 font=pygameMenu.font.FONT_BEBAS,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
@@ -217,7 +216,6 @@ def main(test=False):
                                 )
 
     play_submenu = pygameMenu.Menu(surface,
-                                   bgfun=main_background,
                                    font=pygameMenu.font.FONT_BEBAS,
                                    menu_background_color=MENU_BACKGROUND_COLOR,
                                    menu_height=WINDOW_SIZE[1] * 0.5,
@@ -245,7 +243,6 @@ def main(test=False):
 
     # About menu
     about_menu = pygameMenu.Menu(surface,
-                                 bgfun=main_background,
                                  font=pygameMenu.font.FONT_BEBAS,
                                  menu_height=WINDOW_SIZE[1] * 0.6,
                                  menu_width=WINDOW_SIZE[0] * 0.6,
@@ -266,7 +263,6 @@ def main(test=False):
 
     # Main menu
     main_menu = pygameMenu.Menu(surface,
-                                bgfun=main_background,
                                 font=pygameMenu.font.FONT_BEBAS,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.6,
@@ -304,7 +300,7 @@ def main(test=False):
                 exit()
 
         # Main menu
-        main_menu.mainloop(events, disable_loop=test)
+        main_menu.mainloop(surface, main_background, events, disable_loop=test)
 
         # Flip surface
         pygame.display.flip()
