@@ -69,6 +69,12 @@ html_static_path = ['_static']
 
 html_title = '%s %s Documentation' % (project, release)
 
+html_logo = '_static/pygame-menu-small.png'
+
+html_theme_options = {
+    'prev_next_buttons_location': None
+}
+
 # -- Options for LaTeX output -------------------------------------------------
 
 latex_elements = {
