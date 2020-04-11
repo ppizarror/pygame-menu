@@ -36,7 +36,6 @@ import types
 from uuid import uuid4
 
 import pygame as _pygame
-import pygameMenu  # docs usage
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.locals as _locals
@@ -182,7 +181,7 @@ class Menu(object):
                  menu_background_color=(0, 0, 0),
                  mouse_enabled=True,
                  mouse_visible=True,
-                 onclose=pygameMenu.events.CLOSE,
+                 onclose=_events.CLOSE,
                  rows=None,
                  scrollbar_color=(235, 235, 235),
                  scrollbar_shadow=False,
