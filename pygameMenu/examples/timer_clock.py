@@ -174,10 +174,10 @@ def main(test=False):
 
     # Adds a selector (element that can handle functions)
     timer_menu.add_selector(title='Change color ',
-                            values=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
-                                    ('Default', (128, 0, 128)),
-                                    ('Black', (0, 0, 0)),
-                                    ('Blue', COLOR_BLUE)],
+                            items=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
+                                   ('Default', (128, 0, 128)),
+                                   ('Black', (0, 0, 0)),
+                                   ('Blue', COLOR_BLUE)],
                             default=1,  # Optional parameter that sets default item of selector
                             onchange=change_color_bg,  # Action when changing element with left/right
                             onreturn=change_color_bg,  # Action when pressing return on an element
