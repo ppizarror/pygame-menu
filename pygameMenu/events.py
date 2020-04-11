@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 
-class _PymenuAction(object):
+class PymenuAction(object):
     """
     Pymenu event.
     """
@@ -41,16 +41,14 @@ class _PymenuAction(object):
         self._action = action
 
     def __eq__(self, other):
-        if isinstance(other, _PymenuAction):
+        if isinstance(other, PymenuAction):
             return self._action == other._action
         return False
 
 
 # Events
-_PYMENUACTION = "<class 'pygameMenu.events._PymenuAction'>"  # For python compatibility
-
-BACK = _PymenuAction(0)  # Menu back
-CLOSE = _PymenuAction(1)  # Close menu
-DISABLE_CLOSE = _PymenuAction(10)  # Menu disable closing
-EXIT = _PymenuAction(3)  # Menu exit program
-RESET = _PymenuAction(4)  # Menu reset
+BACK = PymenuAction(0)  # Menu back
+CLOSE = PymenuAction(1)  # Close menu
+DISABLE_CLOSE = PymenuAction(2)  # Menu disable closing
+EXIT = PymenuAction(3)  # Menu exit program
+RESET = PymenuAction(4)  # Menu reset

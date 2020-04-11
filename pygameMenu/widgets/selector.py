@@ -37,6 +37,7 @@ from pygameMenu.utils import check_key_pressed_valid
 from pygameMenu.widgets.widget import Widget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Selector(Widget):
     """
     Selector widget.
@@ -137,6 +138,7 @@ class Selector(Widget):
         else:
             color = self._font_color
         self._surface = self.render_string(string, color)
+        self._rect.width, self._rect.height = self._surface.get_size()
 
     def set_value(self, text):
         """

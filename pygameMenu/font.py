@@ -49,7 +49,6 @@ FONT_OPEN_SANS = __fontdir.format(__actualpath, 'open_sans')
 FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')
 
 
-# noinspection PyTypeChecker
 def get_font(name, size):
     """
     Return a pygame.Font from a name or file.
@@ -62,7 +61,7 @@ def get_font(name, size):
     :rtype: pygame.font.Font
     """
     if isinstance(name, _font.Font):
-        font = name  # type: _font.FontType
+        font = name  # type: (_font.FontType,None)
         return font
     else:
 
@@ -117,7 +116,7 @@ def get_font(name, size):
                                                         sys_message_2))
 
         # Try to load the font
-        font = None  # type: _font.FontType
+        font = None  # type: (_font.FontType,None)
         try:
             font = _font.Font(name, size)
         except IOError:

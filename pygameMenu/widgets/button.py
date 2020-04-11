@@ -82,6 +82,7 @@ class Button(Widget):
         else:
             color = self._font_color
         self._surface = self.render_string(self._label, color)
+        self._rect.width, self._rect.height = self._surface.get_size()
 
     def update(self, events):
         updated = False

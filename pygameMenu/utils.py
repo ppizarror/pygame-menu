@@ -97,6 +97,16 @@ def check_key_pressed_valid(event):
     return not bad_event
 
 
+def dummy_function():
+    """
+    Dummy function, this can be archieved with lambda but it's against
+    PEP-8.
+
+    :return: None
+    """
+    return
+
+
 def make_surface(width, height, alpha=False):
     """
     Creates a pygame surface object.

@@ -35,6 +35,9 @@ import pygameMenu
 import random
 
 # noinspection PyUnresolvedReferences
+from pygameMenu.utils import dummy_function
+
+# noinspection PyUnresolvedReferences
 import unittest
 
 # Constants
@@ -308,12 +311,9 @@ class PygameMenuUtils(object):
         :return: Menu
         :rtype: pygameMenu.Menu
         """
-        return pygameMenu.Menu(surface,
-                               columns=columns,
-                               dopause=False,
+        return pygameMenu.Menu(columns=columns,
                                enabled=False,
                                font=pygameMenu.font.FONT_NEVIS,
-                               fps=FPS,
                                menu_alpha=90,
                                menu_height=400,
                                menu_width=600,

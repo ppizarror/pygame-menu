@@ -41,7 +41,6 @@ _TYPE_HEX = 'hex'
 _TYPE_RGB = 'rgb'
 
 
-# noinspection PyTypeChecker
 class ColorInput(TextInput):
     """
     Color input widget.
@@ -146,7 +145,7 @@ class ColorInput(TextInput):
         self._last_r = -1  # type: int
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
-        self._prev_surface = None  # type: _pygame.Surface
+        self._prev_surface = None  # type: (_pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 
     def clear(self):
@@ -168,7 +167,7 @@ class ColorInput(TextInput):
                 super(ColorInput, self).set_value('')
                 return
             assert isinstance(rgb_tuple, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
-            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R, G, B'
+            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R,G,B'
             r, g, b = rgb_tuple
             assert isinstance(r, int), 'Red color must be an integer'
             assert isinstance(g, int), 'Blue color must be an integer'
@@ -221,7 +220,7 @@ class ColorInput(TextInput):
         Changes the color of the previsualization box.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType, None
+        :type surface: pygame.surface.Surface, None
         """
         r, g, b = self.get_value()
         if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color
@@ -246,18 +245,12 @@ class ColorInput(TextInput):
             _posy = self._rect.y - 1
             surface.blit(self._prev_surface, (_posx, _posy))
 
-    def get_rect(self):
+    def _render(self):
         """
-        Return the Rect object, this updates the width of the rect depending if
-        the previsualization box is active.
-
-        :return: pygame.Rect
-        :rtype: pygame.rect.RectType
+        See upper class doc.
         """
-        self._render()
-        self._rect.width, self._rect.height = self._surface.get_size()
-        self._rect.width += self._prev_size * self._rect.height
-        return self._rect
+        super(ColorInput, self)._render()
+        self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
 
     def draw(self, surface):
         super(ColorInput, self).draw(surface)
