@@ -55,6 +55,7 @@ class MenuTest(unittest.TestCase):
         menu.mainloop(surface, bgfun=dummy_function, disable_loop=True)
         menu._close()
 
+    # noinspection PyArgumentEqualDefault
     def test_depth(self):
         """
         Test depth of a menu.
@@ -73,24 +74,25 @@ class MenuTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+        self.assertNotEqual(self.menu.get_id(current=True), self.menu.get_id(current=False))
         self.assertTrue(self.menu != menu)
         self.assertEqual(menu._get_depth(), 10)
         self.assertEqual(self.menu._get_depth(), 10)
 
         """
-        menu_single when it was opened it changed to submenu 1, when submenu 1 was opened
+        menu when it was opened it changed to submenu 1, when submenu 1 was opened
         it changed to submenu 2, and so on...
         """
-        self.assertEqual(self.menu.get_title(), 'mainmenu')
-        self.assertEqual(self.menu.get_title(True), 'submenu 10')
-        self.assertEqual(menu.get_title(), 'submenu 10')
+        self.assertEqual(self.menu.get_title(current=False), 'mainmenu')
+        self.assertEqual(self.menu.get_title(current=True), 'submenu 10')
+        self.assertEqual(menu.get_title(current=True), 'submenu 10')
 
         """
         Submenu 10 has not changed to any, so back will not affect it,
         but mainmenu will reset 1 unit
         """
         menu._back()
-        self.assertEqual(menu.get_title(), 'submenu 10')
+        self.assertEqual(menu.get_title(current=False), 'submenu 10')
 
         """
         Mainmenu has changed, go back changes from submenu 10 to 9
@@ -98,8 +100,8 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu._get_depth(), 9)
         self.menu._back()
         self.assertEqual(self.menu._get_depth(), 8)
-        self.assertEqual(self.menu.get_title(), 'mainmenu')
-        self.assertEqual(self.menu.get_title(True), 'submenu 8')
+        self.assertEqual(self.menu.get_title(current=False), 'mainmenu')
+        self.assertEqual(self.menu.get_title(current=True), 'submenu 8')
 
         """
         Full go back (reset)

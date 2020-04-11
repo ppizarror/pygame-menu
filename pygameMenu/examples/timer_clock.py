@@ -156,7 +156,6 @@ def main(test=False):
 
     # Timer
     timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
-                                 mainloop_loop=False,  # If False then mainloop will break at first iteration
                                  menu_alpha=85,
                                  menu_background_color=(0, 0, 0),  # Background color
                                  menu_height=400,
@@ -265,13 +264,19 @@ def main(test=False):
                     main_menu.enable()
 
         # Draw timer
-        time_string = str(datetime.timedelta(seconds=int(timer[0])))
-        time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
-        time_blit_size = time_blit.get_size()
-        surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
+        if main_menu.get_title() == 'Timer Menu' or not main_menu.is_enabled():
+            time_string = str(datetime.timedelta(seconds=int(timer[0])))
+            time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
+            time_blit_size = time_blit.get_size()
+            surface.blit(time_blit,
+                         (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
+        else:
+            surface.fill(COLOR_BACKGROUND)
 
-        # Execute main from principal menu if is enabled
-        main_menu.mainloop(surface=surface, event_loop=events, bgfun=mainmenu_background, disable_loop=test)
+        if main_menu.is_enabled():
+            main_menu.draw(surface)
+
+        main_menu.update(events)
 
         # Flip surface
         pygame.display.flip()

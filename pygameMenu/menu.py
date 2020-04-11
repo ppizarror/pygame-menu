@@ -78,8 +78,6 @@ class Menu(object):
     :type enabled: bool
     :param joystick_enabled: Enable/disable joystick on the Menu
     :type joystick_enabled: bool
-    :param mainloop_loop: If False, the Menu will not loop in .mainloop() method, and background image will not be drawed
-    :type mainloop_loop: bool
     :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
     :type menu_alpha: int
     :param menu_background_color: Menu background color
@@ -177,7 +175,6 @@ class Menu(object):
                  columns=1,
                  enabled=True,
                  joystick_enabled=True,
-                 mainloop_loop=True,
                  menu_alpha=100,
                  menu_background_color=(0, 0, 0),
                  menu_id='',
@@ -229,7 +226,6 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(mainloop_loop, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(menu_id, str)
         assert isinstance(mouse_enabled, bool)
@@ -334,7 +330,6 @@ class Menu(object):
         self._id = menu_id
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
-        self._mainloop_loop = mainloop_loop
         self._onclose = onclose  # Function that calls after closing Menu
         self._sounds = _Sound()  # type: _Sound
         self._submenus = []  # type: list
@@ -1066,7 +1061,7 @@ class Menu(object):
             self._top._enabled = False
             self._top._closelocked = closelocked
 
-    def center_vertically(self, current=False):
+    def center_vertically(self, current=True):
         """
         Update draw_region_y based on the current widgets.
         If the height of the widgets is greater than the height of the Menu,
@@ -1202,7 +1197,7 @@ class Menu(object):
         :rtype: bool
         """
         assert isinstance(events, list)
-        break_mainloop = not self._current._mainloop_loop
+        break_mainloop = False
 
         # Update mouse
         _pygame.mouse.set_visible(self._current._mouse_visible)
@@ -1350,7 +1345,7 @@ class Menu(object):
         :type bgfun: function
         :param event_loop: Events used by the loop if Menu was created using mainloop_loop=False
         :type event_loop: list,None
-        :param disable_loop: Disable infinite loop waiting for events
+        :param disable_loop: If true run this method for only 1 loop
         :type disable_loop: bool
         :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
         :type fps_limit: int,float
@@ -1366,16 +1361,13 @@ class Menu(object):
         # NOTE: For Menu accesor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
             return
+
         self._current._background_function = bgfun
         while True:
             self._current._clock.tick(fps_limit)
 
             # If loop, gather events by Menu and draw the background function
-            if self._current._mainloop_loop:
-                bgfun()
-                break_mainloop = self.update(_pygame.event.get())  # Public methods do not use _current
-            else:
-                break_mainloop = self.update(event_loop or [])  # If None
+            break_mainloop = self.update(_pygame.event.get())
 
             # As event can change the status of the Menu, this has to be checked twice
             if self.is_enabled():
@@ -1480,7 +1472,7 @@ class Menu(object):
             for menu in self._submenus:  # type: Menu
                 menu.set_sound(sound, recursive=True)
 
-    def get_title(self, current=False):
+    def get_title(self, current=True):
         """
         Return title of the Menu.
 
