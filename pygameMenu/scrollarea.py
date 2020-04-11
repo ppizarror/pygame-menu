@@ -89,7 +89,7 @@ class ScrollArea(object):
         :param shadow_position: Position of shadow
         :type shadow_position: basestring
         :param world: Surface to draw and scroll
-        :type world: pygame.Surface, NoneType
+        :type world: pygame.SurfaceType, NoneType
         """
         self._rect = _pygame.Rect(0, 0, area_width, area_height)
         self._world = world
@@ -104,7 +104,7 @@ class ScrollArea(object):
 
         self._view_rect = self.get_view_rect()
 
-        for pos in self._scrollbar_positions:
+        for pos in self._scrollbar_positions:  # type:str
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
                 sbar = _ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
                                   orientation=_locals.ORIENTATION_VERTICAL,
@@ -173,7 +173,7 @@ class ScrollArea(object):
             surface.blit(self._bg_surface, (self._rect.x, self._rect.y))
 
         offsets = self.get_offsets()
-        for sbar in self._scrollbars:
+        for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
                     sbar.draw(surface)  # Display scrollbar
@@ -206,7 +206,7 @@ class ScrollArea(object):
         Return the offset introduced by the scrollbars in the world.
         """
         offsets = [0, 0]
-        for sbar in self._scrollbars:
+        for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
                     offsets[0] = sbar.get_value()
@@ -219,7 +219,7 @@ class ScrollArea(object):
         """
         Return the Rect object.
 
-        :return: pygame.Rect
+        :return: Pygame.Rect object
         :rtype: pygame.rect.RectType
         """
         return self._rect
@@ -314,10 +314,10 @@ class ScrollArea(object):
         Call when a horizontal scroll bar as changed to update the
         position of the opposite one if it exists.
 
-        :param value: new position of the slider
+        :param value: New position of the slider
         :type value: float
         """
-        for sbar in self._scrollbars:
+        for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL \
                     and self.get_hidden_width() != 0 \
                     and sbar.get_value() != value:
@@ -328,10 +328,10 @@ class ScrollArea(object):
         Call when a vertical scroll bar as changed to update the
         position of the opposite one if it exists.
 
-        :param value: new position of the slider
+        :param value: New position of the slider
         :type value: float
         """
-        for sbar in self._scrollbars:
+        for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL \
                     and self.get_hidden_height() != 0 \
                     and sbar.get_value() != value:
@@ -342,7 +342,7 @@ class ScrollArea(object):
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
-        :type rect: pygame.Rect
+        :type rect: pygame.RectType
         :param margin: Extra margin around the rect
         :type margin: int
         """
@@ -353,7 +353,7 @@ class ScrollArea(object):
                 and self._view_rect.bottomright[1] > real_rect.bottomright[1]:
             return  # rect is in viewable area
 
-        for sbar in self._scrollbars:
+        for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
                 shortest_move = min(real_rect.left - margin - self._view_rect.left,
                                     real_rect.right + margin - self._view_rect.right, key=abs)
@@ -385,8 +385,8 @@ class ScrollArea(object):
         """
         Update the scrolled surface.
 
-        :param surface: new world surface
-        :type surface: pygame.Surface
+        :param surface: New world surface
+        :type surface: pygame.SurfaceType
         """
         self._world = surface
         self._apply_size_changes()
@@ -396,8 +396,8 @@ class ScrollArea(object):
         Return the real position/Rect according to the scroll area origin
         of a position/Rect in the world surface reference.
 
-        :param virtual: position/Rect in the world surface reference
-        :type virtual: pygame.Rect, tuple, list
+        :param virtual: Position/Rect in the world surface reference
+        :type virtual: pygame.RectType, tuple, list
         """
         assert isinstance(virtual, (_pygame.Rect, tuple, list))
         offsets = self.get_offsets()
@@ -417,8 +417,8 @@ class ScrollArea(object):
         Return the position/Rect in the world surface reference
         of a real position/Rect according to the scroll area origin.
 
-        :param real: position/Rect according scroll area origin
-        :type real: pygame.Rect, tuple, list
+        :param real: Position/Rect according scroll area origin
+        :type real: pygame.RectType, tuple, list
         """
         assert isinstance(real, (_pygame.Rect, tuple, list))
         offsets = self.get_offsets()
@@ -433,13 +433,29 @@ class ScrollArea(object):
         y_coord = real[1] - self._rect.y + offsets[1]
         return x_coord, y_coord
 
+    def is_scrolling(self):
+        """
+        :return: Returns true if the user is scrolling.
+        :rtype: bool
+        """
+        scroll = False
+        for sbar in self._scrollbars:  # type: _ScrollBar
+            scroll = scroll or sbar.scrolling
+        return scroll
+
     def update(self, events):
         """
         Called by end user to update scroll state.
+
+        :param events: List of pygame events
+        :type events: list
+        :return: True if updated
+        :rtype: bool
         """
         updated = [0, 0]
-        for sbar in self._scrollbars:
+        for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and not updated[0]:
                 updated[0] = sbar.update(events)
             elif sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and not updated[1]:
                 updated[1] = sbar.update(events)
+        return updated[0] or updated[1]

@@ -92,6 +92,7 @@ class MenuBar(Widget):
     def _apply_font(self):
         pass
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
 
@@ -183,6 +184,7 @@ class MenuBar(Widget):
         self._offsety = offsety
         self._offsetx = offsetx
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
         for event in events:  # type: _pygame.event.EventType

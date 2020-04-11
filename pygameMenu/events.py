@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EVENTS
-Menu events definition.
+Menu events definition and locals.
 
 License:
 -------------------------------------------------------------------------------

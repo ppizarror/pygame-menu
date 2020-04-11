@@ -55,9 +55,9 @@ class Widget(object):
         :param widget_id: Widget identifier
         :type widget_id: basestring
         :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
+        :type onchange: callable, NoneType
         :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
+        :type onreturn: callable, NoneType
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
@@ -168,7 +168,7 @@ class Widget(object):
         Draw the widget shape.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.Surface
+        :type surface: pygame.surface.SurfaceType
         :return: None
         """
         raise NotImplementedError('Override is mandatory')
@@ -178,7 +178,7 @@ class Widget(object):
         Draw selected rect around widget.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.Surface
+        :type surface: pygame.surface.SurfaceType
         :param selected_color: Selected color
         :type selected_color: tuple
         :param inflatex: Pixels to inflate the rect (x axis), used by highlight
@@ -216,7 +216,7 @@ class Widget(object):
         Set widget max width (column support) if force_fit_text is enabled.
 
         :param width: Width in px, None if max width is disabled
-        :type width: int,float,None
+        :type width: int, float, NoneType
         """
         if width is not None:
             assert isinstance(width, (int, float))
@@ -246,7 +246,7 @@ class Widget(object):
     def get_rect(self):
         """
         :return: Return the Rect object.
-        :rtype: pygame.rect.Rect
+        :rtype: pygame.rect.RectType
         """
         self._render()
         return self._rect
@@ -256,7 +256,7 @@ class Widget(object):
         Return the value. If exception ``ValueError`` is raised,
         no value will be passed to the callbacks.
 
-        :return: value
+        :return: Value
         :rtype: Object
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
@@ -285,7 +285,7 @@ class Widget(object):
 
         :param args: Variables to compute hash
         :type args: Object
-        :return: hash data
+        :return: Hash data
         :rtype: int
         """
         return hash(args)
@@ -299,7 +299,7 @@ class Widget(object):
         :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: pygame.surface.Surface
+        :rtype: pygame.surface.SurfaceType
         """
         assert isinstance(color, tuple)
         return self._font.render(text, self._font_antialias, color)
@@ -313,7 +313,7 @@ class Widget(object):
         :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: pygame.surface.Surface
+        :rtype: pygame.surface.SurfaceType
         """
         render_hash = self._hash_variables(string, color)
 
@@ -400,7 +400,7 @@ class Widget(object):
         """
         Return a dict with the information of the widget font.
 
-        :return: dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
+        :return: Dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
         :rtype: dict
         """
         return {
@@ -550,7 +550,7 @@ class Widget(object):
         Set sound engine to the widget.
 
         :param sound: Sound object
-        :type sound: pygameMenu.sound.Sound
+        :type sound: pygameMenu.sound.SoundType
         :return: None
         """
         self.sound = sound

@@ -105,11 +105,11 @@ class TextInput(Widget):
     :param password_char: Character used by password type
     :type password_char: basestring
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :type repeat_keys_initial_ms: float, int
+    :type repeat_keys_initial_ms: int, float
     :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :type repeat_keys_interval_ms: float, int
+    :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :type repeat_mouse_interval_ms: float, int
+    :type repeat_mouse_interval_ms: int, float
     :param selection_color: Selection box color
     :type selection_color: tuple
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
@@ -270,9 +270,6 @@ class TextInput(Widget):
         self._password_char = password_char
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
         self._label_size = self._font.size(self._label)[0]
 
@@ -302,8 +299,13 @@ class TextInput(Widget):
         self._delete()
         self.change()
 
-    # noinspection PyMissingOrEmptyDocstring
     def get_value(self):
+        """
+        Returns the value of the text.
+
+        :return: Text inside the widget
+        :rtype: basestring
+        """
         value = ''
         if self._input_type == _locals.INPUT_TEXT:
             value = self._input_string  # Without filters
@@ -319,10 +321,8 @@ class TextInput(Widget):
                 value = 0
         return value
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._clock.tick()
         self._render()
 
@@ -340,9 +340,6 @@ class TextInput(Widget):
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         string = self._label + self._get_input_string()  # Render string
         if self.selected:
             color = self._font_selected_color
@@ -463,7 +460,7 @@ class TextInput(Widget):
         :param updated: Render string has been updated or not
         :type updated: bool
         :return: New rendered surface
-        :rtype: pygame.surface.Surface
+        :rtype: pygame.surface.SurfaceType
         """
         # If underline is not enabled
         if self._input_underline_size == 0:
@@ -888,7 +885,11 @@ class TextInput(Widget):
 
     def set_value(self, text):
         """
-        See upper class doc.
+        Set the value of the text.
+
+        :param text: New text of the widget
+        :type text: basestring, int, float
+        :return: None
         """
         if self._password and text != '':
             raise ValueError('value cannot be set in password type')
@@ -984,9 +985,6 @@ class TextInput(Widget):
         self._update_renderbox(right=1)
 
     def _blur(self):
-        """
-        See upper class doc.
-        """
         # self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
@@ -995,9 +993,6 @@ class TextInput(Widget):
         # self._history_index = len(self._history) - 1
 
     def _focus(self):
-        """
-        See upper class doc.
-        """
         self._cursor_ms_counter = 0
         self._cursor_visible = True
         self._cursor_render = True
@@ -1356,10 +1351,8 @@ class TextInput(Widget):
                 self.sound.play_event_error()
         return False
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
-        """
-        See upper class doc.
-        """
         updated = False
 
         for event in events:  # type: _pygame.event.EventType

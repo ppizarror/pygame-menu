@@ -41,6 +41,17 @@ class MenuTest(unittest.TestCase):
         self.menu = PygameMenuUtils.generic_menu('mainmenu')
         self.menu.mainloop(surface, bgfun=dummy_function)
 
+    def test_size(self):
+        """
+        Test menu sizes.
+        """
+        inf_size = 1000000000
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=0, height=300))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=300, height=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=-200, height=300))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=inf_size, height=300))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=300, height=inf_size))
+
     def test_enabled(self):
         """
         Test menu enable/disable feature.

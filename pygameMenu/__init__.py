@@ -30,16 +30,51 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+"""
+Controls: Default controls of menu object and key definition.
+"""
+# noinspection PyUnresolvedReferences
 import pygameMenu.controls
+
+"""
+Events: Menu events definition and locals.
+"""
+# noinspection PyUnresolvedReferences
 import pygameMenu.events
+
+"""
+Fonts: Menu fonts.
+"""
+# noinspection PyUnresolvedReferences
 import pygameMenu.font
+
+"""
+Locals: Local constants.
+"""
+# noinspection PyUnresolvedReferences
 import pygameMenu.locals
+
+"""
+Sound: Sound class.
+"""
+# noinspection PyUnresolvedReferences
 import pygameMenu.sound
+
+"""
+Version: Library version.
+"""
+# noinspection PyUnresolvedReferences
 import pygameMenu.version
 
+"""
+Menu: Menu class.
+"""
+# noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
 
-# Other
+"""
+Metadata: Information about the project.
+"""
 __author__ = 'ppizarror'
 __contributors__ = [
     'anxuae',

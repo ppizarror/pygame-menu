@@ -264,7 +264,8 @@ def main(test=False):
     about_menu.add_button('Return to menu', pygameMenu.events.BACK)
 
     # Main menu
-    main_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_BEBAS,
+    main_menu = pygameMenu.Menu(back_box=False,
+                                font=pygameMenu.font.FONT_BEBAS,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.6,
                                 menu_width=WINDOW_SIZE[0] * 0.6,
