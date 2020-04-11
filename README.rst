@@ -3,8 +3,8 @@
 pygame-menu
 ===========
 
-.. image:: _static/pygame-menu.png
-   :scale: 35%
+.. image:: docs/_static/pygame-menu-small.png
+   :scale: 25%
 
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
@@ -34,7 +34,6 @@ Pygame-menu is a python-pygame library for creating menus, it supports
 selectors, buttons, labels, color inputs, text inputs with many options to customize.
 
 Comprehensive documentation is available at https://pygame-menu.readthedocs.io.
-
 
 Install Instructions
 --------------------
