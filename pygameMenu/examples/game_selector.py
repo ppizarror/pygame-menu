@@ -221,9 +221,10 @@ def main(test=False):
                                    selection_color=COLOR_WHITE,
                                    title='Submenu',
                                    widget_font_color=COLOR_BLACK,
-                                   widget_offset_y=50,  # px
+                                   widget_font_size=15,
                                    )
-    play_submenu.add_button('Back', pygameMenu.events.BACK)
+    for i in range(30):
+        play_submenu.add_button('Back {0}'.format(i), pygameMenu.events.BACK)
 
     play_menu.add_button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
                          play_function,

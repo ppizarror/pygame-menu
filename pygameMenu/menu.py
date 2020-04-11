@@ -1508,6 +1508,8 @@ class Menu(object):
                 break
 
         # self._actual = self._top._actual
+        print('---')
+        print(self._actual)
         self._actual._select(self._top._actual._index)
 
     def _select(self, new_index):
@@ -1531,8 +1533,8 @@ class Menu(object):
 
         # If new widget is not selectable
         if not new_widget.is_selectable:
-            if self._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
-                self._select(new_index + 1)
+            if actual._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
+                actual._select(new_index + 1)
                 return
             else:  # No selectable options, quit
                 return

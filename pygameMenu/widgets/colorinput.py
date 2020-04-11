@@ -168,7 +168,7 @@ class ColorInput(TextInput):
                 super(ColorInput, self).set_value('')
                 return
             assert isinstance(rgb_tuple, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
-            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R, G, B'
+            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R,G,B'
             r, g, b = rgb_tuple
             assert isinstance(r, int), 'Red color must be an integer'
             assert isinstance(g, int), 'Blue color must be an integer'
