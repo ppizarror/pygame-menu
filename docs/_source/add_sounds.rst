@@ -10,6 +10,19 @@ file to several sounds defined by a type.
 
 For example, buttons or keys...
 
+**Example:**
+
+.. code-block:: python
+
+    import pygameMenu
+    from pygameMenu import sound
+
+    engine = sound.Sound()
+    engine.set_sound(sound.SOUND_TYPE_CLICK_MOUSE, '/home/me/click.ogg')
+    engine.set_sound(sound.SOUND_TYPE_OPEN_MENU, '/home/me/open.ogg')
+
+    menu = pygameMenu.Menu(...)
+    menu.set_sound(engine, recursive=True)  # Apply on menu and all sub-menus
 
 Sound types are the following:
 

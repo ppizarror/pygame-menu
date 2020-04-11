@@ -56,17 +56,3 @@ This library is dependent on the following
 
 - `Pygame <http://www.pygame.org/download.shtml>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_
-
-Contributors
-------------
-
-Core developers:
-
-- `Pablo Pizarro R. <https://ppizarror.com>`_
-
-Other contributors:
-
-- `anxuae <https://github.com/anxuae>`_
-
-Ideas and contributions are always welcome. Any found bugs or
-enhancement suggestions should be posted in the issues tab.

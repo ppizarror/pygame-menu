@@ -37,17 +37,19 @@ A button is a text that fire action when the user trigger it.
     def fun():
         print("Hello world")
 
-    menu = pygameMenu.Menu(surface, ...)
+    menu = pygameMenu.Menu(...)
+
     menu.add_button('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
     menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
 
 .. code-block:: python
 
-    menu = pygameMenu.Menu(surface, ...)
-    menu.add_button(timer_menu.get_title(), timer_menu)         # Adds timer submenu
-    menu.add_button(help_menu.get_title(), help_menu)           # Adds help submenu
-    menu.add_button(about_menu.get_title(), about_menu)         # Adds about submenu
-    menu.add_button('Exit', pygameMenu.events.MENU_EXIT)        # Adds exit function
+    menu = pygameMenu.Menu(...)
+
+    about_menu = pygameMenu.Menu(...)
+
+    menu.add_button(about_menu.get_title(), about_menu)     # Adds about submenu
+    menu.add_button('Exit', pygameMenu.events.MENU_EXIT)    # Adds exit function
 
 
 Selector
@@ -80,22 +82,17 @@ A selector gives the possibility choose a value in a list.
         """
         ...
 
-    timer_menu = pygameMenu.Menu(...)
+    menu = pygameMenu.Menu(...)
 
-    # Add selector
-    timer_menu.add_selector('Change bgcolor',
-                            # Values of selector, call to change_color_bg
-                            [('Random', (-1, -1, -1)),  # Random color
-                             ('Default', (128, 0, 128)),
-                             ('Black', (0, 0, 0)),
-                             ('Blue', COLOR_BLUE)],
-                            None, # onchange
-                            change_color_bg, # onreturn
-                            write_on_console=True # Optional change_color_bg param
-                            )
-
-    timer_menu.add_button('Close Menu', pygameMenu.events.MENU_CLOSE)
-
+    menu.add_selector('Change bgcolor',
+                      # Values of selector, call to change_color_bg
+                      [('Random', (-1, -1, -1)),  # Random color
+                      ('Default', (128, 0, 128)),
+                      ('Black', (0, 0, 0)),
+                      ('Blue', COLOR_BLUE)],
+                      onchange=None,
+                      onreturn=change_color_bg,
+                      write_on_console=True)
 
 Text Input
 ----------
@@ -116,14 +113,11 @@ A text input permits to enter a string using a keyboard.
         """
         print('User name: {0}'.format(value))
 
-    settings_menu = pygameMenu.Menu(...)
+    menu = pygameMenu.Menu(...)
 
-    # Add text input
-    settings_menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
-    settings_menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
-    settings_menu.add_text_input('Some long text: ', maxwidth=15)
-
-    settings_menu.add_button('Return to main menu', pygameMenu.events.MENU_BACK)
+    menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
+    menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
+    menu.add_text_input('Some long text: ', maxwidth=15)
 
 
 Color Input
@@ -147,8 +141,8 @@ area to display the current color.
         """
         print('New color: {0}'.format(color))
 
-    settings_menu = pygameMenu.Menu(...)
+    menu = pygameMenu.Menu(...)
 
-    settings_menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
-    settings_menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
-    settings_menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
+    menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
+    menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
+    menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')

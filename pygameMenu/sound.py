@@ -78,6 +78,23 @@ SOUND_INITIALIZED = [False]
 class Sound(object):
     """
     Sound engine class.
+    
+    :param uniquechannel: Force the channel to be unique, this is set at the moment of creation of the object
+    :type uniquechannel: bool
+    :param frequency: Frequency of sounds
+    :type frequency: int
+    :param size: Size of sample
+    :type size: int
+    :param channels: Number of channels by default
+    :type channels: int
+    :param buffer: Buffer size
+    :type buffer: int
+    :param devicename: Device name
+    :type devicename: basestring
+    :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
+    :type allowedchanges: bool
+    :param force_init: Force mixer init with new parameters
+    :type force_init: bool
     """
 
     def __init__(self,
@@ -89,26 +106,6 @@ class Sound(object):
                  devicename='',
                  allowedchanges=_AUDIO_ALLOW_CHANNELS_CHANGE | _AUDIO_ALLOW_FREQUENCY_CHANGE,
                  force_init=False):
-        """
-        Constructor.
-
-        :param uniquechannel: Force the channel to be unique, this is set at the moment of creation of the object
-        :type uniquechannel: bool
-        :param frequency: Frequency of sounds
-        :type frequency: int
-        :param size: Size of sample
-        :type size: int
-        :param channels: Number of channels by default
-        :type channels: int
-        :param buffer: Buffer size
-        :type buffer: int
-        :param devicename: Device name
-        :type devicename: basestring
-        :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
-        :type allowedchanges: bool
-        :param force_init: Force mixer init with new parameters
-        :type force_init: bool
-        """
         assert isinstance(uniquechannel, bool)
         assert isinstance(frequency, int)
         assert isinstance(size, int)
