@@ -41,7 +41,6 @@ _TYPE_HEX = 'hex'
 _TYPE_RGB = 'rgb'
 
 
-# noinspection PyTypeChecker
 class ColorInput(TextInput):
     """
     Color input widget.
@@ -146,7 +145,7 @@ class ColorInput(TextInput):
         self._last_r = -1  # type: int
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
-        self._prev_surface = None  # type: _pygame.Surface
+        self._prev_surface = None  # type: (_pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 
     def clear(self):
@@ -221,7 +220,7 @@ class ColorInput(TextInput):
         Changes the color of the previsualization box.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType, None
+        :type surface: pygame.surface.Surface, None
         """
         r, g, b = self.get_value()
         if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color

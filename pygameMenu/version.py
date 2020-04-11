@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 
-# noinspection PyTypeChecker
 class PygameMenuVersion(tuple):
     """
     Version class.
@@ -41,6 +40,7 @@ class PygameMenuVersion(tuple):
     fields = 'major', 'minor', 'patch'
 
     def __new__(cls, major, minor, patch):
+        # noinspection PyTypeChecker
         return tuple.__new__(cls, (major, minor, patch))
 
     def __repr__(self):

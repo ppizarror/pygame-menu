@@ -52,6 +52,7 @@ except ImportError:
         """
         pass
 
+
     def paste():
         """
         Paste method.
@@ -61,6 +62,7 @@ except ImportError:
         """
         return ''
 
+
     class PyperclipException(RuntimeError):
         """
         Pyperclip exception thrown by pyperclip.
@@ -68,7 +70,6 @@ except ImportError:
         pass
 
 
-# noinspection PyTypeChecker
 class TextInput(Widget):
     """
     Text input widget.
@@ -86,7 +87,7 @@ class TextInput(Widget):
     :param enable_copy_paste: Enables copy, paste and cut
     :type enable_copy_paste: bool
     :param enable_selection: Enables selection of text
-    :type enable_selection: tuple
+    :type enable_selection: bool
     :param history: Maximum number of editions stored
     :type history: int
     :param maxchar: Maximum length of input
@@ -214,7 +215,7 @@ class TextInput(Widget):
         self._cursor_offset = -1  # type: int
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
-        self._cursor_surface = None  # type: _pygame.Surface
+        self._cursor_surface = None  # type: (_pygame.Surface,None)
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500  # type: int
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
@@ -235,7 +236,7 @@ class TextInput(Widget):
         self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0, 0]  # (x,y)
         self._selection_render = False
-        self._selection_surface = None  # type: _pygame.Surface
+        self._selection_surface = None  # type: (_pygame.Surface,None)
 
         # List of valid chars
         if valid_chars is not None:
@@ -258,7 +259,7 @@ class TextInput(Widget):
         self._label_size = 0  # type: int
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygameMenu__last_render_string__'  # type: str
-        self._last_rendered_surface = None  # type: _pygame.Surface
+        self._last_rendered_surface = None  # type: (_pygame.Surface,None)
         self._last_rendered_surface_underline_width = 0  # type: int
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
@@ -301,10 +302,8 @@ class TextInput(Widget):
         self._delete()
         self.change()
 
+    # noinspection PyMissingOrEmptyDocstring
     def get_value(self):
-        """
-        See upper class doc.
-        """
         value = ''
         if self._input_type == _locals.INPUT_TEXT:
             value = self._input_string  # Without filters
@@ -464,7 +463,7 @@ class TextInput(Widget):
         :param updated: Render string has been updated or not
         :type updated: bool
         :return: New rendered surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: pygame.surface.Surface
         """
         # If underline is not enabled
         if self._input_underline_size == 0:
@@ -1165,8 +1164,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-            text[0:text_end] + \
-            self._input_string[self._cursor_position:len(self._input_string)]
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

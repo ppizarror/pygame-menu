@@ -38,7 +38,6 @@ from pygameMenu.utils import make_surface
 from pygameMenu.widgets.widget import Widget
 
 
-# noinspection PyTypeChecker
 class MenuBar(Widget):
     """
     MenuBar widget.
@@ -81,13 +80,13 @@ class MenuBar(Widget):
                                       )
 
         self._backbox = back_box
-        self._backbox_pos = None  # type: tuple
-        self._backbox_rect = None  # type: _pygame.rect.RectType
+        self._backbox_pos = None  # type: (tuple,None)
+        self._backbox_rect = None  # type: (_pygame.rect.Rect,None)
         self._bgcolor = bgcolor
         self._label = label
         self._offsetx = 0  # type: int
         self._offsety = 0  # type: int
-        self._polygon_pos = None  # type: tuple
+        self._polygon_pos = None  # type: (tuple,None)
         self._width = width  # type: (int,float)
 
     def _apply_font(self):

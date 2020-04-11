@@ -37,6 +37,7 @@ from pygameMenu.utils import check_key_pressed_valid
 from pygameMenu.widgets.widget import Widget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Selector(Widget):
     """
     Selector widget.

@@ -39,7 +39,6 @@ from pygameMenu.utils import make_surface, assert_alignment, assert_color, asser
 from uuid import uuid4
 
 
-# noinspection PyTypeChecker
 class Widget(object):
     """
     Widget abstract class.
@@ -73,12 +72,12 @@ class Widget(object):
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER
         self._id = str(widget_id)
-        self._last_selected_surface = None  # type: _pygame.SurfaceType
-        self._selected_rect = None  # type: _pygame.rect.RectType
-        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
+        self._last_selected_surface = None  # type: (_pygame.Surface,None)
+        self._selected_rect = None  # type: (_pygame.rect.Rect,None)
+        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: (_pygame.Rect,None)
         self._render_string_cache = 0  # type: int
         self._margin = (0, 0)  # type: tuple
-        self._render_string_cache_surface = None  # type: _pygame.SurfaceType
+        self._render_string_cache_surface = None  # type: (_pygame.Surface,None)
         self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
@@ -87,14 +86,14 @@ class Widget(object):
         self._on_return = onreturn  # type: callable
 
         # Surface of the widget
-        self._surface = None  # type: _pygame.SurfaceType
+        self._surface = None  # type: (_pygame.Surface,None)
 
         # Menu reference
         self._menu = None
         self._menu_widget_position_needs_update = False
 
         # Modified in set_font() method
-        self._font = None  # type: _pygame.font.Font
+        self._font = None  # type: (_pygame.font.Font,None)
         self._font_name = ''  # type: str
         self._font_size = 0  # type: int
         self._font_color = (0, 0, 0)  # type: tuple
@@ -169,7 +168,7 @@ class Widget(object):
         Draw the widget shape.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: pygame.surface.Surface
         :return: None
         """
         raise NotImplementedError('Override is mandatory')
@@ -179,7 +178,7 @@ class Widget(object):
         Draw selected rect around widget.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: pygame.surface.Surface
         :param selected_color: Selected color
         :type selected_color: tuple
         :param inflatex: Pixels to inflate the rect (x axis), used by highlight
@@ -247,7 +246,7 @@ class Widget(object):
     def get_rect(self):
         """
         :return: Return the Rect object.
-        :rtype: pygame.rect.RectType
+        :rtype: pygame.rect.Rect
         """
         self._render()
         return self._rect
@@ -300,7 +299,7 @@ class Widget(object):
         :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: pygame.surface.Surface
         """
         assert isinstance(color, tuple)
         return self._font.render(text, self._font_antialias, color)
@@ -314,7 +313,7 @@ class Widget(object):
         :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: pygame.surface.Surface
         """
         render_hash = self._hash_variables(string, color)
 
