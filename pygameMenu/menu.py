@@ -59,9 +59,9 @@ class Menu(object):
     Menu object.
 
     :param menu_height: Height of the Menu (px)
-    :type menu_height: int,float
+    :type menu_height: int, float
     :param menu_width: Width of the Menu (px)
-    :type menu_width: int,float
+    :type menu_width: int, float
     :param font: Font file path
     :type font: basestring
     :param title: Title of the Menu (main title)
@@ -71,7 +71,7 @@ class Menu(object):
     :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
     :type column_force_fit_text: bool
     :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
-    :type column_max_width: tuple, None
+    :type column_max_width: tuple, NoneType
     :param columns: Number of columns, by default it's 1
     :type columns: int
     :param enabled: Menu is enabled by default or not
@@ -81,7 +81,7 @@ class Menu(object):
     :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
     :type menu_alpha: int
     :param menu_background_color: Menu background color
-    :type menu_background_color: tuple,list
+    :type menu_background_color: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
     :param menu_id: ID of the Menu
@@ -91,7 +91,7 @@ class Menu(object):
     :param onclose: Function applied when closing the Menu
     :type onclose: function, NoneType
     :param rows: Number of rows of each column, None if there's only 1 column
-    :type rows: int,None
+    :type rows: int, NoneType
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -109,7 +109,7 @@ class Menu(object):
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int
     :param selection_color: Color of selected item
-    :type selection_color: tuple,list
+    :type selection_color: tuple, list
     :param selection_highlight: Enable drawing a rectangle around selected item
     :type selection_highlight: bool
     :param selection_highlight_border_width: Border with of rectangle around selected item
@@ -119,11 +119,11 @@ class Menu(object):
     :param selection_highlight_margin_y: Y margin of selected highlight box
     :type selection_highlight_margin_y: int
     :param title_background_color: Title background color
-    :type title_background_color: tuple,list
+    :type title_background_color: tuple, list
     :param title_font: Optional title font, if None use the Menu default font
-    :type title_font: basestring,None
+    :type title_font: basestring, NoneType
     :param title_font_color: Title font color, if None use the widget font color
-    :type title_font_color: list,tuple,None
+    :type title_font_color: list, tuple, NoneType
     :param title_font_size: Font size of the title
     :type title_font_size: int
     :param title_offset_x: Offset x-position of title (px)
@@ -131,11 +131,11 @@ class Menu(object):
     :param title_offset_y: Offset y-position of title (px)
     :type title_offset_y: int
     :param title_offset_y: Title shadow color
-    :type title_offset_y: tuple,list
+    :type title_offset_y: tuple, list
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
     :param title_shadow_color: Title shadow color
-    :type title_shadow_color: list,tuple
+    :type title_shadow_color: list, tuple
     :param title_shadow_offset: Offset of shadow on title
     :type title_shadow_offset: int
     :param title_shadow_position: Position of the shadow on title
@@ -143,7 +143,7 @@ class Menu(object):
     :param widget_alignment: Widget default alignment
     :type widget_alignment: basestring
     :param widget_font_color: Color of the font
-    :type widget_font_color: tuple,list
+    :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
     :param widget_margin_x: Horizontal margin of each element in Menu (px)
@@ -151,13 +151,13 @@ class Menu(object):
     :param widget_margin_y: Vertical margin of each element in Menu (px)
     :type widget_margin_y: int
     :param widget_offset_x: X axis offset of widgets inside Menu (px). If value less than 1 use percentage of width
-    :type widget_offset_x: int,float
+    :type widget_offset_x: int, float
     :param widget_offset_y: Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of height
-    :type widget_offset_y: int,float
+    :type widget_offset_y: int, float
     :param widget_shadow: Indicate if a shadow is drawn on each widget
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the shadow
-    :type widget_shadow_color: tuple,list
+    :type widget_shadow_color: tuple, list
     :param widget_shadow_offset: Offset of shadow
     :type widget_shadow_offset: int
     :param widget_shadow_position: Position of shadow
@@ -357,7 +357,6 @@ class Menu(object):
 
         # Enabled and closed belongs to top, closing a submenu is equal as closing the root
         # Menu
-        self._closelocked = False  # Lock close until next mainloop
         self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
@@ -532,25 +531,25 @@ class Menu(object):
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: basestring
         :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring,None
+        :type align: basestring, NoneType
         :param color_id: ID of the color input
         :type color_id: basestring
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
         :type default: basestring, tuple
         :param font_size: Font size of the widget, if None use default Menu widget font size
-        :type font_size: int,None
+        :type font_size: int, NoneType
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :type input_separator: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple,None
+        :type margin: tuple, NoneType
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
         :type onreturn: function, NoneType
         :param previsualization_width: Previsualization width as a factor of the height
-        :type previsualization_width: float, int
+        :type previsualization_width: int, float
         :param kwargs: Additional keyword-parameters
         :return: Widget object
         :rtype: pygameMenu.widgets.colorinput.ColorInput
@@ -586,13 +585,13 @@ class Menu(object):
         :param label_id: ID of the label
         :type label_id: basestring
         :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring,None
+        :type align: basestring, NoneType
         :param font_size: Font size of the text, if None use default widget font size
-        :type font_size: int,None
+        :type font_size: int, NoneType
         :param max_char: If text length exeeds this limit then split the text and add another label, if 0 there's no limit
         :type max_char: int
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple,None
+        :type margin: tuple, NoneType
         :return: Widget object
         :rtype: pygameMenu.widgets.label.Label
         """
@@ -648,13 +647,13 @@ class Menu(object):
         :param items: Elements of the selector [('Item1', var1..), ('Item2'...)]
         :type items: list
         :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring,None
+        :type align: basestring, NoneType
         :param default: Index of default value to display
         :type default: int
         :param font_size: Font size of the widget, if None use the default Menu widget font size
-        :type font_size: int,None
+        :type font_size: int, NoneType
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple,None
+        :type margin: tuple, NoneType
         :param onchange: Function when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
@@ -707,7 +706,7 @@ class Menu(object):
         :param title: Title of the text input
         :type title: basestring
         :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring,None
+        :type align: basestring, NoneType
         :param default: Default value to display
         :type default: basestring, int, float
         :param enable_copy_paste: Enable text copy, paste and cut
@@ -721,15 +720,15 @@ class Menu(object):
         :param input_underline: Underline character
         :type input_underline: basestring
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple,None
+        :type margin: tuple, NoneType
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
         :type maxwidth: int
         :param onchange: Function when changing the selector
-        :type onchange: function,None
+        :type onchange: function, NoneType
         :param onreturn: Function when pressing return button
-        :type onreturn: function,None
+        :type onreturn: function, NoneType
         :param password: Text input is a password
         :type password: bool
         :param textinput_id: ID of the text input
@@ -772,11 +771,11 @@ class Menu(object):
         :param widget: Widget object
         :type widget: pygameMenu.widgets.widget.Widget
         :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring,None
+        :type align: basestring, NoneType
         :param font_size: Widget font size, if None use the default Menu widget font size
-        :type font_size: int,None
+        :type font_size: int, NoneType
         :param margin: Widget vertical margin, if None the default Menu widget vertical margin
-        :type margin: tuple,None
+        :type margin: tuple, NoneType
         """
         assert isinstance(widget, _widgets.WidgetType)
         assert isinstance(align, (str, type(None)))
@@ -1001,12 +1000,10 @@ class Menu(object):
             if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
-    def _close(self, closelocked=True):
+    def _close(self):
         """
         Execute close callbacks and disable the Menu.
 
-        :param closelocked: Lock close event
-        :type closelocked: bool
         :return: True if Menu has been disabled
         :rtype: bool
         """
@@ -1021,9 +1018,7 @@ class Menu(object):
                 if onclose == _events.DISABLE_CLOSE:
                     close = False
                 else:
-
-                    # Closing disables the Menu
-                    self.disable(closelocked)
+                    self.disable()  # Closing disables the Menu
 
                     # Sort through events
                     if onclose == _events.RESET:
@@ -1056,16 +1051,13 @@ class Menu(object):
                 break
         return depth
 
-    def disable(self, closelocked=True):
+    def disable(self):
         """
         Disables the Menu (doesn't check events and draw on the surface).
-        If *closelocked* is *True*, all the locked submenus are closed too.
 
         :return: None
         """
-        if self.is_enabled():
-            self._top._enabled = False
-            self._top._closelocked = closelocked
+        self._top._enabled = False
 
     def center_vertically(self, current=True):
         """
@@ -1142,9 +1134,7 @@ class Menu(object):
 
         :return: None
         """
-        if not self._top._enabled:
-            self._top._enabled = True
-            self._top._closelocked = True
+        self._top._enabled = True
 
     @staticmethod
     def _exit():
@@ -1208,9 +1198,8 @@ class Menu(object):
         """
         assert isinstance(events, list)
 
-        # Some events may break the mainloop iteration if this method is called by
-        # mainloop()
-        break_mainloop = False
+        # If any widget status changes, set the status as True
+        updated = False
 
         # Update mouse
         _pygame.mouse.set_visible(self._current._mouse_visible)
@@ -1218,16 +1207,20 @@ class Menu(object):
         # Surface needs an update
         menu_surface_needs_update = False
 
-        # Scroll events
-        if self._current._scroll.update(events) or self._scroll.is_scrolling():
-            break_mainloop = True
+        # Update scroll, as it does not change the widgets
+        # It does not affect the status of updated
+        self._current._scroll.update(events)
+        if self._scroll.is_scrolling():
+            return updated
 
-        elif self._current._menubar.update(events):
-            break_mainloop = True
+        # Update the menubar, it may change the status of the widget because
+        # of the button back/close
+        if self._current._menubar.update(events):
+            updated = True
 
         # Check selected widget
         elif len(self._current._widgets) > 0 and self._current._widgets[self._current._index].update(events):
-            break_mainloop = True
+            updated = True
 
         # Check others
         else:
@@ -1239,7 +1232,7 @@ class Menu(object):
                         event.type == _pygame.KEYDOWN and event.key == _pygame.K_F4 and (
                         event.mod == _pygame.KMOD_LALT or event.mod == _pygame.KMOD_RALT)):
                     self._current._exit()
-                    break_mainloop = True
+                    updated = True
 
                 elif event.type == _pygame.locals.KEYDOWN:
 
@@ -1262,10 +1255,10 @@ class Menu(object):
                     elif event.key == _ctrl.KEY_BACK and self._top._prev is not None:
                         self._current._sounds.play_close_menu()
                         self.reset(1)  # public, do not use _current
-                    elif event.key == _ctrl.KEY_CLOSE_MENU and not self._current._closelocked:
+                    elif event.key == _ctrl.KEY_CLOSE_MENU:
                         self._current._sounds.play_close_menu()
                         if self._current._close():
-                            break_mainloop = True
+                            updated = True
 
                 elif self._current._joystick and event.type == _pygame.JOYHATMOTION:
                     if event.value == _ctrl.JOY_UP:
@@ -1323,7 +1316,7 @@ class Menu(object):
                         new_event.pos = self._current._scroll.to_world_position(event.pos)
                         widget.update((new_event,))  # This widget can change the current Menu to a submenu
                         menu_surface_needs_update = menu_surface_needs_update or widget.surface_needs_update()
-                        break_mainloop = True  # It is updated
+                        updated = True  # It is updated
                         break
 
         # Check if the position has changed
@@ -1335,10 +1328,9 @@ class Menu(object):
 
         # A widget has closed the Menu
         if not self.is_enabled():
-            break_mainloop = True
+            updated = True
 
-        self._current._closelocked = False
-        return break_mainloop
+        return updated
 
     def mainloop(self, surface, bgfun, event_loop=None, disable_loop=False, fps_limit=0):
         """
@@ -1359,11 +1351,11 @@ class Menu(object):
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :type bgfun: function
         :param event_loop: Events used by the loop if Menu was created using mainloop_loop=False
-        :type event_loop: list,None
+        :type event_loop: list, NoneType
         :param disable_loop: If true run this method for only 1 loop
         :type disable_loop: bool
         :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
-        :type fps_limit: int,float
+        :type fps_limit: int, float
         :return: None
         """
         assert isinstance(surface, _pygame.Surface)
@@ -1382,14 +1374,15 @@ class Menu(object):
             self._current._clock.tick(fps_limit)
 
             # If loop, gather events by Menu and draw the background function, if this method
-            # returns true
-            break_mainloop = self.update(_pygame.event.get())
+            # returns true then the mainloop will break
+            updated = self.update(_pygame.event.get())
 
             # As event can change the status of the Menu, this has to be checked twice
             if self.is_enabled():
                 self.draw(surface=surface)
+
             _pygame.display.flip()
-            if break_mainloop or disable_loop:
+            if updated or disable_loop:
                 self._current._background_function = None
                 return
 
@@ -1473,7 +1466,7 @@ class Menu(object):
         The sound is applied only to the base Menu (not the currently displayed).
 
         :param sound: Sound object
-        :type sound: :py:class:`pygameMenu.sound.Sound`,NoneType
+        :type sound: :py:class:`pygameMenu.sound.Sound`, NoneType
         :param recursive: Set the sound engine to all submenus
         :type recursive: bool
         :return: None
