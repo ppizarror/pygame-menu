@@ -49,9 +49,14 @@ MENU_BACKGROUND_COLOR = (228, 100, 36)
 TITLE_BACKGROUND_COLOR = (170, 65, 50)
 WINDOW_SIZE = (640, 480)
 
-sound = None
-surface = None
-main_menu = None
+# noinspection PyTypeChecker
+sound = None  # type: pygameMenu.sound.Sound
+
+# noinspection PyTypeChecker
+surface = None  # type: pygame.Surface
+
+# noinspection PyTypeChecker
+main_menu = None  # type: pygameMenu.Menu
 
 
 # -----------------------------------------------------------------------------

@@ -57,9 +57,13 @@ MENU_BACKGROUND_COLOR = (228, 55, 36)
 TITLE_BACKGROUND_COLOR = (170, 65, 50)
 WINDOW_SIZE = (640, 480)
 
-clock = None
-main_menu = None
-surface = None
+clock = None  # type: pygame.time.Clock
+
+# noinspection PyTypeChecker
+main_menu = None  # type: pygameMenu.Menu
+
+# noinspection PyTypeChecker
+surface = None  # type: pygame.Surface
 
 
 # -----------------------------------------------------------------------------
@@ -107,8 +111,8 @@ def play_function(difficulty, font, test=False):
     assert isinstance(difficulty, str)
 
     # Define globals
-    global main_menu  # type: pygameMenu.Menu
-    global clock  # type:pygame.time.Clock
+    global main_menu
+    global clock
 
     if difficulty == 'EASY':
         f = font.render('Playing as a baby (easy)', 1, COLOR_WHITE)
@@ -131,7 +135,7 @@ def play_function(difficulty, font, test=False):
 
     while True:
 
-        # Clock tick
+        # noinspection PyUnresolvedReferences
         clock.tick(60)
 
         # Application events
