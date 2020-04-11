@@ -57,7 +57,6 @@ _JOY_EVENT_REPEAT = _pygame.NUMEVENTS - 1
 
 # noinspection PyArgumentEqualDefault,PyProtectedMember,PyTypeChecker
 class Menu(object):
-
     """
     Menu object.
 
@@ -165,6 +164,7 @@ class Menu(object):
     :type widget_shadow_offset: int
     :param widget_shadow_position: Position of shadow
     :type widget_shadow_position: basestring
+    """
 
     def __init__(self,
                  menu_height,
