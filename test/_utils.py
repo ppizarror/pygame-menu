@@ -304,10 +304,10 @@ class PygameMenuUtils(object):
         :param columns: Number of columns
         :type columns: int
         :param rows: Number of rows
-        :type rows: int,None
+        :type rows: int, NoneType
         :param width: Menu width (px)
         :type width: int
-        :param height: Menu height(px)
+        :param height: Menu height (px)
         :type height: int
         :param args: Additional args
         :param kwargs: Additional key parameters

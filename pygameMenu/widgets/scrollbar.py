@@ -208,7 +208,7 @@ class ScrollBar(Widget):
         """Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
 
-        :param pixels: number of pixels to scroll
+        :param pixels: Number of pixels to scroll
         :type pixels: int
         :return: True is scroll position has changed
         :rtype: bool
@@ -282,7 +282,7 @@ class ScrollBar(Widget):
         represents the proportion of the document area shown in a scrolling
         view.
 
-        :param value: page step
+        :param value: Page step
         :type value: int
         :return: None
         """

@@ -89,7 +89,7 @@ class ScrollArea(object):
         :param shadow_position: Position of shadow
         :type shadow_position: basestring
         :param world: Surface to draw and scroll
-        :type world: pygame.Surface, NoneType
+        :type world: pygame.SurfaceType, NoneType
         """
         self._rect = _pygame.Rect(0, 0, area_width, area_height)
         self._world = world
@@ -219,7 +219,7 @@ class ScrollArea(object):
         """
         Return the Rect object.
 
-        :return: pygame.Rect
+        :return: Pygame.Rect object
         :rtype: pygame.rect.RectType
         """
         return self._rect
@@ -314,7 +314,7 @@ class ScrollArea(object):
         Call when a horizontal scroll bar as changed to update the
         position of the opposite one if it exists.
 
-        :param value: new position of the slider
+        :param value: New position of the slider
         :type value: float
         """
         for sbar in self._scrollbars:  # type: _ScrollBar
@@ -328,7 +328,7 @@ class ScrollArea(object):
         Call when a vertical scroll bar as changed to update the
         position of the opposite one if it exists.
 
-        :param value: new position of the slider
+        :param value: New position of the slider
         :type value: float
         """
         for sbar in self._scrollbars:  # type: _ScrollBar
@@ -385,8 +385,8 @@ class ScrollArea(object):
         """
         Update the scrolled surface.
 
-        :param surface: new world surface
-        :type surface: pygame.Surface
+        :param surface: New world surface
+        :type surface: pygame.SurfaceType
         """
         self._world = surface
         self._apply_size_changes()
@@ -396,8 +396,8 @@ class ScrollArea(object):
         Return the real position/Rect according to the scroll area origin
         of a position/Rect in the world surface reference.
 
-        :param virtual: position/Rect in the world surface reference
-        :type virtual: pygame.Rect, tuple, list
+        :param virtual: Position/Rect in the world surface reference
+        :type virtual: pygame.RectType, tuple, list
         """
         assert isinstance(virtual, (_pygame.Rect, tuple, list))
         offsets = self.get_offsets()
@@ -417,8 +417,8 @@ class ScrollArea(object):
         Return the position/Rect in the world surface reference
         of a real position/Rect according to the scroll area origin.
 
-        :param real: position/Rect according scroll area origin
-        :type real: pygame.Rect, tuple, list
+        :param real: Position/Rect according scroll area origin
+        :type real: pygame.RectType, tuple, list
         """
         assert isinstance(real, (_pygame.Rect, tuple, list))
         offsets = self.get_offsets()

@@ -89,7 +89,7 @@ class Menu(object):
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
-    :type onclose: function, NoneType
+    :type onclose: callable, NoneType
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, NoneType
     :param scrollbar_color: Scrollbars color
@@ -545,9 +545,9 @@ class Menu(object):
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple, NoneType
         :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
+        :type onchange: callable, NoneType
         :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
+        :type onreturn: callable, NoneType
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Additional keyword-parameters
@@ -593,7 +593,7 @@ class Menu(object):
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple, NoneType
         :return: Widget object or List of widgets if the text overflows
-        :rtype: pygameMenu.widgets.label.Label,list
+        :rtype: pygameMenu.widgets.label.Label, list[pygameMenu.widgets.label.Label]
         """
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
@@ -655,9 +655,9 @@ class Menu(object):
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple, NoneType
         :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
+        :type onchange: callable, NoneType
         :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
+        :type onreturn: callable, NoneType
         :param selector_id: ID of the selector
         :type selector_id: basestring
         :param kwargs: Additional parameters
@@ -726,9 +726,9 @@ class Menu(object):
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
         :type maxwidth: int
         :param onchange: Function when changing the selector
-        :type onchange: function, NoneType
+        :type onchange: callable, NoneType
         :param onreturn: Function when pressing return button
-        :type onreturn: function, NoneType
+        :type onreturn: callable, NoneType
         :param password: Text input is a password
         :type password: bool
         :param textinput_id: ID of the text input
@@ -1349,7 +1349,7 @@ class Menu(object):
         :param surface: Pygame surface to draw the Menu
         :type surface: pygame.surface.SurfaceType
         :param bgfun: Background function called on each loop iteration before drawing the Menu
-        :type bgfun: function
+        :type bgfun: callable
         :param event_loop: Events used by the loop if Menu was created using mainloop_loop=False
         :type event_loop: list, NoneType
         :param disable_loop: If true run this method for only 1 loop

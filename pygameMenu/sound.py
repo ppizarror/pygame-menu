@@ -295,7 +295,7 @@ class Sound(object):
         Play a sound.
 
         :param sound: Sound to be played
-        :type sound: pygame.mixer.Sound, NoneType
+        :type sound: pygame.mixer.SoundType, NoneType
         :return: True if the sound was played
         :rtype: bool
         """
@@ -416,7 +416,7 @@ class Sound(object):
         """
         Return the current channel information of the sound engine.
 
-        :return: a info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
+        :return: An info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
         :rtype: dict
         """
         channel = self.get_channel()  # type: _mixer.ChannelType

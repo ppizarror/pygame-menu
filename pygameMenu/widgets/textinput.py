@@ -460,7 +460,7 @@ class TextInput(Widget):
         :param updated: Render string has been updated or not
         :type updated: bool
         :return: New rendered surface
-        :rtype: pygame.surface.Surface
+        :rtype: pygame.surface.SurfaceType
         """
         # If underline is not enabled
         if self._input_underline_size == 0:

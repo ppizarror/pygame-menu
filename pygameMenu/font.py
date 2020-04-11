@@ -58,7 +58,7 @@ def get_font(name, size):
     :param size: Font size
     :type size: int
     :return: Font object
-    :rtype: pygame.font.Font
+    :rtype: pygame.font.FontType
     """
     if isinstance(name, _font.Font):
         font = name  # type: (_font.FontType,None)
