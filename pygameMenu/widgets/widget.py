@@ -593,7 +593,8 @@ class Widget(object):
         Set the value.
 
         .. warning:: This method does not fire the callbacks as it is
-                     called programmatically (avoid infinite loops).
+                     called programmatically. This behavior is deliberately
+                     chosen to avoid infinite loops.
 
         :param value: Value to be set on the widget
         :type value: Object

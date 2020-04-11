@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.selector
+.. module:: pygameMenu.widgets
 
 ========
 Selector
@@ -7,4 +7,5 @@ Selector
 
 .. autoclass:: Selector(...)
     :members:
+    :show-inheritance:
     :inherited-members:

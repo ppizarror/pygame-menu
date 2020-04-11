@@ -73,6 +73,7 @@ class Button(Widget):
         pass
 
     def draw(self, surface):
+        """See doc of :py:meth:`pygameMenu.widgets.widget.Widget.draw`."""
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 

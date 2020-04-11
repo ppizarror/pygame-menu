@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.button
+.. module:: pygameMenu.widgets
 
 ======
 Button
@@ -7,4 +7,5 @@ Button
 
 .. autoclass:: Button
     :members:
+    :show-inheritance:
     :inherited-members:

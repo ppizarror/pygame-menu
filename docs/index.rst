@@ -1,5 +1,9 @@
 :orphan:
 
+.. image:: _static/pygame-menu.png
+   :scale: 35%
+   :align: center
+
 .. include:: ../README.rst
 
 
@@ -14,7 +18,7 @@ was designe.
 
 Here is a basic example of how to create a menu:
 
-1. Make your imports
+1. Import the required libraries
 
 .. code-block:: python
 
@@ -35,6 +39,10 @@ Here is a basic example of how to create a menu:
 
     menu = pygameMenu.Menu(surface, pygameMenu.font.FONT_BEBAS, "My first menu")
 
+    main_menu.add_text_input('Name :')
+    main_menu.add_button('Play', start_the_game)
+    main_menu.add_button('Quit', pygameMenu.events.EXIT)
+
 3. Run your menu
 
 .. code-block:: python
@@ -42,6 +50,7 @@ Here is a basic example of how to create a menu:
     menu.mainloop(surface)
 
 **Interested?** :ref:`Go deeper in menu design <Creating menus>`.
+-----------------------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
@@ -58,8 +67,18 @@ Here is a basic example of how to create a menu:
 Widgets API
 ===========
 
-Each widget is an class that can be inserted in a menu. However
-they could be used has it to design custom menu layout.
+A menu is in fact a list of widgets arranged on a same surface.
+Each :py:mod:`pygameMenu` widget and its behaviors are defined
+in a class:
+
+
+
+For advanced programers, those classes can be used to design
+custom menu or window.
+
+Have a look to :py:mod:`pygameMenu.examples.scroll_bar.py` for
+instance. It show how to use the :py:class:`pygameMenu.widgets.ScrollBar`
+class to display large custom surface.
 
 .. toctree::
    :maxdepth: 2
