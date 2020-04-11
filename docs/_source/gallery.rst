@@ -9,9 +9,9 @@ To run the examples, simply execute these commands in a terminal:
 .. code-block:: bash
 
     $> python -m pygameMenu.examples.game_selector
-    $> python  -m pygameMenu.examples.multi_input
-    $> python  -m pygameMenu.examples.scroll_menu
-    $> python  -m pygameMenu.examples.timer_clock
+    $> python -m pygameMenu.examples.multi_input
+    $> python -m pygameMenu.examples.scroll_menu
+    $> python -m pygameMenu.examples.timer_clock
 
 Them can also be imported as follows:
 
