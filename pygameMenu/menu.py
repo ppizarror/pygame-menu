@@ -313,14 +313,14 @@ class Menu(object):
             'menu alpha must be between 0 and 100 (both values included)'
         assert_alignment(widget_alignment)
 
-        # Generate ID if empty
-        if len(menu_id) == 0:
-            menu_id = str(uuid4())
-
         # Get window size
         window_width, window_height = _pygame.display.get_surface().get_size()
         assert menu_width <= window_width and menu_height <= window_height, \
             'menu size must be lower than the size of the window'
+
+        # Generate ID if empty
+        if len(menu_id) == 0:
+            menu_id = str(uuid4())
 
         # Update background color
         menu_background_color = (menu_background_color[0],
@@ -330,6 +330,7 @@ class Menu(object):
                                  )
 
         # General properties of the Menu
+        self._background_function = None  # type: (None,callable)
         self._clock = _pygame.time.Clock()  # Inner clock
         self._height = int(menu_height)
         self._id = menu_id
@@ -927,6 +928,7 @@ class Menu(object):
             else:
                 dx = 0
             x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
+            x_coord = max(self._selection_highlight_margin_x / 2 + self._selection_border_width, x_coord)
 
             # Calculate Y position
             ysum = 0  # Compute the total height from the current row position to the top of the column
@@ -1113,6 +1115,10 @@ class Menu(object):
         # of widgets has changed and thus size shall be calculated.
         if not self._current._widgets_surface:
             self._current._build_widget_surface()
+
+        # Fill the surface with background function (setted from mainloop)
+        if self._current._background_function is not None:
+            self._current._background_function()
 
         # Fill the scrolling surface
         self._current._widgets_surface.fill((255, 255, 255, 0))
