@@ -3,47 +3,58 @@
 .. include:: ../README.rst
 
 
+===========
 First steps
 ===========
 
-Here is a basic example of how to create a menu using ``pygame-menu``.
+Making games using :py:mod:`pygame` is really cool, but most of game
+(or application) require end-user configuration. Create complex GUI
+object to display a menu can be painful. That why :py:mod:`pygame-menu`
+was designe.
+
+Here is a basic example of how to create a menu:
+
+1. Make your imports
+
+.. code-block:: python
+
+    import pygame
+    import pygameMenu
+
+2. Initialize pygame
 
 .. code-block:: python
 
     pygame.init()
     os.environ['SDL_VIDEO_CENTERED'] = '1'
-
     surface = pygame.display.set_mode((400, 600))
 
-    menu = pygameMenu.Menu(surface,
-                           pygameMenu.font.FONT_BEBAS,
-                           "My first menu")
+3. Make your menu
 
-    while True:
+.. code-block:: python
 
-        # Application events
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                exit()
+    menu = pygameMenu.Menu(surface, pygameMenu.font.FONT_BEBAS, "My first menu")
 
-        # Main menu
-        menu.mainloop(events)
+3. Run your menu
 
-        # Flip surface
-        pygame.display.flip()
+.. code-block:: python
 
+    menu.mainloop(surface)
+
+**Interested?** :ref:`Go deeper in menu design <Creating menus>`.
 
 .. toctree::
    :maxdepth: 2
    :hidden:
    :caption: First steps
 
-   _source/menu
+   _source/create_menu
    _source/add_widgets
+   _source/add_sounds
    _source/gallery
 
 
+===========
 Widgets API
 ===========
 
@@ -64,12 +75,13 @@ they could be used has it to design custom menu layout.
    _source/widget_textinput
 
 
+=================
 About pygame-menu
 =================
 
 This project does not have a mailing list and so the issues tab should
 be the first point of contact if wishing to discuss the project. If you
-have questions that you do not feel are relavent to the issues tab or
+have questions that you do not feel are relevant to the issues tab or
 just want to let me know what you think about the library, feel free to
 email me.
 
@@ -83,6 +95,7 @@ Author email: pablo@ppizarror.com
    _source/license
 
 
+==================
 Indices and tables
 ==================
 

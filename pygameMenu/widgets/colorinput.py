@@ -45,6 +45,32 @@ _TYPE_RGB = 'rgb'
 class ColorInput(TextInput):
     """
     Color input widget.
+
+    :param label: Input label text
+    :type label: basestring
+    :param colorinput_id: ID of the text input
+    :type colorinput_id: basestring
+    :param color_type: Type of color input (rgb, hex)
+    :type color_type: basestring
+    :param input_separator: Divisor between RGB channels
+    :type input_separator: basestring
+    :param input_underline: Character drawn under each number input
+    :type input_underline: basestring
+    :param cursor_color: Color of cursor
+    :type cursor_color: tuple
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
+    :param prev_size: Width of the previsualization box in terms of the height of the widget
+    :type prev_size: int, float
+    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
+    :type repeat_keys_initial_ms: float, int
+    :param repeat_keys_interval_ms: Interval between key press repetition when held
+    :type repeat_keys_interval_ms: float, int
+    :param repeat_mouse_interval_ms: Interval between mouse events when held
+    :type repeat_mouse_interval_ms: float, int
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -62,35 +88,6 @@ class ColorInput(TextInput):
                  repeat_mouse_interval_ms=100,
                  **kwargs
                  ):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param label: Input label text
-        :type label: basestring
-        :param colorinput_id: ID of the text input
-        :type colorinput_id: basestring
-        :param color_type: Type of color input (rgb, hex)
-        :type color_type: basestring
-        :param input_separator: Divisor between RGB channels
-        :type input_separator: basestring
-        :param input_underline: Character drawn under each number input
-        :type input_underline: basestring
-        :param cursor_color: Color of cursor
-        :type cursor_color: tuple
-        :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
-        :param prev_size: Width of the previsualization box in terms of the height of the widget
-        :type prev_size: int, float
-        :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-        :type repeat_keys_initial_ms: float, int
-        :param repeat_keys_interval_ms: Interval between key press repetition when held
-        :type repeat_keys_interval_ms: float, int
-        :param repeat_mouse_interval_ms: Interval between mouse events when held
-        :type repeat_mouse_interval_ms: float, int
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(label, str)
         assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
@@ -164,20 +161,15 @@ class ColorInput(TextInput):
             super(ColorInput, self).set_value('#')
         self.change()
 
-    def set_value(self, text):
-        """
-        See upper class doc.
-        Widget always returns a tuple of (r,g,b)
-        """
+    def set_value(self, rgb_tuple):
         _color = ''
-
         if self._color_type == _TYPE_RGB:
-            if text == '':
+            if rgb_tuple == '':
                 super(ColorInput, self).set_value('')
                 return
-            assert isinstance(text, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
-            assert len(text) == 3, 'Tuple must contain only 3 colors, R, G, B'
-            r, g, b = text
+            assert isinstance(rgb_tuple, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
+            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R, G, B'
+            r, g, b = rgb_tuple
             assert isinstance(r, int), 'Red color must be an integer'
             assert isinstance(g, int), 'Blue color must be an integer'
             assert isinstance(b, int), 'Green color must be an integer'
@@ -186,7 +178,7 @@ class ColorInput(TextInput):
             assert 0 <= b <= 255, 'Green color must be between 0 and 255'
             _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
         elif self._color_type == _TYPE_HEX:
-            text = str(text).strip()
+            text = str(rgb_tuple).strip()
             if text == '':
                 _color = '#'
             else:
@@ -212,9 +204,6 @@ class ColorInput(TextInput):
         super(ColorInput, self).set_value(_color)
 
     def get_value(self):
-        """
-        See upper class doc.
-        """
         if self._color_type == _TYPE_RGB:
             _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
@@ -271,16 +260,10 @@ class ColorInput(TextInput):
         return self._rect
 
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         super(ColorInput, self).draw(surface)
         self._previsualize_color(surface)
 
     def update(self, events):
-        """
-        See upper class doc.
-        """
         _input = self._input_string
         _curpos = self._cursor_position
         _disable_remove_separator = True

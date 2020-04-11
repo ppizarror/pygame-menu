@@ -36,49 +36,31 @@ from pygameMenu.widgets.widget import Widget
 class Label(Widget):
     """
     Label widget.
+
+    :param label: Text of the button
+    :type label: basestring
+    :param label_id: Button ID
+    :type label_id: basestring
     """
 
     def __init__(self, label, label_id=''):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param label: Text of the button
-        :type label: basestring
-        :param label_id: Button ID
-        :type label_id: basestring
-        """
         assert isinstance(label, str)
         super(Label, self).__init__(widget_id=label_id)
         self._label = label
         self.is_selectable = False
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         pass
 
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
     def draw_selected_rect(self, *args, **kwargs):
-        """
-        See upper class doc.
-        """
         pass  # Nothing to select
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         self._surface = self.render_string(self._label, self._font_color)
 
     def update(self, events):
-        """
-        See upper class doc.
-        """
         return False

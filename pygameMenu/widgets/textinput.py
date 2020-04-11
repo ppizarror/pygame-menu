@@ -52,7 +52,6 @@ except ImportError:
         """
         pass
 
-
     def paste():
         """
         Paste method.
@@ -61,7 +60,6 @@ except ImportError:
         :rtype: basestring
         """
         return ''
-
 
     class PyperclipException(RuntimeError):
         """
@@ -74,6 +72,50 @@ except ImportError:
 class TextInput(Widget):
     """
     Text input widget.
+
+    :param label: Input label text
+    :type label: basestring
+    :param textinput_id: ID of the text input
+    :type textinput_id: basestring
+    :param input_type: Type of data
+    :type input_type: basestring
+    :param input_underline: Character drawn under the input
+    :type input_underline: basestring
+    :param cursor_color: Color of cursor
+    :type cursor_color: tuple
+    :param enable_copy_paste: Enables copy, paste and cut
+    :type enable_copy_paste: bool
+    :param enable_selection: Enables selection of text
+    :type enable_selection: tuple
+    :param history: Maximum number of editions stored
+    :type history: int
+    :param maxchar: Maximum length of input
+    :type maxchar: int
+    :param maxwidth: Maximum size of the text to be displayed (overflow), if 0 this feature is disabled
+    :type maxwidth: int
+    :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
+    :type maxwidth_dynamically_update: bool
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
+    :param password: Input string is displayed as a password
+    :type password: bool
+    :param password_char: Character used by password type
+    :type password_char: basestring
+    :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
+    :type repeat_keys_initial_ms: float, int
+    :param repeat_keys_interval_ms: Interval between key press repetition when held
+    :type repeat_keys_interval_ms: float, int
+    :param repeat_mouse_interval_ms: Interval between mouse events when held
+    :type repeat_mouse_interval_ms: float, int
+    :param selection_color: Selection box color
+    :type selection_color: tuple
+    :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
+    :type text_ellipsis: basestring
+    :param valid_chars: List of chars that are valid, None if all chars are valid
+    :type valid_chars: list
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -100,53 +142,6 @@ class TextInput(Widget):
                  valid_chars=None,
                  **kwargs
                  ):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param label: Input label text
-        :type label: basestring
-        :param textinput_id: ID of the text input
-        :type textinput_id: basestring
-        :param input_type: Type of data
-        :type input_type: basestring
-        :param input_underline: Character drawn under the input
-        :type input_underline: basestring
-        :param cursor_color: Color of cursor
-        :type cursor_color: tuple
-        :param enable_copy_paste: Enables copy, paste and cut
-        :type enable_copy_paste: bool
-        :param enable_selection: Enables selection of text
-        :type enable_selection: tuple
-        :param history: Maximum number of editions stored
-        :type history: int
-        :param maxchar: Maximum length of input
-        :type maxchar: int
-        :param maxwidth: Maximum size of the text to be displayed (overflow), if 0 this feature is disabled
-        :type maxwidth: int
-        :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
-        :type maxwidth_dynamically_update: bool
-        :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
-        :param password: Input string is displayed as a password
-        :type password: bool
-        :param password_char: Character used by password type
-        :type password_char: basestring
-        :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-        :type repeat_keys_initial_ms: float, int
-        :param repeat_keys_interval_ms: Interval between key press repetition when held
-        :type repeat_keys_interval_ms: float, int
-        :param repeat_mouse_interval_ms: Interval between mouse events when held
-        :type repeat_mouse_interval_ms: float, int
-        :param selection_color: Selection box color
-        :type selection_color: tuple
-        :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
-        :type text_ellipsis: basestring
-        :param valid_chars: List of chars that are valid, None if all chars are valid
-        :type valid_chars: list
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(label, str)
         assert isinstance(textinput_id, str)
         assert isinstance(input_type, str)
@@ -1167,8 +1162,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-                     text[0:text_end] + \
-                     self._input_string[self._cursor_position:len(self._input_string)]
+            text[0:text_end] + \
+            self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

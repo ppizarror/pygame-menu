@@ -42,6 +42,21 @@ from pygameMenu.widgets.widget import Widget
 class MenuBar(Widget):
     """
     MenuBar widget.
+
+    :param label: Title of the menu
+    :type label: basestring
+    :param width: Width of the menu bar (generally width of the menu dialog)
+    :type width: int
+    :param back_box: Draw a back-box button on header
+    :type back_box: bool
+    :param bgcolor: Color behind the polygon (transparent if not given)
+    :type bgcolor: tuple, list
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
+    :param args: Optional arguments for callbacks
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -54,24 +69,6 @@ class MenuBar(Widget):
                  *args,
                  **kwargs
                  ):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param label: Title of the menu
-        :type label: basestring
-        :param width: Width of the menu bar (generally width of the menu dialog)
-        :type width: int
-        :param back_box: Draw a back-box button on header
-        :type back_box: bool
-        :param bgcolor: Color behind the polygon (transparent if not given)
-        :type bgcolor: tuple, list
-        :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
-        :param args: Optional arguments for callbacks
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(label, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
@@ -94,15 +91,9 @@ class MenuBar(Widget):
         self._width = width  # type: (int,float)
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         pass
 
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._render()
 
         if self._bgcolor:
@@ -130,9 +121,6 @@ class MenuBar(Widget):
         return self._label
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         self._surface = self.render_string(self._label, self._font_selected_color)
 
         # Usually done in get_rect(), but can not be called here because it call _render() itself
@@ -199,9 +187,6 @@ class MenuBar(Widget):
         self._offsetx = offsetx
 
     def update(self, events):
-        """
-        See upper class doc.
-        """
         updated = False
         for event in events:  # type: _pygame.event.EventType
 

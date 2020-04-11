@@ -33,7 +33,8 @@ release = pygameMenu.__version__
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
-              'sphinx.ext.intersphinx']
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.autosectionlabel']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -67,6 +68,12 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 html_title = '%s %s Documentation' % (project, release)
+
+html_logo = '_static/pygame-menu-small.png'
+
+html_theme_options = {
+    'prev_next_buttons_location': None
+}
 
 # -- Options for LaTeX output -------------------------------------------------
 

@@ -7,3 +7,4 @@ Label
 
 .. autoclass:: Label(...)
     :members:
+    :inherited-members:

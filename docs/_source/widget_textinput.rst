@@ -7,3 +7,4 @@ TextInput
 
 .. autoclass:: TextInput(...)
     :members:
+    :inherited-members:
