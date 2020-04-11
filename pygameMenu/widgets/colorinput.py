@@ -64,11 +64,11 @@ class ColorInput(TextInput):
     :param prev_size: Width of the previsualization box in terms of the height of the widget
     :type prev_size: int, float
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :type repeat_keys_initial_ms: float, int
+    :type repeat_keys_initial_ms: int, float
     :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :type repeat_keys_interval_ms: float, int
+    :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :type repeat_mouse_interval_ms: float, int
+    :type repeat_mouse_interval_ms: int, float
     :param kwargs: Optional keyword-arguments for callbacks
     """
 

@@ -302,7 +302,7 @@ class ScrollBar(Widget):
         Set the position of the scrollbar.
 
         :param value: Position
-        :type value: int,float
+        :type value: int, float
         :return: None
         """
         assert self._values_range[0] <= value <= self._values_range[1], \

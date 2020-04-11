@@ -105,11 +105,11 @@ class TextInput(Widget):
     :param password_char: Character used by password type
     :type password_char: basestring
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :type repeat_keys_initial_ms: float, int
+    :type repeat_keys_initial_ms: int, float
     :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :type repeat_keys_interval_ms: float, int
+    :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :type repeat_mouse_interval_ms: float, int
+    :type repeat_mouse_interval_ms: int, float
     :param selection_color: Selection box color
     :type selection_color: tuple
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
@@ -888,7 +888,7 @@ class TextInput(Widget):
         Set the value of the text.
 
         :param text: New text of the widget
-        :type text: basestring,int,float
+        :type text: basestring, int, float
         :return: None
         """
         if self._password and text != '':

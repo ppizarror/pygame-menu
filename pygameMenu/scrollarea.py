@@ -342,7 +342,7 @@ class ScrollArea(object):
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
-        :type rect: pygame.Rect
+        :type rect: pygame.RectType
         :param margin: Extra margin around the rect
         :type margin: int
         """

@@ -216,7 +216,7 @@ class Widget(object):
         Set widget max width (column support) if force_fit_text is enabled.
 
         :param width: Width in px, None if max width is disabled
-        :type width: int,float,None
+        :type width: int, float, NoneType
         """
         if width is not None:
             assert isinstance(width, (int, float))
