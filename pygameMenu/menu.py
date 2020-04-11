@@ -1506,9 +1506,6 @@ class Menu(object):
             else:
                 break
 
-        # self._actual = self._top._actual
-        print('---')
-        print(self._actual)
         self._actual._select(self._top._actual._index)
 
     def _select(self, new_index):
