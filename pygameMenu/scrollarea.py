@@ -46,7 +46,6 @@ class ScrollArea(object):
     scroll bars so that the entire area of the child surface can be viewed.
     """
 
-    # noinspection PyArgumentEqualDefault
     def __init__(self,
                  area_width,
                  area_height,
@@ -116,7 +115,6 @@ class ScrollArea(object):
                                   onchange=self._on_vertical_scroll)
             else:
                 sbar = _ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
-                                  orientation=_locals.ORIENTATION_HORIZONTAL,
                                   slider_pad=scrollbar_slider_pad,
                                   slider_color=scrollbar_slider_color,
                                   page_ctrl_thick=scrollbar_thick,
@@ -126,8 +124,7 @@ class ScrollArea(object):
                             color=shadow_color,
                             position=shadow_position,
                             offset=shadow_offset)
-            sbar.set_controls(joystick=False,
-                              mouse=True)
+            sbar.set_controls(joystick=False)
 
             self._scrollbars.append(sbar)
 

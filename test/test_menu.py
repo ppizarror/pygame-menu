@@ -260,7 +260,7 @@ class MenuTest(unittest.TestCase):
         submenu = PygameMenuUtils.generic_menu()
         submenu.add_text_input('text', textinput_id='id4', default='thewidget')
         self.menu.add_button('submenu', submenu)
-        data = self.menu.get_input_data(True)
+        data = self.menu.get_input_data(recursive=True)
         self.assertEqual(data['id4'], 'thewidget')
 
         # Add a submenu within submenu with a repeated id, menu.get_input_data
@@ -268,7 +268,7 @@ class MenuTest(unittest.TestCase):
         subsubmenu = PygameMenuUtils.generic_menu()
         subsubmenu.add_text_input('text', textinput_id='id4', default='repeateddata')
         submenu.add_button('submenu', subsubmenu)
-        self.assertRaises(ValueError, lambda: self.menu.get_input_data(True))
+        self.assertRaises(ValueError, lambda: self.menu.get_input_data(recursive=True))
 
     def test_columns_menu(self):
         """
