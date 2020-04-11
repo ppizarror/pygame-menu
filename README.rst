@@ -1,14 +1,20 @@
 
+===========
 pygame-menu
 ===========
+
+.. image:: _static/pygame-menu.png
+   :scale: 35%
+
+Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
+
+.. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
+   :target: https://travis-ci.org/ppizarror/pygame-menu
+   :alt: Travis
 
 .. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ppizarror/pygame-menu
     :alt: Codecov
-
-.. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
-    :target: https://travis-ci.org/ppizarror/pygame-menu
-    :alt: Travis
 
 .. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
     :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts
@@ -18,10 +24,8 @@ pygame-menu
     :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python
     :alt: Language grade: Python
 
-Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
-
-Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ or
-run on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
+Source repo on `github <https://github.com/ppizarror/pygame-menu>`_ ,
+and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
 Introduction
 ------------
@@ -29,20 +33,30 @@ Introduction
 Pygame-menu is a python-pygame library for creating menus, it supports
 selectors, buttons, labels, color inputs, text inputs with many options to customize.
 
-Comprehensive documentation is available at https://pygame-menu.readthedocs.io .
+Comprehensive documentation is available at https://pygame-menu.readthedocs.io.
 
 
 Install Instructions
 --------------------
 
-Pygame-menu can be downloaded via pip. Simply run::
+Pygame-menu can be installed via pip. Simply run::
 
-    pip install pygame-menu
+    $> pip install pygame-menu
+
+To build the documentation from git repository:
+
+.. code-block:: bash
+
+    $> clone https://github.com/ppizarror/pygame-menu
+    $> cd pygame-menu
+    $> pip install -e .[doc]
+    $> cd docs
+    $> make html
 
 Dependencies
 ------------
 
-This library is dependant on the following
+This library is dependent on the following
 
 - `Pygame <http://www.pygame.org/download.shtml>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_
@@ -53,7 +67,6 @@ Contributors
 Core developers:
 
 - `Pablo Pizarro R. <https://ppizarror.com>`_
-
 
 Other contributors:
 

@@ -49,6 +49,27 @@ class ScrollBar(Widget):
 
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
+
+    :param length: Length of the page control
+    :type length: int
+    :param values_range: Min and max values
+    :type values_range: tuple, list
+    :param scrollbar_id: Bar identifier
+    :type scrollbar_id: basestring
+    :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+    :type orientation: basestring
+    :param slider_pad: Space between slider and page control
+    :type slider_pad: int
+    :param slider_color: Color of the slider
+    :type slider_color: tuple, list
+    :param page_ctrl_thick: Page control thickness
+    :type page_ctrl_thick: int
+    :param page_ctrl_color: Page control color
+    :type page_ctrl_color: tuple, list
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
     """
 
     def __init__(self,
@@ -64,26 +85,6 @@ class ScrollBar(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param length: Length of the page control
-        :type length: int
-        :param values_range: Min and max values
-        :type values_range: tuple, list
-        :param scrollbar_id: Bar identifier
-        :type scrollbar_id: basestring
-        :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
-        :type orientation: basestring
-        :param slider_pad: Space between slider and page control
-        :type slider_pad: int
-        :param slider_color: Color of the slider
-        :type slider_color: tuple, list
-        :param page_ctrl_thick: Page control thickness
-        :type page_ctrl_thick: int
-        :param page_ctrl_color: Page control color
-        :type page_ctrl_color: tuple, list
-        """
         assert isinstance(length, (int, float))
         assert isinstance(values_range, (tuple, list))
         assert values_range[1] > values_range[0], 'minimum value first is expected'
@@ -120,9 +121,6 @@ class ScrollBar(Widget):
         self.set_orientation(orientation)
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         pass
 
     def _apply_size_changes(self):
@@ -142,9 +140,6 @@ class ScrollBar(Widget):
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
@@ -193,9 +188,6 @@ class ScrollBar(Widget):
         return value
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         # Render page control
         self._surface = make_surface(*self._rect.size)
         self._surface.fill(self._page_ctrl_color)
@@ -327,9 +319,6 @@ class ScrollBar(Widget):
         self._scroll(pixels - self._slider_position)
 
     def update(self, events):
-        """
-        See upper class doc.
-        """
         updated = False
         for event in events:  # type: _pygame.event.EventType
             if event.type == _pygame.KEYDOWN and self._orientation == 1\

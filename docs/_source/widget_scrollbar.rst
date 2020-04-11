@@ -7,3 +7,4 @@ ScrollBar
 
 .. autoclass:: ScrollBar(...)
     :members:
+    :inherited-members:

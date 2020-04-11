@@ -7,3 +7,4 @@ ColorInput
 
 .. autoclass:: ColorInput(...)
     :members:
+    :inherited-members:

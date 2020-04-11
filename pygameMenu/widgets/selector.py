@@ -40,6 +40,20 @@ from pygameMenu.widgets.widget import Widget
 class Selector(Widget):
     """
     Selector widget.
+
+    :param label: Selector label text
+    :type label: basestring
+    :param elements: Elements of the selector
+    :type elements: list
+    :param selector_id: ID of the selector
+    :type selector_id: basestring
+    :param default: Index of default element to display
+    :type default: int
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -51,23 +65,6 @@ class Selector(Widget):
                  onreturn=None,
                  **kwargs
                  ):
-        """
-        Description of the specific parameters (see Widget class for generic ones):
-
-        :param label: Selector label text
-        :type label: basestring
-        :param elements: Elements of the selector
-        :type elements: list
-        :param selector_id: ID of the selector
-        :type selector_id: basestring
-        :param default: Index of default element to display
-        :type default: int
-        :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(label, str)
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
@@ -100,15 +97,9 @@ class Selector(Widget):
             self.right()
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         self._labelsize = self._font.size(self._label)[0]
 
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
@@ -140,9 +131,6 @@ class Selector(Widget):
         self.change(*self._elements[self._index][1:])
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         string = self._sformat.format(self._label, self.get_value()[0])
         if self.selected:
             color = self._font_selected_color
@@ -164,9 +152,6 @@ class Selector(Widget):
         raise ValueError("No value '{}' found in selector".format(text))
 
     def update(self, events):
-        """
-        See upper class doc.
-        """
         updated = False
         for event in events:  # type: _pygame.event.EventType
 

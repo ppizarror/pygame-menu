@@ -7,3 +7,4 @@ MenuBar
 
 .. autoclass:: MenuBar(...)
     :members:
+    :inherited-members:

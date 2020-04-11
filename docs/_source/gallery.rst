@@ -3,6 +3,23 @@
 Gallery
 =======
 
+Several examples are provided with the :py:mod:`pygameMenu` library.
+To run the examples, simply execute these commands in a terminal:
+
+.. code-block:: bash
+
+    $> python -m pygameMenu.examples.game_selector
+    $> python  -m pygameMenu.examples.multi_input
+    $> python  -m pygameMenu.examples.scroll_menu
+    $> python  -m pygameMenu.examples.timer_clock
+
+Them can also be imported as follows:
+
+.. code-block:: python
+
+    from pygameMenu.examples.example import main
+    main()
+
 Normal button menu
 ------------------
 
@@ -30,7 +47,7 @@ Mouse support
 Different entries
 -----------------
 
-.. image:: ../_static/supported entries.gif
+.. image:: ../_static/supported_entries.gif
     :scale: 60 %
     :align: center
     :alt: Different entries

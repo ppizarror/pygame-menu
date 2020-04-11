@@ -118,10 +118,10 @@ class Widget(object):
 
     def apply(self, *args):
         """
-        Run 'on_return' callback when return event. A callback function
+        Run ``on_return`` callback when return event. A callback function
         receives the following arguments:
 
-            callback_func( value, *args, *widget._args, **widget._kwargs )
+            callback_func( value, \*args, \*widget._args, \*\*widget._kwargs )
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -142,10 +142,10 @@ class Widget(object):
 
     def change(self, *args):
         """
-        Run 'on_change' callback after change event is triggered. A callback function
+        Run ``on_change`` callback after change event is triggered. A callback function
         receives the following arguments:
 
-            callback_func( value, *args, *widget._args, **widget._kwargs )
+            callback_func( value, \*args, \*widget._args, \*\*widget._kwargs )
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -212,16 +212,16 @@ class Widget(object):
                           rect,
                           border_width)
 
-    def set_max_width(self, w):
+    def set_max_width(self, width):
         """
         Set widget max width (column support) if force_fit_text is enabled.
 
-        :param w: Width in px, None if max width is disabled
-        :type w: int,float,None
+        :param width: Width in px, None if max width is disabled
+        :type width: int,float,None
         """
-        if w is not None:
-            assert isinstance(w, (int, float))
-        self._max_width = w
+        if width is not None:
+            assert isinstance(width, (int, float))
+        self._max_width = width
 
     def get_margin(self):
         """
@@ -603,8 +603,8 @@ class Widget(object):
         """
         Set the value.
 
-        .. warning:: This method shall not fire the callbacks as it is
-                     called programmatically (avoid possible loops).
+        .. warning:: This method does not fire the callbacks as it is
+                     called programmatically (avoid infinite loops).
 
         :param value: Value to be set on the widget
         :type value: Object
