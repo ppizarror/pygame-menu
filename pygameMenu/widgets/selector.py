@@ -108,7 +108,7 @@ class Selector(Widget):
         """
         Return the current value of the selector at the selected index.
 
-        :return: Value and index as a tuple
+        :return: Value and index as a tuple, (value,index)
         :rtype: tuple
         """
         return self._elements[self._index][0], self._index

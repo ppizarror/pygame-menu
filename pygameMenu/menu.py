@@ -592,8 +592,8 @@ class Menu(object):
         :type max_char: int
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple, NoneType
-        :return: Widget object
-        :rtype: pygameMenu.widgets.label.Label
+        :return: Widget object or List of widgets if the text overflows
+        :rtype: pygameMenu.widgets.label.Label,list
         """
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
