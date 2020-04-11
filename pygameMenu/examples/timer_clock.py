@@ -153,11 +153,12 @@ def main(test=False):
 
     # Timer
     timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
+                                 mainloop_loop=False,  # If False then mainloop will break at first iteration
                                  menu_alpha=85,
                                  menu_background_color=(0, 0, 0),  # Background color
                                  menu_height=400,
                                  menu_width=600,
-                                 onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
+                                 onclose=pygameMenu.events.RESET,
                                  selection_highlight_border_width=4,
                                  title='Timer Menu',
                                  title_background_color=(0, 0, 0),
@@ -227,7 +228,6 @@ def main(test=False):
                                 menu_alpha=90,
                                 menu_height=400,
                                 menu_width=600,
-                                onclose=pygameMenu.events.CLOSE,
                                 title='Main Menu',
                                 title_background_color=(170, 65, 50),
                                 title_offset_y=5,
@@ -268,7 +268,7 @@ def main(test=False):
         surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
 
         # Execute main from principal menu if is enabled
-        main_menu.mainloop(surface=surface, bgfun=mainmenu_background, disable_loop=test)
+        main_menu.mainloop(surface=surface, event_loop=events, bgfun=mainmenu_background, disable_loop=test)
 
         # Flip surface
         pygame.display.flip()

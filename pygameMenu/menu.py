@@ -72,11 +72,12 @@ class Menu(object):
                  columns=1,
                  enabled=True,
                  joystick_enabled=True,
+                 mainloop_loop=True,
                  menu_alpha=100,
                  menu_background_color=(0, 0, 0),
                  mouse_enabled=True,
                  mouse_visible=True,
-                 onclose=None,
+                 onclose=pygameMenu.events.CLOSE,
                  rows=None,
                  scrollbar_color=(235, 235, 235),
                  scrollbar_shadow=False,
@@ -136,6 +137,8 @@ class Menu(object):
         :type enabled: bool
         :param joystick_enabled: Enable/disable joystick on menu
         :type joystick_enabled: bool
+        :param mainloop_loop: If False, the menu will not loop in .mainloop() method, and background image will not be drawed
+        :type mainloop_loop: bool
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
         :type menu_alpha: int
         :param menu_background_color: Menu background color
@@ -228,6 +231,7 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
+        assert isinstance(mainloop_loop, bool)
         assert isinstance(menu_alpha, int)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
@@ -322,22 +326,34 @@ class Menu(object):
                                  )
 
         # General properties of the menu
-        self._background_function = None  # Function used in .draw(), only changed by mainloop bgfun parameter
         self._clock = _pygame.time.Clock()  # Inner clock
-        self._closelocked = False  # Lock close until next mainloop
-        self._enabled = enabled  # Menu is enabled or not
         self._height = int(menu_height)
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
+        self._mainloop_loop = mainloop_loop
         self._onclose = onclose  # Function that calls after closing menu
         self._sounds = _Sound()  # type: _Sound
+        self._submenus = []  # type: list
         self._width = int(menu_width)
 
-        # Menu links (pointer to previous and next menus in nested submenus)
+        # Menu links (pointer to previous and next menus in nested submenus), for public methods
+        # accesing self should be through "_actual", because user can move through submenus
+        # and self pointer should target the current menu object. Private methods access
+        # through self (not _actual) because these methods are called by public (_actual) or
+        # by themselves. _top is only used when moving through menus (open,reset)
         self._actual = self  # Actual menu
+
+        # Prev stores a list of menu pointers, when accesing a submenu, prev grows as
+        # prev = [prev, new_pointer]
         self._prev = None  # type: list
-        self._top = None  # type: Menu
-        self._submenus = []  # type: list
+
+        # Top is the same for the menus and submenus if the user moves through them
+        self._top = self  # type: Menu
+
+        # Enabled and closed belongs to top, closing a submenu is equal as closing the root
+        # menu
+        self._closelocked = False  # Lock close until next mainloop
+        self._enabled = enabled  # Menu is enabled or not
 
         # Position of menu
         window_width, window_height = _pygame.display.get_surface().get_size()
@@ -455,15 +471,15 @@ class Menu(object):
 
         # If element is a Menu
         if isinstance(element, Menu):
-            self._submenus.append(element)
-            widget = _widgets.Button(element_name, button_id, None, self._open, element)
+            self._actual._submenus.append(element)
+            widget = _widgets.Button(element_name, button_id, None, self._actual._open, element)
         # If element is a PyMenuAction
         elif element == _events.BACK:  # Back to menu
-            widget = _widgets.Button(element_name, button_id, None, self.reset, 1)
+            widget = _widgets.Button(element_name, button_id, None, self.reset, 1)  # reset is public, so no _actual
         elif element == _events.CLOSE:  # Close menu
-            widget = _widgets.Button(element_name, button_id, None, self._close, False)
+            widget = _widgets.Button(element_name, button_id, None, self._actual._close, False)
         elif element == _events.EXIT:  # Exit program
-            widget = _widgets.Button(element_name, button_id, None, self._exit)
+            widget = _widgets.Button(element_name, button_id, None, self._actual._exit)
         # If element is a function
         elif isinstance(element, (types.FunctionType, types.MethodType)) or callable(element):
             widget = _widgets.Button(element_name, button_id, None, element, *args)
@@ -471,12 +487,12 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         # Configure and add the button
-        self._configure_widget(widget=widget,
-                               align=kwargs.pop('align', self._widget_alignment),
-                               font_size=kwargs.pop('font_size', self._widget_font_size),
-                               margin=kwargs.pop('margin', self._widget_margin),
-                               )
-        self._append_widget(widget)
+        self._actual._configure_widget(widget=widget,
+                                       align=kwargs.pop('align', self._actual._widget_alignment),
+                                       font_size=kwargs.pop('font_size', self._actual._widget_font_size),
+                                       margin=kwargs.pop('margin', self._actual._widget_margin),
+                                       )
+        self._actual._append_widget(widget)
         return widget
 
     def add_color_input(self,
@@ -540,9 +556,9 @@ class Menu(object):
                                      onreturn=onreturn,
                                      prev_size=previsualization_width,
                                      **kwargs)
-        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._actual._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
         widget.set_value(default)
-        self._append_widget(widget)
+        self._actual._append_widget(widget)
         return widget
 
     def add_label(self,
@@ -580,10 +596,10 @@ class Menu(object):
         # If no overflow
         if len(title) <= max_char or max_char == 0:
             widget = _widgets.Label(label=title, label_id=label_id)
-            self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
-            self._append_widget(widget)
+            self._actual._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+            self._actual._append_widget(widget)
         else:
-            self._check_id_duplicated(label_id)  # Before adding + LEN
+            self._actual._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
             for line in textwrap.wrap(title, max_char):
                 widget.append(self.add_label(title=line,
@@ -647,8 +663,8 @@ class Menu(object):
                                    onchange=onchange,
                                    onreturn=onreturn,
                                    **kwargs)
-        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
-        self._append_widget(widget)
+        self._actual._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._actual._append_widget(widget)
         return widget
 
     def add_text_input(self,
@@ -734,9 +750,9 @@ class Menu(object):
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
-        self._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._actual._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
         widget.set_value(default)
-        self._append_widget(widget)
+        self._actual._append_widget(widget)
         return widget
 
     def _configure_widget(self, widget, align=None, font_size=None, margin=None):
@@ -812,7 +828,6 @@ class Menu(object):
 
         :return: None
         """
-        self._check_menu_initialized()
         if self._top._prev is not None:
             self.reset(1)
         else:
@@ -981,8 +996,7 @@ class Menu(object):
         :return: True if menu has been disabled
         :rtype: bool
         """
-        self._check_menu_initialized()
-        onclose = self._top._actual._onclose
+        onclose = self._onclose
         if onclose is None:
             close = False
         else:
@@ -993,13 +1007,18 @@ class Menu(object):
                 if onclose == _events.DISABLE_CLOSE:
                     close = False
                 else:
-                    self._top.disable(closelocked)
+
+                    # Closing disables the menu
+                    self.disable(closelocked)
+
+                    # Sort through events
                     if onclose == _events.RESET:
                         self.full_reset()
                     elif onclose == _events.BACK:
                         self.reset(1)
                     elif onclose == _events.EXIT:
                         self._exit()
+
             elif isinstance(onclose, (types.FunctionType, types.MethodType)):
                 onclose()
         return close
@@ -1029,9 +1048,9 @@ class Menu(object):
 
         :return: None
         """
-        if self._enabled:
-            self._enabled = False
-            self._closelocked = closelocked
+        if self._top._enabled:
+            self._top._enabled = False
+            self._top._closelocked = closelocked
 
     def center_vertically(self):
         """
@@ -1042,14 +1061,14 @@ class Menu(object):
         >>> menu = pygameMenu.Menu(...)
         >>> menu.center_vertically()
         """
-        self._build_widget_surface()
-        horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
-        _, max_y = self._get_widget_max_position()
-        max_y -= self._widget_offset_y  # Only use total height
-        available = self._height - self._menubar.get_rect().height - horizontal_scroll
-        new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
-        self._widget_offset_y = int(self._height * new_pos)
-        self._build_widget_surface()  # Rebuild
+        self._actual._build_widget_surface()
+        horizontal_scroll = self._actual._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        _, max_y = self._actual._get_widget_max_position()
+        max_y -= self._actual._widget_offset_y  # Only use total height
+        available = self._actual._height - self._actual._menubar.get_rect().height - horizontal_scroll
+        new_pos = max((available - max_y) / (2.0 * self._actual._height), 0)  # Percentage of height
+        self._actual._widget_offset_y = int(self._actual._height * new_pos)
+        self._actual._build_widget_surface()  # Rebuild
 
     def draw(self, surface):
         """
@@ -1059,17 +1078,13 @@ class Menu(object):
         :type surface: pygame.surface.SurfaceType
         :return: None
         """
-        if not self._enabled:
+        if not self._top._enabled:
             raise RuntimeError('Menu is not enabled, it cannot be drawn')
 
         # The surface may has been erased because the number
         # of widgets has changed and thus size shall be calculated.
         if not self._actual._widgets_surface:
             self._actual._build_widget_surface()
-
-        # Fill the background if the function exists (mainloop)
-        if self._actual._background_function is not None:
-            self._actual._background_function()
 
         # Fill the scrolling surface
         self._actual._widgets_surface.fill((255, 255, 255, 0))
@@ -1093,9 +1108,9 @@ class Menu(object):
 
         :return: None
         """
-        if not self._enabled:
-            self._enabled = True
-            self._closelocked = True
+        if not self._top._enabled:
+            self._top._enabled = True
+            self._top._closelocked = True
 
     @staticmethod
     def _exit():
@@ -1109,19 +1124,19 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Returns true/false if menu is enabled or not.
+        Returns true/false if the current menu is enabled or not.
 
         :return: True if the menu is enabled
         :rtype: bool
         """
-        return self._enabled
+        return self._top._enabled
 
     def _left(self):
         """
         Left event (column support).
         """
-        if self._actual._index >= self._actual._rows:
-            self._select(self._actual._index - self._actual._rows)
+        if self._index >= self._rows:
+            self._select(self._index - self._rows)
         else:
             self._select(0)
 
@@ -1129,19 +1144,19 @@ class Menu(object):
         """
         Right event (column support).
         """
-        if self._actual._index + self._actual._rows < len(self._actual._widgets):
-            self._select(self._actual._index + self._actual._rows)
+        if self._index + self._rows < len(self._widgets):
+            self._select(self._index + self._rows)
         else:
-            self._select(len(self._actual._widgets) - 1)
+            self._select(len(self._widgets) - 1)
 
     def _handle_joy_event(self):
         """
         Handle joy events.
         """
         if self._joy_event & _JOY_EVENT_UP:
-            self._select(self._actual._index - 1)
+            self._select(self._index - 1)
         if self._joy_event & _JOY_EVENT_DOWN:
-            self._select(self._actual._index + 1)
+            self._select(self._index + 1)
         if self._joy_event & _JOY_EVENT_LEFT:
             self._left()
         if self._joy_event & _JOY_EVENT_RIGHT:
@@ -1158,9 +1173,7 @@ class Menu(object):
         """
         # NOTE: For usage, all Menu accesors must be "self._actual"
         assert isinstance(events, list)
-        break_mainloop = False
-        if self._top is None:
-            self._top = self
+        break_mainloop = not self._actual._mainloop_loop
 
         # Update mouse
         _pygame.mouse.set_visible(self._actual._mouse_visible)
@@ -1189,7 +1202,7 @@ class Menu(object):
                 if event.type == _pygame.locals.QUIT or (
                         event.type == _pygame.KEYDOWN and event.key == _pygame.K_F4 and (
                         event.mod == _pygame.KMOD_LALT or event.mod == _pygame.KMOD_RALT)):
-                    self._exit()
+                    self._actual._exit()
                     break_mainloop = True
 
                 elif event.type == _pygame.locals.KEYDOWN:
@@ -1199,49 +1212,49 @@ class Menu(object):
                         continue
 
                     if event.key == _ctrl.KEY_MOVE_DOWN:
-                        self._select(self._actual._index - 1)
-                        self._sounds.play_key_add()
+                        self._actual._select(self._actual._index - 1)
+                        self._actual._sounds.play_key_add()
                     elif event.key == _ctrl.KEY_MOVE_UP:
-                        self._select(self._actual._index + 1)
-                        self._sounds.play_key_add()
-                    elif event.key == _ctrl.KEY_LEFT and self._columns > 1:
-                        self._left()
-                        self._sounds.play_key_add()
-                    elif event.key == _ctrl.KEY_RIGHT and self._columns > 1:
-                        self._right()
-                        self._sounds.play_key_add()
+                        self._actual._select(self._actual._index + 1)
+                        self._actual._sounds.play_key_add()
+                    elif event.key == _ctrl.KEY_LEFT and self._actual._columns > 1:
+                        self._actual._left()
+                        self._actual._sounds.play_key_add()
+                    elif event.key == _ctrl.KEY_RIGHT and self._actual._columns > 1:
+                        self._actual._right()
+                        self._actual._sounds.play_key_add()
                     elif event.key == _ctrl.KEY_BACK and self._top._prev is not None:
-                        self._sounds.play_close_menu()
-                        self.reset(1)
-                    elif event.key == _ctrl.KEY_CLOSE_MENU and not self._closelocked:
-                        self._sounds.play_close_menu()
-                        if self._close():
+                        self._actual._sounds.play_close_menu()
+                        self.reset(1)  # public, do not use _actual
+                    elif event.key == _ctrl.KEY_CLOSE_MENU and not self._actual._closelocked:
+                        self._actual._sounds.play_close_menu()
+                        if self._actual._close():
                             break_mainloop = True
 
-                elif self._joystick and event.type == _pygame.JOYHATMOTION:
+                elif self._actual._joystick and event.type == _pygame.JOYHATMOTION:
                     if event.value == _ctrl.JOY_UP:
-                        self._select(self._actual._index - 1)
+                        self._actual._select(self._actual._index - 1)
                     elif event.value == _ctrl.JOY_DOWN:
-                        self._select(self._actual._index + 1)
+                        self._actual._select(self._actual._index + 1)
                     elif event.value == _ctrl.JOY_LEFT and self._columns > 1:
-                        self._select(self._actual._index - 1)
+                        self._actual._select(self._actual._index - 1)
                     elif event.value == _ctrl.JOY_RIGHT and self._columns > 1:
-                        self._select(self._actual._index + 1)
+                        self._actual._select(self._actual._index + 1)
 
-                elif self._joystick and event.type == _pygame.JOYAXISMOTION:
-                    prev = self._joy_event
-                    self._joy_event = 0
+                elif self._actual._joystick and event.type == _pygame.JOYAXISMOTION:
+                    prev = self._actual._joy_event
+                    self._actual._joy_event = 0
                     if event.axis == _ctrl.JOY_AXIS_Y and event.value < -_ctrl.JOY_DEADZONE:
-                        self._joy_event |= _JOY_EVENT_UP
+                        self._actual._joy_event |= _JOY_EVENT_UP
                     if event.axis == _ctrl.JOY_AXIS_Y and event.value > _ctrl.JOY_DEADZONE:
-                        self._joy_event |= _JOY_EVENT_DOWN
+                        self._actual._joy_event |= _JOY_EVENT_DOWN
                     if event.axis == _ctrl.JOY_AXIS_X and event.value < -_ctrl.JOY_DEADZONE and self._columns > 1:
-                        self._joy_event |= _JOY_EVENT_LEFT
+                        self._actual._joy_event |= _JOY_EVENT_LEFT
                     if event.axis == _ctrl.JOY_AXIS_X and event.value > _ctrl.JOY_DEADZONE and self._columns > 1:
-                        self._joy_event |= _JOY_EVENT_RIGHT
-                    if self._joy_event:
-                        self._handle_joy_event()
-                        if self._joy_event == prev:
+                        self._actual._joy_event |= _JOY_EVENT_RIGHT
+                    if self._actual._joy_event:
+                        self._actual._handle_joy_event()
+                        if self._actual._joy_event == prev:
                             _pygame.time.set_timer(_JOY_EVENT_REPEAT, _ctrl.JOY_REPEAT)
                         else:
                             _pygame.time.set_timer(_JOY_EVENT_REPEAT, _ctrl.JOY_DELAY)
@@ -1249,22 +1262,22 @@ class Menu(object):
                         _pygame.time.set_timer(_JOY_EVENT_REPEAT, 0)
 
                 elif event.type == _JOY_EVENT_REPEAT:
-                    if self._joy_event:
-                        self._handle_joy_event()
+                    if self._actual._joy_event:
+                        self._actual._handle_joy_event()
                         _pygame.time.set_timer(_JOY_EVENT_REPEAT, _ctrl.JOY_REPEAT)
                     else:
                         _pygame.time.set_timer(_JOY_EVENT_REPEAT, 0)
 
-                elif self._mouse and event.type == _pygame.MOUSEBUTTONDOWN:
+                elif self._actual._mouse and event.type == _pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._actual._widgets)):
                         widget = self._actual._widgets[index]
                         # Don't considere the mouse wheel (button 4 & 5)
                         if event.button in (1, 2, 3) and \
                                 self._actual._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
-                            self._select(index)
+                            self._actual._select(index)
 
-                elif self._mouse and event.type == _pygame.MOUSEBUTTONUP:
-                    self._sounds.play_click_mouse()
+                elif self._actual._mouse and event.type == _pygame.MOUSEBUTTONUP:
+                    self._actual._sounds.play_click_mouse()
                     widget = self._actual._widgets[self._actual._index]
                     # Don't considere the mouse wheel (button 4 & 5)
                     if event.button in (1, 2, 3) and \
@@ -1285,24 +1298,13 @@ class Menu(object):
             self._actual._widgets_surface = None
 
         # A widget has closed the menu
-        if self._actual is not None and not self._actual._enabled:
+        if not self._top._enabled:
             break_mainloop = True
 
-        self._closelocked = False
+        self._actual._closelocked = False
         return break_mainloop
 
-    def _check_menu_initialized(self):
-        """
-        Check menu initialization.
-
-        :return: True if menu is initialized, raise Exception if not
-        :rtype: bool
-        """
-        if self._top is None:
-            raise Exception('The menu has not been initialized yet, try using mainloop function')
-        return True
-
-    def mainloop(self, surface, bgfun, disable_loop=False, fps_limit=0):
+    def mainloop(self, surface, bgfun, event_loop=None, disable_loop=False, fps_limit=0):
         """
         Main function of menu.
 
@@ -1310,6 +1312,8 @@ class Menu(object):
         :type surface: pygame.surface.SurfaceType
         :param bgfun: Background function called on each loop iteration before drawing the menu
         :type bgfun: function
+        :param event_loop: Events used by the loop if Menu was created using mainloop_loop=False
+        :type event_loop: list,None
         :param disable_loop: Disable infinite loop waiting for events
         :type disable_loop: bool
         :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
@@ -1318,21 +1322,27 @@ class Menu(object):
         """
         assert isinstance(surface, _pygame.Surface)
         assert callable(bgfun), 'background function must be callable (a function)'
+        assert isinstance(event_loop, (list, type(None)))
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
 
-        # Store the reference of the menu (if user moves through submenus)
-        self._top = self
-
         # NOTE: For menu accesor, use only _actual, as the menu pointer can change through the execution
-        if not self._actual._enabled:
+        if not self._top._enabled:
             return
         self._actual._background_function = bgfun
         while True:
             self._actual._clock.tick(fps_limit)
-            break_mainloop = self.update(events=_pygame.event.get())  # Public methods do not use _actual
-            if self._actual._enabled:  # As event can change the status of the menu, this has to be checked twice
+
+            # If loop, gather events by menu and draw the background function
+            if self._actual._mainloop_loop:
+                bgfun()
+                break_mainloop = self.update(_pygame.event.get())  # Public methods do not use _actual
+            else:
+                break_mainloop = self.update(event_loop or [])  # If None
+
+            # As event can change the status of the menu, this has to be checked twice
+            if self._top._enabled:
                 self.draw(surface=surface)
             _pygame.display.flip()
             if break_mainloop or disable_loop:
@@ -1356,14 +1366,14 @@ class Menu(object):
         assert isinstance(recursive, bool)
 
         data = {}
-        for widget in self._widgets:
+        for widget in self._actual._widgets:
             try:
                 data[widget.get_id()] = widget.get_value()
             except ValueError:  # Widget does not return data
                 pass
         if recursive:
             depth += 1
-            for menu in self._submenus:
+            for menu in self._actual._submenus:
                 data_submenu = menu.get_input_data(recursive=recursive, depth=depth)
 
                 # Check if there is a collision between keys
@@ -1385,16 +1395,8 @@ class Menu(object):
         :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
         :rtype: tuple
         """
-        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
-
-    def get_fps(self):
-        """
-        Return the frames per second of the menu.
-
-        :return: FPS
-        :rtype: float
-        """
-        return self._clock.get_fps()
+        return self._actual._posx, self._actual._posy, \
+               self._actual._posx + self._actual._width, self._actual._posy + self._actual._height
 
     def set_sound(self, sound, recursive=False):
         """
@@ -1406,14 +1408,14 @@ class Menu(object):
         :type recursive: bool
         :return: None
         """
-        assert isinstance(sound, (type(self._sounds), type(None)))
+        assert isinstance(sound, (type(self._actual._sounds), type(None)))
         if sound is None:
             sound = _Sound()
-        self._sounds = sound
-        for widget in self._widgets:
+        self._actual._sounds = sound
+        for widget in self._actual._widgets:
             widget.set_sound(sound)
         if recursive:
-            for menu in self._submenus:
+            for menu in self._actual._submenus:
                 menu.set_sound(sound, recursive=True)
 
     def get_title(self, current=False):
@@ -1427,7 +1429,7 @@ class Menu(object):
         """
         if current:
             return self._actual._menubar.get_title()
-        else:
+        else:  # If not, use the first pointer of the menu (root)
             return self._menubar.get_title()
 
     def full_reset(self):
@@ -1438,16 +1440,16 @@ class Menu(object):
         """
         depth = self._actual._get_depth()
         if depth > 0:
-            self.reset(depth)
+            self.reset(depth)  # public, do not use _actual
 
-    def _get_actual_index(self):
+    def get_index(self):
         """
         Get actual selected widget.
 
         :return: Selected widget index
         :rtype: int
         """
-        return self._top._actual._index
+        return self._actual._index
 
     def clear(self):
         """
@@ -1458,7 +1460,7 @@ class Menu(object):
         
         :return: None
         """
-        self.full_reset()
+        self.full_reset()  # public, do not use _actual
         del self._actual._widgets[:]
         del self._actual._submenus[:]
 
@@ -1470,11 +1472,14 @@ class Menu(object):
         :type menu: Menu, TextMenu
         :return: None
         """
-        self._check_menu_initialized()
         actual = self
+
+        # Update pointers
         menu._top = self._top
         self._top._actual = menu._actual
         self._top._prev = [self._top._prev, actual]
+
+        # Select the first widget
         self._select(0)
 
     def reset(self, total):
@@ -1485,8 +1490,7 @@ class Menu(object):
         :type total: int
         :return: None
         """
-        self._check_menu_initialized()
-        assert isinstance(self._top._actual, Menu)
+        assert isinstance(self._top, Menu)
         assert isinstance(total, int)
         assert total > 0, 'total must be greater than zero'
 
@@ -1494,7 +1498,7 @@ class Menu(object):
         while True:
             if self._top._prev is not None:
                 prev = self._top._prev
-                self._top._actual = prev[1]
+                self._top._actual = prev[1]  # This changes the "actual" pointer
                 self._top._prev = prev[0]  # Eventually will reach None
                 i += 1
                 if i == total:
@@ -1502,7 +1506,8 @@ class Menu(object):
             else:
                 break
 
-        self._select(self._top._actual._index)
+        # self._actual = self._top._actual
+        self._actual._select(self._top._actual._index)
 
     def _select(self, new_index):
         """
@@ -1512,7 +1517,6 @@ class Menu(object):
         :type new_index: int
         :return: None
         """
-        self._check_menu_initialized()
         actual = self._top._actual
         if len(actual._widgets) == 0:
             return
@@ -1558,11 +1562,11 @@ class Menu(object):
         """
         assert isinstance(widget_id, str)
         assert isinstance(recursive, bool)
-        for widget in self._widgets:
+        for widget in self._actual._widgets:
             if widget.get_id() == widget_id:
                 return widget
         if recursive:
-            for menu in self._submenus:
+            for menu in self._actual._submenus:
                 widget = menu.get_widget(widget_id, recursive)
                 if widget:
                     return widget
@@ -1575,4 +1579,4 @@ class Menu(object):
         :return: Widget object
         :rtype: pygameMenu.widgets.widget.Widget
         """
-        return self._top._actual._widgets[self._top._actual._index]
+        return self._actual._widgets[self.get_index()]

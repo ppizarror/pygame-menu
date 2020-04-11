@@ -51,6 +51,6 @@ _PYMENUACTION = "<class 'pygameMenu.events._PymenuAction'>"  # For python compat
 
 BACK = _PymenuAction(0)  # Menu back
 CLOSE = _PymenuAction(1)  # Close menu
-DISABLE_CLOSE = _PymenuAction(10)  # Menu disable closing
+DISABLE_CLOSE = _PymenuAction(2)  # Menu disable closing
 EXIT = _PymenuAction(3)  # Menu exit program
 RESET = _PymenuAction(4)  # Menu reset
