@@ -72,6 +72,7 @@ class Button(Widget):
     def _apply_font(self):
         pass
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
@@ -84,6 +85,7 @@ class Button(Widget):
         self._surface = self.render_string(self._label, color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
         for event in events:  # type: _pygame.event.EventType

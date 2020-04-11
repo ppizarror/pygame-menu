@@ -1207,6 +1207,9 @@ class Menu(object):
         :rtype: bool
         """
         assert isinstance(events, list)
+
+        # Some events may break the mainloop iteration if this method is called by
+        # mainloop()
         break_mainloop = False
 
         # Update mouse
@@ -1215,14 +1218,15 @@ class Menu(object):
         # Surface needs an update
         menu_surface_needs_update = False
 
-        # Event title
-        self._current._menubar.update(events)
-
         # Scroll events
-        self._current._scroll.update(events)
+        if self._current._scroll.update(events) or self._scroll.is_scrolling():
+            break_mainloop = True
+
+        elif self._current._menubar.update(events):
+            break_mainloop = True
 
         # Check selected widget
-        if len(self._current._widgets) > 0 and self._current._widgets[self._current._index].update(events):
+        elif len(self._current._widgets) > 0 and self._current._widgets[self._current._index].update(events):
             break_mainloop = True
 
         # Check others
@@ -1340,6 +1344,7 @@ class Menu(object):
         """
         Main loop of Menu. In this function, the Menu handle exceptions and draw.
         The Menu pauses the application and checks :py:mod:`pygame` events itself.
+        This method returns until the menu is updated (a widget status has changed).
 
         The execution of the mainloop is at the current Menu level.
 
@@ -1376,7 +1381,8 @@ class Menu(object):
         while True:
             self._current._clock.tick(fps_limit)
 
-            # If loop, gather events by Menu and draw the background function
+            # If loop, gather events by Menu and draw the background function, if this method
+            # returns true
             break_mainloop = self.update(_pygame.event.get())
 
             # As event can change the status of the Menu, this has to be checked twice

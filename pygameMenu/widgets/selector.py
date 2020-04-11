@@ -37,7 +37,6 @@ from pygameMenu.utils import check_key_pressed_valid
 from pygameMenu.widgets.widget import Widget
 
 
-# noinspection PyMissingOrEmptyDocstring
 class Selector(Widget):
     """
     Selector widget.
@@ -100,13 +99,14 @@ class Selector(Widget):
     def _apply_font(self):
         self._labelsize = self._font.size(self._label)[0]
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
     def get_value(self):
         """
-        Return the current value of the selector.
+        Return the current value of the selector at the selected index.
 
         :return: Value and index as a tuple
         :rtype: tuple
@@ -140,18 +140,32 @@ class Selector(Widget):
         self._surface = self.render_string(string, color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
-    def set_value(self, text):
+    def set_value(self, item):
         """
-        Set the current value of the selector.
+        Set the current value of the widget, selecting the element that matches
+        the text if item is a string, or the index of the position of item is an integer.
 
+        For example, if selector is *[['a',0],['b',1],['a',2]]*:
+            - *widget*.set_value('a') -> Widget selects 0 (first match)
+            - *widget*.set_value(2) -> Widget selects 2.
+
+        :param item: Item to select, can be a string or an integer.
+        :type item: basestring,int
         :return: None
         """
-        for element in self._elements:
-            if element[0] == text:
-                self._index = self._elements.index(element)
-                return
-        raise ValueError("No value '{}' found in selector".format(text))
+        assert isinstance(item, (str, int)), 'item must be an string or an integer'
+        if isinstance(item, str):
+            for element in self._elements:
+                if element[0] == item:
+                    self._index = self._elements.index(element)
+                    return
+            raise ValueError("No value '{}' found in selector".format(item))
+        elif isinstance(item, int):
+            assert 0 <= item < len(self._elements), \
+                'item index must be greater than zero and lower than the number of elements on the selector'
+            self._index = item
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
         for event in events:  # type: _pygame.event.EventType

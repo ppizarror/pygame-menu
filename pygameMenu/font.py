@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 FONTS
-Menu available fonts.
+Menu fonts.
 
 License:
 -------------------------------------------------------------------------------
