@@ -317,6 +317,11 @@ class Menu(object):
         if len(menu_id) == 0:
             menu_id = str(uuid4())
 
+        # Get window size
+        window_width, window_height = _pygame.display.get_surface().get_size()
+        assert menu_width <= window_width and menu_height <= window_height, \
+            'menu size must be lower than the size of the window'
+
         # Update background color
         menu_background_color = (menu_background_color[0],
                                  menu_background_color[1],
@@ -355,7 +360,6 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
-        window_width, window_height = _pygame.display.get_surface().get_size()
         self._posx = int((window_width - self._width) / 2)  # type: int
         self._posy = int((window_height - self._height) / 2)  # type: int
 
