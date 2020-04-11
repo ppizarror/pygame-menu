@@ -1214,12 +1214,19 @@ class Menu(object):
         assert isinstance(current, bool)
         assert isinstance(events, list)
         if current:
-            return self._actual._update(events=events)
-        return self._update(events=events)
+            return self._actual._update(self, events=events)
+        return self._update(self, events=events)
 
-    def _update(self, events=None):
+    def _update(self, source, events=None):
         """
-        See public doc.
+        Update the status of the menu using external events.
+
+        :param source: Pointer to the caller menu
+        :type source: Menu
+        :param events: Pygame events as a list
+        :type events: list
+        :return: True if mainloop must be stopped
+        :rtype: bool
         """
         break_mainloop = not self._mainloop_loop
 
@@ -1271,7 +1278,8 @@ class Menu(object):
                     elif event.key == _ctrl.KEY_RIGHT and self._columns > 1:
                         self._right()
                         self._sounds.play_key_add()
-                    elif event.key == _ctrl.KEY_BACK and self._top._prev is not None:
+                    elif event.key == _ctrl.KEY_BACK:
+                        print(source, self)
                         self._sounds.play_close_menu()
                         self.reset(1)
                     elif event.key == _ctrl.KEY_CLOSE_MENU and not self._closelocked:
@@ -1385,14 +1393,17 @@ class Menu(object):
         assert fps_limit >= 0, 'fps limit cannot be negative'
         assert isinstance(current, bool)
         if current:
-            return self._actual._mainloop(surface=surface, bgfun=bgfun, event_loop=event_loop,
+            return self._mainloop(self, surface=surface, bgfun=bgfun, event_loop=event_loop,
                                           disable_loop=disable_loop, fps_limit=fps_limit)
-        return self._mainloop(surface=surface, bgfun=bgfun, event_loop=event_loop,
+        return self._mainloop(self, surface=surface, bgfun=bgfun, event_loop=event_loop,
                               disable_loop=disable_loop, fps_limit=fps_limit)
 
-    def _mainloop(self, surface, bgfun, event_loop=None, disable_loop=False, fps_limit=0):
+    def _mainloop(self, source, surface, bgfun, event_loop=None, disable_loop=False, fps_limit=0):
         """
         See public doc.
+
+        :param source: Source menu caller
+        :type source: Menu
         """
         if not self.is_enabled():
             return
@@ -1403,9 +1414,9 @@ class Menu(object):
             # If loop, gather events by menu and draw the background function
             if self._mainloop_loop:
                 bgfun()
-                break_mainloop = self._update(_pygame.event.get())
+                break_mainloop = self._update(source, _pygame.event.get())
             else:
-                break_mainloop = self._update(event_loop or [])  # If None
+                break_mainloop = self._update(source, event_loop or [])  # If None
 
             # As event can change the status of the menu, this has to be checked twice
             if self.is_enabled():
@@ -1576,6 +1587,7 @@ class Menu(object):
         :type total: int
         :return: None
         """
+        print(self)
         assert isinstance(self._top, Menu)
         assert isinstance(total, int)
         assert total > 0, 'total must be greater than zero'
