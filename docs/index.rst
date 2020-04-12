@@ -83,6 +83,14 @@ Widgets API
 ===========
 
 A menu is in fact a list of widgets arranged on a same surface.
+Access to a widget in a menu can easily be done with two methods:
+
+.. code-block:: python
+
+    widget = menu.get_widget('MyWidgetID')
+
+    selected = menu.get_selected_widget()
+
 Each :py:mod:`pygameMenu` widget and its behaviors are defined
 in a class:
 
