@@ -1394,7 +1394,7 @@ class Menu(object):
 
         return updated
 
-    def mainloop(self, surface, bgfun, event_loop=None, disable_loop=False, fps_limit=0):
+    def mainloop(self, surface, bgfun=None, disable_loop=False, fps_limit=0):
         """
         Main loop of Menu. In this function, the Menu handle exceptions and draw.
         The Menu pauses the application and checks :py:mod:`pygame` events itself.
@@ -1412,8 +1412,6 @@ class Menu(object):
         :type surface: pygame.surface.SurfaceType
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :type bgfun: callable
-        :param event_loop: Events used by the loop if Menu was created using mainloop_loop=False
-        :type event_loop: list, NoneType
         :param disable_loop: If true run this method for only 1 loop
         :type disable_loop: bool
         :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
@@ -1421,8 +1419,8 @@ class Menu(object):
         :return: None
         """
         assert isinstance(surface, _pygame.Surface)
-        assert callable(bgfun), 'background function must be callable (a function)'
-        assert isinstance(event_loop, (list, type(None)))
+        if bgfun:
+            assert callable(bgfun), 'background function must be callable (a function)'
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
@@ -1437,14 +1435,14 @@ class Menu(object):
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
-            updated = self.update(_pygame.event.get())
+            self.update(_pygame.event.get())
 
             # As event can change the status of the Menu, this has to be checked twice
             if self.is_enabled():
                 self.draw(surface=surface)
 
             _pygame.display.flip()
-            if updated or disable_loop:
+            if not self.is_enabled() or disable_loop:
                 self._current._background_function = None
                 return
 
