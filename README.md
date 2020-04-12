@@ -11,8 +11,8 @@
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7+/3.4+" src="https://img.shields.io/badge/python-2.7+ / 3.4+-red.svg" /></a>
 <a href="https://www.pygame.org/"><img alt="Pygame 1.9.4+" src="https://img.shields.io/badge/pygame-1.9.4+-orange.svg" /></a>
 <br />
-<a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/v2/graph/badge.svg" /></a>
 <a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=v2" /></a>
+<a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/v2/graph/badge.svg" /></a>
 </div><br />
 
 Python library that can create a simple menu for the pygame application. Supports:
