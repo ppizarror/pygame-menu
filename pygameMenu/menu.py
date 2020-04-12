@@ -471,11 +471,11 @@ class Menu(object):
         :param title: Title of the button
         :type title: basestring
         :param action: Action of the button, can be a Menu, an event or a function
-        :type action: Menu,PymenuAction,function
+        :type action: Menu, PymenuAction, function
         :param args: Additional arguments used by a function
         :param kwargs: Additional keyword arguments
         :return: Widget object
-        :rtype: pygameMenu.widgets.button.Button
+        :rtype: :py:class:`pygameMenu.widgets.Button`
         """
         assert isinstance(title, str)
 
@@ -492,6 +492,8 @@ class Menu(object):
         elif action == _events.BACK:  # Back to Menu
             widget = _widgets.Button(title, button_id, onchange, self.reset,
                                      1)  # reset is public, so no _current
+        elif action == _events.RESET:  # Back to Top Menu
+            widget = _widgets.Button(title, button_id, onchange, self.full_reset)
         elif action == _events.CLOSE:  # Close Menu
             widget = _widgets.Button(title, button_id, onchange, self._current._close)
         elif action == _events.EXIT:  # Exit program
@@ -562,7 +564,7 @@ class Menu(object):
         :type previsualization_width: int, float
         :param kwargs: Additional keyword-parameters
         :return: Widget object
-        :rtype: pygameMenu.widgets.colorinput.ColorInput
+        :rtype: :py:class:`pygameMenu.widgets.ColorInput`
         """
         assert isinstance(default, (str, tuple))
         widget = _widgets.ColorInput(label=title,
@@ -603,7 +605,7 @@ class Menu(object):
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple, NoneType
         :return: Widget object or List of widgets if the text overflows
-        :rtype: pygameMenu.widgets.label.Label, list[pygameMenu.widgets.label.Label]
+        :rtype: :py:class:`pygameMenu.widgets.Label`, list[:py:class:`pygameMenu.widgets.Label`]
         """
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
@@ -672,7 +674,7 @@ class Menu(object):
         :type selector_id: basestring
         :param kwargs: Additional parameters
         :return: Widget object
-        :rtype: pygameMenu.widgets.selector.Selector
+        :rtype: :py:class:`pygameMenu.widgets.Selector`
         """
         widget = _widgets.Selector(label=title,
                                    elements=items,
@@ -747,7 +749,7 @@ class Menu(object):
         :type valid_chars: list
         :param kwargs: Additional keyword-parameters
         :return: Widget object
-        :rtype: pygameMenu.widgets.textinput.TextInput
+        :rtype: :py:class:`pygameMenu.widgets.TextInput`
         """
         assert isinstance(default, (str, int, float))
 
@@ -780,7 +782,7 @@ class Menu(object):
         :param margin: Margin in px
         :type margin: int
         :return: Widget object
-        :rtype: pygameMenu.widgets.vmargin.VMargin
+        :rtype: :py:class:`pygameMenu.widgets.VMargin`
         """
         assert isinstance(margin, int)
         widget = _widgets.VMargin()
@@ -794,7 +796,7 @@ class Menu(object):
         the Menu level.
 
         :param widget: Widget object
-        :type widget: pygameMenu.widgets.widget.Widget
+        :type widget: :py:class:`pygameMenu.widgets.widget.Widget`
         :param align: Widget alignment, if None use default Menu widget alignment
         :type align: basestring, NoneType
         :param font_size: Widget font size, if None use the default Menu widget font size
@@ -841,7 +843,7 @@ class Menu(object):
         Add a widget to the list.
 
         :param widget: Widget object
-        :type widget: pygameMenu.widgets.widget.Widget
+        :type widget: :py:class:`pygameMenu.widgets.widget.Widget`
         """
         assert isinstance(widget, _widgets.WidgetType)
         if self._columns > 1:
@@ -1722,7 +1724,7 @@ class Menu(object):
         :param current: If True, returns the value from the current active Menu, otherwise from the base Menu
         :type current: bool
         :return: Widget object
-        :rtype: pygameMenu.widgets.widget.Widget
+        :rtype: :py:class:`pygameMenu.widgets.widget.Widget`
         """
         assert isinstance(widget_id, str)
         assert isinstance(recursive, bool)
@@ -1746,7 +1748,7 @@ class Menu(object):
         :param recursive: Look in Menu and submenus
         :type recursive: bool
         :return: Widget object
-        :rtype: pygameMenu.widgets.widget.Widget
+        :rtype: :py:class:`pygameMenu.widgets.widget.Widget`
         """
         for widget in self._widgets:  # type: _widgets.WidgetType
             if widget.get_id() == widget_id:
@@ -1779,7 +1781,7 @@ class Menu(object):
         :param current: If True, returns the value from the current active Menu, otherwise from the base Menu
         :type current: bool
         :return: Widget object
-        :rtype: pygameMenu.widgets.widget.Widget
+        :rtype: :py:class:`pygameMenu.widgets.widget.Widget`
         """
         assert isinstance(current, bool)
         if current:

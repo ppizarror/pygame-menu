@@ -5,6 +5,7 @@
 MenuBar
 =======
 
-.. autoclass:: MenuBar(...)
+.. autoclass:: pygameMenu.widgets.MenuBar
     :members:
+    :show-inheritance:
     :inherited-members:

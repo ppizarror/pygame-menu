@@ -3,14 +3,36 @@
 pygame-menu
 ===========
 
-.. image:: https://raw.githubusercontent.com/ppizarror/pygame-menu/master/docs/_static/pygame-menu-small.png
-   :scale: 25%
+.. image:: docs/_static/pygame-menu.png
+    :scale: 35%
+    :align: center
+    :alt:
 
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
+.. image:: https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg
+    :target: https://ppizarror.com
+    :alt: @ppizarror
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://opensource.org/licenses/MIT
+    :alt: License MIT
+
+.. image:: https://img.shields.io/badge/python-2.7+ / 3.4+-red.svg
+    :target: https://www.python.org/downloads
+    :alt: Python 2.7+/3.4+
+
+.. image:: https://img.shields.io/badge/pygame-1.9.4+-orange.svg
+    :target: https://www.pygame.org
+    :alt: Pygame 1.9.4+
+
+.. image:: https://badge.fury.io/py/pygame-menu.svg
+    :target: https://pypi.org/project/pygame-menu
+    :alt: PyPi package
+
 .. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
-   :target: https://travis-ci.org/ppizarror/pygame-menu
-   :alt: Travis
+    :target: https://travis-ci.org/ppizarror/pygame-menu
+    :alt: Travis
 
 .. image:: https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ppizarror/pygame-menu
@@ -59,17 +81,3 @@ This library is dependent on the following
 
 - `Pygame <http://www.pygame.org/download.shtml>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_
-
-Contributors
-------------
-
-Core developers:
-
-- `Pablo Pizarro R. <https://ppizarror.com>`_
-
-Other contributors:
-
-- `anxuae <https://github.com/anxuae>`_
-
-Ideas and contributions are always welcome. Any found bugs or
-enhancement suggestions should be posted in the issues tab.

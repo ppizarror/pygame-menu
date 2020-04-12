@@ -5,6 +5,7 @@
 Button
 ======
 
-.. autoclass:: Button
+.. autoclass:: pygameMenu.widgets.Button
     :members:
+    :show-inheritance:
     :inherited-members:

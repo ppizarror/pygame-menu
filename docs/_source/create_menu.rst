@@ -12,4 +12,4 @@ TODO: general description
 
 .. autoclass:: Menu(surface, menu_height, menu_width, font, title, ...)
     :members:
-    :exclude-members: add_button, add_color_input, add_label, add_text_input, add_selector
+    :exclude-members: add_button, add_color_input, add_label, add_text_input, add_selector, add_vertical_margin

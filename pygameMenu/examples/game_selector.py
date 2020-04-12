@@ -229,6 +229,7 @@ def main(test=False):
                                    )
     for i in range(30):
         play_submenu.add_button('Back {0}'.format(i), pygameMenu.events.BACK)
+    play_submenu.add_button('Return to main menu', pygameMenu.events.RESET)
 
     play_menu.add_button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
                          play_function,

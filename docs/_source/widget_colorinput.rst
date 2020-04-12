@@ -5,6 +5,7 @@
 ColorInput
 ==========
 
-.. autoclass:: ColorInput(...)
+.. autoclass:: pygameMenu.widgets.ColorInput
     :members:
+    :show-inheritance:
     :inherited-members:

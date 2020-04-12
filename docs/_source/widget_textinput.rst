@@ -5,6 +5,7 @@
 TextInput
 =========
 
-.. autoclass:: TextInput(...)
+.. autoclass:: pygameMenu.widgets.TextInput
     :members:
+    :show-inheritance:
     :inherited-members:

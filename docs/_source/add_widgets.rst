@@ -3,10 +3,11 @@
 Adding widgets
 ==============
 
-Label
------
+Add a text
+----------
 
-A label is used to display a text.
+A label is used to display a text. If the text is too large, it
+will be wrapped in order to fit the menu size.
 
 .. automethod:: pygameMenu.menu.Menu.add_label
 
@@ -23,10 +24,28 @@ A label is used to display a text.
     menu.add_label(HELP)
 
 
-Button
-------
+Add a button
+------------
 
-A button is a text that fire action when the user trigger it.
+A button is a text that fire action when the user trigger it. An action
+is linked to a button by defining the `action` parameter with one of the
+three values:
+
+ - an other :py:class:`Menu`, in this case, it will be displayed
+   when the button is triggered.
+ - a python callable object (a function, a method, a class, ...)
+   that will be called with the given arguments.
+ - a specific event of :py:mod:`pygameMenu`. The possible events are
+   the following:
+
+   ==========================================  ========================================
+   Type                                        Description
+   ==========================================  ========================================
+   :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
+   :py:data:`pygameMenu.events.CLOSE`          Close the menu
+   :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
+   :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
+   ==========================================  ========================================
 
 .. automethod:: pygameMenu.menu.Menu.add_button
 
@@ -37,21 +56,23 @@ A button is a text that fire action when the user trigger it.
     def fun():
         print("Hello world")
 
-    menu = pygameMenu.Menu(surface, ...)
+    menu = pygameMenu.Menu(...)
+
     menu.add_button('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
     menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
 
 .. code-block:: python
 
-    menu = pygameMenu.Menu(surface, ...)
-    menu.add_button(timer_menu.get_title(), timer_menu)         # Adds timer submenu
-    menu.add_button(help_menu.get_title(), help_menu)           # Adds help submenu
-    menu.add_button(about_menu.get_title(), about_menu)         # Adds about submenu
-    menu.add_button('Exit', pygameMenu.events.MENU_EXIT)        # Adds exit function
+    menu = pygameMenu.Menu(...)
+
+    about_menu = pygameMenu.Menu(...)
+
+    menu.add_button(about_menu.get_title(), about_menu)     # Adds about submenu
+    menu.add_button('Exit', pygameMenu.events.MENU_EXIT)    # Adds exit function
 
 
-Selector
---------
+Add a choices list
+------------------
 
 A selector gives the possibility choose a value in a list.
 
@@ -80,25 +101,21 @@ A selector gives the possibility choose a value in a list.
         """
         ...
 
-    timer_menu = pygameMenu.Menu(...)
+    menu = pygameMenu.Menu(...)
 
-    # Add selector
-    timer_menu.add_selector('Change bgcolor',
-                            # Values of selector, call to change_color_bg
-                            [('Random', (-1, -1, -1)),  # Random color
-                             ('Default', (128, 0, 128)),
-                             ('Black', (0, 0, 0)),
-                             ('Blue', COLOR_BLUE)],
-                            None, # onchange
-                            change_color_bg, # onreturn
-                            write_on_console=True # Optional change_color_bg param
-                            )
-
-    timer_menu.add_button('Close Menu', pygameMenu.events.MENU_CLOSE)
+    menu.add_selector('Change bgcolor',
+                      # Values of selector, call to change_color_bg
+                      [('Random', (-1, -1, -1)),  # Random color
+                      ('Default', (128, 0, 128)),
+                      ('Black', (0, 0, 0)),
+                      ('Blue', COLOR_BLUE)],
+                      onchange=None,
+                      onreturn=change_color_bg,
+                      write_on_console=True)
 
 
-Text Input
-----------
+Add a text entry
+----------------
 
 A text input permits to enter a string using a keyboard.
 
@@ -116,18 +133,15 @@ A text input permits to enter a string using a keyboard.
         """
         print('User name: {0}'.format(value))
 
-    settings_menu = pygameMenu.Menu(...)
+    menu = pygameMenu.Menu(...)
 
-    # Add text input
-    settings_menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
-    settings_menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
-    settings_menu.add_text_input('Some long text: ', maxwidth=15)
-
-    settings_menu.add_button('Return to main menu', pygameMenu.events.MENU_BACK)
+    menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
+    menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
+    menu.add_text_input('Some long text: ', maxwidth=15)
 
 
-Color Input
------------
+Add a color entry
+-----------------
 
 A color input is similar as a text input but with a limited choice of
 characters to enter a RGB value of HEX decimal one. There is also a
@@ -147,8 +161,25 @@ area to display the current color.
         """
         print('New color: {0}'.format(color))
 
-    settings_menu = pygameMenu.Menu(...)
+    menu = pygameMenu.Menu(...)
 
-    settings_menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
-    settings_menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
-    settings_menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
+    menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
+    menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
+    menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
+
+
+Add a vertical spacer
+---------------------
+
+A vertical spacer can be added between widget to have a better
+visual rendering of the menu.
+
+.. automethod:: pygameMenu.menu.Menu.add_vertical_margin
+
+**Example:**
+
+.. code-block:: python
+
+    menu = pygameMenu.Menu(...)
+
+    menu.add_vertical_margin(20)
