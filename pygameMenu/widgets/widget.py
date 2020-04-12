@@ -42,6 +42,15 @@ from uuid import uuid4
 class Widget(object):
     """
     Widget abstract class.
+
+    :param widget_id: Widget identifier
+    :type widget_id: basestring
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
+    :param args: Optional arguments for callbacks
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -51,21 +60,11 @@ class Widget(object):
                  args=None,
                  kwargs=None
                  ):
-        """
-        :param widget_id: Widget identifier
-        :type widget_id: basestring
-        :param onchange: Callback when changing the selector
-        :type onchange: callable, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: callable, NoneType
-        :param args: Optional arguments for callbacks
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(widget_id, str)
         if onchange:
-            assert callable(onchange), 'onchange must be a function or None'
+            assert callable(onchange), 'onchange must be callable or None'
         if onreturn:
-            assert callable(onreturn), 'onreturn must be a function or None'
+            assert callable(onreturn), 'onreturn must be callable or None'
 
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
