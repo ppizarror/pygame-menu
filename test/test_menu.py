@@ -35,7 +35,7 @@ from pygameMenu import events
 import timeit
 
 # Configure the tests
-_TEST_TIME_DRAW = True
+_TEST_TIME_DRAW = False
 
 
 class MenuTest(unittest.TestCase):
