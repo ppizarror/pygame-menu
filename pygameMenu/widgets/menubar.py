@@ -121,7 +121,14 @@ class MenuBar(Widget):
         return self._label
 
     def _render(self):
-        self._surface = self.render_string(self._label, self._font_selected_color)
+        # noinspection PyProtectedMember
+        menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
+
+        if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._label,
+                                         self._font_selected_color, menu_prev_condition):
+            return
+
+        self._surface = self._render_string(self._label, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
         self._polygon_pos = (
@@ -138,8 +145,7 @@ class MenuBar(Widget):
                                           self._polygon_pos[1][1] + 3,
                                           cross_size, cross_size)
 
-        # noinspection PyProtectedMember
-        if not self._menu or not self._menu._top or not self._menu._top._prev:
+        if menu_prev_condition:
             # Make a cross for top menu
             self._backbox_pos = (
                 (self._backbox_rect.left + 4, self._backbox_rect.top + 4),

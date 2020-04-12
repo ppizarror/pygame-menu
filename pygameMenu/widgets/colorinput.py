@@ -145,13 +145,14 @@ class ColorInput(TextInput):
         self._last_r = -1  # type: int
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
-        self._prev_surface = None  # type: (_pygame.Surface,None)
+        self._previsualization_position = (0, 0)
+        self._previsualization_surface = None  # type: (_pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 
     # noinspection PyMissingOrEmptyDocstring
     def clear(self):
         super(ColorInput, self).clear()
-        self._prev_surface = None
+        self._previsualization_surface = None
         if self._color_type == _TYPE_HEX:
             super(ColorInput, self).set_value('#')
         self.change()
@@ -210,7 +211,9 @@ class ColorInput(TextInput):
         if self._color_type == _TYPE_RGB:
             _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
-                return int(_color[0]), int(_color[1]), int(_color[2])
+                r, g, b = int(_color[0]), int(_color[1]), int(_color[2])
+                if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= g <= 255:
+                    return r, g, b
         elif self._color_type == _TYPE_HEX:
             if len(self._input_string) == 7:
                 _color = self._input_string[1:]
@@ -226,35 +229,39 @@ class ColorInput(TextInput):
         """
         r, g, b = self.get_value()
         if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color
-            self._prev_surface = None
+            self._previsualization_surface = None
             return
 
         # If previsualization surface is None or the color changed
-        if self._last_r != r or self._last_b != b or self._last_g != g or self._prev_surface is None:
+        if self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
             _width = self._prev_size * self._rect.height
             if _width == 0 or self._rect.height == 0:
-                self._prev_surface = None
+                self._previsualization_surface = None
                 return
-            self._prev_surface = make_surface(_width, self._rect.height)
-            self._prev_surface.fill((r, g, b))
+            self._previsualization_surface = make_surface(_width, self._rect.height)
+            self._previsualization_surface.fill((r, g, b))
             self._last_r = r
             self._last_g = g
             self._last_b = b
+            _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
+            _posy = self._rect.y - 1
+            self._previsualization_position = (_posx, _posy)
 
         # Draw the surface
         if surface is not None:
-            _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
-            _posy = self._rect.y - 1
-            surface.blit(self._prev_surface, (_posx, _posy))
-
-    def _render(self):
-        super(ColorInput, self)._render()
-        self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
+            surface.blit(self._previsualization_surface, self._previsualization_position)
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
-        super(ColorInput, self).draw(surface)
+        super(ColorInput, self).draw(surface)  # This calls _render()
         self._previsualize_color(surface)
+
+    def _render(self):
+        super(ColorInput, self)._render()
+
+        # Maybe TextInput did not rendered, so this has to be changed
+        self._rect.width, self._rect.height = self._surface.get_size()
+        self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
@@ -380,5 +387,14 @@ class ColorInput(TextInput):
                      (len(self._input_string) > 2 and self._input_string[
                          self._cursor_position - 2] == self._separator)):
                 self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
+
+            # Check number is valid (fix) because sometimes the user can type
+            # too fast and avoid analysis of the text
+            colors = self._input_string.split(self._separator)
+            for c in colors:
+                if len(c) > 0 and (int(c) > 255 or int(c) < 0):
+                    self._input_string = _input
+                    self._cursor_position = _curpos
+                    break
 
         return updated

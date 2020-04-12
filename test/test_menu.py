@@ -29,7 +29,13 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+
 from test._utils import *
+from pygameMenu import events
+import timeit
+
+# Configure the tests
+_TEST_TIME_DRAW = False
 
 
 class MenuTest(unittest.TestCase):
@@ -40,6 +46,27 @@ class MenuTest(unittest.TestCase):
         """
         self.menu = PygameMenuUtils.generic_menu('mainmenu')
         self.menu.mainloop(surface, bgfun=dummy_function)
+
+    @staticmethod
+    def test_time_draw():
+        """
+        This test the time that takes to pygamemenu to draw several times.
+        """
+        if not _TEST_TIME_DRAW:
+            return
+        menu = PygameMenuUtils.generic_menu(title='EPIC')
+        menu.enable()
+
+        # Add several widgets
+        for i in range(30):
+            menu.add_button(title='epic', action=events.BACK)
+            menu.add_vertical_margin(margin=10)
+            menu.add_label(title='epic test')
+            menu.add_color_input(title='color', color_type='rgb', default=(234, 33, 2))
+            menu.add_selector(title='epic selector', items=[('1', '3'), ('2', '4')])
+            menu.add_text_input(title='text', default='the default text')
+
+        print(timeit.timeit(lambda: menu.draw(surface), number=100))
 
     def test_size(self):
         """

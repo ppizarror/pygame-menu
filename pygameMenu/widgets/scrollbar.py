@@ -105,7 +105,7 @@ class ScrollBar(Widget):
         self._page_ctrl_thick = page_ctrl_thick
         self._page_ctrl_color = page_ctrl_color
 
-        self._slider_rect = None  # type: (_pygame.rect.Rect,None)
+        self._slider_rect = None  # type: (_pygame.rect.RectType,None)
         self._slider_pad = slider_pad
         self._slider_color = slider_color
         self._slider_position = 0  # type: int
@@ -188,6 +188,10 @@ class ScrollBar(Widget):
         return value
 
     def _render(self):
+        if not self._render_hash_changed(self._rect.size, self._slider_rect.x, self._slider_rect.y,
+                                         self._slider_rect.width, self._slider_rect.height):
+            return
+
         self._surface = make_surface(*self._rect.size)
         self._surface.fill(self._page_ctrl_color)
 

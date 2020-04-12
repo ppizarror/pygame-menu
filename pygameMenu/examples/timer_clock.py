@@ -156,7 +156,7 @@ def main(test=False):
 
     # Timer
     timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
-                                 menu_alpha=85,
+                                 menu_opacity=85,
                                  menu_background_color=(0, 0, 0),  # Background color
                                  menu_height=400,
                                  menu_width=600,
@@ -192,6 +192,7 @@ def main(test=False):
     help_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_FRANCHISE,
                                 menu_background_color=(30, 50, 107),  # Background color
                                 menu_height=600,  # Fullscreen
+                                menu_opacity=85,
                                 menu_width=800,
                                 onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
                                 title='Help',
@@ -209,6 +210,7 @@ def main(test=False):
     # About menu
     about_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
                                  menu_height=400,
+                                 menu_opacity=85,  # Enable transparency
                                  menu_width=600,
                                  mouse_visible=False,
                                  onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
@@ -227,7 +229,7 @@ def main(test=False):
     # Main menu, pauses execution of the application
     main_menu = pygameMenu.Menu(enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
-                                menu_alpha=90,
+                                menu_opacity=90,
                                 menu_height=400,
                                 menu_width=600,
                                 title='Main Menu',
@@ -251,9 +253,6 @@ def main(test=False):
         clock.tick(FPS)
         timer[0] += dt
 
-        # Paint background
-        surface.fill(COLOR_BACKGROUND)
-
         # Application events
         events = pygame.event.get()
         for event in events:
@@ -261,17 +260,19 @@ def main(test=False):
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    main_menu.enable()
+                    main_menu.toggle()
 
-        # Draw timer
-        if main_menu.get_title() == 'Timer Menu' or not main_menu.is_enabled():
+        if main_menu.get_title() != 'Main Menu' or not main_menu.is_enabled():
+            # Draw timer
+            surface.fill(COLOR_BACKGROUND)
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
             time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
             time_blit_size = time_blit.get_size()
             surface.blit(time_blit,
                          (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
         else:
-            surface.fill(COLOR_BACKGROUND)
+            # Background color if the menu is enabled and timer is hidden
+            surface.fill((40, 0, 40))
 
         if main_menu.is_enabled():
             main_menu.draw(surface)

@@ -51,4 +51,5 @@ BACK = PymenuAction(0)  # Menu back
 CLOSE = PymenuAction(1)  # Close menu
 DISABLE_CLOSE = PymenuAction(2)  # Menu disable closing
 EXIT = PymenuAction(3)  # Menu exit program
+NONE = PymenuAction(5)  # None action
 RESET = PymenuAction(4)  # Menu reset
