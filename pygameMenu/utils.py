@@ -40,6 +40,7 @@ def assert_alignment(align):
 
     :param align: Align value
     :type align: basestring
+    :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
     assert align in [_locals.ALIGN_LEFT,
@@ -55,11 +56,26 @@ def assert_color(color):
     Assert that a certain color is valid.
 
     :param color: Object color
+    :type color: list, tuple
+    :return: None
     """
     assert isinstance(color, (list, tuple))
     assert len(color) == 3, 'color must be a tuple or list of 3 numbers'
     for i in color:
         assert isinstance(i, int), '"{0}" in element color {1} must be an integer'.format(i, color)
+
+
+def assert_orientation(orientation):
+    """
+    Assert that a certain widget orientation is valid.
+
+    :param orientation: Object orientation
+    :type orientation: basestring
+    :return: None
+    """
+    assert isinstance(orientation, str)
+    assert orientation in [_locals.ORIENTATION_HORIZONTAL, _locals.ORIENTATION_VERTICAL], \
+        'invalid orientation value "{0}"'.format(orientation)
 
 
 def assert_position(position):
@@ -68,6 +84,7 @@ def assert_position(position):
 
     :param position: Object position
     :type position: basestring
+    :return: None
     """
     assert isinstance(position, str)
     assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
