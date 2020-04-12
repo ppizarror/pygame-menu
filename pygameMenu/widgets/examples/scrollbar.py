@@ -79,6 +79,7 @@ def make_world(width, height):
 def h_changed(value):
     """
     :param value: Value data
+    :return: None
     """
     print('Horizontal position changed:', value)
 
@@ -86,6 +87,7 @@ def h_changed(value):
 def v_changed(value):
     """
     :param value: Value data
+    :return: None
     """
     print('Vertical position changed:', value)
 
@@ -94,7 +96,9 @@ def main(test=False):
     """
     Main function.
 
-    :param test: If test, mainloop breaks at first iteration
+    :param test: Indicate function is being tested
+    :type test: bool
+    :return: None
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()

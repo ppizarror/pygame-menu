@@ -235,7 +235,10 @@ def main(test=False):
     def print_color(color):
         """
         Test onchange/onreturn.
+
         :param color: Color tuple
+        :type color: tuple
+        :return: None
         """
         print('Returned color: ', color)
 

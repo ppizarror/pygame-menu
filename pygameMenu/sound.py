@@ -199,15 +199,15 @@ class Sound(object):
             self._channel = channel  # Store the available channel
         return self._channel
 
-    def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
+    def set_sound(self, sound_type, sound_file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
         """
         Link a sound file to a sound type.
 
-        :param sound: Sound type
-        :type sound: basestring
-        :param file: Sound file
-        :type file: basestring, NoneType
-        :param volume: Volume of the sound, (0-1)
+        :param sound_type: Sound type
+        :type sound_type: basestring
+        :param sound_file: Sound file
+        :type sound_file: basestring, NoneType
+        :param volume: Volume of the sound, from 0.0 to 1.0
         :type volume: float
         :param loops: Loops of the sound
         :type loops: int
@@ -218,8 +218,8 @@ class Sound(object):
         :return: The status of the sound load, True if the sound was loaded
         :rtype: bool
         """
-        assert isinstance(sound, str)
-        assert isinstance(file, (str, type(None)))
+        assert isinstance(sound_type, str)
+        assert isinstance(sound_file, (str, type(None)))
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
         assert isinstance(fade_ms, (int, float))
@@ -229,35 +229,35 @@ class Sound(object):
         assert 1 >= volume >= 0, 'volume must be between 0 and 1'
 
         # Check sound type is correct
-        if sound not in self._type_sounds:
+        if sound_type not in self._type_sounds:
             raise ValueError('sound type not valid, check the manual')
 
         # If file is none disable the sound
-        if file is None:
-            self._sound[sound] = {}
+        if sound_file is None:
+            self._sound[sound_type] = {}
             return False
 
         # Check the file exists
-        if not _path.isfile(file):
-            raise IOError('sound file "{0}" does not exist'.format(file))
+        if not _path.isfile(sound_file):
+            raise IOError('sound file "{0}" does not exist'.format(sound_file))
 
         # Load the sound
         try:
-            sound_data = _mixer.Sound(file=file)
+            sound_data = _mixer.Sound(file=sound_file)
         except _pygame_error:
             if self._verbose:
                 _stderr.write('The sound format is not valid, the sound has been disabled\n')
-            self._sound[sound] = {}
+            self._sound[sound_type] = {}
             return False
 
         # Configure the sound
         sound_data.set_volume(volume)
 
         # Store the sound
-        self._sound[sound] = {
+        self._sound[sound_type] = {
             'file': sound_data,
-            'path': file,
-            'type': sound,
+            'path': sound_file,
+            'type': sound_type,
             'length': sound_data.get_length(),
             'volume': volume,
             'loops': loops,
@@ -329,54 +329,72 @@ class Sound(object):
     def play_click_mouse(self):
         """
         Play click mouse sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_CLICK_MOUSE])
 
     def play_error(self):
         """
         Play error sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_ERROR])
 
     def play_event(self):
         """
         Play event sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_EVENT])
 
     def play_event_error(self):
         """
         Play event error sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_EVENT_ERROR])
 
     def play_key_add(self):
         """
         Play key addition sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_ADDITION])
 
     def play_key_del(self):
         """
         Play key deletion sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_DELETION])
 
     def play_open_menu(self):
         """
         Play open menu sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_OPEN_MENU])
 
     def play_close_menu(self):
         """
         Play close menu sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
 
     def stop(self):
         """
         Stop the current the channel.
+
+        :return: None
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
@@ -389,6 +407,8 @@ class Sound(object):
     def pause(self):
         """
         Pause the current channel.
+
+        :return: None
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
@@ -401,6 +421,8 @@ class Sound(object):
     def unpause(self):
         """
         Unpause channel.
+
+        :return: None
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy

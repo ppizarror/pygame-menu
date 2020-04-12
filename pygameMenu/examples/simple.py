@@ -42,6 +42,8 @@ surface = pygame.display.set_mode((600, 500))
 def set_difficulty(selected, value):
     """
     Set the difficulty of the game.
+
+    :return: None
     """
     print('Set difficulty to {} ({})'.format(selected[0], value))
 
@@ -50,6 +52,8 @@ def start_the_game():
     """
     Function that starts a game. This is raised by the menu button,
     here menu can be disabled, etc.
+
+    :return: None
     """
     print('Do the job here !')
 
