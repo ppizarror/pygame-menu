@@ -31,8 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 from test._utils import *
 import pygame
-from pygameMenu import locals as _locals
-from pygameMenu.widgets import ScrollBar
 
 
 class WidgetsTest(unittest.TestCase):
@@ -350,48 +348,3 @@ class WidgetsTest(unittest.TestCase):
         for i in range(50):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
-
-    # noinspection PyArgumentEqualDefault
-    def test_scrollbar(self):
-        """
-        Test ScrollBar widget.
-            """
-        screen_size = surface.get_size()
-        world = PygameMenuUtils.get_large_surface()
-
-        # Vertical right scrollbar
-        thick = 80
-        length = screen_size[1]
-        world_range = (50, world.get_height())
-        orientation = _locals.ORIENTATION_VERTICAL
-        x, y = screen_size[0] - thick, 0
-
-        sb = ScrollBar(length,
-                       world_range,
-                       '',
-                       orientation,
-                       slider_pad=2,
-                       slider_color=(210, 120, 200),
-                       page_ctrl_thick=thick,
-                       page_ctrl_color=(235, 235, 230))
-
-        sb.set_shadow(color=(245, 245, 245),
-                      position=_locals.POSITION_SOUTHEAST,
-                      offset=2)
-
-        sb.set_position(x, y)
-
-        self.assertEqual(sb.get_orientation(), _locals.ORIENTATION_VERTICAL)
-        self.assertEqual(sb.get_minimum(), world_range[0])
-        self.assertEqual(sb.get_maximum(), world_range[1])
-
-        sb.set_value(80)
-        self.assertAlmostEqual(sb.get_value(), 80, delta=2)  # Scaling delta
-
-        sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
-        self.assertEqual(sb.get_value(), 50)
-
-        sb.set_page_step(length)
-        self.assertAlmostEqual(sb.get_page_step(), length, delta=2)  # Scaling delta
-
-        sb.draw(surface)
