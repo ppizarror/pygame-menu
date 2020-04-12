@@ -60,24 +60,20 @@ def paint_background(surface):
     Paints a given surface with background color.
 
     :param surface: Pygame surface
-    :type surface: pygame.Surface
+    :type surface: pygame.SurfaceType
     """
     surface.fill(COLOR_BACKGROUND)
 
 
-def make_long_menu(surface):
+def make_long_menu():
     """
     Create a long scrolling menu.
 
-    :param surface: Pygame active surface of the menu
     :return: Menu
     :rtype: pygameMenu.Menu
     """
     # Main menu, pauses execution of the application
-    _menu = pygameMenu.Menu(surface,
-                            bgfun=partial(paint_background, surface),
-                            font=pygameMenu.font.FONT_COMIC_NEUE,
-                            fps=FPS,
+    _menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
                             menu_alpha=80,
                             menu_background_color=(188, 200, 108),
                             menu_height=400,
@@ -88,11 +84,8 @@ def make_long_menu(surface):
                             widget_offset_y=10,
                             )
 
-    _menu_sub = pygameMenu.Menu(surface,
-                                bgfun=partial(paint_background, surface),
-                                columns=4,
+    _menu_sub = pygameMenu.Menu(columns=4,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
-                                fps=FPS,
                                 menu_alpha=60,
                                 menu_background_color=(120, 200, 108),
                                 menu_height=400,
@@ -104,10 +97,7 @@ def make_long_menu(surface):
                                 widget_shadow=True,
                                 )
 
-    _menu_text = pygameMenu.Menu(surface,
-                                 bgfun=partial(paint_background, surface),
-                                 font=pygameMenu.font.FONT_COMIC_NEUE,
-                                 fps=FPS,
+    _menu_text = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
                                  menu_alpha=60,
                                  menu_height=400,
                                  menu_width=600,
@@ -118,6 +108,8 @@ def make_long_menu(surface):
 
     _menu.add_button('Rows and Columns', _menu_sub)
     _menu.add_button('Text scrolled', _menu_text)
+    _menu.add_vertical_margin(20)  # Adds margin
+    
     label1 = 'Button n°{}'
     label2 = 'Text n°{}: '
     for i in range(1, 20):
@@ -140,7 +132,7 @@ def make_long_menu(surface):
             txt = label.format(100 * i)
         _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygameMenu.events.BACK)
-    _menu_sub.center_vertically()
+    _menu_sub.center_content()
 
     _menu_text.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                          'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
@@ -167,7 +159,7 @@ def main(test=False):
     pygame.display.set_caption('Example - Scrolling Menu')
 
     # Create menu
-    menu = make_long_menu(screen)
+    menu = make_long_menu()
 
     # -------------------------------------------------------------------------
     # Main loop
@@ -181,7 +173,10 @@ def main(test=False):
         paint_background(screen)
 
         # Execute main from principal menu if is enabled
-        menu.mainloop(disable_loop=test)
+        menu.mainloop(surface=screen,
+                      bgfun=partial(paint_background, screen),
+                      disable_loop=test,
+                      fps_limit=FPS)
 
         # Update surface
         pygame.display.flip()

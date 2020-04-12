@@ -6,7 +6,8 @@ Adding widgets
 Label
 -----
 
-A label is used to display a text.
+A label is used to display a text. If the text is too large, it
+will be wrapped in order to fit the menu size.
 
 .. automethod:: pygameMenu.menu.Menu.add_label
 

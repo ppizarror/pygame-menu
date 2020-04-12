@@ -38,7 +38,6 @@ from pygameMenu.utils import make_surface
 from pygameMenu.widgets.widget import Widget
 
 
-# noinspection PyTypeChecker
 class MenuBar(Widget):
     """
     MenuBar widget.
@@ -81,18 +80,19 @@ class MenuBar(Widget):
                                       )
 
         self._backbox = back_box
-        self._backbox_pos = None  # type: tuple
-        self._backbox_rect = None  # type: _pygame.rect.RectType
+        self._backbox_pos = None  # type: (tuple,None)
+        self._backbox_rect = None  # type: (_pygame.rect.Rect,None)
         self._bgcolor = bgcolor
         self._label = label
         self._offsetx = 0  # type: int
         self._offsety = 0  # type: int
-        self._polygon_pos = None  # type: tuple
+        self._polygon_pos = None  # type: (tuple,None)
         self._width = width  # type: (int,float)
 
     def _apply_font(self):
         pass
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
 
@@ -122,8 +122,6 @@ class MenuBar(Widget):
 
     def _render(self):
         self._surface = self.render_string(self._label, self._font_selected_color)
-
-        # Usually done in get_rect(), but can not be called here because it call _render() itself
         self._rect.width, self._rect.height = self._surface.get_size()
 
         self._polygon_pos = (
@@ -186,6 +184,7 @@ class MenuBar(Widget):
         self._offsety = offsety
         self._offsetx = offsetx
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
         for event in events:  # type: _pygame.event.EventType

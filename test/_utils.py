@@ -35,6 +35,9 @@ import pygameMenu
 import random
 
 # noinspection PyUnresolvedReferences
+from pygameMenu.utils import dummy_function
+
+# noinspection PyUnresolvedReferences
 import unittest
 
 # Constants
@@ -292,7 +295,16 @@ class PygameMenuUtils(object):
         return fonts[random.randrange(0, len(fonts))]
 
     @staticmethod
-    def generic_menu(title='', columns=1, rows=None, *args, **kwargs):
+    def generic_menu(
+            title='',
+            columns=1,
+            rows=None,
+            width=600,
+            height=400,
+            position_x=50,
+            position_y=50,
+            *args,
+            **kwargs):
         """
         Generate a generic test menu.
 
@@ -301,22 +313,29 @@ class PygameMenuUtils(object):
         :param columns: Number of columns
         :type columns: int
         :param rows: Number of rows
-        :type rows: int,None
+        :type rows: int, NoneType
+        :param width: Menu width (px)
+        :type width: int
+        :param height: Menu height (px)
+        :type height: int
+        :param position_x: X position of the menu
+        :type position_x: int, float
+        :param position_y: Y position of the menu
+        :type position_y: int, float
         :param args: Additional args
         :param kwargs: Additional key parameters
         :type kwargs: dict
         :return: Menu
         :rtype: pygameMenu.Menu
         """
-        return pygameMenu.Menu(surface,
-                               columns=columns,
-                               dopause=False,
+        return pygameMenu.Menu(columns=columns,
                                enabled=False,
                                font=pygameMenu.font.FONT_NEVIS,
-                               fps=FPS,
                                menu_alpha=90,
-                               menu_height=400,
-                               menu_width=600,
+                               menu_height=height,
+                               menu_position_x=position_x,
+                               menu_position_y=position_y,
+                               menu_width=width,
                                rows=rows,
                                title=title,
                                *args,

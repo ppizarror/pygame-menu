@@ -41,7 +41,6 @@ _TYPE_HEX = 'hex'
 _TYPE_RGB = 'rgb'
 
 
-# noinspection PyTypeChecker
 class ColorInput(TextInput):
     """
     Color input widget.
@@ -65,11 +64,11 @@ class ColorInput(TextInput):
     :param prev_size: Width of the previsualization box in terms of the height of the widget
     :type prev_size: int, float
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :type repeat_keys_initial_ms: float, int
+    :type repeat_keys_initial_ms: int, float
     :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :type repeat_keys_interval_ms: float, int
+    :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :type repeat_mouse_interval_ms: float, int
+    :type repeat_mouse_interval_ms: int, float
     :param kwargs: Optional keyword-arguments for callbacks
     """
 
@@ -146,21 +145,18 @@ class ColorInput(TextInput):
         self._last_r = -1  # type: int
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
-        self._prev_surface = None  # type: _pygame.Surface
+        self._prev_surface = None  # type: (_pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 
+    # noinspection PyMissingOrEmptyDocstring
     def clear(self):
-        """
-        Clear the current text.
-
-        :return: None
-        """
         super(ColorInput, self).clear()
         self._prev_surface = None
         if self._color_type == _TYPE_HEX:
             super(ColorInput, self).set_value('#')
         self.change()
 
+    # noinspection PyMissingOrEmptyDocstring
     def set_value(self, rgb_tuple):
         _color = ''
         if self._color_type == _TYPE_RGB:
@@ -168,7 +164,7 @@ class ColorInput(TextInput):
                 super(ColorInput, self).set_value('')
                 return
             assert isinstance(rgb_tuple, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
-            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R, G, B'
+            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R,G,B'
             r, g, b = rgb_tuple
             assert isinstance(r, int), 'Red color must be an integer'
             assert isinstance(g, int), 'Blue color must be an integer'
@@ -204,16 +200,21 @@ class ColorInput(TextInput):
         super(ColorInput, self).set_value(_color)
 
     def get_value(self):
+        """
+        Return the color value as a tuple or red blue and green channels.
+        If the data is invalid the widget returns (-1,-1,-1).
+
+        :return: Color tuple as (R,G,B)
+        :rtype: tuple
+        """
         if self._color_type == _TYPE_RGB:
             _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
                 return int(_color[0]), int(_color[1]), int(_color[2])
-            # raise ValueError('Invalid color format, R, G and B channels must be provided')
         elif self._color_type == _TYPE_HEX:
             if len(self._input_string) == 7:
                 _color = self._input_string[1:]
                 return tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
-            # raise ValueError('Invalid color format, color must be "#XXXXXX"')
         return -1, -1, -1
 
     def _previsualize_color(self, surface):
@@ -221,7 +222,7 @@ class ColorInput(TextInput):
         Changes the color of the previsualization box.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType, None
+        :type surface: pygame.surface.Surface, None
         """
         r, g, b = self.get_value()
         if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color
@@ -246,23 +247,16 @@ class ColorInput(TextInput):
             _posy = self._rect.y - 1
             surface.blit(self._prev_surface, (_posx, _posy))
 
-    def get_rect(self):
-        """
-        Return the Rect object, this updates the width of the rect depending if
-        the previsualization box is active.
+    def _render(self):
+        super(ColorInput, self)._render()
+        self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
 
-        :return: pygame.Rect
-        :rtype: pygame.rect.RectType
-        """
-        self._render()
-        self._rect.width, self._rect.height = self._surface.get_size()
-        self._rect.width += self._prev_size * self._rect.height
-        return self._rect
-
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         super(ColorInput, self).draw(surface)
         self._previsualize_color(surface)
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         _input = self._input_string
         _curpos = self._cursor_position

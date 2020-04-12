@@ -52,6 +52,7 @@ except ImportError:
         """
         pass
 
+
     def paste():
         """
         Paste method.
@@ -61,6 +62,7 @@ except ImportError:
         """
         return ''
 
+
     class PyperclipException(RuntimeError):
         """
         Pyperclip exception thrown by pyperclip.
@@ -68,7 +70,6 @@ except ImportError:
         pass
 
 
-# noinspection PyTypeChecker
 class TextInput(Widget):
     """
     Text input widget.
@@ -86,7 +87,7 @@ class TextInput(Widget):
     :param enable_copy_paste: Enables copy, paste and cut
     :type enable_copy_paste: bool
     :param enable_selection: Enables selection of text
-    :type enable_selection: tuple
+    :type enable_selection: bool
     :param history: Maximum number of editions stored
     :type history: int
     :param maxchar: Maximum length of input
@@ -104,11 +105,11 @@ class TextInput(Widget):
     :param password_char: Character used by password type
     :type password_char: basestring
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-    :type repeat_keys_initial_ms: float, int
+    :type repeat_keys_initial_ms: int, float
     :param repeat_keys_interval_ms: Interval between key press repetition when held
-    :type repeat_keys_interval_ms: float, int
+    :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
-    :type repeat_mouse_interval_ms: float, int
+    :type repeat_mouse_interval_ms: int, float
     :param selection_color: Selection box color
     :type selection_color: tuple
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
@@ -214,7 +215,7 @@ class TextInput(Widget):
         self._cursor_offset = -1  # type: int
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
-        self._cursor_surface = None  # type: _pygame.Surface
+        self._cursor_surface = None  # type: (_pygame.Surface,None)
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500  # type: int
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
@@ -235,7 +236,7 @@ class TextInput(Widget):
         self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0, 0]  # (x,y)
         self._selection_render = False
-        self._selection_surface = None  # type: _pygame.Surface
+        self._selection_surface = None  # type: (_pygame.Surface,None)
 
         # List of valid chars
         if valid_chars is not None:
@@ -258,7 +259,7 @@ class TextInput(Widget):
         self._label_size = 0  # type: int
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygameMenu__last_render_string__'  # type: str
-        self._last_rendered_surface = None  # type: _pygame.Surface
+        self._last_rendered_surface = None  # type: (_pygame.Surface,None)
         self._last_rendered_surface_underline_width = 0  # type: int
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
@@ -269,9 +270,6 @@ class TextInput(Widget):
         self._password_char = password_char
 
     def _apply_font(self):
-        """
-        See upper class doc.
-        """
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
         self._label_size = self._font.size(self._label)[0]
 
@@ -303,7 +301,10 @@ class TextInput(Widget):
 
     def get_value(self):
         """
-        See upper class doc.
+        Returns the value of the text.
+
+        :return: Text inside the widget
+        :rtype: basestring
         """
         value = ''
         if self._input_type == _locals.INPUT_TEXT:
@@ -320,10 +321,8 @@ class TextInput(Widget):
                 value = 0
         return value
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
-        """
-        See upper class doc.
-        """
         self._clock.tick()
         self._render()
 
@@ -341,9 +340,6 @@ class TextInput(Widget):
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
     def _render(self):
-        """
-        See upper class doc.
-        """
         string = self._label + self._get_input_string()  # Render string
         if self.selected:
             color = self._font_selected_color
@@ -367,6 +363,9 @@ class TextInput(Widget):
 
         # Update last rendered
         self._last_rendered_string = string
+
+        # Update the size of the render
+        self._rect.width, self._rect.height = self._surface.get_size()
 
     def _render_selection_box(self, force=False):
         """
@@ -473,7 +472,8 @@ class TextInput(Widget):
 
             # Calculate total available space
             current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
-            _, _, posx2, _ = menu.get_position()
+            menu_rect = menu.get_rect()
+            posx2 = menu_rect.x + menu_rect.width
             space_between_label = posx2 - self._label_size - self._rect.x
             char = _math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
 
@@ -886,7 +886,11 @@ class TextInput(Widget):
 
     def set_value(self, text):
         """
-        See upper class doc.
+        Set the value of the text.
+
+        :param text: New text of the widget
+        :type text: basestring, int, float
+        :return: None
         """
         if self._password and text != '':
             raise ValueError('value cannot be set in password type')
@@ -982,9 +986,6 @@ class TextInput(Widget):
         self._update_renderbox(right=1)
 
     def _blur(self):
-        """
-        See upper class doc.
-        """
         # self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
@@ -993,9 +994,6 @@ class TextInput(Widget):
         # self._history_index = len(self._history) - 1
 
     def _focus(self):
-        """
-        See upper class doc.
-        """
         self._cursor_ms_counter = 0
         self._cursor_visible = True
         self._cursor_render = True
@@ -1162,8 +1160,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-            text[0:text_end] + \
-            self._input_string[self._cursor_position:len(self._input_string)]
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):
@@ -1354,10 +1352,8 @@ class TextInput(Widget):
                 self.sound.play_event_error()
         return False
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
-        """
-        See upper class doc.
-        """
         updated = False
 
         for event in events:  # type: _pygame.event.EventType

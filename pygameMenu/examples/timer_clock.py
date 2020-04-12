@@ -60,8 +60,11 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
-surface = None
-timer = None
+# noinspection PyTypeChecker
+surface = None  # type: pygame.Surface
+
+# noinspection PyTypeChecker
+timer = None  # type: list
 
 
 # -----------------------------------------------------------------------------
@@ -152,14 +155,12 @@ def main(test=False):
     # -------------------------------------------------------------------------
 
     # Timer
-    timer_menu = pygameMenu.Menu(surface,
-                                 dopause=False,
-                                 font=pygameMenu.font.FONT_NEVIS,
+    timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
                                  menu_alpha=85,
                                  menu_background_color=(0, 0, 0),  # Background color
-                                 menu_height=H_SIZE * 0.65,
+                                 menu_height=400,
                                  menu_width=600,
-                                 onclose=pygameMenu.events.RESET,  # If this menu closes (ESC) back to main
+                                 onclose=pygameMenu.events.RESET,
                                  selection_highlight_border_width=4,
                                  title='Timer Menu',
                                  title_background_color=(0, 0, 0),
@@ -172,10 +173,10 @@ def main(test=False):
 
     # Adds a selector (element that can handle functions)
     timer_menu.add_selector(title='Change color ',
-                            values=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
-                                    ('Default', (128, 0, 128)),
-                                    ('Black', (0, 0, 0)),
-                                    ('Blue', COLOR_BLUE)],
+                            items=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
+                                   ('Default', (128, 0, 128)),
+                                   ('Black', (0, 0, 0)),
+                                   ('Blue', COLOR_BLUE)],
                             default=1,  # Optional parameter that sets default item of selector
                             onchange=change_color_bg,  # Action when changing element with left/right
                             onreturn=change_color_bg,  # Action when pressing return on an element
@@ -185,12 +186,10 @@ def main(test=False):
     timer_menu.add_button('Update game object', TestCallClassMethod().update_game_settings)
     timer_menu.add_button('Return to Menu', pygameMenu.events.BACK)
     timer_menu.add_button('Close Menu', pygameMenu.events.CLOSE)
-    timer_menu.center_vertically()
+    timer_menu.center_content()
 
     # Help menu
-    help_menu = pygameMenu.Menu(surface,
-                                dopause=False,
-                                font=pygameMenu.font.FONT_FRANCHISE,
+    help_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_FRANCHISE,
                                 menu_background_color=(30, 50, 107),  # Background color
                                 menu_height=600,  # Fullscreen
                                 menu_width=800,
@@ -208,9 +207,7 @@ def main(test=False):
     help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # About menu
-    about_menu = pygameMenu.Menu(surface,
-                                 dopause=False,
-                                 font=pygameMenu.font.FONT_NEVIS,
+    about_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
                                  menu_height=400,
                                  menu_width=600,
                                  mouse_visible=False,
@@ -228,15 +225,11 @@ def main(test=False):
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # Main menu, pauses execution of the application
-    main_menu = pygameMenu.Menu(surface,
-                                bgfun=mainmenu_background,
-                                enabled=False,
+    main_menu = pygameMenu.Menu(enabled=False,
                                 font=pygameMenu.font.FONT_NEVIS,
-                                fps=FPS,
                                 menu_alpha=90,
                                 menu_height=400,
                                 menu_width=600,
-                                onclose=pygameMenu.events.CLOSE,
                                 title='Main Menu',
                                 title_background_color=(170, 65, 50),
                                 title_offset_y=5,
@@ -247,7 +240,7 @@ def main(test=False):
     main_menu.add_button(help_menu.get_title(), help_menu)  # Add help submenu
     main_menu.add_button(about_menu.get_title(), about_menu)  # Add about submenu
     main_menu.add_button('Exit', pygameMenu.events.EXIT)  # Add exit function
-    main_menu.center_vertically()
+    main_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Main loop
@@ -271,13 +264,19 @@ def main(test=False):
                     main_menu.enable()
 
         # Draw timer
-        time_string = str(datetime.timedelta(seconds=int(timer[0])))
-        time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
-        time_blit_size = time_blit.get_size()
-        surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
+        if main_menu.get_title() == 'Timer Menu' or not main_menu.is_enabled():
+            time_string = str(datetime.timedelta(seconds=int(timer[0])))
+            time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
+            time_blit_size = time_blit.get_size()
+            surface.blit(time_blit,
+                         (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
+        else:
+            surface.fill(COLOR_BACKGROUND)
 
-        # Execute main from principal menu if is enabled
-        main_menu.mainloop(events, disable_loop=test)
+        if main_menu.is_enabled():
+            main_menu.draw(surface)
+
+        main_menu.update(events)
 
         # Flip surface
         pygame.display.flip()

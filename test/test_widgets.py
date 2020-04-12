@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from test._utils import *
 import pygame
 from pygameMenu import locals as _locals
-from pygameMenu.widgets import ScrollBar, WidgetType
+from pygameMenu.widgets import ScrollBar, Label
 
 
 class WidgetsTest(unittest.TestCase):
@@ -42,7 +42,6 @@ class WidgetsTest(unittest.TestCase):
         Setup sound engine.
         """
         self.menu = PygameMenuUtils.generic_menu()
-        self.menu.mainloop()
 
     def test_selector(self):
         """
@@ -53,7 +52,8 @@ class WidgetsTest(unittest.TestCase):
                                            ('2 - Medium', 'MEDIUM'),
                                            ('3 - Hard', 'HARD')],
                                           default=1)
-        self.menu.draw()
+        self.menu.enable()
+        self.menu.draw(surface)
 
         selector.draw(surface)
         selector.selected = False
@@ -77,6 +77,12 @@ class WidgetsTest(unittest.TestCase):
                         ('6 - Hard', 'HARD')]
         selector.update_elements(new_elements)
         selector.set_value('6 - Hard')
+        self.assertEqual(selector.get_value()[1], 2)
+        self.assertRaises(AssertionError, lambda: selector.set_value(bool))
+        self.assertRaises(AssertionError, lambda: selector.set_value(200))
+        selector.set_value(1)
+        self.assertEqual(selector.get_value()[1], 1)
+        self.assertEqual(selector.get_value()[0], '5 - Medium')
 
     # noinspection PyArgumentEqualDefault
     def test_colorinput(self):
@@ -199,7 +205,7 @@ class WidgetsTest(unittest.TestCase):
         for i in range(5):
             widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
-        widget._previsualize_color(self.menu._surface)
+        widget._previsualize_color(surface)
         widget.get_rect()
 
         widget.clear()
@@ -266,14 +272,17 @@ class WidgetsTest(unittest.TestCase):
                                     max_char=33,
                                     margin=(3, 5),
                                     align=_locals.ALIGN_LEFT,
-                                    font_size=3)
+                                    font_size=3)  # type: list
         self.assertEqual(len(label), 15)
-        _w = label[0]  # type: WidgetType
+        _w = label[0]  # type: Label
         self.assertFalse(_w.is_selectable)
         self.assertEqual(_w.get_margin()[0], 3)
         self.assertEqual(_w.get_margin()[1], 5)
         self.assertEqual(_w.get_alignment(), _locals.ALIGN_LEFT)
         self.assertEqual(_w.get_font_info()['size'], 3)
+        _w.draw(surface)
+        _w.draw_selected_rect()
+        self.assertFalse(_w.update([]))
 
     def test_textinput(self):
         """
@@ -414,6 +423,22 @@ class WidgetsTest(unittest.TestCase):
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+    def test_vmargin(self):
+        """
+        Test vertical margin widget.
+        """
+        menu = PygameMenuUtils.generic_menu()
+        w = menu.add_vertical_margin(999)
+        w._render()
+        self.assertEqual(w.get_rect().width, 0)
+        self.assertEqual(w.get_rect().height, 0)
+        self.assertEqual(w.update([]), False)
+        self.assertEqual(w._font_size, 0)
+        self.assertEqual(w.get_margin()[0], 0)
+        self.assertEqual(w.get_margin()[1], 999)
+        w.draw(surface)
+        w.draw_selected_rect()
 
     # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):

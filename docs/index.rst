@@ -114,6 +114,7 @@ class to display large custom surface.
    _source/widget_scrollbar
    _source/widget_selector
    _source/widget_textinput
+   _source/widget_vmargin
 
 
 =================

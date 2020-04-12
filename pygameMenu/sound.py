@@ -74,7 +74,6 @@ _SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 SOUND_INITIALIZED = [False]
 
 
-# noinspection PyTypeChecker
 class Sound(object):
     """
     Sound engine class.
@@ -154,12 +153,12 @@ class Sound(object):
                                 allowedchanges=allowedchanges)
 
             except Exception as e:
-                print('Sound error: ' + str(e))
+                print('sound error: ' + str(e))
             except _pygame_error as e:
-                print('Sound engine could not be initialized, pygame error: ' + str(e))
+                print('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Channel where a sound is played
-        self._channel = None  # type: _mixer.ChannelType
+        self._channel = None  # type: (_mixer.ChannelType,None)
         self._uniquechannel = uniquechannel
 
         # Sound dict
@@ -293,7 +292,7 @@ class Sound(object):
         Play a sound.
 
         :param sound: Sound to be played
-        :type sound: pygame.mixer.Sound, NoneType
+        :type sound: pygame.mixer.SoundType, NoneType
         :return: True if the sound was played
         :rtype: bool
         """
@@ -414,7 +413,7 @@ class Sound(object):
         """
         Return the current channel information of the sound engine.
 
-        :return: a info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
+        :return: An info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
         :rtype: dict
         """
         channel = self.get_channel()  # type: _mixer.ChannelType

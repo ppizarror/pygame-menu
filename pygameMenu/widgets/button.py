@@ -72,6 +72,7 @@ class Button(Widget):
     def _apply_font(self):
         pass
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         """See doc of :py:meth:`pygameMenu.widgets.widget.Widget.draw`."""
         self._render()
@@ -83,7 +84,9 @@ class Button(Widget):
         else:
             color = self._font_color
         self._surface = self.render_string(self._label, color)
+        self._rect.width, self._rect.height = self._surface.get_size()
 
+    # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
         for event in events:  # type: _pygame.event.EventType

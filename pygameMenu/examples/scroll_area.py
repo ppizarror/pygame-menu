@@ -115,6 +115,7 @@ def iter_world(area):
     Iterate through worlds.
 
     :param area: Scroll area
+    :type area: ScrollArea
     :return:
     """
     for name in itertools.cycle(WORLDS):

@@ -3,6 +3,9 @@
 pygame-menu
 ===========
 
+.. image:: https://raw.githubusercontent.com/ppizarror/pygame-menu/master/docs/_static/pygame-menu-small.png
+   :scale: 25%
+
 Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
 .. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master

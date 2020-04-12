@@ -49,9 +49,14 @@ MENU_BACKGROUND_COLOR = (228, 100, 36)
 TITLE_BACKGROUND_COLOR = (170, 65, 50)
 WINDOW_SIZE = (640, 480)
 
-sound = None
-surface = None
-main_menu = None
+# noinspection PyTypeChecker
+sound = None  # type: pygameMenu.sound.Sound
+
+# noinspection PyTypeChecker
+surface = None  # type: pygame.Surface
+
+# noinspection PyTypeChecker
+main_menu = None  # type: pygameMenu.Menu
 
 
 # -----------------------------------------------------------------------------
@@ -141,9 +146,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Settings
     # -------------------------------------------------------------------------
-    settings_menu = pygameMenu.Menu(surface,
-                                    bgfun=main_background,
-                                    font=pygameMenu.font.FONT_HELVETICA,
+    settings_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_HELVETICA,
                                     menu_background_color=MENU_BACKGROUND_COLOR,
                                     menu_height=WINDOW_SIZE[1] * 0.85,
                                     menu_width=WINDOW_SIZE[0] * 0.9,
@@ -205,14 +208,12 @@ def main(test=False):
     settings_menu.add_button('Store data', data_fun)  # Call function
     settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                              align=pygameMenu.locals.ALIGN_CENTER)
-    settings_menu.center_vertically()  # After all widgets added
+    settings_menu.center_content()  # After all widgets added
 
     # -------------------------------------------------------------------------
     # Create menus: More settings
     # -------------------------------------------------------------------------
-    more_settings_menu = pygameMenu.Menu(surface,
-                                         bgfun=main_background,
-                                         font=pygameMenu.font.FONT_COMIC_NEUE,
+    more_settings_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
                                          menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.85,
                                          menu_width=WINDOW_SIZE[0] * 0.9,
@@ -224,7 +225,7 @@ def main(test=False):
                                          widget_font_color=COLOR_BLACK,
                                          widget_font_size=25,
                                          widget_offset_x=5,  # px
-                                         widget_offset_y=50,  # px
+                                         widget_offset_y=40,  # px
                                          )
 
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
@@ -245,9 +246,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Column buttons
     # -------------------------------------------------------------------------
-    button_column_menu = pygameMenu.Menu(surface,
-                                         bgfun=main_background,
-                                         columns=2,
+    button_column_menu = pygameMenu.Menu(columns=2,
                                          font=pygameMenu.font.FONT_COMIC_NEUE,
                                          menu_background_color=MENU_BACKGROUND_COLOR,
                                          menu_height=WINDOW_SIZE[1] * 0.45,
@@ -263,14 +262,12 @@ def main(test=False):
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
     button_column_menu.add_button('Return to main menu', pygameMenu.events.BACK)
-    button_column_menu.center_vertically()
+    button_column_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
     # -------------------------------------------------------------------------
-    main_menu = pygameMenu.Menu(surface,
-                                bgfun=main_background,
-                                font=pygameMenu.font.FONT_COMIC_NEUE,
+    main_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
                                 menu_background_color=MENU_BACKGROUND_COLOR,
                                 menu_height=WINDOW_SIZE[1] * 0.7,
                                 menu_width=WINDOW_SIZE[0] * 0.8,
@@ -282,7 +279,6 @@ def main(test=False):
                                 widget_font_size=30,
                                 widget_offset_y=0.09,
                                 )
-    main_menu.set_fps(FPS)
 
     main_menu.add_button('Settings', settings_menu)
     main_menu.add_button('More Settings', more_settings_menu)
@@ -308,7 +304,7 @@ def main(test=False):
         main_background()
 
         # Main menu
-        main_menu.mainloop(disable_loop=test)
+        main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
 
         # Flip surface
         pygame.display.flip()

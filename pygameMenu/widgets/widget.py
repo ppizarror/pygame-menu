@@ -39,7 +39,6 @@ from pygameMenu.utils import make_surface, assert_alignment, assert_color, asser
 from uuid import uuid4
 
 
-# noinspection PyTypeChecker
 class Widget(object):
     """
     Widget abstract class.
@@ -56,9 +55,9 @@ class Widget(object):
         :param widget_id: Widget identifier
         :type widget_id: basestring
         :param onchange: Callback when changing the selector
-        :type onchange: function, NoneType
+        :type onchange: callable, NoneType
         :param onreturn: Callback when pressing return button
-        :type onreturn: function, NoneType
+        :type onreturn: callable, NoneType
         :param args: Optional arguments for callbacks
         :param kwargs: Optional keyword-arguments for callbacks
         """
@@ -72,15 +71,13 @@ class Widget(object):
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER
-        self._fps = 0  # type: int
         self._id = str(widget_id)
-        self._last_selected_surface = None  # type: _pygame.SurfaceType
-        self._selected_rect = None  # type: _pygame.rect.RectType
-        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: _pygame.Rect
+        self._last_selected_surface = None  # type: (_pygame.Surface,None)
+        self._selected_rect = None  # type: (_pygame.rect.Rect,None)
+        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: (_pygame.Rect,None)
         self._render_string_cache = 0  # type: int
         self._margin = (0, 0)  # type: tuple
-        self._render_string_cache_surface = None  # type: _pygame.SurfaceType
-        self._surface = None  # type: _pygame.SurfaceType
+        self._render_string_cache_surface = None  # type: (_pygame.Surface,None)
         self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
@@ -88,11 +85,15 @@ class Widget(object):
         self._on_change = onchange  # type: callable
         self._on_return = onreturn  # type: callable
 
+        # Surface of the widget
+        self._surface = None  # type: (_pygame.Surface,None)
+
         # Menu reference
         self._menu = None
+        self._menu_widget_position_needs_update = False
 
         # Modified in set_font() method
-        self._font = None  # type: _pygame.font.Font
+        self._font = None  # type: (_pygame.font.Font,None)
         self._font_name = ''  # type: str
         self._font_size = 0  # type: int
         self._font_color = (0, 0, 0)  # type: tuple
@@ -108,7 +109,7 @@ class Widget(object):
         self._create_shadow_tuple()
 
         # Public attributes
-        self.is_selectable = True  # type:bool
+        self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True  # type: bool
         self.mouse_enabled = True  # type: bool
         self.selected = False  # type: bool
@@ -192,7 +193,6 @@ class Widget(object):
         rect = self._selected_rect
 
         if self._last_selected_surface != self._surface:  # If surface changed
-            self._last_selected_surface = self._surface
             self._selected_rect = self._rect.copy()
 
             # Inflate rect
@@ -203,6 +203,7 @@ class Widget(object):
 
             # Update rect
             rect = self._selected_rect
+            self._last_selected_surface = self._surface
 
         # Draw rect
         _pygame.draw.rect(surface,
@@ -215,7 +216,7 @@ class Widget(object):
         Set widget max width (column support) if force_fit_text is enabled.
 
         :param width: Width in px, None if max width is disabled
-        :type width: int,float,None
+        :type width: int, float, NoneType
         """
         if width is not None:
             assert isinstance(width, (int, float))
@@ -248,7 +249,6 @@ class Widget(object):
         :rtype: pygame.rect.RectType
         """
         self._render()
-        self._rect.width, self._rect.height = self._surface.get_size()
         return self._rect
 
     def get_value(self):
@@ -256,7 +256,7 @@ class Widget(object):
         Return the value. If exception ``ValueError`` is raised,
         no value will be passed to the callbacks.
 
-        :return: value
+        :return: Value
         :rtype: Object
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
@@ -285,7 +285,7 @@ class Widget(object):
 
         :param args: Variables to compute hash
         :type args: Object
-        :return: hash data
+        :return: Hash data
         :rtype: int
         """
         return hash(args)
@@ -316,12 +316,20 @@ class Widget(object):
         :rtype: pygame.surface.SurfaceType
         """
         render_hash = self._hash_variables(string, color)
+
+        # Check if the size of the string changed, if so, menu widget position must change
+        last_width, last_height = (0, 0)
+        if self._render_string_cache_surface is not None:
+            last_width = self._render_string_cache_surface.get_size()[0]
+            last_height = self._render_string_cache_surface.get_size()[1]
+
+        # If the render surface must change
         if render_hash != self._render_string_cache:  # If render changed
 
             text = self.font_render_string(string, color)
 
             # Create surface
-            surface = make_surface(text.get_width() + 2, text.get_height() + 2, alpha=True)
+            surface = make_surface(text.get_width(), text.get_height(), alpha=True)
 
             # Draw shadow first
             if self._shadow:
@@ -329,15 +337,35 @@ class Widget(object):
                 surface.blit(text_bg, self._shadow_tuple)
 
             surface.blit(text, (0, 0))
+            new_width = surface.get_size()[0]
+            new_height = surface.get_size()[1]
 
-            if self._max_width is not None and surface.get_size()[0] > self._max_width:
-                surface = _pygame.transform.smoothscale(surface, (self._max_width, surface.get_size()[1]))
+            if self._max_width is not None and new_width > self._max_width:
+                surface = _pygame.transform.smoothscale(surface, (self._max_width, new_height))
 
             self._render_string_cache = render_hash
-            self._render_string_cache_surface = surface
+            self._render_string_cache_surface = surface  # type: _pygame.Surface
+
+            # If the size of the widget change then the menu widget position must be updated
+            if new_width != last_width or new_height != last_height:
+                self._menu_widget_position_needs_update = True
 
         # Return rendered surface
         return self._render_string_cache_surface
+
+    def surface_needs_update(self):
+        """
+        Checks if the widget width/height has changed because events. If so, return true and
+        set the status of the widget (menu widget position needs update) as false. This method
+        is used by .update() from Menu class.
+
+        :return: True if the widget position has changed by events after the rendering.
+        :rtype: bool
+        """
+        if self._menu_widget_position_needs_update:
+            self._menu_widget_position_needs_update = False
+            return True
+        return False
 
     def set_font(self, font, font_size, color, selected_color, antialias=True):
         """
@@ -372,7 +400,7 @@ class Widget(object):
         """
         Return a dict with the information of the widget font.
 
-        :return: dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
+        :return: Dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
         :rtype: dict
         """
         return {
@@ -422,6 +450,7 @@ class Widget(object):
         """
         self._rect.x = posx
         self._rect.y = posy
+        self._last_selected_surface = None
 
     def get_position(self):
         """
@@ -516,34 +545,15 @@ class Widget(object):
         # Create shadow tuple position
         self._create_shadow_tuple()
 
-    def set_fps(self, fps):
-        """
-        Set the FPS limit of the widget.
-
-        :param fps: FPS (Frames Per Second) limit of the widget
-        :type fps: float, int
-        :return: None
-        """
-        self._fps = float(fps)
-
     def set_sound(self, sound):
         """
         Set sound engine to the widget.
 
         :param sound: Sound object
-        :type sound: pygameMenu.sound.Sound
+        :type sound: pygameMenu.sound.SoundType
         :return: None
         """
         self.sound = sound
-
-    def get_fps(self):
-        """
-        Return the FPS limit of the widget.
-
-        :return: FPS limit
-        :rtype: float
-        """
-        return self._fps
 
     def _create_shadow_tuple(self):
         """
