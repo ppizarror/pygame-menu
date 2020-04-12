@@ -5,7 +5,6 @@ def check_key_pressed_valid(event):
     """
     Checks if the pressed key is valid.
 
-    :param self:
     :param event: Key press event
     :type event: pygame.event.EventType
     :return: True if a key is pressed

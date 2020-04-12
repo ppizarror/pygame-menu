@@ -82,7 +82,7 @@ class TextMenu(Menu):
         :param kwargs: Additional parameters
         """
         assert isinstance(draw_text_region_x, int) or \
-            isinstance(draw_text_region_x, float)
+               isinstance(draw_text_region_x, float)
         assert isinstance(text_align, str)
         assert isinstance(text_color, tuple)
         assert isinstance(text_fontsize, int)

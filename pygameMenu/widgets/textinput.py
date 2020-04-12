@@ -290,8 +290,8 @@ class TextInput(Widget):
         if self._password:
             password_size = self.font_render_string(self._password_char).get_size()[0]
             if password_size == 0:
-                raise ValueError(
-                    'Password character is not valid, the size of the font is zero, use another character or change the font')
+                raise ValueError('Password character is not valid, the size of the font is '
+                                 'zero, use another character or change the font')
             self._keychar_size[self._password_char] = password_size
 
     def clear(self):
