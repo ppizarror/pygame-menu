@@ -76,5 +76,5 @@ Dependencies
 
 This library is dependent on the following
 
-- `Pygame <http://www.pygame.org/download.shtml>`_
+- `pygame <http://www.pygame.org/download.shtml>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_
