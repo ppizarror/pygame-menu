@@ -1248,7 +1248,7 @@ class Menu(object):
         if self._joy_event & _JOY_EVENT_RIGHT:
             self._right()
 
-    def update(self, events=None):
+    def update(self, events):
         """
         Update the status of the Menu using external events.
         The update event is applied only on the current Menu.
@@ -1442,6 +1442,7 @@ class Menu(object):
                 self.draw(surface=surface)
 
             _pygame.display.flip()
+
             if not self.is_enabled() or disable_loop:
                 self._current._background_function = None
                 return
