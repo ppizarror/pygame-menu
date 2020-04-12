@@ -471,7 +471,7 @@ class Menu(object):
         :param title: Title of the button
         :type title: basestring
         :param action: Action of the button, can be a Menu, an event or a function
-        :type action: Menu,PymenuAction,function
+        :type action: Menu, PymenuAction, function
         :param args: Additional arguments used by a function
         :param kwargs: Additional keyword arguments
         :return: Widget object

@@ -27,7 +27,28 @@ will be wrapped in order to fit the menu size.
 Add a button
 ------------
 
-A button is a text that fire action when the user trigger it.
+A button is a text that fire action when the user trigger it. An action
+is linked to a button by defining the `action` parameter with one of the
+three values:
+
+ - an other :py:class:`Menu`, in this case, it will be displayed
+   when the button is triggered.
+ - a python callable object (a function, a method, a class, ...)
+   that will be called with the given arguments.
+ - a specific event of :py:mod:`pygameMenu`.
+
+The possible events are the following:
+
+ ==========================================  ========================================
+ Type                                        Description
+ ==========================================  ========================================
+ :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
+ :py:data:`pygameMenu.events.CLOSE`          Close the menu
+ :py:data:`pygameMenu.events.DISABLE_CLOSE`  Does nothing
+ :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
+ :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
+ ==========================================  ========================================
+
 
 .. automethod:: pygameMenu.menu.Menu.add_button
 
@@ -53,8 +74,8 @@ A button is a text that fire action when the user trigger it.
     menu.add_button('Exit', pygameMenu.events.MENU_EXIT)    # Adds exit function
 
 
-Add a list of choices
----------------------
+Add a choices list
+------------------
 
 A selector gives the possibility choose a value in a list.
 
