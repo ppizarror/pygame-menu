@@ -1174,8 +1174,8 @@ class Menu(object):
             self._current._build_widget_surface()
 
         # Fill the surface with background function (setted from mainloop)
-        if self._current._background_function is not None:
-            self._current._background_function()
+        if self._top._background_function is not None:
+            self._top._background_function()
 
         # Fill the scrolling surface
         self._current._widgets_surface.fill((255, 255, 255, 0))
@@ -1259,7 +1259,7 @@ class Menu(object):
         if self._joy_event & _JOY_EVENT_RIGHT:
             self._right()
 
-    def update(self, events=None):
+    def update(self, events):
         """
         Update the status of the Menu using external events.
         The update event is applied only on the current Menu.
@@ -1407,7 +1407,7 @@ class Menu(object):
 
         return updated
 
-    def mainloop(self, surface, bgfun, event_loop=None, disable_loop=False, fps_limit=0):
+    def mainloop(self, surface, bgfun=None, disable_loop=False, fps_limit=30):
         """
         Main loop of Menu. In this function, the Menu handle exceptions and draw.
         The Menu pauses the application and checks :py:mod:`pygame` events itself.
@@ -1425,8 +1425,6 @@ class Menu(object):
         :type surface: pygame.surface.SurfaceType
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :type bgfun: callable
-        :param event_loop: Events used by the loop if Menu was created using mainloop_loop=False
-        :type event_loop: list, NoneType
         :param disable_loop: If true run this method for only 1 loop
         :type disable_loop: bool
         :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
@@ -1434,8 +1432,8 @@ class Menu(object):
         :return: None
         """
         assert isinstance(surface, _pygame.Surface)
-        assert callable(bgfun), 'background function must be callable (a function)'
-        assert isinstance(event_loop, (list, type(None)))
+        if bgfun:
+            assert callable(bgfun), 'background function must be callable (a function)'
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
@@ -1444,21 +1442,23 @@ class Menu(object):
         if not self.is_enabled():
             return
 
-        self._current._background_function = bgfun
+        self._background_function = bgfun
+
         while True:
             self._current._clock.tick(fps_limit)
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
-            updated = self.update(_pygame.event.get())
+            self.update(_pygame.event.get())
 
             # As event can change the status of the Menu, this has to be checked twice
             if self.is_enabled():
                 self.draw(surface=surface)
 
             _pygame.display.flip()
-            if updated or disable_loop:
-                self._current._background_function = None
+
+            if not self.is_enabled() or disable_loop:
+                self._background_function = None
                 return
 
     def get_input_data(self, recursive=False, current=True):
