@@ -73,6 +73,7 @@ they could be used has it to design custom menu layout.
    _source/widget_scrollbar
    _source/widget_selector
    _source/widget_textinput
+   _source/widget_vmargin
 
 
 =================

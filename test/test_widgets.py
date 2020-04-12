@@ -424,6 +424,22 @@ class WidgetsTest(unittest.TestCase):
         textinput._cursor_render = True
         textinput._render_cursor()
 
+    def test_vmargin(self):
+        """
+        Test vertical margin widget.
+        """
+        menu = PygameMenuUtils.generic_menu()
+        w = menu.add_vertical_margin(999)
+        w._render()
+        self.assertEqual(w.get_rect().width, 0)
+        self.assertEqual(w.get_rect().height, 0)
+        self.assertEqual(w.update([]), False)
+        self.assertEqual(w._font_size, 0)
+        self.assertEqual(w.get_margin()[0], 0)
+        self.assertEqual(w.get_margin()[1], 999)
+        w.draw(surface)
+        w.draw_selected_rect()
+
     # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):
         """

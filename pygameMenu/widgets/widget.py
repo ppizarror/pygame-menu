@@ -329,7 +329,7 @@ class Widget(object):
             text = self.font_render_string(string, color)
 
             # Create surface
-            surface = make_surface(text.get_width() + 2, text.get_height() + 2, alpha=True)
+            surface = make_surface(text.get_width(), text.get_height(), alpha=True)
 
             # Draw shadow first
             if self._shadow:

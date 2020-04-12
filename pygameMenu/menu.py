@@ -215,7 +215,7 @@ class Menu(object):
                  widget_font_color=(255, 255, 255),
                  widget_font_size=35,
                  widget_margin_x=0,
-                 widget_margin_y=15,
+                 widget_margin_y=10,
                  widget_offset_x=0,
                  widget_offset_y=0,
                  widget_shadow=False,
@@ -308,8 +308,8 @@ class Menu(object):
         assert scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert selection_highlight_border_width >= 0, \
             'selection lighlight border width must be greater or equal than zero'
-        assert selection_highlight_margin_x > 0 and selection_highlight_margin_y > 0, \
-            'selection highlight margin must be greater than zero in both axis'
+        assert selection_highlight_margin_x >= 0 and selection_highlight_margin_y >= 0, \
+            'selection highlight margin must be greater or equal than zero in both axis'
         assert widget_font_size > 0 and title_font_size > 0, \
             'widget font size and title font size must be greater than zero'
         assert widget_offset_x >= 0 and widget_offset_y >= 0, 'widget offset must be greater or equal than zero'
@@ -771,6 +771,21 @@ class Menu(object):
         self._current._append_widget(widget)
         return widget
 
+    def add_vertical_margin(self, margin):
+        """
+        Adds a vertical margin to the current Menu.
+
+        :param margin: Margin in px
+        :type margin: int
+        :return: Widget object
+        :rtype: pygameMenu.widgets.vmargin.VMargin
+        """
+        assert isinstance(margin, int)
+        widget = _widgets.VMargin()
+        self._current._configure_widget(widget=widget, margin=(0, margin))
+        self._current._append_widget(widget)
+        return widget
+
     def _configure_widget(self, widget, align=None, font_size=None, margin=None):
         """
         Update the given widget with the parameters defined at
@@ -942,7 +957,7 @@ class Menu(object):
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(_row):
                 rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
-                ysum += rwidget.get_font_info()['size'] + rwidget.get_margin()[1]
+                ysum += rwidget.get_rect().height + rwidget.get_margin()[1]
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
             y_coord = self._widget_offset_y + ysum + dy
 
@@ -1118,11 +1133,11 @@ class Menu(object):
         """
         isinstance(current, bool)
         if current:
-            self._current._center_vertically()
+            self._current._center_content()
         else:
-            self._center_vertically()
+            self._center_content()
 
-    def _center_vertically(self):
+    def _center_content(self):
         """
         Update draw_region_y based on the current widgets.
         If the height of the widgets is greater than the height of the Menu,
@@ -1636,8 +1651,12 @@ class Menu(object):
 
         # If new widget is not selectable
         if not new_widget.is_selectable:
+            if new_index < current._index:
+                dwidget = -1
+            else:
+                dwidget = 1
             if current._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
-                current._select(new_index + 1)
+                current._select(new_index + dwidget)
                 return
             else:  # No selectable options, quit
                 return
