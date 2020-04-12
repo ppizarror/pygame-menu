@@ -115,6 +115,7 @@ def iter_world(area):
     Iterate through worlds.
 
     :param area: Scroll area
+    :type area: ScrollArea
     :return:
     """
     for name in itertools.cycle(WORLDS):
@@ -126,7 +127,7 @@ def iter_world(area):
         area.set_world(make_world(params['size'][0],
                                   params['size'][1],
                                   text))
-        area.set_relative_position(*params['pos'])
+        area.set_position(*params['pos'])
         yield params
 
 

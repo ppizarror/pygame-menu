@@ -304,8 +304,7 @@ class PygameMenuUtils(object):
             position_x=50,
             position_y=50,
             *args,
-            **kwargs,
-    ):
+            **kwargs):
         """
         Generate a generic test menu.
 
