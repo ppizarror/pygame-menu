@@ -250,7 +250,6 @@ class TextInput(Widget):
 
         # Other
         self._copy_paste_enabled = enable_copy_paste
-        self._first_render = True  # type: bool
         self._input_type = input_type
         self._input_underline = input_underline
         self._input_underline_size = 0  # type: int
@@ -323,8 +322,8 @@ class TextInput(Widget):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
-        self._clock.tick()
         self._render()
+        self._clock.tick()
 
         # Draw selection first
         if self._selection_surface is not None:
@@ -341,16 +340,16 @@ class TextInput(Widget):
 
     def _render(self):
         string = self._label + self._get_input_string()  # Render string
+
+        if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
+                                         self._selection_enabled):
+            return
+
         if self.selected:
             color = self._font_selected_color
         else:
             color = self._font_color
         updated_surface = self._render_string_surface(string, color)
-
-        # Apply render methods after first rendering call
-        if self._first_render:
-            self._first_render = False
-            return
 
         # Apply underline if exists
         self._surface = self._render_underline(string, color, updated_surface)
@@ -366,6 +365,9 @@ class TextInput(Widget):
 
         # Update the size of the render
         self._rect.width, self._rect.height = self._surface.get_size()
+
+        # Check if the size changed
+        self._check_render_size_changed()
 
     def _render_selection_box(self, force=False):
         """
@@ -442,7 +444,7 @@ class TextInput(Widget):
         :return: True if surface is updated
         :rtype: bool
         """
-        new_surface = self.render_string(string, color)
+        new_surface = self._render_string(string, color)
         updated_surface = self._last_rendered_surface != new_surface
         if updated_surface:
             self._surface = new_surface

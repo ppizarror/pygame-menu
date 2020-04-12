@@ -225,7 +225,7 @@ def main(test=False):
                                          widget_font_color=COLOR_BLACK,
                                          widget_font_size=25,
                                          widget_offset_x=5,  # px
-                                         widget_offset_y=40,  # px
+                                         widget_offset_y=30,  # px
                                          )
 
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
@@ -240,6 +240,7 @@ def main(test=False):
 
     more_settings_menu.add_color_input('Color in Hex: ', color_type='hex', onreturn=print_color)
 
+    more_settings_menu.add_vertical_margin(25)
     more_settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                                   align=pygameMenu.locals.ALIGN_CENTER)
 

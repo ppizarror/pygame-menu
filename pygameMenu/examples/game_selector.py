@@ -254,6 +254,7 @@ def main(test=False):
                                  title_font=pygameMenu.font.FONT_8BIT,
                                  title_font_color=COLOR_WHITE,
                                  title_font_size=30,
+                                 widget_font_size=25,
                                  widget_font_color=(255, 255, 255),
                                  widget_margin_y=0,
                                  widget_offset_y=0.15,  # Percentage of height

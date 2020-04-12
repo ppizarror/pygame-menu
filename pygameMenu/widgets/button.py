@@ -78,11 +78,13 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
+        if not self._render_hash_changed(self.selected, self._label):
+            return
         if self.selected:
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self.render_string(self._label, color)
+        self._surface = self._render_string(self._label, color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
     # noinspection PyMissingOrEmptyDocstring

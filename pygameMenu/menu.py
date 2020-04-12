@@ -215,7 +215,7 @@ class Menu(object):
                  widget_font_color=(255, 255, 255),
                  widget_font_size=35,
                  widget_margin_x=0,
-                 widget_margin_y=10,
+                 widget_margin_y=5,
                  widget_offset_x=0,
                  widget_offset_y=0,
                  widget_shadow=False,
@@ -1607,7 +1607,7 @@ class Menu(object):
         self._top._current = menu._current
         self._top._prev = [self._top._prev, current]
 
-        # Select the first widget
+        # Select the first item
         self._select(0)
 
     def reset(self, total):

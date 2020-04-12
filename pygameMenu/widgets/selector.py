@@ -133,12 +133,15 @@ class Selector(Widget):
 
     def _render(self):
         string = self._sformat.format(self._label, self.get_value()[0])
+        if not self._render_hash_changed(string, self.selected):
+            return
         if self.selected:
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self.render_string(string, color)
+        self._surface = self._render_string(string, color)
         self._rect.width, self._rect.height = self._surface.get_size()
+        self._check_render_size_changed()
 
     def set_value(self, item):
         """

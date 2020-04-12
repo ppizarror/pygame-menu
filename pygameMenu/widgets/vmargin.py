@@ -48,7 +48,8 @@ class VMargin(Widget):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
-        self._render()
+        if self._surface is None:
+            self._render()
         surface.blit(self._surface, self._rect.topleft)
 
     # noinspection PyMissingOrEmptyDocstring

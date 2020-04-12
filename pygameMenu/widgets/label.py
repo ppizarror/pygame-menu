@@ -57,13 +57,15 @@ class Label(Widget):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
 
+    def _render(self):
+        if not self._render_hash_changed(self._label, self._font_color):
+            return
+        self._surface = self._render_string(self._label, self._font_color)
+        self._rect.width, self._rect.height = self._surface.get_size()
+
     # noinspection PyMissingOrEmptyDocstring
     def draw_selected_rect(self, *args, **kwargs):
         pass  # Nothing to select
-
-    def _render(self):
-        self._surface = self.render_string(self._label, self._font_color)
-        self._rect.width, self._rect.height = self._surface.get_size()
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

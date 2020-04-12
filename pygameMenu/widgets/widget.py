@@ -75,9 +75,7 @@ class Widget(object):
         self._last_selected_surface = None  # type: (_pygame.Surface,None)
         self._selected_rect = None  # type: (_pygame.rect.Rect,None)
         self._rect = _pygame.Rect(0, 0, 0, 0)  # type: (_pygame.Rect,None)
-        self._render_string_cache = 0  # type: int
         self._margin = (0, 0)  # type: tuple
-        self._render_string_cache_surface = None  # type: (_pygame.Surface,None)
         self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
@@ -117,6 +115,10 @@ class Widget(object):
         # then the widget should render and update the hash
         self._last_render_hash = 0  # type: int
 
+        # Stores the last render surface size, updated by
+        # self._check_render_size_changed()
+        self._last_render_surface_size = (0, 0)
+
         # Public attributes
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True  # type: bool
@@ -136,7 +138,7 @@ class Widget(object):
         """
         return hash(args)
 
-    def _render_changed(self, *args):
+    def _render_hash_changed(self, *args):
         """
         This method checks if the widget must render because the inner variables changed.
         This method should include all the variables.
@@ -147,6 +149,11 @@ class Widget(object):
         :return: Hash data
         :rtype: int
         """
+        _hash = self._hash_variables(*args)
+        if _hash != self._last_render_hash:
+            self._last_render_hash = _hash
+            return True
+        return False
 
     def apply(self, *args):
         """
@@ -325,7 +332,23 @@ class Widget(object):
         assert isinstance(color, tuple)
         return self._font.render(text, self._font_antialias, color)
 
-    def render_string(self, string, color):
+    def _check_render_size_changed(self):
+        """
+        Check the size changed after rendering, if so, set
+        self._menu_surface_needs_update as True. This method should be used only on
+        widgets that can change in size.
+
+        :return: Boolean, if True the size changed
+        :rtype: bool
+        """
+        sz = self._surface.get_size()
+        if sz[0] != self._last_render_surface_size[0] or sz[1] != self._last_render_surface_size[1]:
+            self._last_render_surface_size = sz
+            self._menu_surface_needs_update = True
+            return True
+        return False
+
+    def _render_string(self, string, color):
         """
         Render text and turn it into a surface.
 
@@ -336,44 +359,24 @@ class Widget(object):
         :return: Text surface
         :rtype: pygame.surface.SurfaceType
         """
-        render_hash = self._hash_variables(string, color)
+        text = self.font_render_string(string, color)
 
-        # Check if the size of the string changed, if so, menu widget position must change
-        last_width, last_height = (0, 0)
-        if self._render_string_cache_surface is not None:
-            sz = self._render_string_cache_surface.get_size()
-            last_width = sz[0]
-            last_height = sz[1]
+        # Create surface
+        surface = make_surface(text.get_width(), text.get_height(), alpha=True)
 
-        # If the render surface must change
-        if render_hash != self._render_string_cache:  # If render changed
+        # Draw shadow first
+        if self._shadow:
+            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+            surface.blit(text_bg, self._shadow_tuple)
 
-            text = self.font_render_string(string, color)
+        surface.blit(text, (0, 0))
+        new_width = surface.get_size()[0]
+        new_height = surface.get_size()[1]
 
-            # Create surface
-            surface = make_surface(text.get_width(), text.get_height(), alpha=True)
+        if self._max_width is not None and new_width > self._max_width:
+            surface = _pygame.transform.smoothscale(surface, (self._max_width, new_height))
 
-            # Draw shadow first
-            if self._shadow:
-                text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
-                surface.blit(text_bg, self._shadow_tuple)
-
-            surface.blit(text, (0, 0))
-            new_width = surface.get_size()[0]
-            new_height = surface.get_size()[1]
-
-            if self._max_width is not None and new_width > self._max_width:
-                surface = _pygame.transform.smoothscale(surface, (self._max_width, new_height))
-
-            self._render_string_cache = render_hash
-            self._render_string_cache_surface = surface  # type: _pygame.Surface
-
-            # If the size of the widget change then the menu widget position must be updated
-            if new_width != last_width or new_height != last_height:
-                self._menu_surface_needs_update = True
-
-        # Return rendered surface
-        return self._render_string_cache_surface
+        return surface
 
     def surface_needs_update(self):
         """
@@ -488,7 +491,7 @@ class Widget(object):
         """
         Set the alignment of the widget.
 
-        :param align: Widget align, could be ALIGN_LEFT/CENTER/RIGHT/TOP/BOTTOM
+        :param align: Widget align, see locals
         :type align: basestring
         :return: None
         """
@@ -499,7 +502,7 @@ class Widget(object):
         """
         Returns widget alignment.
 
-        :return: Widget align
+        :return: Widget align, see locals
         :rtype: basestring
         """
         return self._alignment
@@ -560,9 +563,9 @@ class Widget(object):
             try:
                 offset = int(offset)
             except ValueError:
-                raise TypeError('Shadow offset must be integer')
+                raise TypeError('shadow offset must be integer')
             if offset <= 0:
-                raise ValueError('Shadow offset must be greater than zero')
+                raise ValueError('shadow offset must be greater than zero')
             self._shadow_offset = offset
 
         # Create shadow tuple position
