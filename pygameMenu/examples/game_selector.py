@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EXAMPLE - GAME SELECTOR
 Game with 3 difficulty options.
 
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -97,7 +100,7 @@ def play_function(difficulty, font, test=False):
     Main game function.
 
     :param difficulty: Difficulty of the game
-    :type difficulty: basestring
+    :type difficulty: list
     :param font: Pygame font
     :type font: pygame.font.FontType
     :param test: Test method, if true only one loop is allowed

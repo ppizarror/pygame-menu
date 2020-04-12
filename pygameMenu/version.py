@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 VERSION
 Library version.
 
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -55,6 +58,6 @@ class PygameMenuVersion(tuple):
     patch = property(lambda self: self[2])
 
 
-vernum = PygameMenuVersion(2, 2, 1)
+vernum = PygameMenuVersion(2, 3, 0)
 ver = str(vernum)
-rev = ""
+rev = ''
