@@ -39,16 +39,15 @@ three values:
 
 The possible events are the following:
 
- ==========================================  ========================================
- Type                                        Description
- ==========================================  ========================================
- :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
- :py:data:`pygameMenu.events.CLOSE`          Close the menu
- :py:data:`pygameMenu.events.DISABLE_CLOSE`  Does nothing
- :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
- :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
- ==========================================  ========================================
-
+==========================================  ========================================
+Type                                        Description
+==========================================  ========================================
+:py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
+:py:data:`pygameMenu.events.CLOSE`          Close the menu
+:py:data:`pygameMenu.events.DISABLE_CLOSE`  Does nothing
+:py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
+:py:data:`pygameMenu.events.RESET`          Go back to first opened menu
+==========================================  ========================================
 
 .. automethod:: pygameMenu.menu.Menu.add_button
 
@@ -115,6 +114,7 @@ A selector gives the possibility choose a value in a list.
                       onchange=None,
                       onreturn=change_color_bg,
                       write_on_console=True)
+
 
 Add a text entry
 ----------------

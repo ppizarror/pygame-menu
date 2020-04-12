@@ -495,7 +495,7 @@ class Menu(object):
         elif action == _events.RESET:  # Back to Top Menu
             widget = _widgets.Button(title, button_id, onchange, self.full_reset)
         elif action == _events.CLOSE:  # Close Menu
-            widget = _widgets.Button(title, button_id, onchange, self._current._close, False)
+            widget = _widgets.Button(title, button_id, onchange, self._current._close)
         elif action == _events.EXIT:  # Exit program
             widget = _widgets.Button(title, button_id, onchange, self._current._exit)
         # If element is a function
