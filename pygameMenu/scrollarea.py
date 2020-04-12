@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 import pygameMenu.locals as _locals
 
-from pygameMenu.utils import make_surface
+from pygameMenu.utils import make_surface, assert_color, assert_position
 from pygameMenu.widgets import ScrollBar as _ScrollBar
 
 
@@ -44,6 +44,33 @@ class ScrollArea(object):
     A scroll area is used to display the contents of a child surface (``world``).
     If the surface exceeds the size of the drawing surface, the view provide
     scroll bars so that the entire area of the child surface can be viewed.
+
+    :param area_width: Width of scrollable area (px)
+    :type area_width: int, float
+    :param area_height: Height of scrollable area (px)
+    :type area_height: int, float
+    :param area_color: Background color
+    :type area_color: tuple, list, NoneType
+    :param scrollbar_color: Scrollbars color
+    :type scrollbar_color: tuple, list
+    :param scrollbar_slider_color: Color of the sliders
+    :type scrollbar_slider_color: tuple, list
+    :param scrollbar_slider_pad: Space between slider and scrollbars borders
+    :type scrollbar_slider_pad: int, float
+    :param scrollbar_thick: Scrollbars thickness
+    :type scrollbar_thick: int, float
+    :param scrollbars: Postions of the scrollbars
+    :type scrollbars: tuple, list
+    :param shadow: Indicate if a shadow is drawn on each scrollbar
+    :type shadow: bool
+    :param shadow_color: Color of the shadow
+    :type shadow_color: tuple, list
+    :param shadow_offset: Offset of shadow
+    :type shadow_offset: int, float
+    :param shadow_position: Position of shadow
+    :type shadow_position: basestring
+    :param world: Surface to draw and scroll
+    :type world: pygame.SurfaceType, NoneType
     """
 
     def __init__(self,
@@ -61,37 +88,19 @@ class ScrollArea(object):
                  shadow_position=_locals.POSITION_SOUTHEAST,
                  world=None,
                  ):
-        """
-        Description of the parameters:
+        assert isinstance(area_width, (int, float))
+        assert isinstance(area_height, (int, float))
+        assert isinstance(scrollbar_slider_pad, (int, float))
+        assert isinstance(scrollbar_thick, (int, float))
+        assert isinstance(shadow, bool)
+        assert isinstance(shadow_offset, (int, float))
 
-        :param area_width: Width of scrollable area (px)
-        :type area_width: int
-        :param area_height: Height of scrollable area (px)
-        :type area_height: int
-        :param area_color: Background color
-        :type area_color: tuple, list, NoneType
-        :param scrollbar_color: Scrollbars color
-        :type scrollbar_color: tuple, list
-        :param scrollbar_slider_color: Color of the sliders
-        :type scrollbar_slider_color: tuple, list
-        :param scrollbar_slider_pad: Space between slider and scrollbars borders
-        :type scrollbar_slider_pad: int
-        :param scrollbar_thick: Scrollbars thickness
-        :type scrollbar_thick: int
-        :param scrollbars: Postions of the scrollbars
-        :type scrollbars: tuple, list
-        :param shadow: Indicate if a shadow is drawn on each scrollbar
-        :type shadow: bool
-        :param shadow_color: Color of the shadow
-        :type shadow_color: tuple, list
-        :param shadow_offset: Offset of shadow
-        :type shadow_offset: int
-        :param shadow_position: Position of shadow
-        :type shadow_position: basestring
-        :param world: Surface to draw and scroll
-        :type world: pygame.SurfaceType, NoneType
-        """
-        self._rect = _pygame.Rect(0, 0, area_width, area_height)
+        assert_color(scrollbar_color)
+        assert_color(scrollbar_slider_color)
+        assert_color(shadow_color)
+        assert_position(shadow_position)
+
+        self._rect = _pygame.Rect(0.0, 0.0, area_width, area_height)
         self._world = world
         self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
@@ -105,6 +114,7 @@ class ScrollArea(object):
         self._view_rect = self.get_view_rect()
 
         for pos in self._scrollbar_positions:  # type:str
+            assert_position(pos)
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
                 sbar = _ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
                                   orientation=_locals.ORIENTATION_VERTICAL,

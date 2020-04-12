@@ -944,7 +944,7 @@ class Menu(object):
 
             # Calculate X position
             _column_width = self._column_widths[_col]
-            _highlist_margin = float(self._selection_highlight_margin_x) / 2 + self._selection_border_width
+            _highlist_margin = float(self._selection_highlight_margin_x + self._selection_border_width) / 2
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
                 dx = -float(rect.width) / 2
