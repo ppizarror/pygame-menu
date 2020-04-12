@@ -35,7 +35,7 @@ import os.path as _path
 import pygame.font as _font
 
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
-__fontdir = '{0}/fonts/{1}.ttf'
+__fontdir = '{0}/resources/fonts/{1}.ttf'
 
 # Available fonts
 FONT_8BIT = __fontdir.format(__actualpath, '8bit')

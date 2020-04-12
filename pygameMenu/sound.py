@@ -48,7 +48,7 @@ except ImportError:
     _AUDIO_ALLOW_FREQUENCY_CHANGE = False
 
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
-__sounddir = '{0}/sounds/{1}.ogg'
+__sounddir = '{0}/resources/sounds/{1}.ogg'
 
 # Sound types
 SOUND_TYPE_CLICK_MOUSE = '__pygameMenu_sound_click_mouse__'

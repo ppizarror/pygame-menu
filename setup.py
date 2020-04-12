@@ -77,7 +77,7 @@ setup(name='pygame-menu',
         'Topic :: Text Processing',
           ],
       include_package_data=True,
-      packages=find_packages(exclude=["test"]),
+      packages=find_packages(exclude=['test']),
       install_requires=requirements,
       extras_require={
                         'doc': ['sphinx', 'sphinx-rtd-theme'],
