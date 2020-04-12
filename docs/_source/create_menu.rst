@@ -16,6 +16,70 @@ and visual aspect of the menu.
 
 The less trivial are explain here.
 
+Widgets position
+^^^^^^^^^^^^^^^^
+
+By default the widgets are centered horizontally (``widget_alignment=ALIGN_CENTER``)
+and start at 0 pixels below the title bar (``widget_offset_y=O``).
+
+The horizontal alignment can be changed with one of the following values:
+
+==============================================  ========================
+Alignment                                       Description
+==============================================  ========================
+:py:data:`pygameMenu.locals.ALIGN_LEFT`         Left alignment
+:py:data:`pygameMenu.locals.ALIGN_CENTER`       Center alignment
+:py:data:`pygameMenu.locals.ALIGN_RIGHT`        Right alignment
+==============================================  ========================
+
+The vertical alignment can be done after all widget have been added
+to the menu by calling the method :py:meth:`Menu.center_content`:
+
+.. code-block:: python
+    :emphasize-lines: 7
+
+    menu = pygameMenu.Menu(...)
+
+    menu.add_text_input(...)
+    menu.add_selector(...)
+    menu.add_button(...)
+    menu.add_button(...)
+    menu.center_content()
+
+.. note:: If the menu size does not permits to show all widget, horizontal
+          and/or vertical scrollbar(s) appear(s) automatically.
+
+Column and row
+^^^^^^^^^^^^^^
+
+By default the widget are arranged in one uniq column. But using the
+``columns`` and ``rows`` parameters, it is possible to arrange them in
+a grid.
+
+The defined grid of ``columns`` x ``rows`` cells will be completed with
+the widgets (defined order) **column by column** starting at the
+**top-left** corner of the menu.
+
+On-close callback
+^^^^^^^^^^^^^^^^^
+
+A callback can be define using the ``onclose`` parameter. This parameter
+can take one of these two types of values:
+
+ - a python callable object (a function, a method, a class, ...)
+   that will be called without any argument.
+ - a specific event of :py:mod:`pygameMenu`. The possible events are
+   the following:
+
+   ==========================================  ========================================
+   Event                                       Description
+   ==========================================  ========================================
+   :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
+   :py:data:`pygameMenu.events.DISABLE_CLOSE`  The menu can not be closed
+   :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
+   :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
+   ==========================================  ========================================
+
 
 Execute a menu
 --------------
