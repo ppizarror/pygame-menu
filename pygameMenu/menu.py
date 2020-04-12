@@ -86,6 +86,10 @@ class Menu(object):
     :type mouse_enabled: bool
     :param menu_id: ID of the Menu
     :type menu_id: basestring
+    :param menu_position_x: Left position of the Menu respect to the window (%), if 50 the Menu is horizontally centered
+    :type menu_position_x: int, float
+    :param menu_position_y: Top position of the Menu respect to the window (%), if 50 the Menu is vertically centered
+    :type menu_position_y: int, float
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
@@ -178,6 +182,8 @@ class Menu(object):
                  menu_alpha=100,
                  menu_background_color=(0, 0, 0),
                  menu_id='',
+                 menu_position_x=50,
+                 menu_position_y=50,
                  mouse_enabled=True,
                  mouse_visible=True,
                  onclose=None,
@@ -296,7 +302,7 @@ class Menu(object):
         else:
             column_max_width = [None for _ in range(columns)]
 
-        # Element size asserts
+        # Element size and position asserts
         assert menu_width > 0 and menu_height > 0, \
             'menu width and height must be greater than zero'
         assert scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
@@ -360,8 +366,9 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
-        self._posx = int((window_width - self._width) / 2)  # type: int
-        self._posy = int((window_height - self._height) / 2)  # type: int
+        self._posx = 0  # type: int
+        self._posy = 0  # type: int
+        self.set_position(menu_position_x, menu_position_y, current=False)
 
         # Menu widgets
         if abs(widget_offset_x) < 1:
@@ -926,8 +933,9 @@ class Menu(object):
                 dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
             else:
                 dx = 0
-            x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
+            x_coord = self._column_posx[_col] + dx + widget.get_margin()[0]
             x_coord = max(self._selection_highlight_margin_x / 2 + self._selection_border_width, x_coord)
+            x_coord += self._widget_offset_x
 
             # Calculate Y position
             ysum = 0  # Compute the total height from the current row position to the top of the column
@@ -1059,11 +1067,49 @@ class Menu(object):
         """
         self._top._enabled = False
 
-    def center_vertically(self, current=True):
+    def set_position(self, menu_position_x, menu_position_y, current=True):
         """
-        Update draw_region_y based on the current widgets.
+        Set the menu position respect to the window.
+
+        - Menu left position (x) must be between 0 and 100, if 0 the margin
+          is at the left of the window, if 100 the menu is at the right
+          of the window.
+
+        - Menu top position (y) must be between 0 and 100, if 0 the margin is
+          at the top of the window, if 100 the margin is at the bottom of
+          the window.
+
+        :param menu_position_x: Left position of the window
+        :type menu_position_x: int, float
+        :param menu_position_y: Top position of the window
+        :type menu_position_y: int, float
+        :param current: If true, centers the current active Menu, otherwise center the base Menu
+        :type current: bool
+        :return: None
+        """
+        assert isinstance(menu_position_x, (int, float))
+        assert isinstance(menu_position_y, (int, float))
+        assert 0 <= menu_position_x <= 100
+        assert 0 <= menu_position_y <= 100
+        isinstance(current, bool)
+
+        menu_position_x = float(menu_position_x) / 100
+        menu_position_y = float(menu_position_y) / 100
+        window_width, window_height = _pygame.display.get_surface().get_size()
+        if current:
+            self._current._posx = int((window_width - self._current._width) * menu_position_x)
+            self._current._posy = int((window_height - self._current._height) * menu_position_y)
+        else:
+            self._posx = int((window_width - self._width) * menu_position_x)
+            self._posy = int((window_height - self._height) * menu_position_y)
+
+    def center_content(self, current=True):
+        """
+        Update draw_region_y based on the current widgets, centering the content
+        of the window.
+
         If the height of the widgets is greater than the height of the Menu,
-        the drawing region will start at zero.
+        the drawing region will start at zero, using all the height for the scrollbar.
 
         :param current: If true, centers the current active Menu, otherwise center the base Menu
         :type current: bool
