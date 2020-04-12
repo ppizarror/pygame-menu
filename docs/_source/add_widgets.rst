@@ -3,8 +3,8 @@
 Adding widgets
 ==============
 
-Label
------
+Add a text
+----------
 
 A label is used to display a text. If the text is too large, it
 will be wrapped in order to fit the menu size.
@@ -24,8 +24,8 @@ will be wrapped in order to fit the menu size.
     menu.add_label(HELP)
 
 
-Button
-------
+Add a button
+------------
 
 A button is a text that fire action when the user trigger it.
 
@@ -53,8 +53,8 @@ A button is a text that fire action when the user trigger it.
     menu.add_button('Exit', pygameMenu.events.MENU_EXIT)    # Adds exit function
 
 
-Selector
---------
+Add a list of choices
+---------------------
 
 A selector gives the possibility choose a value in a list.
 
@@ -95,8 +95,8 @@ A selector gives the possibility choose a value in a list.
                       onreturn=change_color_bg,
                       write_on_console=True)
 
-Text Input
-----------
+Add a text entry
+----------------
 
 A text input permits to enter a string using a keyboard.
 
@@ -121,8 +121,8 @@ A text input permits to enter a string using a keyboard.
     menu.add_text_input('Some long text: ', maxwidth=15)
 
 
-Color Input
------------
+Add a color entry
+-----------------
 
 A color input is similar as a text input but with a limited choice of
 characters to enter a RGB value of HEX decimal one. There is also a
@@ -149,8 +149,8 @@ area to display the current color.
     menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
 
 
-Vertical spacer
----------------
+Add a vertical spacer
+---------------------
 
 A vertical spacer can be added between widget to have a better
 visual rendering of the menu.

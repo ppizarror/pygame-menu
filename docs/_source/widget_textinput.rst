@@ -1,11 +1,11 @@
 
-.. module:: pygameMenu.widgets
+.. module:: pygameMenu.widgets.textinput
 
 =========
 TextInput
 =========
 
-.. autoclass:: TextInput
+.. autoclass:: pygameMenu.widgets.TextInput
     :members:
     :show-inheritance:
     :inherited-members:

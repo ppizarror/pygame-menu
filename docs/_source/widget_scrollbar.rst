@@ -1,11 +1,11 @@
 
-.. module:: pygameMenu.widgets
+.. module:: pygameMenu.widgets.scrollbar
 
 =========
 ScrollBar
 =========
 
-.. autoclass:: ScrollBar
+.. autoclass:: pygameMenu.widgets.ScrollBar
     :members:
     :show-inheritance:
     :inherited-members:

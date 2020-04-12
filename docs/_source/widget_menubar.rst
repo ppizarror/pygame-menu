@@ -1,11 +1,11 @@
 
-.. module:: pygameMenu.widgets
+.. module:: pygameMenu.widgets.menubar
 
 =======
 MenuBar
 =======
 
-.. autoclass:: MenuBar
+.. autoclass:: pygameMenu.widgets.MenuBar
     :members:
     :show-inheritance:
     :inherited-members:
