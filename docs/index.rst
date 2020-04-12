@@ -41,7 +41,6 @@ Here is a basic example of how to create a menu:
         # Do the job here !
 
     menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS, "Welcome",
-                           widget_offset_y=10,
                            widget_font_color=(102, 122, 130),
                            selection_color=(38, 158, 151),
                            title_font_color=(253, 246, 226),
@@ -49,12 +48,12 @@ Here is a basic example of how to create a menu:
                            menu_background_color=(239, 231, 211))
 
     menu.add_text_input('Name :')
-    menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)])
+    menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
     menu.add_button('Play', start_the_game)
     menu.add_button('Quit', pygameMenu.events.EXIT)
-    menu.center_vertically()
+    menu.center_content()
 
-3. Run your menu
+4. Run your menu
 
 .. code-block:: python
 
@@ -94,6 +93,7 @@ in a class:
  - :py:class:`~pygameMenu.widgets.ScrollBar`
  - :py:class:`~pygameMenu.widgets.Selector`
  - :py:class:`~pygameMenu.widgets.TextInput`
+ - :py:class:`~pygameMenu.widgets.VMargin`
 
 For advanced programers, those classes can be used to design
 custom menu or window.
