@@ -61,4 +61,4 @@ menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygameMenu.events.EXIT)
 menu.center_content()
 
-menu.mainloop(surface, fps_limit=30)
+menu.mainloop(surface)

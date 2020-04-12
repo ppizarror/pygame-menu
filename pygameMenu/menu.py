@@ -1394,7 +1394,7 @@ class Menu(object):
 
         return updated
 
-    def mainloop(self, surface, bgfun=None, disable_loop=False, fps_limit=0):
+    def mainloop(self, surface, bgfun=None, disable_loop=False, fps_limit=30):
         """
         Main loop of Menu. In this function, the Menu handle exceptions and draw.
         The Menu pauses the application and checks :py:mod:`pygame` events itself.
