@@ -29,6 +29,8 @@ Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 .. image:: https://badge.fury.io/py/pygame-menu.svg
     :target: https://pypi.org/project/pygame-menu
     :alt: PyPi package
+    
+|
 
 .. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
     :target: https://travis-ci.org/ppizarror/pygame-menu
