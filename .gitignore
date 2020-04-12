@@ -15,6 +15,7 @@
 # Distribution files
 *.egg-info
 build/*
+dist/
 build.bat
 
 # Other example files
