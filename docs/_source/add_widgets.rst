@@ -147,3 +147,20 @@ area to display the current color.
     menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
     menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
     menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
+
+
+Vertical spacer
+---------------
+
+A vertical spacer can be added between widget to have a better
+visual rendering of the menu.
+
+.. automethod:: pygameMenu.menu.Menu.add_vertical_margin
+
+**Example:**
+
+.. code-block:: python
+
+    menu = pygameMenu.Menu(...)
+
+    menu.add_vertical_margin(20)
