@@ -49,4 +49,4 @@ have questions that you do not feel are relavent to the issues tab or
 just want to let me know what you think about the library, feel free to
 email me.
 
-Email: pablo.pizarro@ing.uchile.cl
+Email: pablo@ppizarror.com
