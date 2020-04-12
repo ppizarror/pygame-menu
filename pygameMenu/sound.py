@@ -199,14 +199,14 @@ class Sound(object):
             self._channel = channel  # Store the available channel
         return self._channel
 
-    def set_sound(self, sound, file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
+    def set_sound(self, sound_type, sound_file, volume=0.5, loops=0, maxtime=0, fade_ms=0):
         """
         Link a sound file to a sound type.
 
-        :param sound: Sound type
-        :type sound: basestring
-        :param file: Sound file
-        :type file: basestring, NoneType
+        :param sound_type: Sound type
+        :type sound_type: basestring
+        :param sound_file: Sound file
+        :type sound_file: basestring, NoneType
         :param volume: Volume of the sound, (0-1)
         :type volume: float
         :param loops: Loops of the sound
@@ -218,8 +218,8 @@ class Sound(object):
         :return: The status of the sound load, True if the sound was loaded
         :rtype: bool
         """
-        assert isinstance(sound, str)
-        assert isinstance(file, (str, type(None)))
+        assert isinstance(sound_type, str)
+        assert isinstance(sound_file, (str, type(None)))
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
         assert isinstance(fade_ms, (int, float))
@@ -229,35 +229,35 @@ class Sound(object):
         assert 1 >= volume >= 0, 'volume must be between 0 and 1'
 
         # Check sound type is correct
-        if sound not in self._type_sounds:
+        if sound_type not in self._type_sounds:
             raise ValueError('sound type not valid, check the manual')
 
         # If file is none disable the sound
-        if file is None:
-            self._sound[sound] = {}
+        if sound_file is None:
+            self._sound[sound_type] = {}
             return False
 
         # Check the file exists
-        if not _path.isfile(file):
-            raise IOError('sound file "{0}" does not exist'.format(file))
+        if not _path.isfile(sound_file):
+            raise IOError('sound file "{0}" does not exist'.format(sound_file))
 
         # Load the sound
         try:
-            sound_data = _mixer.Sound(file=file)
+            sound_data = _mixer.Sound(file=sound_file)
         except _pygame_error:
             if self._verbose:
                 _stderr.write('The sound format is not valid, the sound has been disabled\n')
-            self._sound[sound] = {}
+            self._sound[sound_type] = {}
             return False
 
         # Configure the sound
         sound_data.set_volume(volume)
 
         # Store the sound
-        self._sound[sound] = {
+        self._sound[sound_type] = {
             'file': sound_data,
-            'path': file,
-            'type': sound,
+            'path': sound_file,
+            'type': sound_type,
             'length': sound_data.get_length(),
             'volume': volume,
             'loops': loops,
