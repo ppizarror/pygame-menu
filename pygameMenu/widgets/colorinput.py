@@ -254,7 +254,6 @@ class ColorInput(TextInput):
                 self._last_g = g
                 self._last_b = b
             except TypeError:
-                print((r, g, b))
                 return
 
         # Draw the surface
