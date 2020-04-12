@@ -1677,7 +1677,7 @@ class Menu(object):
         current._index = new_index  # Update selected index
         new_widget.set_selected()
 
-        # Update the widgets, get_rect() forces rendering
+        # Scroll to rect
         rect = new_widget.get_rect()
         if current._index == 0:  # Scroll to the top of the Menu
             rect = _pygame.Rect(rect.x, 0, rect.width, rect.height)
