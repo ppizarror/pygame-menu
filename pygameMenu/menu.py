@@ -1171,8 +1171,8 @@ class Menu(object):
             self._current._build_widget_surface()
 
         # Fill the surface with background function (setted from mainloop)
-        if self._current._background_function is not None:
-            self._current._background_function()
+        if self._top._background_function is not None:
+            self._top._background_function()
 
         # Fill the scrolling surface
         self._current._widgets_surface.fill((255, 255, 255, 0))
@@ -1429,7 +1429,8 @@ class Menu(object):
         if not self.is_enabled():
             return
 
-        self._current._background_function = bgfun
+        self._background_function = bgfun
+
         while True:
             self._current._clock.tick(fps_limit)
 
@@ -1444,7 +1445,7 @@ class Menu(object):
             _pygame.display.flip()
 
             if not self.is_enabled() or disable_loop:
-                self._current._background_function = None
+                self._background_function = None
                 return
 
     def get_input_data(self, recursive=False, current=True):
