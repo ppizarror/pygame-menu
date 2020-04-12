@@ -11,12 +11,12 @@
 First steps
 ===========
 
-Making games using :py:mod:`pygame` is really cool, but most of game
-(or application) require end-user configuration. Create complex GUI
+Making games using :py:mod:`pygame` is really cool, but most of games
+(or applications) require end-user configuration. Create complex GUI
 object to display a menu can be painful. That why :py:mod:`pygame-menu`
-was designe.
+was designed.
 
-Here is a basic example of how to create a menu:
+Here is a simple example of how to create a menu with :py:mod:`pygame-menu` :
 
 1. Import the required libraries
 
@@ -91,8 +91,8 @@ Access to a widget in a menu can easily be done with two methods:
 
     selected = menu.get_selected_widget()
 
-Each :py:mod:`pygameMenu` widget and its behaviors are defined
-in a class:
+Each :py:mod:`pygameMenu` widget and its behaviors is defined in a
+class. The currently existing classes are:
 
  - :py:class:`~pygameMenu.widgets.Button`
  - :py:class:`~pygameMenu.widgets.ColorInput`
@@ -103,10 +103,10 @@ in a class:
  - :py:class:`~pygameMenu.widgets.TextInput`
  - :py:class:`~pygameMenu.widgets.VMargin`
 
-For advanced programers, those classes can be used to design
-custom menu or window.
+For advanced programers, those classes can be used to design custom
+menu or window.
 
-Have a look to :py:mod:`pygameMenu.examples.scroll_bar.py` for
+Have a look to :py:mod:`pygameMenu.widgets.examples.scrollbar.py` for
 instance. It show how to use the :py:class:`pygameMenu.widgets.ScrollBar`
 class to display large custom surface.
 
