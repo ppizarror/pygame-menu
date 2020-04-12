@@ -9,8 +9,6 @@ Add a text
 A label is used to display a text. If the text is too large, it
 will be wrapped in order to fit the menu size.
 
-.. automethod:: pygameMenu.menu.Menu.add_label
-
 **Example:**
 
 .. code-block:: python
@@ -22,6 +20,8 @@ will be wrapped in order to fit the menu size.
 
     menu = pygameMenu.Menu(...)
     menu.add_label(HELP)
+
+.. automethod:: pygameMenu.menu.Menu.add_label
 
 
 Add a button
@@ -39,15 +39,13 @@ three values:
    the following:
 
    ==========================================  ========================================
-   Type                                        Description
+   Event                                       Description
    ==========================================  ========================================
    :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
    :py:data:`pygameMenu.events.CLOSE`          Close the menu
    :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
    :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
    ==========================================  ========================================
-
-.. automethod:: pygameMenu.menu.Menu.add_button
 
 **Example:**
 
@@ -70,13 +68,13 @@ three values:
     menu.add_button(about_menu.get_title(), about_menu)     # Adds about submenu
     menu.add_button('Exit', pygameMenu.events.MENU_EXIT)    # Adds exit function
 
+.. automethod:: pygameMenu.menu.Menu.add_button
+
 
 Add a choices list
 ------------------
 
-A selector gives the possibility choose a value in a list.
-
-.. automethod:: pygameMenu.menu.Menu.add_selector
+A selector gives the possibility choose a value in a predefined list.
 
 **Example:**
 
@@ -95,12 +93,6 @@ A selector gives the possibility choose a value in a list.
         COLOR_BACKGROUND[1] = c[1]
         COLOR_BACKGROUND[2] = c[2]
 
-    def reset_timer():
-        """
-        Reset timer function.
-        """
-        ...
-
     menu = pygameMenu.Menu(...)
 
     menu.add_selector('Change bgcolor',
@@ -113,13 +105,13 @@ A selector gives the possibility choose a value in a list.
                       onreturn=change_color_bg,
                       write_on_console=True)
 
+.. automethod:: pygameMenu.menu.Menu.add_selector
+
 
 Add a text entry
 ----------------
 
 A text input permits to enter a string using a keyboard.
-
-.. automethod:: pygameMenu.menu.Menu.add_text_input
 
 **Example:**
 
@@ -139,6 +131,8 @@ A text input permits to enter a string using a keyboard.
     menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
     menu.add_text_input('Some long text: ', maxwidth=15)
 
+.. automethod:: pygameMenu.menu.Menu.add_text_input
+
 
 Add a color entry
 -----------------
@@ -146,8 +140,6 @@ Add a color entry
 A color input is similar as a text input but with a limited choice of
 characters to enter a RGB value of HEX decimal one. There is also a
 area to display the current color.
-
-.. automethod:: pygameMenu.menu.Menu.add_color_input
 
 **Example:**
 
@@ -167,14 +159,14 @@ area to display the current color.
     menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
     menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
 
+.. automethod:: pygameMenu.menu.Menu.add_color_input
+
 
 Add a vertical spacer
 ---------------------
 
 A vertical spacer can be added between widget to have a better
 visual rendering of the menu.
-
-.. automethod:: pygameMenu.menu.Menu.add_vertical_margin
 
 **Example:**
 
@@ -183,3 +175,5 @@ visual rendering of the menu.
     menu = pygameMenu.Menu(...)
 
     menu.add_vertical_margin(20)
+
+.. automethod:: pygameMenu.menu.Menu.add_vertical_margin

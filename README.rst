@@ -3,12 +3,9 @@
 pygame-menu
 ===========
 
-.. image:: docs/_static/pygame-menu.png
-    :scale: 35%
+.. image:: docs/_static/pygame-menu-small.png
     :align: center
     :alt:
-
-Currently, Python 2.7+ and 3.4+ (3.4, 3.5, 3.6, 3.7) are supported.
 
 .. image:: https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg
     :target: https://ppizarror.com
