@@ -1283,10 +1283,13 @@ class Menu(object):
         # Surface needs an update
         menu_surface_needs_update = False
 
-        # Update scroll, as it does not change the widgets
-        # It does not affect the status of updated
-        self._current._scroll.update(events)
-        if self._scroll.is_scrolling():
+        # Update scroll bars
+        was_scrolling = self._current._scroll.is_scrolling()
+        if self._current._scroll.update(events):
+            updated = True
+
+        # If scrolling is ending, no action on any other elements
+        if was_scrolling and not self._current._scroll.is_scrolling():
             return updated
 
         # Update the menubar, it may change the status of the widget because
