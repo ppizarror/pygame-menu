@@ -178,14 +178,14 @@ class MenuBar(Widget):
         :param title: Menu title
         :type title: basestring
         :param offsetx: Offset x-position of title (px)
-        :type offsetx: int
+        :type offsetx: int, float
         :param offsety: Offset y-position of title (px)
-        :type offsety: int
+        :type offsety: int, float
         :return: None
         """
         assert isinstance(title, str)
-        assert isinstance(offsetx, int)
-        assert isinstance(offsety, int)
+        assert isinstance(offsetx, (int, float))
+        assert isinstance(offsety, (int, float))
         self._label = title
         self._offsety = offsety
         self._offsetx = offsetx

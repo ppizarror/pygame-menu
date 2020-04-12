@@ -90,9 +90,10 @@ class ExamplesTest(unittest.TestCase):
         """
         scroll_area.main(test=True)
 
-    # @staticmethod
-    # def test_example_simple():
-    #     """
-    #     Test scroll area example.
-    #     """
-    #     import pygameMenu.examples.simple
+    @staticmethod
+    def test_example_simple():
+        """
+        Test scroll area example.
+        """
+        # noinspection PyUnresolvedReferences
+        import pygameMenu.examples.simple

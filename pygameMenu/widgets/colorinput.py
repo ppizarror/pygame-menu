@@ -93,9 +93,9 @@ class ColorInput(TextInput):
         assert isinstance(input_separator, str)
         assert isinstance(input_underline, str)
         assert isinstance(cursor_color, tuple)
-        assert isinstance(repeat_keys_initial_ms, int)
-        assert isinstance(repeat_keys_interval_ms, int)
-        assert isinstance(repeat_mouse_interval_ms, int)
+        assert isinstance(repeat_keys_initial_ms, (int, float))
+        assert isinstance(repeat_keys_interval_ms, (int, float))
+        assert isinstance(repeat_mouse_interval_ms, (int, float))
         assert isinstance(prev_size, (int, float))
 
         assert len(input_separator) == 1, 'input_separator must be a single char'

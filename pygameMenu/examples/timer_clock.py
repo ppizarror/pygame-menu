@@ -268,8 +268,8 @@ def main(test=False):
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
             time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
             time_blit_size = time_blit.get_size()
-            surface.blit(time_blit,
-                         (int(W_SIZE / 2 - time_blit_size[0] / 2), int(H_SIZE / 2 - time_blit_size[1] / 2)))
+            surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2),
+                                     int(H_SIZE / 2 - time_blit_size[1] / 2)))
         else:
             # Background color if the menu is enabled and timer is hidden
             surface.fill((40, 0, 40))

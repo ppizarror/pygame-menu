@@ -67,4 +67,5 @@ menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygameMenu.events.EXIT)
 menu.center_content()
 
-menu.mainloop(surface)
+if __name__ == '__main__':
+    menu.mainloop(surface)

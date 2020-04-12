@@ -96,6 +96,7 @@ class Sound(object):
     :type force_init: bool
     """
 
+    # noinspection PyShadowingBuiltins
     def __init__(self,
                  uniquechannel=True,
                  frequency=22050,

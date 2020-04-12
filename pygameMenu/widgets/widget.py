@@ -222,11 +222,11 @@ class Widget(object):
         :param selected_color: Selected color
         :type selected_color: tuple
         :param inflatex: Pixels to inflate the rect (x axis), used by highlight
-        :type inflatex: int
+        :type inflatex: int, float
         :param inflatey: Pixels to inflate the rect (y axis), used by highlight
-        :type inflatey: int
+        :type inflatey: int, float
         :param border_width: Border rect width
-        :type border_width: int
+        :type border_width: int, float
         :return: None
         """
         # Generate new rect if it's different
@@ -249,7 +249,7 @@ class Widget(object):
         _pygame.draw.rect(surface,
                           selected_color,
                           rect,
-                          border_width)
+                          int(border_width))
 
     def set_max_width(self, width):
         """
@@ -274,13 +274,13 @@ class Widget(object):
         Set Widget margin.
 
         :param x: Margin on x axis
-        :type x: int
+        :type x: int, float
         :param y: Margin on y axis
-        :type y: int
+        :type y: int, float
         :return: None
         """
-        assert isinstance(x, int)
-        assert isinstance(y, int)
+        assert isinstance(x, (int, float))
+        assert isinstance(y, (int, float))
         self._margin = (x, y)
 
     def get_rect(self):
@@ -549,7 +549,7 @@ class Widget(object):
         :param position: Shadow position
         :type position: basestring, NoneType
         :param offset: Shadow offset
-        :type offset: int, NoneType
+        :type offset: int, float, NoneType
         :return: None
         """
         self._shadow = enabled
@@ -560,10 +560,7 @@ class Widget(object):
             assert_position(position)
             self._shadow_position = position
         if offset is not None:
-            try:
-                offset = int(offset)
-            except ValueError:
-                raise TypeError('shadow offset must be integer')
+            assert isinstance(offset, (int, float))
             if offset <= 0:
                 raise ValueError('shadow offset must be greater than zero')
             self._shadow_offset = offset

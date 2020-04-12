@@ -153,7 +153,7 @@ class Selector(Widget):
             - *widget*.set_value(2) -> Widget selects 2.
 
         :param item: Item to select, can be a string or an integer.
-        :type item: basestring,int
+        :type item: basestring, int
         :return: None
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'

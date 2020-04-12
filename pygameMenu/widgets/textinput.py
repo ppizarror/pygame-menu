@@ -156,9 +156,9 @@ class TextInput(Widget):
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
-        assert isinstance(repeat_keys_initial_ms, int)
-        assert isinstance(repeat_keys_interval_ms, int)
-        assert isinstance(repeat_mouse_interval_ms, int)
+        assert isinstance(repeat_keys_initial_ms, (int, float))
+        assert isinstance(repeat_keys_interval_ms, (int, float))
+        assert isinstance(repeat_mouse_interval_ms, (int, float))
         assert isinstance(text_ellipsis, str)
 
         if history < 0:
@@ -527,7 +527,7 @@ class TextInput(Widget):
         if self._cursor_surface is None:
             if self._rect.height == 0:  # If menu has not been initialized this error can occur
                 return
-            self._cursor_surface = make_surface(int(self._font_size / 20 + 1), self._rect.height - 2)
+            self._cursor_surface = make_surface(self._font_size / 20 + 1, self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string
