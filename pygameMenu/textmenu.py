@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 TEXT MENU
 Menu with text and buttons.
 
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)

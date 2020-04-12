@@ -4,7 +4,10 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 TEST VERSION
-Test version management.
+Test version.
+
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
 
 License:
 -------------------------------------------------------------------------------

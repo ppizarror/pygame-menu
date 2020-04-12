@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 MENU
 Menu class.
 
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -768,18 +771,18 @@ class Menu(object):
 
         # Calculate alignment
         if align == _locals.ALIGN_CENTER:
-            option_dx = -int(rect.width / 2.0)
+            option_dx = -float(rect.width) / 2
         elif align == _locals.ALIGN_LEFT:
-            option_dx = -self._width / 2 + self._selected_inflate_x
+            option_dx = -float(self._width) / 2 + self._selected_inflate_x
         elif align == _locals.ALIGN_RIGHT:
-            option_dx = self._width / 2 - rect.width - self._selected_inflate_x
+            option_dx = float(self._width) / 2 - rect.width - self._selected_inflate_x
         else:
             option_dx = 0
-        t_dy = -int(rect.height / 2.0)
+        t_dy = -float(rect.height) / 2
 
         xccord = self._opt_posx + option_dx
         ycoord = self._opt_posy + index * (self._fsize + self._opt_dy) + t_dy
-        return xccord, ycoord
+        return int(xccord), int(ycoord)
 
     def enable(self):
         """

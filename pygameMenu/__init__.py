@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 PYGAME-MENU
 A menu for pygame, simple, lightweight and easy to use.
 
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -91,11 +94,11 @@ __contributors__ = [
 ]
 __copyright__ = 'Copyright 2017-2020 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'
-__email__ = 'pablo.pizarro@ing.uchile.cl'
+__email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu'
 __license__ = 'MIT'
-__url__ = 'https://ppizarror.com/pygame-menu/'
-__url_source_code__ = 'https://github.com/ppizarror/pygame-menu'
-__url_documentation__ = 'https://github.com/ppizarror/pygame-menu'
+__url__ = 'https://github.com/ppizarror/pygame-menu/tree/v2'
+__url_source_code__ = 'https://github.com/ppizarror/pygame-menu/tree/v2/pygameMenu'
+__url_documentation__ = 'https://github.com/ppizarror/pygame-menu/blob/v2/README.md'
 __url_bug_tracker__ = 'https://github.com/ppizarror/pygame-menu/issues'
 __version__ = pygameMenu.version.ver

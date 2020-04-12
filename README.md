@@ -622,8 +622,8 @@ A basic sound engine can be created using the *Sound* class, imported from *pyga
 
     | Param | Description | Type | Default |
     | :--: | :-- | :--: | :--: |
-    | sound | Sound type | str | - |
-    | file | Sound file | str | - |
+    | sound_type | Sound type | str | - |
+    | sound_file | Sound file | str | - |
     | volume | Volume of the sound | float | 0.5 |
     | loops | Number of loops of the sound | int | 0 |
     | maxtime | Max playing time of the sound | int | 0 |

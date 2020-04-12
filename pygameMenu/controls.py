@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 CONTROLS
 Default controls of menu object and key definition.
 
+NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
+upgrading to the lastest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
