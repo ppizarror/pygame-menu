@@ -59,7 +59,7 @@ def assert_color(color):
     assert isinstance(color, (list, tuple))
     assert len(color) == 3, 'color must be a tuple or list of 3 numbers'
     for i in color:
-        assert isinstance(i, int), '{0} element must be a number'.format(i)
+        assert isinstance(i, int), '"{0}" in element color {1} must be an integer'.format(i, color)
 
 
 def assert_position(position):
@@ -112,9 +112,9 @@ def make_surface(width, height, alpha=False):
     Creates a pygame surface object.
 
     :param width: Surface width
-    :type width: int
+    :type width: int, float
     :param height: Surface height
-    :type height: int
+    :type height: int, float
     :param alpha: Enable alpha channel on surface
     :type alpha: bool
     :return: Pygame surface

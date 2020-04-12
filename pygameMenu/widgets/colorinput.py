@@ -93,9 +93,9 @@ class ColorInput(TextInput):
         assert isinstance(input_separator, str)
         assert isinstance(input_underline, str)
         assert isinstance(cursor_color, tuple)
-        assert isinstance(repeat_keys_initial_ms, int)
-        assert isinstance(repeat_keys_interval_ms, int)
-        assert isinstance(repeat_mouse_interval_ms, int)
+        assert isinstance(repeat_keys_initial_ms, (int, float))
+        assert isinstance(repeat_keys_interval_ms, (int, float))
+        assert isinstance(repeat_mouse_interval_ms, (int, float))
         assert isinstance(prev_size, (int, float))
 
         assert len(input_separator) == 1, 'input_separator must be a single char'
@@ -145,7 +145,7 @@ class ColorInput(TextInput):
         self._last_r = -1  # type: int
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
-        self._previsualization_position = (0, 0)
+        self._previsualization_position = (0.0, 0.0)
         self._previsualization_surface = None  # type: (_pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 

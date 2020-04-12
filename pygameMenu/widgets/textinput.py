@@ -156,9 +156,9 @@ class TextInput(Widget):
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
-        assert isinstance(repeat_keys_initial_ms, int)
-        assert isinstance(repeat_keys_interval_ms, int)
-        assert isinstance(repeat_mouse_interval_ms, int)
+        assert isinstance(repeat_keys_initial_ms, (int, float))
+        assert isinstance(repeat_keys_interval_ms, (int, float))
+        assert isinstance(repeat_mouse_interval_ms, (int, float))
         assert isinstance(text_ellipsis, str)
 
         if history < 0:
@@ -199,25 +199,25 @@ class TextInput(Widget):
         self._absolute_origin = (0, 0)  # To calculate mouse collide point
 
         # Mouse handling
-        self._keyrepeat_mouse_ms = 0  # type: int
+        self._keyrepeat_mouse_ms = 0.0  # type: float
         self._keyrepeat_mouse_interval_ms = repeat_mouse_interval_ms
         self._mouse_is_pressed = False  # type: bool
 
         # Render box (overflow)
         self._ellipsis = text_ellipsis
-        self._ellipsis_size = 0  # type: int
-        self._renderbox = [0, 0, 0]  # Left/Right/Inner
+        self._ellipsis_size = 0.0  # type: float
+        self._renderbox = [0, 0, 0]  # Left/Right/Inner, int
 
         # Things cursor:
         self._clock = _pygame.time.Clock()  # type: _pygame.time.Clock
         self._cursor_color = cursor_color
-        self._cursor_ms_counter = 0  # type: int
-        self._cursor_offset = -1  # type: int
+        self._cursor_ms_counter = 0.0  # type: float
+        self._cursor_offset = -1.0  # type: float
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None  # type: (_pygame.Surface,None)
-        self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
-        self._cursor_switch_ms = 500  # type: int
+        self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
+        self._cursor_switch_ms = 500.0  # type: float
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # History of editions
@@ -228,13 +228,13 @@ class TextInput(Widget):
         self._max_history = history
 
         # Text selection
-        self._last_selection_render = [0, 0]
+        self._last_selection_render = [0, 0]  # Position (int)
         self._selection_active = False
         self._selection_enabled = enable_selection
-        self._selection_box = [0, 0]  # [from, to]
+        self._selection_box = [0, 0]  # [from, to], (int)
         self._selection_color = selection_color
         self._selection_mouse_first_position = -1  # type: int
-        self._selection_position = [0, 0]  # (x,y)
+        self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
         self._selection_surface = None  # type: (_pygame.Surface,None)
 
@@ -252,10 +252,10 @@ class TextInput(Widget):
         self._copy_paste_enabled = enable_copy_paste
         self._input_type = input_type
         self._input_underline = input_underline
-        self._input_underline_size = 0  # type: int
+        self._input_underline_size = 0.0  # type: float
         self._keychar_size = {'': 0}  # type: dict
         self._label = label
-        self._label_size = 0  # type: int
+        self._label_size = 0.0  # type: float
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygameMenu__last_render_string__'  # type: str
         self._last_rendered_surface = None  # type: (_pygame.Surface,None)
@@ -264,7 +264,7 @@ class TextInput(Widget):
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
         self._maxwidth_base = maxwidth
         self._maxwidth_update = maxwidth_dynamically_update
-        self._maxwidthsize = 0  # Updated in font
+        self._maxwidthsize = 0.0  # Updated in _apply_font()
         self._password = password
         self._password_char = password_char
 
@@ -527,7 +527,7 @@ class TextInput(Widget):
         if self._cursor_surface is None:
             if self._rect.height == 0:  # If menu has not been initialized this error can occur
                 return
-            self._cursor_surface = make_surface(int(self._font_size / 20 + 1), self._rect.height - 2)
+            self._cursor_surface = make_surface(self._font_size / 20 + 1, self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string

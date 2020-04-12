@@ -85,7 +85,7 @@ class Menu(object):
     :param menu_id: ID of the Menu
     :type menu_id: basestring
     :param menu_opacity: Opacity of background (0=transparent, 100=opaque)
-    :type menu_opacity: int
+    :type menu_opacity: int, float
     :param menu_position_x: Left position of the Menu respect to the window (%), if 50 the Menu is horizontally centered
     :type menu_position_x: int, float
     :param menu_position_y: Top position of the Menu respect to the window (%), if 50 the Menu is vertically centered
@@ -103,25 +103,25 @@ class Menu(object):
     :param scrollbar_shadow_color: Color of the shadow
     :type scrollbar_shadow_color: tuple, list
     :param scrollbar_shadow_offset: Offset of shadow
-    :type scrollbar_shadow_offset: int
+    :type scrollbar_shadow_offset: int, float
     :param scrollbar_shadow_position: Position of shadow
     :type scrollbar_shadow_position: basestring
     :param scrollbar_slider_color: Color of the sliders
     :type scrollbar_slider_color: tuple, list
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
-    :type scrollbar_slider_pad: int
+    :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbars thickness
-    :type scrollbar_thick: int
+    :type scrollbar_thick: int, float
     :param selection_color: Color of selected item
     :type selection_color: tuple, list
     :param selection_highlight: Enable drawing a rectangle around selected item
     :type selection_highlight: bool
-    :param selection_highlight_border_width: Border with of rectangle around selected item
+    :param selection_highlight_border_width: Border width of the rectangle around selected item
     :type selection_highlight_border_width: int
     :param selection_highlight_margin_x: X margin of selected highlight box
-    :type selection_highlight_margin_x: int
+    :type selection_highlight_margin_x: int, float
     :param selection_highlight_margin_y: Y margin of selected highlight box
-    :type selection_highlight_margin_y: int
+    :type selection_highlight_margin_y: int, float
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
     :param title_font: Optional title font, if None use the Menu default font
@@ -131,17 +131,15 @@ class Menu(object):
     :param title_font_size: Font size of the title
     :type title_font_size: int
     :param title_offset_x: Offset x-position of title (px)
-    :type title_offset_x: int
+    :type title_offset_x: int, float
     :param title_offset_y: Offset y-position of title (px)
-    :type title_offset_y: int
-    :param title_offset_y: Title shadow color
-    :type title_offset_y: tuple, list
+    :type title_offset_y: int, float
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
     :param title_shadow_color: Title shadow color
     :type title_shadow_color: list, tuple
     :param title_shadow_offset: Offset of shadow on title
-    :type title_shadow_offset: int
+    :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title
     :type title_shadow_position: basestring
     :param widget_alignment: Widget default alignment
@@ -151,9 +149,9 @@ class Menu(object):
     :param widget_font_size: Font size
     :type widget_font_size: int
     :param widget_margin_x: Horizontal margin of each element in Menu (px)
-    :type widget_margin_x: int
+    :type widget_margin_x: int, float
     :param widget_margin_y: Vertical margin of each element in Menu (px)
-    :type widget_margin_y: int
+    :type widget_margin_y: int, float
     :param widget_offset_x: X axis offset of widgets inside Menu (px). If value less than 1 use percentage of width
     :type widget_offset_x: int, float
     :param widget_offset_y: Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of height
@@ -163,7 +161,7 @@ class Menu(object):
     :param widget_shadow_color: Color of the shadow
     :type widget_shadow_color: tuple, list
     :param widget_shadow_offset: Offset of shadow
-    :type widget_shadow_offset: int
+    :type widget_shadow_offset: int, float
     :param widget_shadow_position: Position of shadow
     :type widget_shadow_position: basestring
     """
@@ -232,32 +230,34 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_opacity, int)
+        assert isinstance(menu_opacity, (int, float))
         assert isinstance(menu_id, str)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
         assert isinstance(scrollbar_shadow, bool)
-        assert isinstance(scrollbar_shadow_offset, int)
+        assert isinstance(scrollbar_shadow_offset, (int, float))
+        assert isinstance(scrollbar_slider_pad, (int, float))
+        assert isinstance(scrollbar_thick, (int, float))
         assert isinstance(selection_highlight, bool)
         assert isinstance(selection_highlight_border_width, int)
-        assert isinstance(selection_highlight_margin_x, int)
-        assert isinstance(selection_highlight_margin_y, int)
+        assert isinstance(selection_highlight_margin_x, (int, float))
+        assert isinstance(selection_highlight_margin_y, (int, float))
         assert isinstance(title, str)
         assert isinstance(title_font, (str, type(None)))
         assert isinstance(title_font_size, int)
-        assert isinstance(title_offset_x, int)
-        assert isinstance(title_offset_y, int)
+        assert isinstance(title_offset_x, (int, float))
+        assert isinstance(title_offset_y, (int, float))
         assert isinstance(title_shadow, bool)
-        assert isinstance(title_shadow_offset, int)
+        assert isinstance(title_shadow_offset, (int, float))
         assert isinstance(widget_alignment, str)
         assert isinstance(widget_font_size, int)
-        assert isinstance(widget_margin_x, int)
-        assert isinstance(widget_margin_y, int)
+        assert isinstance(widget_margin_x, (int, float))
+        assert isinstance(widget_margin_y, (int, float))
         assert isinstance(widget_offset_x, (int, float))
         assert isinstance(widget_offset_y, (int, float))
         assert isinstance(widget_shadow, bool)
-        assert isinstance(widget_shadow_offset, int)
+        assert isinstance(widget_shadow_offset, (int, float))
 
         # Assert colors
         if title_background_color is None:
@@ -329,23 +329,23 @@ class Menu(object):
             menu_id = str(uuid4())
 
         # Update background color
+        menu_opacity = int(255.0 * (1.0 - (100.0 - menu_opacity) / 100.0))
         menu_background_color = (menu_background_color[0],
                                  menu_background_color[1],
                                  menu_background_color[2],
-                                 int(255 * (1 - (100 - menu_opacity) / 100.0))
-                                 )
+                                 menu_opacity)
 
         # General properties of the Menu
         self._background_function = None  # type: (None,callable)
         self._clock = _pygame.time.Clock()  # Inner clock
-        self._height = int(menu_height)
+        self._height = float(menu_height)
         self._id = menu_id
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
         self._onclose = onclose  # Function that calls after closing Menu
         self._sounds = _Sound()  # type: _Sound
         self._submenus = []  # type: list
-        self._width = int(menu_width)
+        self._width = float(menu_width)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accesing self should be through "_current", because user can move through submenus
@@ -381,8 +381,8 @@ class Menu(object):
         self._widget_font_name = font
         self._widget_font_size = widget_font_size
         self._widget_margin = (widget_margin_x, widget_margin_y)
-        self._widget_offset_x = int(widget_offset_x)
-        self._widget_offset_y = int(widget_offset_y)
+        self._widget_offset_x = widget_offset_x
+        self._widget_offset_y = widget_offset_y
         self._widget_shadow = widget_shadow
         self._widget_shadow_color = widget_shadow_color
         self._widget_shadow_offset = widget_shadow_offset
@@ -392,7 +392,7 @@ class Menu(object):
         # Selected widget
         self._selection_border_width = selection_highlight_border_width * selection_highlight
         self._selection_color = selection_color
-        self._selection_highlight = selection_highlight  # Highlight box around selected item
+        self._selection_highlight = selection_highlight  # Highlight box around selected item (bool)
         self._selection_highlight_margin_x = selection_highlight_margin_x * selection_highlight
         self._selection_highlight_margin_y = selection_highlight_margin_y * selection_highlight
 
@@ -432,7 +432,7 @@ class Menu(object):
                                color=(title_background_color[0],
                                       title_background_color[1],
                                       title_background_color[2],
-                                      int(255 * (1 - (100 - menu_opacity) / 100.0))),
+                                      menu_opacity),
                                selected_color=title_font_color)
         self._menubar.set_shadow(enabled=title_shadow,
                                  color=title_shadow_color,
@@ -780,11 +780,11 @@ class Menu(object):
         Adds a vertical margin to the current Menu.
 
         :param margin: Margin in px
-        :type margin: int
+        :type margin: int, float
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.VMargin`
         """
-        assert isinstance(margin, int)
+        assert isinstance(margin, (int, float))
         widget = _widgets.VMargin()
         self._current._configure_widget(widget=widget, margin=(0, margin))
         self._current._append_widget(widget)
@@ -894,12 +894,12 @@ class Menu(object):
 
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         if 0 < sum(self._column_widths) < self._width:
-            scale = self._width / sum(self._column_widths)
+            scale = float(self._width) / sum(self._column_widths)
             for index in range(self._columns):
                 self._column_widths[index] *= scale
 
         # Final column width
-        total_col_width = int(sum(self._column_widths))
+        total_col_width = float(sum(self._column_widths))
 
         if self._columns > 1:
 
@@ -912,11 +912,11 @@ class Menu(object):
             cumulative = 0
             for i in range(self._columns):
                 w = column_weights[i]
-                self._column_pos_x.append(int(total_col_width * (cumulative + 0.5 * w)))
+                self._column_pos_x.append(total_col_width * (cumulative + 0.5 * w))
                 cumulative += w
 
         else:
-            self._column_pos_x = [int(total_col_width * 0.5)]
+            self._column_pos_x = [total_col_width * 0.5]
             self._column_widths = [total_col_width]
 
         return total_col_width
@@ -944,17 +944,18 @@ class Menu(object):
 
             # Calculate X position
             _column_width = self._column_widths[_col]
+            _highlist_margin = float(self._selection_highlight_margin_x + self._selection_border_width) / 2
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
-                dx = -int(rect.width / 2.0)
+                dx = -float(rect.width) / 2
             elif align == _locals.ALIGN_LEFT:
-                dx = -_column_width / 2 + self._selection_highlight_margin_x / 2
+                dx = -_column_width / 2 + _highlist_margin
             elif align == _locals.ALIGN_RIGHT:
-                dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
+                dx = _column_width / 2 - rect.width - _highlist_margin
             else:
                 dx = 0
             x_coord = self._column_pos_x[_col] + dx + widget.get_margin()[0]
-            x_coord = max(self._selection_highlight_margin_x / 2 + self._selection_border_width, x_coord)
+            x_coord = max(_highlist_margin, x_coord)
             x_coord += self._widget_offset_x
 
             # Calculate Y position
@@ -979,7 +980,7 @@ class Menu(object):
             _, _, x, y = widget.get_position()  # Use only bottom right position
             max_x = max(max_x, x)
             max_y = max(max_y, y)
-        return int(max_x), int(max_y)
+        return max_x, max_y
 
     def _build_widget_surface(self):
         """
@@ -1117,11 +1118,11 @@ class Menu(object):
         position_y = float(position_y) / 100
         window_width, window_height = _pygame.display.get_surface().get_size()
         if current:
-            self._current._pos_x = int((window_width - self._current._width) * position_x)
-            self._current._pos_y = int((window_height - self._current._height) * position_y)
+            self._current._pos_x = (window_width - self._current._width) * position_x
+            self._current._pos_y = (window_height - self._current._height) * position_y
         else:
-            self._pos_x = int((window_width - self._width) * position_x)
-            self._pos_y = int((window_height - self._height) * position_y)
+            self._pos_x = (window_width - self._width) * position_x
+            self._pos_y = (window_height - self._height) * position_y
         self._widgets_surface = None  # This forces an update of the widgets
 
     def center_content(self, current=True):
@@ -1156,7 +1157,7 @@ class Menu(object):
         max_y -= self._widget_offset_y  # Only use total height
         available = self._height - self._menubar.get_rect().height - horizontal_scroll
         new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
-        self._widget_offset_y = int(self._height * new_pos)
+        self._widget_offset_y = self._height * new_pos
         self._build_widget_surface()  # Rebuild
 
     def draw(self, surface):

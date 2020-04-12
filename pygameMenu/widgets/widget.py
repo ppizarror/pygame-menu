@@ -42,6 +42,15 @@ from uuid import uuid4
 class Widget(object):
     """
     Widget abstract class.
+
+    :param widget_id: Widget identifier
+    :type widget_id: basestring
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, NoneType
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, NoneType
+    :param args: Optional arguments for callbacks
+    :param kwargs: Optional keyword-arguments for callbacks
     """
 
     def __init__(self,
@@ -51,21 +60,11 @@ class Widget(object):
                  args=None,
                  kwargs=None
                  ):
-        """
-        :param widget_id: Widget identifier
-        :type widget_id: basestring
-        :param onchange: Callback when changing the selector
-        :type onchange: callable, NoneType
-        :param onreturn: Callback when pressing return button
-        :type onreturn: callable, NoneType
-        :param args: Optional arguments for callbacks
-        :param kwargs: Optional keyword-arguments for callbacks
-        """
         assert isinstance(widget_id, str)
         if onchange:
-            assert callable(onchange), 'onchange must be a function or None'
+            assert callable(onchange), 'onchange must be callable or None'
         if onreturn:
-            assert callable(onreturn), 'onreturn must be a function or None'
+            assert callable(onreturn), 'onreturn must be callable or None'
 
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
@@ -74,8 +73,8 @@ class Widget(object):
         self._id = str(widget_id)
         self._last_selected_surface = None  # type: (_pygame.Surface,None)
         self._selected_rect = None  # type: (_pygame.rect.Rect,None)
-        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: (_pygame.Rect,None)
-        self._margin = (0, 0)  # type: tuple
+        self._rect = _pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (_pygame.Rect,None)
+        self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
@@ -104,7 +103,7 @@ class Widget(object):
         # Text shadow
         self._shadow = False  # type: bool
         self._shadow_color = (0, 0, 0)  # type: tuple
-        self._shadow_offset = 2  # type: int
+        self._shadow_offset = 2.0  # type: float
         self._shadow_position = _locals.POSITION_NORTHWEST
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
@@ -117,7 +116,7 @@ class Widget(object):
 
         # Stores the last render surface size, updated by
         # self._check_render_size_changed()
-        self._last_render_surface_size = (0, 0)
+        self._last_render_surface_size = (0.0, 0.0)
 
         # Public attributes
         self.is_selectable = True  # Some widgets cannot be selected like labels
@@ -222,11 +221,11 @@ class Widget(object):
         :param selected_color: Selected color
         :type selected_color: tuple
         :param inflatex: Pixels to inflate the rect (x axis), used by highlight
-        :type inflatex: int
+        :type inflatex: int, float
         :param inflatey: Pixels to inflate the rect (y axis), used by highlight
-        :type inflatey: int
+        :type inflatey: int, float
         :param border_width: Border rect width
-        :type border_width: int
+        :type border_width: int, float
         :return: None
         """
         # Generate new rect if it's different
@@ -249,7 +248,7 @@ class Widget(object):
         _pygame.draw.rect(surface,
                           selected_color,
                           rect,
-                          border_width)
+                          int(border_width))
 
     def set_max_width(self, width):
         """
@@ -274,13 +273,13 @@ class Widget(object):
         Set Widget margin.
 
         :param x: Margin on x axis
-        :type x: int
+        :type x: int, float
         :param y: Margin on y axis
-        :type y: int
+        :type y: int, float
         :return: None
         """
-        assert isinstance(x, int)
-        assert isinstance(y, int)
+        assert isinstance(x, (int, float))
+        assert isinstance(y, (int, float))
         self._margin = (x, y)
 
     def get_rect(self):
@@ -549,7 +548,7 @@ class Widget(object):
         :param position: Shadow position
         :type position: basestring, NoneType
         :param offset: Shadow offset
-        :type offset: int, NoneType
+        :type offset: int, float, NoneType
         :return: None
         """
         self._shadow = enabled
@@ -560,10 +559,7 @@ class Widget(object):
             assert_position(position)
             self._shadow_position = position
         if offset is not None:
-            try:
-                offset = int(offset)
-            except ValueError:
-                raise TypeError('shadow offset must be integer')
+            assert isinstance(offset, (int, float))
             if offset <= 0:
                 raise ValueError('shadow offset must be greater than zero')
             self._shadow_offset = offset

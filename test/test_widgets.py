@@ -281,7 +281,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(_w.get_alignment(), _locals.ALIGN_LEFT)
         self.assertEqual(_w.get_font_info()['size'], 3)
         _w.draw(surface)
-        _w.draw_selected_rect()
+        _w.draw_selected_rect(surface, (0, 0, 0), 0, 0, 0)
         self.assertFalse(_w.update([]))
 
     def test_textinput(self):
@@ -438,7 +438,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_margin()[0], 0)
         self.assertEqual(w.get_margin()[1], 999)
         w.draw(surface)
-        w.draw_selected_rect()
+        w.draw_selected_rect(surface, (0, 0, 0), 0, 0, 0)
 
     # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):

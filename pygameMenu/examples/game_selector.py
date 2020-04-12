@@ -99,7 +99,7 @@ def play_function(difficulty, font, test=False):
     Main game function.
 
     :param difficulty: Difficulty of the game
-    :type difficulty: basestring
+    :type difficulty: list, tuple
     :param font: Pygame font
     :type font: pygame.font.FontType
     :param test: Test method, if true only one loop is allowed

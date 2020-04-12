@@ -45,7 +45,7 @@ class MenuBar(Widget):
     :param label: Title of the menu
     :type label: basestring
     :param width: Width of the menu bar (generally width of the menu dialog)
-    :type width: int
+    :type width: int, float
     :param back_box: Draw a back-box button on header
     :type back_box: bool
     :param bgcolor: Color behind the polygon (transparent if not given)
@@ -84,10 +84,10 @@ class MenuBar(Widget):
         self._backbox_rect = None  # type: (_pygame.rect.Rect,None)
         self._bgcolor = bgcolor
         self._label = label
-        self._offsetx = 0  # type: int
-        self._offsety = 0  # type: int
+        self._offsetx = 0.0
+        self._offsety = 0.0
         self._polygon_pos = None  # type: (tuple,None)
-        self._width = width  # type: (int,float)
+        self._width = width
 
     def _apply_font(self):
         pass
@@ -178,14 +178,14 @@ class MenuBar(Widget):
         :param title: Menu title
         :type title: basestring
         :param offsetx: Offset x-position of title (px)
-        :type offsetx: int
+        :type offsetx: int, float
         :param offsety: Offset y-position of title (px)
-        :type offsety: int
+        :type offsety: int, float
         :return: None
         """
         assert isinstance(title, str)
-        assert isinstance(offsetx, int)
-        assert isinstance(offsety, int)
+        assert isinstance(offsetx, (int, float))
+        assert isinstance(offsety, (int, float))
         self._label = title
         self._offsety = offsety
         self._offsetx = offsetx

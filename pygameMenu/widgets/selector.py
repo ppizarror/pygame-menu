@@ -88,7 +88,7 @@ class Selector(Widget):
         self._elements = elements
         self._index = 0  # type: int
         self._label = label
-        self._labelsize = 0  # type: int
+        self._labelsize = 0.0  # type: float
         self._sformat = '{0}< {1} >'  # type: str
 
         # Apply default item
@@ -153,7 +153,7 @@ class Selector(Widget):
             - *widget*.set_value(2) -> Widget selects 2.
 
         :param item: Item to select, can be a string or an integer.
-        :type item: basestring,int
+        :type item: basestring, int
         :return: None
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'

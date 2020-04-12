@@ -34,10 +34,10 @@ from test._utils import *
 # Imports
 import pygameMenu.examples.game_selector as game_selector
 import pygameMenu.examples.multi_input as multi_input
-import pygameMenu.examples.scroll_area as scroll_area
-import pygameMenu.examples.scroll_bar as scroll_bar
 import pygameMenu.examples.scroll_menu as scroll_menu
 import pygameMenu.examples.timer_clock as timer_clock
+import widgets.examples.scrollbar as scroll_bar
+import widgets.examples.scrollbar_area as scroll_area
 
 
 class ExamplesTest(unittest.TestCase):
@@ -89,3 +89,11 @@ class ExamplesTest(unittest.TestCase):
         Test scroll area example.
         """
         scroll_area.main(test=True)
+
+    @staticmethod
+    def test_example_simple():
+        """
+        Test scroll area example.
+        """
+        # noinspection PyUnresolvedReferences
+        import pygameMenu.examples.simple

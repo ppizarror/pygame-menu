@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-EXAMPLE - GAME SELECTOR
-Game with 3 difficulty options.
+EXAMPLE - SIMPLE
+Super simple example of pygame-menu usage, featuring a selector and a button.
 
 License:
 -------------------------------------------------------------------------------
@@ -34,21 +34,27 @@ import os
 import pygame
 import pygameMenu
 
-
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 surface = pygame.display.set_mode((600, 500))
 
 
 def set_difficulty(selected, value):
-    print("Set difficulty to {} ({})".format(selected[0], value))
+    """
+    Set the difficulty of the game.
+    """
+    print('Set difficulty to {} ({})'.format(selected[0], value))
 
 
 def start_the_game():
-    print("Do the job here !")
+    """
+    Function that starts a game. This is raised by the menu button,
+    here menu can be disabled, etc.
+    """
+    print('Do the job here !')
 
 
-menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS, "Welcome",
+menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS, 'Welcome',
                        widget_font_color=(102, 122, 130),
                        selection_color=(207, 62, 132),
                        title_font_color=(38, 158, 151),
@@ -61,4 +67,5 @@ menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygameMenu.events.EXIT)
 menu.center_content()
 
-menu.mainloop(surface)
+if __name__ == '__main__':
+    menu.mainloop(surface)
