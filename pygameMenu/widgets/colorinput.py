@@ -145,7 +145,7 @@ class ColorInput(TextInput):
         self._last_r = -1  # type: int
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
-        self._previsualization_position = (0, 0)
+        self._previsualization_position = (0.0, 0.0)
         self._previsualization_surface = None  # type: (_pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 

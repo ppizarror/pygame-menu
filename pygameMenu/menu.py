@@ -338,14 +338,14 @@ class Menu(object):
         # General properties of the Menu
         self._background_function = None  # type: (None,callable)
         self._clock = _pygame.time.Clock()  # Inner clock
-        self._height = menu_height
+        self._height = float(menu_height)
         self._id = menu_id
         self._index = 0  # Selected index
         self._joy_event = 0  # type: int
         self._onclose = onclose  # Function that calls after closing Menu
         self._sounds = _Sound()  # type: _Sound
         self._submenus = []  # type: list
-        self._width = menu_width
+        self._width = float(menu_width)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accesing self should be through "_current", because user can move through submenus

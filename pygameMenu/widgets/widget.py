@@ -74,8 +74,8 @@ class Widget(object):
         self._id = str(widget_id)
         self._last_selected_surface = None  # type: (_pygame.Surface,None)
         self._selected_rect = None  # type: (_pygame.rect.Rect,None)
-        self._rect = _pygame.Rect(0, 0, 0, 0)  # type: (_pygame.Rect,None)
-        self._margin = (0, 0)  # type: tuple
+        self._rect = _pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (_pygame.Rect,None)
+        self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
 
         self._args = args or []  # type: list
@@ -104,7 +104,7 @@ class Widget(object):
         # Text shadow
         self._shadow = False  # type: bool
         self._shadow_color = (0, 0, 0)  # type: tuple
-        self._shadow_offset = 2  # type: int
+        self._shadow_offset = 2.0  # type: float
         self._shadow_position = _locals.POSITION_NORTHWEST
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
@@ -117,7 +117,7 @@ class Widget(object):
 
         # Stores the last render surface size, updated by
         # self._check_render_size_changed()
-        self._last_render_surface_size = (0, 0)
+        self._last_render_surface_size = (0.0, 0.0)
 
         # Public attributes
         self.is_selectable = True  # Some widgets cannot be selected like labels
