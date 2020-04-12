@@ -366,9 +366,9 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
-        self._posx = 0  # type: int
-        self._posy = 0  # type: int
-        self.set_position(menu_position_x, menu_position_y, current=False)
+        self._pos_x = 0  # type: int
+        self._pos_y = 0  # type: int
+        self.set_relative_position(menu_position_x, menu_position_y, current=False)
 
         # Menu widgets
         if abs(widget_offset_x) < 1:
@@ -397,9 +397,10 @@ class Menu(object):
         self._selection_highlight_margin_y = selection_highlight_margin_y * selection_highlight
 
         # Columns and rows
-        self._columns = columns
         self._column_max_width = column_max_width
+        self._column_pos_x = []
         self._column_widths = None  # type: (list,None)
+        self._columns = columns
         self._force_fit_text = column_force_fit_text
         self._rows = rows
 
@@ -888,15 +889,15 @@ class Menu(object):
                 float(self._column_widths[i]) / max(total_col_width, 1) for i in range(self._columns))
 
             # Calculate the position of each column
-            self._column_posx = []
+            self._column_pos_x = []
             cumulative = 0
             for i in range(self._columns):
                 w = column_weights[i]
-                self._column_posx.append(int(total_col_width * (cumulative + 0.5 * w)))
+                self._column_pos_x.append(int(total_col_width * (cumulative + 0.5 * w)))
                 cumulative += w
 
         else:
-            self._column_posx = [int(total_col_width * 0.5)]
+            self._column_pos_x = [int(total_col_width * 0.5)]
             self._column_widths = [total_col_width]
 
         return total_col_width
@@ -911,7 +912,7 @@ class Menu(object):
             self._update_column_width()
 
         # Update title position
-        self._menubar.set_position(self._posx, self._posy)
+        self._menubar.set_position(self._pos_x, self._pos_y)
 
         # Update appended widgets
         for index in range(len(self._widgets)):
@@ -933,7 +934,7 @@ class Menu(object):
                 dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
             else:
                 dx = 0
-            x_coord = self._column_posx[_col] + dx + widget.get_margin()[0]
+            x_coord = self._column_pos_x[_col] + dx + widget.get_margin()[0]
             x_coord = max(self._selection_highlight_margin_x / 2 + self._selection_border_width, x_coord)
             x_coord += self._widget_offset_x
 
@@ -994,7 +995,7 @@ class Menu(object):
 
         self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
-        self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
+        self._scroll.set_position(self._pos_x, self._pos_y + menubar_height + 5)
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -1067,9 +1068,9 @@ class Menu(object):
         """
         self._top._enabled = False
 
-    def set_position(self, menu_position_x, menu_position_y, current=True):
+    def set_relative_position(self, position_x, position_y, current=True):
         """
-        Set the menu position respect to the window.
+        Set the menu position relative to the window.
 
         - Menu left position (x) must be between 0 and 100, if 0 the margin
           is at the left of the window, if 100 the menu is at the right
@@ -1079,29 +1080,29 @@ class Menu(object):
           at the top of the window, if 100 the margin is at the bottom of
           the window.
 
-        :param menu_position_x: Left position of the window
-        :type menu_position_x: int, float
-        :param menu_position_y: Top position of the window
-        :type menu_position_y: int, float
+        :param position_x: Left position of the window
+        :type position_x: int, float
+        :param position_y: Top position of the window
+        :type position_y: int, float
         :param current: If true, centers the current active Menu, otherwise center the base Menu
         :type current: bool
         :return: None
         """
-        assert isinstance(menu_position_x, (int, float))
-        assert isinstance(menu_position_y, (int, float))
-        assert 0 <= menu_position_x <= 100
-        assert 0 <= menu_position_y <= 100
+        assert isinstance(position_x, (int, float))
+        assert isinstance(position_y, (int, float))
+        assert 0 <= position_x <= 100
+        assert 0 <= position_y <= 100
         isinstance(current, bool)
 
-        menu_position_x = float(menu_position_x) / 100
-        menu_position_y = float(menu_position_y) / 100
+        position_x = float(position_x) / 100
+        position_y = float(position_y) / 100
         window_width, window_height = _pygame.display.get_surface().get_size()
         if current:
-            self._current._posx = int((window_width - self._current._width) * menu_position_x)
-            self._current._posy = int((window_height - self._current._height) * menu_position_y)
+            self._current._pos_x = int((window_width - self._current._width) * position_x)
+            self._current._pos_y = int((window_height - self._current._height) * position_y)
         else:
-            self._posx = int((window_width - self._width) * menu_position_x)
-            self._posy = int((window_height - self._height) * menu_position_y)
+            self._pos_x = int((window_width - self._width) * position_x)
+            self._pos_y = int((window_height - self._height) * position_y)
 
     def center_content(self, current=True):
         """
@@ -1489,20 +1490,19 @@ class Menu(object):
                 data.update(data_submenu)
         return data
 
-    def get_position(self, current=True):
+    def get_rect(self, current=True):
         """
-        Return current Menu position as a tuple *(x1, y1, x2, y2)*, where *(x1, y1)*
-        is the top-left position and *(x2, y2)* is the bottom-right position.
+        Return Menu pygame Rect.
 
         :param current: If True, returns the value from the current active Menu, otherwise from the base Menu
         :type current: bool
-        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
-        :rtype: tuple
+        :return: Rect
+        :rtype: pygame.rect.RectType
         """
         if current:
-            return self._current._posx, self._current._posy, \
-                   self._current._posx + self._current._width, self._current._posy + self._current._height
-        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
+            return _pygame.Rect(self._current._pos_x, self._current._pos_y,
+                                self._current._width, self._current._height)
+        return _pygame.Rect(self._pos_x, self._pos_y, self._width, self._height)
 
     def set_sound(self, sound, recursive=False):
         """

@@ -472,7 +472,8 @@ class TextInput(Widget):
 
             # Calculate total available space
             current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
-            _, _, posx2, _ = menu.get_position()
+            menu_rect = menu.get_rect()
+            posx2 = menu_rect.x + menu_rect.width
             space_between_label = posx2 - self._label_size - self._rect.x
             char = _math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
 

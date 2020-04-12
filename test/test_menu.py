@@ -52,6 +52,18 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=inf_size, height=300))
         self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=300, height=inf_size))
 
+    def test_position(self):
+        """
+        Test position.
+        """
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=-1, position_y=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=0, position_y=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=-1, position_y=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=101, position_y=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=99, position_y=101))
+        menu = PygameMenuUtils.generic_menu(position_x=0, position_y=0)
+        menu.set_relative_position(20, 40)
+
     def test_enabled(self):
         """
         Test menu enable/disable feature.

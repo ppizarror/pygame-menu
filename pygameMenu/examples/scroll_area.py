@@ -126,7 +126,7 @@ def iter_world(area):
         area.set_world(make_world(params['size'][0],
                                   params['size'][1],
                                   text))
-        area.set_position(*params['pos'])
+        area.set_relative_position(*params['pos'])
         yield params
 
 
