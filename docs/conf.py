@@ -1,8 +1,11 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+# coding=utf-8
+"""
+Configuration file for the Sphinx documentation builder.
+
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
 
 # -- Path setup ---------------------------------------------------------------
 
@@ -24,7 +27,6 @@ author = 'Pablo Pizarro R.'
 
 # The full version, including alpha/beta/rc tags
 release = pygameMenu.__version__
-
 
 # -- General configuration ----------------------------------------------------
 
@@ -48,13 +50,12 @@ master_doc = 'index'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
 
-
 # -- Intersphinx configuration ------------------------------------------------
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.7', None),
     'pygame': ('https://www.pygame.org/docs', None),
-    }
+}
 
 # -- Options for HTML output --------------------------------------------------
 
@@ -85,13 +86,13 @@ latex_elements = {
 
 latex_documents = [
     (
-        'index',                       # source start file
-        '%s.tex' % project,            # target filename
+        'index',  # source start file
+        '%s.tex' % project,  # target filename
         '%s Documentation' % project,  # title
-        author,                        # author
-        'manual',                      # documentclass
-        True,                          # documents ref'd from toctree only
-        ),
+        author,  # author
+        'manual',  # documentclass
+        True,  # documents ref'd from toctree only
+    ),
 ]
 
 latex_show_pagerefs = True

@@ -109,7 +109,7 @@ def make_long_menu():
     _menu.add_button('Rows and Columns', _menu_sub)
     _menu.add_button('Text scrolled', _menu_text)
     _menu.add_vertical_margin(20)  # Adds margin
-    
+
     label1 = 'Button n°{}'
     label2 = 'Text n°{}: '
     for i in range(1, 20):
@@ -148,7 +148,7 @@ def make_long_menu():
 
 def main(test=False):
     """
-    Main function
+    Main function.
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
