@@ -1641,6 +1641,15 @@ class Menu(object):
         current = self._top._current
         if len(current._widgets) == 0:
             return
+
+        # This stores +/-1 if the index increases or decreases
+        # Used by non-selectable selection
+        if new_index < current._index:
+            dwidget = -1
+        else:
+            dwidget = 1
+
+        # Limit the index to the length
         new_index %= len(current._widgets)
         if new_index == current._index:  # Index has not changed
             return
@@ -1651,10 +1660,6 @@ class Menu(object):
 
         # If new widget is not selectable
         if not new_widget.is_selectable:
-            if new_index < current._index:
-                dwidget = -1
-            else:
-                dwidget = 1
             if current._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
                 current._select(new_index + dwidget)
                 return
