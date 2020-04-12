@@ -74,7 +74,7 @@ def make_long_menu():
     """
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
-                            menu_alpha=80,
+                            menu_opacity=80,
                             menu_background_color=(188, 200, 108),
                             menu_height=400,
                             menu_width=600,  # px
@@ -86,7 +86,7 @@ def make_long_menu():
 
     _menu_sub = pygameMenu.Menu(columns=4,
                                 font=pygameMenu.font.FONT_COMIC_NEUE,
-                                menu_alpha=60,
+                                menu_opacity=60,
                                 menu_background_color=(120, 200, 108),
                                 menu_height=400,
                                 menu_width=600,
@@ -98,8 +98,8 @@ def make_long_menu():
                                 )
 
     _menu_text = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
-                                 menu_alpha=60,
                                  menu_height=400,
+                                 menu_opacity=60,
                                  menu_width=600,
                                  onclose=pygameMenu.events.EXIT,
                                  title='Text with scroll',
