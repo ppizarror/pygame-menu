@@ -72,6 +72,7 @@ def mainmenu_background():
     images, play sounds, etc.
     """
     global surface
+    # noinspection PyUnresolvedReferences
     surface.fill((40, 0, 40))
 
 
@@ -80,6 +81,7 @@ def reset_timer():
     Reset timer.
     """
     global timer
+    # noinspection PyUnresolvedReferences
     timer[0] = 0
 
 

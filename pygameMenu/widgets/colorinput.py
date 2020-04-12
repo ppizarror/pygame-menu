@@ -412,7 +412,7 @@ class ColorInput(TextInput):
 
             # Check number is valid (fix) because sometimes the user can type
             # too fast and avoid analysis of the text
-            colors = self._input_string.split(',')
+            colors = self._input_string.split(self._separator)
             for c in colors:
                 if len(c) > 0 and (int(c) > 255 or int(c) < 0):
                     self._input_string = _input

@@ -72,6 +72,9 @@ Menu: Menu class.
 # noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
 
+# noinspection PyUnresolvedReferences
+from pygameMenu.textmenu import TextMenu
+
 """
 Metadata: Information about the project.
 """

@@ -56,8 +56,12 @@ MENU_BACKGROUND_COLOR = (228, 55, 36)
 WINDOW_SIZE = (640, 480)
 
 clock = None
-main_menu = None
-surface = None
+
+# noinspection PyTypeChecker
+main_menu = None  # type: pygameMenu.Menu
+
+# noinspection PyTypeChecker
+surface = None  # type: pygame.SurfaceType
 
 
 # -----------------------------------------------------------------------------
@@ -130,6 +134,7 @@ def play_function(difficulty, font, test=False):
     while True:
 
         # Clock tick
+        # noinspection PyUnresolvedReferences
         clock.tick(60)
 
         # Application events
