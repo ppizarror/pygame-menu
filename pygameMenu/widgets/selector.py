@@ -72,10 +72,10 @@ class Selector(Widget):
 
         # Check element list
         for vl in elements:
-            assert len(vl) >= 1, \
-                'Length of each element in value list must be greater than 1'
+            assert len(vl) > 1, \
+                'Length of each element on item list must be greater than 1'
             assert isinstance(vl[0], str), \
-                'First element of value list component must be a string'
+                'First element of each item on list must be a string (the title of each item)'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'ID must be a string'
         assert isinstance(default, int), 'default must be an integer'

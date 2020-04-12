@@ -493,9 +493,11 @@ class Menu(object):
             widget = _widgets.Button(title, button_id, onchange, self.reset,
                                      1)  # reset is public, so no _current
         elif action == _events.CLOSE:  # Close Menu
-            widget = _widgets.Button(title, button_id, onchange, self._current._close, False)
+            widget = _widgets.Button(title, button_id, onchange, self._current._close)
         elif action == _events.EXIT:  # Exit program
             widget = _widgets.Button(title, button_id, onchange, self._current._exit)
+        elif action == _events.NONE:  # None action
+            widget = _widgets.Button(title, button_id)
         # If element is a function
         elif isinstance(action, (types.FunctionType, types.MethodType)) or callable(action):
             widget = _widgets.Button(title, button_id, onchange, action, *args)
@@ -1118,6 +1120,7 @@ class Menu(object):
         else:
             self._pos_x = int((window_width - self._width) * position_x)
             self._pos_y = int((window_height - self._height) * position_y)
+        self._widgets_surface = None  # This forces an update of the widgets
 
     def center_content(self, current=True):
         """
@@ -1385,6 +1388,8 @@ class Menu(object):
         if len(self._current._widgets) > 0:
             menu_surface_needs_update = menu_surface_needs_update or self._current._widgets[
                 self._current._index].surface_needs_update()
+
+        # This forces the rendering of all widgets
         if menu_surface_needs_update:
             self._current._widgets_surface = None
 
@@ -1633,6 +1638,7 @@ class Menu(object):
     def _select(self, new_index):
         """
         Select the widget at the given index and unselect others.
+        Selection forces rendering of the widget.
 
         :param new_index: Widget index
         :type new_index: int
@@ -1666,9 +1672,12 @@ class Menu(object):
             else:  # No selectable options, quit
                 return
 
+        # Selecting widgets forces rendering
         old_widget.set_selected(False)
         current._index = new_index  # Update selected index
         new_widget.set_selected()
+
+        # Update the widgets, get_rect() forces rendering
         rect = new_widget.get_rect()
         if current._index == 0:  # Scroll to the top of the Menu
             rect = _pygame.Rect(rect.x, 0, rect.width, rect.height)

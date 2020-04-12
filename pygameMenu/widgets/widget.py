@@ -90,7 +90,10 @@ class Widget(object):
 
         # Menu reference
         self._menu = None
-        self._menu_widget_position_needs_update = False
+
+        # If this is True then the widget forces the Menu to update because the
+        # widget render has changed
+        self._menu_surface_needs_update = False
 
         # Modified in set_font() method
         self._font = None  # type: (_pygame.font.Font,None)
@@ -108,12 +111,42 @@ class Widget(object):
         self._shadow_tuple = None  # (x px offset, y px offset)
         self._create_shadow_tuple()
 
+        # Rendering, this variable may be used by render() method
+        # If the hash of the variables change respect to the last render hash
+        # (hash computed using self._hash_variables() method)
+        # then the widget should render and update the hash
+        self._last_render_hash = 0  # type: int
+
         # Public attributes
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True  # type: bool
         self.mouse_enabled = True  # type: bool
         self.selected = False  # type: bool
         self.sound = _Sound()  # type: _Sound
+
+    @staticmethod
+    def _hash_variables(*args):
+        """
+        Compute hash from a series of variables.
+
+        :param args: Variables to compute hash
+        :type args: Object
+        :return: Hash data
+        :rtype: int
+        """
+        return hash(args)
+
+    def _render_changed(self, *args):
+        """
+        This method checks if the widget must render because the inner variables changed.
+        This method should include all the variables.
+        If the render changed,
+
+        :param args: Variables to checkl the hash
+        :type args: Object
+        :return: Hash data
+        :rtype: int
+        """
 
     def apply(self, *args):
         """
@@ -245,7 +278,7 @@ class Widget(object):
 
     def get_rect(self):
         """
-        :return: Return the Rect object.
+        :return: Return the Rect object, this forces the widget rendering
         :rtype: pygame.rect.RectType
         """
         self._render()
@@ -278,18 +311,6 @@ class Widget(object):
         """
         raise NotImplementedError('Override is mandatory')
 
-    @staticmethod
-    def _hash_variables(*args):
-        """
-        Compute hash from a series of variables.
-
-        :param args: Variables to compute hash
-        :type args: Object
-        :return: Hash data
-        :rtype: int
-        """
-        return hash(args)
-
     def font_render_string(self, text, color=(0, 0, 0)):
         """
         Render text.
@@ -320,8 +341,9 @@ class Widget(object):
         # Check if the size of the string changed, if so, menu widget position must change
         last_width, last_height = (0, 0)
         if self._render_string_cache_surface is not None:
-            last_width = self._render_string_cache_surface.get_size()[0]
-            last_height = self._render_string_cache_surface.get_size()[1]
+            sz = self._render_string_cache_surface.get_size()
+            last_width = sz[0]
+            last_height = sz[1]
 
         # If the render surface must change
         if render_hash != self._render_string_cache:  # If render changed
@@ -348,7 +370,7 @@ class Widget(object):
 
             # If the size of the widget change then the menu widget position must be updated
             if new_width != last_width or new_height != last_height:
-                self._menu_widget_position_needs_update = True
+                self._menu_surface_needs_update = True
 
         # Return rendered surface
         return self._render_string_cache_surface
@@ -362,8 +384,8 @@ class Widget(object):
         :return: True if the widget position has changed by events after the rendering.
         :rtype: bool
         """
-        if self._menu_widget_position_needs_update:
-            self._menu_widget_position_needs_update = False
+        if self._menu_surface_needs_update:
+            self._menu_surface_needs_update = False
             return True
         return False
 
@@ -495,6 +517,7 @@ class Widget(object):
             self._focus()
         else:
             self._blur()
+        self._render()
 
     def _focus(self):
         """
