@@ -74,6 +74,8 @@ def mainmenu_background():
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
+
+    :return: None
     """
     global surface
     surface.fill((40, 0, 40))
@@ -82,6 +84,8 @@ def mainmenu_background():
 def reset_timer():
     """
     Reset timer.
+
+    :return: None
     """
     global timer
     timer[0] = 0
@@ -96,6 +100,8 @@ class TestCallClassMethod(object):
     def update_game_settings():
         """
         Class method.
+
+        :return: None
         """
         print('Update game with new settings')
 
@@ -108,6 +114,7 @@ def change_color_bg(value, c=None, **kwargs):
     :type value: tuple
     :param c: Color tuple
     :type c: tuple
+    :return: None
     """
     color, _ = value
     if c == (-1, -1, -1):  # If random color

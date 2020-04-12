@@ -143,6 +143,8 @@ class ScrollArea(object):
     def _apply_size_changes(self):
         """
         Apply size changes to scrollbar.
+
+        :return: None
         """
         self._view_rect = self.get_view_rect()
         for sbar in self._scrollbars:
@@ -175,6 +177,10 @@ class ScrollArea(object):
     def draw(self, surface):
         """
         Called by end user to draw state to the surface.
+
+        :param surface: Surface to render the area
+        :type surface: pygame.SurfaceType
+        :return: None
         """
         if not self._world:
             return
@@ -197,6 +203,8 @@ class ScrollArea(object):
         """
         Return the total width out of the bounds of the the viewable area.
         Zero is returned if the world width is lower than the viewable area.
+
+        :return: None
         """
         if not self._world:
             return 0
@@ -206,6 +214,8 @@ class ScrollArea(object):
         """
         Return the total height out of the bounds of the the viewable area.
         Zero is returned if the world height is lower than the viewable area.
+
+        :return: None
         """
         if not self._world:
             return 0
@@ -214,6 +224,8 @@ class ScrollArea(object):
     def get_offsets(self):
         """
         Return the offset introduced by the scrollbars in the world.
+
+        :return: None
         """
         offsets = [0, 0]
         for sbar in self._scrollbars:  # type: _ScrollBar
@@ -241,6 +253,8 @@ class ScrollArea(object):
 
         The viewable area depends on the world size, because scroll bars may
         or may not be displayed.
+
+        :return: None
         """
         rect = _pygame.Rect(self._rect)
 
@@ -326,6 +340,7 @@ class ScrollArea(object):
 
         :param value: New position of the slider
         :type value: float
+        :return: None
         """
         for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL \
@@ -340,6 +355,7 @@ class ScrollArea(object):
 
         :param value: New position of the slider
         :type value: float
+        :return: None
         """
         for sbar in self._scrollbars:  # type: _ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL \
@@ -347,15 +363,17 @@ class ScrollArea(object):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
-    def scroll_to_rect(self, rect, margin=10):
+    def scroll_to_rect(self, rect, margin=10.0):
         """
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
         :type rect: pygame.RectType
         :param margin: Extra margin around the rect
-        :type margin: int
+        :type margin: int, float
+        :return: None
         """
+        assert isinstance(margin, (int, float))
         real_rect = self.to_real_position(rect)
         if self._view_rect.topleft[0] < real_rect.topleft[0] \
                 and self._view_rect.topleft[1] < real_rect.topleft[1] \
@@ -397,6 +415,7 @@ class ScrollArea(object):
 
         :param surface: New world surface
         :type surface: pygame.SurfaceType
+        :return: None
         """
         self._world = surface
         self._apply_size_changes()
@@ -408,6 +427,7 @@ class ScrollArea(object):
 
         :param virtual: Position/Rect in the world surface reference
         :type virtual: pygame.RectType, tuple, list
+        :return: None
         """
         assert isinstance(virtual, (_pygame.Rect, tuple, list))
         offsets = self.get_offsets()
@@ -429,6 +449,7 @@ class ScrollArea(object):
 
         :param real: Position/Rect according scroll area origin
         :type real: pygame.RectType, tuple, list
+        :return: None
         """
         assert isinstance(real, (_pygame.Rect, tuple, list))
         offsets = self.get_offsets()

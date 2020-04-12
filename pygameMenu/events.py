@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class PymenuAction(object):
     """
-    Pymenu event.
+    Pymenu events.
     """
 
     def __init__(self, action):
@@ -51,5 +51,5 @@ BACK = PymenuAction(0)  # Menu back
 CLOSE = PymenuAction(1)  # Close menu
 DISABLE_CLOSE = PymenuAction(2)  # Menu disable closing
 EXIT = PymenuAction(3)  # Menu exit program
-NONE = PymenuAction(5)  # None action
-RESET = PymenuAction(4)  # Menu reset
+NONE = PymenuAction(4)  # None action
+RESET = PymenuAction(5)  # Menu reset

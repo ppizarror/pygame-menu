@@ -118,7 +118,7 @@ def iter_world(area):
 
     :param area: Scroll area
     :type area: ScrollArea
-    :return:
+    :return: None
     """
     for name in itertools.cycle(WORLDS):
         params = WORLDS[name]
@@ -135,7 +135,11 @@ def iter_world(area):
 
 def main(test=False):
     """
-    Main function
+    Main function.
+
+    :param test: Indicate function is being tested
+    :type test: bool
+    :return: None
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()

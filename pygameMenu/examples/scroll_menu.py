@@ -48,6 +48,7 @@ def on_button_click(value=None, text=None):
 
     :param value: Button value
     :param text: Button text
+    :return: None
     """
     if not text:
         print('Hello from {}'.format(value))
@@ -61,6 +62,7 @@ def paint_background(surface):
 
     :param surface: Pygame surface
     :type surface: pygame.SurfaceType
+    :return: None
     """
     surface.fill(COLOR_BACKGROUND)
 
@@ -149,6 +151,10 @@ def make_long_menu():
 def main(test=False):
     """
     Main function.
+
+    :param test: Indicate function is being tested
+    :type test: bool
+    :return: None
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()

@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 import pygameMenu.locals as _locals
 
-from pygameMenu.utils import make_surface
+from pygameMenu.utils import make_surface, assert_orientation
 from pygameMenu.widgets.widget import Widget
 
 
@@ -58,11 +58,11 @@ class ScrollBar(Widget):
     :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
     :type orientation: basestring
     :param slider_pad: Space between slider and page control
-    :type slider_pad: int
+    :type slider_pad: int, float
     :param slider_color: Color of the slider
     :type slider_color: tuple, list
     :param page_ctrl_thick: Page control thickness
-    :type page_ctrl_thick: int
+    :type page_ctrl_thick: int, float
     :param page_ctrl_color: Page control color
     :type page_ctrl_color: tuple, list
     :param onchange: Callback when changing the selector
@@ -125,6 +125,8 @@ class ScrollBar(Widget):
     def _apply_size_changes(self):
         """
         Apply scrollbar changes.
+
+        :return: None
         """
         dims = ('width', 'height')
         setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
@@ -145,19 +147,22 @@ class ScrollBar(Widget):
 
     def get_maximum(self):
         """
-        Return the greatest acceptable value.
+        :return: Return the greatest acceptable value
+        :rtype: int
         """
         return self._values_range[1]
 
     def get_minimum(self):
         """
-        Return the smallest acceptable value.
+        :return: Return the smallest acceptable value
+        :rtype: int
         """
         return self._values_range[0]
 
     def get_orientation(self):
         """
-        Return the scroll bar orientation.
+        :return: Return the scroll bar orientation
+        :rtype: basestring
         """
         if self._orientation == 0:
             return _locals.ORIENTATION_HORIZONTAL
@@ -166,8 +171,8 @@ class ScrollBar(Widget):
 
     def get_page_step(self):
         """
-        Return amount that the value changes by when the user click on the
-        page control surface.
+        :return: Return amount that the value changes by when the user click on the page control surface
+        :rtype: int
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
                self._page_ctrl_length
@@ -209,7 +214,8 @@ class ScrollBar(Widget):
             _pygame.draw.rect(self._surface, self._slider_color, self._slider_rect)
 
     def _scroll(self, pixels):
-        """Moves the slider based on mouse events relative to change along axis.
+        """
+        Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
 
         :param pixels: Number of pixels to scroll
@@ -240,7 +246,12 @@ class ScrollBar(Widget):
     def set_length(self, value):
         """
         Set the length of the page control area.
+
+        :param value: Length of the area
+        :type value: int, float
+        :return: None
         """
+        assert isinstance(value, (int, float))
         assert 0 < value
         self._page_ctrl_length = value
         self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
@@ -249,14 +260,24 @@ class ScrollBar(Widget):
     def set_maximum(self, value):
         """
         Set the greatest acceptable value.
+
+        :param value: Maximum value
+        :type value: int, float
+        :return: None
         """
-        assert value > self._values_range[0], "Maximum value shall greater than {}".format(self._values_range[0])
+        assert isinstance(value, (int, float))
+        assert value > self._values_range[0], 'Maximum value shall greater than {}'.format(self._values_range[0])
         self._values_range[1] = value
 
     def set_minimum(self, value):
         """
         Set the smallest acceptable value.
+
+        :param value: Minimum value
+        :type value: int, float
+        :return: None
         """
+        assert isinstance(value, (int, float))
         assert 0 <= value < self._values_range[1], "Minimum value shall lower than {}".format(self._values_range[1])
         self._values_range[0] = value
 
@@ -268,12 +289,11 @@ class ScrollBar(Widget):
         :type orientation: basestring
         :return: None
         """
+        assert_orientation(orientation)
         if orientation == _locals.ORIENTATION_HORIZONTAL:
             self._orientation = 0
         elif orientation == _locals.ORIENTATION_VERTICAL:
             self._orientation = 1
-        else:
-            raise ValueError('Incorrect orientation of the widget')
         self._opp_orientation = int(not self._orientation)
         self._apply_size_changes()
 

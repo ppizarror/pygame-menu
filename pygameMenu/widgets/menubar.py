@@ -42,9 +42,9 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-    :param label: Title of the menu
+    :param label: Title of the Menu
     :type label: basestring
-    :param width: Width of the menu bar (generally width of the menu dialog)
+    :param width: Width of the widget, generally width of the Menu
     :type width: int, float
     :param back_box: Draw a back-box button on header
     :type back_box: bool
@@ -113,7 +113,7 @@ class MenuBar(Widget):
 
     def get_title(self):
         """
-        Return the title of the menu.
+        Return the title of the Menu.
 
         :return: Title
         :rtype: basestring
@@ -173,7 +173,7 @@ class MenuBar(Widget):
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
-        Set menu title.
+        Set Menu title.
 
         :param title: Menu title
         :type title: basestring

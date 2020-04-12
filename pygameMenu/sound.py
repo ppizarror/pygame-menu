@@ -207,7 +207,7 @@ class Sound(object):
         :type sound_type: basestring
         :param sound_file: Sound file
         :type sound_file: basestring, NoneType
-        :param volume: Volume of the sound, (0-1)
+        :param volume: Volume of the sound, from 0.0 to 1.0
         :type volume: float
         :param loops: Loops of the sound
         :type loops: int
@@ -329,54 +329,72 @@ class Sound(object):
     def play_click_mouse(self):
         """
         Play click mouse sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_CLICK_MOUSE])
 
     def play_error(self):
         """
         Play error sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_ERROR])
 
     def play_event(self):
         """
         Play event sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_EVENT])
 
     def play_event_error(self):
         """
         Play event error sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_EVENT_ERROR])
 
     def play_key_add(self):
         """
         Play key addition sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_ADDITION])
 
     def play_key_del(self):
         """
         Play key deletion sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_DELETION])
 
     def play_open_menu(self):
         """
         Play open menu sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_OPEN_MENU])
 
     def play_close_menu(self):
         """
         Play close menu sound.
+
+        :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
 
     def stop(self):
         """
         Stop the current the channel.
+
+        :return: None
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
@@ -389,6 +407,8 @@ class Sound(object):
     def pause(self):
         """
         Pause the current channel.
+
+        :return: None
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy
@@ -401,6 +421,8 @@ class Sound(object):
     def unpause(self):
         """
         Unpause channel.
+
+        :return: None
         """
         channel = self.get_channel()  # type: _mixer.ChannelType
         if channel is None:  # The sound can't be played because all channels are busy

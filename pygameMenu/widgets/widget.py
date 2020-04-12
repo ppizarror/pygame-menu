@@ -256,6 +256,7 @@ class Widget(object):
 
         :param width: Width in px, None if max width is disabled
         :type width: int, float, NoneType
+        :return: None
         """
         if width is not None:
             assert isinstance(width, (int, float))
@@ -314,6 +315,8 @@ class Widget(object):
 
         This method shall update the attribute ``_surface`` with a pygame.Surface
         representing the outer borders of the widget.
+
+        :return: None
         """
         raise NotImplementedError('Override is mandatory')
 

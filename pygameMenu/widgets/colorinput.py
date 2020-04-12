@@ -226,6 +226,7 @@ class ColorInput(TextInput):
 
         :param surface: Surface to draw
         :type surface: pygame.surface.Surface, None
+        :return: None
         """
         r, g, b = self.get_value()
         if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color
