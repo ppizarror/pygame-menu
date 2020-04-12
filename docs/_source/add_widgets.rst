@@ -39,7 +39,7 @@ three values:
    the following:
 
    ==========================================  ========================================
-   Type                                        Description
+   Event                                       Description
    ==========================================  ========================================
    :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
    :py:data:`pygameMenu.events.CLOSE`          Close the menu
@@ -74,7 +74,8 @@ three values:
 Add a choices list
 ------------------
 
-A selector gives the possibility choose a value in a list.
+A selector gives the possibility choose a value in a predefined list.
+
 
 .. automethod:: pygameMenu.menu.Menu.add_selector
 
@@ -94,12 +95,6 @@ A selector gives the possibility choose a value in a list.
         COLOR_BACKGROUND[0] = c[0]
         COLOR_BACKGROUND[1] = c[1]
         COLOR_BACKGROUND[2] = c[2]
-
-    def reset_timer():
-        """
-        Reset timer function.
-        """
-        ...
 
     menu = pygameMenu.Menu(...)
 
