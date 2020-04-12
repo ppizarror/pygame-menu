@@ -78,14 +78,14 @@ class Menu(object):
     :type enabled: bool
     :param joystick_enabled: Enable/disable joystick on the Menu
     :type joystick_enabled: bool
-    :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
-    :type menu_alpha: int
     :param menu_background_color: Menu background color
     :type menu_background_color: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
     :param menu_id: ID of the Menu
     :type menu_id: basestring
+    :param menu_opacity: Opacity of background (0=transparent, 100=opaque)
+    :type menu_opacity: int
     :param menu_position_x: Left position of the Menu respect to the window (%), if 50 the Menu is horizontally centered
     :type menu_position_x: int, float
     :param menu_position_y: Top position of the Menu respect to the window (%), if 50 the Menu is vertically centered
@@ -179,7 +179,7 @@ class Menu(object):
                  columns=1,
                  enabled=True,
                  joystick_enabled=True,
-                 menu_alpha=100,
+                 menu_opacity=100,
                  menu_background_color=(0, 0, 0),
                  menu_id='',
                  menu_position_x=50,
@@ -215,7 +215,7 @@ class Menu(object):
                  widget_font_color=(255, 255, 255),
                  widget_font_size=35,
                  widget_margin_x=0,
-                 widget_margin_y=5,
+                 widget_margin_y=10,
                  widget_offset_x=0,
                  widget_offset_y=0,
                  widget_shadow=False,
@@ -232,7 +232,7 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_alpha, int)
+        assert isinstance(menu_opacity, int)
         assert isinstance(menu_id, str)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
@@ -315,8 +315,8 @@ class Menu(object):
         assert widget_offset_x >= 0 and widget_offset_y >= 0, 'widget offset must be greater or equal than zero'
 
         # Other asserts
-        assert 0 <= menu_alpha <= 100, \
-            'menu alpha must be between 0 and 100 (both values included)'
+        assert 0 <= menu_opacity <= 100, \
+            'menu opacity must be between 0 and 100 (both values included)'
         assert_alignment(widget_alignment)
 
         # Get window size
@@ -332,7 +332,7 @@ class Menu(object):
         menu_background_color = (menu_background_color[0],
                                  menu_background_color[1],
                                  menu_background_color[2],
-                                 int(255 * (1 - (100 - menu_alpha) / 100.0))
+                                 int(255 * (1 - (100 - menu_opacity) / 100.0))
                                  )
 
         # General properties of the Menu
@@ -432,7 +432,7 @@ class Menu(object):
                                color=(title_background_color[0],
                                       title_background_color[1],
                                       title_background_color[2],
-                                      int(255 * (1 - (100 - menu_alpha) / 100.0))),
+                                      int(255 * (1 - (100 - menu_opacity) / 100.0))),
                                selected_color=title_font_color)
         self._menubar.set_shadow(enabled=title_shadow,
                                  color=title_shadow_color,
@@ -1200,6 +1200,14 @@ class Menu(object):
         :return: None
         """
         self._top._enabled = True
+
+    def toggle(self):
+        """
+        Switch between enable and disable.
+
+        :return: None
+        """
+        self._top._enabled = not self._top._enabled
 
     @staticmethod
     def _exit():
