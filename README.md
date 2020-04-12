@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="Pygame Menu" src="https://res.ppizarror.com/other/python.png" width="200px" height="200px" />
+  <img alt="Pygame Menu" src="https://res.ppizarror.com/other/python.png" width="150px" height="150px" />
   <br /><br />
   Pygame Menu</h1>
 
@@ -10,12 +10,9 @@
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 2.7+/3.4+" src="https://img.shields.io/badge/python-2.7+ / 3.4+-red.svg" /></a>
 <a href="https://www.pygame.org/"><img alt="Pygame 1.9.4+" src="https://img.shields.io/badge/pygame-1.9.4+-orange.svg" /></a>
-<a href="https://pypi.org/project/pygame-menu/"><img alt="PyPi package" src="https://badge.fury.io/py/pygame-menu.svg" /></a>
 <br />
-<a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg" /></a>
+<a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/v2/graph/badge.svg" /></a>
 <a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=v2" /></a>
-<a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
-<a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 </div><br />
 
 Python library that can create a simple menu for the pygame application. Supports:
@@ -24,6 +21,9 @@ Python library that can create a simple menu for the pygame application. Support
 2. Buttons
 3. Lists of values (selectors) that can trigger functions when pressing return or changing the value
 4. Input text
+5. Color input
+
+**NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider upgrading to the lastest version.**
 
 ## Table of Contents
 
