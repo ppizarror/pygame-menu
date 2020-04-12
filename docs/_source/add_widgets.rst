@@ -35,19 +35,17 @@ three values:
    when the button is triggered.
  - a python callable object (a function, a method, a class, ...)
    that will be called with the given arguments.
- - a specific event of :py:mod:`pygameMenu`.
+ - a specific event of :py:mod:`pygameMenu`. The possible events are
+   the following:
 
-The possible events are the following:
-
-==========================================  ========================================
-Type                                        Description
-==========================================  ========================================
-:py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
-:py:data:`pygameMenu.events.CLOSE`          Close the menu
-:py:data:`pygameMenu.events.DISABLE_CLOSE`  Does nothing
-:py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
-:py:data:`pygameMenu.events.RESET`          Go back to first opened menu
-==========================================  ========================================
+   ==========================================  ========================================
+   Type                                        Description
+   ==========================================  ========================================
+   :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
+   :py:data:`pygameMenu.events.CLOSE`          Close the menu
+   :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
+   :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
+   ==========================================  ========================================
 
 .. automethod:: pygameMenu.menu.Menu.add_button
 
