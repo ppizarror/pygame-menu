@@ -13,7 +13,7 @@
 <a href="https://pypi.org/project/pygame-menu/"><img alt="PyPi package" src="https://badge.fury.io/py/pygame-menu.svg" /></a>
 <br />
 <a href="https://codecov.io/gh/ppizarror/pygame-menu"><img src="https://codecov.io/gh/ppizarror/pygame-menu/branch/master/graph/badge.svg" /></a>
-<a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master" /></a>
+<a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=v2" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 <a href="https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18" /></a>
 </div><br />
