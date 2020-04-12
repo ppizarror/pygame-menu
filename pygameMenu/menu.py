@@ -1607,7 +1607,7 @@ class Menu(object):
         self._top._current = menu._current
         self._top._prev = [self._top._prev, current]
 
-        # Select the first item
+        # Select the first widget
         self._select(0)
 
     def reset(self, total):
