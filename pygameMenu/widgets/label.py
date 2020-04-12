@@ -64,7 +64,7 @@ class Label(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw_selected_rect(self, *args, **kwargs):
+    def draw_selected_rect(self, surface, selected_color, inflatex, inflatey, border_width):
         pass  # Nothing to select
 
     # noinspection PyMissingOrEmptyDocstring

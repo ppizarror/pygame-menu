@@ -53,7 +53,7 @@ class VMargin(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw_selected_rect(self, *args, **kwargs):
+    def draw_selected_rect(self, surface, selected_color, inflatex, inflatey, border_width):
         pass  # Nothing to select
 
     def _render(self):
