@@ -221,7 +221,9 @@ class ColorInput(TextInput):
         if self._color_type == _TYPE_RGB:
             _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
-                return int(_color[0]), int(_color[1]), int(_color[2])
+                r, g, b = int(_color[0]), int(_color[1]), int(_color[2])
+                if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= g <= 255:
+                    return r, g, b
             # raise ValueError('Invalid color format, R, G and B channels must be provided')
         elif self._color_type == _TYPE_HEX:
             if len(self._input_string) == 7:
@@ -246,10 +248,14 @@ class ColorInput(TextInput):
         if self._last_r != r or self._last_b != b or self._last_g != g or self._prev_surface is None:
             _width = self._prev_size * self._rect.height
             self._prev_surface = _pygame.Surface((_width, self._rect.height))  # lgtm [py/call/wrong-arguments]
-            self._prev_surface.fill((r, g, b))
-            self._last_r = r
-            self._last_g = g
-            self._last_b = b
+            try:
+                self._prev_surface.fill((r, g, b))
+                self._last_r = r
+                self._last_g = g
+                self._last_b = b
+            except TypeError:
+                print((r, g, b))
+                return
 
         # Draw the surface
         if surface is not None:
@@ -403,5 +409,14 @@ class ColorInput(TextInput):
                      (len(self._input_string) > 2 and self._input_string[
                          self._cursor_position - 2] == self._separator)):
                 self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
+
+            # Check number is valid (fix) because sometimes the user can type
+            # too fast and avoid analysis of the text
+            colors = self._input_string.split(',')
+            for c in colors:
+                if len(c) > 0 and (int(c) > 255 or int(c) < 0):
+                    self._input_string = _input
+                    self._cursor_position = _curpos
+                    break
 
         return updated
