@@ -108,6 +108,8 @@ def make_long_menu():
 
     _menu.add_button('Rows and Columns', _menu_sub)
     _menu.add_button('Text scrolled', _menu_text)
+    _menu.add_vertical_margin(20)  # Adds margin
+    
     label1 = 'Button n°{}'
     label2 = 'Text n°{}: '
     for i in range(1, 20):
@@ -130,7 +132,7 @@ def make_long_menu():
             txt = label.format(100 * i)
         _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygameMenu.events.BACK)
-    _menu_sub.center_vertically()
+    _menu_sub.center_content()
 
     _menu_text.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                          'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '

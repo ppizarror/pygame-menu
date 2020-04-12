@@ -54,7 +54,6 @@ class Label(Widget):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
-        self._render()
         surface.blit(self._surface, self._rect.topleft)
 
     # noinspection PyMissingOrEmptyDocstring

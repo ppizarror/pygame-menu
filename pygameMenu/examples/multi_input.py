@@ -208,7 +208,7 @@ def main(test=False):
     settings_menu.add_button('Store data', data_fun)  # Call function
     settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                              align=pygameMenu.locals.ALIGN_CENTER)
-    settings_menu.center_vertically()  # After all widgets added
+    settings_menu.center_content()  # After all widgets added
 
     # -------------------------------------------------------------------------
     # Create menus: More settings
@@ -225,7 +225,7 @@ def main(test=False):
                                          widget_font_color=COLOR_BLACK,
                                          widget_font_size=25,
                                          widget_offset_x=5,  # px
-                                         widget_offset_y=50,  # px
+                                         widget_offset_y=40,  # px
                                          )
 
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
@@ -262,7 +262,7 @@ def main(test=False):
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
     button_column_menu.add_button('Return to main menu', pygameMenu.events.BACK)
-    button_column_menu.center_vertically()
+    button_column_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu

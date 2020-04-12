@@ -86,6 +86,10 @@ class Menu(object):
     :type mouse_enabled: bool
     :param menu_id: ID of the Menu
     :type menu_id: basestring
+    :param menu_position_x: Left position of the Menu respect to the window (%), if 50 the Menu is horizontally centered
+    :type menu_position_x: int, float
+    :param menu_position_y: Top position of the Menu respect to the window (%), if 50 the Menu is vertically centered
+    :type menu_position_y: int, float
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
@@ -178,6 +182,8 @@ class Menu(object):
                  menu_alpha=100,
                  menu_background_color=(0, 0, 0),
                  menu_id='',
+                 menu_position_x=50,
+                 menu_position_y=50,
                  mouse_enabled=True,
                  mouse_visible=True,
                  onclose=None,
@@ -209,7 +215,7 @@ class Menu(object):
                  widget_font_color=(255, 255, 255),
                  widget_font_size=35,
                  widget_margin_x=0,
-                 widget_margin_y=15,
+                 widget_margin_y=10,
                  widget_offset_x=0,
                  widget_offset_y=0,
                  widget_shadow=False,
@@ -296,14 +302,14 @@ class Menu(object):
         else:
             column_max_width = [None for _ in range(columns)]
 
-        # Element size asserts
+        # Element size and position asserts
         assert menu_width > 0 and menu_height > 0, \
             'menu width and height must be greater than zero'
         assert scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert selection_highlight_border_width >= 0, \
             'selection lighlight border width must be greater or equal than zero'
-        assert selection_highlight_margin_x > 0 and selection_highlight_margin_y > 0, \
-            'selection highlight margin must be greater than zero in both axis'
+        assert selection_highlight_margin_x >= 0 and selection_highlight_margin_y >= 0, \
+            'selection highlight margin must be greater or equal than zero in both axis'
         assert widget_font_size > 0 and title_font_size > 0, \
             'widget font size and title font size must be greater than zero'
         assert widget_offset_x >= 0 and widget_offset_y >= 0, 'widget offset must be greater or equal than zero'
@@ -360,8 +366,9 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
-        self._posx = int((window_width - self._width) / 2)  # type: int
-        self._posy = int((window_height - self._height) / 2)  # type: int
+        self._pos_x = 0  # type: int
+        self._pos_y = 0  # type: int
+        self.set_relative_position(menu_position_x, menu_position_y, current=False)
 
         # Menu widgets
         if abs(widget_offset_x) < 1:
@@ -390,9 +397,10 @@ class Menu(object):
         self._selection_highlight_margin_y = selection_highlight_margin_y * selection_highlight
 
         # Columns and rows
-        self._columns = columns
         self._column_max_width = column_max_width
+        self._column_pos_x = []
         self._column_widths = None  # type: (list,None)
+        self._columns = columns
         self._force_fit_text = column_force_fit_text
         self._rows = rows
 
@@ -763,6 +771,21 @@ class Menu(object):
         self._current._append_widget(widget)
         return widget
 
+    def add_vertical_margin(self, margin):
+        """
+        Adds a vertical margin to the current Menu.
+
+        :param margin: Margin in px
+        :type margin: int
+        :return: Widget object
+        :rtype: pygameMenu.widgets.vmargin.VMargin
+        """
+        assert isinstance(margin, int)
+        widget = _widgets.VMargin()
+        self._current._configure_widget(widget=widget, margin=(0, margin))
+        self._current._append_widget(widget)
+        return widget
+
     def _configure_widget(self, widget, align=None, font_size=None, margin=None):
         """
         Update the given widget with the parameters defined at
@@ -881,15 +904,15 @@ class Menu(object):
                 float(self._column_widths[i]) / max(total_col_width, 1) for i in range(self._columns))
 
             # Calculate the position of each column
-            self._column_posx = []
+            self._column_pos_x = []
             cumulative = 0
             for i in range(self._columns):
                 w = column_weights[i]
-                self._column_posx.append(int(total_col_width * (cumulative + 0.5 * w)))
+                self._column_pos_x.append(int(total_col_width * (cumulative + 0.5 * w)))
                 cumulative += w
 
         else:
-            self._column_posx = [int(total_col_width * 0.5)]
+            self._column_pos_x = [int(total_col_width * 0.5)]
             self._column_widths = [total_col_width]
 
         return total_col_width
@@ -904,7 +927,7 @@ class Menu(object):
             self._update_column_width()
 
         # Update title position
-        self._menubar.set_position(self._posx, self._posy)
+        self._menubar.set_position(self._pos_x, self._pos_y)
 
         # Update appended widgets
         for index in range(len(self._widgets)):
@@ -926,14 +949,15 @@ class Menu(object):
                 dx = _column_width / 2 - rect.width - self._selection_highlight_margin_x / 2
             else:
                 dx = 0
-            x_coord = self._widget_offset_x + self._column_posx[_col] + dx + widget.get_margin()[0]
+            x_coord = self._column_pos_x[_col] + dx + widget.get_margin()[0]
             x_coord = max(self._selection_highlight_margin_x / 2 + self._selection_border_width, x_coord)
+            x_coord += self._widget_offset_x
 
             # Calculate Y position
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(_row):
                 rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
-                ysum += rwidget.get_font_info()['size'] + rwidget.get_margin()[1]
+                ysum += rwidget.get_rect().height + rwidget.get_margin()[1]
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
             y_coord = self._widget_offset_y + ysum + dy
 
@@ -986,7 +1010,7 @@ class Menu(object):
 
         self._widgets_surface = make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
-        self._scroll.set_position(self._posx, self._posy + menubar_height + 5)
+        self._scroll.set_position(self._pos_x, self._pos_y + menubar_height + 5)
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -1059,11 +1083,49 @@ class Menu(object):
         """
         self._top._enabled = False
 
-    def center_vertically(self, current=True):
+    def set_relative_position(self, position_x, position_y, current=True):
         """
-        Update draw_region_y based on the current widgets.
+        Set the menu position relative to the window.
+
+        - Menu left position (x) must be between 0 and 100, if 0 the margin
+          is at the left of the window, if 100 the menu is at the right
+          of the window.
+
+        - Menu top position (y) must be between 0 and 100, if 0 the margin is
+          at the top of the window, if 100 the margin is at the bottom of
+          the window.
+
+        :param position_x: Left position of the window
+        :type position_x: int, float
+        :param position_y: Top position of the window
+        :type position_y: int, float
+        :param current: If true, centers the current active Menu, otherwise center the base Menu
+        :type current: bool
+        :return: None
+        """
+        assert isinstance(position_x, (int, float))
+        assert isinstance(position_y, (int, float))
+        assert 0 <= position_x <= 100
+        assert 0 <= position_y <= 100
+        isinstance(current, bool)
+
+        position_x = float(position_x) / 100
+        position_y = float(position_y) / 100
+        window_width, window_height = _pygame.display.get_surface().get_size()
+        if current:
+            self._current._pos_x = int((window_width - self._current._width) * position_x)
+            self._current._pos_y = int((window_height - self._current._height) * position_y)
+        else:
+            self._pos_x = int((window_width - self._width) * position_x)
+            self._pos_y = int((window_height - self._height) * position_y)
+
+    def center_content(self, current=True):
+        """
+        Update draw_region_y based on the current widgets, centering the content
+        of the window.
+
         If the height of the widgets is greater than the height of the Menu,
-        the drawing region will start at zero.
+        the drawing region will start at zero, using all the height for the scrollbar.
 
         :param current: If true, centers the current active Menu, otherwise center the base Menu
         :type current: bool
@@ -1071,11 +1133,11 @@ class Menu(object):
         """
         isinstance(current, bool)
         if current:
-            self._current._center_vertically()
+            self._current._center_content()
         else:
-            self._center_vertically()
+            self._center_content()
 
-    def _center_vertically(self):
+    def _center_content(self):
         """
         Update draw_region_y based on the current widgets.
         If the height of the widgets is greater than the height of the Menu,
@@ -1443,20 +1505,19 @@ class Menu(object):
                 data.update(data_submenu)
         return data
 
-    def get_position(self, current=True):
+    def get_rect(self, current=True):
         """
-        Return current Menu position as a tuple *(x1, y1, x2, y2)*, where *(x1, y1)*
-        is the top-left position and *(x2, y2)* is the bottom-right position.
+        Return Menu pygame Rect.
 
         :param current: If True, returns the value from the current active Menu, otherwise from the base Menu
         :type current: bool
-        :return: Top left, bottom right as a tuple (x1, y1, x2, y2)
-        :rtype: tuple
+        :return: Rect
+        :rtype: pygame.rect.RectType
         """
         if current:
-            return self._current._posx, self._current._posy, \
-                   self._current._posx + self._current._width, self._current._posy + self._current._height
-        return self._posx, self._posy, self._posx + self._width, self._posy + self._height
+            return _pygame.Rect(self._current._pos_x, self._current._pos_y,
+                                self._current._width, self._current._height)
+        return _pygame.Rect(self._pos_x, self._pos_y, self._width, self._height)
 
     def set_sound(self, sound, recursive=False):
         """
@@ -1580,6 +1641,15 @@ class Menu(object):
         current = self._top._current
         if len(current._widgets) == 0:
             return
+
+        # This stores +/-1 if the index increases or decreases
+        # Used by non-selectable selection
+        if new_index < current._index:
+            dwidget = -1
+        else:
+            dwidget = 1
+
+        # Limit the index to the length
         new_index %= len(current._widgets)
         if new_index == current._index:  # Index has not changed
             return
@@ -1591,7 +1661,7 @@ class Menu(object):
         # If new widget is not selectable
         if not new_widget.is_selectable:
             if current._widget_selected:  # There's at least 1 selectable option (if only text this would be false)
-                current._select(new_index + 1)
+                current._select(new_index + dwidget)
                 return
             else:  # No selectable options, quit
                 return

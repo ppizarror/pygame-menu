@@ -242,7 +242,7 @@ def main(test=False):
                            selector_id='select_difficulty')
     play_menu.add_button('Another menu', play_submenu)
     play_menu.add_button('Return to main menu', pygameMenu.events.BACK)
-    play_menu.center_vertically()
+    play_menu.center_content()
 
     # About menu
     about_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_BEBAS,
@@ -279,7 +279,7 @@ def main(test=False):
     main_menu.add_button('Play', play_menu)
     main_menu.add_button('About', about_menu)
     main_menu.add_button('Quit', pygameMenu.events.EXIT)
-    main_menu.center_vertically()
+    main_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Main loop

@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGETS
-Widgets elements that can be added to the menu.
+VERTICAL MARGIN
+Vertical box margin.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,15 +30,35 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import widgets
-from pygameMenu.widgets.button import Button
-from pygameMenu.widgets.colorinput import ColorInput
-from pygameMenu.widgets.label import Label
-from pygameMenu.widgets.menubar import MenuBar
-from pygameMenu.widgets.scrollbar import ScrollBar
-from pygameMenu.widgets.selector import Selector
-from pygameMenu.widgets.textinput import TextInput
-from pygameMenu.widgets.vmargin import VMargin
+from pygameMenu.widgets.widget import Widget, make_surface
 
-# Widget type
-from pygameMenu.widgets.widget import WidgetType
+
+class VMargin(Widget):
+    """
+    Vertical margin widget.
+    """
+
+    def __init__(self):
+        super(VMargin, self).__init__()
+        self.is_selectable = False
+
+    def _apply_font(self):
+        self._font_size = 0
+        self._shadow = False
+
+    # noinspection PyMissingOrEmptyDocstring
+    def draw(self, surface):
+        surface.blit(self._surface, self._rect.topleft)
+
+    # noinspection PyMissingOrEmptyDocstring
+    def draw_selected_rect(self, *args, **kwargs):
+        pass  # Nothing to select
+
+    def _render(self):
+        self._surface = make_surface(1, 1, alpha=True)
+        self._rect.width = 0
+        self._rect.height = 0
+
+    # noinspection PyMissingOrEmptyDocstring
+    def update(self, events):
+        return False
