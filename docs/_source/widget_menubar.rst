@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.menubar
+.. module:: pygameMenu.widgets.widget.menubar
 
 =======
 MenuBar

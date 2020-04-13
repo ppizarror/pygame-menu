@@ -151,7 +151,6 @@ def main(test=False):
                                     menu_height=WINDOW_SIZE[1] * 0.85,
                                     menu_width=WINDOW_SIZE[0] * 0.9,
                                     onclose=pygameMenu.events.DISABLE_CLOSE,
-                                    selection_color=COLOR_WHITE,
                                     title='Settings',
                                     title_background_color=TITLE_BACKGROUND_COLOR,
                                     widget_alignment=pygameMenu.locals.ALIGN_LEFT,

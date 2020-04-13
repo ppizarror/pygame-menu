@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.selector
+.. module:: pygameMenu.widgets.widget.selector
 
 ========
 Selector

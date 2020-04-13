@@ -30,11 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
+import pygame
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import make_surface, assert_color, assert_position
-from pygameMenu.widgets import ScrollBar as _ScrollBar
+from pygameMenu.widgets import ScrollBar
 
 
 class ScrollArea(object):
@@ -100,7 +100,7 @@ class ScrollArea(object):
         assert_color(shadow_color)
         assert_position(shadow_position)
 
-        self._rect = _pygame.Rect(0.0, 0.0, area_width, area_height)
+        self._rect = pygame.Rect(0.0, 0.0, area_width, area_height)
         self._world = world
         self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
@@ -116,20 +116,20 @@ class ScrollArea(object):
         for pos in self._scrollbar_positions:  # type:str
             assert_position(pos)
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
-                sbar = _ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
-                                  orientation=_locals.ORIENTATION_VERTICAL,
-                                  slider_pad=scrollbar_slider_pad,
-                                  slider_color=scrollbar_slider_color,
-                                  page_ctrl_thick=scrollbar_thick,
-                                  page_ctrl_color=scrollbar_color,
-                                  onchange=self._on_vertical_scroll)
+                sbar = ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
+                                 orientation=_locals.ORIENTATION_VERTICAL,
+                                 slider_pad=scrollbar_slider_pad,
+                                 slider_color=scrollbar_slider_color,
+                                 page_ctrl_thick=scrollbar_thick,
+                                 page_ctrl_color=scrollbar_color,
+                                 onchange=self._on_vertical_scroll)
             else:
-                sbar = _ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
-                                  slider_pad=scrollbar_slider_pad,
-                                  slider_color=scrollbar_slider_color,
-                                  page_ctrl_thick=scrollbar_thick,
-                                  page_ctrl_color=scrollbar_color,
-                                  onchange=self._on_horizontal_scroll)
+                sbar = ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
+                                 slider_pad=scrollbar_slider_pad,
+                                 slider_color=scrollbar_slider_color,
+                                 page_ctrl_thick=scrollbar_thick,
+                                 page_ctrl_color=scrollbar_color,
+                                 onchange=self._on_horizontal_scroll)
             sbar.set_shadow(enabled=shadow,
                             color=shadow_color,
                             position=shadow_position,
@@ -189,7 +189,7 @@ class ScrollArea(object):
             surface.blit(self._bg_surface, (self._rect.x, self._rect.y))
 
         offsets = self.get_offsets()
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
                     sbar.draw(surface)  # Display scrollbar
@@ -228,7 +228,7 @@ class ScrollArea(object):
         :return: None
         """
         offsets = [0, 0]
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
                     offsets[0] = sbar.get_value()
@@ -256,7 +256,7 @@ class ScrollArea(object):
 
         :return: None
         """
-        rect = _pygame.Rect(self._rect)
+        rect = pygame.Rect(self._rect)
 
         # No scrollbar: area is enought large to display world
         if not self._world or (self._world.get_width() <= self._rect.width
@@ -342,7 +342,7 @@ class ScrollArea(object):
         :type value: float
         :return: None
         """
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL \
                     and self.get_hidden_width() != 0 \
                     and sbar.get_value() != value:
@@ -357,7 +357,7 @@ class ScrollArea(object):
         :type value: float
         :return: None
         """
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL \
                     and self.get_hidden_height() != 0 \
                     and sbar.get_value() != value:
@@ -381,7 +381,7 @@ class ScrollArea(object):
                 and self._view_rect.bottomright[1] > real_rect.bottomright[1]:
             return  # rect is in viewable area
 
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
                 shortest_move = min(real_rect.left - margin - self._view_rect.left,
                                     real_rect.right + margin - self._view_rect.right, key=abs)
@@ -429,11 +429,11 @@ class ScrollArea(object):
         :type virtual: pygame.RectType, tuple, list
         :return: None
         """
-        assert isinstance(virtual, (_pygame.Rect, tuple, list))
+        assert isinstance(virtual, (pygame.Rect, tuple, list))
         offsets = self.get_offsets()
 
-        if isinstance(virtual, _pygame.Rect):
-            rect = _pygame.Rect(virtual)
+        if isinstance(virtual, pygame.Rect):
+            rect = pygame.Rect(virtual)
             rect.x = self._rect.x + virtual.x - offsets[0]
             rect.y = self._rect.y + virtual.y - offsets[1]
             return rect
@@ -451,11 +451,11 @@ class ScrollArea(object):
         :type real: pygame.RectType, tuple, list
         :return: None
         """
-        assert isinstance(real, (_pygame.Rect, tuple, list))
+        assert isinstance(real, (pygame.Rect, tuple, list))
         offsets = self.get_offsets()
 
-        if isinstance(real, _pygame.Rect):
-            rect = _pygame.Rect(real)
+        if isinstance(real, pygame.Rect):
+            rect = pygame.Rect(real)
             rect.x = real.x - self._rect.x + offsets[0]
             rect.y = real.y - self._rect.y + offsets[1]
             return rect
@@ -470,7 +470,7 @@ class ScrollArea(object):
         :rtype: bool
         """
         scroll = False
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             scroll = scroll or sbar.scrolling
         return scroll
 
@@ -484,7 +484,7 @@ class ScrollArea(object):
         :rtype: bool
         """
         updated = [0, 0]
-        for sbar in self._scrollbars:  # type: _ScrollBar
+        for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and not updated[0]:
                 updated[0] = sbar.update(events)
             elif sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and not updated[1]:

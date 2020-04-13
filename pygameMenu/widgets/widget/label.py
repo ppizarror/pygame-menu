@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGETS
-Widgets elements that can be added to the menu.
+LABEL
+Label class, adds a simple text to the Menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,21 +30,39 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Core
 from pygameMenu.widgets.core.widget import Widget
-from pygameMenu.widgets.core.selection import Selection
 
-# Selection
-from pygameMenu.widgets.selection.highlight import HighlightSelection
-from pygameMenu.widgets.selection.none import NoneSelection
 
-# Widgets
-from pygameMenu.widgets.widget.button import Button
-from pygameMenu.widgets.widget.colorinput import ColorInput
-from pygameMenu.widgets.widget.image import Image
-from pygameMenu.widgets.widget.label import Label
-from pygameMenu.widgets.widget.menubar import MenuBar
-from pygameMenu.widgets.widget.scrollbar import ScrollBar
-from pygameMenu.widgets.widget.selector import Selector
-from pygameMenu.widgets.widget.textinput import TextInput
-from pygameMenu.widgets.widget.vmargin import VMargin
+class Label(Widget):
+    """
+    Label widget.
+
+    :param label: Text of the button
+    :type label: basestring
+    :param label_id: Button ID
+    :type label_id: basestring
+    """
+
+    def __init__(self, label, label_id=''):
+        assert isinstance(label, str)
+        super(Label, self).__init__(widget_id=label_id)
+        self._label = label
+        self.is_selectable = False
+
+    def _apply_font(self):
+        pass
+
+    # noinspection PyMissingOrEmptyDocstring
+    def draw(self, surface):
+        self._render()
+        surface.blit(self._surface, self._rect.topleft)
+
+    def _render(self):
+        if not self._render_hash_changed(self._label, self._font_color):
+            return
+        self._surface = self._render_string(self._label, self._font_color)
+        self._rect.width, self._rect.height = self._surface.get_size()
+
+    # noinspection PyMissingOrEmptyDocstring
+    def update(self, events):
+        return False

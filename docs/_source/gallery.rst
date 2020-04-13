@@ -18,6 +18,7 @@ Them can also be imported as follows:
 .. code-block:: python
 
     from pygameMenu.examples.example import main
+    
     main()
 
 Normal button menu

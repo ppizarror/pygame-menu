@@ -30,10 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
-import pygameMenu.controls as _ctrl
+import pygame
+import pygameMenu.controls as _controls
 
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class Button(Widget):
@@ -90,15 +90,15 @@ class Button(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: _pygame.event.EventType
+        for event in events:  # type: pygame.event.EventType
 
-            if event.type == _pygame.KEYDOWN and event.key == _ctrl.KEY_APPLY or \
-                    self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN and event.button == _ctrl.JOY_BUTTON_SELECT:
+            if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
+                    self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and event.button == _controls.JOY_BUTTON_SELECT:
                 self.sound.play_open_menu()
                 self.apply()
                 updated = True
 
-            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 self.sound.play_click_mouse()
                 if self._rect.collidepoint(*event.pos):
                     self.apply()

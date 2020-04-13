@@ -30,12 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
-import pygame.gfxdraw as _gfxdraw
-import pygameMenu.controls as _ctrl
+import pygame
+import pygame.gfxdraw as gfxdraw
+import pygameMenu.controls as _controls
 
 from pygameMenu.utils import make_surface
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class MenuBar(Widget):
@@ -81,7 +81,7 @@ class MenuBar(Widget):
 
         self._backbox = back_box
         self._backbox_pos = None  # type: (tuple,None)
-        self._backbox_rect = None  # type: (_pygame.rect.Rect,None)
+        self._backbox_rect = None  # type: (pygame.rect.Rect,None)
         self._bgcolor = bgcolor
         self._label = label
         self._offsetx = 0.0
@@ -101,11 +101,11 @@ class MenuBar(Widget):
             bg.fill(self._bgcolor)
             surface.blit(bg, self._rect.topleft)
 
-        _gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
+        gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
 
         if self.mouse_enabled and self._backbox:
-            _pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
-            _pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
+            pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
+            pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
         surface.blit(self._surface,
                      (5 + self._rect.topleft[0] + self._offsetx,
@@ -141,9 +141,9 @@ class MenuBar(Widget):
         )
 
         cross_size = self._polygon_pos[2][1] - self._polygon_pos[1][1] - 6
-        self._backbox_rect = _pygame.Rect(self._polygon_pos[1][0] - cross_size - 3,
-                                          self._polygon_pos[1][1] + 3,
-                                          cross_size, cross_size)
+        self._backbox_rect = pygame.Rect(self._polygon_pos[1][0] - cross_size - 3,
+                                         self._polygon_pos[1][1] + 3,
+                                         cross_size, cross_size)
 
         if menu_prev_condition:
             # Make a cross for top menu
@@ -193,16 +193,16 @@ class MenuBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: _pygame.event.EventType
+        for event in events:  # type: pygame.event.EventType
 
-            if self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+            if self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self.sound.play_click_mouse()
                     self.apply()
                     updated = True
 
-            elif self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN:
-                if event.button == _ctrl.JOY_BUTTON_BACK:
+            elif self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
+                if event.button == _controls.JOY_BUTTON_BACK:
                     self.sound.play_key_del()
                     self.apply()
                     updated = True

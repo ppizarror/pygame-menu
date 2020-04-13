@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGETS
-Widgets elements that can be added to the menu.
+HIGHLIGHT
+Widget selection highlight box effect.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,21 +30,35 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Core
-from pygameMenu.widgets.core.widget import Widget
 from pygameMenu.widgets.core.selection import Selection
 
-# Selection
-from pygameMenu.widgets.selection.highlight import HighlightSelection
-from pygameMenu.widgets.selection.none import NoneSelection
 
-# Widgets
-from pygameMenu.widgets.widget.button import Button
-from pygameMenu.widgets.widget.colorinput import ColorInput
-from pygameMenu.widgets.widget.image import Image
-from pygameMenu.widgets.widget.label import Label
-from pygameMenu.widgets.widget.menubar import MenuBar
-from pygameMenu.widgets.widget.scrollbar import ScrollBar
-from pygameMenu.widgets.widget.selector import Selector
-from pygameMenu.widgets.widget.textinput import TextInput
-from pygameMenu.widgets.widget.vmargin import VMargin
+class NoneSelection(Selection):
+    """
+    No selection.
+    """
+
+    def __init__(self):
+        super(NoneSelection, self).__init__(margin_left=0, margin_right=0,
+                                            margin_top=0, margin_bottom=0)
+
+    def get_margin(self):
+        """
+        Return top, left, bottom and right margins of the selection.
+
+        :return: Tuple of (t,l,b,r) margins in px
+        :rtype: tuple
+        """
+        return 0, 0, 0, 0
+
+    def draw(self, surface, widget):
+        """
+        Draw the selection.
+
+        :param surface: Surface to draw
+        :type surface: pygame.surface.SurfaceType
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.core.widget.Widget
+        :return: None
+        """
+        pass

@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.textinput
+.. module:: pygameMenu.widgets.widget.textinput
 
 =========
 TextInput

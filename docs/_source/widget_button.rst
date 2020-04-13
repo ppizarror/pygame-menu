@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.button
+.. module:: pygameMenu.widgets.widget.button
 
 ======
 Button

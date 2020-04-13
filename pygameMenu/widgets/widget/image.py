@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from pygameMenu.baseimage import BaseImage
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class Image(Widget):
@@ -77,10 +77,6 @@ class Image(Widget):
             return
         self._surface = self._image.get_surface()
         self._rect.width, self._rect.height = self._surface.get_size()
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw_selected_rect(self, surface, selected_color, inflatex, inflatey, border_width):
-        pass  # Nothing to select
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

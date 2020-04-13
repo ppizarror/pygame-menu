@@ -24,6 +24,21 @@ will be wrapped in order to fit the menu size.
 .. automethod:: pygameMenu.menu.Menu.add_label
 
 
+Add an image
+------------
+
+An image can be displayed on a menu.
+
+**Example:**
+
+.. code-block:: python
+
+    menu = pygameMenu.Menu(...)
+    menu.add_image('/home/me/cool_image.png')
+
+.. automethod:: pygameMenu.menu.Menu.add_image
+
+
 Add a button
 ------------
 

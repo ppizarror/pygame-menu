@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
+import pygame
 import pygameMenu.locals as _locals
 
 
@@ -105,12 +105,12 @@ def check_key_pressed_valid(event):
     # If the system detects that any key event has been pressed but
     # there's not any key pressed then this method raises a KEYUP
     # flag
-    bad_event = not (True in _pygame.key.get_pressed())
+    bad_event = not (True in pygame.key.get_pressed())
     if bad_event:
         if 'test' in event.dict and event.dict['test']:
             return True
-        ev = _pygame.event.Event(_pygame.KEYUP, {'key': event.key})
-        _pygame.event.post(ev)
+        ev = pygame.event.Event(pygame.KEYUP, {'key': event.key})
+        pygame.event.post(ev)
     return not bad_event
 
 
@@ -139,7 +139,7 @@ def make_surface(width, height, alpha=False):
     """
     assert width > 0 and height > 0, 'surface width and height must be greater than zero'
     assert isinstance(alpha, bool)
-    surface = _pygame.Surface((width, height), _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+    surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
     if alpha:
-        surface = _pygame.Surface.convert_alpha(surface)
+        surface = pygame.Surface.convert_alpha(surface)
     return surface

@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.colorinput
+.. module:: pygameMenu.widgets.widget.colorinput
 
 ==========
 ColorInput

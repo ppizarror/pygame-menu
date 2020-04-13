@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.label
+.. module:: pygameMenu.widgets.widget.label
 
 =====
 Label
