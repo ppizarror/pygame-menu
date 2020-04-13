@@ -11,9 +11,9 @@
 First steps
 ===========
 
-Making games using :py:mod:`pygame` is really cool, but most of games
-(or applications) require end-user configuration. Create complex GUI
-object to display a menu can be painful. That why :py:mod:`pygame-menu`
+Making games using :py:mod:`pygame` is really cool, but most games
+(or applications) require end-user configuration. Creating complex GUI
+objects to display a menu can be painful. That why :py:mod:`pygame-menu`
 was designed.
 
 Here is a simple example of how to create a menu with :py:mod:`pygame-menu` :
@@ -63,9 +63,9 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu` :
    :scale: 40%
    :align: center
 
-   Tadada... !!! A so beautiful menu ＼(^o^)／
+   Tadada... !!! Such a beautiful menu ＼(^o^)／
 
-**Interested to** :ref:`go deeper in menu design <Creating menus>` **?**
+**Interested in** :ref:`going deeper into menu design <Creating menus>` **?**
 
 .. toctree::
    :maxdepth: 2
@@ -82,7 +82,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu` :
 Widgets API
 ===========
 
-A menu is in fact a list of widgets arranged on a same surface.
+A menu is in fact a list of widgets arranged on the same surface.
 Access to a widget in a menu can easily be done with two methods:
 
 .. code-block:: python
@@ -91,7 +91,7 @@ Access to a widget in a menu can easily be done with two methods:
 
     selected = menu.get_selected_widget()
 
-Each :py:mod:`pygameMenu` widget and its behaviors is defined in a
+Each :py:mod:`pygameMenu` widget and its behaviors are defined in a
 class. The currently existing classes are:
 
  - :py:class:`~pygameMenu.widgets.Button`
@@ -104,11 +104,11 @@ class. The currently existing classes are:
  - :py:class:`~pygameMenu.widgets.VMargin`
 
 For advanced programers, those classes can be used to design custom
-menu or window.
+menus or windows.
 
-Have a look to :py:mod:`pygameMenu.widgets.examples.scrollbar.py` for
-instance. It show how to use the :py:class:`pygameMenu.widgets.ScrollBar`
-class to display large custom surface.
+Have a look at :py:mod:`pygameMenu.widgets.examples.scrollbar.py` for
+instance. It shows how to use the :py:class:`pygameMenu.widgets.ScrollBar`
+class to display large custom surfaces.
 
 .. toctree::
    :maxdepth: 2
