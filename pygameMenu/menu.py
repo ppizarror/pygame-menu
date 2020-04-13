@@ -575,12 +575,9 @@ class Menu(object):
 
         kwargs (Optional):
             - align             Widget alignment (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
             - margin            Tuple of (x,y) margin (int, float)
             - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Image`
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
 
         :param image_path: Path of the image of the widget
         :type image_path: basestring

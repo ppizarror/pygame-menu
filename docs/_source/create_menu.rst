@@ -81,7 +81,7 @@ can take one of these two types of values:
    ==========================================  ========================================
 
 
-Execute a menu
+Display a menu
 --------------
 
 The :ref:`First steps` chapter show the way to execute the menu in the
@@ -132,4 +132,4 @@ it is necessary.
 
 .. autoclass:: Menu(surface, menu_height, menu_width, font, title, ...)
     :members:
-    :exclude-members: add_button, add_color_input, add_label, add_text_input, add_selector, add_vertical_margin
+    :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin
