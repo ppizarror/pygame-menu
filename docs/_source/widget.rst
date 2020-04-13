@@ -1,6 +1,6 @@
 :orphan:
 
-.. module:: pygameMenu.widgets
+.. module:: pygameMenu.widgets.core.widget
 
 ======
 Widget
