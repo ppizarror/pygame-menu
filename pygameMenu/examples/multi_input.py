@@ -226,9 +226,12 @@ def main(test=False):
                                          widget_font_color=COLOR_BLACK,
                                          widget_font_size=25,
                                          widget_offset_x=5,  # px
-                                         widget_offset_y=20,  # px
+                                         widget_offset_y=10,  # px
                                          )
 
+    more_settings_menu.add_image(pygameMenu.baseimage.IMAGE_PYGAME_MENU,
+                                 scale=(0.25, 0.25),
+                                 align=pygameMenu.locals.ALIGN_CENTER)
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
     more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_separator='-')
 

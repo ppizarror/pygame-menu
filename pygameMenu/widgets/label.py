@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 LABEL
-Label class, to add simple text to the menu.
+Label class, adds a simple text to the Menu.
 
 License:
 -------------------------------------------------------------------------------
