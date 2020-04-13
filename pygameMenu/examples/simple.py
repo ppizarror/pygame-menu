@@ -58,12 +58,12 @@ def start_the_game():
     print('Do the job here !')
 
 
-menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS, 'Welcome',
-                       widget_font_color=(102, 122, 130),
-                       selection_color=(207, 62, 132),
-                       title_font_color=(38, 158, 151),
-                       title_background_color=(4, 47, 58),
-                       menu_background_color=(239, 231, 211))
+menu = pygameMenu.Menu(
+    height=300,
+    width=400,
+    theme=pygameMenu.themes.THEME_BLUE.copy(),
+    title='Welcome',
+)
 
 menu.add_text_input('Name: ')
 menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)

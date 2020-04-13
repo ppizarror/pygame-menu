@@ -49,9 +49,7 @@ ABOUT = ['pygameMenu {0}'.format(pygameMenu.__version__),
          'Author: @{0}'.format(pygameMenu.__author__),
          '',
          'Email: {0}'.format(pygameMenu.__email__)]
-COLOR_BLUE = (12, 12, 200)
 COLOR_BACKGROUND = [128, 0, 128]
-COLOR_WHITE = (255, 255, 255)
 FPS = 60
 H_SIZE = 600  # Height of window size
 HELP = ['Press ESC to enable/disable Menu',
@@ -162,17 +160,14 @@ def main(test=False):
     # -------------------------------------------------------------------------
 
     # Timer
-    timer_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
-                                 menu_opacity=85,
-                                 menu_background_color=(0, 0, 0),  # Background color
-                                 menu_height=400,
-                                 menu_width=600,
-                                 onclose=pygameMenu.events.RESET,
-                                 title='Timer Menu',
-                                 title_background_color=(0, 0, 0),
-                                 title_offset_y=5,  # Adds 5px to title vertical position
-                                 widget_shadow=True,
-                                 )
+    timer_menu = pygameMenu.Menu(
+        theme=pygameMenu.themes.THEME_BLACK.copy(),
+        menu_opacity=85,
+        height=400,
+        width=600,
+        onclose=pygameMenu.events.RESET,
+        title='Timer Menu',
+    )
 
     # Add widgets
     timer_menu.add_button('Reset timer', reset_timer)
@@ -182,7 +177,7 @@ def main(test=False):
                             items=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
                                    ('Default', (128, 0, 128)),
                                    ('Black', (0, 0, 0)),
-                                   ('Blue', COLOR_BLUE)],
+                                   ('Blue', (12, 12, 200))],
                             default=1,  # Optional parameter that sets default item of selector
                             onchange=change_color_bg,  # Action when changing element with left/right
                             onreturn=change_color_bg,  # Action when pressing return on an element
@@ -195,54 +190,61 @@ def main(test=False):
     timer_menu.center_content()
 
     # Help menu
-    help_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_FRANCHISE,
-                                menu_background_color=(30, 50, 107),  # Background color
-                                menu_height=600,  # Fullscreen
-                                menu_opacity=85,
-                                menu_width=800,
-                                onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
-                                title='Help',
-                                title_background_color=(120, 45, 30),
-                                title_font_size=60,
-                                widget_font_size=45,
-                                widget_offset_y=0.2,  # Percentage of height (30%)
-                                widget_shadow=True,
-                                widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
-                                )
+    help_theme = pygameMenu.themes.Theme(
+        background_color=(30, 50, 107),
+        title_background_color=(120, 45, 30),
+        title_font=pygameMenu.font.FONT_FRANCHISE,
+        title_font_size=60,
+        widget_font=pygameMenu.font.FONT_FRANCHISE,
+        widget_font_color=(170, 170, 170),
+        widget_font_size=45,
+        widget_shadow=False,
+        widget_shadow_position=pygameMenu.locals.POSITION_SOUTHEAST,
+    )
+
+    help_menu = pygameMenu.Menu(
+        height=600,  # Fullscreen
+        menu_opacity=85,
+        onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
+        theme=help_theme,
+        title='Help',
+        widget_offset=(0, 0.2),  # Percentage of height (30%)
+        width=800,
+    )
     for m in HELP:
         help_menu.add_label(m, align=pygameMenu.locals.ALIGN_CENTER)
+    help_menu.add_vertical_margin(25)
     help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # About menu
-    about_menu = pygameMenu.Menu(font=pygameMenu.font.FONT_NEVIS,
-                                 menu_height=400,
-                                 menu_opacity=85,  # Enable transparency
-                                 menu_width=600,
-                                 mouse_visible=False,
-                                 onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
-                                 title='About',
-                                 title_background_color=COLOR_BLUE,
-                                 title_font=pygameMenu.font.FONT_8BIT,
-                                 title_font_size=30,
-                                 widget_offset_y=0.14,  # Percentage of height
-                                 widget_shadow=True,
-                                 )
+    about_theme = pygameMenu.themes.THEME_BLACK.copy()
+    about_theme.widget_font = pygameMenu.font.FONT_NEVIS
+    about_theme.title_font = pygameMenu.font.FONT_8BIT
+
+    about_menu = pygameMenu.Menu(
+        height=400,
+        menu_opacity=85,  # Enable transparency
+        mouse_visible=False,
+        onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
+        theme=about_theme,
+        title='About',
+        widget_offset=(0, 0.14),
+        width=600,
+    )
     for m in ABOUT:
         about_menu.add_label(m, margin=(0, 0))
     about_menu.add_label('')
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
     # Main menu, pauses execution of the application
-    main_menu = pygameMenu.Menu(enabled=False,
-                                font=pygameMenu.font.FONT_NEVIS,
-                                menu_opacity=90,
-                                menu_height=400,
-                                menu_width=600,
-                                title='Main Menu',
-                                title_background_color=(170, 65, 50),
-                                title_offset_y=5,
-                                widget_font_size=40,
-                                )
+    main_menu = pygameMenu.Menu(
+        enabled=False,
+        height=400,
+        menu_opacity=90,
+        theme=pygameMenu.themes.THEME_BLACK.copy(),
+        title='Main Menu',
+        width=600,
+    )
 
     main_menu.add_button(timer_menu.get_title(), timer_menu)  # Add timer submenu
     main_menu.add_button(help_menu.get_title(), help_menu)  # Add help submenu
@@ -272,7 +274,7 @@ def main(test=False):
             # Draw timer
             surface.fill(COLOR_BACKGROUND)
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
-            time_blit = timer_font.render(time_string, 1, COLOR_WHITE)
+            time_blit = timer_font.render(time_string, 1, (255, 255, 255))
             time_blit_size = time_blit.get_size()
             surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2),
                                      int(H_SIZE / 2 - time_blit_size[1] / 2)))

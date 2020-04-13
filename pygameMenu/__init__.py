@@ -67,6 +67,12 @@ Sound: Sound class.
 import pygameMenu.sound
 
 """
+Themes: Menu themes class.
+"""
+# noinspection PyUnresolvedReferences
+import pygameMenu.themes
+
+"""
 Version: Library version.
 """
 # noinspection PyUnresolvedReferences

@@ -108,7 +108,7 @@ class MenuBar(Widget):
             pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
         surface.blit(self._surface,
-                     (5 + self._rect.topleft[0] + self._offsetx,
+                     (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
 
     def get_title(self):

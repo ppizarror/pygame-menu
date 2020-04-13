@@ -78,6 +78,19 @@ def assert_orientation(orientation):
         'invalid orientation value "{0}"'.format(orientation)
 
 
+def assert_numeric2_vector(num_vector):
+    """
+    Assert that a 2 item vector is numeric.
+
+    :param num_vector: Numeric 2 item vector
+    :type num_vector: list, tuple
+    :return: None
+    """
+    assert isinstance(num_vector, (list, tuple)), 'object {0} must be a list or tuple of 2 items'.format(num_vector)
+    assert len(num_vector) == 2 and isinstance(num_vector[0], (int, float)) and \
+           isinstance(num_vector[1], (int, float)), 'each object of {0} must be integer or float'.format(num_vector)
+
+
 def assert_position(position):
     """
     Assert that a certain widget position is valid.
