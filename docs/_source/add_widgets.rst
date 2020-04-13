@@ -34,7 +34,7 @@ An image can be displayed on a menu.
 .. code-block:: python
 
     menu = pygameMenu.Menu(...)
-    menu.add_image(HELP)
+    menu.add_image('/home/me/cool_image.png')
 
 .. automethod:: pygameMenu.menu.Menu.add_image
 
