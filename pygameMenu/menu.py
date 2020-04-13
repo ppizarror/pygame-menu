@@ -580,6 +580,44 @@ class Menu(object):
         self._current._append_widget(widget)
         return widget
 
+    def add_image(self,
+                  image_path,
+                  align=None,
+                  angle=0,
+                  image_id='',
+                  margin=None,
+                  scale=(1, 1),
+                  scale_smooth=False,
+                  ):
+        """
+        Add a simple image to the current Menu.
+
+        :param image_path: Path of the image of the widget
+        :type image_path: basestring
+        :param image_id: ID of the label
+        :type image_id: basestring
+        :param align: Widget alignment, if None use default Menu widget alignment
+        :type align: basestring, NoneType
+        :param angle: Angle of the image in degrees (clockwise)
+        :type angle: int, float
+        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
+        :type margin: tuple, NoneType
+        :param scale: Scale of the image (x,y), float or int
+        :type scale: tuple, list
+        :param scale_smooth: Scale is smoothed
+        :type scale_smooth: bool
+        :return: Widget object
+        :rtype: :py:class:`pygameMenu.widgets.Image`
+        """
+        widget = _widgets.Image(image_path=image_path,
+                                image_id=image_id,
+                                angle=angle,
+                                scale=scale,
+                                scale_smooth=scale_smooth)
+        self._current._configure_widget(widget=widget, align=align, margin=margin)
+        self._current._append_widget(widget)
+        return widget
+
     def add_label(self,
                   title,
                   align=None,
@@ -932,10 +970,15 @@ class Menu(object):
         # Update title position
         self._menubar.set_position(self._pos_x, self._pos_y)
 
+        # Store widget rects
+        _widget_rect = {}
+        for widget in self._widgets:  # type: _widgets.WidgetType
+            _widget_rect[widget.get_id()] = widget.get_rect()
+
         # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]  # type: _widgets.WidgetType
-            rect = widget.get_rect()  # type: _pygame.Rect
+            rect = _widget_rect[widget.get_id()]  # type: _pygame.Rect
 
             # Get column and row position
             _col = int(index // self._rows)
@@ -961,7 +1004,7 @@ class Menu(object):
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(_row):
                 rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
-                ysum += rwidget.get_rect().height + rwidget.get_margin()[1]
+                ysum += _widget_rect[rwidget.get_id()].height + rwidget.get_margin()[1]
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
             y_coord = self._widget_offset_y + ysum + dy
 
@@ -1002,7 +1045,7 @@ class Menu(object):
             # to avoid displaying an vertical one
             width, height = max_x + 20, self._height - menubar_height - 20
             self._mouse_visible = self._mouse_visible_default
-        elif max_y > self._height:
+        elif max_y > self._height - menubar_height:
             # Remove the thick of the scrollbar
             # to avoid displaying an horizontal one
             width, height = self._width - 20, max_y + 20
@@ -1237,7 +1280,7 @@ class Menu(object):
         if self._index >= self._rows:
             self._select(self._index - self._rows)
         else:
-            self._select(0)
+            self._select(0, 1)
 
     def _right(self):
         """
@@ -1621,7 +1664,7 @@ class Menu(object):
         self._top._prev = [self._top._prev, current]
 
         # Select the first widget
-        self._select(0)
+        self._select(0, 1)
 
     def reset(self, total):
         """
@@ -1648,13 +1691,15 @@ class Menu(object):
 
         self._current._select(self._top._current._index)
 
-    def _select(self, new_index):
+    def _select(self, new_index, dwidget=0):
         """
         Select the widget at the given index and unselect others.
         Selection forces rendering of the widget.
 
         :param new_index: Widget index
         :type new_index: int
+        :param dwidget: Direction to search if the new_index widget is non selectable
+        :type dwidget: int
         :return: None
         """
         current = self._top._current
@@ -1663,10 +1708,11 @@ class Menu(object):
 
         # This stores +/-1 if the index increases or decreases
         # Used by non-selectable selection
-        if new_index < current._index:
-            dwidget = -1
-        else:
-            dwidget = 1
+        if dwidget == 0:
+            if new_index < current._index:
+                dwidget = -1
+            else:
+                dwidget = 1
 
         # Limit the index to the length
         new_index %= len(current._widgets)
