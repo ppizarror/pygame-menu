@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.scrollbar
+.. module:: pygameMenu.widgets.widget.scrollbar
 
 =========
 ScrollBar

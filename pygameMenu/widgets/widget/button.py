@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame as _pygame
 import pygameMenu.controls as _ctrl
 
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class Button(Widget):

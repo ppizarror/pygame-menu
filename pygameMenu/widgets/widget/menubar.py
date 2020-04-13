@@ -35,7 +35,7 @@ import pygame.gfxdraw as _gfxdraw
 import pygameMenu.controls as _ctrl
 
 from pygameMenu.utils import make_surface
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class MenuBar(Widget):

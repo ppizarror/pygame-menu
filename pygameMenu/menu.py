@@ -588,6 +588,7 @@ class Menu(object):
                   margin=None,
                   scale=(1, 1),
                   scale_smooth=False,
+                  selectable=False,
                   ):
         """
         Add a simple image to the current Menu.
@@ -606,14 +607,18 @@ class Menu(object):
         :type scale: tuple, list
         :param scale_smooth: Scale is smoothed
         :type scale_smooth: bool
+        :param selectable: Widget accepts user selection
+        :type selectable: bool
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.Image`
         """
+        assert isinstance(selectable, bool)
         widget = _widgets.Image(image_path=image_path,
                                 image_id=image_id,
                                 angle=angle,
                                 scale=scale,
                                 scale_smooth=scale_smooth)
+        widget.is_selectable = selectable
         self._current._configure_widget(widget=widget, align=align, margin=margin)
         self._current._append_widget(widget)
         return widget
@@ -625,6 +630,7 @@ class Menu(object):
                   label_id='',
                   max_char=0,
                   margin=None,
+                  selectable=False,
                   ):
         """
         Add a simple text to the current Menu.
@@ -641,11 +647,14 @@ class Menu(object):
         :type max_char: int
         :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
         :type margin: tuple, NoneType
+        :param selectable: Widget accepts user selection
+        :type selectable: bool
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygameMenu.widgets.Label`, list[:py:class:`pygameMenu.widgets.Label`]
         """
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
+        assert isinstance(selectable, bool)
         assert max_char >= 0, 'max characters cannot be negative'
         if len(label_id) == 0:
             label_id = str(_uuid4())  # If wrap
@@ -653,6 +662,7 @@ class Menu(object):
         # If no overflow
         if len(title) <= max_char or max_char == 0:
             widget = _widgets.Label(label=title, label_id=label_id)
+            widget.is_selectable = selectable
             self._current._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
             self._current._append_widget(widget)
         else:
@@ -664,7 +674,9 @@ class Menu(object):
                                              font_size=font_size,
                                              label_id=label_id + '+' + str(len(widget) + 1),
                                              max_char=max_char,
-                                             margin=margin))
+                                             margin=margin,
+                                             selectable=selectable)
+                              )
         return widget
 
     def add_selector(self,
@@ -841,7 +853,7 @@ class Menu(object):
         :param margin: Widget vertical margin, if None the default Menu widget vertical margin
         :type margin: tuple, NoneType
         """
-        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(widget, _widgets.Widget)
         assert isinstance(align, (str, type(None)))
         assert isinstance(font_size, (int, type(None)))
         assert isinstance(margin, (tuple, type(None)))
@@ -882,7 +894,7 @@ class Menu(object):
         :param widget: Widget object
         :type widget: :py:class:`pygameMenu.widgets.widget.Widget`
         """
-        assert isinstance(widget, _widgets.WidgetType)
+        assert isinstance(widget, _widgets.Widget)
         if self._columns > 1:
             _max_elements = self._columns * self._rows
             _msg = 'total widgets cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
@@ -972,12 +984,12 @@ class Menu(object):
 
         # Store widget rects
         _widget_rect = {}
-        for widget in self._widgets:  # type: _widgets.WidgetType
+        for widget in self._widgets:  # type: _widgets.Widget
             _widget_rect[widget.get_id()] = widget.get_rect()
 
         # Update appended widgets
         for index in range(len(self._widgets)):
-            widget = self._widgets[index]  # type: _widgets.WidgetType
+            widget = self._widgets[index]  # type: _widgets.Widget
             rect = _widget_rect[widget.get_id()]  # type: _pygame.Rect
 
             # Get column and row position
@@ -986,24 +998,24 @@ class Menu(object):
 
             # Calculate X position
             _column_width = self._column_widths[_col]
-            _highlist_margin = float(self._selection_highlight_margin_x + self._selection_border_width) / 2
+            _highlight_margin = float(self._selection_highlight_margin_x + self._selection_border_width) / 2
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
                 dx = -float(rect.width) / 2
             elif align == _locals.ALIGN_LEFT:
-                dx = -_column_width / 2 + _highlist_margin
+                dx = -_column_width / 2 + _highlight_margin
             elif align == _locals.ALIGN_RIGHT:
-                dx = _column_width / 2 - rect.width - _highlist_margin
+                dx = _column_width / 2 - rect.width - _highlight_margin
             else:
                 dx = 0
             x_coord = self._column_pos_x[_col] + dx + widget.get_margin()[0]
-            x_coord = max(_highlist_margin, x_coord)
+            x_coord = max(_highlight_margin, x_coord)
             x_coord += self._widget_offset_x
 
             # Calculate Y position
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(_row):
-                rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.WidgetType
+                rwidget = self._widgets[int(self._rows * _col + r)]  # type: _widgets.Widget
                 ysum += _widget_rect[rwidget.get_id()].height + rwidget.get_margin()[1]
             dy = self._selection_highlight_margin_y + self._selection_border_width - self._selection_highlight
             y_coord = self._widget_offset_y + ysum + dy
@@ -1018,7 +1030,7 @@ class Menu(object):
         """
         max_x = -1e6
         max_y = -1e6
-        for widget in self._widgets:  # type: _widgets.WidgetType
+        for widget in self._widgets:  # type: _widgets.Widget
             _, _, x, y = widget.get_position()  # Use only bottom right position
             max_x = max(max_x, x)
             max_y = max(max_y, y)
@@ -1067,7 +1079,7 @@ class Menu(object):
         :type widget_id: basestring
         :return: None
         """
-        for widget in self._widgets:  # type: _widgets.WidgetType
+        for widget in self._widgets:  # type: _widgets.Widget
             if widget.get_id() == widget_id:
                 raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
 
@@ -1226,7 +1238,7 @@ class Menu(object):
         self._current._widgets_surface.fill((255, 255, 255, 0))
 
         # Draw widgets
-        for widget in self._current._widgets:  # type: _widgets.WidgetType
+        for widget in self._current._widgets:  # type: _widgets.Widget
             widget.draw(self._current._widgets_surface)
             if self._current._selection_highlight and widget.selected:  # If selected draw a rectangle
                 widget.draw_selected_rect(self._current._widgets_surface,
@@ -1544,7 +1556,7 @@ class Menu(object):
         :rtype: dict
         """
         data = {}
-        for widget in self._widgets:  # type: _widgets.WidgetType
+        for widget in self._widgets:  # type: _widgets.Widget
             try:
                 data[widget.get_id()] = widget.get_value()
             except ValueError:  # Widget does not return data
@@ -1597,7 +1609,7 @@ class Menu(object):
         if sound is None:
             sound = _Sound()
         self._sounds = sound
-        for widget in self._widgets:  # type: _widgets.WidgetType
+        for widget in self._widgets:  # type: _widgets.Widget
             widget.set_sound(sound)
         if recursive:
             for menu in self._submenus:  # type: Menu
@@ -1720,8 +1732,8 @@ class Menu(object):
             return
 
         # Get both widgets
-        old_widget = current._widgets[current._index]  # type: _widgets.WidgetType
-        new_widget = current._widgets[new_index]  # type:_widgets.WidgetType
+        old_widget = current._widgets[current._index]  # type: _widgets.Widget
+        new_widget = current._widgets[new_index]  # type:_widgets.Widget
 
         # If new widget is not selectable
         if not new_widget.is_selectable:
@@ -1799,7 +1811,7 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.widget.Widget`
         """
-        for widget in self._widgets:  # type: _widgets.WidgetType
+        for widget in self._widgets:  # type: _widgets.Widget
             if widget.get_id() == widget_id:
                 return widget
         if recursive:

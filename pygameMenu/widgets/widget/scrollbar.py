@@ -34,7 +34,7 @@ import pygame as _pygame
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import make_surface, assert_orientation
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class ScrollBar(Widget):

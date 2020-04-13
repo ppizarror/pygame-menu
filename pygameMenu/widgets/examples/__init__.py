@@ -3,7 +3,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGET EXAMPLES
+EXAMPLES
 Specific widget examples directory.
 
 License:

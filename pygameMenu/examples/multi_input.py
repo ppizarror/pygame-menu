@@ -231,7 +231,9 @@ def main(test=False):
 
     more_settings_menu.add_image(pygameMenu.baseimage.IMAGE_PYGAME_MENU,
                                  scale=(0.25, 0.25),
-                                 align=pygameMenu.locals.ALIGN_CENTER)
+                                 align=pygameMenu.locals.ALIGN_CENTER,
+                                 selectable=True
+                                 )
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
     more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_separator='-')
 

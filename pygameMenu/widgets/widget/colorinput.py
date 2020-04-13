@@ -35,7 +35,7 @@ import pygame as _pygame
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import check_key_pressed_valid, make_surface
-from pygameMenu.widgets.textinput import TextInput
+from pygameMenu.widgets.widget.textinput import TextInput
 
 _TYPE_HEX = 'hex'
 _TYPE_RGB = 'rgb'

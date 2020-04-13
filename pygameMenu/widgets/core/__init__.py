@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGETS
-Widgets elements that can be added to the menu.
+CORE
+This module contains the widget core classes.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,15 +29,3 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
-
-from pygameMenu.widgets.core.widget import Widget
-
-from pygameMenu.widgets.widget.button import Button
-from pygameMenu.widgets.widget.colorinput import ColorInput
-from pygameMenu.widgets.widget.image import Image
-from pygameMenu.widgets.widget.label import Label
-from pygameMenu.widgets.widget.menubar import MenuBar
-from pygameMenu.widgets.widget.scrollbar import ScrollBar
-from pygameMenu.widgets.widget.selector import Selector
-from pygameMenu.widgets.widget.textinput import TextInput
-from pygameMenu.widgets.widget.vmargin import VMargin

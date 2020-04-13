@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.vmargin
+.. module:: pygameMenu.widgets.widget.vmargin
 
 =======
 VMargin

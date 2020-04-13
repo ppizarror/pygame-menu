@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-VERTICAL MARGIN
-Vertical box margin.
+WIDGET
+This module contains the widgets of pygame-menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,39 +29,3 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
-
-from pygameMenu.widgets.widget import Widget, make_surface
-
-
-class VMargin(Widget):
-    """
-    Vertical margin widget.
-    """
-
-    def __init__(self):
-        super(VMargin, self).__init__()
-        self.is_selectable = False
-
-    def _apply_font(self):
-        self._font_size = 0
-        self._shadow = False
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
-        self._render()
-        surface.blit(self._surface, self._rect.topleft)
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw_selected_rect(self, surface, selected_color, inflatex, inflatey, border_width):
-        pass  # Nothing to select
-
-    def _render(self):
-        if self._surface is not None:
-            return
-        self._surface = make_surface(1, 1, alpha=True)
-        self._rect.width = 0.0
-        self._rect.height = 0.0
-
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
-        return False

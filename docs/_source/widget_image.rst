@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.widgets.image
+.. module:: pygameMenu.widgets.widget.image
 
 ======
 Image

@@ -34,7 +34,7 @@ import pygame as _pygame
 import pygameMenu.controls as _ctrl
 
 from pygameMenu.utils import check_key_pressed_valid
-from pygameMenu.widgets.widget import Widget
+from pygameMenu.widgets.core.widget import Widget
 
 
 class Selector(Widget):

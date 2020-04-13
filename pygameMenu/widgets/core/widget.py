@@ -228,6 +228,9 @@ class Widget(object):
         :type border_width: int, float
         :return: None
         """
+        if not self.is_selectable:
+            return
+
         # Generate new rect if it's different
         rect = self._selected_rect
 
@@ -649,6 +652,3 @@ class Widget(object):
         :rtype: bool
         """
         raise NotImplementedError('Override is mandatory')
-
-
-WidgetType = Widget
