@@ -84,6 +84,15 @@ class BaseImage(object):
         """
         return self._surface.get_width(), self._surface.get_height()
 
+    def get_surface(self):
+        """
+        Return the surface object.
+
+        :return: Image surface
+        :rtype: pygame.surface.SurfaceType
+        """
+        return self._surface
+
     def get_namefile(self):
         """
         :return: Return the name of the image file
