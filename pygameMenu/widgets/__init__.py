@@ -30,9 +30,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import widgets
 from pygameMenu.widgets.button import Button
 from pygameMenu.widgets.colorinput import ColorInput
+from pygameMenu.widgets.image import Image
 from pygameMenu.widgets.label import Label
 from pygameMenu.widgets.menubar import MenuBar
 from pygameMenu.widgets.scrollbar import ScrollBar
@@ -40,5 +40,4 @@ from pygameMenu.widgets.selector import Selector
 from pygameMenu.widgets.textinput import TextInput
 from pygameMenu.widgets.vmargin import VMargin
 
-# Widget type
 from pygameMenu.widgets.widget import WidgetType

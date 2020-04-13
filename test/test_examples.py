@@ -29,9 +29,9 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+
 from test._utils import *
 
-# Imports
 import pygameMenu.examples.game_selector as game_selector
 import pygameMenu.examples.multi_input as multi_input
 import pygameMenu.examples.scroll_menu as scroll_menu

@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-LABEL
-Label class, adds a simple text to the Menu.
+IMAGE
+Image widget class, adds a simple image.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,23 +30,38 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pygameMenu.baseimage import BaseImage
 from pygameMenu.widgets.widget import Widget
 
 
-class Label(Widget):
+class Image(Widget):
     """
-    Label widget.
+    Image widget.
 
-    :param label: Text of the button
-    :type label: basestring
-    :param label_id: Button ID
-    :type label_id: basestring
+    :param image_path: Path of the image
+    :type image_path: basestring
+    :param image_id: Image ID
+    :type image_id: basestring
+    :param angle: Angle of the image in degrees (clockwise)
+    :type angle: int, float
+    :param scale: Scale of the image (x,y), float or int
+    :type scale: tuple, list
+    :param scale_smooth: Scale is smoothed
+    :type scale_smooth: bool
     """
 
-    def __init__(self, label, label_id=''):
-        assert isinstance(label, str)
-        super(Label, self).__init__(widget_id=label_id)
-        self._label = label
+    def __init__(self, image_path, image_id='', angle=0, scale=(1, 1), scale_smooth=True):
+        assert isinstance(image_path, str)
+        assert isinstance(image_id, str)
+        assert isinstance(angle, (int, float))
+        assert isinstance(scale, (tuple, list))
+        assert isinstance(scale_smooth, bool)
+        super(Image, self).__init__(widget_id=image_id)
+
+        self._image = BaseImage(image_path)
+        self._image.rotate(angle)
+        self._image.scale(scale[0], scale[1], smooth=scale_smooth)
+
         self.is_selectable = False
 
     def _apply_font(self):
@@ -58,9 +73,9 @@ class Label(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
-        if not self._render_hash_changed(self._label, self._font_color):
+        if self._surface is not None:
             return
-        self._surface = self._render_string(self._label, self._font_color)
+        self._surface = self._image.get_surface()
         self._rect.width, self._rect.height = self._surface.get_size()
 
     # noinspection PyMissingOrEmptyDocstring

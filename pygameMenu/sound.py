@@ -30,12 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# General imports
 from sys import stderr as _stderr
 import os.path as _path
 import time as _time
 
-# Import pygame and base audio mixer
 from pygame import error as _pygame_error
 from pygame import mixer as _mixer
 from pygame import vernum as _pygame_version

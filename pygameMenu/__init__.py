@@ -31,6 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 """
+BaseImage: Provides a class to perform basic image loading an manipulation with pygame.
+"""
+# noinspection PyUnresolvedReferences
+import pygameMenu.baseimage
+
+"""
 Controls: Default controls of menu object and key definition.
 """
 # noinspection PyUnresolvedReferences

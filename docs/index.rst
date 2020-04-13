@@ -96,6 +96,7 @@ class. The currently existing classes are:
 
  - :py:class:`~pygameMenu.widgets.Button`
  - :py:class:`~pygameMenu.widgets.ColorInput`
+ - :py:class:`~pygameMenu.widgets.Image`
  - :py:class:`~pygameMenu.widgets.Label`
  - :py:class:`~pygameMenu.widgets.MenuBar`
  - :py:class:`~pygameMenu.widgets.ScrollBar`
@@ -117,6 +118,7 @@ class to display large custom surfaces.
 
    _source/widget_button
    _source/widget_colorinput
+   _source/widget_image
    _source/widget_label
    _source/widget_menubar
    _source/widget_scrollbar
