@@ -170,7 +170,7 @@ class ScrollBar(Widget):
         page control surface.
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-               self._page_ctrl_length
+            self._page_ctrl_length
 
     def get_value(self):
         """
@@ -180,7 +180,7 @@ class ScrollBar(Widget):
         :rtype: int
         """
         value = self._values_range[0] + self._slider_position * \
-                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
+            (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -222,10 +222,10 @@ class ScrollBar(Widget):
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
-                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
+            self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
         space_after = self._rect.bottomright[axis] - \
-                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
+            self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
 
         if not move:
@@ -313,7 +313,7 @@ class ScrollBar(Widget):
             '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
         pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
-                 (self._values_range[1] - self._values_range[0])
+            (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)
@@ -360,6 +360,8 @@ class ScrollBar(Widget):
                             updated = True
 
             elif self.mouse_enabled and event.type is _pygame.MOUSEBUTTONUP:
-                self.scrolling = False
+                if self.scrolling:
+                    self.scrolling = False
+                    updated = True
 
         return updated
