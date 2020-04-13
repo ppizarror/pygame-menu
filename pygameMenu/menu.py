@@ -30,21 +30,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import sys
-import textwrap
-import types
-from uuid import uuid4
+import sys as _sys
+import textwrap as _textwrap
+import types as _types
+from uuid import uuid4 as _uuid4
 
 import pygame as _pygame
 import pygameMenu.controls as _ctrl
 import pygameMenu.events as _events
 import pygameMenu.locals as _locals
+import pygameMenu.utils as _utils
 import pygameMenu.widgets as _widgets
 
 from pygameMenu.scrollarea import ScrollArea as _ScrollArea
 from pygameMenu.sound import Sound as _Sound
-from pygameMenu.utils import assert_color, assert_position, assert_alignment, make_surface, \
-    check_key_pressed_valid
 
 # Joy events
 _JOY_EVENT_LEFT = 1
@@ -264,21 +263,21 @@ class Menu(object):
             title_background_color = menu_background_color
         if title_font_color is None:
             title_font_color = widget_font_color
-        assert_color(menu_background_color)
-        assert_color(scrollbar_color)
-        assert_color(scrollbar_shadow_color)
-        assert_color(scrollbar_slider_color)
-        assert_color(selection_color)
-        assert_color(title_background_color)
-        assert_color(title_font_color)
-        assert_color(title_shadow_color)
-        assert_color(widget_font_color)
-        assert_color(widget_shadow_color)
+        _utils.assert_color(menu_background_color)
+        _utils.assert_color(scrollbar_color)
+        _utils.assert_color(scrollbar_shadow_color)
+        _utils.assert_color(scrollbar_slider_color)
+        _utils.assert_color(selection_color)
+        _utils.assert_color(title_background_color)
+        _utils.assert_color(title_font_color)
+        _utils.assert_color(title_shadow_color)
+        _utils.assert_color(widget_font_color)
+        _utils.assert_color(widget_shadow_color)
 
         # Assert positions
-        assert_position(scrollbar_shadow_position)
-        assert_position(title_shadow_position)
-        assert_position(widget_shadow_position)
+        _utils.assert_position(scrollbar_shadow_position)
+        _utils.assert_position(title_shadow_position)
+        _utils.assert_position(widget_shadow_position)
 
         # Column/row asserts
         assert columns >= 1, 'number of columns must be greater or equal than 1'
@@ -317,7 +316,7 @@ class Menu(object):
         # Other asserts
         assert 0 <= menu_opacity <= 100, \
             'menu opacity must be between 0 and 100 (both values included)'
-        assert_alignment(widget_alignment)
+        _utils.assert_alignment(widget_alignment)
 
         # Get window size
         window_width, window_height = _pygame.display.get_surface().get_size()
@@ -326,7 +325,7 @@ class Menu(object):
 
         # Generate ID if empty
         if len(menu_id) == 0:
-            menu_id = str(uuid4())
+            menu_id = str(_uuid4())
 
         # Update background color
         menu_opacity = int(255.0 * (1.0 - (100.0 - menu_opacity) / 100.0))
@@ -501,7 +500,7 @@ class Menu(object):
         elif action == _events.NONE:  # None action
             widget = _widgets.Button(title, button_id)
         # If element is a function
-        elif isinstance(action, (types.FunctionType, types.MethodType)) or callable(action):
+        elif isinstance(action, (_types.FunctionType, _types.MethodType)) or callable(action):
             widget = _widgets.Button(title, button_id, onchange, action, *args)
         else:
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
@@ -611,7 +610,7 @@ class Menu(object):
         assert isinstance(max_char, int)
         assert max_char >= 0, 'max characters cannot be negative'
         if len(label_id) == 0:
-            label_id = str(uuid4())  # If wrap
+            label_id = str(_uuid4())  # If wrap
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
@@ -621,7 +620,7 @@ class Menu(object):
         else:
             self._current._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
-            for line in textwrap.wrap(title, max_char):
+            for line in _textwrap.wrap(title, max_char):
                 widget.append(self.add_label(title=line,
                                              align=align,
                                              font_size=font_size,
@@ -1013,7 +1012,7 @@ class Menu(object):
             width, height = self._width, self._height - menubar_height
             self._mouse_visible = self._mouse_visible_default
 
-        self._widgets_surface = make_surface(width, height)
+        self._widgets_surface = _utils.make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
         self._scroll.set_position(self._pos_x, self._pos_y + menubar_height + 5)
 
@@ -1057,7 +1056,7 @@ class Menu(object):
                     elif onclose == _events.EXIT:
                         self._exit()
 
-            elif isinstance(onclose, (types.FunctionType, types.MethodType)):
+            elif isinstance(onclose, (_types.FunctionType, _types.MethodType)):
                 onclose()
         return close
 
@@ -1220,7 +1219,7 @@ class Menu(object):
         :return: None
         """
         _pygame.quit()
-        sys.exit()
+        _sys.exit()
 
     def is_enabled(self):
         """
@@ -1316,7 +1315,7 @@ class Menu(object):
                 elif event.type == _pygame.locals.KEYDOWN:
 
                     # Check key event is valid
-                    if not check_key_pressed_valid(event):
+                    if not _utils.check_key_pressed_valid(event):
                         continue
 
                     if event.key == _ctrl.KEY_MOVE_DOWN:

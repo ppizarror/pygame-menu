@@ -30,10 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Get actual folder
 import os.path as _path
 import pygame.font as _font
 
+# Get actual folder
 __actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
 __fontdir = '{0}/resources/fonts/{1}.ttf'
 
