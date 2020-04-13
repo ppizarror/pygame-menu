@@ -2,7 +2,7 @@
 .. module:: pygameMenu.widgets.image
 
 ======
-Button
+Image
 ======
 
 .. autoclass:: pygameMenu.widgets.Image
