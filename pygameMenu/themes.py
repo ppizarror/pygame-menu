@@ -30,8 +30,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
+import pygame
 import pygameMenu
+import pygameMenu.utils
 
 
 class Theme(object):
@@ -128,7 +129,7 @@ class Theme(object):
         self.title_background_color = self._get(kwargs, 'title_background_color',
                                                 'color', (70, 70, 70))
         self.title_font = self._get(kwargs, 'title_font',
-                                    (str, type(None)), None)
+                                    (str, type(None)))
         self.title_font_color = self._get(kwargs, 'title_font_color',
                                           'color', (220, 220, 220))
         self.title_font_size = self._get(kwargs, 'title_font_size',
@@ -158,7 +159,8 @@ class Theme(object):
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position',
                                                 'position', pygameMenu.locals.POSITION_NORTHWEST)
 
-    def _get(self, params, key, allowed_types=None, default=None):
+    @staticmethod
+    def _get(params, key, allowed_types=None, default=None):
         """
         Return a value from a dictionary.
 
@@ -167,7 +169,7 @@ class Theme(object):
         :param key: key to look for
         :type key: basestring
         :param allowed_types: list of allowed types
-        :type allowed_types: tuple
+        :type allowed_types: any
         :param default: default value to return
         :type default: any
         :return: the value associated to the key
@@ -189,7 +191,8 @@ class Theme(object):
 
             others = [t for t in allowed_types if t not in ('color', 'position', 'alignment')]
             if others:
-                msg = "Theme.{} type shall be {} (got {})".format(key, others, type(value))
+                msg = 'Theme.{} type shall be {} (got {})'.format(key, others, type(value))
+                # noinspection PyTypeChecker
                 assert isinstance(value, others), msg
         return value
 
@@ -206,7 +209,7 @@ class Theme(object):
         # noinspection PyProtectedMember
         rect = widget._rect.copy().inflate(self.selection_margin_x,
                                            self.selection_margin_y).move(0, -1)
-        _pygame.draw.rect(surface, self.selection_color, rect, self.selection_border_width)
+        pygame.draw.rect(surface, self.selection_color, rect, self.selection_border_width)
 
 
 THEME_DEFAULT = Theme()

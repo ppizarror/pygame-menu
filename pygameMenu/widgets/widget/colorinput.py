@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
+import pygame
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import check_key_pressed_valid, make_surface
@@ -273,7 +273,7 @@ class ColorInput(TextInput):
         key = ''  # Pressed key
         if self._color_type == _TYPE_RGB:
             for event in events:  # type: _pygame.event.EventType
-                if event.type == _pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
                     if not check_key_pressed_valid(event):
@@ -285,12 +285,12 @@ class ColorInput(TextInput):
                     ):
 
                         # Backspace button, delete text from right
-                        if event.key == _pygame.K_BACKSPACE:
+                        if event.key == pygame.K_BACKSPACE:
                             if len(_input) >= 1 and _input[_curpos - 1] == self._separator:
                                 return True
 
                         # Delete button, delete text from left
-                        elif event.key == _pygame.K_DELETE:
+                        elif event.key == pygame.K_DELETE:
                             if _input[_curpos] == self._separator:
                                 return True
 
@@ -348,19 +348,19 @@ class ColorInput(TextInput):
 
         elif self._color_type == _TYPE_HEX:
             for event in events:  # type: _pygame.event.EventType
-                if event.type == _pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
                     if not check_key_pressed_valid(event):
                         return True
 
                     # Backspace button, delete text from right
-                    if event.key == _pygame.K_BACKSPACE:
+                    if event.key == pygame.K_BACKSPACE:
                         if _curpos == 1:
                             return True
 
                     # Delete button, delete text from left
-                    elif event.key == _pygame.K_DELETE:
+                    elif event.key == pygame.K_DELETE:
                         if _curpos == 0:
                             return True
 

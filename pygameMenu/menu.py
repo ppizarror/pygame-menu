@@ -35,7 +35,7 @@ import types
 import textwrap
 from uuid import uuid4
 
-import pygame as pygame
+import pygame
 import pygameMenu.controls as _controls
 import pygameMenu.events as _events
 import pygameMenu.locals as _locals
@@ -46,11 +46,11 @@ from pygameMenu.scrollarea import ScrollArea
 from pygameMenu.sound import Sound
 
 # Joy events
-JOY_EVENT_LEFT = 1
-JOY_EVENT_RIGHT = 2
-JOY_EVENT_UP = 4
-JOY_EVENT_DOWN = 8
-JOY_EVENT_REPEAT = pygame.NUMEVENTS - 1
+_JOY_EVENT_LEFT = 1
+_JOY_EVENT_RIGHT = 2
+_JOY_EVENT_UP = 4
+_JOY_EVENT_DOWN = 8
+_JOY_EVENT_REPEAT = pygame.NUMEVENTS - 1
 
 
 class Menu(object):
@@ -909,9 +909,9 @@ class Menu(object):
         """
         assert isinstance(widget, _widgets.Widget)
         if self._columns > 1:
-            _max_elements = self._columns * self._rows
-            _msg = 'total widgets cannot be greater than columns*rows ({0} elements)'.format(_max_elements)
-            assert len(self._widgets) + 1 <= _max_elements, _msg
+            max_elements = self._columns * self._rows
+            assert len(self._widgets) + 1 <= max_elements, \
+                'total widgets cannot be greater than columns*rows ({0} elements)'.format(max_elements)
         self._widgets.append(widget)
         if self._index < 0 and widget.is_selectable:
             widget.set_selected()
@@ -995,14 +995,14 @@ class Menu(object):
         self._menubar.set_position(self._pos_x, self._pos_y)
 
         # Store widget rects
-        _widget_rect = {}
+        widget_rects = {}
         for widget in self._widgets:  # type: _widgets.Widget
-            _widget_rect[widget.get_id()] = widget.get_rect()
+            widget_rects[widget.get_id()] = widget.get_rect()
 
         # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]  # type: _widgets.Widget
-            rect = _widget_rect[widget.get_id()]  # type: pygame.Rect
+            rect = widget_rects[widget.get_id()]  # type: pygame.Rect
             selection = widget.get_selection_effect()
 
             # Get column and row position
@@ -1032,7 +1032,7 @@ class Menu(object):
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.Widget
-                ysum += _widget_rect[rwidget.get_id()].height + rwidget.get_margin()[1]
+                ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
             y_coord = self._widget_offset_y + ysum + sel_bottom
 
             # Update the position of the widget
@@ -1318,13 +1318,13 @@ class Menu(object):
         """
         Handle joy events.
         """
-        if self._joy_event & JOY_EVENT_UP:
+        if self._joy_event & _JOY_EVENT_UP:
             self._select(self._index - 1)
-        if self._joy_event & JOY_EVENT_DOWN:
+        if self._joy_event & _JOY_EVENT_DOWN:
             self._select(self._index + 1)
-        if self._joy_event & JOY_EVENT_LEFT:
+        if self._joy_event & _JOY_EVENT_LEFT:
             self._left()
-        if self._joy_event & JOY_EVENT_RIGHT:
+        if self._joy_event & _JOY_EVENT_RIGHT:
             self._right()
 
     def update(self, events):
@@ -1418,28 +1418,28 @@ class Menu(object):
                     prev = self._current._joy_event
                     self._current._joy_event = 0
                     if event.axis == _controls.JOY_AXIS_Y and event.value < -_controls.JOY_DEADZONE:
-                        self._current._joy_event |= JOY_EVENT_UP
+                        self._current._joy_event |= _JOY_EVENT_UP
                     if event.axis == _controls.JOY_AXIS_Y and event.value > _controls.JOY_DEADZONE:
-                        self._current._joy_event |= JOY_EVENT_DOWN
+                        self._current._joy_event |= _JOY_EVENT_DOWN
                     if event.axis == _controls.JOY_AXIS_X and event.value < -_controls.JOY_DEADZONE and self._columns > 1:
-                        self._current._joy_event |= JOY_EVENT_LEFT
+                        self._current._joy_event |= _JOY_EVENT_LEFT
                     if event.axis == _controls.JOY_AXIS_X and event.value > _controls.JOY_DEADZONE and self._columns > 1:
-                        self._current._joy_event |= JOY_EVENT_RIGHT
+                        self._current._joy_event |= _JOY_EVENT_RIGHT
                     if self._current._joy_event:
                         self._current._handle_joy_event()
                         if self._current._joy_event == prev:
-                            pygame.time.set_timer(JOY_EVENT_REPEAT, _controls.JOY_REPEAT)
+                            pygame.time.set_timer(_JOY_EVENT_REPEAT, _controls.JOY_REPEAT)
                         else:
-                            pygame.time.set_timer(JOY_EVENT_REPEAT, _controls.JOY_DELAY)
+                            pygame.time.set_timer(_JOY_EVENT_REPEAT, _controls.JOY_DELAY)
                     else:
-                        pygame.time.set_timer(JOY_EVENT_REPEAT, 0)
+                        pygame.time.set_timer(_JOY_EVENT_REPEAT, 0)
 
-                elif event.type == JOY_EVENT_REPEAT:
+                elif event.type == _JOY_EVENT_REPEAT:
                     if self._current._joy_event:
                         self._current._handle_joy_event()
-                        pygame.time.set_timer(JOY_EVENT_REPEAT, _controls.JOY_REPEAT)
+                        pygame.time.set_timer(_JOY_EVENT_REPEAT, _controls.JOY_REPEAT)
                     else:
-                        pygame.time.set_timer(JOY_EVENT_REPEAT, 0)
+                        pygame.time.set_timer(_JOY_EVENT_REPEAT, 0)
 
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._current._widgets)):

@@ -30,11 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import os.path as _path
+import os.path as path
 import pygame.font as _font
 
 # Get actual folder
-__actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
+__actualpath = str(path.abspath(path.dirname(__file__))).replace('\\', '/')
 __fontdir = '{0}/resources/fonts/{1}.ttf'
 
 # Available fonts
@@ -73,7 +73,7 @@ def get_font(name, size):
             raise ValueError('Font size cannot be lower or equal than zero')
 
         # Font is not a file, then use a system font
-        if not _path.isfile(name):
+        if not path.isfile(name):
             font_name = name
             name = _font.match_font(font_name)
 

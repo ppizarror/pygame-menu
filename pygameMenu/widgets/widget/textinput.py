@@ -30,9 +30,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import math as _math
-import pygame as _pygame
-import pygameMenu.controls as _ctrl
+import math
+import pygame
+import pygameMenu.controls as _controls
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import check_key_pressed_valid, make_surface
@@ -177,16 +177,16 @@ class TextInput(Widget):
 
         self._input_string = ''  # Inputted text
         self._ignore_keys = (  # Ignore keys on input-gathering events
-            _ctrl.KEY_MOVE_DOWN,
-            _ctrl.KEY_MOVE_UP,
-            _pygame.K_CAPSLOCK,
-            _pygame.K_LCTRL,
-            _pygame.K_LSHIFT,
-            _pygame.K_NUMLOCK,
-            _pygame.K_RCTRL,
-            _pygame.K_RETURN,
-            _pygame.K_RSHIFT,
-            _pygame.K_TAB
+            _controls.KEY_MOVE_DOWN,
+            _controls.KEY_MOVE_UP,
+            pygame.K_CAPSLOCK,
+            pygame.K_LCTRL,
+            pygame.K_LSHIFT,
+            pygame.K_NUMLOCK,
+            pygame.K_RCTRL,
+            pygame.K_RETURN,
+            pygame.K_RSHIFT,
+            pygame.K_TAB
         )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
@@ -209,13 +209,13 @@ class TextInput(Widget):
         self._renderbox = [0, 0, 0]  # Left/Right/Inner, int
 
         # Things cursor:
-        self._clock = _pygame.time.Clock()  # type: _pygame.time.Clock
+        self._clock = pygame.time.Clock()  # type: pygame.time.Clock
         self._cursor_color = cursor_color
         self._cursor_ms_counter = 0.0  # type: float
         self._cursor_offset = -1.0  # type: float
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
-        self._cursor_surface = None  # type: (_pygame.Surface,None)
+        self._cursor_surface = None  # type: (pygame.Surface,None)
         self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500.0  # type: float
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
@@ -236,7 +236,7 @@ class TextInput(Widget):
         self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
-        self._selection_surface = None  # type: (_pygame.Surface,None)
+        self._selection_surface = None  # type: (pygame.Surface,None)
 
         # List of valid chars
         if valid_chars is not None:
@@ -258,7 +258,7 @@ class TextInput(Widget):
         self._label_size = 0.0  # type: float
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygameMenu__last_render_string__'  # type: str
-        self._last_rendered_surface = None  # type: (_pygame.Surface,None)
+        self._last_rendered_surface = None  # type: (pygame.Surface,None)
         self._last_rendered_surface_underline_width = 0  # type: int
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
@@ -473,11 +473,11 @@ class TextInput(Widget):
             menu = self.get_menu()
 
             # Calculate total available space
-            current_rect = self._surface.get_rect()  # type: _pygame.rect.RectType
+            current_rect = self._surface.get_rect()  # type: pygame.rect.RectType
             menu_rect = menu.get_rect()
             posx2 = menu_rect.x + menu_rect.width
             space_between_label = posx2 - self._label_size - self._rect.x
-            char = _math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
+            char = math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
 
             # If char limit
             max_width_current = 0
@@ -488,7 +488,7 @@ class TextInput(Widget):
                     basechar = self._password_char
                 max_size = self.font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
-                maxchar_char = _math.ceil(max_size * 1.0 / self._input_underline_size)
+                maxchar_char = math.ceil(max_size * 1.0 / self._input_underline_size)
                 char = min(char, maxchar_char)
                 max_width_current = current_rect.width
 
@@ -1358,9 +1358,9 @@ class TextInput(Widget):
     def update(self, events):
         updated = False
 
-        for event in events:  # type: _pygame.event.EventType
+        for event in events:  # type: pygame.event.EventType
 
-            if event.type == _pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
 
                 # Check if any key is pressed, if True the event is invalid
                 if not check_key_pressed_valid(event):
@@ -1376,14 +1376,14 @@ class TextInput(Widget):
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if _pygame.key.get_mods() & _pygame.KMOD_CTRL:
+                if pygame.key.get_mods() & pygame.KMOD_CTRL:
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
-                        _pygame.key.set_mods(_pygame.KMOD_NONE)
+                        pygame.key.set_mods(pygame.KMOD_NONE)
 
                     # Ctrl+C copy
-                    if event.key == _pygame.K_c:
+                    if event.key == pygame.K_c:
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
                             return
@@ -1393,14 +1393,14 @@ class TextInput(Widget):
                         return copy_status
 
                     # Ctrl+V paste
-                    elif event.key == _pygame.K_v:
+                    elif event.key == pygame.K_v:
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
                             return
                         return self._paste()
 
                     # Ctrl+Z undo
-                    elif event.key == _pygame.K_z:
+                    elif event.key == pygame.K_z:
                         if self._max_history == 0:
                             self.sound.play_event_error()
                             return
@@ -1408,7 +1408,7 @@ class TextInput(Widget):
                         return self._undo()
 
                     # Ctrl+Y redo
-                    elif event.key == _pygame.K_y:
+                    elif event.key == pygame.K_y:
                         if self._max_history == 0:
                             self.sound.play_event_error()
                             return
@@ -1416,7 +1416,7 @@ class TextInput(Widget):
                         return self._redo()
 
                     # Ctrl+X cut
-                    elif event.key == _pygame.K_x:
+                    elif event.key == pygame.K_x:
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
                             return
@@ -1424,7 +1424,7 @@ class TextInput(Widget):
                         return self._cut()
 
                     # Ctrl+A select all
-                    elif event.key == _pygame.K_a:
+                    elif event.key == pygame.K_a:
                         if not self._selection_enabled:
                             self.sound.play_event_error()
                             return
@@ -1436,7 +1436,7 @@ class TextInput(Widget):
                         return False
 
                 # Backspace button, delete text from right
-                if event.key == _pygame.K_BACKSPACE:
+                if event.key == pygame.K_BACKSPACE:
 
                     # Play sound
                     if self._cursor_position == 0:
@@ -1454,7 +1454,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Delete button, delete text from left
-                elif event.key == _pygame.K_DELETE:
+                elif event.key == pygame.K_DELETE:
 
                     # Play sound
                     if self._cursor_position == len(self._input_string):
@@ -1472,7 +1472,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Right arrow
-                elif event.key == _pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT:
 
                     # Play sound
                     if self._cursor_position == len(self._input_string):
@@ -1498,7 +1498,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Left arrow
-                elif event.key == _pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT:
 
                     # Play sound
                     if self._cursor_position == 0:
@@ -1524,7 +1524,7 @@ class TextInput(Widget):
                     updated = True
 
                 # End
-                elif event.key == _pygame.K_END:
+                elif event.key == pygame.K_END:
                     self.sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
@@ -1532,7 +1532,7 @@ class TextInput(Widget):
                     updated = True
 
                 # Home
-                elif event.key == _pygame.K_HOME:
+                elif event.key == pygame.K_HOME:
                     self.sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
@@ -1540,21 +1540,21 @@ class TextInput(Widget):
                     updated = True
 
                 # Enter
-                elif event.key == _ctrl.KEY_APPLY:
+                elif event.key == _controls.KEY_APPLY:
                     self.sound.play_open_menu()
                     self.apply()
                     self._unselect_text()
                     updated = True
 
                 # Escape
-                elif event.key == _pygame.K_ESCAPE:
+                elif event.key == pygame.K_ESCAPE:
                     # Nothing updated if nothing selected
                     if self._get_selected_text():
                         self._unselect_text()
                         updated = True
 
                 # Press lshift, rshift -> selection
-                elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
+                elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                     if not self._selection_active:
                         self._selection_active = True
                         self._selection_box[0] = self._cursor_position
@@ -1567,25 +1567,25 @@ class TextInput(Widget):
                         break
                     updated = True
 
-            elif event.type == _pygame.KEYUP:
+            elif event.type == pygame.KEYUP:
                 # Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
 
                 # If selection keys are released, stop selection
-                elif event.key == _pygame.K_LSHIFT or event.key == _pygame.K_RSHIFT:
+                elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                     self._selection_active = False
 
                 # Release inputs
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 self._selection_active = False
                 self._check_mouse_collide_input(event.pos)
 
-            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONDOWN:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
                 self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 if self._selection_active:
                     self._unselect_text()
@@ -1597,13 +1597,13 @@ class TextInput(Widget):
         self._keyrepeat_mouse_ms += time_clock
 
         # Check mouse pressed
-        mouse_left, mouse_middle, mouse_right = _pygame.mouse.get_pressed()
+        mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = mouse_left or mouse_right or mouse_middle
 
         if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
             self._keyrepeat_mouse_ms = 0
             if mouse_left:
-                pos = _pygame.mouse.get_pos()
+                pos = pygame.mouse.get_pos()
                 self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
                                                  pos[1] - self._absolute_origin[1]))
 
@@ -1618,11 +1618,11 @@ class TextInput(Widget):
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
                 try:
                     # noinspection PyArgumentList
-                    _pygame.event.post(_pygame.event.Event(_pygame.KEYDOWN,
-                                                           key=event_key,
-                                                           unicode=event_unicode)
-                                       )
-                except _pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
+                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN,
+                                                         key=event_key,
+                                                         unicode=event_unicode)
+                                      )
+                except pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
                     pass
 
         # Update self._cursor_visible

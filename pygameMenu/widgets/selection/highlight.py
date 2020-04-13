@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
+import pygame
 from pygameMenu.widgets.core.selection import Selection
 
 
@@ -83,8 +83,8 @@ class HighlightSelection(Selection):
         :return: None
         """
         # noinspection PyProtectedMember
-        rect = widget._rect.copy().inflate(self.margin_x, self.margin_y).move(0, -1)
-        _pygame.draw.rect(surface,
-                          self.color,
-                          rect,
-                          self.border_width)
+        rect = widget.get_rect().inflate(self.margin_x, self.margin_y).move(0, -1)
+        pygame.draw.rect(surface,
+                         self.color,
+                         rect,
+                         self.border_width)

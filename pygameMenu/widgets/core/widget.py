@@ -30,12 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
+import pygame
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
-from pygameMenu.widgets.core.selection import Selection as _Selection
-from pygameMenu.sound import Sound as _Sound
+from pygameMenu.widgets.core.selection import Selection
+from pygameMenu.sound import Sound
 from pygameMenu.utils import make_surface, assert_alignment, assert_color, assert_position
 from uuid import uuid4
 
@@ -72,9 +72,9 @@ class Widget(object):
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER
         self._id = str(widget_id)
-        self._last_selected_surface = None  # type: (_pygame.Surface,None)
-        self._selected_rect = None  # type: (_pygame.rect.Rect,None)
-        self._rect = _pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (_pygame.Rect,None)
+        self._last_selected_surface = None  # type: (pygame.Surface,None)
+        self._selected_rect = None  # type: (pygame.rect.Rect,None)
+        self._rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (pygame.Rect,None)
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
 
@@ -84,7 +84,7 @@ class Widget(object):
         self._on_return = onreturn  # type: callable
 
         # Surface of the widget
-        self._surface = None  # type: (_pygame.Surface,None)
+        self._surface = None  # type: (pygame.Surface,None)
 
         # Menu reference
         self._menu = None
@@ -94,7 +94,7 @@ class Widget(object):
         self._menu_surface_needs_update = False
 
         # Modified in set_font() method
-        self._font = None  # type: (_pygame.font.Font,None)
+        self._font = None  # type: (pygame.font.Font,None)
         self._font_name = ''  # type: str
         self._font_size = 0  # type: int
         self._font_color = (0, 0, 0)  # type: tuple
@@ -120,14 +120,14 @@ class Widget(object):
         self._last_render_surface_size = (0.0, 0.0)
 
         # noinspection PyTypeChecker
-        self._selection_effect = None  # type: _Selection
+        self._selection_effect = None  # type: Selection
 
         # Public attributes
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True  # type: bool
         self.mouse_enabled = True  # type: bool
         self.selected = False  # type: bool
-        self.sound = _Sound()  # type: _Sound
+        self.sound = Sound()  # type: Sound
 
     @staticmethod
     def _hash_variables(*args):
@@ -173,7 +173,7 @@ class Widget(object):
         :type selection: pygameMenu.widgets.core.selection.Selection
         :return: None
         """
-        assert isinstance(selection, _Selection)
+        assert isinstance(selection, Selection)
         self._selection_effect = selection
 
     def apply(self, *args):
@@ -285,7 +285,7 @@ class Widget(object):
         :rtype: pygame.rect.RectType
         """
         self._render()
-        return self._rect
+        return self._rect.copy()
 
     def get_value(self):
         """
@@ -372,7 +372,7 @@ class Widget(object):
         new_height = surface.get_size()[1]
 
         if self._max_width is not None and new_width > self._max_width:
-            surface = _pygame.transform.smoothscale(surface, (self._max_width, new_height))
+            surface = pygame.transform.smoothscale(surface, (self._max_width, new_height))
 
         return surface
 

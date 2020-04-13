@@ -31,8 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os.path as _path
-
-import pygame as _pygame
+import pygame
 
 # https://www.pygame.org/docs/ref/image.html
 _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
@@ -72,7 +71,7 @@ class BaseImage(object):
         self._extension = file_extension
 
         # Load the image and store as a surface
-        self._surface = _pygame.image.load(image_path)  # type: _pygame.SurfaceType
+        self._surface = pygame.image.load(image_path)  # type: pygame.SurfaceType
         self._original_surface = self._surface.copy()
 
     def get_size(self):
@@ -117,8 +116,8 @@ class BaseImage(object):
         :rtype: bool
         """
         assert isinstance(image, BaseImage)
-        im1 = _pygame.image.tostring(self._surface, 'RGBA')
-        im2 = _pygame.image.tostring(image._surface, 'RGBA')
+        im1 = pygame.image.tostring(self._surface, 'RGBA')
+        im2 = pygame.image.tostring(image._surface, 'RGBA')
         return im1 == im2
 
     def restore(self):
@@ -151,7 +150,7 @@ class BaseImage(object):
         assert isinstance(x, bool)
         assert isinstance(y, bool)
         assert not (x and y), 'at least one axis should be True'
-        self._surface = _pygame.transform.flip(self._surface, x, y)
+        self._surface = pygame.transform.flip(self._surface, x, y)
 
     def scale(self, width, height, smooth=False):
         """
@@ -171,9 +170,9 @@ class BaseImage(object):
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
         if not smooth:
-            self._surface = _pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
+            self._surface = pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
         else:
-            self._surface = _pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
+            self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
 
     def scale2x(self):
         """
@@ -186,7 +185,7 @@ class BaseImage(object):
 
         :return: None
         """
-        self._surface = _pygame.transform.scale2x(self._surface)
+        self._surface = pygame.transform.scale2x(self._surface)
 
     def resize(self, width, height, smooth=False):
         """
@@ -233,4 +232,4 @@ class BaseImage(object):
         :return: None
         """
         assert isinstance(angle, (int, float))
-        self._surface = _pygame.transform.rotate(self._surface, angle)
+        self._surface = pygame.transform.rotate(self._surface, angle)

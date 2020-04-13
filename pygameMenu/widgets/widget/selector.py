@@ -30,8 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame as _pygame
-import pygameMenu.controls as _ctrl
+import pygame
+import pygameMenu.controls as _controls
 
 from pygameMenu.utils import check_key_pressed_valid
 from pygameMenu.widgets.core.widget import Widget
@@ -171,39 +171,39 @@ class Selector(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: _pygame.event.EventType
+        for event in events:  # type: pygame.event.EventType
 
-            if event.type == _pygame.KEYDOWN:  # Check key is valid
+            if event.type == pygame.KEYDOWN:  # Check key is valid
                 if not check_key_pressed_valid(event):
                     continue
 
             # Events
-            keydown = event.type == _pygame.KEYDOWN
-            joy_hatmotion = self.joystick_enabled and event.type == _pygame.JOYHATMOTION
-            joy_axismotion = self.joystick_enabled and event.type == _pygame.JOYAXISMOTION
-            joy_button_down = self.joystick_enabled and event.type == _pygame.JOYBUTTONDOWN
+            keydown = event.type == pygame.KEYDOWN
+            joy_hatmotion = self.joystick_enabled and event.type == pygame.JOYHATMOTION
+            joy_axismotion = self.joystick_enabled and event.type == pygame.JOYAXISMOTION
+            joy_button_down = self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
-            if keydown and event.key == _ctrl.KEY_LEFT or \
-                    joy_hatmotion and event.value == _ctrl.JOY_LEFT or \
-                    joy_axismotion and event.axis == _ctrl.JOY_AXIS_X and event.value < _ctrl.JOY_DEADZONE:
+            if keydown and event.key == _controls.KEY_LEFT or \
+                    joy_hatmotion and event.value == _controls.JOY_LEFT or \
+                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
                 self.sound.play_key_add()
                 self.left()
                 updated = True
 
-            elif keydown and event.key == _ctrl.KEY_RIGHT or \
-                    joy_hatmotion and event.value == _ctrl.JOY_RIGHT or \
-                    joy_axismotion and event.axis == _ctrl.JOY_AXIS_X and event.value > -_ctrl.JOY_DEADZONE:
+            elif keydown and event.key == _controls.KEY_RIGHT or \
+                    joy_hatmotion and event.value == _controls.JOY_RIGHT or \
+                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
                 self.sound.play_key_add()
                 self.right()
                 updated = True
 
-            elif keydown and event.key == _ctrl.KEY_APPLY or \
-                    joy_button_down and event.button == _ctrl.JOY_BUTTON_SELECT:
+            elif keydown and event.key == _controls.KEY_APPLY or \
+                    joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
                 self.sound.play_open_menu()
                 self.apply(*self._elements[self._index][1:])
                 updated = True
 
-            elif self.mouse_enabled and event.type == _pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._rect.collidepoint(*event.pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
