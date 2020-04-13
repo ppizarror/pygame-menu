@@ -61,7 +61,7 @@ class Menu(object):
     :type menu_height: int, float
     :param menu_width: Width of the Menu (px)
     :type menu_width: int, float
-    :param font: Font file path
+    :param font: Menu font file path or name
     :type font: basestring
     :param title: Title of the Menu (main title)
     :type title: basestring
@@ -325,7 +325,6 @@ class Menu(object):
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._joy_event = 0  # type: int
-        self._selection_color = selection_color
         self._onclose = onclose  # Function that calls after closing Menu
         self._sounds = _Sound()  # type: _Sound
         self._submenus = []  # type: list
@@ -360,21 +359,22 @@ class Menu(object):
         if abs(widget_offset_y) < 1:
             widget_offset_y *= self._height
         self._widgets = []  # type: list
-        self._widget_alignment = widget_alignment
-        self._widget_font_color = widget_font_color
-        self._widget_font_name = font
-        self._widget_font_size = widget_font_size
-        self._widget_margin = (widget_margin_x, widget_margin_y)
+        self._widget_default_alignment = widget_alignment
+        self._widget_default_font_color = widget_font_color
+        self._widget_default_font_name = font
+        self._widget_default_font_size = widget_font_size
+        self._widget_default_margin = (widget_margin_x, widget_margin_y)
+        self._widget_default_selection = widget_selection
+        self._widget_default_selection_color = selection_color
+        self._widget_default_shadow = widget_shadow
+        self._widget_default_shadow_color = widget_shadow_color
+        self._widget_default_shadow_offset = widget_shadow_offset
+        self._widget_default_shadow_position = widget_shadow_position
         self._widget_offset_x = widget_offset_x
         self._widget_offset_y = widget_offset_y
-        self._widget_selection = widget_selection
-        self._widget_shadow = widget_shadow
-        self._widget_shadow_color = widget_shadow_color
-        self._widget_shadow_offset = widget_shadow_offset
-        self._widget_shadow_position = widget_shadow_position
 
         # Configure the selection widget effect
-        self._widget_selection.set_color(selection_color)
+        self._widget_default_selection.set_color(selection_color)
 
         # Columns and rows
         self._column_max_width = column_max_width
@@ -443,10 +443,14 @@ class Menu(object):
         Adds a button to the current Menu.
 
         kwargs (Optional):
-            - align         Widget alignment (str)
-            - button_id     Widget ID (str)
-            - font_size     Font size of the widget (int)
-            - margin        Tuple of (x,y) integers
+            - align             Widget alignment (str)
+            - button_id         Widget ID (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
 
         :param title: Title of the button
         :type title: basestring
@@ -454,6 +458,7 @@ class Menu(object):
         :type action: Menu, PymenuAction, function
         :param args: Additional arguments used by a function
         :param kwargs: Additional keyword arguments
+        :type kwargs: any
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.Button`
         """
@@ -487,29 +492,21 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         # Configure and add the button
-        self._current._configure_widget(widget=widget,
-                                        align=kwargs.pop('align', self._current._widget_alignment),
-                                        font_size=kwargs.pop('font_size', self._current._widget_font_size),
-                                        margin=kwargs.pop('margin', self._current._widget_margin),
-                                        )
+        self._current._configure_widget(widget=widget, **kwargs)
         self._current._append_widget(widget)
         return widget
 
     def add_color_input(self,
                         title,
                         color_type,
-                        align=None,
                         color_id='',
                         default='',
-                        font_size=None,
                         input_separator=',',
                         input_underline='_',
-                        margin=None,
                         onchange=None,
                         onreturn=None,
                         previsualization_width=3,
-                        **kwargs
-                        ):
+                        **kwargs):
         """
         Add a color widget with RGB or Hex format to the current Menu.
         Includes a preview box that renders the given color.
@@ -518,24 +515,27 @@ class Menu(object):
             onchange(current_text, \*\*kwargs)
             onreturn(current_text, \*\*kwargs)
 
+        kwargs (Optional):
+            - align             Widget alignment (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+
         :param title: Title of the color input
         :type title: basestring
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: basestring
-        :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring, NoneType
         :param color_id: ID of the color input
         :type color_id: basestring
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
         :type default: basestring, tuple
-        :param font_size: Font size of the widget, if None use default Menu widget font size
-        :type font_size: int, NoneType
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :type input_separator: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
-        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple, NoneType
         :param onchange: Function when changing the selector
         :type onchange: callable, NoneType
         :param onreturn: Function when pressing return button
@@ -543,6 +543,7 @@ class Menu(object):
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Additional keyword-parameters
+        :type kwargs: any
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.ColorInput`
         """
@@ -556,40 +557,45 @@ class Menu(object):
                                      onreturn=onreturn,
                                      prev_size=previsualization_width,
                                      **kwargs)
-        self._current._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._current._configure_widget(widget=widget, **kwargs)
         widget.set_value(default)
         self._current._append_widget(widget)
         return widget
 
     def add_image(self,
                   image_path,
-                  align=None,
                   angle=0,
                   image_id='',
-                  margin=None,
                   scale=(1, 1),
                   scale_smooth=False,
                   selectable=False,
-                  ):
+                  **kwargs):
         """
         Add a simple image to the current Menu.
+
+        kwargs (Optional):
+            - align             Widget alignment (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Image`
 
         :param image_path: Path of the image of the widget
         :type image_path: basestring
         :param image_id: ID of the label
         :type image_id: basestring
-        :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring, NoneType
         :param angle: Angle of the image in degrees (clockwise)
         :type angle: int, float
-        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple, NoneType
         :param scale: Scale of the image (x,y), float or int
         :type scale: tuple, list
         :param scale_smooth: Scale is smoothed
         :type scale_smooth: bool
-        :param selectable: Widget accepts user selection
+        :param selectable: Image accepts user selection
         :type selectable: bool
+        :param kwargs: Optional keywords arguments
+        :type kwargs: any
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.Image`
         """
@@ -600,36 +606,38 @@ class Menu(object):
                                 scale=scale,
                                 scale_smooth=scale_smooth)
         widget.is_selectable = selectable
-        self._current._configure_widget(widget=widget, align=align, margin=margin)
+        self._current._configure_widget(widget=widget, **kwargs)
         self._current._append_widget(widget)
         return widget
 
     def add_label(self,
                   title,
-                  align=None,
-                  font_size=None,
                   label_id='',
                   max_char=0,
-                  margin=None,
                   selectable=False,
-                  ):
+                  **kwargs):
         """
         Add a simple text to the current Menu.
+
+        kwargs (Optional):
+            - align             Widget alignment (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
 
         :param title: Text to be displayed
         :type title: basestring
         :param label_id: ID of the label
         :type label_id: basestring
-        :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring, NoneType
-        :param font_size: Font size of the text, if None use default widget font size
-        :type font_size: int, NoneType
         :param max_char: If text length exeeds this limit then split the text and add another label, if 0 there's no limit
         :type max_char: int
-        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple, NoneType
-        :param selectable: Widget accepts user selection
+        :param selectable: Label accepts user selection
         :type selectable: bool
+        :param kwargs: Optional keywords arguments
+        :type kwargs: any
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygameMenu.widgets.Label`, list[:py:class:`pygameMenu.widgets.Label`]
         """
@@ -644,34 +652,27 @@ class Menu(object):
         if len(title) <= max_char or max_char == 0:
             widget = _widgets.Label(label=title, label_id=label_id)
             widget.is_selectable = selectable
-            self._current._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+            self._current._configure_widget(widget=widget, **kwargs)
             self._current._append_widget(widget)
         else:
             self._current._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
             for line in _textwrap.wrap(title, max_char):
                 widget.append(self.add_label(title=line,
-                                             align=align,
-                                             font_size=font_size,
                                              label_id=label_id + '+' + str(len(widget) + 1),
                                              max_char=max_char,
-                                             margin=margin,
-                                             selectable=selectable)
-                              )
+                                             selectable=selectable,
+                                             **kwargs))
         return widget
 
     def add_selector(self,
                      title,
                      items,
-                     align=None,
                      default=0,
-                     font_size=None,
-                     margin=None,
                      onchange=None,
                      onreturn=None,
                      selector_id='',
-                     **kwargs
-                     ):
+                     **kwargs):
         """
         Add a selector to the current Menu: several items with values and
         two functions that are executed when changing the selector (left/right)
@@ -684,18 +685,21 @@ class Menu(object):
             onchange(a, b, c..., \*\*kwargs)
             onreturn(a, b, c..., \*\*kwargs)
 
+        kwargs (Optional):
+            - align             Widget alignment (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+
         :param title: Title of the selector
         :type title: basestring
         :param items: Elements of the selector [('Item1', var1..), ('Item2'...)]
         :type items: list
-        :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring, NoneType
         :param default: Index of default value to display
         :type default: int
-        :param font_size: Font size of the widget, if None use the default Menu widget font size
-        :type font_size: int, NoneType
-        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple, NoneType
         :param onchange: Function when changing the selector
         :type onchange: callable, NoneType
         :param onreturn: Function when pressing return button
@@ -703,6 +707,7 @@ class Menu(object):
         :param selector_id: ID of the selector
         :type selector_id: basestring
         :param kwargs: Additional parameters
+        :type kwargs: any
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.Selector`
         """
@@ -713,20 +718,17 @@ class Menu(object):
                                    onchange=onchange,
                                    onreturn=onreturn,
                                    **kwargs)
-        self._current._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._current._configure_widget(widget=widget, **kwargs)
         self._current._append_widget(widget)
         return widget
 
     def add_text_input(self,
                        title,
-                       align=None,
                        default='',
                        enable_copy_paste=True,
                        enable_selection=True,
-                       font_size=None,
                        input_type=_locals.INPUT_TEXT,
                        input_underline='',
-                       margin=None,
                        maxchar=0,
                        maxwidth=0,
                        onchange=None,
@@ -734,8 +736,7 @@ class Menu(object):
                        password=False,
                        textinput_id='',
                        valid_chars=None,
-                       **kwargs
-                       ):
+                       **kwargs):
         """
         Add a text input to the current Menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -745,24 +746,27 @@ class Menu(object):
             onchange(current_text, \*\*kwargs)
             onreturn(current_text, \*\*kwargs)
 
+        kwargs (Optional):
+            - align             Widget alignment (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color
+            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+
         :param title: Title of the text input
         :type title: basestring
-        :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring, NoneType
         :param default: Default value to display
         :type default: basestring, int, float
         :param enable_copy_paste: Enable text copy, paste and cut
         :type enable_copy_paste: bool
         :param enable_selection: Enable text selection on input
         :type enable_selection: bool
-        :param font_size: Font size of the widget, if None use the default Menu widget font size
-        :type font_size: int
         :param input_type: Data type of the input
         :type input_type: basestring
         :param input_underline: Underline character
         :type input_underline: basestring
-        :param margin: Margin of the widget, tuple of (x,y) of integers, if None use default widget margin
-        :type margin: tuple, NoneType
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
@@ -778,6 +782,7 @@ class Menu(object):
         :param valid_chars: List of chars to be ignored, None if no chars are invalid
         :type valid_chars: list
         :param kwargs: Additional keyword-parameters
+        :type kwargs: any
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.TextInput`
         """
@@ -800,7 +805,7 @@ class Menu(object):
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
-        self._current._configure_widget(widget=widget, align=align, font_size=font_size, margin=margin)
+        self._current._configure_widget(widget=widget, **kwargs)
         widget.set_value(default)
         self._current._append_widget(widget)
         return widget
@@ -814,67 +819,89 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.VMargin`
         """
-        assert isinstance(margin, (int, float))
         widget = _widgets.VMargin()
         self._current._configure_widget(widget=widget, margin=(0, margin))
         self._current._append_widget(widget)
         return widget
 
-    def _configure_widget(self, widget, align=None, font_size=None, margin=None, selection=None):
+    def _configure_widget(self, widget, **kwargs):
         """
         Update the given widget with the parameters defined at
         the Menu level.
 
+        kwargs (Optional):
+            - align             Widget alignment (str)
+            - font_color        Widget font color (tuple)
+            - font_name         Widget font (str)
+            - font_size         Font size of the widget (int)
+            - margin            Tuple of (x,y) margin (int, float)
+            - selection_color   Widget selection color (tuple)
+            - selection_effect  Widget selector effect (:py:class:`pygameMenu.widgets.Selection`)
+            - shadow_enabled    Shadow is enabled or disabled (bool)
+            - shadow_color      Text shadow color (tuple)
+            - shadow_position   Text shadow position, see locals for position (str)
+            - shadow_offset     Text shadow offset (int, float, NoneType)
+
         :param widget: Widget object
         :type widget: :py:class:`pygameMenu.widgets.core.widget.Widget`
-        :param align: Widget alignment, if None use default Menu widget alignment
-        :type align: basestring, NoneType
-        :param font_size: Widget font size, if None use the default Menu widget font size
-        :type font_size: int, NoneType
-        :param margin: Widget vertical margin, if None the default Menu widget vertical margin
-        :type margin: tuple, NoneType
-        :param selection: Selection effect, if None use the default Menu seletion widget effect
-        :type selection: pygameMenu.widgets.core.selection.Selection
+        :param kwargs: Optional keywords arguments
+        :type kwargs: any
+        :return: None
         """
-        assert isinstance(widget, _widgets.Widget)
-        assert isinstance(align, (str, type(None)))
-        assert isinstance(font_size, (int, type(None)))
-        assert isinstance(margin, (tuple, type(None)))
-        assert isinstance(selection, (_widgets.Selection, type(None)))
+        align = kwargs.pop('align', self._widget_default_alignment)
+        assert isinstance(align, str)
 
-        if align is None or align == '':
-            align = self._widget_alignment
+        font_color = kwargs.pop('font_folor', self._widget_default_font_color)
+        _utils.assert_color(font_color)
 
-        if font_size is None or font_size == 0:
-            font_size = self._widget_font_size
+        font_name = kwargs.pop('font_name', self._widget_default_font_name)
+        assert isinstance(font_name, str)
+
+        font_size = kwargs.pop('font_size', self._widget_default_font_size)
+        assert isinstance(font_size, int)
         assert font_size > 0, 'font_size must be greater than zero'
 
-        if margin is None:
-            margin = self._widget_margin
-        else:
-            assert len(margin) == 2, 'margin must be a tuple of 2 elements'
+        margin = kwargs.pop('margin', self._widget_default_margin)
+        assert isinstance(margin, (tuple, list))
+        assert len(margin) == 2, 'margin must be a tuple or list of 2 numbers'
 
-        if selection is None:
-            selection = self._widget_selection
+        selection_color = kwargs.pop('selection_color', self._widget_default_selection_color)
+        _utils.assert_color(selection_color)
+
+        selection_effect = kwargs.pop('selection_effect', self._widget_default_selection)
+        assert isinstance(selection_effect, _widgets.Selection)
+
+        shadow_enabled = kwargs.pop('shadow', self._widget_default_shadow)
+        assert isinstance(shadow_enabled, bool)
+
+        shadow_color = kwargs.pop('shadow_color', self._widget_default_shadow_color)
+        _utils.assert_color(shadow_color)
+
+        shadow_position = kwargs.pop('shadow_position', self._widget_default_shadow_position)
+        assert isinstance(shadow_position, str)
+
+        shadow_offset = kwargs.pop('shadow_offset', self._widget_default_shadow_offset)
+        assert isinstance(shadow_offset, (int, float, type(None)))
 
         _col = int((len(self._widgets) - 1) // self._rows)  # Column position
 
+        # Configure the widget
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(font=self._widget_font_name,
+        widget.set_font(font=font_name,
                         font_size=font_size,
-                        color=self._widget_font_color,
-                        selected_color=self._selection_color)
+                        color=font_color,
+                        selected_color=selection_color)
         if self._force_fit_text and self._column_max_width[_col] is not None:
-            widget.set_max_width(self._column_max_width[_col] - selection.get_width())
-        widget.set_shadow(enabled=self._widget_shadow,
-                          color=self._widget_shadow_color,
-                          position=self._widget_shadow_position,
-                          offset=self._widget_shadow_offset)
+            widget.set_max_width(self._column_max_width[_col] - selection_effect.get_width())
+        widget.set_shadow(enabled=shadow_enabled,
+                          color=shadow_color,
+                          position=shadow_position,
+                          offset=shadow_offset)
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(align)
         widget.set_margin(margin[0], margin[1])
-        widget.set_selection_effect(selection)
+        widget.set_selection_effect(selection_effect)
 
     def _append_widget(self, widget):
         """

@@ -560,7 +560,7 @@ class TextInput(Widget):
         cursor_y_pos = 0
 
         # Move x position
-        cursor_x_pos += 2
+        cursor_x_pos += 3
 
         # Store position
         self._cursor_surface_pos[0] = cursor_x_pos

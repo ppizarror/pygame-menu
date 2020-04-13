@@ -49,7 +49,7 @@ class HighlightSelection(Selection):
     def __init__(self,
                  border_width=1,
                  margin_x=16.0,
-                 margin_y=4.0,
+                 margin_y=8.0,
                  ):
         assert isinstance(border_width, int)
         assert margin_x >= 0 and margin_y >= 0
