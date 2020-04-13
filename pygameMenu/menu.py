@@ -1326,17 +1326,12 @@ class Menu(object):
         menu_surface_needs_update = False
 
         # Update scroll bars
-        was_scrolling = self._current._scroll.is_scrolling()
         if self._current._scroll.update(events):
             updated = True
 
-        # If scrolling is ending, no action on any other elements
-        if was_scrolling and not self._current._scroll.is_scrolling():
-            return updated
-
         # Update the menubar, it may change the status of the widget because
         # of the button back/close
-        if self._current._menubar.update(events):
+        elif self._current._menubar.update(events):
             updated = True
 
         # Check selected widget
