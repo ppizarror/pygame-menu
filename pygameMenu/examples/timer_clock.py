@@ -168,7 +168,6 @@ def main(test=False):
                                  menu_height=400,
                                  menu_width=600,
                                  onclose=pygameMenu.events.RESET,
-                                 selection_highlight_border_width=4,
                                  title='Timer Menu',
                                  title_background_color=(0, 0, 0),
                                  title_offset_y=5,  # Adds 5px to title vertical position

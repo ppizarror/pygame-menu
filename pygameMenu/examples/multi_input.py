@@ -151,7 +151,6 @@ def main(test=False):
                                     menu_height=WINDOW_SIZE[1] * 0.85,
                                     menu_width=WINDOW_SIZE[0] * 0.9,
                                     onclose=pygameMenu.events.DISABLE_CLOSE,
-                                    selection_color=COLOR_WHITE,
                                     title='Settings',
                                     title_background_color=TITLE_BACKGROUND_COLOR,
                                     widget_alignment=pygameMenu.locals.ALIGN_LEFT,
@@ -231,9 +230,7 @@ def main(test=False):
 
     more_settings_menu.add_image(pygameMenu.baseimage.IMAGE_PYGAME_MENU,
                                  scale=(0.25, 0.25),
-                                 align=pygameMenu.locals.ALIGN_CENTER,
-                                 selectable=True
-                                 )
+                                 align=pygameMenu.locals.ALIGN_CENTER)
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
     more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_separator='-')
 

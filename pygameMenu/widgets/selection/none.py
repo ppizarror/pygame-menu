@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 HIGHLIGHT
-This module contains the widget highlight effects.
+Widget selection highlight box effect.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,3 +29,36 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+
+from pygameMenu.widgets.core.selection import Selection
+
+
+class NoneSelection(Selection):
+    """
+    No selection.
+    """
+
+    def __init__(self):
+        super(NoneSelection, self).__init__(margin_left=0, margin_right=0,
+                                            margin_top=0, margin_bottom=0)
+
+    def get_margin(self):
+        """
+        Return top, left, bottom and right margins of the selection.
+
+        :return: Tuple of (t,l,b,r) margins in px
+        :rtype: tuple
+        """
+        return 0, 0, 0, 0
+
+    def draw(self, surface, widget):
+        """
+        Draw the selection.
+
+        :param surface: Surface to draw
+        :type surface: pygame.surface.SurfaceType
+        :param widget: Widget object
+        :type widget: pygameMenu.widgets.core.widget.Widget
+        :return: None
+        """
+        pass
