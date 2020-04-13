@@ -34,17 +34,21 @@ import pygame as _pygame
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import make_surface, assert_orientation
-from pygameMenu.widgets.core.widget import Widget
+from pygameMenu.widgets.widget import Widget
 
 
 class ScrollBar(Widget):
     """
     A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control.
+
         a. The slider provides a way to quickly go to any part of the document
+
         b. The scroll arrows are push buttons which can be used to accurately navigate
            to a particular place in a document. TODO: arrows not yet implemented
+
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
+
     :param length: Length of the page control
     :type length: int
     :param values_range: Min and max values
@@ -121,6 +125,7 @@ class ScrollBar(Widget):
     def _apply_size_changes(self):
         """
         Apply scrollbar changes.
+
         :return: None
         """
         dims = ('width', 'height')
@@ -170,16 +175,17 @@ class ScrollBar(Widget):
         :rtype: int
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-               self._page_ctrl_length
+            self._page_ctrl_length
 
     def get_value(self):
         """
         Return the value according to the slider position.
+
         :return: Position in pixels
         :rtype: int
         """
         value = self._values_range[0] + self._slider_position * \
-                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
+            (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -211,6 +217,7 @@ class ScrollBar(Widget):
         """
         Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
+
         :param pixels: Number of pixels to scroll
         :type pixels: int
         :return: True is scroll position has changed
@@ -221,10 +228,10 @@ class ScrollBar(Widget):
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
-                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
+            self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
         space_after = self._rect.bottomright[axis] - \
-                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
+            self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
 
         if not move:
@@ -239,6 +246,7 @@ class ScrollBar(Widget):
     def set_length(self, value):
         """
         Set the length of the page control area.
+
         :param value: Length of the area
         :type value: int, float
         :return: None
@@ -252,6 +260,7 @@ class ScrollBar(Widget):
     def set_maximum(self, value):
         """
         Set the greatest acceptable value.
+
         :param value: Maximum value
         :type value: int, float
         :return: None
@@ -263,6 +272,7 @@ class ScrollBar(Widget):
     def set_minimum(self, value):
         """
         Set the smallest acceptable value.
+
         :param value: Minimum value
         :type value: int, float
         :return: None
@@ -274,6 +284,7 @@ class ScrollBar(Widget):
     def set_orientation(self, orientation):
         """
         Set the scroll bar orientation to vertical or horizontal.
+
         :param orientation: Widget orientation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
         :type orientation: basestring
         :return: None
@@ -290,9 +301,11 @@ class ScrollBar(Widget):
         """
         Set the amount that the value changes by when the user click on the
         page control surface.
+
         The length of the slider is related to this value, and typically
         represents the proportion of the document area shown in a scrolling
         view.
+
         :param value: Page step
         :type value: int
         :return: None
@@ -311,6 +324,7 @@ class ScrollBar(Widget):
     def set_value(self, value):
         """
         Set the position of the scrollbar.
+
         :param value: Position
         :type value: int, float
         :return: None
@@ -319,7 +333,7 @@ class ScrollBar(Widget):
             '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
         pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
-                 (self._values_range[1] - self._values_range[0])
+            (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)
