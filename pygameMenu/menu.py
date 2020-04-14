@@ -274,8 +274,7 @@ class Menu(object):
                                   shadow=self._theme.scrollbar_shadow,
                                   shadow_color=self._theme.scrollbar_shadow_color,
                                   shadow_offset=self._theme.scrollbar_shadow_offset,
-                                  shadow_position=self._theme.scrollbar_shadow_position,
-                                  )
+                                  shadow_position=self._theme.scrollbar_shadow_position)
 
     def add_button(self,
                    title,
