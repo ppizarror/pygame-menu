@@ -32,7 +32,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
 
     pygame.init()
     os.environ['SDL_VIDEO_CENTERED'] = '1'
-    surface = pygame.display.set_mode((400, 600))
+    surface = pygame.display.set_mode((600, 400))
 
 3. Make your menu
 
@@ -48,7 +48,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
                            title="Welcome",
                            theme=pygameMenu.themes.THEME_BLUE)
 
-    menu.add_text_input('Name :')
+    menu.add_text_input('Name :', default='John Doe')
     menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
     menu.add_button('Play', start_the_game)
     menu.add_button('Quit', pygameMenu.events.EXIT)
