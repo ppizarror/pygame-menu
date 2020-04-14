@@ -28,6 +28,7 @@ Theme                                           Example
 ==============================================  ================================================
 :py:data:`pygameMenu.themes.THEME_DEFAULT`      .. image:: ../_static/theme_default.png
 :py:data:`pygameMenu.themes.THEME_BLACK`        .. image:: ../_static/theme_black.png
+:py:data:`pygameMenu.themes.THEME_BLUE`         .. image:: ../_static/theme_blue.png
 :py:data:`pygameMenu.themes.THEME_GREEN`        .. image:: ../_static/theme_green.png
 :py:data:`pygameMenu.themes.THEME_ORANGE`       .. image:: ../_static/theme_orange.png
 :py:data:`pygameMenu.themes.THEME_SOLARIZED`    .. image:: ../_static/theme_solarized.png
