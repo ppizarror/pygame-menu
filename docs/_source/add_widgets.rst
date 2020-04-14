@@ -143,25 +143,26 @@ displayed, the others are the arguments passed to the callbacks
 Add a text entry
 ----------------
 
-A text input permits to enter a string using a keyboard.
+A text input permits to enter a string using a keyboard. Restriction
+on entered characters can be set using ``input_type``, ``maxchar``,
+``maxwidth`` and ``valid_chars`` parameters.
 
 **Example:**
 
+.. image:: ../_static/widget_textiput.png
+    :scale: 30%
+    :align: center
+
 .. code-block:: python
 
-    def check_name_test(value):
-        """
-        This function tests the text input widget.
-        :param value: The widget value
-        :return: None
-        """
+    def check_name(value):
         print('User name: {0}'.format(value))
 
     menu = pygameMenu.Menu(...)
 
-    menu.add_text_input('First name: ', default='John', onreturn=check_name_test)
-    menu.add_text_input('Last name: ', default='Rambo', maxchar=10)
-    menu.add_text_input('Some long text: ', maxwidth=15)
+    menu.add_text_input('First name: ', default='John', onreturn=check_name)
+    menu.add_text_input('Last name: ', default='Doe', maxchar=20)
+    menu.add_text_input('Password: ', input_type=pygameMenu.locals.INPUT_INT, password=True)
 
 .. automethod:: pygameMenu.menu.Menu.add_text_input
 
@@ -174,6 +175,10 @@ characters to enter a RGB value of HEX decimal one. There is also a
 area to display the current color.
 
 **Example:**
+
+.. image:: ../_static/widget_colorinput.png
+    :scale: 30%
+    :align: center
 
 .. code-block:: python
 
