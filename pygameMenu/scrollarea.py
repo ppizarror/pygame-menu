@@ -82,7 +82,7 @@ class ScrollArea(object):
                  area_height,
                  area_color=None,
                  extend_x=0,
-                 extend_y=1,
+                 extend_y=0,
                  scrollbar_color=(235, 235, 235),
                  scrollbar_slider_color=(200, 200, 200),
                  scrollbar_slider_pad=0,
