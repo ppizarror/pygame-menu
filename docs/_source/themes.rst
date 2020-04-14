@@ -21,6 +21,7 @@ menu window itself and all its widgets.
           when adding a widget to the menu. See the overwritable
           ones in the :ref:`add_... methods <Adding widgets>`
 
+
 Default themes
 --------------
 
@@ -61,6 +62,7 @@ copying it first.
     mytheme.title_background_color=(0, 0, 0)
 
     menu = Menu(..., theme=mytheme)
+
 
 Menubar style
 -------------
