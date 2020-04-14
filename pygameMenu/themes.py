@@ -46,7 +46,7 @@ class Theme(object):
 
                   - (R,G,B)
                   - (R,G,B,A)
-                  
+
               Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
               A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
 
@@ -270,7 +270,7 @@ THEME_DEFAULT = Theme()
 THEME_BLACK = Theme(
     background_color=(0, 0, 0),
     selection_color=(255, 255, 255),
-    title_background_color=(0, 0, 0),
+    title_background_color=(50, 50, 50),
     title_font_color=(255, 255, 255),
     widget_font_color=(150, 150, 150),
 )
