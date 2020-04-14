@@ -111,7 +111,7 @@ class Menu(object):
                  onclose=None,
                  rows=None,
                  theme=_themes.THEME_DEFAULT,
-                 title_offset=(5, 2),  # px
+                 title_offset=(5, 3),  # px
                  widget_margin=(0, 10),
                  widget_offset=(0, 0),
                  ):

@@ -156,8 +156,8 @@ class MenuBar(Widget):
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
             d = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y + self._rect.height * 0.6
             e = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + 2 + self._offsety
-            f = self._rect.x, self._rect.y + self._rect.height + 2 + self._offsety
+                self._rect.y + self._rect.height + self._offsety
+            f = self._rect.x, self._rect.y + self._rect.height + self._offsety
             self._polygon_pos = a, b, c, d, e, f
             cross_size = self._rect.height * 0.6
         elif self._mode == MENUBAR_MODE_SIMPLE:
@@ -181,8 +181,8 @@ class MenuBar(Widget):
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + 2 + self._offsety
-            d = self._rect.x, self._rect.y + self._rect.height + 2 + self._offsety
+                self._rect.y + self._rect.height + self._offsety
+            d = self._rect.x, self._rect.y + self._rect.height + self._offsety
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
         elif self._mode == MENUBAR_MODE_TITLE_ONLY_DIAGONAL:
@@ -194,8 +194,8 @@ class MenuBar(Widget):
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + 2 + self._offsety
-            d = self._rect.x, self._rect.y + self._rect.height + 2 + self._offsety
+                self._rect.y + self._rect.height + self._offsety
+            d = self._rect.x, self._rect.y + self._rect.height + self._offsety
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
         elif self._mode == MENUBAR_MODE_NONE:
