@@ -25,7 +25,7 @@ Them can also be imported as follows:
 Normal button menu
 ------------------
 
-.. image:: ../_static/normal_button_menu.gif
+.. image:: ../_static/example_normal_button_menu.gif
     :scale: 60 %
     :align: center
     :alt: Normal button menu
@@ -33,7 +33,7 @@ Normal button menu
 Textual menus
 -------------
 
-.. image:: ../_static/textual_menus.gif
+.. image:: ../_static/example_textual_menus.gif
     :scale: 60 %
     :align: center
     :alt: Textual menus
@@ -41,7 +41,7 @@ Textual menus
 Mouse support
 -------------
 
-.. image:: ../_static/mouse_support.gif
+.. image:: ../_static/example_mouse_support.gif
     :scale: 60 %
     :align: center
     :alt: Mouse support
@@ -49,7 +49,7 @@ Mouse support
 Different entries
 -----------------
 
-.. image:: ../_static/supported_entries.gif
+.. image:: ../_static/example_supported_entries.gif
     :scale: 75 %
     :align: center
     :alt: Different entries

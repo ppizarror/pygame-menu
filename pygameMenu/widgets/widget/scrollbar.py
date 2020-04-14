@@ -39,12 +39,16 @@ from pygameMenu.widgets.core.widget import Widget
 
 class ScrollBar(Widget):
     """
-    A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control.
+    A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control:
+
         a. The slider provides a way to quickly go to any part of the document
         b. The scroll arrows are push buttons which can be used to accurately navigate
-           to a particular place in a document. TODO: arrows not yet implemented
+           to a particular place in a document.
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
+
+    .. warning:: Arrows are not yet implemented
+
     :param length: Length of the page control
     :type length: int
     :param values_range: Min and max values
@@ -170,7 +174,7 @@ class ScrollBar(Widget):
         :rtype: int
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-               self._page_ctrl_length
+            self._page_ctrl_length
 
     def get_value(self):
         """
@@ -179,7 +183,7 @@ class ScrollBar(Widget):
         :rtype: int
         """
         value = self._values_range[0] + self._slider_position * \
-                (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
+            (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
 
         # Correction due to value scaling
         value = max(self._values_range[0], value)
@@ -221,10 +225,10 @@ class ScrollBar(Widget):
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
-                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
+            self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
         space_after = self._rect.bottomright[axis] - \
-                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
+            self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
 
         if not move:
@@ -319,7 +323,7 @@ class ScrollBar(Widget):
             '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
         pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
-                 (self._values_range[1] - self._values_range[0])
+            (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)
