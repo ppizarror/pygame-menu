@@ -498,7 +498,7 @@ class Menu(object):
         :type title: basestring
         :param label_id: ID of the label
         :type label_id: basestring
-        :param max_char: If text length exeeds this limit then split the text and add another label, if 0 there's no limit
+        :param max_char: Split the title in several labels if length exeeds. (0: don't split, -1: split to menu width)
         :type max_char: int
         :param selectable: Label accepts user selection
         :type selectable: bool
@@ -510,9 +510,17 @@ class Menu(object):
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
         assert isinstance(selectable, bool)
-        assert max_char >= 0, 'max characters cannot be negative'
+        assert max_char >= -1
         if len(label_id) == 0:
             label_id = str(uuid4())  # If wrap
+
+        # Warp text to menu width (imply additional calls to render functions)
+        if max_char < 0:
+            dummy_attrs = self._filter_widget_attributes(kwargs.copy())
+            dummy = _widgets.Label(label=title)
+            self._current._configure_widget(dummy, **dummy_attrs)
+            dummy_rect = dummy.get_rect()
+            max_char = int(1.0 * self._current._width * len(title) / dummy_rect.width)
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
