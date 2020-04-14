@@ -285,23 +285,23 @@ class Menu(object):
         Adds a button to the current Menu.
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - button_id         Widget ID (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
-            - shadow            Shadow is enabled or disabled (bool)
-            - shadow_color      Text shadow color (tuple)
-            - shadow_position   Text shadow position, see locals for position (str)
-            - shadow_offset     Text shadow offset (int, float, NoneType)
+            - ``align``             Widget alignment (str)
+            - ``button_id``         Widget ID (str)
+            - ``font_color``        Widget font color (tuple)
+            - ``font_name``         Widget font (str)
+            - ``font_size``         Font size of the widget (int)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color
+            - ``selection_effect``  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+            - ``shadow``            Shadow is enabled or disabled (bool)
+            - ``shadow_color``      Text shadow color (tuple)
+            - ``shadow_position``   Text shadow position, see locals for position (str)
+            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
 
         :param title: Title of the button
         :type title: basestring
         :param action: Action of the button, can be a Menu, an event or a function
-        :type action: Menu, PymenuAction, function
+        :type action: Menu, PymenuAction, callable
         :param args: Additional arguments used by a function
         :param kwargs: Additional keyword arguments
         :type kwargs: any
@@ -358,21 +358,21 @@ class Menu(object):
         Includes a preview box that renders the given color.
 
         And functions onchange and onreturn does
-            onchange(current_text, \*\*kwargs)
-            onreturn(current_text, \*\*kwargs)
+            onchange(current_color, \*\*kwargs)
+            onreturn(current_color, \*\*kwargs)
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
-            - shadow            Shadow is enabled or disabled (bool)
-            - shadow_color      Text shadow color (tuple)
-            - shadow_position   Text shadow position, see locals for position (str)
-            - shadow_offset     Text shadow offset (int, float, NoneType)
+            - ``align``             Widget alignment (str)
+            - ``font_color``        Widget font color (tuple)
+            - ``font_name``         Widget font (str)
+            - ``font_size``         Font size of the widget (int)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color
+            - ``selection_effect``  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+            - ``shadow``            Shadow is enabled or disabled (bool)
+            - ``shadow_color``      Text shadow color (tuple)
+            - ``shadow_position``   Text shadow position, see locals for position (str)
+            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
 
         :param title: Title of the color input
         :type title: basestring
@@ -424,10 +424,10 @@ class Menu(object):
         Add a simple image to the current Menu.
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+            - ``align``             Widget alignment (str)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color
+            - ``selection_effect``  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
 
         :param image_path: Path of the image of the widget
         :type image_path: basestring
@@ -467,17 +467,17 @@ class Menu(object):
         Add a simple text to the current Menu.
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
-            - shadow            Shadow is enabled or disabled (bool)
-            - shadow_color      Text shadow color (tuple)
-            - shadow_position   Text shadow position, see locals for position (str)
-            - shadow_offset     Text shadow offset (int, float, NoneType)
+            - ``align``             Widget alignment (str)
+            - ``font_color``        Widget font color (tuple)
+            - ``font_name``         Widget font (str)
+            - ``font_size``         Font size of the widget (int)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color
+            - ``selection_effect``  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+            - ``shadow``            Shadow is enabled or disabled (bool)
+            - ``shadow_color``      Text shadow color (tuple)
+            - ``shadow_position``   Text shadow position, see locals for position (str)
+            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
 
         :param title: Text to be displayed
         :type title: basestring
@@ -537,17 +537,17 @@ class Menu(object):
             onreturn(a, b, c..., \*\*kwargs)
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
-            - shadow            Shadow is enabled or disabled (bool)
-            - shadow_color      Text shadow color (tuple)
-            - shadow_position   Text shadow position, see locals for position (str)
-            - shadow_offset     Text shadow offset (int, float, NoneType)
+            - ``align``             Widget alignment (str)
+            - ``font_color``        Widget font color (tuple)
+            - ``font_name``         Widget font (str)
+            - ``font_size``         Font size of the widget (int)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color
+            - ``selection_effect``  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+            - ``shadow``            Shadow is enabled or disabled (bool)
+            - ``shadow_color``      Text shadow color (tuple)
+            - ``shadow_position``   Text shadow position, see locals for position (str)
+            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
 
         :param title: Title of the selector
         :type title: basestring
@@ -602,17 +602,17 @@ class Menu(object):
             onreturn(current_text, \*\*kwargs)
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color
-            - selection_effect  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
-            - shadow            Shadow is enabled or disabled (bool)
-            - shadow_color      Text shadow color (tuple)
-            - shadow_position   Text shadow position, see locals for position (str)
-            - shadow_offset     Text shadow offset (int, float, NoneType)
+            - ``align``             Widget alignment (str)
+            - ``font_color``        Widget font color (tuple)
+            - ``font_name``         Widget font (str)
+            - ``font_size``         Font size of the widget (int)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color
+            - ``selection_effect``  Widget selector effect :py:class:`pygameMenu.widgets.Selection`
+            - ``shadow``            Shadow is enabled or disabled (bool)
+            - ``shadow_color``      Text shadow color (tuple)
+            - ``shadow_position``   Text shadow position, see locals for position (str)
+            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
 
         :param title: Title of the text input
         :type title: basestring
@@ -689,17 +689,17 @@ class Menu(object):
         the Menu level.
 
         kwargs (Optional):
-            - align             Widget alignment (str)
-            - font_color        Widget font color (tuple)
-            - font_name         Widget font (str)
-            - font_size         Font size of the widget (int)
-            - margin            Tuple of (x,y) margin (int, float)
-            - selection_color   Widget selection color (tuple)
-            - selection_effect  Widget selector effect (:py:class:`pygameMenu.widgets.Selection`)
-            - shadow            Shadow is enabled or disabled (bool)
-            - shadow_color      Text shadow color (tuple)
-            - shadow_position   Text shadow position, see locals for position (str)
-            - shadow_offset     Text shadow offset (int, float, NoneType)
+            - ``align``             Widget alignment (str)
+            - ``font_color``        Widget font color (tuple)
+            - ``font_name``         Widget font (str)
+            - ``font_size``         Font size of the widget (int)
+            - ``margin``            Tuple of (x,y) margin (int, float)
+            - ``selection_color``   Widget selection color (tuple)
+            - ``selection_effect``  Widget selector effect (:py:class:`pygameMenu.widgets.Selection`)
+            - ``shadow``            Shadow is enabled or disabled (bool)
+            - ``shadow_color``      Text shadow color (tuple)
+            - ``shadow_position``   Text shadow position, see locals for position (str)
+            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
 
         :param widget: Widget object
         :type widget: :py:class:`pygameMenu.widgets.core.widget.Widget`
