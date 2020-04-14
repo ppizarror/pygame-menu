@@ -19,8 +19,12 @@ The less trivial ones are explained here.
 Widgets position
 ^^^^^^^^^^^^^^^^
 
-By default, the widgets are centered horizontally (``widget_alignment=ALIGN_CENTER``)
-and start at 0 pixels below the title bar (``widget_offset_y=O``).
+By default, the widgets are centered horizontally (``widget_alignment=ALIGN_CENTER``).
+All are included in a virtual rectangle positioned at 0 pixel below the title bar and
+0 pixel from the left border (``widget_offset=(0, 0)``).
+
+In the same way, an offset can be defined for the title using the parameter
+``title_offset``.
 
 The horizontal alignment can be changed with one of the following values:
 
@@ -32,8 +36,8 @@ Alignment                                       Description
 :py:data:`pygameMenu.locals.ALIGN_RIGHT`        Right alignment
 ==============================================  ========================
 
-The vertical alignment can be done after all widgets have been added
-to the menu by calling the method :py:meth:`Menu.center_content`:
+The content of the menu can be centered vertically after all widgets have
+been added by calling the method :py:meth:`Menu.center_content`:
 
 .. code-block:: python
     :emphasize-lines: 7
@@ -63,8 +67,9 @@ the widgets (in order of definition) **column by column** starting at the
 On-close callback
 ^^^^^^^^^^^^^^^^^
 
-A callback can be defined using the ``onclose`` parameter. This parameter
-can take one of these two types of values:
+A callback can be defined using the ``onclose`` parameter, it will be
+called when the menu (end sub-menus) is closing. This parameter can take
+one of these two types of values:
 
  - a python callable object (a function, a method, a class, ...)
    that will be called without any arguments.
@@ -84,9 +89,9 @@ can take one of these two types of values:
 Display a menu
 --------------
 
-The :ref:`First steps` chapter shows the way to execute the menu in the
-application, which lets `pygame-menu` manage the event loop by calling
-the :py:meth:`Menu.mainloop` :
+The :ref:`First steps` chapter shows the way to display the menu, this
+method lets `pygame-menu` managing the event loop by calling the
+:py:meth:`Menu.mainloop` :
 
 .. code-block:: python
     :emphasize-lines: 6
