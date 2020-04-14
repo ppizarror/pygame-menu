@@ -49,6 +49,6 @@ from pygameMenu.widgets.widget.textinput import TextInput
 from pygameMenu.widgets.widget.vmargin import VMargin
 
 # Menubar and positions
-from pygameMenu.widgets.widget.menubar import MenuBar, MENUBAR_MODE_ADAPTATIVE, MENUBAR_MODE_SIMPLE, \
-    MENUBAR_MODE_TITLE_ONLY, MENUBAR_MODE_TITLE_ONLY_DIAGONAL, MENUBAR_MODE_NONE, MENUBAR_MODE_UNDERLINE, \
-    MENUBAR_MODE_UNDERLINE_TITLE
+from pygameMenu.widgets.widget.menubar import MenuBar, MENUBAR_STYLE_ADAPTATIVE, MENUBAR_STYLE_SIMPLE, \
+    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
+    MENUBAR_STYLE_UNDERLINE_TITLE

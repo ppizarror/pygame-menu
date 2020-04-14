@@ -37,13 +37,13 @@ import pygameMenu.controls as _controls
 from pygameMenu.utils import make_surface
 from pygameMenu.widgets.core.widget import Widget
 
-MENUBAR_MODE_ADAPTATIVE = 1
-MENUBAR_MODE_SIMPLE = 2
-MENUBAR_MODE_TITLE_ONLY = 3
-MENUBAR_MODE_TITLE_ONLY_DIAGONAL = 4
-MENUBAR_MODE_NONE = 5
-MENUBAR_MODE_UNDERLINE = 6
-MENUBAR_MODE_UNDERLINE_TITLE = 7
+MENUBAR_STYLE_ADAPTATIVE = 1
+MENUBAR_STYLE_SIMPLE = 2
+MENUBAR_STYLE_TITLE_ONLY = 3
+MENUBAR_STYLE_TITLE_ONLY_DIAGONAL = 4
+MENUBAR_STYLE_NONE = 5
+MENUBAR_STYLE_UNDERLINE = 6
+MENUBAR_STYLE_UNDERLINE_TITLE = 7
 
 
 class MenuBar(Widget):
@@ -73,7 +73,7 @@ class MenuBar(Widget):
                  width,
                  back_box=False,
                  bgcolor=None,
-                 mode=MENUBAR_MODE_ADAPTATIVE,
+                 mode=MENUBAR_STYLE_ADAPTATIVE,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -93,7 +93,7 @@ class MenuBar(Widget):
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
         self._bgcolor = bgcolor
         self._label = label
-        self._mode = mode
+        self._style = mode
         self._offsetx = 0.0
         self._offsety = 0.0
         self._polygon_pos = None  # type: (tuple,None)
@@ -142,7 +142,7 @@ class MenuBar(Widget):
         self._surface = self._render_string(self._label, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        if self._mode == MENUBAR_MODE_ADAPTATIVE:
+        if self._style == MENUBAR_STYLE_ADAPTATIVE:
             """
             A-----------------B                  D-E: 25 dx
             |****           x | *0,6 height
@@ -158,7 +158,7 @@ class MenuBar(Widget):
             f = self._rect.x, self._rect.y + self._rect.height + self._offsety
             self._polygon_pos = a, b, c, d, e, f
             cross_size = self._rect.height * 0.6
-        elif self._mode == MENUBAR_MODE_SIMPLE:
+        elif self._style == MENUBAR_STYLE_SIMPLE:
             """
             A-----------------B
             |****           x | *1,0 height
@@ -170,7 +170,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height
-        elif self._mode == MENUBAR_MODE_TITLE_ONLY:
+        elif self._style == MENUBAR_STYLE_TITLE_ONLY:
             """
             A-----B
             | *** |          x  *0,6 height
@@ -183,7 +183,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height + self._offsety
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
-        elif self._mode == MENUBAR_MODE_TITLE_ONLY_DIAGONAL:
+        elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
             """
             A--------B
             | **** /          x  *0,6 height
@@ -196,7 +196,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height + self._offsety
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
-        elif self._mode == MENUBAR_MODE_NONE:
+        elif self._style == MENUBAR_STYLE_NONE:
             """
             A------------------B
              ****             x  *0,6 height
@@ -205,7 +205,7 @@ class MenuBar(Widget):
             b = self._rect.x + self._width - 1, self._rect.y
             self._polygon_pos = a, b
             cross_size = self._rect.height * 0.6
-        elif self._mode == MENUBAR_MODE_UNDERLINE:
+        elif self._style == MENUBAR_STYLE_UNDERLINE:
             """
              ****           x
             A-----------------B *0,20 height
@@ -218,7 +218,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height + self._offsety + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
-        elif self._mode == MENUBAR_MODE_UNDERLINE_TITLE:
+        elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
             """
              ****           x
             A----B             *0,20 height
@@ -232,7 +232,7 @@ class MenuBar(Widget):
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
         else:
-            raise ValueError('invalid menubar mode {0}'.format(self._mode))
+            raise ValueError('invalid menubar mode {0}'.format(self._style))
 
         cross_size -= self._offsety + 4
         backbox_x = self._rect.x + self._width - 4 - cross_size

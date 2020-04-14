@@ -246,7 +246,7 @@ class Menu(object):
                                          width=self._width,
                                          back_box=back_box,
                                          bgcolor=self._theme.background_color,
-                                         mode=self._theme.title_bar_mode,
+                                         mode=self._theme.title_bar_style,
                                          onreturn=self._back)
         self._menubar.set_menu(self)
         self._menubar.set_title(title=title,

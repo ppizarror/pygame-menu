@@ -72,8 +72,8 @@ class Theme(object):
     :type selection_color: tuple
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
-    :param title_bar_mode: Mode of drawing the title, use menubar widget modes
-    :type title_bar_mode: int
+    :param title_bar_style: Mode of drawing the title, use menubar widget modes
+    :type title_bar_style: int
     :param title_font: Optional title font, if None use the Menu default font
     :type title_font: basestring, NoneType
     :param title_font_color: Title font color, if None use the widget font color
@@ -134,8 +134,8 @@ class Theme(object):
                                          'color', (255, 255, 255))  # type: (tuple, list)
         self.title_background_color = self._get(kwargs, 'title_background_color',
                                                 'color', (70, 70, 70))  # type: (tuple, list)
-        self.title_bar_mode = self._get(kwargs, 'title_bar_mode',
-                                        int, _widgets.MENUBAR_MODE_ADAPTATIVE)
+        self.title_bar_style = self._get(kwargs, 'title_bar_style',
+                                         int, _widgets.MENUBAR_STYLE_ADAPTATIVE)
         self.title_font = self._get(kwargs, 'title_font',
                                     str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.title_font_color = self._get(kwargs, 'title_font_color',

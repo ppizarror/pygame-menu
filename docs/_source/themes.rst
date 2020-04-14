@@ -27,7 +27,7 @@ Default themes
 Several predefined themes are proposed by :py:mod:`pygame-menu`.
 
 ==============================================  ================================================
-Theme                                           Example
+Theme name                                      Example
 ==============================================  ================================================
 :py:data:`pygameMenu.themes.THEME_DEFAULT`      .. image:: ../_static/theme_default.png
 :py:data:`pygameMenu.themes.THEME_BLACK`        .. image:: ../_static/theme_black.png
@@ -61,6 +61,24 @@ copying it first.
     mytheme.title_background_color=(0, 0, 0)
 
     menu = Menu(..., theme=mytheme)
+
+Menubar style
+-------------
+
+The visual style of the menubar is managed using the theme parameter
+``title_bar_style`` which can take the following values:
+
+====================================================================  ======================================================
+Menubar style                                                         Example
+====================================================================  ======================================================
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_ADAPTATIVE`                .. image:: ../_static/menubar_adaptive.png
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_SIMPLE`                    .. image:: ../_static/menubar_simple.png
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_TITLE_ONLY`                .. image:: ../_static/menubar_title_only.png
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`       .. image:: ../_static/menubar_title_only_diagonal.png
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_NONE`                      .. image:: ../_static/menubar_none.png
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_UNDERLINE`                 .. image:: ../_static/menubar_underline.png
+:py:data:`pygameMenu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`           .. image:: ../_static/menubar_underline_title.png
+====================================================================  ======================================================
 
 
 .. autoclass:: Theme
