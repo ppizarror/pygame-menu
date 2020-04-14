@@ -52,7 +52,6 @@ except ImportError:
         """
         pass
 
-
     def paste():
         """
         Paste method.
@@ -61,7 +60,6 @@ except ImportError:
         :rtype: basestring
         """
         return ''
-
 
     class PyperclipException(RuntimeError):
         """
@@ -141,8 +139,8 @@ class TextInput(Widget):
                  selection_color=(30, 30, 30),
                  text_ellipsis='...',
                  valid_chars=None,
-                 **kwargs
-                 ):
+                 *args,
+                 **kwargs):
         assert isinstance(label, str)
         assert isinstance(textinput_id, str)
         assert isinstance(input_type, str)
@@ -173,6 +171,7 @@ class TextInput(Widget):
         super(TextInput, self).__init__(widget_id=textinput_id,
                                         onchange=onchange,
                                         onreturn=onreturn,
+                                        args=args,
                                         kwargs=kwargs)
 
         self._input_string = ''  # Inputted text
@@ -1162,8 +1161,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-                     text[0:text_end] + \
-                     self._input_string[self._cursor_position:len(self._input_string)]
+            text[0:text_end] + \
+            self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

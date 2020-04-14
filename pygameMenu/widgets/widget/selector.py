@@ -63,8 +63,8 @@ class Selector(Widget):
                  default=0,
                  onchange=None,
                  onreturn=None,
-                 **kwargs
-                 ):
+                 *args,
+                 **kwargs):
         assert isinstance(label, str)
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
@@ -83,6 +83,7 @@ class Selector(Widget):
         super(Selector, self).__init__(widget_id=selector_id,
                                        onchange=onchange,
                                        onreturn=onreturn,
+                                       args=args,
                                        kwargs=kwargs)
 
         self._elements = elements
@@ -108,7 +109,7 @@ class Selector(Widget):
         """
         Return the current value of the selector at the selected index.
 
-        :return: Value and index as a tuple, (value,index)
+        :return: Value and index as a tuple, (value, index)
         :rtype: tuple
         """
         return self._elements[self._index][0], self._index

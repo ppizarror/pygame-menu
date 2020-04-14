@@ -227,7 +227,9 @@ def main(test=False):
                             ('2 - Medium', 'MEDIUM'),
                             ('3 - Hard', 'HARD')],
                            onchange=change_difficulty,
-                           selector_id='select_difficulty')
+                           selector_id='select_difficulty',
+                           # Test widgets attribute is not passed to the callback
+                           align=pygameMenu.locals.ALIGN_RIGHT)
     play_menu.add_button('Another menu', play_submenu)
     play_menu.add_button('Return to main menu', pygameMenu.events.BACK)
     play_menu.center_content()

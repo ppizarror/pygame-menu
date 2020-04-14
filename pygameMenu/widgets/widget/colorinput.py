@@ -85,8 +85,8 @@ class ColorInput(TextInput):
                  repeat_keys_initial_ms=450,
                  repeat_keys_interval_ms=80,
                  repeat_mouse_interval_ms=100,
-                 **kwargs
-                 ):
+                 *args,
+                 **kwargs):
         assert isinstance(label, str)
         assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
@@ -135,8 +135,8 @@ class ColorInput(TextInput):
                                          repeat_keys_interval_ms=repeat_keys_interval_ms,
                                          repeat_mouse_interval_ms=repeat_mouse_interval_ms,
                                          valid_chars=self._valid_chars,
-                                         **kwargs
-                                         )
+                                         *args,
+                                         **kwargs)
 
         # Store inner variables
         self._separator = input_separator

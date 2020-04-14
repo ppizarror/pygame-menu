@@ -58,15 +58,13 @@ class Button(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs
-                 ):
+                 **kwargs):
         assert isinstance(label, str)
         super(Button, self).__init__(widget_id=button_id,
                                      onchange=onchange,
                                      onreturn=onreturn,
                                      args=args,
-                                     kwargs=kwargs
-                                     )
+                                     kwargs=kwargs)
         self._label = label
 
     def _apply_font(self):

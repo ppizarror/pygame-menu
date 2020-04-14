@@ -77,8 +77,7 @@ class MenuBar(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs
-                 ):
+                 **kwargs):
         assert isinstance(label, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
@@ -87,8 +86,7 @@ class MenuBar(Widget):
         super(MenuBar, self).__init__(onchange=onchange,
                                       onreturn=onreturn,
                                       args=args,
-                                      kwargs=kwargs
-                                      )
+                                      kwargs=kwargs)
 
         self._backbox = back_box
         self._backbox_pos = None  # type: (tuple,None)
@@ -149,7 +147,7 @@ class MenuBar(Widget):
             A-----------------B                  D-E: 25 dx
             |****           x | *0,6 height
             |      D----------C
-            F----E/   
+            F----E/
             """
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
@@ -209,7 +207,7 @@ class MenuBar(Widget):
             cross_size = self._rect.height * 0.6
         elif self._mode == MENUBAR_MODE_UNDERLINE:
             """
-             ****           x  
+             ****           x
             A-----------------B *0,20 height
             D-----------------C
             """
@@ -222,7 +220,7 @@ class MenuBar(Widget):
             cross_size = 0.6 * self._rect.height
         elif self._mode == MENUBAR_MODE_UNDERLINE_TITLE:
             """
-             ****           x  
+             ****           x
             A----B             *0,20 height
             D----C
             """

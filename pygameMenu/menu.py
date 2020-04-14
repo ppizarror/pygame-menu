@@ -284,6 +284,11 @@ class Menu(object):
         """
         Adds a button to the current Menu.
 
+        The arguments and unknown keyword arguments are passed to
+        the action::
+
+            action(*args, **kwargs)
+
         kwargs (Optional):
             - ``align``             Widget alignment (str)
             - ``button_id``         Widget ID (str)
@@ -309,6 +314,8 @@ class Menu(object):
         :rtype: :py:class:`pygameMenu.widgets.Button`
         """
         assert isinstance(title, str)
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
 
         # Get ID
         button_id = kwargs.pop('button_id', '')
@@ -338,7 +345,7 @@ class Menu(object):
             raise ValueError('Element must be a Menu, a PymenuAction or a function')
 
         # Configure and add the button
-        self._current._configure_widget(widget=widget, **kwargs)
+        self._current._configure_widget(widget=widget, **attributes)
         self._current._append_widget(widget)
         return widget
 
@@ -357,9 +364,11 @@ class Menu(object):
         Add a color widget with RGB or Hex format to the current Menu.
         Includes a preview box that renders the given color.
 
-        And functions onchange and onreturn does
-            onchange(current_color, \*\*kwargs)
-            onreturn(current_color, \*\*kwargs)
+        The callbacks receive the current value and all unknown keyword
+        arguments::
+
+            onchange(current_color, **kwargs)
+            onreturn(current_color, **kwargs)
 
         kwargs (Optional):
             - ``align``             Widget alignment (str)
@@ -398,6 +407,9 @@ class Menu(object):
         :rtype: :py:class:`pygameMenu.widgets.ColorInput`
         """
         assert isinstance(default, (str, tuple))
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+
         widget = _widgets.ColorInput(label=title,
                                      colorinput_id=color_id,
                                      color_type=color_type,
@@ -407,7 +419,7 @@ class Menu(object):
                                      onreturn=onreturn,
                                      prev_size=previsualization_width,
                                      **kwargs)
-        self._current._configure_widget(widget=widget, **kwargs)
+        self._current._configure_widget(widget=widget, **attributes)
         widget.set_value(default)
         self._current._append_widget(widget)
         return widget
@@ -447,13 +459,16 @@ class Menu(object):
         :rtype: :py:class:`pygameMenu.widgets.Image`
         """
         assert isinstance(selectable, bool)
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+
         widget = _widgets.Image(image_path=image_path,
                                 image_id=image_id,
                                 angle=angle,
                                 scale=scale,
                                 scale_smooth=scale_smooth)
         widget.is_selectable = selectable
-        self._current._configure_widget(widget=widget, **kwargs)
+        self._current._configure_widget(widget=widget, **attributes)
         self._current._append_widget(widget)
         return widget
 
@@ -501,9 +516,10 @@ class Menu(object):
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
+            attributes = self._filter_widget_attributes(kwargs)
             widget = _widgets.Label(label=title, label_id=label_id)
             widget.is_selectable = selectable
-            self._current._configure_widget(widget=widget, **kwargs)
+            self._current._configure_widget(widget=widget, **attributes)
             self._current._append_widget(widget)
         else:
             self._current._check_id_duplicated(label_id)  # Before adding + LEN
@@ -529,12 +545,15 @@ class Menu(object):
         two functions that are executed when changing the selector (left/right)
         and pressing return button on the selected item.
 
-        Values of the selector are like:
-            values = [('Item1', a, b, c...), ('Item2', a, b, c..)]
+        The values of the selector are like::
 
-        And functions onchange and onreturn does
-            onchange(a, b, c..., \*\*kwargs)
-            onreturn(a, b, c..., \*\*kwargs)
+            values = [('Item1', a, b, c...), ('Item2', d, e, f..)]
+
+        The callbacks receive the current text, its index in the list,
+        the associated arguments and all unknown keyword arguments::
+
+            onchange((current_text, index), a, b, c..., **kwargs)
+            onreturn((current_text, index), a, b, c..., **kwargs)
 
         kwargs (Optional):
             - ``align``             Widget alignment (str)
@@ -566,6 +585,9 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.Selector`
         """
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+
         widget = _widgets.Selector(label=title,
                                    elements=items,
                                    selector_id=selector_id,
@@ -573,7 +595,7 @@ class Menu(object):
                                    onchange=onchange,
                                    onreturn=onreturn,
                                    **kwargs)
-        self._current._configure_widget(widget=widget, **kwargs)
+        self._current._configure_widget(widget=widget, **attributes)
         self._current._append_widget(widget)
         return widget
 
@@ -597,9 +619,11 @@ class Menu(object):
         that execute when changing the text and pressing return button
         on the element.
 
-        And functions onchange and onreturn does
-            onchange(current_text, \*\*kwargs)
-            onreturn(current_text, \*\*kwargs)
+        The callbacks receive the current value and all unknown keyword
+        arguments::
+
+            onchange(current_text, **kwargs)
+            onreturn(current_text, **kwargs)
 
         kwargs (Optional):
             - ``align``             Widget alignment (str)
@@ -646,6 +670,8 @@ class Menu(object):
         :rtype: :py:class:`pygameMenu.widgets.TextInput`
         """
         assert isinstance(default, (str, int, float))
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
 
         # If password is active no default value should exist
         if password and default != '':
@@ -664,7 +690,7 @@ class Menu(object):
                                     onchange=onchange,
                                     onreturn=onreturn,
                                     **kwargs)
-        self._current._configure_widget(widget=widget, **kwargs)
+        self._current._configure_widget(widget=widget, **attributes)
         widget.set_value(default)
         self._current._append_widget(widget)
         return widget
@@ -678,10 +704,71 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.VMargin`
         """
+        attributes = self._filter_widget_attributes({'margin': (0, margin)})
         widget = _widgets.VMargin()
-        self._current._configure_widget(widget=widget, margin=(0, margin))
+        self._current._configure_widget(widget=widget, **attributes)
         self._current._append_widget(widget)
         return widget
+
+    def _filter_widget_attributes(self, kwargs):
+        """
+        Return valid widgets attributes from a dictionnary.
+        The valid (key, value) are removed from the initial
+        dictionary.
+
+        :param kwargs: input attributes
+        :type kwargs: dict
+        :return: dictionary of valid  attributes
+        :rtype: dict
+        """
+        attributes = {}
+        align = kwargs.pop('align', self._theme.widget_alignment)
+        assert isinstance(align, str)
+        attributes['align'] = align
+
+        font_color = kwargs.pop('font_folor', self._theme.widget_font_color)
+        _utils.assert_color(font_color)
+        attributes['font_color'] = font_color
+
+        font_name = kwargs.pop('font_name', self._theme.widget_font)
+        assert isinstance(font_name, str)
+        attributes['font_name'] = font_name
+
+        font_size = kwargs.pop('font_size', self._theme.widget_font_size)
+        assert isinstance(font_size, int)
+        assert font_size > 0, 'font_size must be greater than zero'
+        attributes['font_size'] = font_size
+
+        margin = kwargs.pop('margin', self._widget_margin)
+        assert isinstance(margin, (tuple, list))
+        assert len(margin) == 2, 'margin must be a tuple or list of 2 numbers'
+        attributes['margin'] = margin
+
+        selection_color = kwargs.pop('selection_color', self._theme.selection_color)
+        _utils.assert_color(selection_color)
+        attributes['selection_color'] = selection_color
+
+        selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
+        assert isinstance(selection_effect, _widgets.Selection)
+        attributes['selection_effect'] = selection_effect
+
+        shadow = kwargs.pop('shadow', self._theme.widget_shadow)
+        assert isinstance(shadow, bool)
+        attributes['shadow'] = shadow
+
+        shadow_color = kwargs.pop('shadow_color', self._theme.widget_shadow_color)
+        _utils.assert_color(shadow_color)
+        attributes['shadow_color'] = shadow_color
+
+        shadow_position = kwargs.pop('shadow_position', self._theme.widget_shadow_position)
+        assert isinstance(shadow_position, str)
+        attributes['shadow_position'] = shadow_position
+
+        shadow_offset = kwargs.pop('shadow_offset', self._theme.widget_shadow_offset)
+        assert isinstance(shadow_offset, (int, float, type(None)))
+        attributes['shadow_offset'] = shadow_offset
+
+        return attributes
 
     def _configure_widget(self, widget, **kwargs):
         """
@@ -707,60 +794,25 @@ class Menu(object):
         :type kwargs: any
         :return: None
         """
-        align = kwargs.pop('align', self._theme.widget_alignment)
-        assert isinstance(align, str)
-
-        font_color = kwargs.pop('font_folor', self._theme.widget_font_color)
-        _utils.assert_color(font_color)
-
-        font_name = kwargs.pop('font_name', self._theme.widget_font)
-        assert isinstance(font_name, str)
-
-        font_size = kwargs.pop('font_size', self._theme.widget_font_size)
-        assert isinstance(font_size, int)
-        assert font_size > 0, 'font_size must be greater than zero'
-
-        margin = kwargs.pop('margin', self._widget_margin)
-        assert isinstance(margin, (tuple, list))
-        assert len(margin) == 2, 'margin must be a tuple or list of 2 numbers'
-
-        selection_color = kwargs.pop('selection_color', self._theme.selection_color)
-        _utils.assert_color(selection_color)
-
-        selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
-        assert isinstance(selection_effect, _widgets.Selection)
-
-        shadow = kwargs.pop('shadow', self._theme.widget_shadow)
-        assert isinstance(shadow, bool)
-
-        shadow_color = kwargs.pop('shadow_color', self._theme.widget_shadow_color)
-        _utils.assert_color(shadow_color)
-
-        shadow_position = kwargs.pop('shadow_position', self._theme.widget_shadow_position)
-        assert isinstance(shadow_position, str)
-
-        shadow_offset = kwargs.pop('shadow_offset', self._theme.widget_shadow_offset)
-        assert isinstance(shadow_offset, (int, float, type(None)))
-
         _col = int((len(self._widgets) - 1) // self._rows)  # Column position
 
         # Configure the widget
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(font=font_name,
-                        font_size=font_size,
-                        color=font_color,
-                        selected_color=selection_color)
+        widget.set_font(font=kwargs['font_name'],
+                        font_size=kwargs['font_size'],
+                        color=kwargs['font_color'],
+                        selected_color=kwargs['selection_color'])
         if self._force_fit_text and self._column_max_width[_col] is not None:
-            widget.set_max_width(self._column_max_width[_col] - selection_effect.get_width())
-        widget.set_shadow(enabled=shadow,
-                          color=shadow_color,
-                          position=shadow_position,
-                          offset=shadow_offset)
+            widget.set_max_width(self._column_max_width[_col] - kwargs['selection_effect'].get_width())
+        widget.set_shadow(enabled=kwargs['shadow'],
+                          color=kwargs['shadow_color'],
+                          position=kwargs['shadow_position'],
+                          offset=kwargs['shadow_offset'])
         widget.set_controls(self._joystick, self._mouse)
-        widget.set_alignment(align)
-        widget.set_margin(margin[0], margin[1])
-        widget.set_selection_effect(selection_effect)
+        widget.set_alignment(kwargs['align'])
+        widget.set_margin(*kwargs['margin'])
+        widget.set_selection_effect(kwargs['selection_effect'])
 
     def _append_widget(self, widget):
         """
