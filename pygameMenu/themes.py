@@ -210,9 +210,8 @@ class Theme(object):
         :rtype: list, tuple
         """
         if len(color) == 4:
-            opacity = color[3]
-        else:
-            opacity = 255
+            return color
+        opacity = 255
         if isinstance(color, tuple):
             color = color[0], color[1], color[2], opacity
         elif isinstance(color, list):
