@@ -144,9 +144,9 @@ class MenuBar(Widget):
 
         if self._style == MENUBAR_STYLE_ADAPTATIVE:
             """
-            A-----------------B                  D-E: 25 dx
-            |****           x | *0,6 height
-            |      D----------C
+            A-------------------B                  D-E: 25 dx
+            |****             x | *0,6 height
+            |      D------------C
             F----E/
             """
             a = self._rect.x, self._rect.y
@@ -160,9 +160,9 @@ class MenuBar(Widget):
             cross_size = self._rect.height * 0.6
         elif self._style == MENUBAR_STYLE_SIMPLE:
             """
-            A-----------------B
-            |****           x | *1,0 height
-            D-----------------C
+            A-------------------B
+            |****             x | *1,0 height
+            D-------------------C
             """
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
@@ -173,7 +173,7 @@ class MenuBar(Widget):
         elif self._style == MENUBAR_STYLE_TITLE_ONLY:
             """
             A-----B
-            | *** |          x  *0,6 height
+            | *** |           x        *0,6 height
             D-----C
             """
             a = self._rect.x, self._rect.y
@@ -186,7 +186,7 @@ class MenuBar(Widget):
         elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
             """
             A--------B
-            | **** /          x  *0,6 height
+            | **** /          x        *0,6 height
             D-----C
             """
             a = self._rect.x, self._rect.y
@@ -199,7 +199,7 @@ class MenuBar(Widget):
         elif self._style == MENUBAR_STYLE_NONE:
             """
             A------------------B
-             ****             x  *0,6 height
+             ****             x        *0,6 height
             """
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
@@ -207,9 +207,9 @@ class MenuBar(Widget):
             cross_size = self._rect.height * 0.6
         elif self._style == MENUBAR_STYLE_UNDERLINE:
             """
-             ****           x
-            A-----------------B *0,20 height
-            D-----------------C
+             ****             x
+            A-------------------B      *0,20 height
+            D-------------------C
             """
             dy = 3
             a = self._rect.x, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
@@ -220,8 +220,8 @@ class MenuBar(Widget):
             cross_size = 0.6 * self._rect.height
         elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
             """
-             ****           x
-            A----B             *0,20 height
+             ****               x
+            A----B                     *0,20 height
             D----C
             """
             dy = 3

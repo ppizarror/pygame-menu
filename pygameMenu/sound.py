@@ -69,7 +69,7 @@ _SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_delete')
 _SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
 
 # Stores global reference that marks sounds as initialized
-SOUND_INITIALIZED = [False]
+_SOUND_INITIALIZED = [False]
 
 
 class Sound(object):
@@ -117,10 +117,10 @@ class Sound(object):
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if (_mixer.get_init() is None and SOUND_INITIALIZED[0] is False) or force_init:
+        if (_mixer.get_init() is None and _SOUND_INITIALIZED[0] is False) or force_init:
 
             # Set sound as initialized globally
-            SOUND_INITIALIZED[0] = True
+            _SOUND_INITIALIZED[0] = True
 
             # Check pygame version
             version_major, _, version_minor = _pygame_version
