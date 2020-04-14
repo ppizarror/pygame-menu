@@ -16,7 +16,8 @@ Making games using :py:mod:`pygame` is really cool, but most games
 objects to display a menu can be painful. That why :py:mod:`pygame-menu`
 was designed.
 
-Here is a simple example of how to create a menu with :py:mod:`pygame-menu` :
+Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
+(the code is available in :py:mod:`pygameMenu.examples.simple`):
 
 1. Import the required libraries
 
@@ -37,15 +38,15 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu` :
 
 .. code-block:: python
 
+    def set_difficulty(value, difficulty):
+        # Do the job here !
+
     def start_the_game():
         # Do the job here !
 
-    menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS, "Welcome",
-                           widget_font_color=(102, 122, 130),
-                           selection_color=(38, 158, 151),
-                           title_font_color=(253, 246, 226),
-                           title_background_color=(4, 47, 58),
-                           menu_background_color=(239, 231, 211))
+    menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS,
+                           title="Welcome",
+                           theme=pygameMenu.themes.THEME_BLUE)
 
     menu.add_text_input('Name :')
     menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)

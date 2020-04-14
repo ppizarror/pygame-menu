@@ -8,6 +8,7 @@ To run the examples, simply execute these commands in a terminal:
 
 .. code-block:: bash
 
+    $> python -m pygameMenu.examples.simple
     $> python -m pygameMenu.examples.game_selector
     $> python -m pygameMenu.examples.multi_input
     $> python -m pygameMenu.examples.scroll_menu
@@ -18,7 +19,7 @@ Them can also be imported as follows:
 .. code-block:: python
 
     from pygameMenu.examples.example import main
-    
+
     main()
 
 Normal button menu
@@ -49,6 +50,6 @@ Different entries
 -----------------
 
 .. image:: ../_static/supported_entries.gif
-    :scale: 60 %
+    :scale: 75 %
     :align: center
     :alt: Different entries

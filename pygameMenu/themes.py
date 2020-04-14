@@ -168,7 +168,7 @@ class Theme(object):
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position',
                                                 'position', pygameMenu.locals.POSITION_NORTHWEST)  # type: str
 
-        # Upon this, no more kwargs should exist, raise exceptiion if there's more
+        # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
             raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
 
