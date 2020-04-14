@@ -144,7 +144,8 @@ def main(test=False):
     # -------------------------------------------------------------------------
     settings_menu_theme = pygameMenu.themes.THEME_ORANGE.copy()
     settings_menu_theme.widget_alignment = pygameMenu.locals.ALIGN_LEFT
-    settings_menu_theme.widget_font_size = 25
+    settings_menu_theme.widget_font = pygameMenu.font.FONT_OPEN_SANS_LIGHT
+    settings_menu_theme.widget_font_size = 20
 
     settings_menu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.85,

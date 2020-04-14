@@ -38,9 +38,9 @@ import pygameMenu.utils
 import pygameMenu.widgets as _widgets
 
 # noinspection PyUnresolvedReferences
-from pygameMenu.widgets.widget.menubar import MENUBAR_MODE_ADAPTATIVE, MENUBAR_MODE_SIMPLE, \
-    MENUBAR_MODE_TITLE_ONLY, MENUBAR_MODE_TITLE_ONLY_DIAGONAL, MENUBAR_MODE_NONE, MENUBAR_MODE_UNDERLINE, \
-    MENUBAR_MODE_UNDERLINE_TITLE
+from pygameMenu.widgets.widget.menubar import MENUBAR_MODE_ADAPTATIVE, MENUBAR_MODE_SIMPLE, MENUBAR_MODE_TITLE_ONLY, \
+    MENUBAR_MODE_TITLE_ONLY_DIAGONAL, MENUBAR_MODE_NONE, MENUBAR_MODE_UNDERLINE, \
+    MENUBAR_MODE_UNDERLINE_TITLE  # lgtm [py/unused-import]
 
 
 class Theme(object):
@@ -140,7 +140,7 @@ class Theme(object):
         self.title_bar_mode = self._get(kwargs, 'title_bar_mode',
                                         int, MENUBAR_MODE_ADAPTATIVE)
         self.title_font = self._get(kwargs, 'title_font',
-                                    str, pygameMenu.font.FONT_BEBAS)  # type: str
+                                    str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.title_font_color = self._get(kwargs, 'title_font_color',
                                           'color', (220, 220, 220))  # type: (tuple, list)
         self.title_font_size = self._get(kwargs, 'title_font_size',
@@ -154,7 +154,7 @@ class Theme(object):
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position',
                                                'position', pygameMenu.locals.POSITION_NORTHWEST)  # type: str
         self.widget_font = self._get(kwargs, 'widget_font',
-                                     str, pygameMenu.font.FONT_BEBAS)  # type: str
+                                     str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.widget_alignment = self._get(kwargs, 'widget_alignment',
                                           'alignment', pygameMenu.locals.ALIGN_CENTER)
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
@@ -274,9 +274,7 @@ THEME_BLACK = Theme(
     background_color=(0, 0, 0),
     selection_color=(255, 255, 255),
     title_background_color=(0, 0, 0),
-    title_font=pygameMenu.font.FONT_NEVIS,
     title_font_color=(255, 255, 255),
-    widget_font=pygameMenu.font.FONT_NEVIS,
     widget_font_color=(150, 150, 150),
 )
 
@@ -300,8 +298,6 @@ THEME_ORANGE = Theme(
     background_color=(228, 100, 36),
     selection_color=(255, 255, 255),
     title_background_color=(170, 65, 50),
-    title_font=pygameMenu.font.FONT_HELVETICA,
-    widget_font=pygameMenu.font.FONT_HELVETICA,
     widget_font_color=(0, 0, 0),
     widget_font_size=30,
 )

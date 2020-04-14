@@ -45,7 +45,10 @@ FONT_FRANCHISE = __fontdir.format(__actualpath, 'franchise')
 FONT_HELVETICA = __fontdir.format(__actualpath, 'helvetica')
 FONT_MUNRO = __fontdir.format(__actualpath, 'munro')
 FONT_NEVIS = __fontdir.format(__actualpath, 'nevis')
-FONT_OPEN_SANS = __fontdir.format(__actualpath, 'open_sans')
+FONT_OPEN_SANS = __fontdir.format(__actualpath, 'opensans_regular')
+FONT_OPEN_SANS_BOLD = __fontdir.format(__actualpath, 'opensans_bold')
+FONT_OPEN_SANS_ITALIC = __fontdir.format(__actualpath, 'opensans_italic')
+FONT_OPEN_SANS_LIGHT = __fontdir.format(__actualpath, 'opensans_light')
 FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')
 
 
