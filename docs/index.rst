@@ -1,6 +1,6 @@
 :orphan:
 
-.. image:: _static/pygame-menu.png
+.. image:: _static/pygame_menu.png
    :scale: 35%
    :align: center
 
@@ -76,6 +76,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
    _source/create_menu
    _source/add_widgets
    _source/add_sounds
+   _source/themes
    _source/gallery
 
 

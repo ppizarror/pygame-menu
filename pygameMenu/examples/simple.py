@@ -36,7 +36,7 @@ import pygameMenu
 
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-surface = pygame.display.set_mode((600, 500))
+surface = pygame.display.set_mode((400, 300))
 
 
 def set_difficulty(selected, value):
@@ -61,8 +61,9 @@ def start_the_game():
 menu = pygameMenu.Menu(
     height=300,
     width=400,
-    theme=pygameMenu.themes.THEME_BLUE,
+    theme=pygameMenu.themes.THEME_BLACK,
     title='Welcome',
+    widget_offset=(0, 0)
 )
 
 menu.add_text_input('Name: ')

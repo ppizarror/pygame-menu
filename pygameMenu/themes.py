@@ -42,11 +42,13 @@ class Theme(object):
     """
     Class defining the visual rendering of menus and widgets.
 
-    Note: All colors must be defined with a tuple of 3 or 4 numbers in the formats:
-        - (R,G,B)
-        - (R,G,B,A)
-    Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
-    A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
+    .. note:: All colors must be defined with a tuple of 3 or 4 numbers in the formats:
+
+                  - (R,G,B)
+                  - (R,G,B,A)
+                  
+              Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
+              A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
 
     :param background_color: Menu background color
     :type background_color: tuple, list

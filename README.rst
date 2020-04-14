@@ -3,7 +3,7 @@
 pygame-menu
 ===========
 
-.. image:: docs/_static/pygame-menu-small.png
+.. image:: docs/_static/pygame_menu_small.png
     :align: center
     :alt:
 

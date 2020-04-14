@@ -135,6 +135,6 @@ it is necessary.
 .. Document here only the members relative to the menu itself, members
 .. for adding widgets are documented in another chapter.
 
-.. autoclass:: Menu(surface, menu_height, menu_width, font, title, ...)
+.. autoclass:: Menu
     :members:
     :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin
