@@ -246,7 +246,7 @@ class Menu(object):
                                          width=self._width,
                                          back_box=back_box,
                                          bgcolor=self._theme.background_color,
-                                         # bg_color_title is only used behind text
+                                         mode=self._theme.title_bar_mode,
                                          onreturn=self._back)
         self._menubar.set_menu(self)
         self._menubar.set_title(title=title,
@@ -274,7 +274,8 @@ class Menu(object):
                                   shadow=self._theme.scrollbar_shadow,
                                   shadow_color=self._theme.scrollbar_shadow_color,
                                   shadow_offset=self._theme.scrollbar_shadow_offset,
-                                  shadow_position=self._theme.scrollbar_shadow_position)
+                                  shadow_position=self._theme.scrollbar_shadow_position,
+                                  )
 
     def add_button(self,
                    title,

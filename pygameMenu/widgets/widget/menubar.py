@@ -37,6 +37,14 @@ import pygameMenu.controls as _controls
 from pygameMenu.utils import make_surface
 from pygameMenu.widgets.core.widget import Widget
 
+MENUBAR_MODE_ADAPTATIVE = 1
+MENUBAR_MODE_SIMPLE = 2
+MENUBAR_MODE_TITLE_ONLY = 3
+MENUBAR_MODE_TITLE_ONLY_DIAGONAL = 4
+MENUBAR_MODE_NONE = 5
+MENUBAR_MODE_UNDERLINE = 6
+MENUBAR_MODE_UNDERLINE_TITLE = 7
+
 
 class MenuBar(Widget):
     """
@@ -50,6 +58,8 @@ class MenuBar(Widget):
     :type back_box: bool
     :param bgcolor: Color behind the polygon (transparent if not given)
     :type bgcolor: tuple, list
+    :param mode: Mode of drawing the bar
+    :type mode: int
     :param onchange: Callback when changing the selector
     :type onchange: callable, NoneType
     :param onreturn: Callback when pressing return button
@@ -63,6 +73,7 @@ class MenuBar(Widget):
                  width,
                  back_box=False,
                  bgcolor=None,
+                 mode=MENUBAR_MODE_ADAPTATIVE,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -84,6 +95,7 @@ class MenuBar(Widget):
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
         self._bgcolor = bgcolor
         self._label = label
+        self._mode = mode
         self._offsetx = 0.0
         self._offsety = 0.0
         self._polygon_pos = None  # type: (tuple,None)
@@ -101,7 +113,8 @@ class MenuBar(Widget):
             bg.fill(self._bgcolor)
             surface.blit(bg, self._rect.topleft)
 
-        gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
+        if len(self._polygon_pos) > 2:
+            gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
 
         if self.mouse_enabled and self._backbox:
             pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
@@ -131,19 +144,102 @@ class MenuBar(Widget):
         self._surface = self._render_string(self._label, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        self._polygon_pos = (
-            (self._rect.x, self._rect.y),
-            (self._rect.x + self._width - 1, self._rect.y),  # -1 for line thickness
-            (self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6),
-            (self._rect.x + self._rect.width + 30, self._rect.y + self._rect.height * 0.6),
-            (self._rect.x + self._rect.width + 10, self._rect.y + self._rect.height + 5),
-            (self._rect.x, self._rect.y + self._rect.height + 5)
-        )
+        if self._mode == MENUBAR_MODE_ADAPTATIVE:
+            """
+            A-----------------B                  D-E: 25 dx
+            |****           x | *0,6 height
+            |      D----------C
+            F----E/   
+            """
+            a = self._rect.x, self._rect.y
+            b = self._rect.x + self._width - 1, self._rect.y
+            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
+            d = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y + self._rect.height * 0.6
+            e = self._rect.x + self._rect.width + 5 + self._offsetx, \
+                self._rect.y + self._rect.height + 2 + self._offsety
+            f = self._rect.x, self._rect.y + self._rect.height + 2 + self._offsety
+            self._polygon_pos = a, b, c, d, e, f
+            cross_size = self._rect.height * 0.6
+        elif self._mode == MENUBAR_MODE_SIMPLE:
+            """
+            A-----------------B
+            |****           x | *1,0 height
+            D-----------------C
+            """
+            a = self._rect.x, self._rect.y
+            b = self._rect.x + self._width - 1, self._rect.y
+            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
+            d = self._rect.x, self._rect.y + self._rect.height
+            self._polygon_pos = a, b, c, d
+            cross_size = self._rect.height
+        elif self._mode == MENUBAR_MODE_TITLE_ONLY:
+            """
+            A-----B
+            | *** |          x  *0,6 height
+            D-----C
+            """
+            a = self._rect.x, self._rect.y
+            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, \
+                self._rect.y + self._rect.height + 2 + self._offsety
+            d = self._rect.x, self._rect.y + self._rect.height + 2 + self._offsety
+            self._polygon_pos = a, b, c, d
+            cross_size = self._rect.height * 0.6
+        elif self._mode == MENUBAR_MODE_TITLE_ONLY_DIAGONAL:
+            """
+            A--------B
+            | **** /          x  *0,6 height
+            D-----C
+            """
+            a = self._rect.x, self._rect.y
+            b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, \
+                self._rect.y + self._rect.height + 2 + self._offsety
+            d = self._rect.x, self._rect.y + self._rect.height + 2 + self._offsety
+            self._polygon_pos = a, b, c, d
+            cross_size = self._rect.height * 0.6
+        elif self._mode == MENUBAR_MODE_NONE:
+            """
+            A------------------B
+             ****             x  *0,6 height
+            """
+            a = self._rect.x, self._rect.y
+            b = self._rect.x + self._width - 1, self._rect.y
+            self._polygon_pos = a, b
+            cross_size = self._rect.height * 0.6
+        elif self._mode == MENUBAR_MODE_UNDERLINE:
+            """
+             ****           x  
+            A-----------------B *0,20 height
+            D-----------------C
+            """
+            dy = 3
+            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
+            b = self._rect.x + self._width - 1, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
+            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + self._offsety + dy
+            d = self._rect.x, self._rect.y + self._rect.height + self._offsety + dy
+            self._polygon_pos = a, b, c, d
+            cross_size = 0.6 * self._rect.height
+        elif self._mode == MENUBAR_MODE_UNDERLINE_TITLE:
+            """
+             ****           x  
+            A----B             *0,20 height
+            D----C
+            """
+            dy = 3
+            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
+            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + self._offsety + dy
+            d = self._rect.x, self._rect.y + self._rect.height + self._offsety + dy
+            self._polygon_pos = a, b, c, d
+            cross_size = 0.6 * self._rect.height
+        else:
+            raise ValueError('invalid menubar mode {0}'.format(self._mode))
 
-        cross_size = self._polygon_pos[2][1] - self._polygon_pos[1][1] - 6
-        self._backbox_rect = pygame.Rect(self._polygon_pos[1][0] - cross_size - 3,
-                                         self._polygon_pos[1][1] + 3,
-                                         cross_size, cross_size)
+        cross_size -= self._offsety + 4
+        backbox_x = self._rect.x + self._width - 4 - cross_size
+        backbox_y = self._rect.y + 3
+        self._backbox_rect = pygame.Rect(backbox_x, backbox_y, cross_size, cross_size)
 
         if menu_prev_condition:
             # Make a cross for top menu
