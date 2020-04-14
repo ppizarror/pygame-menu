@@ -7,7 +7,7 @@ Add a text
 ----------
 
 A label is used to display a text. If the text is too large, it
-will be wrapped in order to fit the menu size.
+can be wrapped in order to fit the menu size.
 
 **Example:**
 
@@ -32,6 +32,9 @@ Add an image
 ------------
 
 An image can be displayed on a menu.
+The ``scale`` parameter represent the scaling ratio of the image width
+and height. When ``scale_smooth=True``, the rendering is better but it
+requires more CPU resources.
 
 **Example:**
 
@@ -90,7 +93,7 @@ three values:
 
     about_menu = pygameMenu.Menu(...)
 
-    menu.add_button('Exec func', func, 'foo',               # Execute a function
+    menu.add_button('Exec', func, 'foo',                    # Execute a function
                     align=pygameMenu.locals.ALIGN_LEFT)
     menu.add_button(about_menu.get_title(), about_menu,     # Open a sub-menu
                     shadow=True, shadow_color=(0, 0, 100))
@@ -104,35 +107,35 @@ Add a choices list
 ------------------
 
 A selector gives the possibility choose a value in a predefined list.
+An item of a selector is a tuple: the first element is the text
+displayed, the others are the arguments passed to the callbacks
+``onchange`` and ``onreturn``.
 
 **Example:**
 
+.. image:: ../_static/widget_selector.png
+    :scale: 30%
+    :align: center
+
 .. code-block:: python
 
-    def change_color_bg(value, c=None, **kwargs):
-        """
-        Change background color.
-        """
-        color, _ = value
-        if c == (-1, -1, -1):  # If random color
-            c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
-        if kwargs['write_on_console']:
-            print('New background color: {0} ({1},{2},{3})'.format(color, *c))
-        COLOR_BACKGROUND[0] = c[0]
-        COLOR_BACKGROUND[1] = c[1]
-        COLOR_BACKGROUND[2] = c[2]
+    def change_background_color(value, surface, color):
+        name, index = value
+        print("Change color to", name)
+        if color == (-1, -1, -1):
+            # Generate a random color
+            color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
+        surface.fill(color)
 
     menu = pygameMenu.Menu(...)
 
-    menu.add_selector('Change bgcolor',
-                      # Values of selector, call to change_color_bg
-                      [('Random', (-1, -1, -1)),  # Random color
-                      ('Default', (128, 0, 128)),
-                      ('Black', (0, 0, 0)),
-                      ('Blue', COLOR_BLUE)],
-                      onchange=None,
-                      onreturn=change_color_bg,
-                      write_on_console=True)
+    menu.add_selector('Current color',
+                      # list of (Text, parameters...)
+                      [('Default', surface, (128, 0, 128)),
+                       ('Black', surface, (0, 0, 0)),
+                       ('Blue', surface, (0, 0, 255)),
+                       ('Random', surface, (-1, -1, -1))],
+                      onchange=change_background_color)
 
 .. automethod:: pygameMenu.menu.Menu.add_selector
 
