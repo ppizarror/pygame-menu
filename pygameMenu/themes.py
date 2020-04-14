@@ -268,11 +268,11 @@ class Theme(object):
 THEME_DEFAULT = Theme()
 
 THEME_BLACK = Theme(
-    background_color=(0, 0, 0),
+    background_color=(40, 41, 35),
     selection_color=(255, 255, 255),
-    title_background_color=(50, 50, 50),
-    title_font_color=(255, 255, 255),
-    widget_font_color=(150, 150, 150),
+    title_background_color=(47, 48, 51),
+    title_font_color=(215, 215, 215),
+    widget_font_color=(200, 200, 200),
 )
 
 THEME_BLUE = Theme(
