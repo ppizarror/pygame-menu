@@ -43,8 +43,12 @@ from pygameMenu.widgets.widget.button import Button
 from pygameMenu.widgets.widget.colorinput import ColorInput
 from pygameMenu.widgets.widget.image import Image
 from pygameMenu.widgets.widget.label import Label
-from pygameMenu.widgets.widget.menubar import MenuBar
 from pygameMenu.widgets.widget.scrollbar import ScrollBar
 from pygameMenu.widgets.widget.selector import Selector
 from pygameMenu.widgets.widget.textinput import TextInput
 from pygameMenu.widgets.widget.vmargin import VMargin
+
+# Menubar and positions
+from pygameMenu.widgets.widget.menubar import MenuBar, MENUBAR_MODE_ADAPTATIVE, MENUBAR_MODE_SIMPLE, \
+    MENUBAR_MODE_TITLE_ONLY, MENUBAR_MODE_TITLE_ONLY_DIAGONAL, MENUBAR_MODE_NONE, MENUBAR_MODE_UNDERLINE, \
+    MENUBAR_MODE_UNDERLINE_TITLE

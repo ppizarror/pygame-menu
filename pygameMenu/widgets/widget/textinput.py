@@ -488,7 +488,7 @@ class TextInput(Widget):
                     basechar = self._password_char
                 max_size = self.font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
-                maxchar_char = math.ceil(max_size * 1.0 / self._input_underline_size)
+                maxchar_char = math.ceil((max_size + 2 * self._ellipsis_size) / self._input_underline_size)
                 char = min(char, maxchar_char)
                 max_width_current = current_rect.width
 

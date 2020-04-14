@@ -37,11 +37,6 @@ import pygameMenu.font
 import pygameMenu.utils
 import pygameMenu.widgets as _widgets
 
-# noinspection PyUnresolvedReferences
-from pygameMenu.widgets.widget.menubar import MENUBAR_MODE_ADAPTATIVE, MENUBAR_MODE_SIMPLE, MENUBAR_MODE_TITLE_ONLY, \
-    MENUBAR_MODE_TITLE_ONLY_DIAGONAL, MENUBAR_MODE_NONE, MENUBAR_MODE_UNDERLINE, \
-    MENUBAR_MODE_UNDERLINE_TITLE  # lgtm [py/unused-import]
-
 
 class Theme(object):
     """
@@ -138,7 +133,7 @@ class Theme(object):
         self.title_background_color = self._get(kwargs, 'title_background_color',
                                                 'color', (70, 70, 70))  # type: (tuple, list)
         self.title_bar_mode = self._get(kwargs, 'title_bar_mode',
-                                        int, MENUBAR_MODE_ADAPTATIVE)
+                                        int, _widgets.MENUBAR_MODE_ADAPTATIVE)
         self.title_font = self._get(kwargs, 'title_font',
                                     str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.title_font_color = self._get(kwargs, 'title_font_color',
