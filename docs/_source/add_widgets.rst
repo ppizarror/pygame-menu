@@ -149,14 +149,14 @@ on entered characters can be set using ``input_type``, ``maxchar``,
 
 **Example:**
 
-.. image:: ../_static/widget_textiput.png
+.. image:: ../_static/widget_textinput.png
     :scale: 30%
     :align: center
 
 .. code-block:: python
 
     def check_name(value):
-        print('User name: {0}'.format(value))
+        print('User name:', value)
 
     menu = pygameMenu.Menu(...)
 
@@ -172,7 +172,8 @@ Add a color entry
 
 A color input is similar as a text input but with a limited choice of
 characters to enter a RGB value of HEX decimal one. There is also a
-area to display the current color.
+area to show the current color. By default the RGB integers separator
+is a comma (``,``).
 
 **Example:**
 
@@ -182,19 +183,14 @@ area to display the current color.
 
 .. code-block:: python
 
-    def check_color_value(value):
-        """
-        This function tests the color input value.
-        :param value: The widget value (tuple)
-        :return: None
-        """
-        print('New color: {0}'.format(color))
+    def check_color(value):
+        print('New color:', value)
 
     menu = pygameMenu.Menu(...)
 
-    menu.add_color_input('Color RGB: ', color=type='rgb', default=(255, 0, 255), onreturn=check_color_value)
-    menu.add_color_input('Empty color in RGB: ', color_type='rgb', input_separator='-')
-    menu.add_color_input('Color in Hex: ', color_type='hex', default='#ffaa11')
+    menu.add_color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), onreturn=check_color, font_size=18)
+    menu.add_color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
+    menu.add_color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
 
 .. automethod:: pygameMenu.menu.Menu.add_color_input
 
@@ -202,15 +198,21 @@ area to display the current color.
 Add a vertical spacer
 ---------------------
 
-A vertical spacer can be added between widget to have a better
+A vertical spacer can be added between two widgets to have a better
 visual rendering of the menu.
 
 **Example:**
+
+.. image:: ../_static/widget_vmargin.png
+    :scale: 30%
+    :align: center
 
 .. code-block:: python
 
     menu = pygameMenu.Menu(...)
 
-    menu.add_vertical_margin(20)
+    menu.add_label('Text #1')
+    menu.add_vertical_margin(100)
+    menu.add_label('Text #2')
 
 .. automethod:: pygameMenu.menu.Menu.add_vertical_margin

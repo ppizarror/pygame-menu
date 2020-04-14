@@ -670,7 +670,7 @@ class Menu(object):
         :type password: bool
         :param textinput_id: ID of the text input
         :type textinput_id: basestring
-        :param valid_chars: List of chars to be ignored, None if no chars are invalid
+        :param valid_chars: List of authorized chars, None if all chars are valid
         :type valid_chars: list
         :param kwargs: Additional keyword-parameters
         :type kwargs: any
