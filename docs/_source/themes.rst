@@ -21,7 +21,7 @@ menu window itself and all its widgets.
 Default themes
 --------------
 
-Several themes are provided with y default.
+Several predefined themes are proposed by :py:mod:`pygame-menu`.
 
 ==============================================  ================================================
 Theme                                           Example
@@ -48,7 +48,7 @@ give the opportunity to create custom themes.
 
     menu = Menu(..., theme=mytheme)
 
-Of course it is possible to start from data of a predefined theme by
+Of course it is also possible to start from a predefined theme by
 copying it first.
 
 .. code-block:: python
