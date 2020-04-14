@@ -58,13 +58,10 @@ def start_the_game():
     print('Do the job here !')
 
 
-menu = pygameMenu.Menu(
-    height=300,
-    width=400,
-    theme=pygameMenu.themes.THEME_BLACK,
-    title='Welcome',
-    widget_offset=(0, 0)
-)
+menu = pygameMenu.Menu(height=300,
+                       width=400,
+                       theme=pygameMenu.themes.THEME_BLUE,
+                       title='Welcome')
 
 menu.add_text_input('Name: ')
 menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
