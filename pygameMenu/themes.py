@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import copy
-import warnings
 
 import pygameMenu
 import pygameMenu.font
@@ -42,6 +41,12 @@ import pygameMenu.widgets as _widgets
 class Theme(object):
     """
     Class defining the visual rendering of menus and widgets.
+
+    Note: All colors must be defined with a tuple of 3 or 4 numbers in the formats:
+        - (R,G,B)
+        - (R,G,B,A)
+    Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
+    A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
 
     :param background_color: Menu background color
     :type background_color: tuple, list
@@ -170,31 +175,18 @@ class Theme(object):
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
         assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
 
+        # Format colors
+        self.background_color = self._format_opacity(self.background_color)
+        self.scrollbar_color = self._format_opacity(self.scrollbar_color)
+        self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
+        self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
+        self.selection_color = self._format_opacity(self.selection_color)
+        self.title_background_color = self._format_opacity(self.title_background_color)
+        self.title_font_color = self._format_opacity(self.title_font_color)
+        self.title_shadow_color = self._format_opacity(self.title_shadow_color)
+
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
-        self._registered_menu_id = None
-
-    def register(self, menu):
-        """
-        Register menu object, if the menu is different then raises a warning
-        because a same Theme object should not be used by two different objects.
-
-        For avoiding this warning, user must create a copy of the object.
-
-        :param menu: Menu object
-        :type menu: pygameMenu.menu.Menu
-        :return: True if the object must be copied
-        :rtype: bool
-        """
-        if self._registered_menu_id is None:
-            self._registered_menu_id = menu.get_id()
-            return False
-        if self._registered_menu_id != menu.get_id():
-            msg = 'theme object should not be used for more than 1 different menu, please use ' \
-                  '.copy() method. Currently used in menu ID {0}'.format(self._registered_menu_id)
-            warnings.warn(msg)
-            return True
-        return False
 
     def copy(self):
         """
@@ -204,6 +196,30 @@ class Theme(object):
         :rtype: Theme
         """
         return copy.deepcopy(self)
+
+    @staticmethod
+    def _format_opacity(color):
+        """
+        Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
+        has not an alpha channel. Also updates the opacity to a number between
+        0 and 255.
+
+        :param color: Color tuple
+        :type color: list, tuple
+        :return: Color in the same format
+        :rtype: list, tuple
+        """
+        if len(color) == 4:
+            opacity = color[3]
+        else:
+            opacity = 255
+        if isinstance(color, tuple):
+            color = color[0], color[1], color[2], opacity
+        elif isinstance(color, list):
+            color = [color[0], color[1], color[2], opacity]
+        else:
+            raise ValueError('Invalid color {0}'.format(color))
+        return color
 
     @staticmethod
     def _get(params, key, allowed_types=None, default=None):
@@ -218,7 +234,8 @@ class Theme(object):
         :type allowed_types: any
         :param default: default value to return
         :type default: any
-        :return: the value associated to the key
+        :return: The value associated to the key
+        :rtype: any
         """
         if key not in params:
             return default

@@ -196,15 +196,13 @@ def main(test=False):
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
-    # Create menus
+    # Create menus: Play Menu
     # -------------------------------------------------------------------------
-
-    # Play menu
     play_menu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.7,
         width=WINDOW_SIZE[0] * 0.7,
         onclose=pygameMenu.events.DISABLE_CLOSE,
-        title='Play menu',
+        title='Play Menu',
         widget_offset=[0, 0.17],  # %17 of menu height
     )
 
@@ -234,7 +232,9 @@ def main(test=False):
     play_menu.add_button('Return to main menu', pygameMenu.events.BACK)
     play_menu.center_content()
 
-    # About menu
+    # -------------------------------------------------------------------------
+    # Create menus:About
+    # -------------------------------------------------------------------------
     about_menu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
         width=WINDOW_SIZE[0] * 0.6,
@@ -248,13 +248,15 @@ def main(test=False):
     about_menu.add_label('')
     about_menu.add_button('Return to menu', pygameMenu.events.BACK)
 
-    # Main menu
+    # -------------------------------------------------------------------------
+    # Create menus: Main
+    # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(
         back_box=False,
         height=WINDOW_SIZE[1] * 0.6,
         width=WINDOW_SIZE[0] * 0.6,
         onclose=pygameMenu.events.DISABLE_CLOSE,
-        title='Main menu',
+        title='Main Menu',
     )
 
     main_menu.add_button('Play', play_menu)

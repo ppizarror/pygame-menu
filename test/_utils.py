@@ -332,7 +332,6 @@ class PygameMenuUtils(object):
             columns=columns,
             enabled=False,
             height=height,
-            menu_opacity=90,
             menu_position=(position_x, position_y),
             width=width,
             rows=rows,

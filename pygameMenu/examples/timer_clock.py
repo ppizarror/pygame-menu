@@ -156,13 +156,15 @@ def main(test=False):
     timer_font = pygameMenu.font.get_font(pygameMenu.font.FONT_NEVIS, 100)
 
     # -------------------------------------------------------------------------
-    # Create menus
+    # Create menus: Timer
     # -------------------------------------------------------------------------
+
+    timer_theme = pygameMenu.themes.THEME_BLACK.copy()  # Create a new copy
+    timer_theme.background_color = (0, 0, 0, 180)  # Enable transparency
 
     # Timer
     timer_menu = pygameMenu.Menu(
-        theme=pygameMenu.themes.THEME_BLACK.copy(),
-        menu_opacity=85,
+        theme=timer_theme,
         height=400,
         width=600,
         onclose=pygameMenu.events.RESET,
@@ -189,10 +191,12 @@ def main(test=False):
     timer_menu.add_button('Close Menu', pygameMenu.events.CLOSE)
     timer_menu.center_content()
 
-    # Help menu
+    # -------------------------------------------------------------------------
+    # Create menus: Help
+    # -------------------------------------------------------------------------
     help_theme = pygameMenu.themes.Theme(
-        background_color=(30, 50, 107),
-        title_background_color=(120, 45, 30),
+        background_color=(30, 50, 107, 190),  # 75% opacity
+        title_background_color=(120, 45, 30, 190),
         title_font=pygameMenu.font.FONT_FRANCHISE,
         title_font_size=60,
         widget_font=pygameMenu.font.FONT_FRANCHISE,
@@ -204,7 +208,6 @@ def main(test=False):
 
     help_menu = pygameMenu.Menu(
         height=600,  # Fullscreen
-        menu_opacity=85,
         onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
         theme=help_theme,
         title='Help',
@@ -216,14 +219,15 @@ def main(test=False):
     help_menu.add_vertical_margin(25)
     help_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
-    # About menu
+    # -------------------------------------------------------------------------
+    # Create menus: About
+    # -------------------------------------------------------------------------
     about_theme = pygameMenu.themes.THEME_BLACK.copy()
     about_theme.widget_font = pygameMenu.font.FONT_NEVIS
     about_theme.title_font = pygameMenu.font.FONT_8BIT
 
     about_menu = pygameMenu.Menu(
         height=400,
-        menu_opacity=85,  # Enable transparency
         mouse_visible=False,
         onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
         theme=about_theme,
@@ -236,12 +240,13 @@ def main(test=False):
     about_menu.add_label('')
     about_menu.add_button('Return to Menu', pygameMenu.events.BACK)
 
-    # Main menu, pauses execution of the application
+    # -------------------------------------------------------------------------
+    # Create menus: Main menu
+    # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(
         enabled=False,
         height=400,
-        menu_opacity=90,
-        theme=pygameMenu.themes.THEME_BLACK.copy(),
+        theme=pygameMenu.themes.THEME_BLACK,
         title='Main Menu',
         width=600,
     )

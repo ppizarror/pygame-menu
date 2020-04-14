@@ -76,28 +76,25 @@ def make_long_menu():
     # Main menu, pauses execution of the application
     _menu = pygameMenu.Menu(
         height=400,
-        menu_opacity=80,
         width=600,  # px
         onclose=pygameMenu.events.EXIT,
-        theme=pygameMenu.themes.THEME_GREEN.copy(),
+        theme=pygameMenu.themes.THEME_GREEN,
         title='Main Menu',
         widget_offset=(0, 10),
     )
 
     _menu_sub = pygameMenu.Menu(
         columns=4,
-        menu_opacity=60,
         height=400,
         width=600,
         onclose=pygameMenu.events.EXIT,
         rows=3,
         title='Menu with columns',
-        theme=pygameMenu.themes.THEME_GREEN.copy(),
+        theme=pygameMenu.themes.THEME_GREEN,
     )
 
     _menu_text = pygameMenu.Menu(
         height=400,
-        menu_opacity=60,
         width=600,
         onclose=pygameMenu.events.EXIT,
         theme=pygameMenu.themes.THEME_BLACK,

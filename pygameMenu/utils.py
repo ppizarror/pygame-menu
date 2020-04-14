@@ -60,9 +60,17 @@ def assert_color(color):
     :return: None
     """
     assert isinstance(color, (list, tuple))
-    assert len(color) == 3, 'color must be a tuple or list of 3 numbers'
-    for i in color:
-        assert isinstance(i, int), '"{0}" in element color {1} must be an integer'.format(i, color)
+    assert 4 >= len(color) >= 3, 'color must be a tuple or list of 3 or 4 numbers'
+    for i in range(3):
+        assert isinstance(color[i], int), \
+            '"{0}" in element color {1} must be an integer'.format(color[i], color)
+        assert 0 <= color[i] <= 255, \
+            '"{0}" in element color {1} must be a number between 0 and 255'.format(color[i], color)
+    if len(color) == 4:
+        assert isinstance(color[3], int)
+        assert 0 <= color[3] <= 255, \
+            'opacity of color {0} must be an integer between 0 and 255, ' \
+            '0 is transparent, 255 is opaque'.format(color)
 
 
 def assert_orientation(orientation):

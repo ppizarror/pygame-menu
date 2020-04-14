@@ -151,7 +151,7 @@ def main(test=False):
         width=WINDOW_SIZE[0] * 0.9,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='Settings',
-        theme=settings_menu_theme.copy(),  # This theme will be used for another menu
+        theme=settings_menu_theme,
     )
 
     # Add text inputs with different configurations
@@ -213,7 +213,7 @@ def main(test=False):
         width=WINDOW_SIZE[0] * 0.9,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='More Settings',
-        theme=settings_menu_theme.copy(),
+        theme=settings_menu_theme,
         widget_offset=(5, 10),  # px
     )
 
@@ -248,7 +248,7 @@ def main(test=False):
         width=WINDOW_SIZE[0] * 0.9,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         rows=3,
-        theme=pygameMenu.themes.THEME_ORANGE.copy(),
+        theme=pygameMenu.themes.THEME_ORANGE,
         title='Columns',
     )
     for i in range(4):

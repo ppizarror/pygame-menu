@@ -61,7 +61,7 @@ def start_the_game():
 menu = pygameMenu.Menu(
     height=300,
     width=400,
-    theme=pygameMenu.themes.THEME_BLUE.copy(),
+    theme=pygameMenu.themes.THEME_BLUE,
     title='Welcome',
 )
 

@@ -78,8 +78,6 @@ class Menu(object):
     :type joystick_enabled: bool
     :param menu_id: ID of the Menu
     :type menu_id: basestring
-    :param menu_opacity: Opacity of background (0=transparent, 100=opaque)
-    :type menu_opacity: int, float
     :param menu_position: Position in x,y axis (%). Default (50, 50), vertically and horizontally centered
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
@@ -107,13 +105,12 @@ class Menu(object):
                  enabled=True,
                  joystick_enabled=True,
                  menu_id='',
-                 menu_opacity=100,
                  menu_position=(50, 50),
                  mouse_enabled=True,
                  mouse_visible=True,
                  onclose=None,
                  rows=None,
-                 theme=None,
+                 theme=_themes.THEME_DEFAULT,
                  title_offset=(5, 2),  # px
                  widget_margin=(0, 10),
                  widget_offset=(0, 0),
@@ -126,13 +123,12 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_opacity, (int, float))
         assert isinstance(menu_position, (tuple, list))
         assert isinstance(menu_id, str)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(theme, (_themes.Theme, type(None)))
+        assert isinstance(theme, _themes.Theme)
         assert isinstance(title, str)
         assert isinstance(title_offset, (tuple, list))
         assert isinstance(widget_margin, (tuple, list))
@@ -169,10 +165,6 @@ class Menu(object):
             'menu width and height must be greater than zero'
         assert widget_offset[0] >= 0 and widget_offset[1] >= 0, 'widget offset must be greater or equal than zero'
 
-        # Other asserts
-        assert 0 <= menu_opacity <= 100, \
-            'menu opacity must be between 0 and 100 (both values included)'
-
         # Get window size
         window_width, window_height = pygame.display.get_surface().get_size()
         assert width <= window_width and height <= window_height, \
@@ -192,6 +184,7 @@ class Menu(object):
         self._onclose = onclose  # Function that calls after closing Menu
         self._sounds = Sound()  # type: Sound
         self._submenus = []  # type: list
+        self._theme = theme
         self._width = float(width)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
@@ -211,20 +204,6 @@ class Menu(object):
         # Enabled and closed belongs to top, closing a submenu is equal as closing the root
         # Menu
         self._enabled = enabled  # Menu is enabled or not
-
-        # Set the theme
-        # Set theme
-        if theme is None:
-            theme = _themes.THEME_DEFAULT.copy()
-        if theme.register(self):
-            theme = theme.copy()
-        self._theme = theme
-
-        menu_opacity = int(255.0 * (1.0 - (100.0 - menu_opacity) / 100.0))
-        menu_background_color = (self._theme.background_color[0],
-                                 self._theme.background_color[1],
-                                 self._theme.background_color[2],
-                                 menu_opacity)
 
         # Position of Menu
         self._pos_x = 0  # type: int
@@ -266,7 +245,8 @@ class Menu(object):
         self._menubar = _widgets.MenuBar(label=title,
                                          width=self._width,
                                          back_box=back_box,
-                                         bgcolor=menu_background_color,  # bg_color_title is only used behind text
+                                         bgcolor=self._theme.background_color,
+                                         # bg_color_title is only used behind text
                                          onreturn=self._back)
         self._menubar.set_menu(self)
         self._menubar.set_title(title=title,
@@ -274,10 +254,7 @@ class Menu(object):
                                 offsety=title_offset[1])
         self._menubar.set_font(font=self._theme.title_font,
                                font_size=self._theme.title_font_size,
-                               color=(self._theme.title_background_color[0],
-                                      self._theme.title_background_color[1],
-                                      self._theme.title_background_color[2],
-                                      menu_opacity),
+                               color=self._theme.title_background_color,
                                selected_color=self._theme.title_font_color)
         self._menubar.set_shadow(enabled=self._theme.title_shadow,
                                  color=self._theme.title_shadow_color,
@@ -289,7 +266,7 @@ class Menu(object):
         self._widgets_surface = None
         self._scroll = ScrollArea(area_width=self._width,
                                   area_height=self._height - self._menubar.get_rect().height,
-                                  area_color=menu_background_color,
+                                  area_color=self._theme.background_color,
                                   scrollbar_color=self._theme.scrollbar_color,
                                   scrollbar_slider_color=self._theme.scrollbar_slider_color,
                                   scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
