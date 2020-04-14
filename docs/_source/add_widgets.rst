@@ -77,24 +77,25 @@ three values:
 
 **Example:**
 
-.. code-block:: python
-
-    def fun():
-        print("Hello world")
-
-    menu = pygameMenu.Menu(...)
-
-    menu.add_button('Simple button', fun, align=pygameMenu.locals.ALIGN_LEFT)
-    menu.add_button('Return to Menu', pygameMenu.events.MENU_BACK)
+.. image:: ../_static/widget_button.png
+    :scale: 30%
+    :align: center
 
 .. code-block:: python
+
+    def func(name):
+        print("Hello world from", name)
 
     menu = pygameMenu.Menu(...)
 
     about_menu = pygameMenu.Menu(...)
 
-    menu.add_button(about_menu.get_title(), about_menu)     # Adds about submenu
-    menu.add_button('Exit', pygameMenu.events.MENU_EXIT)    # Adds exit function
+    menu.add_button('Exec func', func, 'foo',               # Execute a function
+                    align=pygameMenu.locals.ALIGN_LEFT)
+    menu.add_button(about_menu.get_title(), about_menu,     # Open a sub-menu
+                    shadow=True, shadow_color=(0, 0, 100))
+    menu.add_button('Exit', pygameMenu.events.EXIT,         # Link to exit action
+                    align=pygameMenu.locals.ALIGN_RIGHT)
 
 .. automethod:: pygameMenu.menu.Menu.add_button
 
