@@ -11,15 +11,19 @@ will be wrapped in order to fit the menu size.
 
 **Example:**
 
+.. image:: ../_static/widget_label.png
+    :scale: 30%
+    :align: center
+
 .. code-block:: python
 
-    HELP = "Press ESC to enable/disable Menu \
-        Press ENTER to access a Sub-Menu or use an option \
-        Press UP/DOWN to move through Menu \
-        Press LEFT/RIGHT to move through Selectors."
+    HELP = "Press ESC to enable/disable Menu "\
+           "Press ENTER to access a Sub-Menu or use an option "\
+           "Press UP/DOWN to move through Menu "\
+           "Press LEFT/RIGHT to move through Selectors."
 
     menu = pygameMenu.Menu(...)
-    menu.add_label(HELP)
+    menu.add_label(HELP, max_char=-1, font_size=20)
 
 .. automethod:: pygameMenu.menu.Menu.add_label
 
@@ -31,10 +35,19 @@ An image can be displayed on a menu.
 
 **Example:**
 
+.. image:: ../_static/widget_image.png
+    :scale: 30%
+    :align: center
+
 .. code-block:: python
 
+    PATH = os.path.join(os.path.dirname(pygameMenu.__file__),
+                        'resources', 'images', 'pygame_menu.png')
+
     menu = pygameMenu.Menu(...)
-    menu.add_image('/home/me/cool_image.png')
+
+    menu.add_image(PATH, angle=10, scale=(0.15, 0.15))
+    menu.add_image(PATH, angle=-10, scale=(0.15, 0.15), scale_smooth=True)
 
 .. automethod:: pygameMenu.menu.Menu.add_image
 
