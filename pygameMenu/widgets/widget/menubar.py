@@ -34,7 +34,6 @@ import pygame
 import pygame.gfxdraw as gfxdraw
 import pygameMenu.controls as _controls
 
-from pygameMenu.utils import make_surface
 from pygameMenu.widgets.core.widget import Widget
 
 MENUBAR_STYLE_ADAPTATIVE = 1
@@ -56,8 +55,6 @@ class MenuBar(Widget):
     :type width: int, float
     :param back_box: Draw a back-box button on header
     :type back_box: bool
-    :param bgcolor: Color behind the polygon (transparent if not given)
-    :type bgcolor: tuple, list
     :param mode: Mode of drawing the bar
     :type mode: int
     :param onchange: Callback when changing the selector
@@ -72,7 +69,6 @@ class MenuBar(Widget):
                  label,
                  width,
                  back_box=False,
-                 bgcolor=None,
                  mode=MENUBAR_STYLE_ADAPTATIVE,
                  onchange=None,
                  onreturn=None,
@@ -91,7 +87,6 @@ class MenuBar(Widget):
         self._backbox = back_box
         self._backbox_pos = None  # type: (tuple,None)
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
-        self._bgcolor = bgcolor
         self._label = label
         self._style = mode
         self._offsetx = 0.0
@@ -105,11 +100,6 @@ class MenuBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
-
-        if self._bgcolor:
-            bg = make_surface(self._width, self._rect.height + 5)
-            bg.fill(self._bgcolor)
-            surface.blit(bg, self._rect.topleft)
 
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
@@ -142,6 +132,8 @@ class MenuBar(Widget):
         self._surface = self._render_string(self._label, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
+        self._rect.y += 4
+        backbox_dx, backbox_dy = -4, 4
         if self._style == MENUBAR_STYLE_ADAPTATIVE:
             """
             A-------------------B                  D-E: 25 dx
@@ -154,10 +146,11 @@ class MenuBar(Widget):
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
             d = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y + self._rect.height * 0.6
             e = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + self._offsety
-            f = self._rect.x, self._rect.y + self._rect.height + self._offsety
+                self._rect.y + self._rect.height
+            f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
             cross_size = self._rect.height * 0.6
+            backbox_dy = 3
         elif self._style == MENUBAR_STYLE_SIMPLE:
             """
             A-------------------B
@@ -179,8 +172,8 @@ class MenuBar(Widget):
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + self._offsety
-            d = self._rect.x, self._rect.y + self._rect.height + self._offsety
+                self._rect.y + self._rect.height
+            d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
         elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
@@ -192,8 +185,8 @@ class MenuBar(Widget):
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
-                self._rect.y + self._rect.height + self._offsety
-            d = self._rect.x, self._rect.y + self._rect.height + self._offsety
+                self._rect.y + self._rect.height
+            d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
         elif self._style == MENUBAR_STYLE_NONE:
@@ -212,10 +205,10 @@ class MenuBar(Widget):
             D-------------------C
             """
             dy = 3
-            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
-            b = self._rect.x + self._width - 1, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
-            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + self._offsety + dy
-            d = self._rect.x, self._rect.y + self._rect.height + self._offsety + dy
+            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + dy
+            b = self._rect.x + self._width - 1, self._rect.y + 0.9 * self._rect.height + dy
+            c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
+            d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
         elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
@@ -225,45 +218,48 @@ class MenuBar(Widget):
             D----C
             """
             dy = 3
-            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
-            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.9 * self._rect.height + self._offsety + dy
-            c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + self._offsety + dy
-            d = self._rect.x, self._rect.y + self._rect.height + self._offsety + dy
+            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + dy
+            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.9 * self._rect.height + dy
+            c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + dy
+            d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
         else:
             raise ValueError('invalid menubar mode {0}'.format(self._style))
 
-        cross_size -= self._offsety + 4
-        backbox_x = self._rect.x + self._width - 4 - cross_size
-        backbox_y = self._rect.y + 3
-        self._backbox_rect = pygame.Rect(backbox_x, backbox_y, cross_size, cross_size)
+        # Create the back box
+        if self._backbox:
+            cross_size -= backbox_dy + 4
+            backbox_x = self._rect.x + self._width - cross_size + backbox_dx
+            backbox_y = self._rect.y + backbox_dy
+            self._backbox_rect = pygame.Rect(backbox_x, backbox_y, cross_size, cross_size)
+            if menu_prev_condition:
+                # Make a cross for top menu
+                self._backbox_pos = (
+                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+                    (self._backbox_rect.centerx, self._backbox_rect.centery),
+                    (self._backbox_rect.right - 4, self._backbox_rect.top + 4),
+                    (self._backbox_rect.centerx, self._backbox_rect.centery),
+                    (self._backbox_rect.right - 4, self._backbox_rect.bottom - 4),
+                    (self._backbox_rect.centerx, self._backbox_rect.centery),
+                    (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
+                    (self._backbox_rect.centerx, self._backbox_rect.centery),
+                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+                )
+            else:
+                # Make a back arrow for sub-menus
+                self._backbox_pos = (
+                    (self._backbox_rect.left + 5, self._backbox_rect.centery),
+                    (self._backbox_rect.centerx, self._backbox_rect.top + 5),
+                    (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
+                    (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
+                    (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
+                    (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
+                    (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
+                    (self._backbox_rect.left + 5, self._backbox_rect.centery)
+                )
 
-        if menu_prev_condition:
-            # Make a cross for top menu
-            self._backbox_pos = (
-                (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
-                (self._backbox_rect.centerx, self._backbox_rect.centery),
-                (self._backbox_rect.right - 4, self._backbox_rect.top + 4),
-                (self._backbox_rect.centerx, self._backbox_rect.centery),
-                (self._backbox_rect.right - 4, self._backbox_rect.bottom - 4),
-                (self._backbox_rect.centerx, self._backbox_rect.centery),
-                (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
-                (self._backbox_rect.centerx, self._backbox_rect.centery),
-                (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
-            )
-        else:
-            # Make a back arrow for sub-menus
-            self._backbox_pos = (
-                (self._backbox_rect.left + 5, self._backbox_rect.centery),
-                (self._backbox_rect.centerx, self._backbox_rect.top + 5),
-                (self._backbox_rect.centerx, self._backbox_rect.centery - 2),
-                (self._backbox_rect.right - 5, self._backbox_rect.centery - 2),
-                (self._backbox_rect.right - 5, self._backbox_rect.centery + 2),
-                (self._backbox_rect.centerx, self._backbox_rect.centery + 2),
-                (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
-                (self._backbox_rect.left + 5, self._backbox_rect.centery)
-            )
+        self._rect.y -= 4
 
     def set_title(self, title, offsetx=0, offsety=0):
         """

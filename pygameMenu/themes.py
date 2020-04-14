@@ -77,21 +77,21 @@ class Theme(object):
     :param title_font: Optional title font, if None use the Menu default font
     :type title_font: basestring, NoneType
     :param title_font_color: Title font color, if None use the widget font color
-    :type title_font_color: list, tuple, NoneType
+    :type title_font_color: tuple, list, NoneType
     :param title_font_size: Font size of the title
     :type title_font_size: int
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
     :param title_shadow_color: Title shadow color
-    :type title_shadow_color: list, tuple
+    :type title_shadow_color: tuple, list
     :param title_shadow_offset: Offset of shadow on title
     :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title
     :type title_shadow_position: basestring
-    :param widget_font: Menu font file path or name
-    :type widget_font: basestring
     :param widget_alignment: Widget default alignment
     :type widget_alignment: basestring
+    :param widget_background_color: Background color of a widget
+    :type widget_background_color: tuple, list, NoneType
     :param widget_font: Widget font path or name
     :type widget_font: basestring
     :param widget_font_color: Color of the font
@@ -154,6 +154,10 @@ class Theme(object):
                                      str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.widget_alignment = self._get(kwargs, 'widget_alignment',
                                           'alignment', pygameMenu.locals.ALIGN_CENTER)
+        self.widget_background_color = self._get(kwargs, 'widget_background_color',
+                                                 'color_none')  # type: (tuple, list, type(None))
+        self.widget_background_inflate = self._get(kwargs, 'background_inflate',
+                                                   'vector2', (16, 8))  # type: (tuple, list)
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: (tuple, list)
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
@@ -190,6 +194,7 @@ class Theme(object):
         self.title_background_color = self._format_opacity(self.title_background_color)
         self.title_font_color = self._format_opacity(self.title_font_color)
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)
+        self.widget_background_color = self._format_opacity(self.widget_background_color)
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
@@ -211,11 +216,11 @@ class Theme(object):
         0 and 255.
 
         :param color: Color tuple
-        :type color: list, tuple
+        :type color: tuple, list
         :return: Color in the same format
-        :rtype: list, tuple
+        :rtype: tuple, list, NoneType
         """
-        if len(color) == 4:
+        if color is None or len(color) == 4:
             return color
         opacity = 255
         if isinstance(color, tuple):
@@ -250,14 +255,18 @@ class Theme(object):
             if not isinstance(allowed_types, (tuple, list)):
                 allowed_types = (allowed_types,)
             for valtype in allowed_types:
-                if valtype == 'color':
+                if valtype == 'color' or valtype == 'color_none':
+                    if valtype == 'color_none' and value is None:
+                        return value
                     pygameMenu.utils.assert_color(value)
                 elif valtype == 'position':
                     pygameMenu.utils.assert_position(value)
                 elif valtype == 'alignment':
                     pygameMenu.utils.assert_alignment(value)
+                elif valtype == 'tuple2':
+                    pygameMenu.utils.assert_vector2(value)
 
-            others = [t for t in allowed_types if t not in ('color', 'position', 'alignment')]
+            others = [t for t in allowed_types if t not in ('color', 'color_none', 'position', 'alignment', 'tuple2')]
             if others:
                 for t in others:
                     msg = 'Theme.{} type shall be {} (got {})'.format(key, t, type(value))

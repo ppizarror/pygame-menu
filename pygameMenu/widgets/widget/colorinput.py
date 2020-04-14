@@ -146,7 +146,7 @@ class ColorInput(TextInput):
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
         self._previsualization_position = (0.0, 0.0)
-        self._previsualization_surface = None  # type: (_pygame.Surface,None)
+        self._previsualization_surface = None  # type: (pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 
     # noinspection PyMissingOrEmptyDocstring
@@ -245,7 +245,7 @@ class ColorInput(TextInput):
             self._last_g = g
             self._last_b = b
             _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
-            _posy = self._rect.y - 1
+            _posy = self._rect.y
             self._previsualization_position = (_posx, _posy)
 
         # Draw the surface
@@ -272,7 +272,7 @@ class ColorInput(TextInput):
 
         key = ''  # Pressed key
         if self._color_type == _TYPE_RGB:
-            for event in events:  # type: _pygame.event.EventType
+            for event in events:  # type: pygame.event.EventType
                 if event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
@@ -347,7 +347,7 @@ class ColorInput(TextInput):
                                     return False
 
         elif self._color_type == _TYPE_HEX:
-            for event in events:  # type: _pygame.event.EventType
+            for event in events:  # type: pygame.event.EventType
                 if event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid

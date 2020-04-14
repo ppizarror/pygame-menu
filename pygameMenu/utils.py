@@ -56,10 +56,10 @@ def assert_color(color):
     Assert that a certain color is valid.
 
     :param color: Object color
-    :type color: list, tuple
+    :type color: tuple, list
     :return: None
     """
-    assert isinstance(color, (list, tuple))
+    assert isinstance(color, (tuple, list))
     assert 4 >= len(color) >= 3, 'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
@@ -86,15 +86,15 @@ def assert_orientation(orientation):
         'invalid orientation value "{0}"'.format(orientation)
 
 
-def assert_numeric2_vector(num_vector):
+def assert_vector2(num_vector):
     """
     Assert that a 2 item vector is numeric.
 
     :param num_vector: Numeric 2 item vector
-    :type num_vector: list, tuple
+    :type num_vector: tuple, list
     :return: None
     """
-    assert isinstance(num_vector, (list, tuple)), 'object {0} must be a list or tuple of 2 items'.format(num_vector)
+    assert isinstance(num_vector, (tuple, list)), 'object {0} must be a list or tuple of 2 items'.format(num_vector)
     assert len(num_vector) == 2 and isinstance(num_vector[0], (int, float)) and \
            isinstance(num_vector[1], (int, float)), 'each object of {0} must be integer or float'.format(num_vector)
 
@@ -145,7 +145,7 @@ def dummy_function():
     return
 
 
-def make_surface(width, height, alpha=False):
+def make_surface(width, height, alpha=False, fill_color=None):
     """
     Creates a pygame surface object.
 
@@ -155,12 +155,17 @@ def make_surface(width, height, alpha=False):
     :type height: int, float
     :param alpha: Enable alpha channel on surface
     :type alpha: bool
+    :param fill_color: Fill surface with a certain color
+    :type fill_color: tuple, list, NoneType
     :return: Pygame surface
-    :rtype: _pygame.Surface
+    :rtype: pygame.SurfaceType
     """
     assert width > 0 and height > 0, 'surface width and height must be greater than zero'
     assert isinstance(alpha, bool)
     surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
     if alpha:
         surface = pygame.Surface.convert_alpha(surface)
+    if fill_color is not None:
+        assert_color(fill_color)
+        surface.fill(fill_color)
     return surface

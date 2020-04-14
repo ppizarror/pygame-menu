@@ -73,6 +73,7 @@ class Button(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
+        self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):

@@ -51,6 +51,10 @@ class ScrollArea(object):
     :type area_height: int, float
     :param area_color: Background color
     :type area_color: tuple, list, NoneType
+    :param extend_x: Px to extend the surface in yxaxis (px) from left
+    :type extend_x: int, float
+    :param extend_y: Px to extend the surface in y axis (px) from top
+    :type extend_y: int, float
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_slider_color: Color of the sliders
@@ -77,6 +81,8 @@ class ScrollArea(object):
                  area_width,
                  area_height,
                  area_color=None,
+                 extend_x=0,
+                 extend_y=1,
                  scrollbar_color=(235, 235, 235),
                  scrollbar_slider_color=(200, 200, 200),
                  scrollbar_slider_pad=0,
@@ -107,9 +113,13 @@ class ScrollArea(object):
         self._scrollbar_thick = scrollbar_thick
         self._bg_surface = None
 
+        self._extend_x = extend_x
+        self._extend_y = extend_y
+
         if area_color:
-            self._bg_surface = make_surface(area_width, area_height)
-            self._bg_surface.fill(area_color)
+            self._bg_surface = make_surface(width=area_width + extend_x,
+                                            height=area_height + self._extend_y,
+                                            fill_color=area_color)
 
         self._view_rect = self.get_view_rect()
 
@@ -186,7 +196,7 @@ class ScrollArea(object):
             return
 
         if self._bg_surface:
-            surface.blit(self._bg_surface, (self._rect.x, self._rect.y))
+            surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
         offsets = self.get_offsets()
         for sbar in self._scrollbars:  # type: ScrollBar
