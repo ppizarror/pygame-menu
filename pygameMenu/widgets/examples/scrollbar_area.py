@@ -32,11 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import itertools
 import os
-import pygame
 import sys
 
 sys.path.insert(0, '../../../')
 
+import pygame
 from pygameMenu import locals
 from pygameMenu.scrollarea import ScrollArea
 from pygameMenu.utils import make_surface

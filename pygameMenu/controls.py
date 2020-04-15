@@ -30,9 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import pygame locals
-import pygame.locals as __locals
-
 # Joypad
 JOY_AXIS_X = 0
 JOY_AXIS_Y = 1
@@ -48,6 +45,8 @@ JOY_RIGHT = (1, 0)
 JOY_UP = (0, 1)
 
 # Keyboard events
+import pygame.locals as __locals
+
 KEY_APPLY = __locals.K_RETURN
 KEY_BACK = __locals.K_BACKSPACE
 KEY_CLOSE_MENU = __locals.K_ESCAPE

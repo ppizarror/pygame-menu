@@ -31,10 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import math
+
 import pygame
 import pygameMenu.controls as _controls
 import pygameMenu.locals as _locals
-
 from pygameMenu.utils import check_key_pressed_valid, make_surface
 from pygameMenu.widgets.core.widget import Widget
 
@@ -52,6 +52,7 @@ except ImportError:
         """
         pass
 
+
     def paste():
         """
         Paste method.
@@ -60,6 +61,7 @@ except ImportError:
         :rtype: basestring
         """
         return ''
+
 
     class PyperclipException(RuntimeError):
         """
@@ -1164,8 +1166,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-            text[0:text_end] + \
-            self._input_string[self._cursor_position:len(self._input_string)]
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

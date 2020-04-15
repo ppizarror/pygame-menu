@@ -33,7 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame
 import pygameMenu.baseimage as _baseimage
 import pygameMenu.locals as _locals
-
 from pygameMenu.utils import make_surface, assert_color, assert_position
 from pygameMenu.widgets import ScrollBar
 

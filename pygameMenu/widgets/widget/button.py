@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygameMenu.controls as _controls
-
 from pygameMenu.widgets.core.widget import Widget
 
 

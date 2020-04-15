@@ -34,10 +34,10 @@ import pygame
 import pygameMenu.baseimage as _baseimage
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
-
 from pygameMenu.widgets.core.selection import Selection
 from pygameMenu.sound import Sound
 from pygameMenu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2
+
 from uuid import uuid4
 
 

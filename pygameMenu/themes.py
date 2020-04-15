@@ -36,7 +36,6 @@ import pygameMenu
 import pygameMenu.font
 import pygameMenu.utils
 import pygameMenu.widgets as _widgets
-
 from pygameMenu.baseimage import BaseImage
 
 
