@@ -243,28 +243,36 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Column buttons
     # -------------------------------------------------------------------------
+    button_column_menu_theme = pygameMenu.themes.THEME_ORANGE.copy()
+    button_column_menu_theme.background_color = pygameMenu.baseimage.BaseImage(
+        image_path=pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+        drawing_mode=pygameMenu.baseimage.IMAGE_MODE_REPEAT_XY
+    )
+    button_column_menu_theme.widget_font_size = 25
+
     button_column_menu = pygameMenu.Menu(
         columns=2,
         height=WINDOW_SIZE[1] * 0.45,
         width=WINDOW_SIZE[0] * 0.9,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         rows=3,
-        theme=pygameMenu.themes.THEME_ORANGE,
-        title='Columns',
+        theme=button_column_menu_theme,
+        title='Textures+Columns',
     )
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
-    button_column_menu.add_button('Return to main menu', pygameMenu.events.BACK)
+    button_column_menu.add_button(
+        'Return to main menu', pygameMenu.events.BACK,
+        background_color=pygameMenu.baseimage.BaseImage(
+            image_path=pygameMenu.baseimage.IMAGE_EXAMPLE_METAL
+        )
+    )
     button_column_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu_theme = pygameMenu.themes.THEME_ORANGE.copy()
-    main_menu_theme.background_color = pygameMenu.baseimage.BaseImage(
-        image_path=pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
-        drawing_mode=pygameMenu.baseimage.IMAGE_MODE_REPEAT_XY
-    )
     main_menu_theme.title_font = pygameMenu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font = pygameMenu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font_size = 30
@@ -280,7 +288,7 @@ def main(test=False):
 
     main_menu.add_button('Settings', settings_menu)
     main_menu.add_button('More Settings', more_settings_menu)
-    main_menu.add_button('Menu in columns!', button_column_menu)
+    main_menu.add_button('Menu in textures and columns', button_column_menu)
     main_menu.add_selector('Menu sounds ',
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
