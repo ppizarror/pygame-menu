@@ -54,6 +54,10 @@ class Theme(object):
 
     :param background_color: Menu background color
     :type background_color: tuple, list
+    :param cursor_color: Color of cursor
+    :type cursor_color: tuple
+    :param cursor_selection_color: Selection box color
+    :type cursor_selection_color: tuple
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -116,6 +120,10 @@ class Theme(object):
 
         self.background_color = self._get(kwargs, 'background_color',
                                           'color_image', (220, 220, 220))  # type: (tuple, list)
+        self.cursor_color = self._get(kwargs, 'cursor_color',
+                                      'color', (0, 0, 0))  # type: (tuple, list)
+        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
+                                                'color', (30, 30, 30))  # type: (tuple, list)
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
                                          'color', (235, 235, 235))  # type: (tuple, list)
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
@@ -296,12 +304,14 @@ class Theme(object):
 
 THEME_DEFAULT = Theme()
 
-THEME_BLACK = Theme(
+THEME_DARK = Theme(
     background_color=(40, 41, 35),
     selection_color=(255, 255, 255),
     title_background_color=(47, 48, 51),
     title_font_color=(215, 215, 215),
     widget_font_color=(200, 200, 200),
+    cursor_color=(255, 255, 255),
+    cursor_selection_color=(80, 80, 80),
 )
 
 THEME_BLUE = Theme(
@@ -334,4 +344,6 @@ THEME_SOLARIZED = Theme(
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),
     widget_font_color=(102, 122, 130),
+    cursor_color=(0, 0, 0),
+    cursor_selection_color=(146, 160, 160),
 )

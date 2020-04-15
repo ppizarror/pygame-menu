@@ -97,7 +97,7 @@ def make_long_menu():
         height=400,
         width=600,
         onclose=pygameMenu.events.EXIT,
-        theme=pygameMenu.themes.THEME_BLACK,
+        theme=pygameMenu.themes.THEME_DARK,
         title='Text with scroll',
     )
 

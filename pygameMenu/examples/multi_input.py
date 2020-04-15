@@ -171,7 +171,7 @@ def main(test=False):
                                  maxwidth=3,
                                  textinput_id='age',
                                  input_type=pygameMenu.locals.INPUT_INT,
-                                 enable_selection=False)
+                                 cursor_selection_enable=False)
     settings_menu.add_text_input('Some long text: ',
                                  maxwidth=19,
                                  textinput_id='long_text',

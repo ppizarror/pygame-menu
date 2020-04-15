@@ -52,7 +52,6 @@ except ImportError:
         """
         pass
 
-
     def paste():
         """
         Paste method.
@@ -61,7 +60,6 @@ except ImportError:
         :rtype: basestring
         """
         return ''
-
 
     class PyperclipException(RuntimeError):
         """
@@ -84,10 +82,12 @@ class TextInput(Widget):
     :type input_underline: basestring
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
-    :param enable_copy_paste: Enables copy, paste and cut
-    :type enable_copy_paste: bool
-    :param enable_selection: Enables selection of text
-    :type enable_selection: bool
+    :param cursor_selection_color: Selection box color
+    :type cursor_selection_color: tuple
+    :param cursor_selection_enable: Enables selection of text
+    :type cursor_selection_enable: bool
+    :param copy_paste_enable: Enables copy, paste and cut
+    :type copy_paste_enable: bool
     :param history: Maximum number of editions stored
     :type history: int
     :param maxchar: Maximum length of input
@@ -110,8 +110,6 @@ class TextInput(Widget):
     :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :type repeat_mouse_interval_ms: int, float
-    :param selection_color: Selection box color
-    :type selection_color: tuple
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :type text_ellipsis: basestring
     :param valid_chars: List of chars that are valid, None if all chars are valid
@@ -124,9 +122,10 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.INPUT_TEXT,
                  input_underline='',
+                 copy_paste_enable=True,
                  cursor_color=(0, 0, 0),
-                 enable_copy_paste=True,
-                 enable_selection=True,
+                 cursor_selection_color=(30, 30, 30),
+                 cursor_selection_enable=True,
                  history=50,
                  maxchar=0,
                  maxwidth=0,
@@ -138,7 +137,6 @@ class TextInput(Widget):
                  repeat_keys_initial_ms=450,
                  repeat_keys_interval_ms=80,
                  repeat_mouse_interval_ms=100,
-                 selection_color=(30, 30, 30),
                  text_ellipsis='...',
                  valid_chars=None,
                  *args,
@@ -148,8 +146,8 @@ class TextInput(Widget):
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
         assert isinstance(cursor_color, tuple)
-        assert isinstance(enable_copy_paste, bool)
-        assert isinstance(enable_selection, bool)
+        assert isinstance(copy_paste_enable, bool)
+        assert isinstance(cursor_selection_enable, bool)
         assert isinstance(history, int)
         assert isinstance(valid_chars, (type(None), list))
         assert isinstance(maxchar, int)
@@ -231,13 +229,13 @@ class TextInput(Widget):
         # Text selection
         self._last_selection_render = [0, 0]  # Position (int)
         self._selection_active = False
-        self._selection_enabled = enable_selection
         self._selection_box = [0, 0]  # [from, to], (int)
-        self._selection_color = selection_color
         self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
         self._selection_surface = None  # type: (pygame.Surface,None)
+        self._selection_color = cursor_selection_color
+        self._selection_enabled = cursor_selection_enable
 
         # List of valid chars
         if valid_chars is not None:
@@ -250,7 +248,7 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Other
-        self._copy_paste_enabled = enable_copy_paste
+        self._copy_paste_enabled = copy_paste_enable
         self._input_type = input_type
         self._input_underline = input_underline
         self._input_underline_size = 0.0  # type: float
@@ -435,7 +433,7 @@ class TextInput(Widget):
 
             # Fill cursor
             if self._cursor_surface:
-                self._cursor_surface.fill(self._font_selected_color)
+                self._cursor_surface.fill(self._cursor_color)
 
     def _render_string_surface(self, string, color):
         """
@@ -1166,8 +1164,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-                     text[0:text_end] + \
-                     self._input_string[self._cursor_position:len(self._input_string)]
+            text[0:text_end] + \
+            self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

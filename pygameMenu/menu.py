@@ -620,8 +620,8 @@ class Menu(object):
     def add_text_input(self,
                        title,
                        default='',
-                       enable_copy_paste=True,
-                       enable_selection=True,
+                       copy_paste_enable=True,
+                       cursor_selection_enable=True,
                        input_type=_locals.INPUT_TEXT,
                        input_underline='',
                        maxchar=0,
@@ -662,10 +662,10 @@ class Menu(object):
         :type title: basestring
         :param default: Default value to display
         :type default: basestring, int, float
-        :param enable_copy_paste: Enable text copy, paste and cut
-        :type enable_copy_paste: bool
-        :param enable_selection: Enable text selection on input
-        :type enable_selection: bool
+        :param copy_paste_enable: Enable text copy, paste and cut
+        :type copy_paste_enable: bool
+        :param cursor_selection_enable: Enable text selection on input
+        :type cursor_selection_enable: bool
         :param input_type: Data type of the input
         :type input_type: basestring
         :param input_underline: Underline character
@@ -701,10 +701,12 @@ class Menu(object):
                                     textinput_id=textinput_id,
                                     maxchar=maxchar,
                                     maxwidth=maxwidth,
+                                    cursor_color=self._current._theme.cursor_color,
+                                    cursor_selection_color=self._current._theme.cursor_selection_color,
                                     input_type=input_type,
                                     input_underline=input_underline,
-                                    enable_copy_paste=enable_copy_paste,
-                                    enable_selection=enable_selection,
+                                    copy_paste_enable=copy_paste_enable,
+                                    cursor_selection_enable=cursor_selection_enable,
                                     valid_chars=valid_chars,
                                     password=password,
                                     onchange=onchange,

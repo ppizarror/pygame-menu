@@ -159,7 +159,7 @@ def main(test=False):
     # Create menus: Timer
     # -------------------------------------------------------------------------
 
-    timer_theme = pygameMenu.themes.THEME_BLACK.copy()  # Create a new copy
+    timer_theme = pygameMenu.themes.THEME_DARK.copy()  # Create a new copy
     timer_theme.background_color = (0, 0, 0, 180)  # Enable transparency
 
     # Timer
@@ -222,7 +222,7 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: About
     # -------------------------------------------------------------------------
-    about_theme = pygameMenu.themes.THEME_BLACK.copy()
+    about_theme = pygameMenu.themes.THEME_DARK.copy()
     about_theme.widget_font = pygameMenu.font.FONT_NEVIS
     about_theme.title_font = pygameMenu.font.FONT_8BIT
 
@@ -246,7 +246,7 @@ def main(test=False):
     main_menu = pygameMenu.Menu(
         enabled=False,
         height=400,
-        theme=pygameMenu.themes.THEME_BLACK,
+        theme=pygameMenu.themes.THEME_DARK,
         title='Main Menu',
         width=600,
     )

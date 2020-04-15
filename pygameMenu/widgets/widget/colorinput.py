@@ -123,8 +123,8 @@ class ColorInput(TextInput):
                                          input_type=_input_type,
                                          input_underline=input_underline,
                                          cursor_color=cursor_color,
-                                         enable_copy_paste=False,
-                                         enable_selection=False,
+                                         copy_paste_enable=False,
+                                         cursor_selection_enable=False,
                                          history=0,
                                          maxchar=_maxchar,
                                          maxwidth=_maxwidth,  # Disabled
