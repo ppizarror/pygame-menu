@@ -218,7 +218,7 @@ def main(test=False):
         widget_offset=(5, 10),  # px
     )
 
-    more_settings_menu.add_image(pygameMenu.baseimage.IMAGE_PYGAME_MENU,
+    more_settings_menu.add_image(pygameMenu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
                                  scale=(0.25, 0.25),
                                  align=pygameMenu.locals.ALIGN_CENTER)
     more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
@@ -261,6 +261,10 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu_theme = pygameMenu.themes.THEME_ORANGE.copy()
+    main_menu_theme.background_color = pygameMenu.baseimage.BaseImage(
+        image_path=pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+        drawing_mode=pygameMenu.baseimage.IMAGE_MODE_REPEAT_XY
+    )
     main_menu_theme.title_font = pygameMenu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font = pygameMenu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font_size = 30

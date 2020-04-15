@@ -37,6 +37,8 @@ import pygameMenu.font
 import pygameMenu.utils
 import pygameMenu.widgets as _widgets
 
+from pygameMenu.baseimage import BaseImage
+
 
 class Theme(object):
     """
@@ -113,7 +115,7 @@ class Theme(object):
     def __init__(self, **kwargs):
 
         self.background_color = self._get(kwargs, 'background_color',
-                                          'color', (220, 220, 220))  # type: (tuple, list)
+                                          'color_image', (220, 220, 220))  # type: (tuple, list)
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
                                          'color', (235, 235, 235))  # type: (tuple, list)
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
@@ -215,11 +217,15 @@ class Theme(object):
         has not an alpha channel. Also updates the opacity to a number between
         0 and 255.
 
+        Color may be an Image, so if this is the case return the same object.
+
         :param color: Color tuple
         :type color: tuple, list
         :return: Color in the same format
         :rtype: tuple, list, NoneType
         """
+        if isinstance(color, BaseImage):
+            return color
         if color is None or len(color) == 4:
             return color
         opacity = 255
@@ -255,8 +261,20 @@ class Theme(object):
             if not isinstance(allowed_types, (tuple, list)):
                 allowed_types = (allowed_types,)
             for valtype in allowed_types:
-                if valtype == 'color' or valtype == 'color_none':
-                    if valtype == 'color_none' and value is None:
+                if valtype == 'color':
+                    pygameMenu.utils.assert_color(value)
+                elif valtype == 'color_none':
+                    if value is None:
+                        return value
+                    pygameMenu.utils.assert_color(value)
+                elif valtype == 'color_image':
+                    if isinstance(value, BaseImage):
+                        return value
+                    pygameMenu.utils.assert_color(value)
+                elif valtype == 'color_image_none':
+                    if value is None:
+                        return value
+                    elif isinstance(value, BaseImage):
                         return value
                     pygameMenu.utils.assert_color(value)
                 elif valtype == 'position':
@@ -266,7 +284,9 @@ class Theme(object):
                 elif valtype == 'tuple2':
                     pygameMenu.utils.assert_vector2(value)
 
-            others = [t for t in allowed_types if t not in ('color', 'color_none', 'position', 'alignment', 'tuple2')]
+            all_types = ('color', 'color_none', 'color_image', 'color_image_none',
+                         'position', 'alignment', 'tuple2')
+            others = [t for t in allowed_types if t not in all_types]
             if others:
                 for t in others:
                     msg = 'Theme.{} type shall be {} (got {})'.format(key, t, type(value))

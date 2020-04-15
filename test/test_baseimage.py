@@ -42,13 +42,13 @@ class BaseImageTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: pygameMenu.baseimage.BaseImage('invalid.pnng'))
         self.assertRaises(AssertionError, lambda: pygameMenu.baseimage.BaseImage('invalid'))
         self.assertRaises(AssertionError, lambda: pygameMenu.baseimage.BaseImage('file_invalid.png'))
-        pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_GRAY_LINES)
+        pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
     def test_image_properties(self):
         """
         Test the getters of the image object.
         """
-        image = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_GRAY_LINES)
+        image = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         w, h = image.get_size()
         self.assertEqual(w, 256)
         self.assertEqual(h, 256)
@@ -59,8 +59,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the file operations.
         """
-        image_original = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_GRAY_LINES)
-        image = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_GRAY_LINES)
+        image_original = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertTrue(image.equals(image_original))
 
         # Flip
@@ -81,8 +81,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the image transformation.
         """
-        image_original = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_GRAY_LINES)
-        image = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_GRAY_LINES)
+        image_original = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygameMenu.baseimage.BaseImage(pygameMenu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
         # Scale
         image.scale(0.5, 0.5)

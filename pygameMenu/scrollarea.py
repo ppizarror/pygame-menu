@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame
+import pygameMenu.baseimage as _baseimage
 import pygameMenu.locals as _locals
 
 from pygameMenu.utils import make_surface, assert_color, assert_position
@@ -49,8 +50,8 @@ class ScrollArea(object):
     :type area_width: int, float
     :param area_height: Height of scrollable area (px)
     :type area_height: int, float
-    :param area_color: Background color
-    :type area_color: tuple, list, NoneType
+    :param area_color: Background color, it can be a color or an image
+    :type area_color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, NoneType
     :param extend_x: Px to extend the surface in yxaxis (px) from left
     :type extend_x: int, float
     :param extend_y: Px to extend the surface in y axis (px) from top
@@ -118,8 +119,11 @@ class ScrollArea(object):
 
         if area_color:
             self._bg_surface = make_surface(width=area_width + extend_x,
-                                            height=area_height + self._extend_y,
-                                            fill_color=area_color)
+                                            height=area_height + self._extend_y)
+            if isinstance(area_color, _baseimage.BaseImage):
+                area_color.draw(surface=self._bg_surface, area=self._bg_surface.get_rect())
+            else:
+                self._bg_surface.fill(area_color)
 
         self._view_rect = self.get_view_rect()
 

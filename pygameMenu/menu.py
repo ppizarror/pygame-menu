@@ -36,6 +36,7 @@ import textwrap
 from uuid import uuid4
 
 import pygame
+import pygameMenu.baseimage as _baseimage
 import pygameMenu.controls as _controls
 import pygameMenu.events as _events
 import pygameMenu.locals as _locals
@@ -128,7 +129,7 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(theme, _themes.Theme)
+        assert isinstance(theme, _themes.Theme), 'theme bust be an Theme object instance'
         assert isinstance(title, str)
         assert isinstance(title_offset, (tuple, list))
         assert isinstance(widget_margin, (tuple, list))
@@ -264,8 +265,8 @@ class Menu(object):
         # Scrolling area
         self._widgets_surface = None
         self._scroll = ScrollArea(area_width=self._width,
-                                  area_height=self._height - self._menubar.get_rect().height,
                                   area_color=self._theme.background_color,
+                                  area_height=self._height - self._menubar.get_rect().height,
                                   extend_y=self._menubar.get_rect().height,
                                   scrollbar_color=self._theme.scrollbar_color,
                                   scrollbar_slider_color=self._theme.scrollbar_slider_color,
@@ -291,7 +292,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget alignment (str)
-            - ``background_color``      Color of the background (tuple, list)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``button_id``             Widget ID (str)
             - ``font_color``            Widget font color (tuple)
@@ -374,7 +375,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget alignment (str)
-            - ``background_color``      Color of the background (tuple, list)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``font_color``            Widget font color (tuple)
             - ``font_name``             Widget font (str)
@@ -441,7 +442,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget alignment (str)
-            - ``background_color``      Color of the background (tuple, list)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``margin``                Tuple of (x,y) margin (int, float)
             - ``selection_color``       Widget selection color
@@ -489,7 +490,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget alignment (str)
-            - ``background_color``      Color of the background (tuple, list)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``font_color``            Widget font color (tuple)
             - ``font_name``             Widget font (str)
@@ -573,7 +574,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget alignment (str)
-            - ``background_color``      Color of the background (tuple, list)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``font_color``            Widget font color (tuple)
             - ``font_name``             Widget font (str)
@@ -645,7 +646,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget alignment (str)
-            - ``background_color``      Color of the background (tuple, list)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``font_color``            Widget font color (tuple)
             - ``font_name``             Widget font (str)
@@ -748,7 +749,10 @@ class Menu(object):
 
         background_color = kwargs.pop('background_color', self._theme.widget_background_color)
         if background_color is not None:
-            _utils.assert_color(background_color)
+            if isinstance(background_color, _baseimage.BaseImage):
+                pass
+            else:
+                _utils.assert_color(background_color)
         attributes['background_color'] = background_color
 
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
@@ -805,17 +809,19 @@ class Menu(object):
         the Menu level.
 
         kwargs (Optional):
-            - ``align``             Widget alignment (str)
-            - ``font_color``        Widget font color (tuple)
-            - ``font_name``         Widget font (str)
-            - ``font_size``         Font size of the widget (int)
-            - ``margin``            Tuple of (x,y) margin (int, float)
-            - ``selection_color``   Widget selection color (tuple)
-            - ``selection_effect``  Widget selector effect (:py:class:`pygameMenu.widgets.Selection`)
-            - ``shadow``            Shadow is enabled or disabled (bool)
-            - ``shadow_color``      Text shadow color (tuple)
-            - ``shadow_position``   Text shadow position, see locals for position (str)
-            - ``shadow_offset``     Text shadow offset (int, float, NoneType)
+            - ``align``                 Widget alignment (str)
+            - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
+            - ``background_inflate``    Inflate background color if enabled
+            - ``font_color``            Widget font color (tuple)
+            - ``font_name``             Widget font (str)
+            - ``font_size``             Font size of the widget (int)
+            - ``margin``                Tuple of (x,y) margin (int, float)
+            - ``selection_color``       Widget selection color (tuple)
+            - ``selection_effect``      Widget selector effect (:py:class:`pygameMenu.widgets.Selection`)
+            - ``shadow``                Shadow is enabled or disabled (bool)
+            - ``shadow_color``          Text shadow color (tuple)
+            - ``shadow_position``       Text shadow position, see locals for position (str)
+            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
 
         :param widget: Widget object
         :type widget: :py:class:`pygameMenu.widgets.core.widget.Widget`

@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame
+import pygameMenu.baseimage as _baseimage
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
 
@@ -165,13 +166,17 @@ class Widget(object):
         Set widget background color.
 
         :param color: Widget background color
-        :type color: tuple, list, NoneType
+        :type color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, NoneType
         :param inflate: Inflate background in x,y
         :type inflate: tuple, list
         :return: None
         """
         if color is not None:
-            assert_color(color)
+            if isinstance(color, _baseimage.BaseImage):
+                assert color.get_drawing_mode() == _baseimage.IMAGE_MODE_FILL, \
+                    'currently widget only support IMAGE_MODE_FILL drawing mode'
+            else:
+                assert_color(color)
         assert_vector2(inflate)
         assert inflate[0] >= 0 and inflate[1] >= 0, \
             'widget background inflate must be equal or greater than zero in both axis'
@@ -188,7 +193,15 @@ class Widget(object):
         """
         if self._background_color is None:
             return
-        surface.fill(self._background_color, self._rect.inflate(*self._background_inflate))
+        if isinstance(self._background_color, _baseimage.BaseImage):
+            self._background_color.draw(
+                surface=surface,
+                area=self._rect.inflate(*self._background_inflate),
+                position=(self._rect.x - self._background_inflate[0] / 2,
+                          self._rect.y - self._background_inflate[1] / 2)
+            )
+        else:
+            surface.fill(self._background_color, self._rect.inflate(*self._background_inflate))
 
     def get_selection_effect(self):
         """

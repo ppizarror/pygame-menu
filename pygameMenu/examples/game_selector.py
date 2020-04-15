@@ -130,7 +130,6 @@ def play_function(difficulty, font, test=False):
 
     while True:
 
-        # noinspection PyUnresolvedReferences
         clock.tick(60)
 
         # Application events

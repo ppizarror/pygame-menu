@@ -30,22 +30,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from sys import stderr as _stderr
-import os.path as _path
-import time as _time
+from sys import stderr
+import os.path as path
+import time
 
-from pygame import error as _pygame_error
-from pygame import mixer as _mixer
-from pygame import vernum as _pygame_version
+from pygame import error as pygame_error
+from pygame import mixer
+from pygame import vernum as pygame_version
 
 try:  # pygame<2.0.0 compatibility
-    from pygame import AUDIO_ALLOW_CHANNELS_CHANGE as _AUDIO_ALLOW_CHANNELS_CHANGE
-    from pygame import AUDIO_ALLOW_FREQUENCY_CHANGE as _AUDIO_ALLOW_FREQUENCY_CHANGE
+    from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
+    from pygame import AUDIO_ALLOW_FREQUENCY_CHANGE
 except ImportError:
-    _AUDIO_ALLOW_CHANNELS_CHANGE = False
-    _AUDIO_ALLOW_FREQUENCY_CHANGE = False
+    AUDIO_ALLOW_CHANNELS_CHANGE = False
+    AUDIO_ALLOW_FREQUENCY_CHANGE = False
 
-__actualpath = str(_path.abspath(_path.dirname(__file__))).replace('\\', '/')
+__actualpath = str(path.abspath(path.dirname(__file__))).replace('\\', '/')
 __sounddir = '{0}/resources/sounds/{1}.ogg'
 
 # Sound types
@@ -102,7 +102,7 @@ class Sound(object):
                  channels=2,
                  buffer=4096,
                  devicename='',
-                 allowedchanges=_AUDIO_ALLOW_CHANNELS_CHANGE | _AUDIO_ALLOW_FREQUENCY_CHANGE,
+                 allowedchanges=AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
                  force_init=False):
         assert isinstance(uniquechannel, bool)
         assert isinstance(frequency, int)
@@ -117,43 +117,43 @@ class Sound(object):
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if (_mixer.get_init() is None and _SOUND_INITIALIZED[0] is False) or force_init:
+        if (mixer.get_init() is None and _SOUND_INITIALIZED[0] is False) or force_init:
 
             # Set sound as initialized globally
             _SOUND_INITIALIZED[0] = True
 
             # Check pygame version
-            version_major, _, version_minor = _pygame_version
+            version_major, _, version_minor = pygame_version
 
             # noinspection PyBroadException
             try:
                 # <= 1.9.4
                 if version_major == 1 and version_minor <= 4:
-                    _mixer.init(frequency=frequency,
-                                size=size,
-                                channels=channels,
-                                buffer=buffer)
+                    mixer.init(frequency=frequency,
+                               size=size,
+                               channels=channels,
+                               buffer=buffer)
 
                 # <2.0.0 & >= 1.9.5
                 elif version_major == 1 and version_minor > 4:  # lgtm [py/redundant-comparison]
-                    _mixer.init(frequency=frequency,
-                                size=size,
-                                channels=channels,
-                                buffer=buffer,
-                                devicename=devicename)
+                    mixer.init(frequency=frequency,
+                               size=size,
+                               channels=channels,
+                               buffer=buffer,
+                               devicename=devicename)
 
                 # >= 2.0.0
                 elif version_major > 1:
-                    _mixer.init(frequency=frequency,
-                                size=size,
-                                channels=channels,
-                                buffer=buffer,
-                                devicename=devicename,
-                                allowedchanges=allowedchanges)
+                    mixer.init(frequency=frequency,
+                               size=size,
+                               channels=channels,
+                               buffer=buffer,
+                               devicename=devicename,
+                               allowedchanges=allowedchanges)
 
             except Exception as e:
                 print('sound error: ' + str(e))
-            except _pygame_error as e:
+            except pygame_error as e:
                 print('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Channel where a sound is played
@@ -189,7 +189,7 @@ class Sound(object):
         :return: Channel
         :rtype: :py:class:`pygame.mixer.Channel`
         """
-        channel = _mixer.find_channel()
+        channel = mixer.find_channel()
         if self._uniquechannel:  # If the channel is unique
             if self._channel is None:  # If the channel has not been set
                 self._channel = channel
@@ -236,15 +236,15 @@ class Sound(object):
             return False
 
         # Check the file exists
-        if not _path.isfile(sound_file):
+        if not path.isfile(sound_file):
             raise IOError('sound file "{0}" does not exist'.format(sound_file))
 
         # Load the sound
         try:
-            sound_data = _mixer.Sound(file=sound_file)
-        except _pygame_error:
+            sound_data = mixer.Sound(file=sound_file)
+        except pygame_error:
             if self._verbose:
-                _stderr.write('The sound format is not valid, the sound has been disabled\n')
+                stderr.write('The sound format is not valid, the sound has been disabled\n')
             self._sound[sound_type] = {}
             return False
 
@@ -304,10 +304,11 @@ class Sound(object):
             return False
 
         # Play the sound
-        time = _time.time()
+        soundtime = time.time()
 
         # If the previous sound is the same and has not ended (max 20% overlap)
-        if sound['type'] != self._last_play or time - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
+        if sound['type'] != self._last_play or \
+                soundtime - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()
@@ -316,12 +317,12 @@ class Sound(object):
                              maxtime=sound['maxtime'],
                              fade_ms=sound['fade_ms']
                              )
-            except _pygame_error:  # Ignore errors
+            except pygame_error:  # Ignore errors
                 pass
 
         # Store last execution
         self._last_play = sound['type']
-        self._last_time = time
+        self._last_time = soundtime
         return True
 
     def play_click_mouse(self):
@@ -399,7 +400,7 @@ class Sound(object):
             return
         try:
             channel.stop()
-        except _pygame_error:
+        except pygame_error:
             pass
 
     def pause(self):
@@ -413,7 +414,7 @@ class Sound(object):
             return
         try:
             channel.pause()
-        except _pygame_error:
+        except pygame_error:
             pass
 
     def unpause(self):
@@ -427,7 +428,7 @@ class Sound(object):
             return
         try:
             channel.unpause()
-        except _pygame_error:
+        except pygame_error:
             pass
 
     def get_channel_info(self):
@@ -447,3 +448,7 @@ class Sound(object):
         data['sound'] = channel.get_sound()
         data['volume'] = channel.get_volume()
         return data
+
+
+# Workspace cleaning
+del AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE
