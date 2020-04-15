@@ -318,7 +318,7 @@ class Menu(object):
         """
         assert isinstance(title, str)
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
+        attributes = self._current._filter_widget_attributes(kwargs)
 
         # Get ID
         button_id = kwargs.pop('button_id', '')
@@ -413,7 +413,7 @@ class Menu(object):
         """
         assert isinstance(default, (str, tuple))
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
+        attributes = self._current._filter_widget_attributes(kwargs)
 
         widget = _widgets.ColorInput(label=title,
                                      colorinput_id=color_id,
@@ -467,7 +467,7 @@ class Menu(object):
         """
         assert isinstance(selectable, bool)
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
+        attributes = self._current._filter_widget_attributes(kwargs)
 
         widget = _widgets.Image(image_path=image_path,
                                 image_id=image_id,
@@ -525,15 +525,14 @@ class Menu(object):
 
         # Warp text to menu width (imply additional calls to render functions)
         if max_char < 0:
-            dummy_attrs = self._filter_widget_attributes(kwargs.copy())
+            dummy_attrs = self._current._filter_widget_attributes(kwargs.copy())
             dummy = _widgets.Label(label=title)
             self._current._configure_widget(dummy, **dummy_attrs)
-            dummy_rect = dummy.get_rect()
-            max_char = int(1.0 * self._current._width * len(title) / dummy_rect.width)
+            max_char = int(1.0 * self._current._width * len(title) / dummy.get_rect().width)
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
-            attributes = self._filter_widget_attributes(kwargs)
+            attributes = self._current._filter_widget_attributes(kwargs)
             widget = _widgets.Label(label=title, label_id=label_id)
             widget.is_selectable = selectable
             self._current._configure_widget(widget=widget, **attributes)
@@ -605,7 +604,7 @@ class Menu(object):
         :rtype: :py:class:`pygameMenu.widgets.Selector`
         """
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
+        attributes = self._current._filter_widget_attributes(kwargs)
 
         widget = _widgets.Selector(label=title,
                                    elements=items,
@@ -692,7 +691,7 @@ class Menu(object):
         """
         assert isinstance(default, (str, int, float))
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
+        attributes = self._current._filter_widget_attributes(kwargs)
 
         # If password is active no default value should exist
         if password and default != '':
@@ -725,7 +724,7 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygameMenu.widgets.VMargin`
         """
-        attributes = self._filter_widget_attributes({'margin': (0, margin)})
+        attributes = self._current._filter_widget_attributes({'margin': (0, margin)})
         widget = _widgets.VMargin()
         self._current._configure_widget(widget=widget, **attributes)
         self._current._append_widget(widget)
