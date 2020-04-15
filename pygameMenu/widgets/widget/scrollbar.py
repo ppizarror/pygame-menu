@@ -206,7 +206,7 @@ class ScrollBar(Widget):
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
             shadow_rect = shadow_rect.move(self._shadow_tuple[0] / 2, self._shadow_tuple[1] / 2)
 
-            pygame.draw.rect(self._surface, self._font_color, lit_rect)
+            pygame.draw.rect(self._surface, self._font_selected_color, lit_rect)
             pygame.draw.rect(self._surface, self._shadow_color, shadow_rect)
             pygame.draw.rect(self._surface, self._slider_color, slider_rect)
         else:

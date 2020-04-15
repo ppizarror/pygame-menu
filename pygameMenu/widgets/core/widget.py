@@ -101,7 +101,7 @@ class Widget(object):
         self._font_name = ''  # type: str
         self._font_size = 0  # type: int
         self._font_color = (0, 0, 0)  # type: tuple
-        self._font_selected_color = (0, 0, 0)  # type: tuple
+        self._font_selected_color = (255, 255, 255)  # type: tuple
         self._font_antialias = True  # type: bool
 
         # Text shadow

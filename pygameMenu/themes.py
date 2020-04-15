@@ -310,7 +310,6 @@ THEME_DARK = Theme(
     title_font_color=(215, 215, 215),
     widget_font_color=(200, 200, 200),
     scrollbar_color=(39, 41, 42),
-    scrollbar_slider_pad=2,
     scrollbar_slider_color=(65, 66, 67),
     cursor_color=(255, 255, 255),
     cursor_selection_color=(80, 80, 80),
@@ -321,7 +320,12 @@ THEME_BLUE = Theme(
     selection_color=(100, 62, 132),
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),
+    title_shadow=True,
     widget_font_color=(61, 170, 220),
+    scrollbar_thick=14,
+    scrollbar_slider_color=(150, 200, 230),
+    scrollbar_slider_pad=2,
+    scrollbar_shadow=True
 )
 
 THEME_GREEN = Theme(
