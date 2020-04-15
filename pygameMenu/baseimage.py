@@ -29,34 +29,29 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+# File constants no. 100
 
 import os.path as path
-import pygame
 import math
 
+import pygame
 from pygameMenu.utils import assert_vector2
 
-# https://www.pygame.org/docs/ref/image.html
-_VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
-                        '.pbm', '.pgm', '.ppm', '.xpm']
-
-# Available images
-__actualpath = str(path.abspath(path.dirname(__file__))).replace('\\', '/')
-__fontdir = '{0}/resources/images/{1}'
-
 # Example images
-IMAGE_EXAMPLE_CARBON_FIBER = __fontdir.format(__actualpath, 'carbon_fiber.png')
-IMAGE_EXAMPLE_GRAY_LINES = __fontdir.format(__actualpath, 'gray_lines.png')
-IMAGE_EXAMPLE_METAL = __fontdir.format(__actualpath, 'metal.png')
-IMAGE_EXAMPLE_PYGAME_MENU = __fontdir.format(__actualpath, 'pygame_menu.png')
+__fontdir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
+
+IMAGE_EXAMPLE_CARBON_FIBER = __fontdir.format('carbon_fiber.png')
+IMAGE_EXAMPLE_GRAY_LINES = __fontdir.format('gray_lines.png')
+IMAGE_EXAMPLE_METAL = __fontdir.format('metal.png')
+IMAGE_EXAMPLE_PYGAME_MENU = __fontdir.format('pygame_menu.png')
 
 # Drawing modes
-IMAGE_MODE_CENTER = 0
-IMAGE_MODE_FILL = 1
-IMAGE_MODE_REPEAT_X = 2
-IMAGE_MODE_REPEAT_XY = 3
-IMAGE_MODE_REPEAT_Y = 4
-IMAGE_MODE_SIMPLE = 5  # Just draw the image without any effect
+IMAGE_MODE_CENTER = 100
+IMAGE_MODE_FILL = 101
+IMAGE_MODE_REPEAT_X = 102
+IMAGE_MODE_REPEAT_XY = 103
+IMAGE_MODE_REPEAT_Y = 104
+IMAGE_MODE_SIMPLE = 105  # Just draw the image without any effect
 
 
 class BaseImage(object):
@@ -72,7 +67,11 @@ class BaseImage(object):
     :type drawing_offset: tuple, list
     """
 
-    def __init__(self, image_path, drawing_mode=IMAGE_MODE_FILL, drawing_offset=(0, 0)):
+    def __init__(self,
+                 image_path,
+                 drawing_mode=IMAGE_MODE_FILL,
+                 drawing_offset=(0, 0)
+                 ):
         assert isinstance(image_path, str)
         assert isinstance(drawing_mode, int)
         assert_vector2(drawing_offset)
@@ -80,8 +79,10 @@ class BaseImage(object):
         _, file_extension = path.splitext(image_path)
         file_extension = file_extension.lower()
 
-        assert file_extension in _VALID_IMAGE_FORMATS, \
-            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
+        valid_formats = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
+                         '.pbm', '.pgm', '.ppm', '.xpm']
+        assert file_extension in valid_formats, \
+            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(valid_formats))
         assert path.isfile(image_path), 'file {0} does not exist or could not be found, please ' \
                                         'check if the path of the image is valid'.format(image_path)
 
@@ -282,28 +283,37 @@ class BaseImage(object):
                              self._drawing_offset[0] + position[0],
                              self._drawing_offset[1] + position[1]
                          ))
+
         elif self._drawing_mode == IMAGE_MODE_REPEAT_X:
             w = self._surface.get_width()
-            times = int(math.ceil(area.width / w))
+            times = int(math.ceil(float(area.width) / w))
+            assert times > 0, \
+                'invalid size, width must be greater than zero'
             for x in range(times):
                 surface.blit(self._surface,
                              (x * w + self._drawing_offset[0] + position[0],
                               self._drawing_offset[1] + position[1]),
                              area
                              )
+
         elif self._drawing_mode == IMAGE_MODE_REPEAT_Y:
             h = self._surface.get_height()
-            times = int(math.ceil(area.height / h))
+            times = int(math.ceil(float(area.height) / h))
+            assert times > 0, \
+                'invalid size, height must be greater than zero'
             for y in range(times):
                 surface.blit(self._surface,
                              (
                                  0 + self._drawing_offset[0] + position[0],
                                  y * h + self._drawing_offset[1] + position[1]),
                              area)
+
         elif self._drawing_mode == IMAGE_MODE_REPEAT_XY:
             w, h = self._surface.get_size()
-            timesx = int(math.ceil(area.width / w))
-            timesy = int(math.ceil(area.height / h))
+            timesx = int(math.ceil(float(area.width) / w))
+            timesy = int(math.ceil(float(area.height) / h))
+            assert timesx > 0 and timesy > 0, \
+                'invalid size, width and height must be greater than zero'
             for x in range(timesx):
                 for y in range(timesy):
                     surface.blit(self._surface,
@@ -312,15 +322,17 @@ class BaseImage(object):
                                      y * h + self._drawing_offset[1] + position[1],
                                  ),
                                  area)
+
         elif self._drawing_mode == IMAGE_MODE_CENTER:
             sw, hw = area.width, area.height  # Window
             w, h = self._surface.get_size()  # Image
             surface.blit(self._surface,
                          (
-                             (sw - w) / 2 + self._drawing_offset[0] + position[0],
-                             (hw - h) / 2 + self._drawing_offset[1] + position[1],
+                             float(sw - w) / 2 + self._drawing_offset[0] + position[0],
+                             float(hw - h) / 2 + self._drawing_offset[1] + position[1],
                          ),
                          area)
+
         elif self._drawing_mode == IMAGE_MODE_SIMPLE:
             surface.blit(
                 self._surface,
@@ -329,5 +341,6 @@ class BaseImage(object):
                     self._drawing_offset[1] + position[1]
                 ),
                 area)
+
         else:
             raise ValueError('Invalid image mode')

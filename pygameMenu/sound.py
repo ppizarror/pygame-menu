@@ -45,9 +45,6 @@ except ImportError:
     AUDIO_ALLOW_CHANNELS_CHANGE = False
     AUDIO_ALLOW_FREQUENCY_CHANGE = False
 
-__actualpath = str(path.abspath(path.dirname(__file__))).replace('\\', '/')
-__sounddir = '{0}/resources/sounds/{1}.ogg'
-
 # Sound types
 SOUND_TYPE_CLICK_MOUSE = '__pygameMenu_sound_click_mouse__'
 SOUND_TYPE_CLOSE_MENU = '__pygameMenu_sound_close_menu__'
@@ -58,18 +55,8 @@ SOUND_TYPE_KEY_ADDITION = '__pygameMenu_sound_key_addition__'
 SOUND_TYPE_KEY_DELETION = '__pygameMenu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygameMenu_sound_open_menu__'
 
-# Sound examples
-_SOUND_EXAMPLE_CLICK_MOUSE = __sounddir.format(__actualpath, 'click_mouse')
-_SOUND_EXAMPLE_CLOSE_MENU = __sounddir.format(__actualpath, 'close_menu')
-_SOUND_EXAMPLE_ERROR = __sounddir.format(__actualpath, 'error')
-_SOUND_EXAMPLE_EVENT = __sounddir.format(__actualpath, 'event')
-_SOUND_EXAMPLE_EVENT_ERROR = __sounddir.format(__actualpath, 'event_error')
-_SOUND_EXAMPLE_KEY_ADDITION = __sounddir.format(__actualpath, 'key_add')
-_SOUND_EXAMPLE_KEY_DELETION = __sounddir.format(__actualpath, 'key_delete')
-_SOUND_EXAMPLE_OPEN_MENU = __sounddir.format(__actualpath, 'open_menu')
-
 # Stores global reference that marks sounds as initialized
-_SOUND_INITIALIZED = [False]
+SOUND_INITIALIZED = [False]
 
 
 class Sound(object):
@@ -117,10 +104,10 @@ class Sound(object):
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if (mixer.get_init() is None and _SOUND_INITIALIZED[0] is False) or force_init:
+        if (mixer.get_init() is None and SOUND_INITIALIZED[0] is False) or force_init:
 
             # Set sound as initialized globally
-            _SOUND_INITIALIZED[0] = True
+            SOUND_INITIALIZED[0] = True
 
             # Check pygame version
             version_major, _, version_minor = pygame_version
@@ -272,17 +259,20 @@ class Sound(object):
         :type volume: float
         :return: None
         """
-        # Must be in the same order of types
+        sound_dir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
+
+        # Must be in the same order of self._type_sounds
         examples = [
-            _SOUND_EXAMPLE_CLICK_MOUSE,
-            _SOUND_EXAMPLE_CLOSE_MENU,
-            _SOUND_EXAMPLE_ERROR,
-            _SOUND_EXAMPLE_EVENT,
-            _SOUND_EXAMPLE_EVENT_ERROR,
-            _SOUND_EXAMPLE_KEY_ADDITION,
-            _SOUND_EXAMPLE_KEY_DELETION,
-            _SOUND_EXAMPLE_OPEN_MENU
+            sound_dir.format('click_mouse.ogg'),
+            sound_dir.format('close_menu.ogg'),
+            sound_dir.format('error.ogg'),
+            sound_dir.format('event.ogg'),
+            sound_dir.format('event_error.ogg'),
+            sound_dir.format('key_add.ogg'),
+            sound_dir.format('key_delete.ogg'),
+            sound_dir.format('open_menu.ogg')
         ]
+
         for sound in range(len(self._type_sounds)):
             self.set_sound(self._type_sounds[sound], examples[sound], volume=volume)
 
