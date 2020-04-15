@@ -149,10 +149,11 @@ def main(test=False):
 
     settings_menu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.85,
-        width=WINDOW_SIZE[0] * 0.9,
         onclose=pygameMenu.events.DISABLE_CLOSE,
-        title='Settings',
         theme=settings_menu_theme,
+        title='Settings',
+        title_offset=(5, -2),
+        width=WINDOW_SIZE[0] * 0.9,
     )
 
     # Add text inputs with different configurations

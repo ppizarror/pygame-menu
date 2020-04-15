@@ -232,6 +232,7 @@ def main(test=False):
         onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
         theme=about_theme,
         title='About',
+        title_offset=(5, -2),
         widget_offset=(0, 0.14),
         width=600,
     )

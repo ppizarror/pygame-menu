@@ -112,7 +112,7 @@ class Menu(object):
                  onclose=None,
                  rows=None,
                  theme=_themes.THEME_DEFAULT,
-                 title_offset=(5, 2),  # px
+                 title_offset=(5, 0),  # px
                  widget_margin=(0, 10),
                  widget_offset=(0, 0),
                  ):
@@ -1035,7 +1035,7 @@ class Menu(object):
 
         self._widgets_surface = _utils.make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
-        self._scroll.set_position(self._pos_x, self._pos_y + menubar_height + 5)
+        self._scroll.set_position(self._pos_x, self._pos_y + menubar_height)
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -1464,19 +1464,18 @@ class Menu(object):
         while True:
             self._current._clock.tick(fps_limit)
 
+            self.draw(surface=surface)
+
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
             self.update(pygame.event.get())
 
-            # As event can change the status of the Menu, this has to be checked twice
-            if self.is_enabled():
-                self.draw(surface=surface)
-
-            pygame.display.flip()
-
             if not self.is_enabled() or disable_loop:
                 self._background_function = None
                 return
+
+            # Flip contents to screen
+            pygame.display.flip()
 
     def get_input_data(self, recursive=False, current=True):
         """

@@ -125,7 +125,7 @@ class Theme(object):
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
                                                 'color', (30, 30, 30))  # type: (tuple, list)
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
-                                         'color', (235, 235, 235))  # type: (tuple, list)
+                                         'color', (220, 220, 220))  # type: (tuple, list)
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
                                           bool, False)  # type: bool
         self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color',
@@ -305,37 +305,37 @@ THEME_DEFAULT = Theme()
 
 THEME_DARK = Theme(
     background_color=(40, 41, 35),
+    cursor_color=(255, 255, 255),
+    cursor_selection_color=(80, 80, 80),
+    scrollbar_color=(39, 41, 42),
+    scrollbar_slider_color=(65, 66, 67),
     selection_color=(255, 255, 255),
     title_background_color=(47, 48, 51),
     title_font_color=(215, 215, 215),
     widget_font_color=(200, 200, 200),
-    scrollbar_color=(39, 41, 42),
-    scrollbar_slider_color=(65, 66, 67),
-    cursor_color=(255, 255, 255),
-    cursor_selection_color=(80, 80, 80),
 )
 
 THEME_BLUE = Theme(
     background_color=(228, 230, 246),
+    scrollbar_shadow=True,
+    scrollbar_slider_color=(150, 200, 230),
+    scrollbar_slider_pad=2,
+    scrollbar_thick=14,
     selection_color=(100, 62, 132),
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),
     title_shadow=True,
     widget_font_color=(61, 170, 220),
-    scrollbar_thick=14,
-    scrollbar_slider_color=(150, 200, 230),
-    scrollbar_slider_pad=2,
-    scrollbar_shadow=True
 )
 
 THEME_GREEN = Theme(
     background_color=(186, 214, 177),
+    scrollbar_slider_color=(125, 121, 114),
+    scrollbar_slider_pad=2,
     selection_color=(125, 121, 114),
     title_background_color=(125, 121, 114),
     title_font_color=(228, 230, 246),
     widget_font_color=(255, 255, 255),
-    scrollbar_slider_pad=2,
-    scrollbar_slider_color=(125, 121, 114),
 )
 
 THEME_ORANGE = Theme(
@@ -348,10 +348,10 @@ THEME_ORANGE = Theme(
 
 THEME_SOLARIZED = Theme(
     background_color=(239, 231, 211),
+    cursor_color=(0, 0, 0),
+    cursor_selection_color=(146, 160, 160),
     selection_color=(207, 62, 132),
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),
     widget_font_color=(102, 122, 130),
-    cursor_color=(0, 0, 0),
-    cursor_selection_color=(146, 160, 160),
 )

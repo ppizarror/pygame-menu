@@ -132,8 +132,6 @@ class MenuBar(Widget):
         self._surface = self._render_string(self._label, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        self._rect.y += 4
-        backbox_dx, backbox_dy = -4, 4
         if self._style == MENUBAR_STYLE_ADAPTATIVE:
             """
             A-------------------B                  D-E: 25 dx
@@ -150,7 +148,6 @@ class MenuBar(Widget):
             f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
             cross_size = self._rect.height * 0.6
-            backbox_dy = 3
         elif self._style == MENUBAR_STYLE_SIMPLE:
             """
             A-------------------B
@@ -229,10 +226,11 @@ class MenuBar(Widget):
 
         # Create the back box
         if self._backbox:
-            cross_size -= backbox_dy + 4
-            backbox_x = self._rect.x + self._width - cross_size + backbox_dx
-            backbox_y = self._rect.y + backbox_dy
-            self._backbox_rect = pygame.Rect(backbox_x, backbox_y, cross_size, cross_size)
+            backbox_margin = 4
+            self._backbox_rect = pygame.Rect(self._rect.x + self._width - cross_size + backbox_margin,
+                                             self._rect.y + backbox_margin,
+                                             cross_size - 2 * backbox_margin,
+                                             cross_size - 2 * backbox_margin)
             if menu_prev_condition:
                 # Make a cross for top menu
                 self._backbox_pos = (
@@ -259,7 +257,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
 
-        self._rect.y -= 4
+        # self._rect.y -= menu_dy
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
