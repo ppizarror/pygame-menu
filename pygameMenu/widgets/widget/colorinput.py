@@ -33,12 +33,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygameMenu.locals as _locals
-
 from pygameMenu.utils import check_key_pressed_valid, make_surface
 from pygameMenu.widgets.widget.textinput import TextInput
 
-_TYPE_HEX = 'hex'
-_TYPE_RGB = 'rgb'
+TYPE_HEX = 'hex'
+TYPE_RGB = 'rgb'
 
 
 class ColorInput(TextInput):
@@ -75,7 +74,7 @@ class ColorInput(TextInput):
     def __init__(self,
                  label='',
                  colorinput_id='',
-                 color_type=_TYPE_RGB,
+                 color_type=TYPE_RGB,
                  input_separator=',',
                  input_underline='_',
                  cursor_color=(0, 0, 0),
@@ -103,14 +102,14 @@ class ColorInput(TextInput):
         assert prev_size > 0, 'previsualization width must be greater than zero'
         assert input_separator not in ['0', '1', '2', '3', '4', '5', '6', '7', '8',
                                        '9'], 'input_separator cannot be a number'
-        assert color_type in [_TYPE_HEX, _TYPE_RGB], 'color type must be "{0}" or "{1}"'.format(_TYPE_HEX, _TYPE_RGB)
+        assert color_type in [TYPE_HEX, TYPE_RGB], 'color type must be "{0}" or "{1}"'.format(TYPE_HEX, TYPE_RGB)
 
         _maxchar = 0
         self._color_type = color_type.lower()  # type: str
-        if self._color_type == _TYPE_RGB:
+        if self._color_type == TYPE_RGB:
             _maxchar = 11  # RRR,GGG,BBB
             self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_separator]
-        elif self._color_type == _TYPE_HEX:
+        elif self._color_type == TYPE_HEX:
             _maxchar = 7  # #XXYYZZ
             self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '0', '1', '2', '3', '#',
                                  '4', '5', '6', '7', '8', '9']
@@ -153,14 +152,14 @@ class ColorInput(TextInput):
     def clear(self):
         super(ColorInput, self).clear()
         self._previsualization_surface = None
-        if self._color_type == _TYPE_HEX:
+        if self._color_type == TYPE_HEX:
             super(ColorInput, self).set_value('#')
         self.change()
 
     # noinspection PyMissingOrEmptyDocstring
     def set_value(self, rgb_tuple):
         _color = ''
-        if self._color_type == _TYPE_RGB:
+        if self._color_type == TYPE_RGB:
             if rgb_tuple == '':
                 super(ColorInput, self).set_value('')
                 return
@@ -174,7 +173,7 @@ class ColorInput(TextInput):
             assert 0 <= g <= 255, 'Blue color must be between 0 and 255'
             assert 0 <= b <= 255, 'Green color must be between 0 and 255'
             _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
-        elif self._color_type == _TYPE_HEX:
+        elif self._color_type == TYPE_HEX:
             text = str(rgb_tuple).strip()
             if text == '':
                 _color = '#'
@@ -208,13 +207,13 @@ class ColorInput(TextInput):
         :return: Color tuple as (R,G,B)
         :rtype: tuple
         """
-        if self._color_type == _TYPE_RGB:
+        if self._color_type == TYPE_RGB:
             _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
                 r, g, b = int(_color[0]), int(_color[1]), int(_color[2])
                 if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= g <= 255:
                     return r, g, b
-        elif self._color_type == _TYPE_HEX:
+        elif self._color_type == TYPE_HEX:
             if len(self._input_string) == 7:
                 _color = self._input_string[1:]
                 return tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
@@ -271,7 +270,7 @@ class ColorInput(TextInput):
         _disable_remove_separator = True
 
         key = ''  # Pressed key
-        if self._color_type == _TYPE_RGB:
+        if self._color_type == TYPE_RGB:
             for event in events:  # type: pygame.event.EventType
                 if event.type == pygame.KEYDOWN:
 
@@ -346,7 +345,7 @@ class ColorInput(TextInput):
                                 if len(_num) > 3:  # Number like 0XXX
                                     return False
 
-        elif self._color_type == _TYPE_HEX:
+        elif self._color_type == TYPE_HEX:
             for event in events:  # type: pygame.event.EventType
                 if event.type == pygame.KEYDOWN:
 
@@ -376,7 +375,7 @@ class ColorInput(TextInput):
         updated = super(ColorInput, self).update(events)
 
         # After
-        if self._color_type == _TYPE_RGB:
+        if self._color_type == TYPE_RGB:
             _total_separator = 0
             for _ch in _input:
                 if _ch == self._separator:

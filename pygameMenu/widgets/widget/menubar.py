@@ -29,20 +29,20 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+# File constants no. 1000
 
 import pygame
 import pygame.gfxdraw as gfxdraw
 import pygameMenu.controls as _controls
-
 from pygameMenu.widgets.core.widget import Widget
 
-MENUBAR_STYLE_ADAPTATIVE = 1
-MENUBAR_STYLE_SIMPLE = 2
-MENUBAR_STYLE_TITLE_ONLY = 3
-MENUBAR_STYLE_TITLE_ONLY_DIAGONAL = 4
-MENUBAR_STYLE_NONE = 5
-MENUBAR_STYLE_UNDERLINE = 6
-MENUBAR_STYLE_UNDERLINE_TITLE = 7
+MENUBAR_STYLE_ADAPTATIVE = 1000
+MENUBAR_STYLE_SIMPLE = 1001
+MENUBAR_STYLE_TITLE_ONLY = 1002
+MENUBAR_STYLE_TITLE_ONLY_DIAGONAL = 1003
+MENUBAR_STYLE_NONE = 1004
+MENUBAR_STYLE_UNDERLINE = 1005
+MENUBAR_STYLE_UNDERLINE_TITLE = 1006
 
 
 class MenuBar(Widget):
@@ -148,6 +148,7 @@ class MenuBar(Widget):
             f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
             cross_size = self._rect.height * 0.6
+
         elif self._style == MENUBAR_STYLE_SIMPLE:
             """
             A-------------------B
@@ -160,6 +161,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height
+
         elif self._style == MENUBAR_STYLE_TITLE_ONLY:
             """
             A-----B
@@ -173,6 +175,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
+
         elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
             """
             A--------B
@@ -186,6 +189,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
+
         elif self._style == MENUBAR_STYLE_NONE:
             """
             A------------------B
@@ -195,6 +199,7 @@ class MenuBar(Widget):
             b = self._rect.x + self._width - 1, self._rect.y
             self._polygon_pos = a, b
             cross_size = self._rect.height * 0.6
+
         elif self._style == MENUBAR_STYLE_UNDERLINE:
             """
              ****             x
@@ -208,6 +213,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
+
         elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
             """
              ****               x
@@ -221,6 +227,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
+
         else:
             raise ValueError('invalid menubar mode {0}'.format(self._style))
 

@@ -29,11 +29,12 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+# File constants no. 0
 
-import sys
-import types
-import textwrap
 from uuid import uuid4
+import sys
+import textwrap
+import types
 
 import pygame
 import pygameMenu.baseimage as _baseimage
@@ -43,16 +44,8 @@ import pygameMenu.locals as _locals
 import pygameMenu.themes as _themes
 import pygameMenu.utils as _utils
 import pygameMenu.widgets as _widgets
-
 from pygameMenu.scrollarea import ScrollArea
 from pygameMenu.sound import Sound
-
-# Joy events
-_JOY_EVENT_LEFT = 1
-_JOY_EVENT_RIGHT = 2
-_JOY_EVENT_UP = 4
-_JOY_EVENT_DOWN = 8
-_JOY_EVENT_REPEAT = pygame.NUMEVENTS - 1
 
 
 class Menu(object):
@@ -181,7 +174,6 @@ class Menu(object):
         self._height = float(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
-        self._joy_event = 0  # type: int
         self._onclose = onclose  # Function that calls after closing Menu
         self._sounds = Sound()  # type: Sound
         self._submenus = []  # type: list
@@ -236,6 +228,12 @@ class Menu(object):
                 pygame.joystick.init()
             for i in range(pygame.joystick.get_count()):
                 pygame.joystick.Joystick(i).init()
+        self._joy_event = 0  # type: int
+        self._joy_event_down = 8
+        self._joy_event_left = 1
+        self._joy_event_repeat = pygame.NUMEVENTS - 1
+        self._joy_event_right = 2
+        self._joy_event_up = 4
 
         # Init mouse
         self._mouse = mouse_enabled and mouse_visible
@@ -1269,13 +1267,13 @@ class Menu(object):
         """
         Handle joy events.
         """
-        if self._joy_event & _JOY_EVENT_UP:
+        if self._joy_event & self._joy_event_up:
             self._select(self._index - 1)
-        if self._joy_event & _JOY_EVENT_DOWN:
+        if self._joy_event & self._joy_event_down:
             self._select(self._index + 1)
-        if self._joy_event & _JOY_EVENT_LEFT:
+        if self._joy_event & self._joy_event_left:
             self._left()
-        if self._joy_event & _JOY_EVENT_RIGHT:
+        if self._joy_event & self._joy_event_right:
             self._right()
 
     def update(self, events):
@@ -1364,28 +1362,28 @@ class Menu(object):
                     prev = self._current._joy_event
                     self._current._joy_event = 0
                     if event.axis == _controls.JOY_AXIS_Y and event.value < -_controls.JOY_DEADZONE:
-                        self._current._joy_event |= _JOY_EVENT_UP
+                        self._current._joy_event |= self._current._joy_event_up
                     if event.axis == _controls.JOY_AXIS_Y and event.value > _controls.JOY_DEADZONE:
-                        self._current._joy_event |= _JOY_EVENT_DOWN
+                        self._current._joy_event |= self._current._joy_event_down
                     if event.axis == _controls.JOY_AXIS_X and event.value < -_controls.JOY_DEADZONE and self._columns > 1:
-                        self._current._joy_event |= _JOY_EVENT_LEFT
+                        self._current._joy_event |= self._current._joy_event_left
                     if event.axis == _controls.JOY_AXIS_X and event.value > _controls.JOY_DEADZONE and self._columns > 1:
-                        self._current._joy_event |= _JOY_EVENT_RIGHT
+                        self._current._joy_event |= self._current._joy_event_right
                     if self._current._joy_event:
                         self._current._handle_joy_event()
                         if self._current._joy_event == prev:
-                            pygame.time.set_timer(_JOY_EVENT_REPEAT, _controls.JOY_REPEAT)
+                            pygame.time.set_timer(self._current._joy_event_repeat, _controls.JOY_REPEAT)
                         else:
-                            pygame.time.set_timer(_JOY_EVENT_REPEAT, _controls.JOY_DELAY)
+                            pygame.time.set_timer(self._current._joy_event_repeat, _controls.JOY_DELAY)
                     else:
-                        pygame.time.set_timer(_JOY_EVENT_REPEAT, 0)
+                        pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
-                elif event.type == _JOY_EVENT_REPEAT:
+                elif event.type == self._current._joy_event_repeat:
                     if self._current._joy_event:
                         self._current._handle_joy_event()
-                        pygame.time.set_timer(_JOY_EVENT_REPEAT, _controls.JOY_REPEAT)
+                        pygame.time.set_timer(self._current._joy_event_repeat, _controls.JOY_REPEAT)
                     else:
-                        pygame.time.set_timer(_JOY_EVENT_REPEAT, 0)
+                        pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._current._widgets)):
