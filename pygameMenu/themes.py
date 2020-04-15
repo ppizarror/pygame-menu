@@ -294,11 +294,10 @@ class Theme(object):
 
             all_types = ('color', 'color_none', 'color_image', 'color_image_none',
                          'position', 'alignment', 'tuple2')
-            others = [t for t in allowed_types if t not in all_types]
+            others = tuple(t for t in allowed_types if t not in all_types)
             if others:
-                for t in others:
-                    msg = 'Theme.{} type shall be {} (got {})'.format(key, t, type(value))
-                    assert isinstance(value, t), msg
+                msg = 'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
+                assert isinstance(value, others), msg
         return value
 
 
@@ -310,6 +309,9 @@ THEME_DARK = Theme(
     title_background_color=(47, 48, 51),
     title_font_color=(215, 215, 215),
     widget_font_color=(200, 200, 200),
+    scrollbar_color=(39, 41, 42),
+    scrollbar_slider_pad=2,
+    scrollbar_slider_color=(65, 66, 67),
     cursor_color=(255, 255, 255),
     cursor_selection_color=(80, 80, 80),
 )
@@ -328,6 +330,8 @@ THEME_GREEN = Theme(
     title_background_color=(125, 121, 114),
     title_font_color=(228, 230, 246),
     widget_font_color=(255, 255, 255),
+    scrollbar_slider_pad=2,
+    scrollbar_slider_color=(125, 121, 114),
 )
 
 THEME_ORANGE = Theme(
