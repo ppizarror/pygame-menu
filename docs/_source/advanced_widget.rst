@@ -4,11 +4,11 @@
 .. working of the library. However it is necessary in order to
 .. be able to quote its items in the documentation.
 
-.. module:: pygameMenu.baseimage
+.. module:: pygameMenu.widgets.core.widget
 
-=========
-BaseImage
-=========
+======
+Widget
+======
 
-.. autoclass:: BaseImage
+.. autoclass:: pygameMenu.widgets.core.widget.Widget
     :members:

@@ -25,7 +25,7 @@ can be wrapped in order to fit the menu size.
     menu = pygameMenu.Menu(...)
     menu.add_label(HELP, max_char=-1, font_size=20)
 
-.. automethod:: pygameMenu.menu.Menu.add_label
+.. automethod:: pygameMenu.Menu.add_label
 
 
 Add an image
@@ -52,7 +52,7 @@ requires more CPU resources.
     menu.add_image(PATH, angle=10, scale=(0.15, 0.15))
     menu.add_image(PATH, angle=-10, scale=(0.15, 0.15), scale_smooth=True)
 
-.. automethod:: pygameMenu.menu.Menu.add_image
+.. automethod:: pygameMenu.Menu.add_image
 
 
 Add a button
@@ -62,7 +62,7 @@ A button is a text that fire action when the user trigger it. An action
 is linked to a button by defining the `action` parameter with one of the
 three values:
 
- - an other :py:class:`Menu`, in this case, it will be displayed
+ - an other :py:class:`pygameMenu.Menu`, in this case, it will be displayed
    when the button is triggered.
  - a python callable object (a function, a method, a class, ...)
    that will be called with the given arguments.
@@ -87,7 +87,7 @@ three values:
 .. code-block:: python
 
     def func(name):
-        print("Hello world from", name)
+        print("Hello world from", name)  # name will be 'foo'
 
     menu = pygameMenu.Menu(...)
 
@@ -100,7 +100,7 @@ three values:
     menu.add_button('Exit', pygameMenu.events.EXIT,         # Link to exit action
                     align=pygameMenu.locals.ALIGN_RIGHT)
 
-.. automethod:: pygameMenu.menu.Menu.add_button
+.. automethod:: pygameMenu.Menu.add_button
 
 
 Add a choices list
@@ -137,7 +137,7 @@ displayed, the others are the arguments passed to the callbacks
                        ('Random', surface, (-1, -1, -1))],
                       onchange=change_background_color)
 
-.. automethod:: pygameMenu.menu.Menu.add_selector
+.. automethod:: pygameMenu.Menu.add_selector
 
 
 Add a text entry
@@ -164,7 +164,7 @@ on entered characters can be set using ``input_type``, ``maxchar``,
     menu.add_text_input('Last name: ', default='Doe', maxchar=20)
     menu.add_text_input('Password: ', input_type=pygameMenu.locals.INPUT_INT, password=True)
 
-.. automethod:: pygameMenu.menu.Menu.add_text_input
+.. automethod:: pygameMenu.Menu.add_text_input
 
 
 Add a color entry
@@ -192,7 +192,7 @@ is a comma (``,``).
     menu.add_color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
     menu.add_color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
 
-.. automethod:: pygameMenu.menu.Menu.add_color_input
+.. automethod:: pygameMenu.Menu.add_color_input
 
 
 Add a vertical spacer
@@ -215,4 +215,4 @@ visual rendering of the menu.
     menu.add_vertical_margin(100)
     menu.add_label('Text #2')
 
-.. automethod:: pygameMenu.menu.Menu.add_vertical_margin
+.. automethod:: pygameMenu.Menu.add_vertical_margin

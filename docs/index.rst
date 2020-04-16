@@ -1,5 +1,7 @@
 :orphan:
 
+.. This page is orphan because it is the documentation entry point
+
 .. image:: _static/pygame_menu.png
    :scale: 35%
    :align: center
@@ -78,6 +80,24 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
    _source/add_sounds
    _source/themes
    _source/gallery
+
+
+==============
+Advanced usage
+==============
+
+This chapter define rules and advanced tips and tricks to develop extensions
+for :py:mod:`pygame-menu`. The main addressed topics are:
+
+- :ref:`creating a widget <Create a widget>`
+- :ref:`creating a selection effect <Create a selection effect>`
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Advanced usage
+
+   _source/advanced
 
 
 ===========
