@@ -422,6 +422,7 @@ class Menu(object):
                                      color_type=color_type,
                                      input_separator=input_separator,
                                      input_underline=input_underline,
+                                     cursor_color=self._current._theme.cursor_color,
                                      onchange=onchange,
                                      onreturn=onreturn,
                                      prev_size=previsualization_width,
