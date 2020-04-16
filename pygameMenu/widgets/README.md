@@ -130,7 +130,7 @@ class MySelection(Selection):
         |           ^ top          | In this example, XXXX represents the
         | left  XXXXXXXXXXXX right | Widget to be Selected.
         |<----> XXXXXXXXXXXX<----->|
-        |           v bottom       |
+        |         v bottom         |
          --------------------------
 
          All distances must be in pixels (px).
