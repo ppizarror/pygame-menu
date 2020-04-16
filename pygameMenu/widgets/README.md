@@ -127,7 +127,7 @@ class MySelection(Selection):
         The method must return the width of the bottom, left, top and right margins.
 
          --------------------------
-        |           ^ top          | In this example, XXXX represents the
+        |          ^ top           | In this example, XXXX represents the
         | left  XXXXXXXXXXXX right | Widget to be Selected.
         |<----> XXXXXXXXXXXX<----->|
         |         v bottom         |
