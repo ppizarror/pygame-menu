@@ -32,19 +32,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygameMenu.locals as _locals
-
 from pygameMenu.utils import make_surface, assert_orientation
 from pygameMenu.widgets.core.widget import Widget
 
 
 class ScrollBar(Widget):
     """
-    A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control.
+    A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control:
+
         a. The slider provides a way to quickly go to any part of the document
         b. The scroll arrows are push buttons which can be used to accurately navigate
-           to a particular place in a document. TODO: arrows not yet implemented
+           to a particular place in a document.
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
+
+    .. warning:: Arrows are not yet implemented
+
     :param length: Length of the page control
     :type length: int
     :param values_range: Min and max values
@@ -138,6 +141,7 @@ class ScrollBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
+        self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
 
     def get_maximum(self):
@@ -201,7 +205,7 @@ class ScrollBar(Widget):
             shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
             shadow_rect = shadow_rect.move(self._shadow_tuple[0] / 2, self._shadow_tuple[1] / 2)
 
-            pygame.draw.rect(self._surface, self._font_color, lit_rect)
+            pygame.draw.rect(self._surface, self._font_selected_color, lit_rect)
             pygame.draw.rect(self._surface, self._shadow_color, shadow_rect)
             pygame.draw.rect(self._surface, self._slider_color, slider_rect)
         else:

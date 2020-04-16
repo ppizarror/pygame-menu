@@ -30,25 +30,33 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame
+import copy
+
 import pygameMenu
+import pygameMenu.font
 import pygameMenu.utils
+import pygameMenu.widgets as _widgets
+from pygameMenu.baseimage import BaseImage
 
 
 class Theme(object):
     """
     Class defining the visual rendering of menus and widgets.
 
+    .. note:: All colors must be defined with a tuple of 3 or 4 numbers in the formats:
+
+                  - (R,G,B)
+                  - (R,G,B,A)
+
+              Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
+              A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
+
     :param background_color: Menu background color
     :type background_color: tuple, list
-    :param selection_border_width: Border width of the highlight box
-    :type selection_border_width: int
-    :param selection_margin_x: X margin of selected highlight box
-    :type selection_margin_x: int, float
-    :param selection_margin_y: X margin of selected highlight box
-    :type selection_margin_y: int, float
-    :param selection_color: Color of the selecter widget
-    :type selection_color: tuple
+    :param cursor_color: Color of cursor
+    :type cursor_color: tuple
+    :param cursor_selection_color: Selection box color
+    :type cursor_selection_color: tuple
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -65,30 +73,38 @@ class Theme(object):
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int, float
+    :param selection_color: Color of the selecter widget
+    :type selection_color: tuple
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
+    :param title_bar_style: Mode of drawing the title, use menubar widget modes
+    :type title_bar_style: int
     :param title_font: Optional title font, if None use the Menu default font
     :type title_font: basestring, NoneType
     :param title_font_color: Title font color, if None use the widget font color
-    :type title_font_color: list, tuple, NoneType
+    :type title_font_color: tuple, list, NoneType
     :param title_font_size: Font size of the title
     :type title_font_size: int
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
     :param title_shadow_color: Title shadow color
-    :type title_shadow_color: list, tuple
+    :type title_shadow_color: tuple, list
     :param title_shadow_offset: Offset of shadow on title
     :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title
     :type title_shadow_position: basestring
-    :param widget_font: Menu font file path or name
-    :type widget_font: basestring
     :param widget_alignment: Widget default alignment
     :type widget_alignment: basestring
+    :param widget_background_color: Background color of a widget
+    :type widget_background_color: tuple, list, NoneType
+    :param widget_font: Widget font path or name
+    :type widget_font: basestring
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
+    :param widget_selection_effect: Widget selection effect object
+    :type widget_selection_effect: pygameMenu.widgets.core.selection.Selection
     :param widget_shadow: Indicate if a shadow is drawn on each widget
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the shadow
@@ -100,64 +116,133 @@ class Theme(object):
     """
 
     def __init__(self, **kwargs):
+
         self.background_color = self._get(kwargs, 'background_color',
-                                          'color', (220, 220, 220))
-        self.selection_border_width = self._get(kwargs, 'selection_border_width',
-                                                int, 1)
-        self.selection_margin_x = self._get(kwargs, 'selection_margin_x',
-                                            float, 16.0)
-        self.selection_margin_y = self._get(kwargs, 'selection_margin_y',
-                                            float, 8.0)
-        self.selection_color = self._get(kwargs, 'selection_color',
-                                         'color', (0, 0, 0))
+                                          'color_image', (220, 220, 220))  # type: (tuple, list)
+        self.cursor_color = self._get(kwargs, 'cursor_color',
+                                      'color', (0, 0, 0))  # type: (tuple, list)
+        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
+                                                'color', (30, 30, 30))  # type: (tuple, list)
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
-                                         'color', (235, 235, 235))
+                                         'color', (220, 220, 220))  # type: (tuple, list)
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
-                                          bool, False)
+                                          bool, False)  # type: bool
         self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color',
-                                                'color', False)
+                                                'color', (0, 0, 0))  # type: bool
         self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset',
-                                                 (int, float), False)
+                                                 (int, float), 2)  # type: (int, float)
         self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position',
-                                                   'position', pygameMenu.locals.POSITION_NORTHWEST)
+                                                   'position', pygameMenu.locals.POSITION_NORTHWEST)  # type: str
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color',
-                                                'color', (200, 200, 200))
+                                                'color', (200, 200, 200))  # type: (tuple, list)
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad',
-                                              (int, float), 0)
+                                              (int, float), 0)  # type: (int,float)
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick',
-                                         (int, float), 20)
+                                         (int, float), 20)  # type: (int,float)
+        self.selection_color = self._get(kwargs, 'selection_color',
+                                         'color', (255, 255, 255))  # type: (tuple, list)
         self.title_background_color = self._get(kwargs, 'title_background_color',
-                                                'color', (70, 70, 70))
+                                                'color', (70, 70, 70))  # type: (tuple, list)
+        self.title_bar_style = self._get(kwargs, 'title_bar_style',
+                                         int, _widgets.MENUBAR_STYLE_ADAPTATIVE)
         self.title_font = self._get(kwargs, 'title_font',
-                                    (str, type(None)))
+                                    str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.title_font_color = self._get(kwargs, 'title_font_color',
-                                          'color', (220, 220, 220))
+                                          'color', (220, 220, 220))  # type: (tuple, list)
         self.title_font_size = self._get(kwargs, 'title_font_size',
-                                         int, 45)
+                                         int, 40)  # type: int
         self.title_shadow = self._get(kwargs, 'title_shadow',
-                                      bool, False)
+                                      bool, False)  # type: bool
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color',
-                                            'color', (0, 0, 0))
+                                            'color', (0, 0, 0))  # type: (tuple, list)
         self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset',
-                                             (int, float), 2)
+                                             (int, float), 2)  # type: (int,float)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position',
-                                               'position', pygameMenu.locals.POSITION_NORTHWEST)
+                                               'position', pygameMenu.locals.POSITION_NORTHWEST)  # type: str
         self.widget_font = self._get(kwargs, 'widget_font',
-                                     str, pygameMenu.font.FONT_BEBAS)
+                                     str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.widget_alignment = self._get(kwargs, 'widget_alignment',
                                           'alignment', pygameMenu.locals.ALIGN_CENTER)
+        self.widget_background_color = self._get(kwargs, 'widget_background_color',
+                                                 'color_none')  # type: (tuple, list, type(None))
+        self.widget_background_inflate = self._get(kwargs, 'background_inflate',
+                                                   'vector2', (16, 8))  # type: (tuple, list)
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
-                                           'color', (70, 70, 70))
+                                           'color', (70, 70, 70))  # type: (tuple, list)
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
-                                          int, 35)
+                                          int, 30)  # type: int
+        self.widget_selection_effect = self._get(kwargs, 'widget_selectiom_effect',
+                                                 _widgets.Selection,
+                                                 _widgets.HighlightSelection())  # type: _widgets.Selection
         self.widget_shadow = self._get(kwargs, 'widget_shadow',
-                                       bool, False)
+                                       bool, False)  # type: bool
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color',
-                                             'color', (0, 0, 0))
+                                             'color', (0, 0, 0))  # type: (tuple, list)
         self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset',
-                                              (int, float), 2)
+                                              (int, float), 2)  # type: (int,float)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position',
-                                                'position', pygameMenu.locals.POSITION_NORTHWEST)
+                                                'position', pygameMenu.locals.POSITION_NORTHWEST)  # type: str
+
+        # Upon this, no more kwargs should exist, raise exception if there's more
+        for invalid_keyword in kwargs.keys():
+            raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
+
+        # Assert values
+        assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
+        assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
+        assert self.title_font_size > 0, 'title font size must be greater than zero'
+        assert self.widget_font_size > 0, 'widget font size must be greater than zero'
+        assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
+
+        # Format colors
+        self.background_color = self._format_opacity(self.background_color)
+        self.scrollbar_color = self._format_opacity(self.scrollbar_color)
+        self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
+        self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
+        self.selection_color = self._format_opacity(self.selection_color)
+        self.title_background_color = self._format_opacity(self.title_background_color)
+        self.title_font_color = self._format_opacity(self.title_font_color)
+        self.title_shadow_color = self._format_opacity(self.title_shadow_color)
+        self.widget_background_color = self._format_opacity(self.widget_background_color)
+
+        # Configs
+        self.widget_selection_effect.set_color(self.selection_color)
+
+    def copy(self):
+        """
+        Creates a deep copy of the object.
+
+        :return: Copied theme
+        :rtype: Theme
+        """
+        return copy.deepcopy(self)
+
+    @staticmethod
+    def _format_opacity(color):
+        """
+        Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
+        has not an alpha channel. Also updates the opacity to a number between
+        0 and 255.
+
+        Color may be an Image, so if this is the case return the same object.
+
+        :param color: Color tuple
+        :type color: tuple, list
+        :return: Color in the same format
+        :rtype: tuple, list, NoneType
+        """
+        if isinstance(color, BaseImage):
+            return color
+        if color is None or len(color) == 4:
+            return color
+        opacity = 255
+        if isinstance(color, tuple):
+            color = color[0], color[1], color[2], opacity
+        elif isinstance(color, list):
+            color = [color[0], color[1], color[2], opacity]
+        else:
+            raise ValueError('Invalid color {0}'.format(color))
+        return color
 
     @staticmethod
     def _get(params, key, allowed_types=None, default=None):
@@ -172,7 +257,8 @@ class Theme(object):
         :type allowed_types: any
         :param default: default value to return
         :type default: any
-        :return: the value associated to the key
+        :return: The value associated to the key
+        :rtype: any
         """
         if key not in params:
             return default
@@ -184,50 +270,87 @@ class Theme(object):
             for valtype in allowed_types:
                 if valtype == 'color':
                     pygameMenu.utils.assert_color(value)
+                elif valtype == 'color_none':
+                    if value is None:
+                        return value
+                    pygameMenu.utils.assert_color(value)
+                elif valtype == 'color_image':
+                    if isinstance(value, BaseImage):
+                        return value
+                    pygameMenu.utils.assert_color(value)
+                elif valtype == 'color_image_none':
+                    if value is None:
+                        return value
+                    elif isinstance(value, BaseImage):
+                        return value
+                    pygameMenu.utils.assert_color(value)
                 elif valtype == 'position':
                     pygameMenu.utils.assert_position(value)
                 elif valtype == 'alignment':
                     pygameMenu.utils.assert_alignment(value)
+                elif valtype == 'tuple2':
+                    pygameMenu.utils.assert_vector2(value)
 
-            others = [t for t in allowed_types if t not in ('color', 'position', 'alignment')]
+            all_types = ('color', 'color_none', 'color_image', 'color_image_none',
+                         'position', 'alignment', 'tuple2')
+            others = tuple(t for t in allowed_types if t not in all_types)
             if others:
-                msg = 'Theme.{} type shall be {} (got {})'.format(key, others, type(value))
-                # noinspection PyTypeChecker
+                msg = 'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
                 assert isinstance(value, others), msg
         return value
-
-    def apply_selected(self, surface, widget):
-        """
-        Draw the selection.
-
-        :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
-        :param widget: Widget object
-        :type widget: pygameMenu.widgets.core.widget.Widget
-        :return: None
-        """
-        # noinspection PyProtectedMember
-        rect = widget._rect.copy().inflate(self.selection_margin_x,
-                                           self.selection_margin_y).move(0, -1)
-        pygame.draw.rect(surface, self.selection_color, rect, self.selection_border_width)
 
 
 THEME_DEFAULT = Theme()
 
-THEME_BLUE = Theme(widget_font_color=(61, 170, 220),
-                   selection_color=(100, 62, 132),
-                   title_font_color=(228, 230, 246),
-                   title_background_color=(62, 149, 195),
-                   background_color=(228, 230, 246))
+THEME_DARK = Theme(
+    background_color=(40, 41, 35),
+    cursor_color=(255, 255, 255),
+    cursor_selection_color=(80, 80, 80),
+    scrollbar_color=(39, 41, 42),
+    scrollbar_slider_color=(65, 66, 67),
+    selection_color=(255, 255, 255),
+    title_background_color=(47, 48, 51),
+    title_font_color=(215, 215, 215),
+    widget_font_color=(200, 200, 200),
+)
 
-THEME_GREEN = Theme(widget_font_color=(255, 255, 255),
-                    selection_color=(125, 121, 114),
-                    title_font_color=(228, 230, 246),
-                    title_background_color=(125, 121, 114),
-                    background_color=(186, 214, 177))
+THEME_BLUE = Theme(
+    background_color=(228, 230, 246),
+    scrollbar_shadow=True,
+    scrollbar_slider_color=(150, 200, 230),
+    scrollbar_slider_pad=2,
+    scrollbar_thick=14,
+    selection_color=(100, 62, 132),
+    title_background_color=(62, 149, 195),
+    title_font_color=(228, 230, 246),
+    title_shadow=True,
+    widget_font_color=(61, 170, 220),
+)
 
-THEME_SOLARIZED = Theme(widget_font_color=(102, 122, 130),
-                        selection_color=(207, 62, 132),
-                        title_font_color=(38, 158, 151),
-                        title_background_color=(4, 47, 58),
-                        background_color=(239, 231, 211))
+THEME_GREEN = Theme(
+    background_color=(186, 214, 177),
+    scrollbar_slider_color=(125, 121, 114),
+    scrollbar_slider_pad=2,
+    selection_color=(125, 121, 114),
+    title_background_color=(125, 121, 114),
+    title_font_color=(228, 230, 246),
+    widget_font_color=(255, 255, 255),
+)
+
+THEME_ORANGE = Theme(
+    background_color=(228, 100, 36),
+    selection_color=(255, 255, 255),
+    title_background_color=(170, 65, 50),
+    widget_font_color=(0, 0, 0),
+    widget_font_size=30,
+)
+
+THEME_SOLARIZED = Theme(
+    background_color=(239, 231, 211),
+    cursor_color=(0, 0, 0),
+    cursor_selection_color=(146, 160, 160),
+    selection_color=(207, 62, 132),
+    title_background_color=(4, 47, 58),
+    title_font_color=(38, 158, 151),
+    widget_font_color=(102, 122, 130),
+)

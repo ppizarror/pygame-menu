@@ -31,12 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame
+import pygameMenu.baseimage as _baseimage
 import pygameMenu.font as _fonts
 import pygameMenu.locals as _locals
-
 from pygameMenu.widgets.core.selection import Selection
 from pygameMenu.sound import Sound
-from pygameMenu.utils import make_surface, assert_alignment, assert_color, assert_position
+from pygameMenu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2
+
 from uuid import uuid4
 
 
@@ -71,6 +72,8 @@ class Widget(object):
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
         self._alignment = _locals.ALIGN_CENTER
+        self._background_color = None
+        self._background_inflate = (0, 0)
         self._id = str(widget_id)
         self._last_selected_surface = None  # type: (pygame.Surface,None)
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
@@ -98,7 +101,7 @@ class Widget(object):
         self._font_name = ''  # type: str
         self._font_size = 0  # type: int
         self._font_color = (0, 0, 0)  # type: tuple
-        self._font_selected_color = (0, 0, 0)  # type: tuple
+        self._font_selected_color = (255, 255, 255)  # type: tuple
         self._font_antialias = True  # type: bool
 
         # Text shadow
@@ -157,6 +160,48 @@ class Widget(object):
             self._last_render_hash = _hash
             return True
         return False
+
+    def set_background_color(self, color, inflate=(0, 0)):
+        """
+        Set widget background color.
+
+        :param color: Widget background color
+        :type color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, NoneType
+        :param inflate: Inflate background in x,y
+        :type inflate: tuple, list
+        :return: None
+        """
+        if color is not None:
+            if isinstance(color, _baseimage.BaseImage):
+                assert color.get_drawing_mode() == _baseimage.IMAGE_MODE_FILL, \
+                    'currently widget only support IMAGE_MODE_FILL drawing mode'
+            else:
+                assert_color(color)
+        assert_vector2(inflate)
+        assert inflate[0] >= 0 and inflate[1] >= 0, \
+            'widget background inflate must be equal or greater than zero in both axis'
+        self._background_color = color
+        self._background_inflate = inflate
+
+    def _fill_background_color(self, surface):
+        """
+        Fill a surface with the widget background color.
+
+        :param surface: Surface to fill
+        :type surface: pygame.SurfaceType
+        :return: None
+        """
+        if self._background_color is None:
+            return
+        if isinstance(self._background_color, _baseimage.BaseImage):
+            self._background_color.draw(
+                surface=surface,
+                area=self._rect.inflate(*self._background_inflate),
+                position=(self._rect.x - self._background_inflate[0] / 2,
+                          self._rect.y - self._background_inflate[1] / 2)
+            )
+        else:
+            surface.fill(self._background_color, self._rect.inflate(*self._background_inflate))
 
     def get_selection_effect(self):
         """
@@ -360,7 +405,9 @@ class Widget(object):
         text = self.font_render_string(string, color)
 
         # Create surface
-        surface = make_surface(text.get_width(), text.get_height(), alpha=True)
+        surface = make_surface(width=text.get_width(),
+                               height=text.get_height(),
+                               alpha=True)
 
         # Draw shadow first
         if self._shadow:

@@ -328,19 +328,17 @@ class PygameMenuUtils(object):
         :return: Menu
         :rtype: pygameMenu.Menu
         """
-        return pygameMenu.Menu(columns=columns,
-                               enabled=False,
-                               font=pygameMenu.font.FONT_NEVIS,
-                               menu_height=height,
-                               menu_opacity=90,
-                               menu_position_x=position_x,
-                               menu_position_y=position_y,
-                               menu_width=width,
-                               rows=rows,
-                               title=title,
-                               *args,
-                               **kwargs
-                               )
+        return pygameMenu.Menu(
+            columns=columns,
+            enabled=False,
+            height=height,
+            menu_position=(position_x, position_y),
+            width=width,
+            rows=rows,
+            title=title,
+            *args,
+            **kwargs
+        )
 
     @staticmethod
     def get_large_surface():

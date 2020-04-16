@@ -355,7 +355,7 @@ class WidgetsTest(unittest.TestCase):
         textinput_nocopy = self.menu.add_text_input('title',
                                                     input_underline='_',
                                                     maxwidth=20,
-                                                    enable_copy_paste=False)
+                                                    copy_paste_enable=False)
         textinput_nocopy.set_value('this cannot be copied')
         textinput_nocopy._copy()
         textinput_nocopy._paste()

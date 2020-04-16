@@ -36,7 +36,7 @@ import pygameMenu
 
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-surface = pygame.display.set_mode((600, 500))
+surface = pygame.display.set_mode((600, 400))
 
 
 def set_difficulty(selected, value):
@@ -58,14 +58,12 @@ def start_the_game():
     print('Do the job here !')
 
 
-menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS, 'Welcome',
-                       widget_font_color=(102, 122, 130),
-                       selection_color=(207, 62, 132),
-                       title_font_color=(38, 158, 151),
-                       title_background_color=(4, 47, 58),
-                       menu_background_color=(239, 231, 211))
+menu = pygameMenu.Menu(height=300,
+                       width=400,
+                       theme=pygameMenu.themes.THEME_BLUE,
+                       title='Welcome')
 
-menu.add_text_input('Name: ')
+menu.add_text_input('Name: ', default='John Doe')
 menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
 menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygameMenu.events.EXIT)

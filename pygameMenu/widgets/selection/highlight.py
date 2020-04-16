@@ -82,9 +82,7 @@ class HighlightSelection(Selection):
         :type widget: pygameMenu.widgets.core.widget.Widget
         :return: None
         """
-        # noinspection PyProtectedMember
-        rect = widget.get_rect().inflate(self.margin_x, self.margin_y).move(0, -1)
         pygame.draw.rect(surface,
                          self.color,
-                         rect,
+                         widget.get_rect().inflate(self.margin_x, self.margin_y),
                          self.border_width)

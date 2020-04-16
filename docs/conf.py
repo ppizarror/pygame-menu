@@ -13,10 +13,10 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 import sys
 
-sys.path.insert(0, '../')
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pygameMenu
 
@@ -71,7 +71,7 @@ html_static_path = ['_static']
 
 html_title = '%s %s Documentation' % (project, release)
 
-html_logo = '_static/pygame-menu-small.png'
+html_logo = '_static/pygame_menu_small.png'
 
 html_theme_options = {
     'prev_next_buttons_location': None

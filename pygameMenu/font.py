@@ -33,20 +33,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path as path
 import pygame.font as _font
 
-# Get actual folder
-__actualpath = str(path.abspath(path.dirname(__file__))).replace('\\', '/')
-__fontdir = '{0}/resources/fonts/{1}.ttf'
-
 # Available fonts
-FONT_8BIT = __fontdir.format(__actualpath, '8bit')
-FONT_BEBAS = __fontdir.format(__actualpath, 'bebas')
-FONT_COMIC_NEUE = __fontdir.format(__actualpath, 'comic_neue')
-FONT_FRANCHISE = __fontdir.format(__actualpath, 'franchise')
-FONT_HELVETICA = __fontdir.format(__actualpath, 'helvetica')
-FONT_MUNRO = __fontdir.format(__actualpath, 'munro')
-FONT_NEVIS = __fontdir.format(__actualpath, 'nevis')
-FONT_OPEN_SANS = __fontdir.format(__actualpath, 'open_sans')
-FONT_PT_SERIF = __fontdir.format(__actualpath, 'pt_serif')
+__fontdir__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
+
+FONT_8BIT = __fontdir__.format('8bit.ttf')
+FONT_BEBAS = __fontdir__.format('bebas.ttf')
+FONT_COMIC_NEUE = __fontdir__.format('comic_neue.ttf')
+FONT_FRANCHISE = __fontdir__.format('franchise.ttf')
+FONT_HELVETICA = __fontdir__.format('helvetica.ttf')
+FONT_MUNRO = __fontdir__.format('munro.ttf')
+FONT_NEVIS = __fontdir__.format('nevis.ttf')
+FONT_OPEN_SANS = __fontdir__.format('opensans_regular.ttf')
+FONT_OPEN_SANS_BOLD = __fontdir__.format('opensans_bold.ttf')
+FONT_OPEN_SANS_ITALIC = __fontdir__.format('opensans_italic.ttf')
+FONT_OPEN_SANS_LIGHT = __fontdir__.format('opensans_light.ttf')
+FONT_PT_SERIF = __fontdir__.format('pt_serif.ttf')
 
 
 def get_font(name, size):

@@ -31,51 +31,48 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 """
-BaseImage: Provides a class to perform basic image loading an manipulation with pygame.
+BaseImage: Provides a class to perform basic image loading an manipulation with pygame
 """
-# noinspection PyUnresolvedReferences
 import pygameMenu.baseimage
 
 """
-Controls: Default controls of menu object and key definition.
+Controls: Default controls of menu object and key definition
 """
-# noinspection PyUnresolvedReferences
 import pygameMenu.controls
 
 """
-Events: Menu events definition and locals.
+Events: Menu events definition and locals
 """
-# noinspection PyUnresolvedReferences
 import pygameMenu.events
 
 """
-Fonts: Menu fonts.
+Fonts: Menu fonts
 """
-# noinspection PyUnresolvedReferences
 import pygameMenu.font
 
 """
-Locals: Local constants.
+Locals: Local constants
 """
-# noinspection PyUnresolvedReferences
 import pygameMenu.locals
 
 """
-Sound: Sound class.
+Sound: Sound class
 """
-# noinspection PyUnresolvedReferences
 import pygameMenu.sound
 
 """
-Version: Library version.
+Themes: Menu themes class
 """
-# noinspection PyUnresolvedReferences
+import pygameMenu.themes
+
+"""
+Version: Library version
+"""
 import pygameMenu.version
 
 """
-Menu: Menu class.
+Menu: Menu class
 """
-# noinspection PyUnresolvedReferences
 from pygameMenu.menu import Menu
 
 """

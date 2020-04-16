@@ -36,7 +36,6 @@ import pygameMenu
 
 from functools import partial
 
-COLOR_BACKGROUND = (128, 230, 198)
 FPS = 30.0
 H_SIZE = 600  # Height of window size
 W_SIZE = 800  # Width of window size
@@ -64,7 +63,7 @@ def paint_background(surface):
     :type surface: pygame.SurfaceType
     :return: None
     """
-    surface.fill(COLOR_BACKGROUND)
+    surface.fill((128, 230, 198))
 
 
 def make_long_menu():
@@ -75,38 +74,32 @@ def make_long_menu():
     :rtype: pygameMenu.Menu
     """
     # Main menu, pauses execution of the application
-    _menu = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
-                            menu_opacity=80,
-                            menu_background_color=(188, 200, 108),
-                            menu_height=400,
-                            menu_width=600,  # px
-                            onclose=pygameMenu.events.EXIT,
-                            title='Main Menu',
-                            title_background_color=(100, 130, 98),
-                            widget_offset_y=10,
-                            )
+    _menu = pygameMenu.Menu(
+        height=400,
+        width=600,  # px
+        onclose=pygameMenu.events.EXIT,
+        theme=pygameMenu.themes.THEME_BLUE,
+        title='Main Menu',
+        widget_offset=(0, 10),
+    )
 
-    _menu_sub = pygameMenu.Menu(columns=4,
-                                font=pygameMenu.font.FONT_COMIC_NEUE,
-                                menu_opacity=60,
-                                menu_background_color=(120, 200, 108),
-                                menu_height=400,
-                                menu_width=600,
-                                onclose=pygameMenu.events.EXIT,
-                                rows=3,
-                                title='Menu with columns',
-                                title_background_color=(100, 200, 98),
-                                widget_shadow=True,
-                                )
+    _menu_sub = pygameMenu.Menu(
+        columns=4,
+        height=400,
+        width=600,
+        onclose=pygameMenu.events.EXIT,
+        rows=3,
+        title='Menu with columns',
+        theme=pygameMenu.themes.THEME_GREEN,
+    )
 
-    _menu_text = pygameMenu.Menu(font=pygameMenu.font.FONT_COMIC_NEUE,
-                                 menu_height=400,
-                                 menu_opacity=60,
-                                 menu_width=600,
-                                 onclose=pygameMenu.events.EXIT,
-                                 title='Text with scroll',
-                                 title_background_color=(25, 25, 25),
-                                 )
+    _menu_text = pygameMenu.Menu(
+        height=400,
+        width=600,
+        onclose=pygameMenu.events.EXIT,
+        theme=pygameMenu.themes.THEME_DARK,
+        title='Text with scroll',
+    )
 
     _menu.add_button('Rows and Columns', _menu_sub)
     _menu.add_button('Text scrolled', _menu_text)

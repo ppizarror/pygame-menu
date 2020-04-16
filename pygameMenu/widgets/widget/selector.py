@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygameMenu.controls as _controls
-
 from pygameMenu.utils import check_key_pressed_valid
 from pygameMenu.widgets.core.widget import Widget
 
@@ -63,8 +62,8 @@ class Selector(Widget):
                  default=0,
                  onchange=None,
                  onreturn=None,
-                 **kwargs
-                 ):
+                 *args,
+                 **kwargs):
         assert isinstance(label, str)
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
@@ -83,6 +82,7 @@ class Selector(Widget):
         super(Selector, self).__init__(widget_id=selector_id,
                                        onchange=onchange,
                                        onreturn=onreturn,
+                                       args=args,
                                        kwargs=kwargs)
 
         self._elements = elements
@@ -102,13 +102,14 @@ class Selector(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
+        self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
 
     def get_value(self):
         """
         Return the current value of the selector at the selected index.
 
-        :return: Value and index as a tuple, (value,index)
+        :return: Value and index as a tuple, (value, index)
         :rtype: tuple
         """
         return self._elements[self._index][0], self._index

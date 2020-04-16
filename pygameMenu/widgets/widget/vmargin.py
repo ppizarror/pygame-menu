@@ -30,8 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygameMenu.widgets.core.widget import Widget
 from pygameMenu.utils import make_surface
+from pygameMenu.widgets.core.widget import Widget
 
 
 class VMargin(Widget):

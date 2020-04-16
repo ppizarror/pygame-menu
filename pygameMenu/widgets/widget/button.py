@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygameMenu.controls as _controls
-
 from pygameMenu.widgets.core.widget import Widget
 
 
@@ -58,15 +57,13 @@ class Button(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs
-                 ):
+                 **kwargs):
         assert isinstance(label, str)
         super(Button, self).__init__(widget_id=button_id,
                                      onchange=onchange,
                                      onreturn=onreturn,
                                      args=args,
-                                     kwargs=kwargs
-                                     )
+                                     kwargs=kwargs)
         self._label = label
 
     def _apply_font(self):
@@ -75,6 +72,7 @@ class Button(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
+        self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
