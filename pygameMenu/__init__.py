@@ -64,11 +64,17 @@ import pygameMenu.sound
 Themes: Menu themes class
 """
 import pygameMenu.themes
+from pygameMenu.themes import Theme
 
 """
 Version: Library version
 """
 import pygameMenu.version
+
+"""
+Widgets: Menu widgets
+"""
+import pygameMenu.widgets
 
 """
 Menu: Menu class
