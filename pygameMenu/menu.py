@@ -58,6 +58,8 @@ class Menu(object):
     :type width: int, float
     :param title: Title of the Menu (main title)
     :type title: str
+    :parama auto_center_v: Auto centers the menu on the vertical position after a widget is added/deleted
+    :type auto_center_v: bool
     :param back_box: Draw a back-box button on header
     :type back_box: bool
     :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
@@ -96,6 +98,7 @@ class Menu(object):
                  height,
                  width,
                  title,
+                 auto_center_v=False,
                  back_box=True,
                  column_force_fit_text=False,
                  column_max_width=None,
@@ -115,6 +118,7 @@ class Menu(object):
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
+        assert isinstance(auto_center_v, bool)
         assert isinstance(back_box, bool)
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
@@ -161,7 +165,11 @@ class Menu(object):
         _utils.assert_vector2(widget_offset)
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
-        assert widget_offset[0] >= 0 and widget_offset[1] >= 0, 'widget offset must be greater or equal than zero'
+        assert widget_offset[0] >= 0 and widget_offset[1] >= 0, \
+            'widget offset must be greater or equal than zero'
+        if auto_center_v:
+            assert widget_offset[1] == 0, \
+                'widget offset on y axis must be zero if auto vertical centering is enabled'
 
         # Get window size
         window_width, window_height = pygame.display.get_surface().get_size()
@@ -173,6 +181,7 @@ class Menu(object):
             menu_id = str(uuid4())
 
         # General properties of the Menu
+        self._auto_center_v = auto_center_v
         self._background_function = None  # type: (None,callable)
         self._clock = pygame.time.Clock()  # Inner clock
         self._height = float(height)
@@ -282,7 +291,6 @@ class Menu(object):
     def add_button(self,
                    title,
                    action,
-                   current=False,
                    *args,
                    **kwargs):
         """
@@ -298,6 +306,7 @@ class Menu(object):
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled
             - ``button_id``             Widget ID (str)
+            - ``current``               Add the widget to the current active Menu, if False add to the base Menu (bool)
             - ``font_color``            Widget font color (tuple)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -313,8 +322,6 @@ class Menu(object):
         :type title: str
         :param action: Action of the button, can be a Menu, an event or a function
         :type action: :py:class:`pygameMenu.Menu`, :py:class:`pygameMenu.events.PyMenuAction`, callable
-        :param current: Add the widget to the current active Menu, if False add to the base Menu
-        :type current: bool
         :param args: Additional arguments used by a function
         :type args: any
         :param kwargs: Additional keyword arguments
@@ -323,6 +330,9 @@ class Menu(object):
         :rtype: :py:class:`pygameMenu.widgets.Button`
         """
         assert isinstance(title, str)
+        current = kwargs.pop('current', False)
+        assert isinstance(current, bool)
+
         menu = self  # type: Menu
         if current:
             menu = self._current
@@ -919,6 +929,8 @@ class Menu(object):
             widget.set_selected()
             self._index = len(self._widgets) - 1
         self._widgets_surface = None  # If added on execution time forces the update of the surface
+        if self._auto_center_v:
+            self._center_content()
 
     def _back(self):
         """
@@ -1222,14 +1234,14 @@ class Menu(object):
 
         :return: None
         """
-        self._build_widget_surface()
+        self._build_widget_surface()  # For position
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         _, max_y = self._get_widget_max_position()
         max_y -= self._widget_offset[1]  # Only use total height
         available = self._height - self._menubar.get_rect().height - horizontal_scroll
         new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
         self._widget_offset[1] = self._height * new_pos
-        self._build_widget_surface()  # Rebuild
+        self._current._widgets_surface = None  # Rebuild on the next draw
 
     def draw(self, surface):
         """

@@ -198,20 +198,20 @@ def main(test=False):
     # Create menus: Play Menu
     # -------------------------------------------------------------------------
     play_menu = pygameMenu.Menu(
+        auto_center_v=True,
         height=WINDOW_SIZE[1] * 0.7,
-        width=WINDOW_SIZE[0] * 0.7,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='Play Menu',
-        widget_offset=[0, 0.17],  # %17 of menu height
+        width=WINDOW_SIZE[0] * 0.7,
     )
 
     submenu_theme = pygameMenu.themes.THEME_DEFAULT.copy()
     submenu_theme.widget_font_size = 15
     play_submenu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.5,
-        width=WINDOW_SIZE[0] * 0.7,
-        title='Submenu',
         theme=submenu_theme,
+        title='Submenu',
+        width=WINDOW_SIZE[0] * 0.7,
     )
     for i in range(30):
         play_submenu.add_button('Back {0}'.format(i), pygameMenu.events.BACK)
@@ -229,18 +229,17 @@ def main(test=False):
                            selector_id='select_difficulty')
     play_menu.add_button('Another menu', play_submenu)
     play_menu.add_button('Return to main menu', pygameMenu.events.BACK)
-    play_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Create menus:About
     # -------------------------------------------------------------------------
     about_menu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
-        width=WINDOW_SIZE[0] * 0.6,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='About',
         widget_margin=(0, 0),
         widget_offset=(0, 0.05),
+        width=WINDOW_SIZE[0] * 0.6,
     )
     for m in ABOUT:
         about_menu.add_label(m, align=pygameMenu.locals.ALIGN_LEFT, font_size=20)
@@ -251,17 +250,17 @@ def main(test=False):
     # Create menus: Main
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(
+        auto_center_v=True,
         back_box=False,
         height=WINDOW_SIZE[1] * 0.6,
-        width=WINDOW_SIZE[0] * 0.6,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='Main Menu',
+        width=WINDOW_SIZE[0] * 0.6,
     )
 
     main_menu.add_button('Play', play_menu)
     main_menu.add_button('About', about_menu)
     main_menu.add_button('Quit', pygameMenu.events.EXIT)
-    main_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Main loop
