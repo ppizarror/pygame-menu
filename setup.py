@@ -78,9 +78,15 @@ setup(name='pygame-menu',
           ],
       include_package_data=True,
       packages=find_packages(exclude=['test']),
+      python_requires='>=2.7',
       install_requires=requirements,
       extras_require={
                         'doc': ['sphinx', 'sphinx-rtd-theme'],
-                     },
-      python_requires='>=2.7',
+                    },
+      setup_requires=[
+                        'setuptools',
+                    ],
+      options={
+                        'bdist_wheel': {'universal': True}
+                },
       )
