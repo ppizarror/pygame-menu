@@ -106,17 +106,21 @@ added:
     class Menu(object):
         ...
 
-        def add_mymenu(self, params, **kwargs):
+        def add_mymenu(self, params, current=False, **kwargs):
             """
             Add MyWidget to the menu.
             """
-            attributes = self._current._filter_widget_attributes(kwargs)
+            menu = self  # type: Menu
+            if current:
+                menu = self._current
+
+            attributes = menu._filter_widget_attributes(kwargs)
 
             # Create your widget
             widget = _widgets.MyWidget(..., **kwargs)
 
-            self._current._configure_widget(widget=widget, **attributes)
-            self._current._append_widget(widget)
+            menu._configure_widget(widget=widget, **attributes)
+            menu._append_widget(widget)
             return widget
 
         ...
@@ -126,6 +130,14 @@ added:
           by the Menu in :py:meth:`pygameMenu.Menu._configure_widget`
           method. If **MyWidget** needs additional parameters please use some that
           are not named as the default kwargs used by the Menu Widget system.
+          
+          Check also that the widget could be added to the `base` menu (the source)
+          or the current active menu (the Menu that is pointing at the execution
+          time). This is controlled by `current` optional parameter. This parameter
+          changes the base object that will accept the new widget, if the object
+          is the base menu use `self`, if not, use `self._current` Menu pointer.
+
+          Also, the function must return the created `widget` object.
 
 
 =========================
