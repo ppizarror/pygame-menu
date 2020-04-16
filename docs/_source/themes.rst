@@ -85,10 +85,10 @@ Menubar style                                                         Example
 Widget selection effect
 -----------------------
 
-A **selection effect** is a drawing class (inherited from :py:class:`pygameMenu.widgets.Selection`)
-used to define the way to highlight the focussed widget. An instance of the selection effect class
-is defined in the :py:attr:`Theme.widget_selection_effect` parameter of a theme. See example on how
-to add a selection effect in :ref:`Create a selection effect` chapter.
+A **selection effect** is a drawing class used to define the way to highlight the focussed widget.
+An instance of the selection effect class is defined in the :py:attr:`Theme.widget_selection_effect`
+parameter of a theme. See example on how to add a selection effect in :ref:`Create a selection effect`
+chapter.
 
 The selection effects available are:
 

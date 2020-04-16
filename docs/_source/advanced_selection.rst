@@ -13,7 +13,7 @@ Selection Effect
 
 .. module:: pygameMenu.widgets.core.selection
 
-.. autoclass:: pygameMenu.widgets.Selection
+.. autoclass:: pygameMenu.widgets.core.selection.Selection
     :members:
 
 

@@ -3,13 +3,15 @@
 Package organization
 ====================
 
-The :py:mod:`pgameMenu.widgets` package contains the widget support for the Menu.
+The :py:mod:`pygameMenu.widgets` package contains the widget support for the Menu.
 Its structure consists of several sub-packages::
 
-    core/           Main object classes for Widget and Selector
-    examples/       Some examples of widgets
-    selection/      Selection effect applied to widgets
-    widget/         Menu widget objects
+    pygameMenu/
+        widgets/
+            core/           Main object classes for Widget and Selector
+            examples/       Some examples of widgets
+            selection/      Selection effect applied to widgets
+            widget/         Menu widget objects
 
 
 ===============
@@ -33,13 +35,13 @@ have to respect some rules:
 Create a widget
 ===============
 
-All widget classes shall inherit from :py:class:`pygameMenu.widgets.Widget`,
-and they must be located in the :py:mod:`pgameMenu.widgets` package. The most
+All widget classes shall inherit from :py:class:`pygameMenu.widgets.core.widget.Widget`,
+and they must be located in the :py:mod:`pgameMenu.widgets.widget` package. The most
 basic widget should contain this code:
 
 .. code-block:: python
 
-    from pygameMenu.widgets import Widget
+    from pygameMenu.widgets.core.widget import Widget
 
     class MyWidget(Widget):
 
@@ -143,13 +145,13 @@ The widgets in Menu are drawn with the following idea:
  #. Draw the menubar
  #. Draw the scrollbar
 
-For defining a new selection effect, a new :py:class:`pygameMenu.widgets.Selection` sub-class
-must be added to :py:mod:`pgameMenu.widgets.selection` package. A basic class must contain
-the following code:
+For defining a new selection effect, a new :py:class:`pygameMenu.widgets.core.selection.Selection`
+sub-class must be added to :py:mod:`pgameMenu.widgets.selection` package. A basic class must
+contain the following code:
 
 .. code-block:: python
 
-    from pygameMenu.widgets import Selection
+    from pygameMenu.widgets.core.selection import Selection
 
     class MySelection(Selection):
 

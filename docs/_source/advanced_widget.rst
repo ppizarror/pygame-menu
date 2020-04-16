@@ -10,5 +10,5 @@
 Widget
 ======
 
-.. autoclass:: pygameMenu.widgets.Widget
+.. autoclass:: pygameMenu.widgets.core.widget.Widget
     :members:

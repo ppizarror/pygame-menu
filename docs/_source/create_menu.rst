@@ -10,9 +10,9 @@ Ready to go deeper into menu usage?
 Configuring the menu
 --------------------
 
-The :py:class:`Menu` is the base class to draw the graphical items on
-the screen. It offers many parameters to let you adapt the behavior
-and the visual aspects of the menu.
+The :py:class:`pygameMenu.Menu` is the base class to draw the graphical items on
+the screen. It offers many parameters to let you adapt the behavior and the visual
+aspects of the menu.
 
 The less trivial ones are explained here.
 
