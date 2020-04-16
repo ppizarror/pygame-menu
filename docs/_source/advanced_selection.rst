@@ -1,8 +1,8 @@
 :orphan:
 
-.. These pages are orphan because they concerns the internal
-.. working of the library. However they are here in order to
-.. be able to quote them in the documentation.
+.. This page is orphan because its content concerns the internal
+.. working of the library. However it is necessary in order to
+.. be able to quote its items in the documentation.
 
 ================
 Widget Selection

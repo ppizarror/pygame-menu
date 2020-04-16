@@ -72,9 +72,9 @@ basic widget should contain this code:
 .. warning:: After creating the widget, it must be added to  ``__init__.py`` file of the
              :py:mod:`pgameMenu.widgets` package.
 
-.. code-block:: python
+             .. code-block:: python
 
-    from pygameMenu.widgets import MyWidget
+                 from pygameMenu.widgets.widget.mywidget import MyWidget
 
 For adding the widget to the :py:class:`pygameMenu.menu.Menu` this class must be extended
 with a public method :py:meth:`pygameMenu.menu.Menu.add_mywidget` with the following
@@ -114,15 +114,16 @@ Create a selection effect
 
 The widgets in Menu are drawn with the following idea:
 
-1. Each time a new Widget is added regenerate the position of them.
-2. Widgets can be active or not. The active widget will catch user events as keyboard or mouse.
-3. Active widgets have a decoration, named *Selection*
-4. The drawing process is:
-   1. Draw Menu background color/image
-   2. Draw all widgets
-   3. Draw *Selection* decoration on selected widget surface area
-   4. Draw the menubar
-   5. Draw the scrollbar
+#. Each time a new Widget is added regenerate the position of them.
+#. Widgets can be active or not. The active widget will catch user events as keyboard or mouse.
+#. Active widgets have a decoration, named *Selection*
+#. The drawing process is:
+
+ #. Draw Menu background color/image
+ #. Draw all widgets
+ #. Draw *Selection* decoration on selected widget surface area
+ #. Draw the menubar
+ #. Draw the scrollbar
 
 For defining a new selection effect a new :py:class:`pygameMenu.widgets.core.selection.Selection`
 object must be added to ``selection`` package . A basic object must contain the following code:
@@ -166,13 +167,13 @@ object must be added to ``selection`` package . A basic object must contain the 
 .. warning:: After creating the selection effect, it must be added to  ``__init__.py`` file of the
              :py:mod:`pgameMenu.widgets` package.
 
-.. code-block:: python
+             .. code-block:: python
 
-    from pygameMenu.widgets import MySelection
+                 from pygameMenu.widgets.selection.myselection import MySelection
 
-Finally, this new selection effect can be used following one of these two ways:
+Finally, this new selection effect can be set following one of these two ways:
 
-1. Pass it when adding ad new widget to the menu
+1. Pass it when adding a new widget to the menu
 
     .. code-block:: python
 

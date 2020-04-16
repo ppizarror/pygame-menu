@@ -1,5 +1,7 @@
 :orphan:
 
+.. This page is orphan because it is the documentation entry point
+
 .. image:: _static/pygame_menu.png
    :scale: 35%
    :align: center
