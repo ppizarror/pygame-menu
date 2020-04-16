@@ -1412,6 +1412,12 @@ class Menu(object):
                         updated = True  # It is updated
                         break
 
+                elif self._current._mouse and event.type == pygame.MOUSEMOTION:
+                    for index in range(len(self._current._widgets)):
+                        widget = self._current._widgets[index]
+                        if self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            self._current._select(index)
+
         # Check if the position has changed
         if len(self._current._widgets) > 0:
             menu_surface_needs_update = menu_surface_needs_update or self._current._widgets[
