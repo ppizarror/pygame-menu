@@ -80,6 +80,21 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
    _source/gallery
 
 
+==============
+Advanced usage
+==============
+
+This chapter define rules and advanced tips and tricks to develop extensions
+for :py:mod:`pygame-menu`.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Advanced usage
+
+   _source/advanced
+
+
 ===========
 Widgets API
 ===========
