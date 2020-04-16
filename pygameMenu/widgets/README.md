@@ -120,7 +120,9 @@ class MySelection(Selection):
 
     def get_margin(self):
         """
-        As selection decorations can be described with a box, this method must return the additional margin of the selection. If the margin is zero, then the selection size is the same as the original widget.
+        As selection decorations can be described with a box, this method must return
+        the additional margin of the selection. If the margin is zero, then the selection
+        size is the same as the original widget.
 
         The method must return the width of the bottom, left, top and right margins.
 
