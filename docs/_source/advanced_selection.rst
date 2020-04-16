@@ -8,14 +8,17 @@
 Widget Selection
 ================
 
+Selection Effect
+----------------
+
 .. module:: pygameMenu.widgets.core.selection
 
 .. autoclass:: pygameMenu.widgets.Selection
     :members:
 
-==========================
+
 Highlight Selection Effect
-==========================
+--------------------------
 
 .. module:: pygameMenu.widgets.selection.highlight
 
@@ -23,9 +26,9 @@ Highlight Selection Effect
     :members:
     :show-inheritance:
 
-=====================
+
 None Selection Effect
-=====================
+---------------------
 
 .. module:: pygameMenu.widgets.selection.none
 

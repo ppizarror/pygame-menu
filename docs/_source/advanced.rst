@@ -13,6 +13,23 @@ Its structure consists of several sub-packages::
 
 
 ===============
+Menu navigation
+===============
+
+The :py:class:`pygameMenu.Menu` keep the link and history with all its sub-menus.
+To be functional, the menu links (pointer to previous and next menus in nested submenus),
+have to respect some rules:
+
+- Public methods access to menu instance through ``_current`` attribute, because
+  user can move through sub-menus and they should target the current Menu instance.
+- Private methods access to menu instance through ``self`` (not ``_current``) because
+  these methods are called by public (``_current``) or by themselves.
+- Methods used to navigate through menus (:py:meth:`pygameMenu.Menu._open`,
+  :py:meth:`pygameMenu.Menu._reset`, ...) should be the only place where the ``_top``
+  attribute is used.
+
+
+===============
 Create a widget
 ===============
 
@@ -76,9 +93,9 @@ basic widget should contain this code:
 
                  from pygameMenu.widgets.widget.mywidget import MyWidget
 
-For adding the widget to the :py:class:`pygameMenu.menu.Menu` this class must be extended
-with a public method :py:meth:`pygameMenu.menu.Menu.add_mywidget` with the following
-structure:
+For adding the widget to the :py:class:`pygameMenu.Menu` class, a public method
+:py:meth:`pygameMenu.Menu.add_mywidget` with the following structure have to be
+added:
 
 .. code-block:: python
 
@@ -104,9 +121,10 @@ structure:
 
 .. note:: This method uses **kwargs** parameter for defining the settings of the
           Widget as the background, margin, etc. This is applied automatically
-          by the Menu in :py:meth:`pygameMenu.menu.Menu._configure_widget`
+          by the Menu in :py:meth:`pygameMenu.Menu._configure_widget`
           method. If **MyWidget** needs additional parameters please use some that
           are not named as the default kwargs used by the Menu Widget system.
+
 
 =========================
 Create a selection effect
@@ -125,8 +143,9 @@ The widgets in Menu are drawn with the following idea:
  #. Draw the menubar
  #. Draw the scrollbar
 
-For defining a new selection effect a new :py:class:`pygameMenu.widgets.core.selection.Selection`
-object must be added to ``selection`` package . A basic object must contain the following code:
+For defining a new selection effect, a new :py:class:`pygameMenu.widgets.Selection` sub-class
+must be added to :py:mod:`pgameMenu.widgets.selection` package. A basic class must contain
+the following code:
 
 .. code-block:: python
 
