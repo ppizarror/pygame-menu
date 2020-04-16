@@ -952,8 +952,25 @@ class Menu(object):
         except ValueError:
             raise ValueError('widget is not in Menu')
         menu._widgets.pop(indx)
-        if menu._index > indx:  # If the selected widget was after this
-            menu._select(menu._index - 1)
+
+        # Check if there's more selectable widgets
+        nselect = 0
+        last_selectable = 0
+        for indx in range(len(menu._widgets)):
+            wid = menu._widgets[indx]  # type: _widgets.Widget
+            if wid.is_selectable:
+                nselect += 1
+                last_selectable = indx
+
+        if nselect == 0:
+            menu._index = -1  # Any widget is selected
+        elif nselect == 1:
+            menu._select(last_selectable)  # Select the unique selectable option
+        elif nselect > 1:
+            if menu._index > indx:  # If the selected widget was after this
+                menu._select(menu._index - 1)
+            else:
+                menu._select(menu._index)
         if menu._auto_center_v:
             menu._center_content()
         menu._widgets_surface = None  # If added on execution time forces the update of the surface
@@ -1260,6 +1277,9 @@ class Menu(object):
 
         :return: None
         """
+        if len(self._widgets) == 0:  # If this happen, get_widget_max returns an inmense value
+            self._widget_offset[1] = 0
+            return
         self._build_widget_surface()  # For position
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         _, max_y = self._get_widget_max_position()
