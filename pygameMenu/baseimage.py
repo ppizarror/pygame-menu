@@ -60,7 +60,7 @@ class BaseImage(object):
     let write the image to an surface.
 
     :param image_path: Path of the image to be loaded
-    :type image_path: basestring
+    :type image_path: str
     :param drawing_mode: Drawing mode of the image
     :type drawing_mode: int
     :param drawing_offset: Offset of the image in drawing method
@@ -119,14 +119,14 @@ class BaseImage(object):
     def get_namefile(self):
         """
         :return: Return the name of the image file
-        :rtype: basestring
+        :rtype: str
         """
         return self._filename
 
     def get_extension(self):
         """
         :return: Return the extension of the image file
-        :rtype: basestring
+        :rtype: str
         """
         return self._extension
 

@@ -6,5 +6,5 @@
 Widget
 ======
 
-.. autoclass:: Widget
+.. autoclass:: pygameMenu.widgets.Widget
     :members:

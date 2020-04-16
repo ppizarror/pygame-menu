@@ -22,34 +22,43 @@ Them can also be imported as follows:
 
     main()
 
-Normal button menu
-------------------
 
-.. image:: ../_static/example_normal_button_menu.gif
-    :scale: 60 %
+Simple example
+--------------
+
+.. image:: ../_static/example_simple.gif
     :align: center
-    :alt: Normal button menu
+    :alt: A basic button menu
+    :width: 590
 
-Textual menus
--------------
+Multiple input example
+----------------------
 
-.. image:: ../_static/example_textual_menus.gif
-    :scale: 60 %
+.. image:: ../_static/example_multi_input.gif
     :align: center
-    :alt: Textual menus
+    :alt: This example features all widgets available on pygame-menu
+    :width: 590
 
-Mouse support
--------------
+Scroll menu example
+-------------------
 
-.. image:: ../_static/example_mouse_support.gif
-    :scale: 60 %
+.. image:: ../_static/example_scroll_menu.gif
     :align: center
-    :alt: Mouse support
+    :alt: Since v3, menu supports columns and scrolls
+    :width: 590
 
-Different entries
------------------
+Game selector example
+---------------------
 
-.. image:: ../_static/example_supported_entries.gif
-    :scale: 75 %
+.. image:: ../_static/example_game_selector.gif
     :align: center
-    :alt: Different entries
+    :alt: A simple game selector
+    :width: 590
+
+Timer clock example
+-------------------
+
+.. image:: ../_static/example_timer_clock.gif
+    :align: center
+    :alt: Timer clock
+    :width: 590

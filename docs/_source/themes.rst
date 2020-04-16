@@ -85,3 +85,19 @@ Menubar style                                                         Example
 
 .. autoclass:: Theme
     :members:
+
+Widget selection effect
+-----------------------
+
+The selection effect (active Widget) must be defined in 
+:py:class:`Theme.widget_selection_effect` parameter as a :py:attr:`pygameMenu.widgets.Selection`
+object instance. Current selection effects available are:
+
+========================    =======================================================
+Selection effect            Class
+========================    =======================================================
+Rectangular highlight       :py:class:`pygameMenu.widgets.HighlightSelection`
+None                        :py:class:`pygameMenu.widgets.NoneSelection`
+========================    =======================================================
+
+The base selection color is defined in :py:attr:`Theme.widget_selection_effec`.

@@ -50,7 +50,7 @@ class ScrollArea(object):
     :param area_height: Height of scrollable area (px)
     :type area_height: int, float
     :param area_color: Background color, it can be a color or an image
-    :type area_color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, NoneType
+    :type area_color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, None
     :param extend_x: Px to extend the surface in yxaxis (px) from left
     :type extend_x: int, float
     :param extend_y: Px to extend the surface in y axis (px) from top
@@ -72,9 +72,9 @@ class ScrollArea(object):
     :param shadow_offset: Offset of shadow
     :type shadow_offset: int, float
     :param shadow_position: Position of shadow
-    :type shadow_position: basestring
+    :type shadow_position: str
     :param world: Surface to draw and scroll
-    :type world: pygame.SurfaceType, NoneType
+    :type world: pygame.SurfaceType, None
     """
 
     def __init__(self,
@@ -336,7 +336,7 @@ class ScrollArea(object):
         Return the scroll thickness of the area. If it's hidden return zero.
 
         :param orientation: Orientation of the scroll
-        :type orientation: basestring
+        :type orientation: str
         :return: Thickness in px
         :rtype: int
         """

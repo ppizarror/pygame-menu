@@ -53,9 +53,9 @@ class ScrollBar(Widget):
     :param values_range: Min and max values
     :type values_range: tuple, list
     :param scrollbar_id: Bar identifier
-    :type scrollbar_id: basestring
+    :type scrollbar_id: str
     :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
-    :type orientation: basestring
+    :type orientation: str
     :param slider_pad: Space between slider and page control
     :type slider_pad: int, float
     :param slider_color: Color of the slider
@@ -65,9 +65,9 @@ class ScrollBar(Widget):
     :param page_ctrl_color: Page control color
     :type page_ctrl_color: tuple, list
     :param onchange: Callback when changing the selector
-    :type onchange: callable, NoneType
+    :type onchange: callable, None
     :param onreturn: Callback when pressing return button
-    :type onreturn: callable, NoneType
+    :type onreturn: callable, None
     """
 
     def __init__(self,
@@ -161,7 +161,7 @@ class ScrollBar(Widget):
     def get_orientation(self):
         """
         :return: Return the scroll bar orientation
-        :rtype: basestring
+        :rtype: str
         """
         if self._orientation == 0:
             return _locals.ORIENTATION_HORIZONTAL
@@ -279,7 +279,7 @@ class ScrollBar(Widget):
         """
         Set the scroll bar orientation to vertical or horizontal.
         :param orientation: Widget orientation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
-        :type orientation: basestring
+        :type orientation: str
         :return: None
         """
         assert_orientation(orientation)

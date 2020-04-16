@@ -46,11 +46,11 @@ class Widget(object):
     Widget abstract class.
 
     :param widget_id: Widget identifier
-    :type widget_id: basestring
+    :type widget_id: str
     :param onchange: Callback when changing the selector
-    :type onchange: callable, NoneType
+    :type onchange: function, None
     :param onreturn: Callback when pressing return button
-    :type onreturn: callable, NoneType
+    :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword-arguments for callbacks
     """
@@ -166,7 +166,7 @@ class Widget(object):
         Set widget background color.
 
         :param color: Widget background color
-        :type color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, NoneType
+        :type color: tuple, list, :py:class:`pygameMenu.baseimage.BaseImage`, None
         :param inflate: Inflate background in x,y
         :type inflate: tuple, list
         :return: None
@@ -296,7 +296,7 @@ class Widget(object):
         Set widget max width (column support) if force_fit_text is enabled.
 
         :param width: Width in px, None if max width is disabled
-        :type width: int, float, NoneType
+        :type width: int, float, None
         :return: None
         """
         if width is not None:
@@ -346,7 +346,7 @@ class Widget(object):
     def get_id(self):
         """
         :return: Returns widget ID.
-        :rtype: basestring
+        :rtype: str
         """
         return self._id
 
@@ -366,7 +366,7 @@ class Widget(object):
         Render text.
 
         :param text: Text to render
-        :type text: basestring
+        :type text: str
         :param color: Text color
         :type color: tuple
         :return: Text surface
@@ -396,7 +396,7 @@ class Widget(object):
         Render text and turn it into a surface.
 
         :param string: Text to render
-        :type string: basestring
+        :type string: str
         :param color: Text color
         :type color: tuple
         :return: Text surface
@@ -442,7 +442,7 @@ class Widget(object):
         Set the text font.
 
         :param font: Name or list of names for font (see pygame.font.match_font for precise format)
-        :type font: basestring, list
+        :type font: str, list
         :param font_size: Size of font in pixels
         :type font_size: int
         :param color: Text color
@@ -537,7 +537,7 @@ class Widget(object):
         Set the alignment of the widget.
 
         :param align: Widget align, see locals
-        :type align: basestring
+        :type align: str
         :return: None
         """
         assert_alignment(align)
@@ -548,7 +548,7 @@ class Widget(object):
         Returns widget alignment.
 
         :return: Widget align, see locals
-        :rtype: basestring
+        :rtype: str
         """
         return self._alignment
 
@@ -590,11 +590,11 @@ class Widget(object):
         :param enabled: Shadow is enabled or not
         :type enabled: bool
         :param color: Shadow color
-        :type color: list, NoneType
+        :type color: list, None
         :param position: Shadow position
-        :type position: basestring, NoneType
+        :type position: str, None
         :param offset: Shadow offset
-        :type offset: int, float, NoneType
+        :type offset: int, float, None
         :return: None
         """
         self._shadow = enabled

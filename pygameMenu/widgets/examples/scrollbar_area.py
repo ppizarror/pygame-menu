@@ -78,7 +78,7 @@ def make_world(width, height, text=''):
     :param height: Height in pixels
     :type height: int
     :param text: Text to write
-    :type: basestring
+    :type: str
     :return: World surface
     """
     world = make_surface(width, height)
