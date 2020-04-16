@@ -448,10 +448,10 @@ class Menu(object):
 
         :param image_path: Path of the image of the widget
         :type image_path: basestring
-        :param image_id: ID of the label
-        :type image_id: basestring
         :param angle: Angle of the image in degrees (clockwise)
         :type angle: int, float
+        :param image_id: ID of the label
+        :type image_id: basestring
         :param scale: Scale of the image (x,y), float or int
         :type scale: tuple, list
         :param scale_smooth: Scale is smoothed
