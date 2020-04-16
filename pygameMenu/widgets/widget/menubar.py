@@ -50,7 +50,7 @@ class MenuBar(Widget):
     MenuBar widget.
 
     :param label: Title of the Menu
-    :type label: basestring
+    :type label: str
     :param width: Width of the widget, generally width of the Menu
     :type width: int, float
     :param back_box: Draw a back-box button on header
@@ -58,9 +58,9 @@ class MenuBar(Widget):
     :param mode: Mode of drawing the bar
     :type mode: int
     :param onchange: Callback when changing the selector
-    :type onchange: callable, NoneType
+    :type onchange: callable, None
     :param onreturn: Callback when pressing return button
-    :type onreturn: callable, NoneType
+    :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword-arguments for callbacks
     """
@@ -117,7 +117,7 @@ class MenuBar(Widget):
         Return the title of the Menu.
 
         :return: Title
-        :rtype: basestring
+        :rtype: str
         """
         return self._label
 
@@ -269,7 +269,7 @@ class MenuBar(Widget):
         Set Menu title.
 
         :param title: Menu title
-        :type title: basestring
+        :type title: str
         :param offsetx: Offset x-position of title (px)
         :type offsetx: int, float
         :param offsety: Offset y-position of title (px)

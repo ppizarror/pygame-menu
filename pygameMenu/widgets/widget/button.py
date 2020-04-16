@@ -40,13 +40,13 @@ class Button(Widget):
     Button widget.
 
     :param label: Text of the button
-    :type label: basestring
+    :type label: str
     :param button_id: Button ID
-    :type button_id: basestring
+    :type button_id: str
     :param onchange: Callback when changing the selector
-    :type onchange: callable, NoneType
+    :type onchange: callable, None
     :param onreturn: Callback when pressing return button
-    :type onreturn: callable, NoneType
+    :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword-arguments for callbacks
     """

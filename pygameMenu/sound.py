@@ -74,7 +74,7 @@ class Sound(object):
     :param buffer: Buffer size
     :type buffer: int
     :param devicename: Device name
-    :type devicename: basestring
+    :type devicename: str
     :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
     :type allowedchanges: bool
     :param force_init: Force mixer init with new parameters
@@ -189,9 +189,9 @@ class Sound(object):
         Link a sound file to a sound type.
 
         :param sound_type: Sound type
-        :type sound_type: basestring
+        :type sound_type: str
         :param sound_file: Sound file
-        :type sound_file: basestring, NoneType
+        :type sound_file: str, None
         :param volume: Volume of the sound, from 0.0 to 1.0
         :type volume: float
         :param loops: Loops of the sound
@@ -281,7 +281,7 @@ class Sound(object):
         Play a sound.
 
         :param sound: Sound to be played
-        :type sound: pygame.mixer.SoundType, NoneType
+        :type sound: pygame.mixer.SoundType, None
         :return: True if the sound was played
         :rtype: bool
         """

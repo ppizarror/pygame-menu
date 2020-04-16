@@ -6,5 +6,5 @@
 Widget Selection
 ================
 
-.. autoclass:: Selection
+.. autoclass:: pygameMenu.widgets.Selection
     :members:

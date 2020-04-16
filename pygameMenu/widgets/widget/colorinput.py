@@ -45,21 +45,21 @@ class ColorInput(TextInput):
     Color input widget.
 
     :param label: Input label text
-    :type label: basestring
+    :type label: str
     :param colorinput_id: ID of the text input
-    :type colorinput_id: basestring
+    :type colorinput_id: str
     :param color_type: Type of color input (rgb, hex)
-    :type color_type: basestring
+    :type color_type: str
     :param input_separator: Divisor between RGB channels
-    :type input_separator: basestring
+    :type input_separator: str
     :param input_underline: Character drawn under each number input
-    :type input_underline: basestring
+    :type input_underline: str
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
     :param onchange: Callback when changing the selector
-    :type onchange: callable, NoneType
+    :type onchange: callable, None
     :param onreturn: Callback when pressing return button
-    :type onreturn: callable, NoneType
+    :type onreturn: callable, None
     :param prev_size: Width of the previsualization box in terms of the height of the widget
     :type prev_size: int, float
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held

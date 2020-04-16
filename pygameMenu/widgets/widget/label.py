@@ -38,9 +38,9 @@ class Label(Widget):
     Label widget.
 
     :param label: Text of the button
-    :type label: basestring
+    :type label: str
     :param label_id: Button ID
-    :type label_id: basestring
+    :type label_id: str
     """
 
     def __init__(self, label, label_id=''):

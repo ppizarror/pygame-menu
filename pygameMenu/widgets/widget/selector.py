@@ -41,17 +41,17 @@ class Selector(Widget):
     Selector widget.
 
     :param label: Selector label text
-    :type label: basestring
+    :type label: str
     :param elements: Elements of the selector
     :type elements: list
     :param selector_id: ID of the selector
-    :type selector_id: basestring
+    :type selector_id: str
     :param default: Index of default element to display
     :type default: int
     :param onchange: Callback when changing the selector
-    :type onchange: callable, NoneType
+    :type onchange: callable, None
     :param onreturn: Callback when pressing return button
-    :type onreturn: callable, NoneType
+    :type onreturn: callable, None
     :param kwargs: Optional keyword-arguments for callbacks
     """
 
@@ -154,7 +154,7 @@ class Selector(Widget):
             - *widget*.set_value(2) -> Widget selects 2.
 
         :param item: Item to select, can be a string or an integer.
-        :type item: basestring, int
+        :type item: str, int
         :return: None
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'

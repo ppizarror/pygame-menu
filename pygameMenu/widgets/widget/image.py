@@ -39,9 +39,9 @@ class Image(Widget):
     Image widget.
 
     :param image_path: Path of the image
-    :type image_path: basestring
+    :type image_path: str
     :param image_id: Image ID
-    :type image_id: basestring
+    :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
     :type angle: int, float
     :param scale: Scale of the image (x,y), float or int

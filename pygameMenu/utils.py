@@ -39,7 +39,7 @@ def assert_alignment(align):
     Assert alignment local.
 
     :param align: Align value
-    :type align: basestring
+    :type align: str
     :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
@@ -78,7 +78,7 @@ def assert_orientation(orientation):
     Assert that a certain widget orientation is valid.
 
     :param orientation: Object orientation
-    :type orientation: basestring
+    :type orientation: str
     :return: None
     """
     assert isinstance(orientation, str)
@@ -104,7 +104,7 @@ def assert_position(position):
     Assert that a certain widget position is valid.
 
     :param position: Object position
-    :type position: basestring
+    :type position: str
     :return: None
     """
     assert isinstance(position, str)
@@ -156,7 +156,7 @@ def make_surface(width, height, alpha=False, fill_color=None):
     :param alpha: Enable alpha channel on surface
     :type alpha: bool
     :param fill_color: Fill surface with a certain color
-    :type fill_color: tuple, list, NoneType
+    :type fill_color: tuple, list, None
     :return: Pygame surface
     :rtype: pygame.SurfaceType
     """

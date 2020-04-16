@@ -118,15 +118,15 @@ class to display large custom surfaces.
    :hidden:
    :caption: Widgets API
 
-   _source/widget_button
-   _source/widget_colorinput
-   _source/widget_image
-   _source/widget_label
-   _source/widget_menubar
-   _source/widget_scrollbar
-   _source/widget_selector
-   _source/widget_textinput
-   _source/widget_vmargin
+   _source/widgets_button
+   _source/widgets_colorinput
+   _source/widgets_image
+   _source/widgets_label
+   _source/widgets_menubar
+   _source/widgets_scrollbar
+   _source/widgets_selector
+   _source/widgets_textinput
+   _source/widgets_vmargin
 
 
 =================

@@ -57,13 +57,13 @@ class Menu(object):
     :param width: Width of the Menu (px)
     :type width: int, float
     :param title: Title of the Menu (main title)
-    :type title: basestring
+    :type title: str
     :param back_box: Draw a back-box button on header
     :type back_box: bool
     :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
     :type column_force_fit_text: bool
     :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
-    :type column_max_width: tuple, NoneType
+    :type column_max_width: tuple, None
     :param columns: Number of columns, by default it's 1
     :type columns: int
     :param enabled: Menu is enabled by default or not
@@ -71,21 +71,25 @@ class Menu(object):
     :param joystick_enabled: Enable/disable joystick on the Menu
     :type joystick_enabled: bool
     :param menu_id: ID of the Menu
-    :type menu_id: basestring
+    :type menu_id: str
     :param menu_position: Position in x,y axis (%). Default (50, 50), vertically and horizontally centered
+    :type menu_position: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
-    :type onclose: callable, NoneType
+    :type onclose: callable, None
     :param rows: Number of rows of each column, None if there's only 1 column
-    :type rows: int, NoneType
+    :type rows: int, None
     :param theme: Menu theme object, if None use the default theme
-    :type theme: pygameMenu.themes.Theme, NoneType
+    :type theme: pygameMenu.themes.Theme, None
     :param title_offset: Offset (x-position,y-position) of title (px). Default (0,0)
+    :type title_offset: tuple, list
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0, 10)
+    :type widget_margin: tuple, list
     :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default (0, 0)
+    :type widget_offset: tuple, list
     """
 
     def __init__(self,
@@ -302,10 +306,10 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
+            - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the button
-        :type title: basestring
+        :type title: str
         :param action: Action of the button, can be a Menu, an event or a function
         :type action: Menu, PymenuAction, callable
         :param args: Additional arguments used by a function
@@ -384,24 +388,24 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
+            - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the color input
-        :type title: basestring
+        :type title: str
         :param color_type: Type of the color input, can be "rgb" or "hex"
-        :type color_type: basestring
+        :type color_type: str
         :param color_id: ID of the color input
-        :type color_id: basestring
+        :type color_id: str
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
-        :type default: basestring, tuple
+        :type default: str, tuple
         :param input_separator: Divisor between RGB channels, not valid in HEX format
-        :type input_separator: basestring
+        :type input_separator: str
         :param input_underline: Underline character
-        :type input_underline: basestring
+        :type input_underline: str
         :param onchange: Function when changing the selector
-        :type onchange: callable, NoneType
+        :type onchange: callable, None
         :param onreturn: Function when pressing return button
-        :type onreturn: callable, NoneType
+        :type onreturn: callable, None
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Additional keyword-parameters
@@ -447,11 +451,11 @@ class Menu(object):
             - ``selection_effect``      Widget selector effect :py:class:`pygameMenu.widgets.Selection`
 
         :param image_path: Path of the image of the widget
-        :type image_path: basestring
+        :type image_path: str
         :param angle: Angle of the image in degrees (clockwise)
         :type angle: int, float
         :param image_id: ID of the label
-        :type image_id: basestring
+        :type image_id: str
         :param scale: Scale of the image (x,y), float or int
         :type scale: tuple, list
         :param scale_smooth: Scale is smoothed
@@ -499,12 +503,12 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
+            - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Text to be displayed
-        :type title: basestring
+        :type title: str
         :param label_id: ID of the label
-        :type label_id: basestring
+        :type label_id: str
         :param max_char: Split the title in several labels if length exeeds. (0: don't split, -1: split to menu width)
         :type max_char: int
         :param selectable: Label accepts user selection
@@ -582,20 +586,20 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
+            - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the selector
-        :type title: basestring
+        :type title: str
         :param items: Elements of the selector [('Item1', var1..), ('Item2'...)]
         :type items: list
         :param default: Index of default value to display
         :type default: int
         :param onchange: Function when changing the selector
-        :type onchange: callable, NoneType
+        :type onchange: callable, None
         :param onreturn: Function when pressing return button
-        :type onreturn: callable, NoneType
+        :type onreturn: callable, None
         :param selector_id: ID of the selector
-        :type selector_id: basestring
+        :type selector_id: str
         :param kwargs: Additional parameters
         :type kwargs: any
         :return: Widget object
@@ -654,32 +658,32 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
+            - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the text input
-        :type title: basestring
+        :type title: str
         :param default: Default value to display
-        :type default: basestring, int, float
+        :type default: str, int, float
         :param copy_paste_enable: Enable text copy, paste and cut
         :type copy_paste_enable: bool
         :param cursor_selection_enable: Enable text selection on input
         :type cursor_selection_enable: bool
         :param input_type: Data type of the input
-        :type input_type: basestring
+        :type input_type: str
         :param input_underline: Underline character
-        :type input_underline: basestring
+        :type input_underline: str
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
         :type maxwidth: int
         :param onchange: Function when changing the selector
-        :type onchange: callable, NoneType
+        :type onchange: callable, None
         :param onreturn: Function when pressing return button
-        :type onreturn: callable, NoneType
+        :type onreturn: callable, None
         :param password: Text input is a password
         :type password: bool
         :param textinput_id: ID of the text input
-        :type textinput_id: basestring
+        :type textinput_id: str
         :param valid_chars: List of authorized chars, None if all chars are valid
         :type valid_chars: list
         :param kwargs: Additional keyword-parameters
@@ -820,10 +824,10 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, NoneType)
+            - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param widget: Widget object
-        :type widget: :py:class:`pygameMenu.widgets.core.widget.Widget`
+        :type widget: :py:class:`pygameMenu.widgets.Widget`
         :param kwargs: Optional keywords arguments
         :type kwargs: any
         :return: None
@@ -854,7 +858,7 @@ class Menu(object):
         Add a widget to the list.
 
         :param widget: Widget object
-        :type widget: :py:class:`pygameMenu.widgets.core.widget.Widget`
+        :type widget: :py:class:`pygameMenu.widgets.Widget`
         """
         assert isinstance(widget, _widgets.Widget)
         if self._columns > 1:
@@ -1040,7 +1044,7 @@ class Menu(object):
         Check if widget ID is duplicated.
 
         :param widget_id: New widget ID
-        :type widget_id: basestring
+        :type widget_id: str
         :return: None
         """
         for widget in self._widgets:  # type: _widgets.Widget
@@ -1554,7 +1558,7 @@ class Menu(object):
         The sound is applied only to the base Menu (not the currently displayed).
 
         :param sound: Sound object
-        :type sound: :py:class:`pygameMenu.sound.Sound`, NoneType
+        :type sound: :py:class:`pygameMenu.sound.Sound`, None
         :param recursive: Set the sound engine to all submenus
         :type recursive: bool
         :return: None
@@ -1576,7 +1580,7 @@ class Menu(object):
         :param current: If True, return the title of currently displayed Menu
         :type current: bool
         :return: Title
-        :rtype: basestring
+        :rtype: str
         """
         if current:
             return self._current._menubar.get_title()
@@ -1715,7 +1719,7 @@ class Menu(object):
         :param current: If True, returns the value from the current active Menu, otherwise returns from the base Menu
         :type current: bool
         :return: Menu ID
-        :rtype: basestring
+        :rtype: str
         """
         assert isinstance(current, bool)
         if current:
@@ -1733,13 +1737,13 @@ class Menu(object):
         None is returned if no widget found.
 
         :param widget_id: Widget ID
-        :type widget_id: basestring
+        :type widget_id: str
         :param recursive: Look in Menu and submenus
         :type recursive: bool
         :param current: If True, returns the value from the current active Menu, otherwise from the base Menu
         :type current: bool
         :return: Widget object
-        :rtype: :py:class:`pygameMenu.widgets.core.widget.Widget`
+        :rtype: :py:class:`pygameMenu.widgets.Widget`
         """
         assert isinstance(widget_id, str)
         assert isinstance(recursive, bool)
@@ -1759,11 +1763,11 @@ class Menu(object):
         None is returned if no widget found.
 
         :param widget_id: Widget ID
-        :type widget_id: basestring
+        :type widget_id: str
         :param recursive: Look in Menu and submenus
         :type recursive: bool
         :return: Widget object
-        :rtype: :py:class:`pygameMenu.widgets.core.widget.Widget`
+        :rtype: :py:class:`pygameMenu.widgets.Widget`
         """
         for widget in self._widgets:  # type: _widgets.Widget
             if widget.get_id() == widget_id:
@@ -1796,7 +1800,7 @@ class Menu(object):
         :param current: If True, returns the value from the current active Menu, otherwise from the base Menu
         :type current: bool
         :return: Widget object
-        :rtype: :py:class:`pygameMenu.widgets.core.widget.Widget`
+        :rtype: :py:class:`pygameMenu.widgets.Widget`
         """
         assert isinstance(current, bool)
         if current:

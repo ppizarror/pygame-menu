@@ -66,7 +66,7 @@ class Theme(object):
     :param scrollbar_shadow_offset: Offset of shadow
     :type scrollbar_shadow_offset: int, float
     :param scrollbar_shadow_position: Position of shadow
-    :type scrollbar_shadow_position: basestring
+    :type scrollbar_shadow_position: str
     :param scrollbar_slider_color: Color of the sliders
     :type scrollbar_slider_color: tuple, list
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
@@ -80,9 +80,9 @@ class Theme(object):
     :param title_bar_style: Mode of drawing the title, use menubar widget modes
     :type title_bar_style: int
     :param title_font: Optional title font, if None use the Menu default font
-    :type title_font: basestring, NoneType
+    :type title_font: str, None
     :param title_font_color: Title font color, if None use the widget font color
-    :type title_font_color: tuple, list, NoneType
+    :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
     :type title_font_size: int
     :param title_shadow: Enable shadow on title
@@ -92,19 +92,19 @@ class Theme(object):
     :param title_shadow_offset: Offset of shadow on title
     :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title
-    :type title_shadow_position: basestring
+    :type title_shadow_position: str
     :param widget_alignment: Widget default alignment
-    :type widget_alignment: basestring
+    :type widget_alignment: str
     :param widget_background_color: Background color of a widget
-    :type widget_background_color: tuple, list, NoneType
+    :type widget_background_color: tuple, list, None
     :param widget_font: Widget font path or name
-    :type widget_font: basestring
+    :type widget_font: str
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
     :param widget_selection_effect: Widget selection effect object
-    :type widget_selection_effect: pygameMenu.widgets.core.selection.Selection
+    :type widget_selection_effect: pygameMenu.widgets.Selection
     :param widget_shadow: Indicate if a shadow is drawn on each widget
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the shadow
@@ -112,7 +112,7 @@ class Theme(object):
     :param widget_shadow_offset: Offset of shadow
     :type widget_shadow_offset: int, float
     :param widget_shadow_position: Position of shadow
-    :type widget_shadow_position: basestring
+    :type widget_shadow_position: str
     """
 
     def __init__(self, **kwargs):
@@ -229,7 +229,7 @@ class Theme(object):
         :param color: Color tuple
         :type color: tuple, list
         :return: Color in the same format
-        :rtype: tuple, list, NoneType
+        :rtype: tuple, list, None
         """
         if isinstance(color, BaseImage):
             return color
@@ -252,7 +252,7 @@ class Theme(object):
         :param params: parameters dictionnary
         :type params: dict
         :param key: key to look for
-        :type key: basestring
+        :type key: str
         :param allowed_types: list of allowed types
         :type allowed_types: any
         :param default: default value to return

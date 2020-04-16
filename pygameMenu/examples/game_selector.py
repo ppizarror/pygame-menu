@@ -71,7 +71,7 @@ def change_difficulty(value, difficulty):
     :param value: Tuple containing the data of the selected object
     :type value: tuple
     :param difficulty: Optional parameter passed as argument to add_selector
-    :type difficulty: basestring
+    :type difficulty: str
     :return: None
     """
     selected, index = value
