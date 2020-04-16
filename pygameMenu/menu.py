@@ -381,7 +381,7 @@ class Menu(object):
                         onchange=None,
                         onreturn=None,
                         previsualization_width=3,
-                        current=False,
+                        current=True,
                         **kwargs):
         """
         Add a color widget with RGB or Hex format to the Menu.
@@ -463,7 +463,7 @@ class Menu(object):
                   scale=(1, 1),
                   scale_smooth=False,
                   selectable=False,
-                  current=False,
+                  current=True,
                   **kwargs):
         """
         Add a simple image to the Menu.
@@ -518,7 +518,7 @@ class Menu(object):
                   label_id='',
                   max_char=0,
                   selectable=False,
-                  current=False,
+                  current=True,
                   **kwargs):
         """
         Add a simple text to the Menu.
@@ -597,7 +597,7 @@ class Menu(object):
                      onchange=None,
                      onreturn=None,
                      selector_id='',
-                     current=False,
+                     current=True,
                      **kwargs):
         """
         Add a selector to the Menu: several items with values and
@@ -680,7 +680,7 @@ class Menu(object):
                        password=False,
                        textinput_id='',
                        valid_chars=None,
-                       current=False,
+                       current=True,
                        **kwargs):
         """
         Add a text input to the Menu: free text area and two functions
@@ -928,9 +928,35 @@ class Menu(object):
         if self._index < 0 and widget.is_selectable:
             widget.set_selected()
             self._index = len(self._widgets) - 1
-        self._widgets_surface = None  # If added on execution time forces the update of the surface
         if self._auto_center_v:
             self._center_content()
+        self._widgets_surface = None  # If added on execution time forces the update of the surface
+
+    def remove_widget(self, widget, current=True):
+        """
+        Remove a widget from the Menu.
+
+        :param widget: Widget object
+        :type widget: :py:class:`pygameMenu.widgets.Widget`
+        :param current: If true, remove the widget from the current active Menu, otherwise remove from the base Menu
+        :type current: bool
+        :return: None
+        """
+        assert isinstance(widget, _widgets.Widget)
+        assert isinstance(current, bool)
+        menu = self
+        if current:
+            menu = self._current
+        try:
+            indx = menu._widgets.index(widget)  # If not exists this raises ValueError
+        except ValueError:
+            raise ValueError('widget is not in Menu')
+        menu._widgets.pop(indx)
+        if menu._index > indx:  # If the selected widget was after this
+            menu._select(menu._index - 1)
+        if menu._auto_center_v:
+            menu._center_content()
+        menu._widgets_surface = None  # If added on execution time forces the update of the surface
 
     def _back(self):
         """
