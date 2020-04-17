@@ -36,7 +36,7 @@ Create a widget
 ===============
 
 All widget classes shall inherit from :py:class:`pygameMenu.widgets.core.widget.Widget`,
-and they must be located in the :py:mod:`pgameMenu.widgets.widget` package. The most
+and they must be located in the :py:mod:`pygameMenu.widgets.widget` package. The most
 basic widget should contain this code:
 
 .. code-block:: python
@@ -88,14 +88,14 @@ basic widget should contain this code:
             ...
             return False
 
-.. warning:: After creating the widget, it must be added to  ``__init__.py`` file of the
-             :py:mod:`pgameMenu.widgets` package.
+.. warning:: After creating the widget, it must be added to the  ``__init__.py`` file of the
+             :py:mod:`pygameMenu.widgets` package.
 
              .. code-block:: python
 
                  from pygameMenu.widgets.widget.mywidget import MyWidget
 
-For adding the widget to the :py:class:`pygameMenu.Menu` class, a public method
+To add the widget to the :py:class:`pygameMenu.Menu` class, a public method
 :py:meth:`pygameMenu.Menu.add_mywidget` with the following structure has to be
 added:
 
@@ -133,9 +133,9 @@ added:
           
           Check also that the widget could be added to the `base` menu (the source)
           or the current active menu (the Menu that is pointing at the execution
-          time). This is controlled by `current` optional parameter. This parameter
-          changes the base object that will accept the new widget, if the object
-          is the base menu use `self`, if not, use `self._current` Menu pointer.
+          time). This is controlled by the `current` optional parameter. This parameter
+          changes the base object that will accept the new widget. If the object
+          is the base menu, use `self`; if not, use the `self._current` Menu pointer.
 
           Also, the function must return the created `widget` object.
 
@@ -158,7 +158,7 @@ The widgets in Menu are drawn with the following idea:
  #. Draw scrollbar
 
 For defining a new selection effect, a new :py:class:`pygameMenu.widgets.core.selection.Selection`
-sub-class must be added to the :py:mod:`pgameMenu.widgets.selection` package. A basic class must
+subclass must be added to the :py:mod:`pgameMenu.widgets.selection` package. A basic class must
 contain the following code:
 
 .. code-block:: python
