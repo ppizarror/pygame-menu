@@ -63,7 +63,7 @@ import pygameMenu.sound
 """
 Themes: Menu themes class
 """
-import pygameMenu.themes
+import pygameMenu.themes  # lgtm [py/import-and-import-from]
 from pygameMenu.themes import Theme
 
 """

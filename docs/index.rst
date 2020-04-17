@@ -89,8 +89,8 @@ Advanced usage
 This chapter define rules and advanced tips and tricks to develop extensions
 for :py:mod:`pygame-menu`. The main addressed topics are:
 
-- :ref:`creating a widget <Create a widget>`
-- :ref:`creating a selection effect <Create a selection effect>`
+- :ref:`Creating a widget <Create a widget>`
+- :ref:`Creating a selection effect <Create a selection effect>`
 
 .. toctree::
    :maxdepth: 2

@@ -245,6 +245,7 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(
+        center_content=True,
         enabled=False,
         height=400,
         theme=pygameMenu.themes.THEME_DARK,
@@ -256,7 +257,6 @@ def main(test=False):
     main_menu.add_button(help_menu.get_title(), help_menu)  # Add help submenu
     main_menu.add_button(about_menu.get_title(), about_menu)  # Add about submenu
     main_menu.add_button('Exit', pygameMenu.events.EXIT)  # Add exit function
-    main_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Main loop
