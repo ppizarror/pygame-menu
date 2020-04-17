@@ -34,7 +34,7 @@ import copy
 
 import pygameMenu
 import pygameMenu.font
-import pygameMenu.utils
+import pygameMenu.utils as _utils
 import pygameMenu.widgets as _widgets
 from pygameMenu.baseimage import BaseImage
 
@@ -85,6 +85,8 @@ class Theme(object):
     :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
     :type title_font_size: int
+    :param title_offset: Offset (x-position,y-position) of title (px). Default (0,0)
+    :type title_offset: tuple, list
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
     :param title_shadow_color: Title shadow color
@@ -103,6 +105,10 @@ class Theme(object):
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
+    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0, 10)
+    :type widget_margin: tuple, list
+    :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default (0, 0)
+    :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object
     :type widget_selection_effect: pygameMenu.widgets.Selection
     :param widget_shadow: Indicate if a shadow is drawn on each widget
@@ -116,15 +122,14 @@ class Theme(object):
     """
 
     def __init__(self, **kwargs):
-
         self.background_color = self._get(kwargs, 'background_color',
-                                          'color_image', (220, 220, 220))  # type: (tuple, list)
+                                          'color_image', (220, 220, 220))  # type: tuple
         self.cursor_color = self._get(kwargs, 'cursor_color',
-                                      'color', (0, 0, 0))  # type: (tuple, list)
+                                      'color', (0, 0, 0))  # type: tuple
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
-                                                'color', (30, 30, 30))  # type: (tuple, list)
+                                                'color', (30, 30, 30))  # type: tuple
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
-                                         'color', (220, 220, 220))  # type: (tuple, list)
+                                         'color', (220, 220, 220))  # type: tuple
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
                                           bool, False)  # type: bool
         self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color',
@@ -134,27 +139,29 @@ class Theme(object):
         self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position',
                                                    'position', pygameMenu.locals.POSITION_NORTHWEST)  # type: str
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color',
-                                                'color', (200, 200, 200))  # type: (tuple, list)
+                                                'color', (200, 200, 200))  # type: tuple
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad',
                                               (int, float), 0)  # type: (int,float)
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick',
                                          (int, float), 20)  # type: (int,float)
         self.selection_color = self._get(kwargs, 'selection_color',
-                                         'color', (255, 255, 255))  # type: (tuple, list)
+                                         'color', (255, 255, 255))  # type: tuple
         self.title_background_color = self._get(kwargs, 'title_background_color',
-                                                'color', (70, 70, 70))  # type: (tuple, list)
+                                                'color', (70, 70, 70))  # type: tuple
         self.title_bar_style = self._get(kwargs, 'title_bar_style',
-                                         int, _widgets.MENUBAR_STYLE_ADAPTATIVE)
+                                         int, _widgets.MENUBAR_STYLE_ADAPTATIVE)  # type: int
         self.title_font = self._get(kwargs, 'title_font',
                                     str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.title_font_color = self._get(kwargs, 'title_font_color',
-                                          'color', (220, 220, 220))  # type: (tuple, list)
+                                          'color', (220, 220, 220))  # type: tuple
         self.title_font_size = self._get(kwargs, 'title_font_size',
                                          int, 40)  # type: int
+        self.title_offset = self._get(kwargs, 'title_offset',
+                                      'vector2', (5, 0))  # type: tuple
         self.title_shadow = self._get(kwargs, 'title_shadow',
                                       bool, False)  # type: bool
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color',
-                                            'color', (0, 0, 0))  # type: (tuple, list)
+                                            'color', (0, 0, 0))  # type: tuple
         self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset',
                                              (int, float), 2)  # type: (int,float)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position',
@@ -162,22 +169,26 @@ class Theme(object):
         self.widget_font = self._get(kwargs, 'widget_font',
                                      str, pygameMenu.font.FONT_OPEN_SANS)  # type: str
         self.widget_alignment = self._get(kwargs, 'widget_alignment',
-                                          'alignment', pygameMenu.locals.ALIGN_CENTER)
+                                          'alignment', pygameMenu.locals.ALIGN_CENTER)  # type: str
         self.widget_background_color = self._get(kwargs, 'widget_background_color',
-                                                 'color_none')  # type: (tuple, list, type(None))
+                                                 'color_none')  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate',
-                                                   'vector2', (16, 8))  # type: (tuple, list)
+                                                   'vector2', (16, 8))  # type: tuple
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
-                                           'color', (70, 70, 70))  # type: (tuple, list)
+                                           'color', (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
                                           int, 30)  # type: int
+        self.widget_margin = self._get(kwargs, 'widget_margin',
+                                       'vector2', (0, 10))  # type: tuple
+        self.widget_offset = self._get(kwargs, 'widget_offset',
+                                       'vector2', (0, 0))  # type: tuple
         self.widget_selection_effect = self._get(kwargs, 'widget_selectiom_effect',
                                                  _widgets.Selection,
                                                  _widgets.HighlightSelection())  # type: _widgets.Selection
         self.widget_shadow = self._get(kwargs, 'widget_shadow',
                                        bool, False)  # type: bool
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color',
-                                             'color', (0, 0, 0))  # type: (tuple, list)
+                                             'color', (0, 0, 0))  # type: tuple
         self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset',
                                               (int, float), 2)  # type: (int,float)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position',
@@ -187,14 +198,25 @@ class Theme(object):
         for invalid_keyword in kwargs.keys():
             raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
 
-        # Assert values
+    def validate(self):
+        """
+        Validate the values of the theme. If there's a invalid parameter throws an
+        AssertionError.
+
+        This function also converts all lists to tuples. This is done because lists
+        are mutable.
+
+        :return: None
+        """
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
         assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
+        assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
+            'widget offset must be greater or equal than zero'
 
-        # Format colors
+        # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
         self.scrollbar_color = self._format_opacity(self.scrollbar_color)
         self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
@@ -205,8 +227,30 @@ class Theme(object):
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
 
+        # List to tuple
+        self.title_offset = self._vec_2tuple(self.title_offset)
+        self.widget_background_inflate = self._vec_2tuple(self.widget_background_inflate)
+        self.widget_margin = self._vec_2tuple(self.widget_margin)
+        self.widget_offset = self._vec_2tuple(self.widget_offset)
+
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
+
+    @staticmethod
+    def _vec_2tuple(obj):
+        """
+        Return a tuple from a list or tuple object.
+
+        :param obj: Object
+        :type obj: list, tuple
+        :return: Tuple
+        """
+        if isinstance(obj, tuple):
+            return obj
+        elif isinstance(obj, list):
+            return obj[0], obj[1]
+        else:
+            raise ValueError('object is not a 2 vector')
 
     def copy(self):
         """
@@ -225,23 +269,28 @@ class Theme(object):
         0 and 255.
 
         Color may be an Image, so if this is the case return the same object.
+        If the color is a list, return a tuple.
 
         :param color: Color tuple
         :type color: tuple, list
         :return: Color in the same format
-        :rtype: tuple, list, None
+        :rtype: tuple, None
         """
         if isinstance(color, BaseImage):
             return color
-        if color is None or len(color) == 4:
+        if color is None:
             return color
-        opacity = 255
-        if isinstance(color, tuple):
-            color = color[0], color[1], color[2], opacity
-        elif isinstance(color, list):
-            color = [color[0], color[1], color[2], opacity]
+        if isinstance(color, (tuple, list)):
+            _utils.assert_color(color)
+            if len(color) == 4:
+                if isinstance(color, tuple):
+                    return color
+                else:
+                    return color[0], color[1], color[2], color[3]
+            elif len(color) == 3:
+                color = color[0], color[1], color[2], 255
         else:
-            raise ValueError('Invalid color {0}'.format(color))
+            raise ValueError('invalid color type {0}, only tuple or list are valid'.format(color))
         return color
 
     @staticmethod
@@ -269,27 +318,27 @@ class Theme(object):
                 allowed_types = (allowed_types,)
             for valtype in allowed_types:
                 if valtype == 'color':
-                    pygameMenu.utils.assert_color(value)
+                    _utils.assert_color(value)
                 elif valtype == 'color_none':
                     if value is None:
                         return value
-                    pygameMenu.utils.assert_color(value)
+                    _utils.assert_color(value)
                 elif valtype == 'color_image':
                     if isinstance(value, BaseImage):
                         return value
-                    pygameMenu.utils.assert_color(value)
+                    _utils.assert_color(value)
                 elif valtype == 'color_image_none':
                     if value is None:
                         return value
                     elif isinstance(value, BaseImage):
                         return value
-                    pygameMenu.utils.assert_color(value)
+                    _utils.assert_color(value)
                 elif valtype == 'position':
-                    pygameMenu.utils.assert_position(value)
+                    _utils.assert_position(value)
                 elif valtype == 'alignment':
-                    pygameMenu.utils.assert_alignment(value)
+                    _utils.assert_alignment(value)
                 elif valtype == 'tuple2':
-                    pygameMenu.utils.assert_vector2(value)
+                    _utils.assert_vector2(value)
 
             all_types = ('color', 'color_none', 'color_image', 'color_image_none',
                          'position', 'alignment', 'tuple2')

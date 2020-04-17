@@ -277,7 +277,7 @@ class Widget(object):
         :type surface: pygame.surface.SurfaceType
         :return: None
         """
-        raise NotImplementedError('Override is mandatory')
+        raise NotImplementedError('override is mandatory')
 
     def draw_selected_rect(self, surface):
         """
@@ -359,7 +359,7 @@ class Widget(object):
 
         :return: None
         """
-        raise NotImplementedError('Override is mandatory')
+        raise NotImplementedError('override is mandatory')
 
     def font_render_string(self, text, color=(0, 0, 0)):
         """
@@ -506,7 +506,7 @@ class Widget(object):
 
         :return: None
         """
-        raise NotImplementedError('Override is mandatory')
+        raise NotImplementedError('override is mandatory')
 
     def set_position(self, posx, posy):
         """
@@ -691,4 +691,4 @@ class Widget(object):
         :return: True if updated
         :rtype: bool
         """
-        raise NotImplementedError('Override is mandatory')
+        raise NotImplementedError('override is mandatory')

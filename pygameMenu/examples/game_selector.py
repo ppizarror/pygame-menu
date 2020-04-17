@@ -130,6 +130,7 @@ def play_function(difficulty, font, test=False):
 
     while True:
 
+        # noinspection PyUnresolvedReferences
         clock.tick(60)
 
         # Application events
@@ -233,12 +234,15 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus:About
     # -------------------------------------------------------------------------
+    about_theme = pygameMenu.themes.THEME_DEFAULT.copy()
+    about_theme.widget_margin = (0, 0)
+    about_theme.widget_offset = (0, 0.05)
+
     about_menu = pygameMenu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
         onclose=pygameMenu.events.DISABLE_CLOSE,
+        theme=about_theme,
         title='About',
-        widget_margin=(0, 0),
-        widget_offset=(0, 0.05),
         width=WINDOW_SIZE[0] * 0.6,
     )
     for m in ABOUT:

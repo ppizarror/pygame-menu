@@ -86,12 +86,6 @@ class Menu(object):
     :type rows: int, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: pygameMenu.themes.Theme, None
-    :param title_offset: Offset (x-position,y-position) of title (px). Default (0,0)
-    :type title_offset: tuple, list
-    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0, 10)
-    :type widget_margin: tuple, list
-    :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default (0, 0)
-    :type widget_offset: tuple, list
     """
 
     def __init__(self,
@@ -112,9 +106,6 @@ class Menu(object):
                  onclose=None,
                  rows=None,
                  theme=_themes.THEME_DEFAULT,
-                 title_offset=(5, 0),  # px
-                 widget_margin=(0, 10),
-                 widget_offset=(0, 0),
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
@@ -132,9 +123,9 @@ class Menu(object):
         assert isinstance(rows, (int, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an Theme object instance'
         assert isinstance(title, str)
-        assert isinstance(title_offset, (tuple, list))
-        assert isinstance(widget_margin, (tuple, list))
-        assert isinstance(widget_offset, (tuple, list))
+
+        # Assert theme
+        theme.validate()
 
         # Column/row asserts
         assert columns >= 1, 'number of columns must be greater or equal than 1'
@@ -160,16 +151,8 @@ class Menu(object):
 
         # Element size and position asserts
         _utils.assert_vector2(menu_position)
-        _utils.assert_vector2(title_offset)
-        _utils.assert_vector2(widget_margin)
-        _utils.assert_vector2(widget_offset)
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
-        assert widget_offset[0] >= 0 and widget_offset[1] >= 0, \
-            'widget offset must be greater or equal than zero'
-        if center_content:
-            assert widget_offset[1] == 0, \
-                'widget offset on y axis must be zero if center content is enabled'
 
         # Get window size
         window_width, window_height = pygame.display.get_surface().get_size()
@@ -218,8 +201,7 @@ class Menu(object):
 
         # Menu widgets
         self._widgets = []  # type: list
-        self._widget_margin = [widget_margin[0], widget_margin[1]]  # type:list
-        self._widget_offset = [widget_offset[0], widget_offset[1]]  # type: list
+        self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]  # type: list
 
         if abs(self._widget_offset[0]) < 1:
             self._widget_offset[0] *= self._width
@@ -261,8 +243,8 @@ class Menu(object):
                                          onreturn=self._back)
         self._menubar.set_menu(self)
         self._menubar.set_title(title=title,
-                                offsetx=title_offset[0],
-                                offsety=title_offset[1])
+                                offsetx=theme.title_offset[0],
+                                offsety=theme.title_offset[1])
         self._menubar.set_font(font=self._theme.title_font,
                                font_size=self._theme.title_font_size,
                                color=self._theme.title_background_color,
@@ -834,7 +816,7 @@ class Menu(object):
         assert font_size > 0, 'font_size must be greater than zero'
         attributes['font_size'] = font_size
 
-        margin = kwargs.pop('margin', self._widget_margin)
+        margin = kwargs.pop('margin', self._theme.widget_margin)
         assert isinstance(margin, (tuple, list))
         assert len(margin) == 2, 'margin must be a tuple or list of 2 numbers'
         attributes['margin'] = margin
@@ -1153,7 +1135,7 @@ class Menu(object):
         """
         for widget in self._widgets:  # type: _widgets.Widget
             if widget.get_id() == widget_id:
-                raise ValueError('The widget ID="{0}" is duplicated'.format(widget_id))
+                raise ValueError('widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self):
         """
@@ -1298,7 +1280,7 @@ class Menu(object):
         :return: None
         """
         if not self.is_enabled():
-            raise RuntimeError('Menu is not enabled, it cannot be drawn')
+            raise RuntimeError('menu is not enabled, it cannot be drawn')
 
         # The surface may has been erased because the number
         # of widgets has changed and thus size shall be calculated.

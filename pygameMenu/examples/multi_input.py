@@ -143,6 +143,7 @@ def main(test=False):
     # Create menus: Settings
     # -------------------------------------------------------------------------
     settings_menu_theme = pygameMenu.themes.THEME_ORANGE.copy()
+    settings_menu_theme.title_offset = (5, -2)
     settings_menu_theme.widget_alignment = pygameMenu.locals.ALIGN_LEFT
     settings_menu_theme.widget_font = pygameMenu.font.FONT_OPEN_SANS_LIGHT
     settings_menu_theme.widget_font_size = 20
@@ -153,7 +154,6 @@ def main(test=False):
         onclose=pygameMenu.events.DISABLE_CLOSE,
         theme=settings_menu_theme,
         title='Settings',
-        title_offset=(5, -2),
         width=WINDOW_SIZE[0] * 0.9,
     )
 
@@ -216,7 +216,6 @@ def main(test=False):
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='More Settings',
         theme=settings_menu_theme,
-        widget_offset=(5, 10),  # px
     )
 
     more_settings_menu.add_image(pygameMenu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
@@ -274,6 +273,7 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu_theme = pygameMenu.themes.THEME_ORANGE.copy()
+    main_menu_theme.widget_offset = (0, 0.09)
     main_menu_theme.title_font = pygameMenu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font = pygameMenu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font_size = 30
@@ -284,7 +284,6 @@ def main(test=False):
         onclose=pygameMenu.events.EXIT,  # User press ESC button
         title='Main menu',
         theme=main_menu_theme,
-        widget_offset=(0, 0.09),
     )
 
     main_menu.add_button('Settings', settings_menu)

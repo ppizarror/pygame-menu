@@ -343,4 +343,4 @@ class BaseImage(object):
                 area)
 
         else:
-            raise ValueError('Invalid image mode')
+            raise ValueError('invalid image mode')
