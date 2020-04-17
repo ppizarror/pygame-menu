@@ -18,14 +18,14 @@ Its structure consists of several sub-packages::
 Menu navigation
 ===============
 
-The :py:class:`pygameMenu.Menu` keep the link and history with all its sub-menus.
+The :py:class:`pygameMenu.Menu` keeps the link and history with all its sub-menus.
 To be functional, the menu links (pointer to previous and next menus in nested submenus),
 have to respect some rules:
 
-- Public methods access to menu instance through ``_current`` attribute, because
-  user can move through sub-menus and they should target the current Menu instance.
-- Private methods access to menu instance through ``self`` (not ``_current``) because
-  these methods are called by public (``_current``) or by themselves.
+- Public methods access the menu instance through the ``_current`` attribute, because
+  users can move through sub-menus and they should target the current Menu instance.
+- Private methods access the menu instance through ``self`` (not ``_current``) because
+  these methods are called publicly (``_current``) or by themselves.
 - Methods used to navigate through menus (:py:meth:`pygameMenu.Menu._open`,
   :py:meth:`pygameMenu.Menu._reset`, ...) should be the only place where the ``_top``
   attribute is used.
@@ -96,7 +96,7 @@ basic widget should contain this code:
                  from pygameMenu.widgets.widget.mywidget import MyWidget
 
 For adding the widget to the :py:class:`pygameMenu.Menu` class, a public method
-:py:meth:`pygameMenu.Menu.add_mywidget` with the following structure have to be
+:py:meth:`pygameMenu.Menu.add_mywidget` with the following structure has to be
 added:
 
 .. code-block:: python
@@ -106,26 +106,38 @@ added:
     class Menu(object):
         ...
 
-        def add_mymenu(self, params, **kwargs):
+        def add_mywidget(self, params, current=False, **kwargs):
             """
             Add MyWidget to the menu.
             """
-            attributes = self._current._filter_widget_attributes(kwargs)
+            menu = self  # type: Menu
+            if current:
+                menu = self._current
+
+            attributes = menu._filter_widget_attributes(kwargs)
 
             # Create your widget
             widget = _widgets.MyWidget(..., **kwargs)
 
-            self._current._configure_widget(widget=widget, **attributes)
-            self._current._append_widget(widget)
+            menu._configure_widget(widget=widget, **attributes)
+            menu._append_widget(widget)
             return widget
 
         ...
 
-.. note:: This method uses **kwargs** parameter for defining the settings of the
-          Widget as the background, margin, etc. This is applied automatically
+.. note:: This method uses the **kwargs** parameter for defining the settings of the
+          Widget, such as the background, margin, etc. This is applied automatically
           by the Menu in :py:meth:`pygameMenu.Menu._configure_widget`
-          method. If **MyWidget** needs additional parameters please use some that
+          method. If **MyWidget** needs additional parameters, please use some that
           are not named as the default kwargs used by the Menu Widget system.
+          
+          Check also that the widget could be added to the `base` menu (the source)
+          or the current active menu (the Menu that is pointing at the execution
+          time). This is controlled by `current` optional parameter. This parameter
+          changes the base object that will accept the new widget, if the object
+          is the base menu use `self`, if not, use `self._current` Menu pointer.
+
+          Also, the function must return the created `widget` object.
 
 
 =========================
@@ -134,19 +146,19 @@ Create a selection effect
 
 The widgets in Menu are drawn with the following idea:
 
-#. Each time a new Widget is added regenerate the position of them.
-#. Widgets can be active or not. The active widget will catch user events as keyboard or mouse.
+#. Each time a new Widget is added, regenerate their position.
+#. Widgets can either be active or inactive. The active widget will catch user events as keyboard or mouse.
 #. Active widgets have a decoration, named *Selection*
 #. The drawing process is:
 
  #. Draw Menu background color/image
  #. Draw all widgets
  #. Draw *Selection* decoration on selected widget surface area
- #. Draw the menubar
- #. Draw the scrollbar
+ #. Draw menubar
+ #. Draw scrollbar
 
 For defining a new selection effect, a new :py:class:`pygameMenu.widgets.core.selection.Selection`
-sub-class must be added to :py:mod:`pgameMenu.widgets.selection` package. A basic class must
+sub-class must be added to the :py:mod:`pgameMenu.widgets.selection` package. A basic class must
 contain the following code:
 
 .. code-block:: python
@@ -192,7 +204,7 @@ contain the following code:
 
                  from pygameMenu.widgets.selection.myselection import MySelection
 
-Finally, this new selection effect can be set following one of these two ways:
+Finally, this new selection effect can be set by following one of these two instructions:
 
 1. Pass it when adding a new widget to the menu
 
@@ -204,7 +216,7 @@ Finally, this new selection effect can be set following one of these two ways:
 
         menu.add_button(..., selection_effect=pygameMenu.widgets.MySelection(...))
 
-2. To apply it on alls menus and widgets (and avoid passing it for each added widget),
+2. To apply it on all menus and widgets (and avoid passing it for each added widget),
    a theme can be created
 
     .. code-block:: python

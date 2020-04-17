@@ -148,6 +148,7 @@ def main(test=False):
     settings_menu_theme.widget_font_size = 20
 
     settings_menu = pygameMenu.Menu(
+        center_content=True,
         height=WINDOW_SIZE[1] * 0.85,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         theme=settings_menu_theme,
@@ -205,7 +206,6 @@ def main(test=False):
     settings_menu.add_button('Store data', data_fun)  # Call function
     settings_menu.add_button('Return to main menu', pygameMenu.events.BACK,
                              align=pygameMenu.locals.ALIGN_CENTER)
-    settings_menu.center_content()  # After all widgets added
 
     # -------------------------------------------------------------------------
     # Create menus: More settings
@@ -252,13 +252,14 @@ def main(test=False):
     button_column_menu_theme.widget_font_size = 25
 
     button_column_menu = pygameMenu.Menu(
+        center_content=True,
         columns=2,
         height=WINDOW_SIZE[1] * 0.45,
-        width=WINDOW_SIZE[0] * 0.9,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         rows=3,
         theme=button_column_menu_theme,
         title='Textures+Columns',
+        width=WINDOW_SIZE[0] * 0.9,
     )
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygameMenu.events.BACK)
@@ -268,7 +269,6 @@ def main(test=False):
             image_path=pygameMenu.baseimage.IMAGE_EXAMPLE_METAL
         )
     )
-    button_column_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
