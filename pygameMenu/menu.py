@@ -59,7 +59,7 @@ class Menu(object):
     :param title: Title of the Menu (main title)
     :type title: str
     :parama auto_center_v: Auto centers the menu on the vertical position after a widget is added/deleted
-    :type auto_center_v: bool
+    :type center_content: bool
     :param back_box: Draw a back-box button on header
     :type back_box: bool
     :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
@@ -98,8 +98,8 @@ class Menu(object):
                  height,
                  width,
                  title,
-                 auto_center_v=False,
                  back_box=True,
+                 center_content=False,
                  column_force_fit_text=False,
                  column_max_width=None,
                  columns=1,
@@ -118,8 +118,8 @@ class Menu(object):
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
-        assert isinstance(auto_center_v, bool)
         assert isinstance(back_box, bool)
+        assert isinstance(center_content, bool)
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
         assert isinstance(columns, int)
@@ -167,9 +167,9 @@ class Menu(object):
             'menu width and height must be greater than zero'
         assert widget_offset[0] >= 0 and widget_offset[1] >= 0, \
             'widget offset must be greater or equal than zero'
-        if auto_center_v:
+        if center_content:
             assert widget_offset[1] == 0, \
-                'widget offset on y axis must be zero if auto vertical centering is enabled'
+                'widget offset on y axis must be zero if center content is enabled'
 
         # Get window size
         window_width, window_height = pygame.display.get_surface().get_size()
@@ -181,7 +181,7 @@ class Menu(object):
             menu_id = str(uuid4())
 
         # General properties of the Menu
-        self._auto_center_v = auto_center_v
+        self._auto_center_content = center_content
         self._background_function = None  # type: (None,callable)
         self._clock = pygame.time.Clock()  # Inner clock
         self._height = float(height)
@@ -928,7 +928,7 @@ class Menu(object):
         if self._index < 0 and widget.is_selectable:
             widget.set_selected()
             self._index = len(self._widgets) - 1
-        if self._auto_center_v:
+        if self._auto_center_content:
             self._center_content()
         self._widgets_surface = None  # If added on execution time forces the update of the surface
 
@@ -971,7 +971,7 @@ class Menu(object):
                 menu._select(menu._index - 1)
             else:
                 menu._select(menu._index)
-        if menu._auto_center_v:
+        if menu._auto_center_content:
             menu._center_content()
         menu._widgets_surface = None  # If added on execution time forces the update of the surface
 

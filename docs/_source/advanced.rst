@@ -106,7 +106,7 @@ added:
     class Menu(object):
         ...
 
-        def add_mymenu(self, params, current=False, **kwargs):
+        def add_mywidget(self, params, current=False, **kwargs):
             """
             Add MyWidget to the menu.
             """

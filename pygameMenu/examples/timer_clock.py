@@ -245,7 +245,7 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(
-        auto_center_v=True,
+        center_content=True,
         enabled=False,
         height=400,
         theme=pygameMenu.themes.THEME_DARK,

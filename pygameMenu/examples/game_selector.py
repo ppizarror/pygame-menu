@@ -198,7 +198,7 @@ def main(test=False):
     # Create menus: Play Menu
     # -------------------------------------------------------------------------
     play_menu = pygameMenu.Menu(
-        auto_center_v=True,
+        center_content=True,
         height=WINDOW_SIZE[1] * 0.7,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='Play Menu',
@@ -250,8 +250,8 @@ def main(test=False):
     # Create menus: Main
     # -------------------------------------------------------------------------
     main_menu = pygameMenu.Menu(
-        auto_center_v=True,
         back_box=False,
+        center_content=True,
         height=WINDOW_SIZE[1] * 0.6,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         title='Main Menu',

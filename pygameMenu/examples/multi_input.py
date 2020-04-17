@@ -148,8 +148,8 @@ def main(test=False):
     settings_menu_theme.widget_font_size = 20
 
     settings_menu = pygameMenu.Menu(
+        center_content=True,
         height=WINDOW_SIZE[1] * 0.85,
-        auto_center_v=True,
         onclose=pygameMenu.events.DISABLE_CLOSE,
         theme=settings_menu_theme,
         title='Settings',
@@ -252,7 +252,7 @@ def main(test=False):
     button_column_menu_theme.widget_font_size = 25
 
     button_column_menu = pygameMenu.Menu(
-        auto_center_v=True,
+        center_content=True,
         columns=2,
         height=WINDOW_SIZE[1] * 0.45,
         onclose=pygameMenu.events.DISABLE_CLOSE,
