@@ -64,7 +64,6 @@ import pygameMenu.sound
 Themes: Menu themes class
 """
 import pygameMenu.themes
-from pygameMenu.themes import Theme
 
 """
 Version: Library version
