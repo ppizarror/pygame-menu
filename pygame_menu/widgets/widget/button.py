@@ -1,0 +1,105 @@
+# coding=utf-8
+"""
+pygame-menu
+https://github.com/ppizarror/pygame-menu
+
+BUTTON
+Button class, manage elements and adds entries to menu.
+
+License:
+-------------------------------------------------------------------------------
+The MIT License (MIT)
+Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
+"""
+
+import pygame
+import pygame_menu.controls as _controls
+from pygame_menu.widgets.core.widget import Widget
+
+
+class Button(Widget):
+    """
+    Button widget.
+
+    :param label: Text of the button
+    :type label: str
+    :param button_id: Button ID
+    :type button_id: str
+    :param onchange: Callback when changing the selector
+    :type onchange: callable, None
+    :param onreturn: Callback when pressing return button
+    :type onreturn: callable, None
+    :param args: Optional arguments for callbacks
+    :param kwargs: Optional keyword-arguments for callbacks
+    """
+
+    def __init__(self,
+                 label,
+                 button_id='',
+                 onchange=None,
+                 onreturn=None,
+                 *args,
+                 **kwargs):
+        assert isinstance(label, str)
+        super(Button, self).__init__(widget_id=button_id,
+                                     onchange=onchange,
+                                     onreturn=onreturn,
+                                     args=args,
+                                     kwargs=kwargs)
+        self._label = label
+
+    def _apply_font(self):
+        pass
+
+    # noinspection PyMissingOrEmptyDocstring
+    def draw(self, surface):
+        self._render()
+        self._fill_background_color(surface)
+        surface.blit(self._surface, self._rect.topleft)
+
+    def _render(self):
+        if not self._render_hash_changed(self.selected, self._label):
+            return
+        if self.selected:
+            color = self._font_selected_color
+        else:
+            color = self._font_color
+        self._surface = self._render_string(self._label, color)
+        self._rect.width, self._rect.height = self._surface.get_size()
+
+    # noinspection PyMissingOrEmptyDocstring
+    def update(self, events):
+        updated = False
+        for event in events:  # type: pygame.event.EventType
+
+            if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
+                    self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and event.button == _controls.JOY_BUTTON_SELECT:
+                self.sound.play_open_menu()
+                self.apply()
+                updated = True
+
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+                self.sound.play_click_mouse()
+                if self._rect.collidepoint(*event.pos):
+                    self.apply()
+                    updated = True
+
+        return updated

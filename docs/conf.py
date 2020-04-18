@@ -18,7 +18,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import pygameMenu
+import pygame_menu
 
 # -- Project information ------------------------------------------------------
 
@@ -27,7 +27,7 @@ copyright = '2020, Pablo Pizarro R.'
 author = 'Pablo Pizarro R.'
 
 # The full version, including alpha/beta/rc tags
-release = pygameMenu.__version__
+release = pygame_menu.__version__
 
 # -- General configuration ----------------------------------------------------
 

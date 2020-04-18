@@ -39,14 +39,14 @@ class SoundTest(unittest.TestCase):
         """
         Setup sound engine.
         """
-        self.sound = pygameMenu.sound.Sound(force_init=True)
+        self.sound = pygame_menu.sound.Sound(force_init=True)
         self.sound._verbose = False
 
     def test_channel(self):
         """
         Test channel.
         """
-        new_sound = pygameMenu.sound.Sound(uniquechannel=False)
+        new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.get_channel()
         self.sound.get_channel_info()
         self.sound.pause()
@@ -57,12 +57,12 @@ class SoundTest(unittest.TestCase):
         """
         Test load sounds.
         """
-        self.assertEqual(self.sound.set_sound(pygameMenu.sound.SOUND_TYPE_CLICK_MOUSE, None), False)
+        self.assertEqual(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, None), False)
         self.assertRaises(ValueError, lambda: self.sound.set_sound('none', None))
         self.assertRaises(IOError,
-                          lambda: self.sound.set_sound(pygameMenu.sound.SOUND_TYPE_CLICK_MOUSE, 'bad_file'))
+                          lambda: self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE, 'bad_file'))
         self.assertEqual(self.sound._play_sound(None), False)
-        self.assertEqual(self.sound.set_sound(pygameMenu.sound.SOUND_TYPE_ERROR, pygameMenu.font.FONT_PT_SERIF), False)
+        self.assertEqual(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_ERROR, pygame_menu.font.FONT_PT_SERIF), False)
 
     def test_example_sounds(self):
         """
@@ -83,8 +83,8 @@ class SoundTest(unittest.TestCase):
         """
         Test sounds in menu.
         """
-        menu = PygameMenuUtils.generic_menu()
-        submenu = PygameMenuUtils.generic_menu()
+        menu = pygame_menuUtils.generic_menu()
+        submenu = pygame_menuUtils.generic_menu()
 
         menu.add_button('submenu', submenu)
         button = menu.add_button('button', lambda: None)

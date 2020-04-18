@@ -1,10 +1,10 @@
 
-.. module:: pygameMenu.widgets.widget.label
+.. module:: pygame_menu.widgets.widget.label
 
 =====
 Label
 =====
 
-.. autoclass:: pygameMenu.widgets.Label
+.. autoclass:: pygame_menu.widgets.Label
     :members:
     :show-inheritance:
