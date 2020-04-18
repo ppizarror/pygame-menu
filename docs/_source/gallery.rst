@@ -3,22 +3,22 @@
 Gallery
 =======
 
-Several examples are provided with the :py:mod:`pygameMenu` library.
+Several examples are provided with the :py:mod:`pygame_menu` library.
 To run the examples, simply execute these commands in a terminal:
 
 .. code-block:: bash
 
-    $> python -m pygameMenu.examples.simple
-    $> python -m pygameMenu.examples.game_selector
-    $> python -m pygameMenu.examples.multi_input
-    $> python -m pygameMenu.examples.scroll_menu
-    $> python -m pygameMenu.examples.timer_clock
+    $> python -m pygame_menu.examples.simple
+    $> python -m pygame_menu.examples.game_selector
+    $> python -m pygame_menu.examples.multi_input
+    $> python -m pygame_menu.examples.scroll_menu
+    $> python -m pygame_menu.examples.timer_clock
 
 Them can also be imported as follows:
 
 .. code-block:: python
 
-    from pygameMenu.examples.example import main
+    from pygame_menu.examples.example import main
 
     main()
 

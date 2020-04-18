@@ -19,14 +19,14 @@ objects to display a menu can be painful. That why :py:mod:`pygame-menu`
 was designed.
 
 Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
-(the code is available in :py:mod:`pygameMenu.examples.simple`):
+(the code is available in `pygame_menu.examples.simple.py <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples/simple.py>`_):
 
 1. Import the required libraries
 
 .. code-block:: python
 
     import pygame
-    import pygameMenu
+    import pygame_menu
 
 2. Initialize pygame
 
@@ -46,14 +46,14 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
     def start_the_game():
         # Do the job here !
 
-    menu = pygameMenu.Menu(300, 400, pygameMenu.font.FONT_BEBAS,
+    menu = pygame_menu.Menu(300, 400, pygame_menu.font.FONT_BEBAS,
                            title="Welcome",
-                           theme=pygameMenu.themes.THEME_BLUE)
+                           theme=pygame_menu.themes.THEME_BLUE)
 
     menu.add_text_input('Name :', default='John Doe')
     menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
     menu.add_button('Play', start_the_game)
-    menu.add_button('Quit', pygameMenu.events.EXIT)
+    menu.add_button('Quit', pygame_menu.events.EXIT)
     menu.center_content()
 
 4. Run your menu
@@ -113,24 +113,24 @@ Access to a widget in a menu can easily be done with two methods:
 
     selected = menu.get_selected_widget()
 
-Each :py:mod:`pygameMenu` widget and its behaviors are defined in a
+Each :py:mod:`pygame_menu` widget and its behaviors are defined in a
 class. The currently existing classes are:
 
- - :py:class:`~pygameMenu.widgets.Button`
- - :py:class:`~pygameMenu.widgets.ColorInput`
- - :py:class:`~pygameMenu.widgets.Image`
- - :py:class:`~pygameMenu.widgets.Label`
- - :py:class:`~pygameMenu.widgets.MenuBar`
- - :py:class:`~pygameMenu.widgets.ScrollBar`
- - :py:class:`~pygameMenu.widgets.Selector`
- - :py:class:`~pygameMenu.widgets.TextInput`
- - :py:class:`~pygameMenu.widgets.VMargin`
+ - :py:class:`~pygame_menu.widgets.Button`
+ - :py:class:`~pygame_menu.widgets.ColorInput`
+ - :py:class:`~pygame_menu.widgets.Image`
+ - :py:class:`~pygame_menu.widgets.Label`
+ - :py:class:`~pygame_menu.widgets.MenuBar`
+ - :py:class:`~pygame_menu.widgets.ScrollBar`
+ - :py:class:`~pygame_menu.widgets.Selector`
+ - :py:class:`~pygame_menu.widgets.TextInput`
+ - :py:class:`~pygame_menu.widgets.VMargin`
 
 For advanced programers, those classes can be used to design custom
 menus or windows.
 
-Have a look at :py:mod:`pygameMenu.widgets.examples.scrollbar.py` for
-instance. It shows how to use the :py:class:`pygameMenu.widgets.ScrollBar`
+Have a look at `pygame_menu.widgets.examples.scrollbar.py <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/widgets/examples/scrollbar.py>`_ for
+instance. It shows how to use the :py:class:`pygame_menu.widgets.ScrollBar`
 class to display large custom surfaces.
 
 .. toctree::

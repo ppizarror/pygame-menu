@@ -32,12 +32,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
-import pygameMenu.examples.game_selector as game_selector
-import pygameMenu.examples.multi_input as multi_input
-import pygameMenu.examples.scroll_menu as scroll_menu
-import pygameMenu.examples.timer_clock as timer_clock
-import pygameMenu.widgets.examples.scrollbar as scroll_bar
-import pygameMenu.widgets.examples.scrollbar_area as scroll_area
+import pygame_menu.examples.game_selector as game_selector
+import pygame_menu.examples.multi_input as multi_input
+import pygame_menu.examples.scroll_menu as scroll_menu
+import pygame_menu.examples.timer_clock as timer_clock
+import pygame_menu.widgets.examples.scrollbar as scroll_bar
+import pygame_menu.widgets.examples.scrollbar_area as scroll_area
 
 
 class ExamplesTest(unittest.TestCase):
@@ -96,4 +96,4 @@ class ExamplesTest(unittest.TestCase):
         Test scroll area example.
         """
         # noinspection PyUnresolvedReferences
-        import pygameMenu.examples.simple
+        import pygame_menu.examples.simple

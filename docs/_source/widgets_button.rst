@@ -1,10 +1,10 @@
 
-.. module:: pygameMenu.widgets.widget.button
+.. module:: pygame_menu.widgets.widget.button
 
 ======
 Button
 ======
 
-.. autoclass:: pygameMenu.widgets.Button
+.. autoclass:: pygame_menu.widgets.Button
     :members:
     :show-inheritance:

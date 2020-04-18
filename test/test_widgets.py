@@ -32,8 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
-from pygameMenu import locals as _locals
-from pygameMenu.widgets import ScrollBar, Label
+from pygame_menu import locals as _locals
+from pygame_menu.widgets import ScrollBar, Label
 
 
 class WidgetsTest(unittest.TestCase):
@@ -62,11 +62,11 @@ class WidgetsTest(unittest.TestCase):
 
         # Test events
         selector.update(PygameUtils.key(0, keydown=True, testmode=False))
-        selector.update(PygameUtils.key(pygameMenu.controls.KEY_LEFT, keydown=True))
-        selector.update(PygameUtils.key(pygameMenu.controls.KEY_RIGHT, keydown=True))
-        selector.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
-        selector.update(PygameUtils.joy_key(pygameMenu.controls.JOY_LEFT))
-        selector.update(PygameUtils.joy_key(pygameMenu.controls.JOY_RIGHT))
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+        selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
         selector.update(PygameUtils.joy_motion(1, 0))
         selector.update(PygameUtils.joy_motion(-1, 0))
         click_pos = PygameUtils.get_middle_rect(selector.get_rect())
@@ -292,7 +292,7 @@ class WidgetsTest(unittest.TestCase):
         # Assert bad settings
         self.assertRaises(ValueError,
                           lambda: self.menu.add_text_input('title',
-                                                           input_type=pygameMenu.locals.INPUT_FLOAT,
+                                                           input_type=pygame_menu.locals.INPUT_FLOAT,
                                                            default='bad'))
         self.assertRaises(ValueError,  # Default and password cannot coexist
                           lambda: self.menu.add_text_input('title',
@@ -369,7 +369,7 @@ class WidgetsTest(unittest.TestCase):
         textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_END, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_HOME, keydown=True))
-        textinput.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
+        textinput.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()
 

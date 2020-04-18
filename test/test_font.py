@@ -39,9 +39,9 @@ class FontTest(unittest.TestCase):
         """
         Load a font from a file.
         """
-        font = PygameMenuUtils.get_font(pygameMenu.font.FONT_8BIT, 5)
+        font = PygameMenuUtils.get_font(pygame_menu.font.FONT_8BIT, 5)
         self.assertTrue(font is not None)
-        self.assertEqual(font, pygameMenu.font.get_font(font, 5))
+        self.assertEqual(font, pygame_menu.font.get_font(font, 5))
         self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('', 0))
         self.assertRaises(ValueError, lambda: PygameMenuUtils.get_font('sys', 0))
 

@@ -22,10 +22,10 @@ can be wrapped in order to fit the menu size.
            "Press UP/DOWN to move through Menu "\
            "Press LEFT/RIGHT to move through Selectors."
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
     menu.add_label(HELP, max_char=-1, font_size=20)
 
-.. automethod:: pygameMenu.Menu.add_label
+.. automethod:: pygame_menu.Menu.add_label
 
 
 Add an image
@@ -44,15 +44,15 @@ requires more CPU resources.
 
 .. code-block:: python
 
-    PATH = os.path.join(os.path.dirname(pygameMenu.__file__),
+    PATH = os.path.join(os.path.dirname(pygame_menu.__file__),
                         'resources', 'images', 'pygame_menu.png')
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
     menu.add_image(PATH, angle=10, scale=(0.15, 0.15))
     menu.add_image(PATH, angle=-10, scale=(0.15, 0.15), scale_smooth=True)
 
-.. automethod:: pygameMenu.Menu.add_image
+.. automethod:: pygame_menu.Menu.add_image
 
 
 Add a button
@@ -62,21 +62,21 @@ A button is a text that fire action when the user trigger it. An action
 is linked to a button by defining the `action` parameter with one of the
 three values:
 
- - an other :py:class:`pygameMenu.Menu`, in this case, it will be displayed
+ - an other :py:class:`pygame_menu.Menu`, in this case, it will be displayed
    when the button is triggered.
  - a python callable object (a function, a method, a class, ...)
    that will be called with the given arguments.
- - a specific event of :py:mod:`pygameMenu`. The possible events are
+ - a specific event of :py:mod:`pygame_menu`. The possible events are
    the following:
 
-   ==========================================  ========================================
-   Event                                       Description
-   ==========================================  ========================================
-   :py:data:`pygameMenu.events.BACK`           Go back to previously opened menu
-   :py:data:`pygameMenu.events.CLOSE`          Close the menu
-   :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
-   :py:data:`pygameMenu.events.RESET`          Go back to first opened menu
-   ==========================================  ========================================
+   ==========================================   ========================================
+   Event                                        Description
+   ==========================================   ========================================
+   :py:data:`pygame_menu.events.BACK`           Go back to previously opened menu
+   :py:data:`pygame_menu.events.CLOSE`          Close the menu
+   :py:data:`pygame_menu.events.EXIT`           Exit the program (not only the menu)
+   :py:data:`pygame_menu.events.RESET`          Go back to first opened menu
+   ==========================================   ========================================
 
 **Example:**
 
@@ -89,18 +89,18 @@ three values:
     def func(name):
         print("Hello world from", name)  # name will be 'foo'
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
-    about_menu = pygameMenu.Menu(...)
+    about_menu = pygame_menu.Menu(...)
 
     menu.add_button('Exec', func, 'foo',                    # Execute a function
-                    align=pygameMenu.locals.ALIGN_LEFT)
+                    align=pygame_menu.locals.ALIGN_LEFT)
     menu.add_button(about_menu.get_title(), about_menu,     # Open a sub-menu
                     shadow=True, shadow_color=(0, 0, 100))
-    menu.add_button('Exit', pygameMenu.events.EXIT,         # Link to exit action
-                    align=pygameMenu.locals.ALIGN_RIGHT)
+    menu.add_button('Exit', pygame_menu.events.EXIT,         # Link to exit action
+                    align=pygame_menu.locals.ALIGN_RIGHT)
 
-.. automethod:: pygameMenu.Menu.add_button
+.. automethod:: pygame_menu.Menu.add_button
 
 
 Add a choices list
@@ -127,7 +127,7 @@ displayed, the others are the arguments passed to the callbacks
             color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
         surface.fill(color)
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
     menu.add_selector('Current color',
                       # list of (Text, parameters...)
@@ -137,7 +137,7 @@ displayed, the others are the arguments passed to the callbacks
                        ('Random', surface, (-1, -1, -1))],
                       onchange=change_background_color)
 
-.. automethod:: pygameMenu.Menu.add_selector
+.. automethod:: pygame_menu.Menu.add_selector
 
 
 Add a text entry
@@ -158,13 +158,13 @@ on entered characters can be set using ``input_type``, ``maxchar``,
     def check_name(value):
         print('User name:', value)
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
     menu.add_text_input('First name: ', default='John', onreturn=check_name)
     menu.add_text_input('Last name: ', default='Doe', maxchar=20)
-    menu.add_text_input('Password: ', input_type=pygameMenu.locals.INPUT_INT, password=True)
+    menu.add_text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
 
-.. automethod:: pygameMenu.Menu.add_text_input
+.. automethod:: pygame_menu.Menu.add_text_input
 
 
 Add a color entry
@@ -186,13 +186,13 @@ is a comma (``,``).
     def check_color(value):
         print('New color:', value)
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
     menu.add_color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), onreturn=check_color, font_size=18)
     menu.add_color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
     menu.add_color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
 
-.. automethod:: pygameMenu.Menu.add_color_input
+.. automethod:: pygame_menu.Menu.add_color_input
 
 
 Add a vertical spacer
@@ -209,10 +209,10 @@ visual rendering of the menu.
 
 .. code-block:: python
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
     menu.add_label('Text #1')
     menu.add_vertical_margin(100)
     menu.add_label('Text #2')
 
-.. automethod:: pygameMenu.Menu.add_vertical_margin
+.. automethod:: pygame_menu.Menu.add_vertical_margin

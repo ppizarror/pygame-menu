@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
-from pygameMenu import events
+from pygame_menu import events
 import timeit
 
 # Configure the tests
@@ -51,7 +51,7 @@ class MenuTest(unittest.TestCase):
     @staticmethod
     def test_time_draw():
         """
-        This test the time that takes to pygamemenu to draw several times.
+        This test the time that takes to pygame_menu to draw several times.
         """
         if not _TEST_TIME_DRAW:
             return
@@ -216,31 +216,31 @@ class MenuTest(unittest.TestCase):
                 first_button = button
 
         # Create a event in pygame
-        self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True))
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu.get_index(), 1)
 
         # Move down twice
         for i in range(2):
-            self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_MOVE_DOWN, keydown=True))
+            self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_MOVE_UP, keydown=True))
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu.get_index(), 0)
 
         # Press enter, button should trigger and call function
         self.assertEqual(button.apply(), 'the value')
-        self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
 
         # Other
-        self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_CLOSE_MENU, keydown=True))
-        self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True))
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_CLOSE_MENU, keydown=True))
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_BACK, keydown=True))
 
         # Check index is the same as before
         self.assertEqual(self.menu.get_index(), 0)
 
         # Check joy
-        self.menu.update(PygameUtils.joy_key(pygameMenu.controls.JOY_UP))
+        self.menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_UP))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameUtils.joy_key(pygameMenu.controls.JOY_DOWN))
+        self.menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_DOWN))
         self.assertEqual(self.menu.get_index(), 0)
         self.menu.update(PygameUtils.joy_motion(1, 1))
         self.assertEqual(self.menu.get_index(), 1)
@@ -265,7 +265,7 @@ class MenuTest(unittest.TestCase):
         button = self.menu.add_button('open', menu)
         button.apply()
         self.assertEqual(self.menu._get_depth(), 1)
-        self.menu.update(PygameUtils.key(pygameMenu.controls.KEY_BACK, keydown=True))  # go back
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_BACK, keydown=True))  # go back
         self.assertEqual(self.menu._get_depth(), 0)
 
     def test_mouse_empty_submenu(self):
@@ -300,12 +300,12 @@ class MenuTest(unittest.TestCase):
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id1'], '1')
 
-        self.menu.add_text_input('text1', textinput_id='id2', default=1.5, input_type=pygameMenu.locals.INPUT_INT)
+        self.menu.add_text_input('text1', textinput_id='id2', default=1.5, input_type=pygame_menu.locals.INPUT_INT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id2'], 1)  # Cast to int
         self.assertRaises(ValueError, lambda: self.menu.add_text_input('text1', textinput_id='id1', default=1))
 
-        self.menu.add_text_input('text1', textinput_id='id3', default=1.5, input_type=pygameMenu.locals.INPUT_FLOAT)
+        self.menu.add_text_input('text1', textinput_id='id3', default=1.5, input_type=pygame_menu.locals.INPUT_FLOAT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id3'], 1.5)  # Correct
 
@@ -336,7 +336,7 @@ class MenuTest(unittest.TestCase):
         # Assert append more widgets than number of rows*columns
         _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
-            _column_menu.add_button('test', pygameMenu.events.BACK)
+            _column_menu.add_button('test', pygame_menu.events.BACK)
         _column_menu.mainloop(surface, bgfun=dummy_function)
         _column_menu._left()
         _column_menu._right()
@@ -346,4 +346,4 @@ class MenuTest(unittest.TestCase):
         _column_menu.draw(surface)
         _column_menu.disable()
         self.assertRaises(RuntimeError, lambda: _column_menu.draw(surface))
-        self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygameMenu.events.BACK))  # 9th item
+        self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygame_menu.events.BACK))  # 9th item

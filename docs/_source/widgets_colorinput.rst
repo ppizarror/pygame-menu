@@ -1,10 +1,10 @@
 
-.. module:: pygameMenu.widgets.widget.colorinput
+.. module:: pygame_menu.widgets.widget.colorinput
 
 ==========
 ColorInput
 ==========
 
-.. autoclass:: pygameMenu.widgets.ColorInput
+.. autoclass:: pygame_menu.widgets.ColorInput
     :members:
     :show-inheritance:

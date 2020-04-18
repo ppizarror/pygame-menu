@@ -4,7 +4,7 @@
 .. working of the library. However it is necessary in order to
 .. be able to quote its items in the documentation.
 
-.. module:: pygameMenu.baseimage
+.. module:: pygame_menu.baseimage
 
 =========
 BaseImage

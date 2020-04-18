@@ -1,5 +1,5 @@
 
-.. module:: pygameMenu.menu
+.. module:: pygame_menu.menu
 
 ==============
 Creating menus
@@ -10,7 +10,7 @@ Ready to go deeper into menu usage?
 Configuring the menu
 --------------------
 
-The :py:class:`pygameMenu.Menu` is the base class to draw the graphical items on
+The :py:class:`pygame_menu.Menu` is the base class to draw the graphical items on
 the screen. It offers many parameters to let you adapt the behavior and the visual
 aspects of the menu.
 
@@ -31,9 +31,9 @@ The horizontal alignment can be changed with one of the following values:
 ==============================================  ========================
 Alignment                                       Description
 ==============================================  ========================
-:py:data:`pygameMenu.locals.ALIGN_LEFT`         Left alignment
-:py:data:`pygameMenu.locals.ALIGN_CENTER`       Center alignment
-:py:data:`pygameMenu.locals.ALIGN_RIGHT`        Right alignment
+:py:data:`pygame_menu.locals.ALIGN_LEFT`        Left alignment
+:py:data:`pygame_menu.locals.ALIGN_CENTER`      Center alignment
+:py:data:`pygame_menu.locals.ALIGN_RIGHT`       Right alignment
 ==============================================  ========================
 
 The content of the menu can be centered vertically after all widgets have
@@ -42,7 +42,7 @@ been added by calling the method :py:meth:`Menu.center_content`:
 .. code-block:: python
     :emphasize-lines: 7
 
-    menu = pygameMenu.Menu(...)
+    menu = pygame_menu.Menu(...)
 
     menu.add_text_input(...)
     menu.add_selector(...)
@@ -73,17 +73,17 @@ one of these two types of values:
 
  - a python callable object (a function, a method, a class, ...)
    that will be called without any arguments.
- - a specific event of :py:mod:`pygameMenu`. The possible events are
+ - a specific event of :py:mod:`pygame_menu`. The possible events are
    the following:
 
-   ==========================================  ========================================
-   Event                                       Description
-   ==========================================  ========================================
-   :py:data:`pygameMenu.events.BACK`           Go back to the previously opened menu
-   :py:data:`pygameMenu.events.DISABLE_CLOSE`  The menu can not be closed
-   :py:data:`pygameMenu.events.EXIT`           Exit the program (not only the menu)
-   :py:data:`pygameMenu.events.RESET`          Go back to the first opened menu
-   ==========================================  ========================================
+   ===========================================  ========================================
+   Event                                        Description
+   ===========================================  ========================================
+   :py:data:`pygame_menu.events.BACK`           Go back to the previously opened menu
+   :py:data:`pygame_menu.events.DISABLE_CLOSE`  The menu can not be closed
+   :py:data:`pygame_menu.events.EXIT`           Exit the program (not only the menu)
+   :py:data:`pygame_menu.events.RESET`          Go back to the first opened menu
+   ===========================================  ========================================
 
 
 Display a menu
@@ -135,6 +135,6 @@ it is necessary.
 .. Document here only the members relative to the menu itself, members
 .. for adding widgets are documented in another chapter.
 
-.. autoclass:: pygameMenu.Menu
+.. autoclass:: pygame_menu.Menu
     :members:
     :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin

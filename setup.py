@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup, find_packages
-import pygameMenu
+import pygame_menu
 
 # Load readme
 with open('README.rst') as f:
@@ -46,47 +46,47 @@ with open('requirements.txt') as f:
 
 # Setup library
 setup(name='pygame-menu',
-      version=pygameMenu.__version__,
-      author=pygameMenu.__author__,
-      author_email=pygameMenu.__email__,
-      description=pygameMenu.__description__,
+      version=pygame_menu.__version__,
+      author=pygame_menu.__author__,
+      author_email=pygame_menu.__email__,
+      description=pygame_menu.__description__,
       long_description=long_description,
-      url=pygameMenu.__url__,
+      url=pygame_menu.__url__,
       project_urls={
-        'Bug Tracker': pygameMenu.__url_bug_tracker__,
-        'Documentation': pygameMenu.__url_documentation__,
-        'Source Code': pygameMenu.__url_source_code__,
-          },
-      license=pygameMenu.__license__,
+          'Bug Tracker': pygame_menu.__url_bug_tracker__,
+          'Documentation': pygame_menu.__url_documentation__,
+          'Source Code': pygame_menu.__url_source_code__,
+      },
+      license=pygame_menu.__license__,
       platforms=['any'],
-      keywords=pygameMenu.__keywords__,
+      keywords=pygame_menu.__keywords__,
       classifiers=[
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python',
-        'Topic :: Games/Entertainment',
-        'Topic :: Multimedia',
-        'Topic :: Software Development :: Libraries :: pygame',
-        'Topic :: Text Processing',
-          ],
+          'License :: OSI Approved :: MIT License',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python',
+          'Topic :: Games/Entertainment',
+          'Topic :: Multimedia',
+          'Topic :: Software Development :: Libraries :: pygame',
+          'Topic :: Text Processing',
+      ],
       include_package_data=True,
       packages=find_packages(exclude=['test']),
       python_requires='>=2.7',
       install_requires=requirements,
       extras_require={
-                        'doc': ['sphinx', 'sphinx-rtd-theme'],
-                    },
+          'doc': ['sphinx', 'sphinx-rtd-theme'],
+      },
       setup_requires=[
-                        'setuptools',
-                    ],
+          'setuptools',
+      ],
       options={
-                        'bdist_wheel': {'universal': True}
-                },
+          'bdist_wheel': {'universal': True}
+      },
       )

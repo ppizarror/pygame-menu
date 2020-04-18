@@ -43,7 +43,7 @@ pygame-menu
     :target: https://lgtm.com/projects/g/ppizarror/pygame-menu/context:python
     :alt: Language grade: Python
 
-Source repo on `GitHub <https://github.com/ppizarror/pygame-menu>`_ ,
+Source repo on `GitHub <https://github.com/ppizarror/pygame-menu>`_, 
 and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
 Introduction
@@ -52,7 +52,7 @@ Introduction
 Pygame-menu is a python-pygame library for creating menus. It supports
 selectors, buttons, labels, color inputs, and text inputs, with many options to customize.
 
-Comprehensive documentation is available at https://pygame-menu.readthedocs.io.
+Comprehensive documentation is available at https://pygame-menu.readthedocs.io
 
 Install Instructions
 --------------------
@@ -74,7 +74,7 @@ To build the documentation from a Git repository:
 Dependencies
 ------------
 
-This library is dependent on the following::
+This library is dependent on the following:
 
-- `pygame <http://www.pygame.org/download.shtml>`_
+- `pygame <https://www.pygame.org/>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_
