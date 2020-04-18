@@ -79,7 +79,6 @@ def make_long_menu():
         onclose=pygameMenu.events.EXIT,
         theme=pygameMenu.themes.THEME_BLUE,
         title='Main Menu',
-        widget_offset=(0, 10),
         width=600,  # px
     )
 

@@ -207,11 +207,11 @@ def main(test=False):
     )
 
     help_menu = pygameMenu.Menu(
+        center_content=True,
         height=600,  # Fullscreen
         onclose=pygameMenu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
         theme=help_theme,
         title='Help',
-        widget_offset=(0, 0.2),  # Percentage of height (30%)
         width=800,
     )
     for m in HELP:
@@ -225,6 +225,8 @@ def main(test=False):
     about_theme = pygameMenu.themes.THEME_DARK.copy()
     about_theme.widget_font = pygameMenu.font.FONT_NEVIS
     about_theme.title_font = pygameMenu.font.FONT_8BIT
+    about_theme.title_offset = (5, -2)
+    about_theme.widget_offset = (0, 0.14)
 
     about_menu = pygameMenu.Menu(
         height=400,
@@ -232,8 +234,6 @@ def main(test=False):
         onclose=pygameMenu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
         theme=about_theme,
         title='About',
-        title_offset=(5, -2),
-        widget_offset=(0, 0.14),
         width=600,
     )
     for m in ABOUT:

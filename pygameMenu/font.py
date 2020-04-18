@@ -68,10 +68,10 @@ def get_font(name, size):
     else:
 
         if name == '':
-            raise ValueError('Font name cannot be empty')
+            raise ValueError('font name cannot be empty')
 
         if size <= 0:
-            raise ValueError('Font size cannot be lower or equal than zero')
+            raise ValueError('font size cannot be lower or equal than zero')
 
         # Font is not a file, then use a system font
         if not path.isfile(name):
@@ -126,5 +126,5 @@ def get_font(name, size):
 
         # If font was not loaded throw an exception
         if font is None:
-            raise IOError('Font file "{0}" cannot be loaded'.format(font))
+            raise IOError('font file "{0}" cannot be loaded'.format(font))
         return font
