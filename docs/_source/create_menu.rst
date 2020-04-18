@@ -31,9 +31,9 @@ The horizontal alignment can be changed with one of the following values:
 ==============================================  ========================
 Alignment                                       Description
 ==============================================  ========================
-:py:data:`pygame_menu.locals.ALIGN_LEFT`         Left alignment
-:py:data:`pygame_menu.locals.ALIGN_CENTER`       Center alignment
-:py:data:`pygame_menu.locals.ALIGN_RIGHT`        Right alignment
+:py:data:`pygame_menu.locals.ALIGN_LEFT`        Left alignment
+:py:data:`pygame_menu.locals.ALIGN_CENTER`      Center alignment
+:py:data:`pygame_menu.locals.ALIGN_RIGHT`       Right alignment
 ==============================================  ========================
 
 The content of the menu can be centered vertically after all widgets have

@@ -70,17 +70,17 @@ Menubar style
 The visual style of the menubar is managed using the theme parameter
 ``title_bar_style`` which can take the following values:
 
-====================================================================  ======================================================
-Menubar style                                                         Example
-====================================================================  ======================================================
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTATIVE`                .. image:: ../_static/menubar_adaptive.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_SIMPLE`                    .. image:: ../_static/menubar_simple.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY`                .. image:: ../_static/menubar_title_only.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`       .. image:: ../_static/menubar_title_only_diagonal.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_NONE`                      .. image:: ../_static/menubar_none.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`                 .. image:: ../_static/menubar_underline.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`           .. image:: ../_static/menubar_underline_title.png
-====================================================================  ======================================================
+=================================================================   =======================================================
+Menubar style                                                       Example
+=================================================================   =======================================================
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTATIVE`             .. image:: ../_static/menubar_adaptive.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_SIMPLE`                 .. image:: ../_static/menubar_simple.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY`             .. image:: ../_static/menubar_title_only.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`    .. image:: ../_static/menubar_title_only_diagonal.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_NONE`                   .. image:: ../_static/menubar_none.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`              .. image:: ../_static/menubar_underline.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`        .. image:: ../_static/menubar_underline_title.png
+=================================================================   =======================================================
 
 Widget selection effect
 -----------------------
@@ -92,14 +92,14 @@ chapter.
 
 The selection effects available are:
 
-=======================================================     ==============================
-Class                                                       Selection effect            
-=======================================================     ==============================
-:py:class:`pygame_menu.widgets.HighlightSelection`           Rectangular highlight
-:py:class:`pygame_menu.widgets.LeftArrowSelection`           Left arrow on the widget
-:py:class:`pygame_menu.widgets.NoneSelection`                No selection
-:py:class:`pygame_menu.widgets.RightArrowSelection`          Right arrow on the widget
-=======================================================     ==============================
+======================================================  ============================
+Class                                                   Selection effect            
+======================================================  ============================
+:py:class:`pygame_menu.widgets.HighlightSelection`      Rectangular highlight
+:py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
+:py:class:`pygame_menu.widgets.NoneSelection`           No selection
+:py:class:`pygame_menu.widgets.RightArrowSelection`     Right arrow on the widget
+======================================================  ============================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.
 

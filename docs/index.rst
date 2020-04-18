@@ -19,7 +19,7 @@ objects to display a menu can be painful. That why :py:mod:`pygame-menu`
 was designed.
 
 Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
-(the code is available in :py:mod:`pygame_menu.examples.simple`):
+(the code is available in `pygame_menu.examples.simple.py <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples/simple.py>`_):
 
 1. Import the required libraries
 
@@ -129,7 +129,7 @@ class. The currently existing classes are:
 For advanced programers, those classes can be used to design custom
 menus or windows.
 
-Have a look at :py:mod:`pygame_menu.widgets.examples.scrollbar.py` for
+Have a look at `pygame_menu.widgets.examples.scrollbar.py <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/widgets/examples/scrollbar.py>`_ for
 instance. It shows how to use the :py:class:`pygame_menu.widgets.ScrollBar`
 class to display large custom surfaces.
 
