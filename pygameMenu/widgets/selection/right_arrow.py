@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-LEFT ARROW CLASS
-Selector with a left arrow on the item.
+RIGHT ARROW CLASS
+Selector with a right arrow on the item.
 
 License:
 -------------------------------------------------------------------------------
@@ -35,31 +35,31 @@ from pygameMenu.widgets.core.selection import Selection
 from pygameMenu.utils import assert_vector2
 
 
-class LeftArrowSelection(Selection):
+class RightArrowSelection(Selection):
     """
-    Widget selection left arrow class.
-    Creates an arrow to the left of the selected menu item.
+    Widget selection right arrow class.
+    Creates an arrow to the right of the selected menu item.
 
     :param arrow_size: Size of arrow on x,y axis (width, height)
     :type arrow_size: tuple, list
-    :param arrow_right_margin: Distance from the arrow to the widget
-    :type arrow_right_margin: int, float
+    :param arrow_left_margin: Distance from the arrow to the widget
+    :type arrow_left_margin: int, float
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
     """
 
-    def __init__(self, arrow_size=(10, 15), arrow_right_margin=3, arrow_vertical_offset=0):
+    def __init__(self, arrow_size=(10, 15), arrow_left_margin=3, arrow_vertical_offset=0):
         assert_vector2(arrow_size)
-        assert isinstance(arrow_right_margin, (int, float))
+        assert isinstance(arrow_left_margin, (int, float))
         assert isinstance(arrow_vertical_offset, (int, float))
-        assert arrow_right_margin >= 0, 'margin cannot be negative'
+        assert arrow_left_margin >= 0, 'margin cannot be negative'
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
 
-        super(LeftArrowSelection, self).__init__(margin_left=arrow_size[0] + arrow_right_margin, margin_right=0,
-                                                 margin_top=0, margin_bottom=0)
+        super(RightArrowSelection, self).__init__(margin_left=0, margin_right=arrow_size[0] + arrow_left_margin,
+                                                  margin_top=0, margin_bottom=0)
 
         self._arrow_size = (arrow_size[0], arrow_size[1])  # type: tuple
-        self._arrow_right_margin = arrow_right_margin
+        self._arrow_left_margin = arrow_left_margin
         self._arrow_vertical_offset = arrow_vertical_offset
 
     def draw(self, surface, widget):
@@ -72,15 +72,15 @@ class LeftArrowSelection(Selection):
         :type widget: :py:class:`pygameMenu.widgets.Widget`
         :return: None
         """
-        # A
-        #   \B      widget
-        # C /
-        #    <------>
-        #     margin
-        a = (widget.get_rect().topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
-             widget.get_rect().midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        b = (widget.get_rect().midleft[0] - self._arrow_right_margin,
-             widget.get_rect().midleft[1] + self._arrow_vertical_offset)
-        c = (widget.get_rect().bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
-             widget.get_rect().midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+        #                 /A
+        # widget        B
+        #                \ C
+        #       <------>
+        #        margin
+        a = (widget.get_rect().topright[0] + self._arrow_size[0] + self._arrow_left_margin,
+             widget.get_rect().midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+        b = (widget.get_rect().midright[0] + self._arrow_left_margin,
+             widget.get_rect().midright[1] + self._arrow_vertical_offset)
+        c = (widget.get_rect().bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
+             widget.get_rect().midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
         pygame.draw.polygon(surface, self.color, [a, b, c])

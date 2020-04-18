@@ -38,6 +38,7 @@ from pygameMenu.widgets.core.selection import Selection
 from pygameMenu.widgets.selection.highlight import HighlightSelection
 from pygameMenu.widgets.selection.left_arrow import LeftArrowSelection
 from pygameMenu.widgets.selection.none import NoneSelection
+from pygameMenu.widgets.selection.right_arrow import RightArrowSelection
 
 # Widgets
 from pygameMenu.widgets.widget.button import Button

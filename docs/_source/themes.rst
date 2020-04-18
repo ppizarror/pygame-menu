@@ -92,12 +92,14 @@ chapter.
 
 The selection effects available are:
 
-========================    =======================================================
-Selection effect            Class
-========================    =======================================================
-Rectangular highlight       :py:class:`pygameMenu.widgets.HighlightSelection`
-No selection                :py:class:`pygameMenu.widgets.NoneSelection`
-========================    =======================================================
+=======================================================     ==============================
+Class                                                       Selection effect            
+=======================================================     ==============================
+:py:class:`pygameMenu.widgets.HighlightSelection`           Rectangular highlight       
+:py:class:`pygameMenu.widgets.LeftArrowSelection`           Left arrow on the widget    
+:py:class:`pygameMenu.widgets.NoneSelection`                No selection                
+:py:class:`pygameMenu.widgets.RightArrowSelection`          Right arrow on the widget   
+=======================================================     ==============================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.
 

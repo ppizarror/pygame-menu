@@ -3,8 +3,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-HIGHLIGHT
-Widget selection highlight box effect.
+NONE
+No selection effect.
 
 License:
 -------------------------------------------------------------------------------
@@ -35,21 +35,12 @@ from pygameMenu.widgets.core.selection import Selection
 
 class NoneSelection(Selection):
     """
-    No selection.
+    No selection effect.
     """
 
     def __init__(self):
         super(NoneSelection, self).__init__(margin_left=0, margin_right=0,
                                             margin_top=0, margin_bottom=0)
-
-    def get_margin(self):
-        """
-        Return top, left, bottom and right margins of the selection.
-
-        :return: Tuple of (t,l,b,r) margins in px
-        :rtype: tuple
-        """
-        return 0, 0, 0, 0
 
     def draw(self, surface, widget):
         """
@@ -58,7 +49,7 @@ class NoneSelection(Selection):
         :param surface: Surface to draw
         :type surface: pygame.surface.SurfaceType
         :param widget: Widget object
-        :type widget: pygameMenu.widgets.core.widget.Widget
+        :type widget: :py:class:`pygameMenu.widgets.Widget`
         :return: None
         """
-        pass
+        return
