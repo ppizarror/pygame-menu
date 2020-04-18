@@ -8,28 +8,14 @@ class LeftArrowSelection(Selection):
     Widget selection left arrow class.
     Creates an arrow to the left of the selected menu item.
 
-    :param border_width: Border width of the highlight box
-    :type border_width: int
-    :param margin_x: X margin of selected highlight box
-    :type margin_x: int, float
-    :param margin_y: X margin of selected highlight box
-    :type margin_y: int, float
     :param arrow_size: size of arrow
     :type arrow_size: int, float
     """
 
     def __init__(self,
-                 border_width=1,
-                 margin_x=16.0,
-                 margin_y=8.0,
                  arrow_size=15):
-        margin_x = float(margin_x)
-        margin_y = float(margin_y)
-        super(LeftArrowSelection, self).__init__(margin_left=margin_x / 2, margin_right=margin_x / 2,
-                                                 margin_top=margin_y / 2, margin_bottom=margin_y / 2)
-        self.border_width = border_width
-        self.margin_x = margin_x
-        self.margin_y = margin_y
+        super(LeftArrowSelection, self).__init__(margin_left=0, margin_right=arrow_size,
+                                                 margin_top=0, margin_bottom=0)
         self.arrow_size = arrow_size
 
     def get_margin(self):
@@ -39,8 +25,7 @@ class LeftArrowSelection(Selection):
         :return: Tuple of (t,l,b,r) margins in px
         :rtype: tuple
         """
-        return self.margin_top + self.border_width, self.margin_left + self.border_width, \
-               self.margin_bottom + self.border_width, self.margin_right + self.border_width
+        return 0, self.arrow_size, 0, 0
 
     def draw(self, surface, widget):
         """
