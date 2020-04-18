@@ -56,21 +56,13 @@ class HighlightSelection(Selection):
         assert border_width >= 0
         margin_x = float(margin_x)
         margin_y = float(margin_y)
-        super(HighlightSelection, self).__init__(margin_left=margin_x / 2, margin_right=margin_x / 2,
-                                                 margin_top=margin_y / 2, margin_bottom=margin_y / 2)
-        self.border_width = border_width
-        self.margin_x = margin_x
-        self.margin_y = margin_y
-
-    def get_margin(self):
-        """
-        Return top, left, bottom and right margins of the selection.
-
-        :return: Tuple of (t,l,b,r) margins in px
-        :rtype: tuple
-        """
-        return self.margin_top + self.border_width, self.margin_left + self.border_width, \
-               self.margin_bottom + self.border_width, self.margin_right + self.border_width
+        super(HighlightSelection, self).__init__(margin_left=margin_x / 2 + border_width,
+                                                 margin_right=margin_x / 2 + border_width,
+                                                 margin_top=margin_y / 2 + border_width,
+                                                 margin_bottom=margin_y / 2 + border_width)
+        self._border_width = border_width
+        self._margin_x = margin_x
+        self._margin_y = margin_y
 
     def draw(self, surface, widget):
         """
@@ -79,10 +71,10 @@ class HighlightSelection(Selection):
         :param surface: Surface to draw
         :type surface: pygame.surface.SurfaceType
         :param widget: Widget object
-        :type widget: pygameMenu.widgets.core.widget.Widget
+        :type widget: :py:class:`pygameMenu.widgets.Widget`
         :return: None
         """
         pygame.draw.rect(surface,
                          self.color,
-                         widget.get_rect().inflate(self.margin_x, self.margin_y),
-                         self.border_width)
+                         widget.get_rect().inflate(self._margin_x, self._margin_y),
+                         self._border_width)

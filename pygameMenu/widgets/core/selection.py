@@ -72,7 +72,7 @@ class Selection(object):
         :return: Tuple of (t,l,b,r) margins in px
         :rtype: tuple
         """
-        raise NotImplementedError('override is mandatory')
+        return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
 
     def get_width(self):
         """
@@ -101,7 +101,7 @@ class Selection(object):
         :param surface: Surface to draw
         :type surface: pygame.surface.SurfaceType
         :param widget: Widget object
-        :type widget: pygameMenu.widgets.core.widget.Widget
+        :type widget: :py:class:`pygameMenu.widgets.Widget`
         :return: None
         """
         raise NotImplementedError('override is mandatory')

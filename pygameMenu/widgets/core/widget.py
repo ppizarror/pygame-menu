@@ -206,7 +206,7 @@ class Widget(object):
     def get_selection_effect(self):
         """
         :return: Selection effect
-        :rtype: pygameMenu.widgets.core.selection.Selection
+        :rtype: :py:class:`pygameMenu.widgets.core.selection.Selection`
         """
         return self._selection_effect
 
@@ -215,7 +215,7 @@ class Widget(object):
         Set the selection effect handler.
 
         :param selection: Selection effect class
-        :type selection: pygameMenu.widgets.core.selection.Selection
+        :type selection: :py:class:`pygameMenu.widgets.core.selection.Selection`
         :return: None
         """
         assert isinstance(selection, Selection)

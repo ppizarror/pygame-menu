@@ -168,26 +168,18 @@ contain the following code:
     class MySelection(Selection):
 
         def __init__(self):
-            super(MySelection, self).__init__(params)
-
-        def get_margin(self):
-            """
-            As selection decorations can be described with a box, this method must return
-            the additional margin of the selection. If the margin is zero, then the selection
-            size is the same as the original widget.
-
-            The method must return the width of the bottom, left, top and right margins.
-
-             --------------------------
-            |          ^ top           | In this example, XXXX represents the
-            | left  XXXXXXXXXXXX right | Widget to be Selected.
-            |<----> XXXXXXXXXXXX<----->|
-            |         v bottom         |
-             --------------------------
-
-             All distances must be in pixels (px).
-            """
-            return top, left, bottom, right
+            # Call the constructor of the Selection providing the left, right, top and bottom margins
+            # of your Selection effect box.
+            #
+            #  --------------------------
+            # |          ^ top           |  In this example, XXXX represents the
+            # | left  XXXXXXXXXXXX right |  Widget to be Selected.
+            # |<----> XXXXXXXXXXXX<----->|  left, right, top and bottom must be described
+            # |         v bottom         |  in pixels
+            #  --------------------------
+            #
+            super(MySelection, self).__init__(margin_left, margin_right, margin_top, margin_bottom)
+            self.your_params = ...
 
         def draw(self, surface, widget):
             """
