@@ -69,14 +69,14 @@ three values:
  - a specific event of :py:mod:`pygame_menu`. The possible events are
    the following:
 
-   ==========================================  ========================================
-   Event                                       Description
-   ==========================================  ========================================
+   ==========================================   ========================================
+   Event                                        Description
+   ==========================================   ========================================
    :py:data:`pygame_menu.events.BACK`           Go back to previously opened menu
    :py:data:`pygame_menu.events.CLOSE`          Close the menu
    :py:data:`pygame_menu.events.EXIT`           Exit the program (not only the menu)
    :py:data:`pygame_menu.events.RESET`          Go back to first opened menu
-   ==========================================  ========================================
+   ==========================================   ========================================
 
 **Example:**
 
