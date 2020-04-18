@@ -171,7 +171,7 @@ class Theme(object):
                                            'color', (70, 70, 70))  # type: (tuple, list)
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
                                           int, 30)  # type: int
-        self.widget_selection_effect = self._get(kwargs, 'widget_selectiom_effect',
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect',
                                                  _widgets.Selection,
                                                  _widgets.HighlightSelection())  # type: _widgets.Selection
         self.widget_shadow = self._get(kwargs, 'widget_shadow',
@@ -249,7 +249,7 @@ class Theme(object):
         """
         Return a value from a dictionary.
 
-        :param params: parameters dictionnary
+        :param params: parameters dictionary
         :type params: dict
         :param key: key to look for
         :type key: str
