@@ -45,7 +45,7 @@ class MenuTest(unittest.TestCase):
         """
         Test setup.
         """
-        self.menu = pygame_menuUtils.generic_menu('mainmenu')
+        self.menu = PygameMenuUtils.generic_menu('mainmenu')
         self.menu.mainloop(surface, bgfun=dummy_function)
 
     @staticmethod
@@ -55,7 +55,7 @@ class MenuTest(unittest.TestCase):
         """
         if not _TEST_TIME_DRAW:
             return
-        menu = pygame_menuUtils.generic_menu(title='EPIC')
+        menu = PygameMenuUtils.generic_menu(title='EPIC')
         menu.enable()
 
         # Add several widgets
@@ -74,29 +74,29 @@ class MenuTest(unittest.TestCase):
         Test menu sizes.
         """
         inf_size = 1000000000
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(width=0, height=300))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(width=300, height=0))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(width=-200, height=300))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(width=inf_size, height=300))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(width=300, height=inf_size))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=0, height=300))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=300, height=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=-200, height=300))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=inf_size, height=300))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(width=300, height=inf_size))
 
     def test_position(self):
         """
         Test position.
         """
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(position_x=-1, position_y=0))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(position_x=0, position_y=-1))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(position_x=-1, position_y=-1))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(position_x=101, position_y=0))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(position_x=99, position_y=101))
-        menu = pygame_menuUtils.generic_menu(position_x=0, position_y=0)
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=-1, position_y=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=0, position_y=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=-1, position_y=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=101, position_y=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(position_x=99, position_y=101))
+        menu = PygameMenuUtils.generic_menu(position_x=0, position_y=0)
         menu.set_relative_position(20, 40)
 
     def test_enabled(self):
         """
         Test menu enable/disable feature.
         """
-        menu = pygame_menuUtils.generic_menu()
+        menu = PygameMenuUtils.generic_menu()
         self.assertTrue(not menu.is_enabled())
         menu.enable()
         self.assertTrue(menu.is_enabled())
@@ -118,7 +118,7 @@ class MenuTest(unittest.TestCase):
         menu_prev = self.menu
         menu = None
         for i in range(1, 11):
-            menu = pygame_menuUtils.generic_menu('submenu {0}'.format(i))
+            menu = PygameMenuUtils.generic_menu('submenu {0}'.format(i))
             button = menu_prev.add_button('open', menu)
             button.apply()
             menu_prev = menu
@@ -175,7 +175,7 @@ class MenuTest(unittest.TestCase):
         # Add a widget to a deepest menu
         prev_menu = self.menu
         for i in range(11):
-            menu = pygame_menuUtils.generic_menu()
+            menu = PygameMenuUtils.generic_menu()
             prev_menu.add_button('menu', menu)
             prev_menu = menu
 
@@ -261,7 +261,7 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
         self.assertEqual(self.menu._get_depth(), 0)
-        menu = pygame_menuUtils.generic_menu('submenu')
+        menu = PygameMenuUtils.generic_menu('submenu')
         button = self.menu.add_button('open', menu)
         button.apply()
         self.assertEqual(self.menu._get_depth(), 1)
@@ -275,7 +275,7 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
         self.menu.enable()
 
-        submenu = pygame_menuUtils.generic_menu()  # 1 option
+        submenu = PygameMenuUtils.generic_menu()  # 1 option
         submenu.add_button('button', lambda: None)
 
         self.menu.add_button('button', lambda: None)
@@ -310,7 +310,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(data['id3'], 1.5)  # Correct
 
         # Add input to a submenu
-        submenu = pygame_menuUtils.generic_menu()
+        submenu = PygameMenuUtils.generic_menu()
         submenu.add_text_input('text', textinput_id='id4', default='thewidget')
         self.menu.add_button('submenu', submenu)
         data = self.menu.get_input_data(recursive=True)
@@ -318,7 +318,7 @@ class MenuTest(unittest.TestCase):
 
         # Add a submenu within submenu with a repeated id, menu.get_input_data
         # should raise an exception
-        subsubmenu = pygame_menuUtils.generic_menu()
+        subsubmenu = PygameMenuUtils.generic_menu()
         subsubmenu.add_text_input('text', textinput_id='id4', default='repeateddata')
         submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(recursive=True))
@@ -327,14 +327,14 @@ class MenuTest(unittest.TestCase):
         """
         Test menu columns behaviour.
         """
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(columns=0))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(columns=-1))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(rows=0))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(rows=-10))
-        self.assertRaises(AssertionError, lambda: pygame_menuUtils.generic_menu(columns=2, rows=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=-1))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=0))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(rows=-10))
+        self.assertRaises(AssertionError, lambda: PygameMenuUtils.generic_menu(columns=2, rows=0))
 
         # Assert append more widgets than number of rows*columns
-        _column_menu = pygame_menuUtils.generic_menu(columns=2, rows=4)
+        _column_menu = PygameMenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             _column_menu.add_button('test', pygame_menu.events.BACK)
         _column_menu.mainloop(surface, bgfun=dummy_function)
