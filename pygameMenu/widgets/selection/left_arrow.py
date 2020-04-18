@@ -5,7 +5,8 @@ from pygameMenu.widgets.core.selection import Selection
 
 class LeftArrowSelection(Selection):
     """
-    Widget selection highlight class.
+    Widget selection left arrow class.
+    Creates an arrow to the left of the selected menu item.
 
     :param border_width: Border width of the highlight box
     :type border_width: int
@@ -13,12 +14,15 @@ class LeftArrowSelection(Selection):
     :type margin_x: int, float
     :param margin_y: X margin of selected highlight box
     :type margin_y: int, float
+    :param arrow_size: size of arrow
+    :type arrow_size: int, float
     """
 
     def __init__(self,
                  border_width=1,
                  margin_x=16.0,
-                 margin_y=8.0):
+                 margin_y=8.0,
+                 arrow_size=15):
         margin_x = float(margin_x)
         margin_y = float(margin_y)
         super(LeftArrowSelection, self).__init__(margin_left=margin_x / 2, margin_right=margin_x / 2,
@@ -26,6 +30,7 @@ class LeftArrowSelection(Selection):
         self.border_width = border_width
         self.margin_x = margin_x
         self.margin_y = margin_y
+        self.arrow_size = arrow_size
 
     def get_margin(self):
         """
@@ -47,9 +52,8 @@ class LeftArrowSelection(Selection):
         :type widget: pygameMenu.widgets.core.widget.Widget
         :return: None
         """
-        arrow_size = 10
         pygame.draw.polygon(surface,
                             self.color,
-                            [(widget.get_rect().topleft[0] - arrow_size, widget.get_rect().topleft[1]),
+                            [(widget.get_rect().topleft[0] - self.arrow_size, widget.get_rect().topleft[1]),
                              widget.get_rect().midleft,
-                             (widget.get_rect().bottomleft[0] - arrow_size, widget.get_rect().bottomleft[1])])
+                             (widget.get_rect().bottomleft[0] - self.arrow_size, widget.get_rect().bottomleft[1])])
