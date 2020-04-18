@@ -182,7 +182,7 @@ class Theme(object):
                                        'vector2', (0, 10))  # type: tuple
         self.widget_offset = self._get(kwargs, 'widget_offset',
                                        'vector2', (0, 0))  # type: tuple
-        self.widget_selection_effect = self._get(kwargs, 'widget_selectiom_effect',
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect',
                                                  _widgets.Selection,
                                                  _widgets.HighlightSelection())  # type: _widgets.Selection
         self.widget_shadow = self._get(kwargs, 'widget_shadow',
@@ -298,7 +298,7 @@ class Theme(object):
         """
         Return a value from a dictionary.
 
-        :param params: parameters dictionnary
+        :param params: parameters dictionary
         :type params: dict
         :param key: key to look for
         :type key: str
