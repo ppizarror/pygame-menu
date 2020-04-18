@@ -74,7 +74,7 @@ To build the documentation from a Git repository:
 Dependencies
 ------------
 
-This library is dependent on the following::
+This library is dependent on the following:
 
-- `pygame <http://www.pygame.org/download.shtml>`_
+- `pygame <https://www.pygame.org/>`_
 - `pyperclip <https://pypi.org/project/pyperclip/>`_
