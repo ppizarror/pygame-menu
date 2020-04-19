@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 
-from pygame_menu.widgets.selection.arrow_selection import ArrowSelection, SELECTOR_CLOCK
+from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 
 class LeftArrowSelection(ArrowSelection):
