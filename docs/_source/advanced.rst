@@ -163,7 +163,7 @@ contain the following code:
             surface.draw(.....)
 
 .. warning:: After creating the selection effect, it must be added to  ``__init__.py`` file of the
-             :py:mod:`pgameMenu.widgets` package.
+             :py:mod:`pygameMenu.widgets` package.
 
              .. code-block:: python
 

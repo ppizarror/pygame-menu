@@ -153,8 +153,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget._cursor_position, 0)
         _assert_invalid_color(widget)
 
-        # Write secuence: 2 -> 25 -> 25, -> 25,0,
-        # The comma after the zero must be atomatically setted
+        # Write sequence: 2 -> 25 -> 25, -> 25,0,
+        # The comma after the zero must be automatically set
         widget.update(PygameUtils.key(pygame.K_2, keydown=True, char='2'))
         widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
         widget.update(PygameUtils.key(pygame.K_COMMA, keydown=True, char=','))
@@ -163,13 +163,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget._input_string, '25,0,')
         _assert_invalid_color(widget)
 
-        # Now, secuence: 25,0,c -> 25c,0, with cursor c
+        # Now, sequence: 25,0,c -> 25c,0, with cursor c
         widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         self.assertEqual(widget._cursor_position, 2)
 
-        # Secuence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
+        # Sequence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
         # That should be cancelled because 2555 > 255
         widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
         self.assertEqual(widget._input_string, '255,0,')
@@ -311,7 +311,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), '')
 
         passwordinput = self.menu.add_text_input('title', password=True, input_underline='_')
-        self.assertRaises(ValueError,  # Password cannot be setted
+        self.assertRaises(ValueError,  # Password cannot be set
                           lambda: passwordinput.set_value('new_value'))
         passwordinput.set_value('')  # No error
         passwordinput.selected = False

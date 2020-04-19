@@ -149,7 +149,7 @@ class Widget(object):
         This method should include all the variables.
         If the render changed,
 
-        :param args: Variables to checkl the hash
+        :param args: Variables to check the hash
         :type args: Object
         :return: Hash data
         :rtype: int

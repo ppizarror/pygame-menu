@@ -127,7 +127,7 @@ class. The currently existing classes are:
  - :py:class:`~pygame_menu.widgets.TextInput`
  - :py:class:`~pygame_menu.widgets.VMargin`
 
-For advanced programers, those classes can be used to design custom
+For advanced programmers, those classes can be used to design custom
 menus or windows.
 
 Have a look at `pygame_menu.widgets.examples.scrollbar.py <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/widgets/examples/scrollbar.py>`_ for

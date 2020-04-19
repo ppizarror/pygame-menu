@@ -115,7 +115,7 @@ The visual style of the menubar is managed using the theme parameter
 =================================================================   =======================================================
 Menubar style                                                       Example
 =================================================================   =======================================================
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTATIVE`             .. image:: ../_static/menubar_adaptive.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTIVE`               .. image:: ../_static/menubar_adaptive.png
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_SIMPLE`                 .. image:: ../_static/menubar_simple.png
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY`             .. image:: ../_static/menubar_title_only.png
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`    .. image:: ../_static/menubar_title_only_diagonal.png
@@ -127,7 +127,7 @@ Menubar style                                                       Example
 Widget selection effect
 -----------------------
 
-A **selection effect** is a drawing class used to define the way to highlight the focussed widget.
+A **selection effect** is a drawing class used to define the way to highlight the focused widget.
 An instance of the selection effect class is defined in the :py:attr:`Theme.widget_selection_effect`
 parameter of a theme. See example on how to add a selection effect in :ref:`Create a selection effect`
 chapter.

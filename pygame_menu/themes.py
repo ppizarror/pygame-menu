@@ -73,7 +73,7 @@ class Theme(object):
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int, float
-    :param selection_color: Color of the selecter widget
+    :param selection_color: Color of the selector widget
     :type selection_color: tuple, list
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
@@ -149,7 +149,7 @@ class Theme(object):
         self.title_background_color = self._get(kwargs, 'title_background_color',
                                                 'color', (70, 70, 70))  # type: tuple
         self.title_bar_style = self._get(kwargs, 'title_bar_style',
-                                         int, _widgets.MENUBAR_STYLE_ADAPTATIVE)  # type: int
+                                         int, _widgets.MENUBAR_STYLE_ADAPTIVE)  # type: int
         self.title_font = self._get(kwargs, 'title_font',
                                     str, pygame_menu.font.FONT_OPEN_SANS)  # type: str
         self.title_font_color = self._get(kwargs, 'title_font_color',

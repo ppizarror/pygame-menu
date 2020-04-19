@@ -58,7 +58,7 @@ class Menu(object):
     :type width: int, float
     :param title: Title of the Menu (main title)
     :type title: str
-    :parama auto_center_v: Auto centers the menu on the vertical position after a widget is added/deleted
+    :param auto_center_v: Auto centers the menu on the vertical position after a widget is added/deleted
     :type center_content: bool
     :param back_box: Draw a back-box button on header
     :type back_box: bool
@@ -177,13 +177,13 @@ class Menu(object):
         self._width = float(width)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
-        # accesing self should be through "_current", because user can move through submenus
+        # accessing self should be through "_current", because user can move through submenus
         # and self pointer should target the current Menu object. Private methods access
         # through self (not _current) because these methods are called by public (_current) or
         # by themselves. _top is only used when moving through menus (open,reset)
         self._current = self  # Current Menu
 
-        # Prev stores a list of Menu pointers, when accesing a submenu, prev grows as
+        # Prev stores a list of Menu pointers, when accessing a submenu, prev grows as
         # prev = [prev, new_pointer]
         self._prev = None  # type: (list,None)
 
@@ -513,7 +513,7 @@ class Menu(object):
         :type title: str
         :param label_id: ID of the label
         :type label_id: str
-        :param max_char: Split the title in several labels if length exeeds. (0: don't split, -1: split to menu width)
+        :param max_char: Split the title in several labels if length exceeds. (0: don't split, -1: split to menu width)
         :type max_char: int
         :param selectable: Label accepts user selection
         :type selectable: bool
@@ -741,7 +741,7 @@ class Menu(object):
 
     def _filter_widget_attributes(self, kwargs):
         """
-        Return valid widgets attributes from a dictionnary.
+        Return valid widgets attributes from a dictionary.
         The valid (key, value) are removed from the initial
         dictionary.
 
@@ -767,7 +767,7 @@ class Menu(object):
         _utils.assert_vector2(background_inflate)
         attributes['background_inflate'] = background_inflate
 
-        font_color = kwargs.pop('font_folor', self._theme.widget_font_color)
+        font_color = kwargs.pop('font_color', self._theme.widget_font_color)
         _utils.assert_color(font_color)
         attributes['font_color'] = font_color
 
@@ -1195,7 +1195,7 @@ class Menu(object):
 
         :return: None
         """
-        if len(self._widgets) == 0:  # If this happen, get_widget_max returns an inmense value
+        if len(self._widgets) == 0:  # If this happen, get_widget_max returns an immense value
             self._widget_offset[1] = 0
             return
         self._build_widget_surface()  # For position
@@ -1225,7 +1225,7 @@ class Menu(object):
         if not self._current._widgets_surface:
             self._current._build_widget_surface()
 
-        # Fill the surface with background function (setted from mainloop)
+        # Fill the surface with background function (set from mainloop)
         if self._top._background_function is not None:
             self._top._background_function()
 
@@ -1425,7 +1425,7 @@ class Menu(object):
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
-                        # Don't considere the mouse wheel (button 4 & 5)
+                        # Don't consider the mouse wheel (button 4 & 5)
                         if event.button in (1, 2, 3) and \
                                 self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                             self._current._select(index)
@@ -1433,7 +1433,7 @@ class Menu(object):
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP:
                     self._current._sounds.play_click_mouse()
                     widget = self._current._widgets[self._current._index]
-                    # Don't considere the mouse wheel (button 4 & 5)
+                    # Don't consider the mouse wheel (button 4 & 5)
                     if event.button in (1, 2, 3) and \
                             self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                         new_event = pygame.event.Event(event.type, **event.dict)
@@ -1492,7 +1492,7 @@ class Menu(object):
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
 
-        # NOTE: For Menu accesor, use only _current, as the Menu pointer can change through the execution
+        # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
             return
 
