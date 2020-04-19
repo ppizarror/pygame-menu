@@ -64,16 +64,8 @@ class HighlightSelection(Selection):
         self._margin_x = margin_x
         self._margin_y = margin_y
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        """
-        Draw the selection.
-
-        :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
-        :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
-        :return: None
-        """
         pygame.draw.rect(surface,
                          self.color,
                          widget.get_rect().inflate(self._margin_x, self._margin_y),

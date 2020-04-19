@@ -183,8 +183,8 @@ class Theme(object):
         self.widget_offset = self._get(kwargs, 'widget_offset',
                                        'vector2', (0, 0))  # type: tuple
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect',
-                                                 _widgets.Selection,
-                                                 _widgets.HighlightSelection())  # type: _widgets.Selection
+                                                 _widgets.core.Selection,
+                                                 _widgets.HighlightSelection())  # type: _widgets.core.Selection
         self.widget_shadow = self._get(kwargs, 'widget_shadow',
                                        bool, False)  # type: bool
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color',

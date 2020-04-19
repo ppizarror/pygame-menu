@@ -30,12 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame
-from pygame_menu.widgets.core.selection import Selection
-from pygame_menu.utils import assert_vector2
+from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 
-class LeftArrowSelection(Selection):
+class LeftArrowSelection(ArrowSelection):
     """
     Widget selection left arrow class.
     Creates an arrow to the left of the selected menu item.
@@ -46,32 +44,25 @@ class LeftArrowSelection(Selection):
     :type arrow_right_margin: int, float
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
+    :param blink_ms: Miliseconds between each blinking status
+    :type blink_ms: int
     """
 
-    def __init__(self, arrow_size=(10, 15), arrow_right_margin=3, arrow_vertical_offset=0):
-        assert_vector2(arrow_size)
+    def __init__(self, arrow_size=(10, 15), arrow_right_margin=5, arrow_vertical_offset=0, blink_ms=0):
         assert isinstance(arrow_right_margin, (int, float))
-        assert isinstance(arrow_vertical_offset, (int, float))
         assert arrow_right_margin >= 0, 'margin cannot be negative'
-        assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
-
-        super(LeftArrowSelection, self).__init__(margin_left=arrow_size[0] + arrow_right_margin, margin_right=0,
-                                                 margin_top=0, margin_bottom=0)
-
-        self._arrow_size = (arrow_size[0], arrow_size[1])  # type: tuple
+        super(LeftArrowSelection, self).__init__(margin_left=arrow_size[0] + arrow_right_margin,
+                                                 margin_right=0,
+                                                 margin_top=0,
+                                                 margin_bottom=0,
+                                                 arrow_vertical_offset=arrow_vertical_offset,
+                                                 blink_ms=blink_ms
+                                                 )
         self._arrow_right_margin = arrow_right_margin
-        self._arrow_vertical_offset = arrow_vertical_offset
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        """
-        Draw the selection.
-
-        :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
-        :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
-        :return: None
-        """
+        super(LeftArrowSelection, self).draw(surface, widget)
         # A
         #   \B      widget
         # C /
@@ -83,4 +74,4 @@ class LeftArrowSelection(Selection):
              widget.get_rect().midleft[1] + self._arrow_vertical_offset)
         c = (widget.get_rect().bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
              widget.get_rect().midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        pygame.draw.polygon(surface, self.color, [a, b, c])
+        super(LeftArrowSelection, self).draw_arrow(surface, widget, a, b, c)
