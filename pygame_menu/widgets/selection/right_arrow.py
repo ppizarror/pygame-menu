@@ -31,11 +31,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame
-from pygame_menu.widgets.core.selection import Selection
-from pygame_menu.utils import assert_vector2
+
+from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 
-class RightArrowSelection(Selection):
+class RightArrowSelection(ArrowSelection):
     """
     Widget selection right arrow class.
     Creates an arrow to the right of the selected menu item.
@@ -44,23 +44,14 @@ class RightArrowSelection(Selection):
     :type arrow_size: tuple, list
     :param arrow_left_margin: Distance from the arrow to the widget
     :type arrow_left_margin: int, float
-    :param arrow_vertical_offset: Vertical offset of the arrow
-    :type arrow_vertical_offset: int
     """
 
-    def __init__(self, arrow_size=(10, 15), arrow_left_margin=3, arrow_vertical_offset=0):
-        assert_vector2(arrow_size)
+    def __init__(self, arrow_size=(10, 15), arrow_left_margin=3):
         assert isinstance(arrow_left_margin, (int, float))
-        assert isinstance(arrow_vertical_offset, (int, float))
         assert arrow_left_margin >= 0, 'margin cannot be negative'
-        assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
-
         super(RightArrowSelection, self).__init__(margin_left=0, margin_right=arrow_size[0] + arrow_left_margin,
                                                   margin_top=0, margin_bottom=0)
-
-        self._arrow_size = (arrow_size[0], arrow_size[1])  # type: tuple
         self._arrow_left_margin = arrow_left_margin
-        self._arrow_vertical_offset = arrow_vertical_offset
 
     def draw(self, surface, widget):
         """
