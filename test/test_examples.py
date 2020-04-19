@@ -57,7 +57,7 @@ class ExamplesTest(unittest.TestCase):
         Test multi-input example.
         """
         game_selector.main(test=True)
-        font = PygameMenuUtils.load_font(PygameMenuUtils.random_font(), 5)
+        font = MenuUtils.load_font(MenuUtils.random_font(), 5)
         game_selector.play_function(['EASY'], font, test=True)
         game_selector.play_function(['MEDIUM'], font, test=True)
         game_selector.play_function(['HARD'], font, test=True)

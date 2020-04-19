@@ -83,8 +83,8 @@ class SoundTest(unittest.TestCase):
         """
         Test sounds in menu.
         """
-        menu = PygameMenuUtils.generic_menu()
-        submenu = PygameMenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu()
+        submenu = MenuUtils.generic_menu()
 
         menu.add_button('submenu', submenu)
         button = menu.add_button('button', lambda: None)

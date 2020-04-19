@@ -15,23 +15,6 @@ Its structure consists of several sub-packages::
 
 
 ===============
-Menu navigation
-===============
-
-The :py:class:`pygame_menu.Menu` keeps the link and history with all its sub-menus.
-To be functional, the menu links (pointer to previous and next menus in nested submenus),
-have to respect some rules:
-
-- Public methods access the menu instance through the ``_current`` attribute, because
-  users can move through sub-menus and they should target the current Menu instance.
-- Private methods access the menu instance through ``self`` (not ``_current``) because
-  these methods are called publicly (``_current``) or by themselves.
-- Methods used to navigate through menus (:py:meth:`pygame_menu.Menu._open`,
-  :py:meth:`pygame_menu.Menu._reset`, ...) should be the only place where the ``_top``
-  attribute is used.
-
-
-===============
 Create a widget
 ===============
 

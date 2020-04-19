@@ -52,11 +52,11 @@ class Theme(object):
               A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
 
     :param background_color: Menu background color
-    :type background_color: tuple, list
+    :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
     :param cursor_color: Color of cursor
-    :type cursor_color: tuple
+    :type cursor_color: tuple, list
     :param cursor_selection_color: Selection box color
-    :type cursor_selection_color: tuple
+    :type cursor_selection_color: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -74,7 +74,7 @@ class Theme(object):
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int, float
     :param selection_color: Color of the selecter widget
-    :type selection_color: tuple
+    :type selection_color: tuple, list
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
     :param title_bar_style: Mode of drawing the title, use menubar widget modes
@@ -98,7 +98,7 @@ class Theme(object):
     :param widget_alignment: Widget default alignment
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget
-    :type widget_background_color: tuple, list, None
+    :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param widget_font: Widget font path or name
     :type widget_font: str
     :param widget_font_color: Color of the font
@@ -107,10 +107,10 @@ class Theme(object):
     :type widget_font_size: int
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0, 10)
     :type widget_margin: tuple, list
-    :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default (0, 0)
+    :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default *(0, 0)*
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object
-    :type widget_selection_effect: pygame_menu.widgets.Selection
+    :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.selection.Selection`
     :param widget_shadow: Indicate if a shadow is drawn on each widget
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the shadow
@@ -171,7 +171,7 @@ class Theme(object):
         self.widget_alignment = self._get(kwargs, 'widget_alignment',
                                           'alignment', pygame_menu.locals.ALIGN_CENTER)  # type: str
         self.widget_background_color = self._get(kwargs, 'widget_background_color',
-                                                 'color_none')  # type: (tuple, type(None))
+                                                 'color_image_none')  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate',
                                                    'vector2', (16, 8))  # type: tuple
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
@@ -244,6 +244,7 @@ class Theme(object):
         :param obj: Object
         :type obj: list, tuple
         :return: Tuple
+        :rtype: tuple
         """
         if isinstance(obj, tuple):
             return obj

@@ -479,7 +479,9 @@ class ScrollArea(object):
 
     def is_scrolling(self):
         """
-        :return: Returns true if the user is scrolling.
+        Returns true if the user is scrolling.
+
+        :return: True if user scrolls
         :rtype: bool
         """
         scroll = False

@@ -45,48 +45,49 @@ with open('requirements.txt') as f:
         requirements.append(line.strip())
 
 # Setup library
-setup(name='pygame-menu',
-      version=pygame_menu.__version__,
-      author=pygame_menu.__author__,
-      author_email=pygame_menu.__email__,
-      description=pygame_menu.__description__,
-      long_description=long_description,
-      url=pygame_menu.__url__,
-      project_urls={
-          'Bug Tracker': pygame_menu.__url_bug_tracker__,
-          'Documentation': pygame_menu.__url_documentation__,
-          'Source Code': pygame_menu.__url_source_code__,
-      },
-      license=pygame_menu.__license__,
-      platforms=['any'],
-      keywords=pygame_menu.__keywords__,
-      classifiers=[
-          'License :: OSI Approved :: MIT License',
-          'Natural Language :: English',
-          'Operating System :: OS Independent',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.4',
-          'Programming Language :: Python :: 3.5',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'Programming Language :: Python :: 3.8',
-          'Programming Language :: Python',
-          'Topic :: Games/Entertainment',
-          'Topic :: Multimedia',
-          'Topic :: Software Development :: Libraries :: pygame',
-          'Topic :: Text Processing',
-      ],
-      include_package_data=True,
-      packages=find_packages(exclude=['test']),
-      python_requires='>=2.7',
-      install_requires=requirements,
-      extras_require={
-          'doc': ['sphinx', 'sphinx-rtd-theme'],
-      },
-      setup_requires=[
-          'setuptools',
-      ],
-      options={
-          'bdist_wheel': {'universal': True}
-      },
-      )
+setup(
+    name='pygame-menu',
+    version=pygame_menu.__version__,
+    author=pygame_menu.__author__,
+    author_email=pygame_menu.__email__,
+    description=pygame_menu.__description__,
+    long_description=long_description,
+    url=pygame_menu.__url__,
+    project_urls={
+        'Bug Tracker': pygame_menu.__url_bug_tracker__,
+        'Documentation': pygame_menu.__url_documentation__,
+        'Source Code': pygame_menu.__url_source_code__,
+    },
+    license=pygame_menu.__license__,
+    platforms=['any'],
+    keywords=pygame_menu.__keywords__,
+    classifiers=[
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python',
+        'Topic :: Games/Entertainment',
+        'Topic :: Multimedia',
+        'Topic :: Software Development :: Libraries :: pygame',
+        'Topic :: Text Processing',
+    ],
+    include_package_data=True,
+    packages=find_packages(exclude=['test']),
+    python_requires='>=2.7, <4',
+    install_requires=requirements,
+    extras_require={
+        'doc': ['sphinx', 'sphinx-rtd-theme'],
+    },
+    setup_requires=[
+        'setuptools',
+    ],
+    options={
+        'bdist_wheel': {'universal': True}
+    },
+)

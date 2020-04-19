@@ -80,6 +80,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
    _source/add_sounds
    _source/themes
    _source/gallery
+   _source/migration_guide
 
 
 ==============
