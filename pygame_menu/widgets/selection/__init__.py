@@ -29,3 +29,8 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+
+from pygame_menu.widgets.selection.highlight import HighlightSelection
+from pygame_menu.widgets.selection.left_arrow import LeftArrowSelection
+from pygame_menu.widgets.selection.none import NoneSelection
+from pygame_menu.widgets.selection.right_arrow import RightArrowSelection

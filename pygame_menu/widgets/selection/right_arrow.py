@@ -30,8 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame
-
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 
 
@@ -44,25 +42,26 @@ class RightArrowSelection(ArrowSelection):
     :type arrow_size: tuple, list
     :param arrow_left_margin: Distance from the arrow to the widget
     :type arrow_left_margin: int, float
+    :param arrow_vertical_offset: Vertical offset of the arrow
+    :type arrow_vertical_offset: int
+    :param blink_ms: Miliseconds between each blinking status
+    :type blink_ms: int
     """
 
-    def __init__(self, arrow_size=(10, 15), arrow_left_margin=3):
+    def __init__(self, arrow_size=(10, 15), arrow_left_margin=3, arrow_vertical_offset=0, blink_ms=0):
         assert isinstance(arrow_left_margin, (int, float))
         assert arrow_left_margin >= 0, 'margin cannot be negative'
-        super(RightArrowSelection, self).__init__(margin_left=0, margin_right=arrow_size[0] + arrow_left_margin,
-                                                  margin_top=0, margin_bottom=0)
+        super(RightArrowSelection, self).__init__(margin_left=0,
+                                                  margin_right=arrow_size[0] + arrow_left_margin,
+                                                  margin_top=0,
+                                                  margin_bottom=0,
+                                                  arrow_vertical_offset=arrow_vertical_offset,
+                                                  blink_ms=blink_ms)
         self._arrow_left_margin = arrow_left_margin
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        """
-        Draw the selection.
-
-        :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
-        :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
-        :return: None
-        """
+        super(RightArrowSelection, self).draw(surface, widget)
         #                 /A
         # widget        B
         #                \ C
@@ -74,7 +73,4 @@ class RightArrowSelection(ArrowSelection):
              widget.get_rect().midright[1] + self._arrow_vertical_offset)
         c = (widget.get_rect().bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
              widget.get_rect().midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        if self._blink_enabled:
-            self.blink(a, b, c, surface)
-        else:
-            pygame.draw.polygon(surface, self.color, [a, b, c])
+        super(RightArrowSelection, self).draw_arrow(surface, widget, a, b, c)

@@ -31,26 +31,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Core
-from pygame_menu.widgets.core.widget import Widget
-from pygame_menu.widgets.core.selection import Selection
+import pygame_menu.widgets.core as core
+from pygame_menu.widgets.core import Widget
 
 # Selection
-from pygame_menu.widgets.selection.highlight import HighlightSelection
-from pygame_menu.widgets.selection.left_arrow import LeftArrowSelection
-from pygame_menu.widgets.selection.none import NoneSelection
-from pygame_menu.widgets.selection.right_arrow import RightArrowSelection
+from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection, NoneSelection, RightArrowSelection
 
 # Widgets
-from pygame_menu.widgets.widget.button import Button
-from pygame_menu.widgets.widget.colorinput import ColorInput
-from pygame_menu.widgets.widget.image import Image
-from pygame_menu.widgets.widget.label import Label
-from pygame_menu.widgets.widget.scrollbar import ScrollBar
-from pygame_menu.widgets.widget.selector import Selector
-from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu.widgets.widget.vmargin import VMargin
+from pygame_menu.widgets.widget import Button, ColorInput, Image, Label, ScrollBar, Selector, TextInput, VMargin
 
 # Menubar and positions
-from pygame_menu.widgets.widget.menubar import MenuBar, MENUBAR_STYLE_ADAPTATIVE, MENUBAR_STYLE_SIMPLE, \
+from pygame_menu.widgets.widget import MenuBar, MENUBAR_STYLE_ADAPTATIVE, MENUBAR_STYLE_SIMPLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
     MENUBAR_STYLE_UNDERLINE_TITLE

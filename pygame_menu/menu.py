@@ -826,7 +826,7 @@ class Menu(object):
         attributes['selection_color'] = selection_color
 
         selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
-        assert isinstance(selection_effect, _widgets.Selection)
+        assert isinstance(selection_effect, _widgets.core.Selection)
         attributes['selection_effect'] = selection_effect
 
         shadow = kwargs.pop('shadow', self._theme.widget_shadow)
@@ -987,7 +987,7 @@ class Menu(object):
             widget = self._widgets[index]
             rect = widget.get_rect()  # type: pygame.Rect
             col_index = int(index // self._rows)
-            selection = widget.get_selection_effect()
+            selection = widget.get_selection_effect()  # type: _widgets.core.Selection
             if self._column_max_width[col_index] is None:  # No limit
                 self._column_widths[col_index] = max(self._column_widths[col_index],
                                                      rect.width + selection.get_width())

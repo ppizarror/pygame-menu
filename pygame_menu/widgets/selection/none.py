@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.widgets.core.selection import Selection
+from pygame_menu.widgets.core import Selection
 
 
 class NoneSelection(Selection):
@@ -42,14 +42,6 @@ class NoneSelection(Selection):
         super(NoneSelection, self).__init__(margin_left=0, margin_right=0,
                                             margin_top=0, margin_bottom=0)
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        """
-        Draw the selection.
-
-        :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
-        :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
-        :return: None
-        """
         return

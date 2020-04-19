@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame
 import pygame_menu.controls as _controls
 from pygame_menu.utils import check_key_pressed_valid
-from pygame_menu.widgets.core.widget import Widget
+from pygame_menu.widgets.core import Widget
 
 
 class Selector(Widget):

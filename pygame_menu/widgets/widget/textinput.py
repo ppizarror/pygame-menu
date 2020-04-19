@@ -36,7 +36,7 @@ import pygame
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
-from pygame_menu.widgets.core.widget import Widget
+from pygame_menu.widgets.core import Widget
 
 try:
     # noinspection PyProtectedMember

@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
-from pygame_menu.widgets.core.widget import Widget
+from pygame_menu.widgets.core import Widget
 
 MENUBAR_STYLE_ADAPTATIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
