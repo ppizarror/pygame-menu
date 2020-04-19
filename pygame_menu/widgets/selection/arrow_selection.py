@@ -54,7 +54,7 @@ class ArrowSelection(Selection):
     :type arrow_size: tuple, list
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
-    :param blink_ms: Miliseconds between each blinking status
+    :param blink_ms: Miliseconds between each blink, if *0* blinking is disabled
     :type blink_ms: int
     """
 
