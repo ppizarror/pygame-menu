@@ -137,7 +137,7 @@ def check_key_pressed_valid(event):
 
 def dummy_function():
     """
-    Dummy function, this can be archived with lambda but it's against
+    Dummy function, this can be achieved with lambda but it's against
     PEP-8.
 
     :return: None
