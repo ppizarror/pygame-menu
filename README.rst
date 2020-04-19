@@ -77,11 +77,3 @@ To build the documentation from a Git repository:
     $> pip install -e .[doc]
     $> cd docs
     $> make html
-
-Dependencies
-------------
-
-This library is dependent on the following:
-
-- `pygame <https://www.pygame.org/>`_
-- `pyperclip <https://pypi.org/project/pyperclip/>`_
