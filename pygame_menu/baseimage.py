@@ -95,7 +95,7 @@ class BaseImage(object):
         self._drawing_offset = (drawing_offset[0], drawing_offset[1])
 
         # Load the image and store as a surface
-        self._surface = pygame.image.load(image_path)  # type: pygame.SurfaceType
+        self._surface = pygame.image.load(image_path)  # type: pygame.Surface
         self._original_surface = self._surface.copy()
 
     def get_size(self):
@@ -112,7 +112,7 @@ class BaseImage(object):
         Return the surface object.
 
         :return: Image surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: :py:class:`pygame.Surface`
         """
         return self._surface
 
@@ -237,7 +237,7 @@ class BaseImage(object):
         Return the rect of the image.
 
         :return: Pygame rect object
-        :rtype: pygame.rect.RectType
+        :rtype: :py:class:`pygame.Rect`
         """
         return self._surface.get_rect()
 
@@ -270,9 +270,9 @@ class BaseImage(object):
         Draw the image in a given surface.
 
         :param surface: Pygame surface object
-        :type surface: pygame.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :param area: Area to draw
-        :type area: pygame.rect.RectType
+        :type area: :py:class:`pygame.Rect`
         :param position: Position to draw
         :type position: tuple
         :return: None

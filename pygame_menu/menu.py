@@ -85,7 +85,7 @@ class Menu(object):
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
     :param theme: Menu theme object, if None use the default theme
-    :type theme: pygame_menu.themes.Theme, None
+    :type theme: :py:class:`pygame_menu.themes.Theme`, None
     """
 
     def __init__(self,
@@ -304,7 +304,7 @@ class Menu(object):
             - ``font_size``             Font size of the widget (int)
             - ``margin``                (x,y) margin (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
-            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.selection.Selection`)
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
@@ -387,7 +387,7 @@ class Menu(object):
             - ``font_size``             Font size of the widget (int)
             - ``margin``                (x,y) margin (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
-            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.selection.Selection`)
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
@@ -453,7 +453,7 @@ class Menu(object):
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``margin``                (x,y) margin (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
-            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.selection.Selection`)
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
 
         :param image_path: Path of the image of the widget
         :type image_path: str
@@ -586,7 +586,7 @@ class Menu(object):
             - ``font_size``             Font size of the widget (int)
             - ``margin``                (x,y) margin (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
-            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.selection.Selection`)
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
@@ -658,7 +658,7 @@ class Menu(object):
             - ``font_size``             Font size of the widget (int)
             - ``margin``                (x,y) margin (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
-            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.selection.Selection`)
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
@@ -825,14 +825,14 @@ class Menu(object):
             - ``font_size``             Font size of the widget (int)
             - ``margin``                (x,y) margin (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
-            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.selection.Selection`)
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param kwargs: Optional keywords arguments
         :type kwargs: any
         :return: None
@@ -861,9 +861,9 @@ class Menu(object):
         Add a widget to the list.
 
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         """
-        assert isinstance(widget, _widgets.Widget)
+        assert isinstance(widget, _widgets.core.Widget)
         if self._columns > 1:
             max_elements = self._columns * self._rows
             assert len(self._widgets) + 1 <= max_elements, \
@@ -881,10 +881,10 @@ class Menu(object):
         Remove a widget from the Menu.
 
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :return: None
         """
-        assert isinstance(widget, _widgets.Widget)
+        assert isinstance(widget, _widgets.core.Widget)
         try:
             indx = self._widgets.index(widget)  # If not exists this raises ValueError
         except ValueError:
@@ -896,7 +896,7 @@ class Menu(object):
         nselect = 0
         last_selectable = 0
         for indx in range(len(self._widgets)):
-            wid = self._widgets[indx]  # type: _widgets.Widget
+            wid = self._widgets[indx]  # type: _widgets.core.Widget
             if wid.is_selectable:
                 nselect += 1
                 last_selectable = indx
@@ -992,12 +992,12 @@ class Menu(object):
 
         # Store widget rects
         widget_rects = {}
-        for widget in self._widgets:  # type: _widgets.Widget
+        for widget in self._widgets:  # type: _widgets.core.Widget
             widget_rects[widget.get_id()] = widget.get_rect()
 
         # Update appended widgets
         for index in range(len(self._widgets)):
-            widget = self._widgets[index]  # type: _widgets.Widget
+            widget = self._widgets[index]  # type: _widgets.core.Widget
             rect = widget_rects[widget.get_id()]  # type: pygame.Rect
             selection = widget.get_selection_effect()
 
@@ -1027,7 +1027,7 @@ class Menu(object):
             # Calculate Y position
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(row):
-                rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.Widget
+                rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
                 ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
             y_coord = self._widget_offset[1] + ysum + sel_bottom
 
@@ -1043,7 +1043,7 @@ class Menu(object):
         """
         max_x = -1e6
         max_y = -1e6
-        for widget in self._widgets:  # type: _widgets.Widget
+        for widget in self._widgets:  # type: _widgets.core.Widget
             _, _, x, y = widget.get_position()  # Use only bottom right position
             max_x = max(max_x, x)
             max_y = max(max_y, y)
@@ -1092,7 +1092,7 @@ class Menu(object):
         :type widget_id: str
         :return: None
         """
-        for widget in self._widgets:  # type: _widgets.Widget
+        for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
                 raise ValueError('widget ID="{0}" is duplicated'.format(widget_id))
 
@@ -1214,7 +1214,7 @@ class Menu(object):
         .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param surface: Pygame surface to draw the Menu
-        :type surface: pygame.surface.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :return: None
         """
         if not self.is_enabled():
@@ -1233,7 +1233,7 @@ class Menu(object):
         self._current._widgets_surface.fill((255, 255, 255, 0))
 
         # Draw widgets
-        for widget in self._current._widgets:  # type: _widgets.Widget
+        for widget in self._current._widgets:  # type: _widgets.core.Widget
             widget.draw(self._current._widgets_surface)
             if widget.selected:
                 widget.draw_selected_rect(self._current._widgets_surface)
@@ -1319,7 +1319,7 @@ class Menu(object):
         .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param events: Pygame events as a list
-        :type events: list
+        :type events: list[:py:class:`pygame.event.Event`]
         :return: True if mainloop must be stopped
         :rtype: bool
         """
@@ -1350,7 +1350,7 @@ class Menu(object):
         # Check others
         else:
 
-            for event in events:  # type: pygame.event.EventType
+            for event in events:  # type: pygame.event.Event
 
                 # noinspection PyUnresolvedReferences
                 if event.type == pygame.locals.QUIT or (
@@ -1476,7 +1476,7 @@ class Menu(object):
         .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param surface: Pygame surface to draw the Menu
-        :type surface: pygame.surface.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :type bgfun: callable, None
         :param disable_loop: If true run this method for only 1 loop
@@ -1544,7 +1544,7 @@ class Menu(object):
         :rtype: dict
         """
         data = {}
-        for widget in self._widgets:  # type: _widgets.Widget
+        for widget in self._widgets:  # type: _widgets.core.Widget
             try:
                 data[widget.get_id()] = widget.get_value()
             except ValueError:  # Widget does not return data
@@ -1571,7 +1571,7 @@ class Menu(object):
         Return Menu rect.
 
         :return: Rect
-        :rtype: pygame.rect.RectType
+        :rtype: :py:class:`pygame.Rect`
         """
         return pygame.Rect(self._pos_x, self._pos_y, self._width, self._height)
 
@@ -1593,7 +1593,7 @@ class Menu(object):
         if sound is None:
             sound = Sound()
         self._sounds = sound
-        for widget in self._widgets:  # type: _widgets.Widget
+        for widget in self._widgets:  # type: _widgets.core.Widget
             widget.set_sound(sound)
         if recursive:
             for menu in self._submenus:  # type: Menu
@@ -1616,7 +1616,7 @@ class Menu(object):
         """
         depth = self._get_depth()
         if depth > 0:
-            self.reset(depth)  # public, do not use _current
+            self.reset(depth)
 
     def clear(self):
         """
@@ -1624,7 +1624,7 @@ class Menu(object):
 
         :return: None
         """
-        self.full_reset()  # public, do not use _current
+        self.full_reset()
         del self._widgets[:]
         del self._submenus[:]
         self._index = 0
@@ -1704,8 +1704,8 @@ class Menu(object):
             return
 
         # Get both widgets
-        old_widget = current._widgets[current._index]  # type: _widgets.Widget
-        new_widget = current._widgets[new_index]  # type:_widgets.Widget
+        old_widget = current._widgets[current._index]  # type: _widgets.core.Widget
+        new_widget = current._widgets[new_index]  # type:_widgets.core.Widget
 
         # If new widget is not selectable
         if not new_widget.is_selectable:
@@ -1750,9 +1750,9 @@ class Menu(object):
         :param recursive: Look in Menu and submenus
         :type recursive: bool
         :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.Widget`
+        :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`
         """
-        for widget in self._widgets:  # type: _widgets.Widget
+        for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
                 return widget
         if recursive:
@@ -1776,6 +1776,6 @@ class Menu(object):
         Return the selected widget on the Menu.
 
         :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.Widget`
+        :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`
         """
         return self._widgets[self._index]

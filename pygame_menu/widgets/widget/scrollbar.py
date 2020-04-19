@@ -104,7 +104,7 @@ class ScrollBar(Widget):
         self._page_ctrl_thick = page_ctrl_thick
         self._page_ctrl_color = page_ctrl_color
 
-        self._slider_rect = None  # type: (pygame.rect.RectType,None)
+        self._slider_rect = None  # type: (pygame.Rect,None)
         self._slider_pad = slider_pad
         self._slider_color = slider_color
         self._slider_position = 0  # type: int
@@ -334,7 +334,7 @@ class ScrollBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: pygame.event.EventType
+        for event in events:  # type: pygame.event.Event
             if event.type == pygame.KEYDOWN and self._orientation == 1 \
                     and event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN):
                 direction = 1 if event.key == pygame.K_PAGEDOWN else -1

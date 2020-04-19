@@ -232,7 +232,7 @@ class MenuUtils(object):
         :param size: Font size
         :type size: int
         :return: Font
-        :rtype: pygame.font.FontType
+        :rtype: :py:class:`pygame.font.Font`
         """
         return pygame_menu.font.get_font(name, size)
 
@@ -313,7 +313,7 @@ class MenuUtils(object):
         :param columns: Number of columns
         :type columns: int
         :param rows: Number of rows
-        :type rows: int, NoneType
+        :type rows: int, None
         :param width: Menu width (px)
         :type width: int
         :param height: Menu height (px)

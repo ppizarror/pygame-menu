@@ -110,7 +110,7 @@ class Theme(object):
     :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default *(0, 0)*
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object
-    :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.selection.Selection`
+    :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
     :param widget_shadow: Indicate if a shadow is drawn on each widget
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the shadow

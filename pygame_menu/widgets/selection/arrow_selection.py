@@ -85,9 +85,9 @@ class ArrowSelection(Selection):
         Draw the selection.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
+        :type widget: :py:class:`pygame_menu.widgets.core.Widget`
         :param a: Arrow coord A
         :type a: tuple
         :param b: Arrow coord B

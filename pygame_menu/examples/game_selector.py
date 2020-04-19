@@ -53,11 +53,7 @@ FPS = 60.0
 WINDOW_SIZE = (640, 480)
 
 clock = None  # type: pygame.time.Clock
-
-# noinspection PyTypeChecker
 main_menu = None  # type: pygame_menu.Menu
-
-# noinspection PyTypeChecker
 surface = None  # type: pygame.Surface
 
 
@@ -96,7 +92,7 @@ def play_function(difficulty, font, test=False):
     :param difficulty: Difficulty of the game
     :type difficulty: tuple, list
     :param font: Pygame font
-    :type font: pygame.font.FontType
+    :type font: :py:class:`pygame.font.Font`
     :param test: Test method, if true only one loop is allowed
     :type test: bool
     :return: None

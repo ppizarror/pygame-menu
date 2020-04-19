@@ -37,7 +37,7 @@ Alignment                                       Description
 ==============================================  ========================
 
 The content of the menu can be centered vertically after all widgets have
-been added by calling the method :py:meth:`Menu.center_content`:
+been added by calling the method :py:meth:`pygame_menu.Menu.center_content`:
 
 .. code-block:: python
     :emphasize-lines: 7
@@ -91,7 +91,7 @@ Display a menu
 
 The :ref:`First steps` chapter shows the way to display the menu, this
 method lets `pygame-menu` managing the event loop by calling the
-:py:meth:`Menu.mainloop` :
+:py:meth:`pygame_menu.Menu.mainloop` :
 
 .. code-block:: python
     :emphasize-lines: 6

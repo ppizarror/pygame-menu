@@ -466,7 +466,7 @@ class TextInput(Widget):
         :param updated: Render string has been updated or not
         :type updated: bool
         :return: New rendered surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: :py:class:`pygame.Surface`
         """
         # If underline is not enabled
         if self._input_underline_size == 0:
@@ -477,7 +477,7 @@ class TextInput(Widget):
             menu = self.get_menu()
 
             # Calculate total available space
-            current_rect = self._surface.get_rect()  # type: pygame.rect.RectType
+            current_rect = self._surface.get_rect()  # type: pygame.Rect
             menu_rect = menu.get_rect()
             posx2 = menu_rect.x + menu_rect.width
             space_between_label = posx2 - self._label_size - self._rect.x
@@ -1362,7 +1362,7 @@ class TextInput(Widget):
     def update(self, events):
         updated = False
 
-        for event in events:  # type: pygame.event.EventType
+        for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN:
 

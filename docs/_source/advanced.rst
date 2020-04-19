@@ -18,7 +18,7 @@ Its structure consists of several sub-packages::
 Create a widget
 ===============
 
-All widget classes shall inherit from :py:class:`pygame_menu.widgets.core.widget.Widget`,
+All widget classes shall inherit from :py:class:`pygame_menu.widgets.core.Widget`,
 and they must be located in the :py:mod:`pygame_menu.widgets.widget` package. The most
 basic widget should contain this code:
 
@@ -140,7 +140,7 @@ The widgets in Menu are drawn with the following idea:
  #. Draw menubar
  #. Draw scrollbar
 
-For defining a new selection effect, a new :py:class:`pygame_menu.widgets.core.selection.Selection`
+For defining a new selection effect, a new :py:class:`pygame_menu.widgets.core.Selection`
 subclass must be added to the :py:mod:`pgameMenu.widgets.selection` package. A basic class must
 contain the following code:
 
@@ -198,7 +198,7 @@ Finally, this new selection effect can be set by following one of these two inst
 
         import pygame_menu
 
-        MY_THEME = pygame_menu.Theme(
+        MY_THEME = pygame_menu.themes.Theme(
             ...,
             widget_selection_effect=pygame_menu.widgets.MySelection(...)
         )

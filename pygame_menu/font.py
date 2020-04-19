@@ -59,11 +59,11 @@ def get_font(name, size):
     :param size: Font size
     :type size: int
     :return: Font object
-    :rtype: pygame.font.FontType
+    :rtype: :py:class:`pygame.font.Font`
     """
     assert isinstance(size, int)
     if isinstance(name, _font.Font):
-        font = name  # type: (_font.FontType,None)
+        font = name  # type: (_font.Font,None)
         return font
     else:
 
@@ -118,7 +118,7 @@ def get_font(name, size):
                                                         sys_message_2))
 
         # Try to load the font
-        font = None  # type: (_font.FontType,None)
+        font = None  # type: (_font.Font,None)
         try:
             font = _font.Font(name, size)
         except IOError:

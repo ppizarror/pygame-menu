@@ -95,7 +95,7 @@ def make_world(width, height, text=''):
         if x % 100 == 0 and x != 0:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 20))
             pygame.draw.line(world, (180, 180, 180), (x, 80), (x, height))
-            tick = font.render(str(x), True, (255, 0, 0))  # type: pygame.SurfaceType
+            tick = font.render(str(x), True, (255, 0, 0))  # type: pygame.Surface
             world.blit(tick, (x - tick.get_width() / 2, 25))
         else:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 10))

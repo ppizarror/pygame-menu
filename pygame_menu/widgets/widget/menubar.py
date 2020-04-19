@@ -286,7 +286,7 @@ class MenuBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: pygame.event.EventType
+        for event in events:  # type: pygame.event.Event
 
             if self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
