@@ -1,9 +1,9 @@
 
 .. module:: pygame_menu.themes
 
-========
-Skinning
-========
+===============
+Creating themes
+===============
 
 :py:mod:`pygame-menu` offers many parameters to control the visual
 aspect of the menu. For an easier usage, all of them are gathered in
