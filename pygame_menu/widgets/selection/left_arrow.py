@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 
-from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
+from pygame_menu.widgets.selection.arrow_selection import ArrowSelection, SELECTOR_CLOCK
 
 
 class LeftArrowSelection(ArrowSelection):
@@ -74,4 +74,7 @@ class LeftArrowSelection(ArrowSelection):
              widget.get_rect().midleft[1] + self._arrow_vertical_offset)
         c = (widget.get_rect().bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
              widget.get_rect().midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        pygame.draw.polygon(surface, self.color, [a, b, c])
+        if self._blink_enabled:
+            self.blink(a, b, c, surface)
+        else:
+            pygame.draw.polygon(surface, self.color, [a, b, c])

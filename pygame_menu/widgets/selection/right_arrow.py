@@ -74,4 +74,7 @@ class RightArrowSelection(ArrowSelection):
              widget.get_rect().midright[1] + self._arrow_vertical_offset)
         c = (widget.get_rect().bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
              widget.get_rect().midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        pygame.draw.polygon(surface, self.color, [a, b, c])
+        if self._blink_enabled:
+            self.blink(a, b, c, surface)
+        else:
+            pygame.draw.polygon(surface, self.color, [a, b, c])

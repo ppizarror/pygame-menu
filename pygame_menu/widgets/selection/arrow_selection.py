@@ -29,8 +29,12 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+import pygame
+
 from pygame_menu.utils import assert_vector2
 from pygame_menu.widgets import Selection
+
+SELECTOR_CLOCK = pygame.time.Clock()
 
 
 class ArrowSelection(Selection):
@@ -43,14 +47,19 @@ class ArrowSelection(Selection):
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
     """
+
     def __init__(self, margin_left, margin_right, margin_top, margin_bottom, arrow_size=(10, 15),
-                 arrow_vertical_offset=0):
+                 arrow_vertical_offset=0, blink_ms=295):
         super().__init__(margin_left, margin_right, margin_top, margin_bottom)
         assert_vector2(arrow_size)
         assert isinstance(arrow_vertical_offset, (int, float))
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
         self._arrow_vertical_offset = arrow_vertical_offset
         self._arrow_size = (arrow_size[0], arrow_size[1])  # type: tuple
+        self._blink_ms = blink_ms
+        self._blink_time = 0
+        self._blink_status = True
+        self._blink_enabled = True
 
     def draw(self, surface, widget):
         """
@@ -63,3 +72,12 @@ class ArrowSelection(Selection):
         :return: None
         """
         ...
+
+    def blink(self, a, b, c, surface):
+        SELECTOR_CLOCK.tick()
+        self._blink_time += SELECTOR_CLOCK.get_time()
+        if self._blink_ms != 0 and self._blink_time > self._blink_ms:
+            self._blink_status = not self._blink_status
+            self._blink_time = 0  # Reset!!!
+        if self._blink_status:
+            pygame.draw.polygon(surface, self.color, [a, b, c])
