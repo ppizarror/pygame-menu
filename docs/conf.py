@@ -23,7 +23,7 @@ import pygame_menu
 # -- Project information ------------------------------------------------------
 
 project = 'pygame-menu'
-copyright = '2020, Pablo Pizarro R.'
+copyright = '2020, Pablo Pizarro R. @ppizarror'
 author = 'Pablo Pizarro R.'
 
 # The full version, including alpha/beta/rc tags
