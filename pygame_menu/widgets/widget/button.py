@@ -88,7 +88,7 @@ class Button(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: pygame.event.EventType
+        for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
                     self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and event.button == _controls.JOY_BUTTON_SELECT:

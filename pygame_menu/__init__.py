@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 """
-BaseImage: Provides a class to perform basic image loading an manipulation with pygame
+BaseImage: Provides basic image loading an manipulation with pygame
 """
 import pygame_menu.baseimage
 
@@ -63,8 +63,7 @@ import pygame_menu.sound
 """
 Themes: Menu themes class
 """
-import pygame_menu.themes  # lgtm [py/import-and-import-from]
-from pygame_menu.themes import Theme
+import pygame_menu.themes
 
 """
 Version: Library version
@@ -82,7 +81,7 @@ Menu: Menu class
 from pygame_menu.menu import Menu
 
 """
-Metadata: Information about the project.
+Metadata: Information about the project
 """
 __author__ = 'ppizarror'
 __contributors__ = [

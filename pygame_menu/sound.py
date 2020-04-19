@@ -144,7 +144,7 @@ class Sound(object):
                 print('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Channel where a sound is played
-        self._channel = None  # type: (mixer.ChannelType,None)
+        self._channel = None  # type: (mixer.Channel,None)
         self._uniquechannel = uniquechannel
 
         # Sound dict
@@ -192,7 +192,7 @@ class Sound(object):
         :type sound_type: str
         :param sound_file: Sound file
         :type sound_file: str, None
-        :param volume: Volume of the sound, from 0.0 to 1.0
+        :param volume: Volume of the sound, from *0.0* to *1.0*
         :type volume: float
         :param loops: Loops of the sound
         :type loops: int
@@ -200,7 +200,7 @@ class Sound(object):
         :type maxtime: int, float
         :param fade_ms: Fading ms
         :type fade_ms: int, float
-        :return: The status of the sound load, True if the sound was loaded
+        :return: The status of the sound load, *True* if the sound was loaded
         :rtype: bool
         """
         assert isinstance(sound_type, str)
@@ -281,7 +281,7 @@ class Sound(object):
         Play a sound.
 
         :param sound: Sound to be played
-        :type sound: pygame.mixer.SoundType, None
+        :type sound: :py:class:`pygame.mixer.Sound`, None
         :return: True if the sound was played
         :rtype: bool
         """
@@ -385,7 +385,7 @@ class Sound(object):
 
         :return: None
         """
-        channel = self.get_channel()  # type: mixer.ChannelType
+        channel = self.get_channel()  # type: mixer.Channel
         if channel is None:  # The sound can't be played because all channels are busy
             return
         try:
@@ -399,7 +399,7 @@ class Sound(object):
 
         :return: None
         """
-        channel = self.get_channel()  # type: mixer.ChannelType
+        channel = self.get_channel()  # type: mixer.Channel
         if channel is None:  # The sound can't be played because all channels are busy
             return
         try:
@@ -413,7 +413,7 @@ class Sound(object):
 
         :return: None
         """
-        channel = self.get_channel()  # type: mixer.ChannelType
+        channel = self.get_channel()  # type: mixer.Channel
         if channel is None:  # The sound can't be played because all channels are busy
             return
         try:
@@ -428,7 +428,7 @@ class Sound(object):
         :return: An info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
         :rtype: dict
         """
-        channel = self.get_channel()  # type: mixer.ChannelType
+        channel = self.get_channel()  # type: mixer.Channel
         data = {}
         if channel is None:  # The sound can't be played because all channels are busy
             return data

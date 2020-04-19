@@ -172,7 +172,7 @@ class Selector(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
-        for event in events:  # type: pygame.event.EventType
+        for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN:  # Check key is valid
                 if not check_key_pressed_valid(event):

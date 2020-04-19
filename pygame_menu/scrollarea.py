@@ -74,7 +74,7 @@ class ScrollArea(object):
     :param shadow_position: Position of shadow
     :type shadow_position: str
     :param world: Surface to draw and scroll
-    :type world: pygame.SurfaceType, None
+    :type world: :py:class:`pygame.Surface`, None
     """
 
     def __init__(self,
@@ -192,7 +192,7 @@ class ScrollArea(object):
         Called by end user to draw state to the surface.
 
         :param surface: Surface to render the area
-        :type surface: pygame.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :return: None
         """
         if not self._world:
@@ -255,7 +255,7 @@ class ScrollArea(object):
         Return the Rect object.
 
         :return: Pygame.Rect object
-        :rtype: pygame.rect.RectType
+        :rtype: :py:class:`pygame.Rect`
         """
         return self._rect
 
@@ -381,7 +381,7 @@ class ScrollArea(object):
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
-        :type rect: pygame.RectType
+        :type rect: :py:class:`pygame.Rect`
         :param margin: Extra margin around the rect
         :type margin: int, float
         :return: None
@@ -427,7 +427,7 @@ class ScrollArea(object):
         Update the scrolled surface.
 
         :param surface: New world surface
-        :type surface: pygame.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :return: None
         """
         self._world = surface
@@ -439,7 +439,7 @@ class ScrollArea(object):
         of a position/Rect in the world surface reference.
 
         :param virtual: Position/Rect in the world surface reference
-        :type virtual: pygame.RectType, tuple, list
+        :type virtual: :py:class:`pygame.Rect`, tuple, list
         :return: None
         """
         assert isinstance(virtual, (pygame.Rect, tuple, list))
@@ -461,7 +461,7 @@ class ScrollArea(object):
         of a real position/Rect according to the scroll area origin.
 
         :param real: Position/Rect according scroll area origin
-        :type real: pygame.RectType, tuple, list
+        :type real: :py:class:`pygame.Rect`, tuple, list
         :return: None
         """
         assert isinstance(real, (pygame.Rect, tuple, list))

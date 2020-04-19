@@ -271,7 +271,7 @@ class ColorInput(TextInput):
 
         key = ''  # Pressed key
         if self._color_type == TYPE_RGB:
-            for event in events:  # type: pygame.event.EventType
+            for event in events:  # type: pygame.event.Event
                 if event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
@@ -346,7 +346,7 @@ class ColorInput(TextInput):
                                     return False
 
         elif self._color_type == TYPE_HEX:
-            for event in events:  # type: pygame.event.EventType
+            for event in events:  # type: pygame.event.Event
                 if event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid

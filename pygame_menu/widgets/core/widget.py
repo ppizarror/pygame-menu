@@ -122,7 +122,6 @@ class Widget(object):
         # self._check_render_size_changed()
         self._last_render_surface_size = (0.0, 0.0)
 
-        # noinspection PyTypeChecker
         self._selection_effect = None  # type: Selection
 
         # Public attributes
@@ -188,7 +187,7 @@ class Widget(object):
         Fill a surface with the widget background color.
 
         :param surface: Surface to fill
-        :type surface: pygame.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :return: None
         """
         if self._background_color is None:
@@ -206,7 +205,7 @@ class Widget(object):
     def get_selection_effect(self):
         """
         :return: Selection effect
-        :rtype: :py:class:`pygame_menu.widgets.core.selection.Selection`
+        :rtype: :py:class:`pygame_menu.widgets.core.Selection`
         """
         return self._selection_effect
 
@@ -215,7 +214,7 @@ class Widget(object):
         Set the selection effect handler.
 
         :param selection: Selection effect class
-        :type selection: :py:class:`pygame_menu.widgets.core.selection.Selection`
+        :type selection: :py:class:`pygame_menu.widgets.core.Selection`
         :return: None
         """
         assert isinstance(selection, Selection)
@@ -226,7 +225,9 @@ class Widget(object):
         Run ``on_return`` callback when return event. A callback function
         receives the following arguments:
 
-            callback_func( value, \*args, \*widget._args, \*\*widget._kwargs )
+        .. code-block:: python
+
+            callback_func( value, *args, *widget._args, **widget._kwargs )
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -250,7 +251,9 @@ class Widget(object):
         Run ``on_change`` callback after change event is triggered. A callback function
         receives the following arguments:
 
-            callback_func( value, \*args, \*widget._args, \*\*widget._kwargs )
+        .. code-block:: python
+
+            callback_func( value, *args, *widget._args, **widget._kwargs )
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -274,7 +277,7 @@ class Widget(object):
         Draw the widget shape.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :return: None
         """
         raise NotImplementedError('override is mandatory')
@@ -284,7 +287,7 @@ class Widget(object):
         Draw selected rect around widget.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :return: None
         """
         if not self.is_selectable or self._selection_effect is None:
@@ -326,8 +329,10 @@ class Widget(object):
 
     def get_rect(self):
         """
-        :return: Return the Rect object, this forces the widget rendering
-        :rtype: pygame.rect.RectType
+        Return the Rect object, this forces the widget rendering
+
+        :return: Widget rect
+        :rtype: :py:class:`pygame.Rect`
         """
         self._render()
         return self._rect.copy()
@@ -345,7 +350,9 @@ class Widget(object):
 
     def get_id(self):
         """
-        :return: Returns widget ID.
+        Returns the widget ID.
+
+        :return: ID
         :rtype: str
         """
         return self._id
@@ -370,16 +377,15 @@ class Widget(object):
         :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: :py:class:`pygame.Surface`
         """
         assert isinstance(color, tuple)
         return self._font.render(text, self._font_antialias, color)
 
     def _check_render_size_changed(self):
         """
-        Check the size changed after rendering, if so, set
-        self._menu_surface_needs_update as True. This method should be used only on
-        widgets that can change in size.
+        Check the size changed after rendering.
+        This method should be used only on widgets that can change in size.
 
         :return: Boolean, if True the size changed
         :rtype: bool
@@ -400,7 +406,7 @@ class Widget(object):
         :param color: Text color
         :type color: tuple
         :return: Text surface
-        :rtype: pygame.surface.SurfaceType
+        :rtype: :py:class:`pygame.Surface`
         """
         text = self.font_render_string(string, color)
 
@@ -486,7 +492,7 @@ class Widget(object):
         Set menu reference.
 
         :param menu: Menu object
-        :type menu: pygame_menu.menu.Menu
+        :type menu: :py:class:`pygame_menu.Menu`
         :return: None
         """
         self._menu = menu
@@ -496,7 +502,7 @@ class Widget(object):
         Return menu reference (if exists).
 
         :return: Menu reference
-        :rtype: pygame_menu.menu.Menu
+        :rtype: :py:class:`pygame_menu.Menu`
         """
         return self._menu
 
@@ -618,7 +624,7 @@ class Widget(object):
         Set sound engine to the widget.
 
         :param sound: Sound object
-        :type sound: pygame_menu.sound.SoundType
+        :type sound: :py:class:`pygame_menu.sound.Sound`
         :return: None
         """
         self.sound = sound
@@ -687,7 +693,7 @@ class Widget(object):
         and fire the callbacks.
 
         :param events: List of pygame events
-        :type events: list
+        :type events: list[:py:class:`pygame.event.Event`]
         :return: True if updated
         :rtype: bool
         """

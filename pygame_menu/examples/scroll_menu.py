@@ -60,7 +60,7 @@ def paint_background(surface):
     Paints a given surface with background color.
 
     :param surface: Pygame surface
-    :type surface: pygame.SurfaceType
+    :type surface: :py:class:`pygame.Surface`
     :return: None
     """
     surface.fill((128, 230, 198))

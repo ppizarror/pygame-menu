@@ -119,7 +119,7 @@ def check_key_pressed_valid(event):
     """
     Checks if the pressed key is valid.
     :param event: Key press event
-    :type event: pygame.event.EventType
+    :type event: :py:class:`pygame.event.Event`
     :return: True if a key is pressed
     :rtype: bool
     """
@@ -158,7 +158,7 @@ def make_surface(width, height, alpha=False, fill_color=None):
     :param fill_color: Fill surface with a certain color
     :type fill_color: tuple, list, None
     :return: Pygame surface
-    :rtype: pygame.SurfaceType
+    :rtype: :py:class:`pygame.Surface`
     """
     assert width > 0 and height > 0, 'surface width and height must be greater than zero'
     assert isinstance(alpha, bool)

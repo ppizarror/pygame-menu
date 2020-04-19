@@ -1,9 +1,9 @@
 
 .. module:: pygame_menu.themes
 
-========
-Skinning
-========
+===============
+Creating themes
+===============
 
 :py:mod:`pygame-menu` offers many parameters to control the visual
 aspect of the menu. For an easier usage, all of them are gathered in
@@ -64,6 +64,48 @@ copying it first.
     menu = Menu(..., theme=mytheme)
 
 
+Background color/Images
+-----------------------
+
+Theme background can be both a color or an image. All colors can be defined
+using a tuple or an list of 3 or 4 numbers between 0 and 255. The format of
+numers are:
+
+.. code-block:: python
+
+    color_opaque = (R,G,B)
+    color_transparent = (R,G,B,A)
+
+*A* alpha channels goes from *0* to *255*. *0* is transparent, *255* is opaque.
+For using images as a background color, class :py:class:`pygame_menu.baseimage.BaseImage`
+must be used.
+
+Images needs a Path (file location on disk), a drawing mode, and an optional offset.
+
+.. code-block:: python
+
+    myimage = pygame_menu.baseimage.BaseImage(
+        image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+        drawing_mode=pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY,
+        offset=(0,0)
+    )
+    mytheme.background_color = myimage
+
+=====================================================   =========================================
+Image drawing modes                                     Description
+=====================================================   =========================================
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_CENTER`      Centers the image in the surface
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_FILL`        Fill the image on the surface
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_X`    Repeat the image on x axis
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY`   Repeat the image on x and y axis
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_Y`    Repeat the image on y axis
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_SIMPLE`      Write the image on top-left location
+=====================================================   =========================================
+
+Currently, :py:class:`Theme` class only supports images for ``background_image`` and
+``widget_background_image``. Also, only `IMAGE_MODE_FILL` drawing mode is valid for 
+``widget_background_image``.
+
 Menubar style
 -------------
 
@@ -90,7 +132,7 @@ An instance of the selection effect class is defined in the :py:attr:`Theme.widg
 parameter of a theme. See example on how to add a selection effect in :ref:`Create a selection effect`
 chapter.
 
-The selection effects available are:
+The available selection effects are:
 
 ======================================================  ============================
 Class                                                   Selection effect            
@@ -102,6 +144,9 @@ Class                                                   Selection effect
 ======================================================  ============================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.
+
+Theme API
+---------
 
 .. autoclass:: Theme
     :members:

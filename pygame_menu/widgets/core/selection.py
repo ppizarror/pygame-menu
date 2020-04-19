@@ -103,9 +103,9 @@ class Selection(object):
         Draw the selection.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.SurfaceType
+        :type surface: :py:class:`pygame.Surface`
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.Widget`
+        :type widget: :py:class:`pygame_menu.widgets.core.Widget`
         :return: None
         """
         raise NotImplementedError('override is mandatory')
