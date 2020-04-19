@@ -58,7 +58,7 @@ class Menu(object):
     :type width: int, float
     :param title: Title of the Menu (main title)
     :type title: str
-    :param auto_center_v: Auto centers the menu on the vertical position after a widget is added/deleted
+    :param center_content: Auto centers the menu on the vertical position after a widget is added/deleted
     :type center_content: bool
     :param back_box: Draw a back-box button on header
     :type back_box: bool
