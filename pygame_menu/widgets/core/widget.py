@@ -227,7 +227,7 @@ class Widget(object):
 
         .. code-block:: python
 
-            callback_func( value, \*args, \*widget._args, \*\*widget._kwargs )
+            callback_func( value, *args, *widget._args, **widget._kwargs )
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -253,7 +253,7 @@ class Widget(object):
 
         .. code-block:: python
 
-            callback_func( value, \*args, \*widget._args, \*\*widget._kwargs )
+            callback_func( value, *args, *widget._args, **widget._kwargs )
 
         with:
             - ``value`` (if something is returned by ``get_value()``)

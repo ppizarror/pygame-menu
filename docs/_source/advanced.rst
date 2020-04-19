@@ -18,7 +18,7 @@ Its structure consists of several sub-packages::
 Create a widget
 ===============
 
-All widget classes shall inherit from :py:class:`pygame_menu.widgets.core.Widget`,
+All widget classes shall inherit from :py:class:`pygame_menu.widgets.core.widget.Widget`,
 and they must be located in the :py:mod:`pygame_menu.widgets.widget` package. The most
 basic widget should contain this code:
 
@@ -93,17 +93,13 @@ added:
             """
             Add MyWidget to the menu.
             """
-            menu = self  # type: Menu
-            if current:
-                menu = self._current
-
-            attributes = menu._filter_widget_attributes(kwargs)
+            attributes = self._filter_widget_attributes(kwargs)
 
             # Create your widget
             widget = _widgets.MyWidget(..., **kwargs)
 
-            menu._configure_widget(widget=widget, **attributes)
-            menu._append_widget(widget)
+            self._configure_widget(widget=widget, **attributes)
+            self._append_widget(widget)
             return widget
 
         ...
@@ -113,14 +109,8 @@ added:
           by the Menu in :py:meth:`pygame_menu.Menu._configure_widget`
           method. If **MyWidget** needs additional parameters, please use some that
           are not named as the default kwargs used by the Menu Widget system.
-          
-          Check also that the widget could be added to the `base` menu (the source)
-          or the current active menu (the Menu that is pointing at the execution
-          time). This is controlled by the `current` optional parameter. This parameter
-          changes the base object that will accept the new widget. If the object
-          is the base menu, use `self`; if not, use the `self._current` Menu pointer.
 
-          Also, the function must return the created `widget` object.
+          The function must return the created `widget` object.
 
 
 =========================
@@ -141,7 +131,7 @@ The widgets in Menu are drawn with the following idea:
  #. Draw scrollbar
 
 For defining a new selection effect, a new :py:class:`pygame_menu.widgets.core.Selection`
-subclass must be added to the :py:mod:`pgameMenu.widgets.selection` package. A basic class must
+subclass must be added to the :py:mod:`pygame_menu.widgets.selection` package. A basic class must
 contain the following code:
 
 .. code-block:: python
@@ -188,7 +178,6 @@ Finally, this new selection effect can be set by following one of these two inst
         import pygame_menu
 
         menu = pygame_menu.Menu(...)
-
         menu.add_button(..., selection_effect=pygame_menu.widgets.MySelection(...))
 
 2. To apply it on all menus and widgets (and avoid passing it for each added widget),
