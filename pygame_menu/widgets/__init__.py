@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Core
-import pygame_menu.widgets.core as core
 from pygame_menu.widgets.core import Widget
 
 # Selection
