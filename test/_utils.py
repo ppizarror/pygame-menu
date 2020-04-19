@@ -217,7 +217,7 @@ class PygameUtils(object):
         return [x, y]
 
 
-class PygameMenuUtils(object):
+class MenuUtils(object):
     """
     Static class for utilitary pygame-menu methods.
     """
@@ -264,7 +264,7 @@ class PygameMenuUtils(object):
         :return: Font file
         :rtype: basestring
         """
-        fonts = PygameMenuUtils.get_library_fonts()
+        fonts = MenuUtils.get_library_fonts()
         opt = random.randrange(0, len(fonts))
         return fonts[opt]
 

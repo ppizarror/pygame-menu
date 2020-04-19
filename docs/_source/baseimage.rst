@@ -10,5 +10,5 @@
 BaseImage
 =========
 
-.. autoclass:: BaseImage
+.. autoclass:: pygame_menu.baseimage.BaseImage
     :members:

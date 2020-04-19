@@ -42,7 +42,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Setup sound engine.
         """
-        self.menu = PygameMenuUtils.generic_menu()
+        self.menu = MenuUtils.generic_menu()
 
     def test_selector(self):
         """
@@ -428,7 +428,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test vertical margin widget.
         """
-        menu = PygameMenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu()
         w = menu.add_vertical_margin(999)
         w._render()
         self.assertEqual(w.get_rect().width, 0)
@@ -445,7 +445,7 @@ class WidgetsTest(unittest.TestCase):
         Test ScrollBar widget.
             """
         screen_size = surface.get_size()
-        world = PygameMenuUtils.get_large_surface()
+        world = MenuUtils.get_large_surface()
 
         # Vertical right scrollbar
         thick = 80
