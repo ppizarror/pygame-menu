@@ -32,8 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
-from pygameMenu import locals as _locals
-from pygameMenu.widgets import ScrollBar, Label
+from pygame_menu import locals as _locals
+from pygame_menu.widgets import ScrollBar, Label
 
 
 class WidgetsTest(unittest.TestCase):
@@ -42,7 +42,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Setup sound engine.
         """
-        self.menu = PygameMenuUtils.generic_menu()
+        self.menu = MenuUtils.generic_menu()
 
     def test_selector(self):
         """
@@ -62,11 +62,11 @@ class WidgetsTest(unittest.TestCase):
 
         # Test events
         selector.update(PygameUtils.key(0, keydown=True, testmode=False))
-        selector.update(PygameUtils.key(pygameMenu.controls.KEY_LEFT, keydown=True))
-        selector.update(PygameUtils.key(pygameMenu.controls.KEY_RIGHT, keydown=True))
-        selector.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
-        selector.update(PygameUtils.joy_key(pygameMenu.controls.JOY_LEFT))
-        selector.update(PygameUtils.joy_key(pygameMenu.controls.JOY_RIGHT))
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+        selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
         selector.update(PygameUtils.joy_motion(1, 0))
         selector.update(PygameUtils.joy_motion(-1, 0))
         click_pos = PygameUtils.get_middle_rect(selector.get_rect())
@@ -142,19 +142,14 @@ class WidgetsTest(unittest.TestCase):
         # Empty rgb
         widget = self.menu.add_color_input('color', color_type='rgb', input_separator=',')
 
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
+        self.test_keypresses(widget)
         self.assertEqual(widget._cursor_position, 0)
         widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
         self.assertEqual(widget._cursor_position, 0)
         _assert_invalid_color(widget)
 
-        # Write secuence: 2 -> 25 -> 25, -> 25,0,
-        # The comma after the zero must be atomatically setted
+        # Write sequence: 2 -> 25 -> 25, -> 25,0,
+        # The comma after the zero must be automatically set
         widget.update(PygameUtils.key(pygame.K_2, keydown=True, char='2'))
         widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
         widget.update(PygameUtils.key(pygame.K_COMMA, keydown=True, char=','))
@@ -163,13 +158,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget._input_string, '25,0,')
         _assert_invalid_color(widget)
 
-        # Now, secuence: 25,0,c -> 25c,0, with cursor c
+        # Now, sequence: 25,0,c -> 25c,0, with cursor c
         widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
         self.assertEqual(widget._cursor_position, 2)
 
-        # Secuence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
+        # Sequence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
         # That should be cancelled because 2555 > 255
         widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
         self.assertEqual(widget._input_string, '255,0,')
@@ -260,6 +255,14 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 255, 255, 255)
         widget._previsualize_color(surface=None)
 
+    def test_keypresses(self, widget):
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
+
     def test_label(self):
         """
         Test label widget.
@@ -292,7 +295,7 @@ class WidgetsTest(unittest.TestCase):
         # Assert bad settings
         self.assertRaises(ValueError,
                           lambda: self.menu.add_text_input('title',
-                                                           input_type=pygameMenu.locals.INPUT_FLOAT,
+                                                           input_type=pygame_menu.locals.INPUT_FLOAT,
                                                            default='bad'))
         self.assertRaises(ValueError,  # Default and password cannot coexist
                           lambda: self.menu.add_text_input('title',
@@ -311,7 +314,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), '')
 
         passwordinput = self.menu.add_text_input('title', password=True, input_underline='_')
-        self.assertRaises(ValueError,  # Password cannot be setted
+        self.assertRaises(ValueError,  # Password cannot be set
                           lambda: passwordinput.set_value('new_value'))
         passwordinput.set_value('')  # No error
         passwordinput.selected = False
@@ -363,13 +366,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
-        textinput.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
-        textinput.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
-        textinput.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        textinput.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
-        textinput.update(PygameUtils.key(pygame.K_END, keydown=True))
-        textinput.update(PygameUtils.key(pygame.K_HOME, keydown=True))
-        textinput.update(PygameUtils.key(pygameMenu.controls.KEY_APPLY, keydown=True))
+        self.test_keypresses(textinput)
+        textinput.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()
 
@@ -428,7 +426,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test vertical margin widget.
         """
-        menu = PygameMenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu()
         w = menu.add_vertical_margin(999)
         w._render()
         self.assertEqual(w.get_rect().width, 0)
@@ -445,7 +443,7 @@ class WidgetsTest(unittest.TestCase):
         Test ScrollBar widget.
             """
         screen_size = surface.get_size()
-        world = PygameMenuUtils.get_large_surface()
+        world = MenuUtils.get_large_surface()
 
         # Vertical right scrollbar
         thick = 80

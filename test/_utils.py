@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 UTILS
-Test suite utilitary functions and classes.
+Test suite utility functions and classes.
 
 License:
 -------------------------------------------------------------------------------
@@ -31,11 +31,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame
-import pygameMenu
+import pygame_menu
 import random
 
 # noinspection PyUnresolvedReferences
-from pygameMenu.utils import dummy_function
+from pygame_menu.utils import dummy_function
 
 # noinspection PyUnresolvedReferences
 import unittest
@@ -78,13 +78,13 @@ class PygameUtils(object):
         if x != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
                                            {'value': x,
-                                            'axis': pygameMenu.controls.JOY_AXIS_X,
+                                            'axis': pygame_menu.controls.JOY_AXIS_X,
                                             'test': testmode
                                             })
         if y != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
                                            {'value': y,
-                                            'axis': pygameMenu.controls.JOY_AXIS_Y,
+                                            'axis': pygame_menu.controls.JOY_AXIS_Y,
                                             'test': testmode
                                             })
         if inlist:
@@ -217,9 +217,9 @@ class PygameUtils(object):
         return [x, y]
 
 
-class PygameMenuUtils(object):
+class MenuUtils(object):
     """
-    Static class for utilitary pygame-menu methods.
+    Static class for utility pygame-menu methods.
     """
 
     @staticmethod
@@ -232,9 +232,9 @@ class PygameMenuUtils(object):
         :param size: Font size
         :type size: int
         :return: Font
-        :rtype: pygame.font.FontType
+        :rtype: :py:class:`pygame.font.Font`
         """
-        return pygameMenu.font.get_font(name, size)
+        return pygame_menu.font.get_font(name, size)
 
     @staticmethod
     def get_library_fonts():
@@ -245,26 +245,26 @@ class PygameMenuUtils(object):
         :rtype: list[basestring]
         """
         return [
-            pygameMenu.font.FONT_8BIT,
-            pygameMenu.font.FONT_BEBAS,
-            pygameMenu.font.FONT_COMIC_NEUE,
-            pygameMenu.font.FONT_FRANCHISE,
-            pygameMenu.font.FONT_HELVETICA,
-            pygameMenu.font.FONT_MUNRO,
-            pygameMenu.font.FONT_NEVIS,
-            pygameMenu.font.FONT_OPEN_SANS,
-            pygameMenu.font.FONT_PT_SERIF
+            pygame_menu.font.FONT_8BIT,
+            pygame_menu.font.FONT_BEBAS,
+            pygame_menu.font.FONT_COMIC_NEUE,
+            pygame_menu.font.FONT_FRANCHISE,
+            pygame_menu.font.FONT_HELVETICA,
+            pygame_menu.font.FONT_MUNRO,
+            pygame_menu.font.FONT_NEVIS,
+            pygame_menu.font.FONT_OPEN_SANS,
+            pygame_menu.font.FONT_PT_SERIF
         ]
 
     @staticmethod
     def random_font():
         """
-        Retunrn a random font from the library.
+        Return a random font from the library.
 
         :return: Font file
         :rtype: basestring
         """
-        fonts = PygameMenuUtils.get_library_fonts()
+        fonts = MenuUtils.get_library_fonts()
         opt = random.randrange(0, len(fonts))
         return fonts[opt]
 
@@ -279,7 +279,7 @@ class PygameMenuUtils(object):
         :type size: int
         :return: Font object
         """
-        return pygameMenu.font.get_font(font, size)
+        return pygame_menu.font.get_font(font, size)
 
     @staticmethod
     def random_system_font():
@@ -313,7 +313,7 @@ class PygameMenuUtils(object):
         :param columns: Number of columns
         :type columns: int
         :param rows: Number of rows
-        :type rows: int, NoneType
+        :type rows: int, None
         :param width: Menu width (px)
         :type width: int
         :param height: Menu height (px)
@@ -326,9 +326,9 @@ class PygameMenuUtils(object):
         :param kwargs: Additional key parameters
         :type kwargs: dict
         :return: Menu
-        :rtype: pygameMenu.Menu
+        :rtype: pygame_menu.Menu
         """
-        return pygameMenu.Menu(
+        return pygame_menu.Menu(
             columns=columns,
             enabled=False,
             height=height,

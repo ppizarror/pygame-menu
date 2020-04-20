@@ -1,6 +1,7 @@
 # Pycharm files
 .idea/
 .ropeproject/
+venv/
 
 # Vscode files
 .vscode/

@@ -1,10 +1,10 @@
 
-.. module:: pygameMenu.widgets.widget.image
+.. module:: pygame_menu.widgets.widget.image
 
 ======
 Image
 ======
 
-.. autoclass:: pygameMenu.widgets.Image
+.. autoclass:: pygame_menu.widgets.Image
     :members:
     :show-inheritance:

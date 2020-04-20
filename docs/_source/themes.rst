@@ -1,9 +1,9 @@
 
-.. module:: pygameMenu.themes
+.. module:: pygame_menu.themes
 
-========
-Skinning
-========
+===============
+Creating themes
+===============
 
 :py:mod:`pygame-menu` offers many parameters to control the visual
 aspect of the menu. For an easier usage, all of them are gathered in
@@ -13,8 +13,8 @@ menu window itself and all its widgets.
 .. code-block:: python
     :emphasize-lines: 2
 
-    menu = pygameMenu.Menu(300, 400,
-                           theme=pygameMenu.themes.THEME_BLUE,
+    menu = pygame_menu.Menu(300, 400,
+                           theme=pygame_menu.themes.THEME_BLUE,
                            title='Welcome')
 
 .. note:: The theme parameters can be overwritten locally
@@ -30,12 +30,12 @@ Several predefined themes are proposed by :py:mod:`pygame-menu`.
 ==============================================  ================================================
 Theme name                                      Example
 ==============================================  ================================================
-:py:data:`pygameMenu.themes.THEME_DEFAULT`      .. image:: ../_static/theme_default.png
-:py:data:`pygameMenu.themes.THEME_BLUE`         .. image:: ../_static/theme_blue.png
-:py:data:`pygameMenu.themes.THEME_DARK`         .. image:: ../_static/theme_dark.png
-:py:data:`pygameMenu.themes.THEME_GREEN`        .. image:: ../_static/theme_green.png
-:py:data:`pygameMenu.themes.THEME_ORANGE`       .. image:: ../_static/theme_orange.png
-:py:data:`pygameMenu.themes.THEME_SOLARIZED`    .. image:: ../_static/theme_solarized.png
+:py:data:`pygame_menu.themes.THEME_DEFAULT`     .. image:: ../_static/theme_default.png
+:py:data:`pygame_menu.themes.THEME_BLUE`        .. image:: ../_static/theme_blue.png
+:py:data:`pygame_menu.themes.THEME_DARK`        .. image:: ../_static/theme_dark.png
+:py:data:`pygame_menu.themes.THEME_GREEN`       .. image:: ../_static/theme_green.png
+:py:data:`pygame_menu.themes.THEME_ORANGE`      .. image:: ../_static/theme_orange.png
+:py:data:`pygame_menu.themes.THEME_SOLARIZED`   .. image:: ../_static/theme_solarized.png
 ==============================================  ================================================
 
 
@@ -58,11 +58,53 @@ copying it first.
 
 .. code-block:: python
 
-    mytheme = pygameMenu.themes.THEME_ORANGE.copy()
+    mytheme = pygame_menu.themes.THEME_ORANGE.copy()
     mytheme.title_background_color=(0, 0, 0)
 
     menu = Menu(..., theme=mytheme)
 
+
+Background color/Images
+-----------------------
+
+Theme background can be both a color or an image. All colors can be defined
+using a tuple or an list of 3 or 4 numbers between 0 and 255. The format of
+numers are:
+
+.. code-block:: python
+
+    color_opaque = (R,G,B)
+    color_transparent = (R,G,B,A)
+
+*A* alpha channels goes from *0* to *255*. *0* is transparent, *255* is opaque.
+For using images as a background color, class :py:class:`pygame_menu.baseimage.BaseImage`
+must be used.
+
+Images needs a Path (file location on disk), a drawing mode, and an optional offset.
+
+.. code-block:: python
+
+    myimage = pygame_menu.baseimage.BaseImage(
+        image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+        drawing_mode=pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY,
+        offset=(0,0)
+    )
+    mytheme.background_color = myimage
+
+=====================================================   =========================================
+Image drawing modes                                     Description
+=====================================================   =========================================
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_CENTER`      Centers the image in the surface
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_FILL`        Fill the image on the surface
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_X`    Repeat the image on x axis
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY`   Repeat the image on x and y axis
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_REPEAT_Y`    Repeat the image on y axis
+:py:data:`pygame_menu.baseimage.IMAGE_MODE_SIMPLE`      Write the image on top-left location
+=====================================================   =========================================
+
+Currently, :py:class:`Theme` class only supports images for ``background_image`` and
+``widget_background_image``. Also, only `IMAGE_MODE_FILL` drawing mode is valid for 
+``widget_background_image``.
 
 Menubar style
 -------------
@@ -70,36 +112,41 @@ Menubar style
 The visual style of the menubar is managed using the theme parameter
 ``title_bar_style`` which can take the following values:
 
-====================================================================  ======================================================
-Menubar style                                                         Example
-====================================================================  ======================================================
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_ADAPTATIVE`                .. image:: ../_static/menubar_adaptive.png
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_SIMPLE`                    .. image:: ../_static/menubar_simple.png
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_TITLE_ONLY`                .. image:: ../_static/menubar_title_only.png
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`       .. image:: ../_static/menubar_title_only_diagonal.png
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_NONE`                      .. image:: ../_static/menubar_none.png
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_UNDERLINE`                 .. image:: ../_static/menubar_underline.png
-:py:data:`pygameMenu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`           .. image:: ../_static/menubar_underline_title.png
-====================================================================  ======================================================
+=================================================================   =======================================================
+Menubar style                                                       Example
+=================================================================   =======================================================
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTIVE`               .. image:: ../_static/menubar_adaptive.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_SIMPLE`                 .. image:: ../_static/menubar_simple.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY`             .. image:: ../_static/menubar_title_only.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`    .. image:: ../_static/menubar_title_only_diagonal.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_NONE`                   .. image:: ../_static/menubar_none.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`              .. image:: ../_static/menubar_underline.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`        .. image:: ../_static/menubar_underline_title.png
+=================================================================   =======================================================
 
 Widget selection effect
 -----------------------
 
-A **selection effect** is a drawing class used to define the way to highlight the focussed widget.
+A **selection effect** is a drawing class used to define the way to highlight the focused widget.
 An instance of the selection effect class is defined in the :py:attr:`Theme.widget_selection_effect`
 parameter of a theme. See example on how to add a selection effect in :ref:`Create a selection effect`
 chapter.
 
-The selection effects available are:
+The available selection effects are:
 
-========================    =======================================================
-Selection effect            Class
-========================    =======================================================
-Rectangular highlight       :py:class:`pygameMenu.widgets.HighlightSelection`
-No selection                :py:class:`pygameMenu.widgets.NoneSelection`
-========================    =======================================================
+======================================================  ============================
+Class                                                   Selection effect            
+======================================================  ============================
+:py:class:`pygame_menu.widgets.HighlightSelection`      Rectangular highlight
+:py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
+:py:class:`pygame_menu.widgets.NoneSelection`           No selection
+:py:class:`pygame_menu.widgets.RightArrowSelection`     Right arrow on the widget
+======================================================  ============================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.
+
+Theme API
+---------
 
 .. autoclass:: Theme
     :members:
