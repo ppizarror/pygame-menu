@@ -142,7 +142,7 @@ class WidgetsTest(unittest.TestCase):
         # Empty rgb
         widget = self.menu.add_color_input('color', color_type='rgb', input_separator=',')
 
-        self.test_keypresses(widget)
+        PygameUtils.test_widget_key_press(widget)
         self.assertEqual(widget._cursor_position, 0)
         widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
         self.assertEqual(widget._cursor_position, 0)
@@ -255,14 +255,6 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 255, 255, 255)
         widget._previsualize_color(surface=None)
 
-    def test_keypresses(self, widget):
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
-
     def test_label(self):
         """
         Test label widget.
@@ -366,7 +358,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
-        self.test_keypresses(textinput)
+        PygameUtils.test_widget_key_press(textinput)
         textinput.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()

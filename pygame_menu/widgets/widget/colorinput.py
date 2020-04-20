@@ -224,7 +224,7 @@ class ColorInput(TextInput):
         Changes the color of the previsualization box.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.Surface, None
+        :type surface: :py:class:`pygame.surface.Surface`, None
         :return: None
         """
         r, g, b = self.get_value()

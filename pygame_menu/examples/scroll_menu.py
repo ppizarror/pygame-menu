@@ -71,7 +71,7 @@ def make_long_menu():
     Create a long scrolling menu.
 
     :return: Menu
-    :rtype: pygame_menu.Menu
+    :rtype: :py:class:`pygame_menu.Menu`
     """
     # Main menu, pauses execution of the application
     _menu = pygame_menu.Menu(
