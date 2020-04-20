@@ -35,6 +35,7 @@ import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 from pygame_menu.widgets.core import Widget
+from pygame_menu.utils import assert_color
 
 MENUBAR_STYLE_ADAPTIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
@@ -53,6 +54,8 @@ class MenuBar(Widget):
     :type label: str
     :param width: Width of the widget, generally width of the Menu
     :type width: int, float
+    :param background_color: Background color
+    :type background_color: tuple, list
     :param back_box: Draw a back-box button on header
     :type back_box: bool
     :param mode: Mode of drawing the bar
@@ -68,6 +71,7 @@ class MenuBar(Widget):
     def __init__(self,
                  label,
                  width,
+                 background_color,
                  back_box=False,
                  mode=MENUBAR_STYLE_ADAPTIVE,
                  onchange=None,
@@ -77,6 +81,7 @@ class MenuBar(Widget):
         assert isinstance(label, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
+        assert_color(background_color)
 
         # MenuBar has no ID
         super(MenuBar, self).__init__(onchange=onchange,
@@ -84,6 +89,7 @@ class MenuBar(Widget):
                                       args=args,
                                       kwargs=kwargs)
 
+        self._background_color = background_color
         self._backbox = back_box
         self._backbox_pos = None  # type: (tuple,None)
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
@@ -102,7 +108,7 @@ class MenuBar(Widget):
         self._render()
 
         if len(self._polygon_pos) > 2:
-            gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
+            gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
         if self.mouse_enabled and self._backbox:
             pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
@@ -116,7 +122,7 @@ class MenuBar(Widget):
         """
         Return the title of the Menu.
 
-        :return: Title
+        :return: Menu title
         :rtype: str
         """
         return self._label
