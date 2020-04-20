@@ -125,7 +125,7 @@ class Widget(object):
         self._selection_effect = None  # type: Selection
 
         # Public attributes
-        self.active = True  # Widget requests focus
+        self.active = False  # Widget requests focus
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True
         self.mouse_enabled = True

@@ -30,12 +30,12 @@ Several predefined themes are proposed by :py:mod:`pygame-menu`.
 ==============================================  ================================================
 Theme name                                      Example
 ==============================================  ================================================
-:py:data:`pygame_menu.themes.THEME_DEFAULT`      .. image:: ../_static/theme_default.png
-:py:data:`pygame_menu.themes.THEME_BLUE`         .. image:: ../_static/theme_blue.png
-:py:data:`pygame_menu.themes.THEME_DARK`         .. image:: ../_static/theme_dark.png
-:py:data:`pygame_menu.themes.THEME_GREEN`        .. image:: ../_static/theme_green.png
-:py:data:`pygame_menu.themes.THEME_ORANGE`       .. image:: ../_static/theme_orange.png
-:py:data:`pygame_menu.themes.THEME_SOLARIZED`    .. image:: ../_static/theme_solarized.png
+:py:data:`pygame_menu.themes.THEME_DEFAULT`     .. image:: ../_static/theme_default.png
+:py:data:`pygame_menu.themes.THEME_BLUE`        .. image:: ../_static/theme_blue.png
+:py:data:`pygame_menu.themes.THEME_DARK`        .. image:: ../_static/theme_dark.png
+:py:data:`pygame_menu.themes.THEME_GREEN`       .. image:: ../_static/theme_green.png
+:py:data:`pygame_menu.themes.THEME_ORANGE`      .. image:: ../_static/theme_orange.png
+:py:data:`pygame_menu.themes.THEME_SOLARIZED`   .. image:: ../_static/theme_solarized.png
 ==============================================  ================================================
 
 

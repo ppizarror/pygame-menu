@@ -131,7 +131,7 @@ class Theme(object):
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
                                                 'color', (30, 30, 30))  # type: tuple
         self.focus_background_color = self._get(kwargs, 'focus_background_color',
-                                                'color', (0, 0, 0, 150))  # type: tuple
+                                                'color', (0, 0, 0, 180))  # type: tuple
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
                                          'color', (220, 220, 220))  # type: tuple
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
@@ -244,8 +244,8 @@ class Theme(object):
         self.widget_selection_effect.set_color(self.selection_color)
 
         # Color asserts
-        assert self.focus_background_color[3] != 255, \
-            'focus background color cannot be fully opaque, suggested opacity between 0 and 200'
+        assert self.focus_background_color[3] != 0, \
+            'focus background color cannot be fully transparent, suggested opacity between 1 and 255'
 
     @staticmethod
     def _vec_2tuple(obj):
