@@ -54,7 +54,7 @@ class ArrowSelection(Selection):
     :type arrow_size: tuple, list
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
-    :param blink_ms: Miliseconds between each blink, if *0* blinking is disabled
+    :param blink_ms: Milliseconds between each blink, if *0* blinking is disabled
     :type blink_ms: int
     """
 
@@ -68,7 +68,7 @@ class ArrowSelection(Selection):
         assert isinstance(arrow_vertical_offset, (int, float))
         assert isinstance(blink_ms, int)
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
-        assert blink_ms >= 0, 'blinking miliseconds must be greater or equal than zero'
+        assert blink_ms >= 0, 'blinking milliseconds must be greater than or equal to zero'
         self._arrow_vertical_offset = arrow_vertical_offset
         self._arrow_size = (arrow_size[0], arrow_size[1])  # type: tuple
         self._blink_ms = blink_ms

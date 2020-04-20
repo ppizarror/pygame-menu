@@ -63,7 +63,7 @@ class ScrollArea(object):
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int, float
-    :param scrollbars: Postions of the scrollbars
+    :param scrollbars: Positions of the scrollbars
     :type scrollbars: tuple, list
     :param shadow: Indicate if a shadow is drawn on each scrollbar
     :type shadow: bool
@@ -271,7 +271,7 @@ class ScrollArea(object):
         """
         rect = pygame.Rect(self._rect)
 
-        # No scrollbar: area is enought large to display world
+        # No scrollbar: area is large enough to display world
         if not self._world or (self._world.get_width() <= self._rect.width
                                and self._world.get_height() <= self._rect.height):
             return rect

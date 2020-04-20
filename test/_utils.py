@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 UTILS
-Test suite utilitary functions and classes.
+Test suite utility functions and classes.
 
 License:
 -------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ class PygameUtils(object):
 
 class MenuUtils(object):
     """
-    Static class for utilitary pygame-menu methods.
+    Static class for utility pygame-menu methods.
     """
 
     @staticmethod
@@ -259,7 +259,7 @@ class MenuUtils(object):
     @staticmethod
     def random_font():
         """
-        Retunrn a random font from the library.
+        Return a random font from the library.
 
         :return: Font file
         :rtype: basestring

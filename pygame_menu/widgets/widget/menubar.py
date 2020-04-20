@@ -36,7 +36,7 @@ import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 from pygame_menu.widgets.core import Widget
 
-MENUBAR_STYLE_ADAPTATIVE = 1000
+MENUBAR_STYLE_ADAPTIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
 MENUBAR_STYLE_TITLE_ONLY = 1002
 MENUBAR_STYLE_TITLE_ONLY_DIAGONAL = 1003
@@ -69,7 +69,7 @@ class MenuBar(Widget):
                  label,
                  width,
                  back_box=False,
-                 mode=MENUBAR_STYLE_ADAPTATIVE,
+                 mode=MENUBAR_STYLE_ADAPTIVE,
                  onchange=None,
                  onreturn=None,
                  *args,
@@ -132,7 +132,7 @@ class MenuBar(Widget):
         self._surface = self._render_string(self._label, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        if self._style == MENUBAR_STYLE_ADAPTATIVE:
+        if self._style == MENUBAR_STYLE_ADAPTIVE:
             """
             A-------------------B                  D-E: 25 dx
             |****             x | *0,6 height

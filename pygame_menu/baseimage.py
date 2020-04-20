@@ -184,7 +184,7 @@ class BaseImage(object):
         :type width: int, float
         :param height: Scale factor of the height
         :type height: int, float
-        :param smooth: Smooth scalling
+        :param smooth: Smooth scaling
         :type smooth: bool
         :return: None
         """
@@ -201,7 +201,7 @@ class BaseImage(object):
     def scale2x(self):
         """
         This will return a new image that is double the size of the original.
-        It uses the AdvanceMAME Scale2X algorithm which does a 'jaggie-less'
+        It uses the AdvanceMAME Scale2X algorithm which does a 'jaggy-less'
         scale of bitmap graphics.
 
         This really only has an effect on simple images with solid colors.
@@ -220,7 +220,7 @@ class BaseImage(object):
         :type width: int, float
         :param height: New height of the image
         :type height: int, float
-        :param smooth: Smooth scalling
+        :param smooth: Smooth scaling
         :type smooth: bool
         :return: None
         """
