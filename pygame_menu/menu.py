@@ -1003,8 +1003,7 @@ class Menu(object):
 
         :return: None
         """
-        if self._column_widths is None:
-            self._update_column_width()
+        self._update_column_width()
 
         # Update title position
         self._menubar.set_position(self._pos_x, self._pos_y)
