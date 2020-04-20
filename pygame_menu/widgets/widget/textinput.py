@@ -1368,9 +1368,6 @@ class TextInput(Widget):
 
             if event.type == pygame.KEYDOWN:
 
-                # Activates the widget
-                self.active = True
-
                 # Check if any key is pressed, if True the event is invalid
                 if not check_key_pressed_valid(event):
                     continue
@@ -1396,6 +1393,7 @@ class TextInput(Widget):
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
                             return
+                        self.active = True
                         copy_status = self._copy()
                         if not copy_status:
                             self.sound.play_event_error()
@@ -1406,6 +1404,7 @@ class TextInput(Widget):
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
                             return
+                        self.active = True
                         return self._paste()
 
                     # Ctrl+Z undo
@@ -1413,6 +1412,7 @@ class TextInput(Widget):
                         if self._max_history == 0:
                             self.sound.play_event_error()
                             return
+                        self.active = True
                         self.sound.play_key_del()
                         return self._undo()
 
@@ -1421,6 +1421,7 @@ class TextInput(Widget):
                         if self._max_history == 0:
                             self.sound.play_event_error()
                             return
+                        self.active = True
                         self.sound.play_key_add()
                         return self._redo()
 
@@ -1429,6 +1430,7 @@ class TextInput(Widget):
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
                             return
+                        self.active = True
                         self.sound.play_key_del()
                         return self._cut()
 
@@ -1437,6 +1439,7 @@ class TextInput(Widget):
                         if not self._selection_enabled:
                             self.sound.play_event_error()
                             return
+                        self.active = True
                         self._select_all()
                         return False
 
@@ -1460,6 +1463,7 @@ class TextInput(Widget):
 
                     self._backspace()
                     self.change()
+                    self.active = True
                     updated = True
 
                 # Delete button, delete text from left
@@ -1478,6 +1482,7 @@ class TextInput(Widget):
 
                     self._delete()
                     self.change()
+                    self.active = True
                     updated = True
 
                 # Right arrow
@@ -1504,6 +1509,7 @@ class TextInput(Widget):
 
                     # Move cursor
                     self._move_cursor_right()
+                    self.active = True
                     updated = True
 
                 # Left arrow
@@ -1530,6 +1536,7 @@ class TextInput(Widget):
 
                     # Move cursor
                     self._move_cursor_left()
+                    self.active = True
                     updated = True
 
                 # Up arrow
@@ -1546,6 +1553,7 @@ class TextInput(Widget):
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
                     self._unselect_text()
+                    self.active = True
                     updated = True
 
                 # Home
@@ -1554,6 +1562,7 @@ class TextInput(Widget):
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
                     self._unselect_text()
+                    self.active = True
                     updated = True
 
                 # Tab
@@ -1561,6 +1570,7 @@ class TextInput(Widget):
                     for _ in range(self._tab_size):
                         self._push_key_input(' ')
                         updated = True
+                    self.active = True
 
                 # Enter
                 elif event.key == _controls.KEY_APPLY:
@@ -1568,7 +1578,7 @@ class TextInput(Widget):
                     self.apply()
                     self._unselect_text()
                     updated = True
-                    self.active = False
+                    self.active = not self.active
 
                 # Escape
                 elif event.key == pygame.K_ESCAPE:
@@ -1586,12 +1596,14 @@ class TextInput(Widget):
                         self._selection_active = True
                         self._selection_box[0] = self._cursor_position
                         self._selection_box[1] = self._cursor_position
+                    self.active = True
                     return False
 
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys:
                     if not self._push_key_input(event.unicode):  # Error in char, not valid or string limit exceeds
                         break
+                    self.active = True
                     updated = True
 
             elif event.type == pygame.KEYUP:

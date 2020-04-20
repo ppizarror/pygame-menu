@@ -1274,7 +1274,7 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         :return: None
         """
-        if widget is None or not widget.active:
+        if widget is None or not widget.active or not self._mouse_motion_selection:
             return
         window_width, window_height = pygame.display.get_surface().get_size()
         x1, y1, x2, y2 = widget.get_absolute_position(self._current._scroll)
@@ -1504,7 +1504,7 @@ class Menu(object):
                         # Don't consider the mouse wheel (button 4 & 5)
                         if event.button in (1, 2, 3) and \
                                 self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
-                            if not selected_widget.active:
+                            if not self._current._mouse_motion_selection:
                                 self._current._select(index)
 
                 # Select widgets by mouse motion, this is valid only if the current selected widget
