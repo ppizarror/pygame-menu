@@ -54,6 +54,7 @@ SOUND_TYPE_EVENT_ERROR = '__pygame_menu_sound_event_error__'
 SOUND_TYPE_KEY_ADDITION = '__pygame_menu_sound_key_addition__'
 SOUND_TYPE_KEY_DELETION = '__pygame_menu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygame_menu_sound_open_menu__'
+SOUND_TYPE_WIDGET_SELECTION = '__pygame_menu_sound_widget_selection__'
 
 # Stores global reference that marks sounds as initialized
 SOUND_INITIALIZED = [False]
@@ -156,7 +157,8 @@ class Sound(object):
             SOUND_TYPE_EVENT_ERROR,
             SOUND_TYPE_KEY_ADDITION,
             SOUND_TYPE_KEY_DELETION,
-            SOUND_TYPE_OPEN_MENU
+            SOUND_TYPE_OPEN_MENU,
+            SOUND_TYPE_WIDGET_SELECTION
         ]
         self._sound = {}
         for sound in self._type_sounds:
@@ -270,7 +272,8 @@ class Sound(object):
             sound_dir.format('event_error.ogg'),
             sound_dir.format('key_add.ogg'),
             sound_dir.format('key_delete.ogg'),
-            sound_dir.format('open_menu.ogg')
+            sound_dir.format('open_menu.ogg'),
+            sound_dir.format('widget_selection.ogg')
         ]
 
         for sound in range(len(self._type_sounds)):
@@ -378,6 +381,14 @@ class Sound(object):
         :return: None
         """
         self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
+
+    def play_widget_selection(self):
+        """
+        Play widget selection sound.
+
+        :return: None
+        """
+        self._play_sound(self._sound[SOUND_TYPE_WIDGET_SELECTION])
 
     def stop(self):
         """
