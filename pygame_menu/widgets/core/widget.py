@@ -125,10 +125,11 @@ class Widget(object):
         self._selection_effect = None  # type: Selection
 
         # Public attributes
+        self.active = True  # Widget requests focus
         self.is_selectable = True  # Some widgets cannot be selected like labels
-        self.joystick_enabled = True  # type: bool
-        self.mouse_enabled = True  # type: bool
-        self.selected = False  # type: bool
+        self.joystick_enabled = True
+        self.mouse_enabled = True
+        self.selected = False
         self.sound = Sound()  # type: Sound
 
     @staticmethod
@@ -282,9 +283,9 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def draw_selected_rect(self, surface):
+    def draw_selection(self, surface):
         """
-        Draw selected rect around widget.
+        Draw selection effect on widget.
 
         :param surface: Surface to draw
         :type surface: :py:class:`pygame.Surface`
@@ -540,7 +541,7 @@ class Widget(object):
 
     def get_absolute_position(self, scroll_area):
         """
-        Return the absolute position in the screen considering the widget is in the given scroll.
+        Return the absolute position in the scroll area considering the widget is in the given scroll.
         The position will not exceed the height of the scroll area.
 
         :param scroll_area: Sroll parent of the widget
@@ -555,13 +556,25 @@ class Widget(object):
         # .------------(x2,y2)
         #
         # This coordinates are added to the position of the scroll area (x0,y0)
+
+        # Add selected margin
+        t, l, b, r = 0, 0, 0, 0  # top, left, bottom, right
+        if self.selected and self._selection_effect is not None:
+            t, l, b, r = self._selection_effect.get_margin()
+
         offx, offy = scroll_area.get_offsets()
         w, h = scroll_area.get_area_size()
+
+        # Add scrollbar if enabled
+        w -= scroll_area.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
+        h -= scroll_area.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+
         x0, y0 = scroll_area.get_position()
-        x1 = int(min(max(self._rect.x - offx, 0), w)) + x0
-        x2 = int(min(max(self._rect.x + self._rect.width - offx, 0), w)) + x0
-        y1 = int(min(max(self._rect.y - offy, 0), h)) + y0
-        y2 = int(min(max(self._rect.y + self._rect.height - offy, 0), h)) + y0
+        x1 = int(min(max(self._rect.x - l - offx, 0), w)) + x0
+        x2 = int(min(max(self._rect.x + r + self._rect.width - offx, 0), w)) + x0
+        y1 = int(min(max(self._rect.y - t - offy, 0), h)) + y0
+        y2 = int(min(max(self._rect.y + b + self._rect.height - offy, 0), h)) + y0
+
         return x1, y1, x2, y2
 
     def set_alignment(self, align):

@@ -37,6 +37,7 @@ import textwrap
 import types
 
 import pygame
+import pygame.gfxdraw as gfxdraw
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.controls as _controls
 import pygame_menu.events as _events
@@ -240,14 +241,15 @@ class Menu(object):
                                          width=self._width,
                                          back_box=back_box,
                                          mode=self._theme.title_bar_style,
-                                         onreturn=self._back)
+                                         onreturn=self._back,
+                                         background_color=self._theme.title_background_color)
         self._menubar.set_menu(self)
         self._menubar.set_title(title=title,
                                 offsetx=theme.title_offset[0],
                                 offsety=theme.title_offset[1])
         self._menubar.set_font(font=self._theme.title_font,
                                font_size=self._theme.title_font_size,
-                               color=self._theme.title_background_color,
+                               color=self._theme.title_font_color,
                                selected_color=self._theme.title_font_color)
         self._menubar.set_shadow(enabled=self._theme.title_shadow,
                                  color=self._theme.title_shadow_color,
@@ -1233,24 +1235,58 @@ class Menu(object):
         self._current._widgets_surface.fill((255, 255, 255, 0))
 
         # Draw widgets
+        selected_widget = None
         for widget in self._current._widgets:  # type: _widgets.core.Widget
             widget.draw(self._current._widgets_surface)
             if widget.selected:
-                print(widget.get_absolute_position(self._current._scroll))
-                widget.draw_selected_rect(self._current._widgets_surface)
+                widget.draw_selection(self._current._widgets_surface)
+                selected_widget = widget
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
+        self._draw_focus_widget(surface, selected_widget)
 
-    def _draw_focus(self, widget):
+    def _draw_focus_widget(self, surface, widget):
         """
         Draw the focus background from a given widget.
 
+        :param surface: Pygame surface to draw the Menu
+        :type surface: :py:class:`pygame.Surface`
         :param widget: Focused widget
-        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         :return: None
         """
-        return
+        if widget is None or not widget.active:
+            return
+        window_width, window_height = pygame.display.get_surface().get_size()
+        x1, y1, x2, y2 = widget.get_absolute_position(self._current._scroll)
+
+        # Draw 4 areas:
+        # .------------------.
+        # |________1_________|
+        # |  2  |XXXXXX|  3  |
+        # |_____|XXXXXX|_____|
+        # |        4         |
+        # .------------------.
+
+        if abs(y1 - y2) <= 4 or abs(x1 - x2) <= 4:
+            gfxdraw.filled_polygon(surface,
+                                   [(0, 0), (window_width, 0), (window_width, window_height), (0, window_height)],
+                                   self._theme.focus_background_color)
+            return
+
+        gfxdraw.filled_polygon(surface,
+                               [(0, 0), (window_width, 0), (window_width, y1 + 1), (0, y1 + 1)],
+                               self._theme.focus_background_color)  # 1
+        gfxdraw.filled_polygon(surface,
+                               [(0, y1 + 2), (x1 + 1, y1 + 2), (x1 + 1, y2 - 2), (0, y2 - 2)],
+                               self._theme.focus_background_color)  # 2
+        gfxdraw.filled_polygon(surface,
+                               [(x2 - 1, y1 + 2), (window_width, y1 + 2), (window_width, y2 - 2), (x2 - 1, y2 - 2)],
+                               self._theme.focus_background_color)  # 3
+        gfxdraw.filled_polygon(surface,
+                               [(0, y2 - 1), (window_width, y2 - 1), (window_width, window_height), (0, window_height)],
+                               self._theme.focus_background_color)  # 4
 
     def enable(self):
         """
