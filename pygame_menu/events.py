@@ -30,6 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame.locals as __locals
+
 
 class MenuAction(object):
     """
@@ -53,3 +55,6 @@ DISABLE_CLOSE = MenuAction(2)  # Menu disable closing
 EXIT = MenuAction(3)  # Menu exit program
 NONE = MenuAction(4)  # None action
 RESET = MenuAction(5)  # Menu reset
+
+# Pygame events
+PYGAME_QUIT = __locals.QUIT
