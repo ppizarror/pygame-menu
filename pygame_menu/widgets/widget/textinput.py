@@ -348,7 +348,7 @@ class TextInput(Widget):
         string = self._label + self._get_input_string()  # Render string
 
         if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
-                                         self._selection_enabled):
+                                         self._selection_enabled, self.active):
             return
 
         if self.selected:

@@ -606,6 +606,7 @@ class Widget(object):
         :return: None
         """
         self.selected = selected
+        self.active = False
         if selected:
             self._focus()
         else:
