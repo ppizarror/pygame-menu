@@ -528,15 +528,41 @@ class Widget(object):
         self._rect.y = posy
         self._last_selected_surface = None
 
-    def get_position(self):
+    def get_relative_position(self):
         """
         Return a tuple containing the top left and bottom right positions in
         the format of (x leftmost, y uppermost, x rightmost, y lowermost).
 
-        :return: Tuple of 4 elements
+        :return: Tuple of 4 elements, *(x leftmost, y uppermost, x rightmost, y lowermost)*
         :rtype: tuple
         """
         return self._rect.x, self._rect.y, self._rect.x + self._rect.width, self._rect.y + self._rect.height
+
+    def get_absolute_position(self, scroll_area):
+        """
+        Return the absolute position in the screen considering the widget is in the given scroll.
+        The position will not exceed the height of the scroll area.
+
+        :param scroll_area: Sroll parent of the widget
+        :type scroll_area: :py:class:`pygame_menu.scrollarea.ScrollArea`
+        :return: Tuple of 4 elements, *(x leftmost, y uppermost, x rightmost, y lowermost)*
+        :rtype: tuple
+        """
+        # This method performs the calculation of the following coordinates:
+        #
+        # (x1,y1) ----------.
+        # |                 |
+        # .------------(x2,y2)
+        #
+        # This coordinates are added to the position of the scroll area (x0,y0)
+        offx, offy = scroll_area.get_offsets()
+        w, h = scroll_area.get_area_size()
+        x0, y0 = scroll_area.get_position()
+        x1 = int(min(max(self._rect.x - offx, 0), w)) + x0
+        x2 = int(min(max(self._rect.x + self._rect.width - offx, 0), w)) + x0
+        y1 = int(min(max(self._rect.y - offy, 0), h)) + y0
+        y2 = int(min(max(self._rect.y + self._rect.height - offy, 0), h)) + y0
+        return x1, y1, x2, y2
 
     def set_alignment(self, align):
         """

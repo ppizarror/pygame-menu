@@ -1044,7 +1044,7 @@ class Menu(object):
         max_x = -1e6
         max_y = -1e6
         for widget in self._widgets:  # type: _widgets.core.Widget
-            _, _, x, y = widget.get_position()  # Use only bottom right position
+            _, _, x, y = widget.get_relative_position()  # Use only bottom right position
             max_x = max(max_x, x)
             max_y = max(max_y, y)
         return max_x, max_y
@@ -1236,10 +1236,21 @@ class Menu(object):
         for widget in self._current._widgets:  # type: _widgets.core.Widget
             widget.draw(self._current._widgets_surface)
             if widget.selected:
+                print(widget.get_absolute_position(self._current._scroll))
                 widget.draw_selected_rect(self._current._widgets_surface)
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
+
+    def _draw_focus(self, widget):
+        """
+        Draw the focus background from a given widget.
+
+        :param widget: Focused widget
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :return: None
+        """
+        return
 
     def enable(self):
         """

@@ -57,6 +57,8 @@ class Theme(object):
     :type cursor_color: tuple, list
     :param cursor_selection_color: Selection box color
     :type cursor_selection_color: tuple, list
+    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements. And must be transparent
+    :type focus_background_color: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -128,6 +130,8 @@ class Theme(object):
                                       'color', (0, 0, 0))  # type: tuple
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
                                                 'color', (30, 30, 30))  # type: tuple
+        self.focus_background_color = self._get(kwargs, 'focus_background_color',
+                                                'color', (0, 0, 0, 150))  # type: tuple
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
                                          'color', (220, 220, 220))  # type: tuple
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
@@ -208,6 +212,8 @@ class Theme(object):
 
         :return: None
         """
+
+        # Size asserts
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
@@ -218,6 +224,7 @@ class Theme(object):
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
+        self.focus_background_color = self._format_opacity(self.focus_background_color)
         self.scrollbar_color = self._format_opacity(self.scrollbar_color)
         self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
         self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
@@ -235,6 +242,10 @@ class Theme(object):
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
+
+        # Color asserts
+        assert self.focus_background_color[3] != 255, \
+            'focus background color cannot be fully opaque, suggested opacity between 0 and 200'
 
     @staticmethod
     def _vec_2tuple(obj):

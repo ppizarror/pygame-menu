@@ -106,8 +106,13 @@ class ScrollArea(object):
         assert_color(shadow_color)
         assert_position(shadow_position)
 
+        assert area_width > 0 and area_height > 0, \
+            'area size must be greater than zero'
+
+        self._area_width = area_width
+        self._area_height = area_height
         self._rect = pygame.Rect(0.0, 0.0, area_width, area_height)
-        self._world = world
+        self._world = world  # type: pygame.Surface
         self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
@@ -233,6 +238,35 @@ class ScrollArea(object):
         if not self._world:
             return 0
         return max(0, self._world.get_height() - self._view_rect.height)
+
+    def get_position(self):
+        """
+        Return the position of the scroll.
+
+        :return: Position (x,y)
+        :rtype: tuple
+        """
+        return self._rect.x, self._rect.y
+
+    def get_world_size(self):
+        """
+        Return world size.
+
+        :return: width, height in pixels
+        :rtype: tuple
+        """
+        if self._world is None:
+            return 0, 0
+        return self._world.get_width(), self._world.get_height()
+
+    def get_area_size(self):
+        """
+        Return the area size.
+
+        :return: width, height in pixels
+        :rtype: tuple
+        """
+        return self._area_width, self._area_height
 
     def get_offsets(self):
         """
