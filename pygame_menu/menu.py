@@ -1279,6 +1279,12 @@ class Menu(object):
         window_width, window_height = pygame.display.get_surface().get_size()
         x1, y1, x2, y2 = widget.get_absolute_position(self._current._scroll)
 
+        # Convert to integer
+        x1 = int(x1)
+        y1 = int(y1)
+        x2 = int(x2)
+        y2 = int(y2)
+
         # Draw 4 areas:
         # .------------------.
         # |________1_________|
@@ -1399,6 +1405,10 @@ class Menu(object):
         # Surface needs an update
         menu_surface_needs_update = False
 
+        selected_widget = None  # type: _widgets.core.Widget
+        if len(self._current._widgets) >= 1:
+            selected_widget = self._current._widgets[self._current._index % len(self._current._widgets)]
+
         # Update scroll bars
         if self._current._scroll.update(events):
             updated = True
@@ -1409,7 +1419,7 @@ class Menu(object):
             updated = True
 
         # Check selected widget
-        elif len(self._current._widgets) > 0 and self._current._widgets[self._current._index].update(events):
+        elif selected_widget is not None and selected_widget.update(events):
             updated = True
 
         # Check others
@@ -1422,26 +1432,6 @@ class Menu(object):
                         event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)):
                     self._current._exit()
                     updated = True
-
-                selected_widget = self._current._widgets[self._current._index]  # type: _widgets.core.Widget
-
-                # Click the selected widget using relative coords
-                if self._current._mouse and event.type == pygame.MOUSEBUTTONUP:
-                    self._current._sounds.play_click_mouse()
-                    # Don't consider the mouse wheel (button 4 & 5)
-                    if event.button in (1, 2, 3) and \
-                            self._current._scroll.to_real_position(selected_widget.get_rect()).collidepoint(*event.pos):
-                        new_event = pygame.event.Event(event.type, **event.dict)
-                        new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
-                        new_event.pos = self._current._scroll.to_world_position(event.pos)
-                        selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
-                        menu_surface_needs_update = menu_surface_needs_update or selected_widget.surface_needs_update()
-                        updated = True  # It is updated
-                        break
-
-                # If the selected widget is active ignore the following events
-                if selected_widget.active and self._current._mouse_motion_selection:
-                    continue
 
                 if event.type == pygame.KEYDOWN:
 
@@ -1506,19 +1496,41 @@ class Menu(object):
                     else:
                         pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
+                # Click event, if the current selected widget is active clicking
+                # outside will disable the active status
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
                         # Don't consider the mouse wheel (button 4 & 5)
                         if event.button in (1, 2, 3) and \
                                 self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            if not selected_widget.active:
+                                self._current._select(index)
+
+                # Select widgets by mouse motion, this is valid only if the current selected widget
+                # is not active and the pointed widget is selectable
+                elif self._current._mouse_motion_selection and event.type == pygame.MOUSEMOTION and \
+                        not selected_widget.active:
+                    for index in range(len(self._current._widgets)):
+                        widget = self._current._widgets[index]  # type: _widgets.core.Widget
+                        if self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            if not widget.is_selectable:
+                                continue
                             self._current._select(index)
 
-                elif self._current._mouse_motion_selection and event.type == pygame.MOUSEMOTION:
-                    for index in range(len(self._current._widgets)):
-                        widget = self._current._widgets[index]
-                        if self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
-                            self._current._select(index)
+                # Mouse events to selected widget
+                elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None:
+                    self._current._sounds.play_click_mouse()
+                    # Don't consider the mouse wheel (button 4 & 5)
+                    if event.button in (1, 2, 3) and \
+                            self._current._scroll.to_real_position(selected_widget.get_rect()).collidepoint(*event.pos):
+                        new_event = pygame.event.Event(event.type, **event.dict)
+                        new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
+                        new_event.pos = self._current._scroll.to_world_position(event.pos)
+                        selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
+                        menu_surface_needs_update = menu_surface_needs_update or selected_widget.surface_needs_update()
+                        updated = True  # It is updated
+                        break
 
         # Check if the position has changed
         if len(self._current._widgets) > 0:

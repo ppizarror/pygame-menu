@@ -1611,7 +1611,6 @@ class TextInput(Widget):
                 self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                 self._selection_active = False
                 self._check_mouse_collide_input(event.pos)
-                self.active = True
                 self._cursor_ms_counter = 0
 
             elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
