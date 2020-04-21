@@ -1726,6 +1726,7 @@ class Menu(object):
         """
         Select the widget at the given index and unselect others.
         Selection forces rendering of the widget.
+        Also play widget selection sound
 
         :param new_index: Widget index
         :type new_index: int
@@ -1772,6 +1773,9 @@ class Menu(object):
         if current._index == 0:  # Scroll to the top of the Menu
             rect = pygame.Rect(rect.x, 0, rect.width, rect.height)
         current._scroll.scroll_to_rect(rect)
+
+        # Play widget selection sound
+        self._current._sounds.play_widget_selection()
 
     def get_id(self):
         """
