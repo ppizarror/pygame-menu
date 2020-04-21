@@ -79,6 +79,8 @@ class Menu(object):
     :type menu_position: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
+    :param mouse_motion_selection: Select widgets using mouse motion
+    :type mouse_motion_selection: bool
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
@@ -103,6 +105,7 @@ class Menu(object):
                  menu_id='',
                  menu_position=(50, 50),
                  mouse_enabled=True,
+                 mouse_motion_selection=False,
                  mouse_visible=True,
                  onclose=None,
                  rows=None,
@@ -120,6 +123,7 @@ class Menu(object):
         assert isinstance(menu_position, (tuple, list))
         assert isinstance(menu_id, str)
         assert isinstance(mouse_enabled, bool)
+        assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an Theme object instance'
@@ -233,6 +237,7 @@ class Menu(object):
 
         # Init mouse
         self._mouse = mouse_enabled and mouse_visible
+        self._mouse_motion_selection = mouse_motion_selection and mouse_visible
         self._mouse_visible = mouse_visible
         self._mouse_visible_default = mouse_visible
 
@@ -423,16 +428,18 @@ class Menu(object):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        widget = _widgets.ColorInput(label=title,
-                                     colorinput_id=color_id,
-                                     color_type=color_type,
-                                     input_separator=input_separator,
-                                     input_underline=input_underline,
-                                     cursor_color=self._theme.cursor_color,
-                                     onchange=onchange,
-                                     onreturn=onreturn,
-                                     prev_size=previsualization_width,
-                                     **kwargs)
+        widget = _widgets.ColorInput(
+            color_type=color_type,
+            colorinput_id=color_id,
+            cursor_color=self._theme.cursor_color,
+            input_separator=input_separator,
+            input_underline=input_underline,
+            label=title,
+            onchange=onchange,
+            onreturn=onreturn,
+            prev_size=previsualization_width,
+            **kwargs
+        )
         self._configure_widget(widget=widget, **attributes)
         widget.set_value(default)
         self._append_widget(widget)
@@ -479,11 +486,13 @@ class Menu(object):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        widget = _widgets.Image(image_path=image_path,
-                                image_id=image_id,
-                                angle=angle,
-                                scale=scale,
-                                scale_smooth=scale_smooth)
+        widget = _widgets.Image(
+            angle=angle,
+            image_id=image_id,
+            image_path=image_path,
+            scale=scale,
+            scale_smooth=scale_smooth,
+        )
         widget.is_selectable = selectable
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
@@ -614,13 +623,15 @@ class Menu(object):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        widget = _widgets.Selector(label=title,
-                                   elements=items,
-                                   selector_id=selector_id,
-                                   default=default,
-                                   onchange=onchange,
-                                   onreturn=onreturn,
-                                   **kwargs)
+        widget = _widgets.Selector(
+            default=default,
+            elements=items,
+            label=title,
+            onchange=onchange,
+            onreturn=onreturn,
+            selector_id=selector_id,
+            **kwargs
+        )
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
         return widget
@@ -637,6 +648,7 @@ class Menu(object):
                        onchange=None,
                        onreturn=None,
                        password=False,
+                       tab_size=4,
                        textinput_id='',
                        valid_chars=None,
                        **kwargs):
@@ -688,6 +700,8 @@ class Menu(object):
         :type onreturn: callable, None
         :param password: Text input is a password
         :type password: bool
+        :param tab_size: Size of tab key
+        :type tab_size: int
         :param textinput_id: ID of the text input
         :type textinput_id: str
         :param valid_chars: List of authorized chars, None if all chars are valid
@@ -706,21 +720,24 @@ class Menu(object):
         if password and default != '':
             raise ValueError('default value must be empty if the input is a password')
 
-        widget = _widgets.TextInput(label=title,
-                                    textinput_id=textinput_id,
-                                    maxchar=maxchar,
-                                    maxwidth=maxwidth,
-                                    cursor_color=self._theme.cursor_color,
-                                    cursor_selection_color=self._theme.cursor_selection_color,
-                                    input_type=input_type,
-                                    input_underline=input_underline,
-                                    copy_paste_enable=copy_paste_enable,
-                                    cursor_selection_enable=cursor_selection_enable,
-                                    valid_chars=valid_chars,
-                                    password=password,
-                                    onchange=onchange,
-                                    onreturn=onreturn,
-                                    **kwargs)
+        widget = _widgets.TextInput(
+            copy_paste_enable=copy_paste_enable,
+            cursor_color=self._theme.cursor_color,
+            cursor_selection_color=self._theme.cursor_selection_color,
+            cursor_selection_enable=cursor_selection_enable,
+            input_type=input_type,
+            input_underline=input_underline,
+            label=title,
+            maxchar=maxchar,
+            maxwidth=maxwidth,
+            onchange=onchange,
+            onreturn=onreturn,
+            password=password,
+            tab_size=tab_size,
+            textinput_id=textinput_id,
+            valid_chars=valid_chars,
+            **kwargs
+        )
         self._configure_widget(widget=widget, **attributes)
         widget.set_value(default)
         self._append_widget(widget)
@@ -986,8 +1003,7 @@ class Menu(object):
 
         :return: None
         """
-        if self._column_widths is None:
-            self._update_column_width()
+        self._update_column_width()
 
         # Update title position
         self._menubar.set_position(self._pos_x, self._pos_y)
@@ -1244,6 +1260,8 @@ class Menu(object):
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
+
+        # Focus on selected if the widget is active
         self._draw_focus_widget(surface, selected_widget)
 
     def _draw_focus_widget(self, surface, widget):
@@ -1256,10 +1274,16 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         :return: None
         """
-        if widget is None or not widget.active:
+        if widget is None or not widget.active or not self._mouse_motion_selection:
             return
         window_width, window_height = pygame.display.get_surface().get_size()
         x1, y1, x2, y2 = widget.get_absolute_position(self._current._scroll)
+
+        # Convert to integer
+        x1 = int(x1)
+        y1 = int(y1)
+        x2 = int(x2)
+        y2 = int(y2)
 
         # Draw 4 areas:
         # .------------------.
@@ -1381,6 +1405,10 @@ class Menu(object):
         # Surface needs an update
         menu_surface_needs_update = False
 
+        selected_widget = None  # type: _widgets.core.Widget
+        if len(self._current._widgets) >= 1:
+            selected_widget = self._current._widgets[self._current._index % len(self._current._widgets)]
+
         # Update scroll bars
         if self._current._scroll.update(events):
             updated = True
@@ -1391,7 +1419,7 @@ class Menu(object):
             updated = True
 
         # Check selected widget
-        elif len(self._current._widgets) > 0 and self._current._widgets[self._current._index].update(events):
+        elif selected_widget is not None and selected_widget.update(events):
             updated = True
 
         # Check others
@@ -1399,14 +1427,13 @@ class Menu(object):
 
             for event in events:  # type: pygame.event.Event
 
-                # noinspection PyUnresolvedReferences
-                if event.type == pygame.locals.QUIT or (
+                if event.type == _events.PYGAME_QUIT or (
                         event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
                         event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)):
                     self._current._exit()
                     updated = True
 
-                elif event.type == pygame.locals.KEYDOWN:
+                if event.type == pygame.KEYDOWN:
 
                     # Check key event is valid
                     if not _utils.check_key_pressed_valid(event):
@@ -1469,25 +1496,39 @@ class Menu(object):
                     else:
                         pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
+                # Click event, if the current selected widget is active clicking
+                # outside will disable the active status
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONDOWN:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
                         # Don't consider the mouse wheel (button 4 & 5)
                         if event.button in (1, 2, 3) and \
                                 self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            if not self._current._mouse_motion_selection:
+                                self._current._select(index)
+
+                # Select widgets by mouse motion, this is valid only if the current selected widget
+                # is not active and the pointed widget is selectable
+                elif self._current._mouse_motion_selection and event.type == pygame.MOUSEMOTION and \
+                        not selected_widget.active:
+                    for index in range(len(self._current._widgets)):
+                        widget = self._current._widgets[index]  # type: _widgets.core.Widget
+                        if self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            if not widget.is_selectable:
+                                continue
                             self._current._select(index)
 
-                elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP:
+                # Mouse events to selected widget
+                elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None:
                     self._current._sounds.play_click_mouse()
-                    widget = self._current._widgets[self._current._index]
                     # Don't consider the mouse wheel (button 4 & 5)
                     if event.button in (1, 2, 3) and \
-                            self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            self._current._scroll.to_real_position(selected_widget.get_rect()).collidepoint(*event.pos):
                         new_event = pygame.event.Event(event.type, **event.dict)
                         new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
                         new_event.pos = self._current._scroll.to_world_position(event.pos)
-                        widget.update((new_event,))  # This widget can change the current Menu to a submenu
-                        menu_surface_needs_update = menu_surface_needs_update or widget.surface_needs_update()
+                        selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
+                        menu_surface_needs_update = menu_surface_needs_update or selected_widget.surface_needs_update()
                         updated = True  # It is updated
                         break
 

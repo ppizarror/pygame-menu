@@ -69,7 +69,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: pygame.event.Event
+        :rtype: :py:class:`pygame.event.Event`
         """
         if x != 0 and y != 0:
             return [PygameUtils.joy_motion(x=x, y=0, inlist=False, testmode=testmode),
@@ -92,6 +92,21 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
+    def test_widget_key_press(widget):
+        """
+        Test keypress widget.
+
+        :param widget: Widget object
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        """
+        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
+
+    @staticmethod
     def joy_key(key, inlist=True, testmode=True):
         """
         Create a pygame joy controller key event.
@@ -103,7 +118,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: pygame.event.Event
+        :rtype: :py:class:`pygame.event.Event`
         """
         event_obj = pygame.event.Event(pygame.JOYHATMOTION,
                                        {'value': key,
@@ -123,7 +138,7 @@ class PygameUtils(object):
         :param inlist: Return event in a list
         :type inlist: bool
         :return: Event
-        :rtype: pygame.event.Event
+        :rtype: :py:class:`pygame.event.Event`
         """
         pygame.key.set_mods(pygame.KMOD_CTRL)
         event_obj = pygame.event.Event(pygame.KEYDOWN,
@@ -142,7 +157,7 @@ class PygameUtils(object):
         :param key: Key to press
         :type key: int
         :param char: Char representing the key
-        :type char: basestring
+        :type char: str
         :param inlist: Return event in a list
         :type inlist: bool
         :param keydown: Event is keydown
@@ -152,7 +167,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: pygame.event.Event
+        :rtype: :py:class:`pygame.event.Event`
         """
         if keyup and keydown:
             raise ValueError('keyup and keydown cannot be active at the same time')
@@ -187,7 +202,7 @@ class PygameUtils(object):
         :param evtype: event type
         :type evtype: int
         :return: Event
-        :rtype: pygame.event.Event
+        :rtype: :py:class:`pygame.event.Event`
         """
         event_obj = pygame.event.Event(evtype,
                                        {'pos': [float(x), float(y)],
@@ -204,7 +219,7 @@ class PygameUtils(object):
         Get middle position from a rect.
 
         :param rect: Pygame rect
-        :type rect: pygame.rect.Rect
+        :type rect: :py:class:`pygame.rect.Rect`
         :return: Position as a list
         :rtype: list[float]
         """
@@ -228,7 +243,7 @@ class MenuUtils(object):
         Returns a font.
 
         :param name: Font name
-        :type name: basestring
+        :type name: str
         :param size: Font size
         :type size: int
         :return: Font
@@ -242,7 +257,7 @@ class MenuUtils(object):
         Return a test font from the library.
 
         :return: Font file
-        :rtype: list[basestring]
+        :rtype: list[str]
         """
         return [
             pygame_menu.font.FONT_8BIT,
@@ -262,7 +277,7 @@ class MenuUtils(object):
         Return a random font from the library.
 
         :return: Font file
-        :rtype: basestring
+        :rtype: str
         """
         fonts = MenuUtils.get_library_fonts()
         opt = random.randrange(0, len(fonts))
@@ -274,10 +289,11 @@ class MenuUtils(object):
         Load font from file.
 
         :param font: Font name
-        :type font: basestring
+        :type font: str
         :param size: Font size
         :type size: int
         :return: Font object
+        :rtype: :py:class:`pygame.font.Font`
         """
         return pygame_menu.font.get_font(font, size)
 
@@ -287,7 +303,7 @@ class MenuUtils(object):
         Return random system font.
 
         :return: System font name
-        :rtype: basestring
+        :rtype: str
         """
         fonts = pygame.font.get_fonts()
         fonts.sort()
@@ -309,7 +325,7 @@ class MenuUtils(object):
         Generate a generic test menu.
 
         :param title: Menu title
-        :type title: basestring
+        :type title: str
         :param columns: Number of columns
         :type columns: int
         :param rows: Number of rows
@@ -326,7 +342,7 @@ class MenuUtils(object):
         :param kwargs: Additional key parameters
         :type kwargs: dict
         :return: Menu
-        :rtype: pygame_menu.Menu
+        :rtype: :py:class:`pygame_menu.Menu`
         """
         return pygame_menu.Menu(
             columns=columns,

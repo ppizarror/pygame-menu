@@ -570,10 +570,10 @@ class Widget(object):
         h -= scroll_area.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
 
         x0, y0 = scroll_area.get_position()
-        x1 = int(min(max(self._rect.x - l - offx, 0), w)) + x0
-        x2 = int(min(max(self._rect.x + r + self._rect.width - offx, 0), w)) + x0
-        y1 = int(min(max(self._rect.y - t - offy, 0), h)) + y0
-        y2 = int(min(max(self._rect.y + b + self._rect.height - offy, 0), h)) + y0
+        x1 = min(max(self._rect.x - l - offx, 0), w) + x0
+        x2 = min(max(self._rect.x + r + self._rect.width - offx, 0), w) + x0
+        y1 = min(max(self._rect.y - t - offy, 0), h) + y0
+        y2 = min(max(self._rect.y + b + self._rect.height - offy, 0), h) + y0
 
         return x1, y1, x2, y2
 
@@ -606,6 +606,7 @@ class Widget(object):
         :return: None
         """
         self.selected = selected
+        self.active = False
         if selected:
             self._focus()
         else:

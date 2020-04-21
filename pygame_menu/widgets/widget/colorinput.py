@@ -117,25 +117,29 @@ class ColorInput(TextInput):
         _input_type = _locals.INPUT_TEXT
         _maxwidth = 0
         _password = False
-        super(ColorInput, self).__init__(label=label,
-                                         textinput_id=colorinput_id,
-                                         input_type=_input_type,
-                                         input_underline=input_underline,
-                                         cursor_color=cursor_color,
-                                         copy_paste_enable=False,
-                                         cursor_selection_enable=False,
-                                         history=0,
-                                         maxchar=_maxchar,
-                                         maxwidth=_maxwidth,  # Disabled
-                                         onchange=onchange,
-                                         onreturn=onreturn,
-                                         password=_password,
-                                         repeat_keys_initial_ms=repeat_keys_initial_ms,
-                                         repeat_keys_interval_ms=repeat_keys_interval_ms,
-                                         repeat_mouse_interval_ms=repeat_mouse_interval_ms,
-                                         valid_chars=self._valid_chars,
-                                         *args,
-                                         **kwargs)
+        super(ColorInput, self).__init__(
+            label=label,
+            textinput_id=colorinput_id,
+            input_type=_input_type,
+            input_underline=input_underline,
+            cursor_color=cursor_color,
+            copy_paste_enable=False,
+            cursor_selection_enable=False,
+            history=0,
+            maxchar=_maxchar,
+            maxwidth=_maxwidth,  # Disabled
+            onchange=onchange,
+            onreturn=onreturn,
+            password=_password,
+            repeat_keys_initial_ms=repeat_keys_initial_ms,
+            repeat_keys_interval_ms=repeat_keys_interval_ms,
+            repeat_mouse_interval_ms=repeat_mouse_interval_ms,
+            tab_size=0,
+            text_ellipsis='',
+            valid_chars=self._valid_chars,
+            *args,
+            **kwargs
+        )
 
         # Store inner variables
         self._separator = input_separator
@@ -224,7 +228,7 @@ class ColorInput(TextInput):
         Changes the color of the previsualization box.
 
         :param surface: Surface to draw
-        :type surface: pygame.surface.Surface, None
+        :type surface: :py:class:`pygame.surface.Surface`, None
         :return: None
         """
         r, g, b = self.get_value()
