@@ -75,7 +75,6 @@ class Widget(object):
         self._background_color = None
         self._background_inflate = (0, 0)
         self._id = str(widget_id)
-        self._last_selected_surface = None  # type: (pygame.Surface,None)
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (pygame.Rect,None)
         self._margin = (0.0, 0.0)  # type: tuple
@@ -119,8 +118,7 @@ class Widget(object):
         self._last_render_hash = 0  # type: int
 
         # Stores the last render surface size, updated by
-        # self._check_render_size_changed()
-        self._last_render_surface_size = (0.0, 0.0)
+        self._last_render_surface_size = (0, 0)
 
         self._selection_effect = None  # type: Selection
 
@@ -391,9 +389,8 @@ class Widget(object):
         :return: Boolean, if True the size changed
         :rtype: bool
         """
-        sz = self._surface.get_size()
-        if sz[0] != self._last_render_surface_size[0] or sz[1] != self._last_render_surface_size[1]:
-            self._last_render_surface_size = sz
+        if self._rect.size != self._last_render_surface_size:
+            self._last_render_surface_size = self._rect.size
             self._menu_surface_needs_update = True
             return True
         return False
@@ -527,7 +524,6 @@ class Widget(object):
         """
         self._rect.x = posx
         self._rect.y = posy
-        self._last_selected_surface = None
 
     def get_relative_position(self):
         """

@@ -186,7 +186,6 @@ def main(test=False):
     timer_menu.add_button('Update game object', TestCallClassMethod().update_game_settings)
     timer_menu.add_button('Return to Menu', pygame_menu.events.BACK)
     timer_menu.add_button('Close Menu', pygame_menu.events.CLOSE)
-    timer_menu.center_content()
 
     # -------------------------------------------------------------------------
     # Create menus: Help
