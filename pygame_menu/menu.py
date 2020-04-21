@@ -94,7 +94,7 @@ class Menu(object):
                  width,
                  title,
                  back_box=True,
-                 center_content=False,
+                 center_content=True,
                  column_force_fit_text=False,
                  column_max_width=None,
                  columns=1,

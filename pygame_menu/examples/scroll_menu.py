@@ -126,7 +126,6 @@ def make_long_menu():
             txt = label.format(100 * i)
         _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygame_menu.events.BACK)
-    _menu_sub.center_content()
 
     _menu_text.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                          'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '

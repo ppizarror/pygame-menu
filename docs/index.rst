@@ -54,7 +54,6 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
     menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
     menu.add_button('Play', start_the_game)
     menu.add_button('Quit', pygame_menu.events.EXIT)
-    menu.center_content()
 
 4. Run your menu
 

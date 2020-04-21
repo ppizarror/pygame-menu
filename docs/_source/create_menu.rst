@@ -48,7 +48,6 @@ been added by calling the method :py:meth:`pygame_menu.Menu.center_content`:
     menu.add_selector(...)
     menu.add_button(...)
     menu.add_button(...)
-    menu.center_content()
 
 .. note:: If the menu size is insufficient to show all of the widgets, horizontal
           and/or vertical scrollbar(s) will appear automatically.
