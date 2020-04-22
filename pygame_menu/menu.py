@@ -1496,16 +1496,24 @@ class Menu(object):
                     else:
                         pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
-                # Click event, if the current selected widget is active clicking
-                # outside will disable the active status
+                # Select widget by clicking
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONDOWN:
-                    for index in range(len(self._current._widgets)):
-                        widget = self._current._widgets[index]
-                        # Don't consider the mouse wheel (button 4 & 5)
-                        if event.button in (1, 2, 3) and \
-                                self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
-                            if not self._current._mouse_motion_selection:
+
+                    # If the mouse motion selection is disabled then select a widget by clicking
+                    if not self._current._mouse_motion_selection:
+                        for index in range(len(self._current._widgets)):
+                            widget = self._current._widgets[index]
+                            # Don't consider the mouse wheel (button 4 & 5)
+                            if event.button in (1, 2, 3) and \
+                                    self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
                                 self._current._select(index)
+
+                    # If mouse motion selection, clicking will disable the active state
+                    # only if the user clicked outside the widget
+                    else:
+                        if not self._current._scroll.to_real_position(selected_widget.get_rect()).collidepoint(
+                                *event.pos):
+                            selected_widget.active = False
 
                 # Select widgets by mouse motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
