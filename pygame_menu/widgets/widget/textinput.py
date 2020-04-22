@@ -119,6 +119,7 @@ class TextInput(Widget):
     :param valid_chars: List of chars that are valid, None if all chars are valid
     :type valid_chars: list
     :param kwargs: Optional keyword-arguments for callbacks
+    :type kwargs: any
     """
 
     def __init__(self,

@@ -48,7 +48,9 @@ class Button(Widget):
     :param onreturn: Callback when pressing return button
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
+    :type args: any
     :param kwargs: Optional keyword-arguments for callbacks
+    :type kwargs: any
     """
 
     def __init__(self,

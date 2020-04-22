@@ -75,7 +75,7 @@ class Menu(object):
     :type joystick_enabled: bool
     :param menu_id: ID of the Menu
     :type menu_id: str
-    :param menu_position: Position in x,y axis (%). Default (50, 50), vertically and horizontally centered
+    :param menu_position: Position in x,y axis (%). Default *(50, 50)*, vertically and horizontally centered
     :type menu_position: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool

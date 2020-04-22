@@ -37,9 +37,9 @@ class Label(Widget):
     """
     Label widget.
 
-    :param label: Text of the button
+    :param label: Text of the label
     :type label: str
-    :param label_id: Button ID
+    :param label_id: Label ID
     :type label_id: str
     """
 

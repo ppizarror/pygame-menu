@@ -53,6 +53,7 @@ class Selector(Widget):
     :param onreturn: Callback when pressing return button
     :type onreturn: callable, None
     :param kwargs: Optional keyword-arguments for callbacks
+    :type kwargs: any
     """
 
     def __init__(self,

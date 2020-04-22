@@ -63,7 +63,7 @@ class Selection(object):
         Set the selection color.
 
         :param color: Selection color
-        :type color: tuple
+        :type color: tuple, list
         :return: None
         """
         assert_color(color)
@@ -74,7 +74,7 @@ class Selection(object):
         Return top, left, bottom and right margins of the selection.
 
         :return: Tuple of (t,l,b,r) margins in px
-        :rtype: tuple
+        :rtype: tuple, list
         """
         return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
 

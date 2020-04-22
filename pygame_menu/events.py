@@ -36,6 +36,9 @@ import pygame.locals as __locals
 class MenuAction(object):
     """
     Pymenu events.
+
+    :param action: Action identifier
+    :type action: int
     """
 
     def __init__(self, action):

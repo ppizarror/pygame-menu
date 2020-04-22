@@ -69,6 +69,7 @@ class ColorInput(TextInput):
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :type repeat_mouse_interval_ms: int, float
     :param kwargs: Optional keyword-arguments for callbacks
+    :type kwargs: any
     """
 
     def __init__(self,

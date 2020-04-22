@@ -46,8 +46,11 @@ def make_world(width, height):
     Create a test surface.
 
     :param width: Width in pixels
+    :type width: int
     :param height: Height in pixels
+    :type height: int
     :return: World surface
+    :rtype: :py:class:`pygame.Surface`
     """
     world = make_surface(width, height)
     world.fill((200, 200, 200))
