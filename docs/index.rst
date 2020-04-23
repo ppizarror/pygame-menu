@@ -25,6 +25,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
 
 .. code-block:: python
 
+    import os
     import pygame
     import pygame_menu
 
@@ -42,12 +43,13 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
 
     def set_difficulty(value, difficulty):
         # Do the job here !
+        pass
 
     def start_the_game():
         # Do the job here !
+        pass
 
-    menu = pygame_menu.Menu(300, 400, pygame_menu.font.FONT_BEBAS,
-                           title="Welcome",
+    menu = pygame_menu.Menu(300, 400, 'Welcome',
                            theme=pygame_menu.themes.THEME_BLUE)
 
     menu.add_text_input('Name :', default='John Doe')
