@@ -49,7 +49,8 @@ give the opportunity to create custom themes.
 
     mytheme = Theme(background_color=(0, 0, 0, 0), # transparent background
                     title_shadow=True,
-                    title_background_color=(4, 47, 126))
+                    title_background_color=(4, 47, 126),
+                    ...)
 
     menu = Menu(..., theme=mytheme)
 
@@ -64,7 +65,7 @@ copying it first.
     menu = Menu(..., theme=mytheme)
 
 
-Background color/Images
+Background Color/Images
 -----------------------
 
 Theme background can be both a color or an image. All colors can be defined
@@ -106,6 +107,7 @@ Currently, :py:class:`Theme` class only supports images for ``background_image``
 ``widget_background_image``. Also, only `IMAGE_MODE_FILL` drawing mode is valid for 
 ``widget_background_image``.
 
+
 Menubar style
 -------------
 
@@ -123,6 +125,7 @@ Menubar style                                                       Example
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`              .. image:: ../_static/menubar_underline.png
 :py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`        .. image:: ../_static/menubar_underline_title.png
 =================================================================   =======================================================
+
 
 Widget selection effect
 -----------------------
@@ -144,6 +147,37 @@ Class                                                   Selection effect
 ======================================================  ============================
 
 The selection color is defined in :py:attr:`Theme.widget_selection_color`.
+
+
+Fonts
+-----
+
+This library also has some fonts to use. To load a font, run this code:
+
+.. code-block:: python
+
+    import pygame_menu
+
+    font = pygame_menu.font.FONT_NAME
+    my_theme = Theme(widget_font=font, ...)
+
+==================================================  =============================================
+Available fonts                                     Preview
+==================================================  =============================================
+:py:class:`pygame_menu.font.FONT_8BIT`              .. image:: ../_static/font_8bit.png
+:py:class:`pygame_menu.font.FONT_BEBAS`             .. image:: ../_static/font_bebas.png
+:py:class:`pygame_menu.font.FONT_COMIC_NEUE`        .. image:: ../_static/font_comic_neue.png
+:py:class:`pygame_menu.font.FONT_FRANCHISE`         .. image:: ../_static/font_franchise.png
+:py:class:`pygame_menu.font.FONT_HELVETICA`         .. image:: ../_static/font_helvetica.png
+:py:class:`pygame_menu.font.FONT_MUNRO`             .. image:: ../_static/font_munro.png
+:py:class:`pygame_menu.font.FONT_NEVIS`             .. image:: ../_static/font_nevis.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS`         .. image:: ../_static/font_open_sans.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS_BOLD`    .. image:: ../_static/font_open_sans_bold.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS_ITALIC`  .. image:: ../_static/font_open_sans_italic.png
+:py:class:`pygame_menu.font.FONT_OPEN_SANS_LIGHT`   .. image:: ../_static/font_open_sans_light.png
+:py:class:`pygame_menu.font.FONT_PT_SERIF`          .. image:: ../_static/font_pt_serif.png
+==================================================  =============================================
+
 
 Theme API
 ---------

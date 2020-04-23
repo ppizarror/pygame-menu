@@ -203,7 +203,6 @@ def main(test=False):
     )
 
     help_menu = pygame_menu.Menu(
-        center_content=True,
         height=600,  # Fullscreen
         onclose=pygame_menu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
         theme=help_theme,
@@ -241,7 +240,6 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu = pygame_menu.Menu(
-        center_content=True,
         enabled=False,
         height=400,
         theme=pygame_menu.themes.THEME_DARK,

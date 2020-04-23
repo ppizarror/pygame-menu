@@ -40,7 +40,6 @@ The content of the menu can be centered vertically after all widgets have
 been added by calling the method :py:meth:`pygame_menu.Menu.center_content`:
 
 .. code-block:: python
-    :emphasize-lines: 7
 
     menu = pygame_menu.Menu(...)
 
