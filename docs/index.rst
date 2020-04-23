@@ -46,8 +46,7 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
     def start_the_game():
         # Do the job here !
 
-    menu = pygame_menu.Menu(300, 400, pygame_menu.font.FONT_BEBAS,
-                           title="Welcome",
+    menu = pygame_menu.Menu(300, 400, "Welcome",
                            theme=pygame_menu.themes.THEME_BLUE)
 
     menu.add_text_input('Name :', default='John Doe')
