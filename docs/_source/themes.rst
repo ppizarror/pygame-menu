@@ -178,6 +178,12 @@ Available fonts                                     Preview
 :py:class:`pygame_menu.font.FONT_PT_SERIF`          .. image:: ../_static/font_pt_serif.png
 ==================================================  =============================================
 
+System fonts can also be used. The available system fonts can be listed using the following command in a python shell:
+
+.. code-block:: python
+
+    import pygame
+    print(pygame.font.get_fonts())
 
 Theme API
 ---------
