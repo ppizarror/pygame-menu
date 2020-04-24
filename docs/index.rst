@@ -25,7 +25,6 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
 
 .. code-block:: python
 
-    import os
     import pygame
     import pygame_menu
 
@@ -34,7 +33,6 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
 .. code-block:: python
 
     pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
     surface = pygame.display.set_mode((600, 400))
 
 3. Make your menu
