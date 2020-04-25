@@ -59,7 +59,7 @@ Introduction
 Pygame-menu is a python-pygame library for creating menus. It supports
 selectors, buttons, labels, color inputs, and text inputs, with many options to customize.
 
-Comprehensive documentation for the lastest version `v3+` is available at
+Comprehensive documentation for the latest version `v3+` is available at
 https://pygame-menu.readthedocs.io
 
 For pygame-menu `v2`, check out https://github.com/ppizarror/pygame-menu/blob/v2/README.md
