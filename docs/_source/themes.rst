@@ -103,9 +103,9 @@ Image drawing modes                                     Description
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_SIMPLE`      Write the image on top-left location
 =====================================================   =========================================
 
-Currently, :py:class:`Theme` class only supports images for py:attr:`background_color` and
-py:attr:`widget_background_color`. Also, only `IMAGE_MODE_FILL` drawing mode is valid for
-py:attr:`widget_background_color`.
+Currently, :py:class:`Theme` class only supports images for :py:attr:`background_color` and
+:py:attr:`widget_background_color`. Also, only `IMAGE_MODE_FILL` drawing mode is valid for
+:py:attr:`widget_background_color`.
 
 
 Menubar style
