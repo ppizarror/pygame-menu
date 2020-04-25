@@ -79,7 +79,7 @@ class Theme(object):
     :type selection_color: tuple, list
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
-    :param title_bar_style: Mode of drawing the title, use menubar widget modes
+    :param title_bar_style: Style of the title, use menubar widget styles
     :type title_bar_style: int
     :param title_font: Optional title font, if None use the Menu default font
     :type title_font: str, None

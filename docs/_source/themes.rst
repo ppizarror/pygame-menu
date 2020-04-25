@@ -103,9 +103,9 @@ Image drawing modes                                     Description
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_SIMPLE`      Write the image on top-left location
 =====================================================   =========================================
 
-Currently, :py:class:`Theme` class only supports images for ``background_image`` and
-``widget_background_image``. Also, only `IMAGE_MODE_FILL` drawing mode is valid for 
-``widget_background_image``.
+Currently, :py:class:`Theme` class only supports images for py:attr:`background_color` and
+py:attr:`widget_background_color`. Also, only `IMAGE_MODE_FILL` drawing mode is valid for
+py:attr:`widget_background_color`.
 
 
 Menubar style
@@ -138,7 +138,7 @@ chapter.
 The available selection effects are:
 
 ======================================================  ============================
-Class                                                   Selection effect            
+Class                                                   Selection effect
 ======================================================  ============================
 :py:class:`pygame_menu.widgets.HighlightSelection`      Rectangular highlight
 :py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
