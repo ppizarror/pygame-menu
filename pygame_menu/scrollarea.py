@@ -474,7 +474,8 @@ class ScrollArea(object):
 
         :param virtual: Position/Rect in the world surface reference
         :type virtual: :py:class:`pygame.Rect`, tuple, list
-        :return: None
+        :return: real rect or real position
+        :rtype: :py:class:`pygame.Rect`, tuple
         """
         assert isinstance(virtual, (pygame.Rect, tuple, list))
         offsets = self.get_offsets()
@@ -496,7 +497,8 @@ class ScrollArea(object):
 
         :param real: Position/Rect according scroll area origin
         :type real: :py:class:`pygame.Rect`, tuple, list
-        :return: None
+        :return: rect in world or position in world
+        :rtype: :py:class:`pygame.Rect`, tuple
         """
         assert isinstance(real, (pygame.Rect, tuple, list))
         offsets = self.get_offsets()
