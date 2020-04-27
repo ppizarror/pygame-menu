@@ -467,13 +467,15 @@ class ScrollArea(object):
         self._world = surface
         self._apply_size_changes()
 
-    def to_real_position(self, virtual):
+    def to_real_position(self, virtual, visible=False):
         """
         Return the real position/Rect according to the scroll area origin
         of a position/Rect in the world surface reference.
 
         :param virtual: Position/Rect in the world surface reference
         :type virtual: :py:class:`pygame.Rect`, tuple, list
+        :param visible: If a rect is given, return only the visible width/height
+        :type visible: bool
         :return: real rect or real position
         :rtype: :py:class:`pygame.Rect`, tuple
         """
@@ -484,6 +486,8 @@ class ScrollArea(object):
             rect = pygame.Rect(virtual)
             rect.x = self._rect.x + virtual.x - offsets[0]
             rect.y = self._rect.y + virtual.y - offsets[1]
+            if visible:
+                return self._view_rect.clip(rect)  # Visible width and height
             return rect
 
         x_coord = self._rect.x + virtual[0] - offsets[0]

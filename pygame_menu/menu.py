@@ -1281,7 +1281,7 @@ class Menu(object):
         rect = widget.get_rect()
         if widget.selected and widget.get_selection_effect():
             rect = widget.get_selection_effect().inflate(rect)
-        rect = self._current._scroll.to_real_position(rect)
+        rect = self._current._scroll.to_real_position(rect, visible=True)
 
         x1, y1, x2, y2 = rect.topleft + rect.bottomright
 
