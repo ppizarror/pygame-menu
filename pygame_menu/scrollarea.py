@@ -109,8 +109,6 @@ class ScrollArea(object):
         assert area_width > 0 and area_height > 0, \
             'area size must be greater than zero'
 
-        self._area_width = area_width
-        self._area_height = area_height
         self._rect = pygame.Rect(0.0, 0.0, area_width, area_height)
         self._world = world  # type: pygame.Surface
         self._scrollbars = []
@@ -239,35 +237,6 @@ class ScrollArea(object):
             return 0
         return max(0, self._world.get_height() - self._view_rect.height)
 
-    def get_position(self):
-        """
-        Return the position of the scroll.
-
-        :return: Position (x,y)
-        :rtype: tuple
-        """
-        return self._rect.x, self._rect.y
-
-    def get_world_size(self):
-        """
-        Return world size.
-
-        :return: width, height in pixels
-        :rtype: tuple
-        """
-        if self._world is None:
-            return 0, 0
-        return self._world.get_width(), self._world.get_height()
-
-    def get_area_size(self):
-        """
-        Return the area size.
-
-        :return: width, height in pixels
-        :rtype: tuple
-        """
-        return self._area_width, self._area_height
-
     def get_offsets(self):
         """
         Return the offset introduced by the scrollbars in the world.
@@ -291,7 +260,22 @@ class ScrollArea(object):
         :return: Pygame.Rect object
         :rtype: :py:class:`pygame.Rect`
         """
-        return self._rect
+        return self._rect.copy()
+
+    def get_scrollbar_thickness(self, orientation):
+        """
+        Return the scroll thickness of the area. If it's hidden return zero.
+
+        :param orientation: Orientation of the scroll
+        :type orientation: str
+        :return: Thickness in px
+        :rtype: int
+        """
+        if orientation == _locals.ORIENTATION_HORIZONTAL:
+            return self._rect.height - self._view_rect.height
+        elif orientation == _locals.ORIENTATION_VERTICAL:
+            return self._rect.width - self._view_rect.width
+        return 0
 
     def get_view_rect(self):
         """
@@ -365,20 +349,16 @@ class ScrollArea(object):
 
         return rect
 
-    def get_scrollbar_thickness(self, orientation):
+    def get_world_size(self):
         """
-        Return the scroll thickness of the area. If it's hidden return zero.
+        Return world size.
 
-        :param orientation: Orientation of the scroll
-        :type orientation: str
-        :return: Thickness in px
-        :rtype: int
+        :return: width, height in pixels
+        :rtype: tuple
         """
-        if orientation == _locals.ORIENTATION_HORIZONTAL:
-            return self._rect.height - self._view_rect.height
-        elif orientation == _locals.ORIENTATION_VERTICAL:
-            return self._rect.width - self._view_rect.width
-        return 0
+        if self._world is None:
+            return 0, 0
+        return self._world.get_width(), self._world.get_height()
 
     def _on_horizontal_scroll(self, value):
         """
