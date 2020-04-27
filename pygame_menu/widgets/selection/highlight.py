@@ -61,12 +61,10 @@ class HighlightSelection(Selection):
                                                  margin_top=margin_y / 2 + border_width,
                                                  margin_bottom=margin_y / 2 + border_width)
         self._border_width = border_width
-        self._margin_x = margin_x
-        self._margin_y = margin_y
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
         pygame.draw.rect(surface,
                          self.color,
-                         widget.get_rect().inflate(self._margin_x, self._margin_y),
+                         self.inflate(widget.get_rect()),
                          self._border_width)
