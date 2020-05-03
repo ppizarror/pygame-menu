@@ -1047,7 +1047,7 @@ class Menu(object):
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
                 ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
-            y_coord = self._widget_offset[1] + ysum + sel_bottom
+            y_coord = max(1, self._widget_offset[1]) + ysum + sel_bottom
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
