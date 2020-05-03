@@ -1047,7 +1047,7 @@ class Menu(object):
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
                 ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
-            y_coord = self._widget_offset[1] + ysum + sel_bottom
+            y_coord = max(1, self._widget_offset[1]) + ysum + sel_bottom
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
@@ -1062,7 +1062,7 @@ class Menu(object):
         max_x = -1e6
         max_y = -1e6
         for widget in self._widgets:  # type: _widgets.core.Widget
-            _, _, x, y = widget.get_relative_position()  # Use only bottom right position
+            x, y = widget.get_rect().bottomright
             max_x = max(max_x, x)
             max_y = max(max_y, y)
         return max_x, max_y
@@ -1277,7 +1277,13 @@ class Menu(object):
         if widget is None or not widget.active or not self._mouse_motion_selection:
             return
         window_width, window_height = pygame.display.get_surface().get_size()
-        x1, y1, x2, y2 = widget.get_absolute_position(self._current._scroll)
+
+        rect = widget.get_rect()
+        if widget.selected and widget.get_selection_effect():
+            rect = widget.get_selection_effect().inflate(rect)
+        rect = self._current._scroll.to_real_position(rect, visible=True)
+
+        x1, y1, x2, y2 = rect.topleft + rect.bottomright
 
         # Convert to integer
         x1 = int(x1)

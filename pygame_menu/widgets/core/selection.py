@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame
 from pygame_menu.utils import assert_color
 
 
@@ -87,6 +88,19 @@ class Selection(object):
         """
         _, l, _, r = self.get_margin()
         return l + r
+
+    def inflate(self, rect):
+        """
+        Grow or shrink the rectangle size according to margins.
+
+        :param rect: rectangle
+        :type rect: :py:class:`pygame.Rect`
+        """
+        assert isinstance(rect, pygame.Rect)
+        return pygame.Rect(rect.x - self.margin_left,
+                           rect.y - self.margin_top,
+                           rect.width + self.margin_left + self.margin_right,
+                           rect.height + self.margin_top + self.margin_bottom)
 
     def get_height(self):
         """

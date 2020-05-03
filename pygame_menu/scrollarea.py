@@ -109,8 +109,6 @@ class ScrollArea(object):
         assert area_width > 0 and area_height > 0, \
             'area size must be greater than zero'
 
-        self._area_width = area_width
-        self._area_height = area_height
         self._rect = pygame.Rect(0.0, 0.0, area_width, area_height)
         self._world = world  # type: pygame.Surface
         self._scrollbars = []
@@ -239,35 +237,6 @@ class ScrollArea(object):
             return 0
         return max(0, self._world.get_height() - self._view_rect.height)
 
-    def get_position(self):
-        """
-        Return the position of the scroll.
-
-        :return: Position (x,y)
-        :rtype: tuple
-        """
-        return self._rect.x, self._rect.y
-
-    def get_world_size(self):
-        """
-        Return world size.
-
-        :return: width, height in pixels
-        :rtype: tuple
-        """
-        if self._world is None:
-            return 0, 0
-        return self._world.get_width(), self._world.get_height()
-
-    def get_area_size(self):
-        """
-        Return the area size.
-
-        :return: width, height in pixels
-        :rtype: tuple
-        """
-        return self._area_width, self._area_height
-
     def get_offsets(self):
         """
         Return the offset introduced by the scrollbars in the world.
@@ -291,7 +260,22 @@ class ScrollArea(object):
         :return: Pygame.Rect object
         :rtype: :py:class:`pygame.Rect`
         """
-        return self._rect
+        return self._rect.copy()
+
+    def get_scrollbar_thickness(self, orientation):
+        """
+        Return the scroll thickness of the area. If it's hidden return zero.
+
+        :param orientation: Orientation of the scroll
+        :type orientation: str
+        :return: Thickness in px
+        :rtype: int
+        """
+        if orientation == _locals.ORIENTATION_HORIZONTAL:
+            return self._rect.height - self._view_rect.height
+        elif orientation == _locals.ORIENTATION_VERTICAL:
+            return self._rect.width - self._view_rect.width
+        return 0
 
     def get_view_rect(self):
         """
@@ -365,20 +349,16 @@ class ScrollArea(object):
 
         return rect
 
-    def get_scrollbar_thickness(self, orientation):
+    def get_world_size(self):
         """
-        Return the scroll thickness of the area. If it's hidden return zero.
+        Return world size.
 
-        :param orientation: Orientation of the scroll
-        :type orientation: str
-        :return: Thickness in px
-        :rtype: int
+        :return: width, height in pixels
+        :rtype: tuple
         """
-        if orientation == _locals.ORIENTATION_HORIZONTAL:
-            return self._rect.height - self._view_rect.height
-        elif orientation == _locals.ORIENTATION_VERTICAL:
-            return self._rect.width - self._view_rect.width
-        return 0
+        if self._world is None:
+            return 0, 0
+        return self._world.get_width(), self._world.get_height()
 
     def _on_horizontal_scroll(self, value):
         """
@@ -467,14 +447,17 @@ class ScrollArea(object):
         self._world = surface
         self._apply_size_changes()
 
-    def to_real_position(self, virtual):
+    def to_real_position(self, virtual, visible=False):
         """
         Return the real position/Rect according to the scroll area origin
         of a position/Rect in the world surface reference.
 
         :param virtual: Position/Rect in the world surface reference
         :type virtual: :py:class:`pygame.Rect`, tuple, list
-        :return: None
+        :param visible: If a rect is given, return only the visible width/height
+        :type visible: bool
+        :return: real rect or real position
+        :rtype: :py:class:`pygame.Rect`, tuple
         """
         assert isinstance(virtual, (pygame.Rect, tuple, list))
         offsets = self.get_offsets()
@@ -483,6 +466,8 @@ class ScrollArea(object):
             rect = pygame.Rect(virtual)
             rect.x = self._rect.x + virtual.x - offsets[0]
             rect.y = self._rect.y + virtual.y - offsets[1]
+            if visible:
+                return self._view_rect.clip(rect)  # Visible width and height
             return rect
 
         x_coord = self._rect.x + virtual[0] - offsets[0]
@@ -496,7 +481,8 @@ class ScrollArea(object):
 
         :param real: Position/Rect according scroll area origin
         :type real: :py:class:`pygame.Rect`, tuple, list
-        :return: None
+        :return: rect in world or position in world
+        :rtype: :py:class:`pygame.Rect`, tuple
         """
         assert isinstance(real, (pygame.Rect, tuple, list))
         offsets = self.get_offsets()
