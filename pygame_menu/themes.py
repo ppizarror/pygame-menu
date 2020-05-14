@@ -161,7 +161,7 @@ class Theme(object):
         self.title_font_size = self._get(kwargs, 'title_font_size',
                                          int, 40)  # type: int
         self.title_offset = self._get(kwargs, 'title_offset',
-                                      'vector2', (5, 0))  # type: tuple
+                                      'tuple2', (5, 0))  # type: tuple
         self.title_shadow = self._get(kwargs, 'title_shadow',
                                       bool, False)  # type: bool
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color',
@@ -177,15 +177,15 @@ class Theme(object):
         self.widget_background_color = self._get(kwargs, 'widget_background_color',
                                                  'color_image_none')  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate',
-                                                   'vector2', (16, 8))  # type: tuple
+                                                   'tuple2', (16, 8))  # type: tuple
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
                                           int, 30)  # type: int
         self.widget_margin = self._get(kwargs, 'widget_margin',
-                                       'vector2', (0, 10))  # type: tuple
+                                       'tuple2', (0, 10))  # type: tuple
         self.widget_offset = self._get(kwargs, 'widget_offset',
-                                       'vector2', (0, 0))  # type: tuple
+                                       'tuple2', (0, 0))  # type: tuple
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect',
                                                  _widgets.core.Selection,
                                                  _widgets.HighlightSelection())  # type: _widgets.core.Selection
