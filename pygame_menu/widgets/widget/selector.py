@@ -40,8 +40,8 @@ class Selector(Widget):
     """
     Selector widget.
 
-    :param label: Selector label text
-    :type label: str
+    :param title: Selector title
+    :type title: str
     :param elements: Elements of the selector
     :type elements: list
     :param selector_id: ID of the selector
@@ -57,7 +57,7 @@ class Selector(Widget):
     """
 
     def __init__(self,
-                 label,
+                 title,
                  elements,
                  selector_id='',
                  default=0,
@@ -65,7 +65,7 @@ class Selector(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
-        assert isinstance(label, str)
+        assert isinstance(title, str)
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
@@ -80,17 +80,19 @@ class Selector(Widget):
         assert isinstance(selector_id, str), 'ID must be a string'
         assert isinstance(default, int), 'default must be an integer'
 
-        super(Selector, self).__init__(widget_id=selector_id,
-                                       onchange=onchange,
-                                       onreturn=onreturn,
-                                       args=args,
-                                       kwargs=kwargs)
+        super(Selector, self).__init__(
+            title=title,
+            widget_id=selector_id,
+            onchange=onchange,
+            onreturn=onreturn,
+            args=args,
+            kwargs=kwargs
+        )
 
         self._elements = elements
         self._index = 0  # type: int
-        self._label = label
-        self._labelsize = 0.0  # type: float
         self._sformat = '{0}< {1} >'  # type: str
+        self._title_size = 0.0  # type: float
 
         # Apply default item
         default %= len(self._elements)
@@ -98,7 +100,7 @@ class Selector(Widget):
             self.right()
 
     def _apply_font(self):
-        self._labelsize = self._font.size(self._label)[0]
+        self._title_size = self._font.size(self._title)[0]
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
@@ -134,7 +136,7 @@ class Selector(Widget):
         self.change(*self._elements[self._index][1:])
 
     def _render(self):
-        string = self._sformat.format(self._label, self.get_value()[0])
+        string = self._sformat.format(self._title, self.get_value()[0])
         if not self._render_hash_changed(string, self.selected):
             return
         if self.selected:
@@ -211,11 +213,11 @@ class Selector(Widget):
                     mousex, _ = event.pos
                     topleft, _ = self._rect.topleft
                     topright, _ = self._rect.topright
-                    dist = mousex - (topleft + self._labelsize)  # Distance from label
+                    dist = mousex - (topleft + self._title_size)  # Distance from label
                     if dist > 0:  # User clicked the options, not label
 
                         # Position in percentage, if <0.5 user clicked left
-                        pos = dist / float(topright - topleft - self._labelsize)
+                        pos = dist / float(topright - topleft - self._title_size)
                         if pos <= 0.5:
                             self.left()
                         else:

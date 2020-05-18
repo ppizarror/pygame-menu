@@ -52,6 +52,7 @@ except ImportError:
         """
         pass
 
+
     def paste():
         """
         Paste method.
@@ -60,6 +61,7 @@ except ImportError:
         :rtype: str
         """
         return ''
+
 
     class PyperclipException(RuntimeError):
         """
@@ -72,8 +74,8 @@ class TextInput(Widget):
     """
     Text input widget.
 
-    :param label: Input label text
-    :type label: str
+    :param title: Text input title
+    :type title: str
     :param textinput_id: ID of the text input
     :type textinput_id: str
     :param input_type: Type of data
@@ -121,7 +123,7 @@ class TextInput(Widget):
     """
 
     def __init__(self,
-                 label='',
+                 title='',
                  textinput_id='',
                  input_type=_locals.INPUT_TEXT,
                  input_underline='',
@@ -145,7 +147,7 @@ class TextInput(Widget):
                  valid_chars=None,
                  *args,
                  **kwargs):
-        assert isinstance(label, str)
+        assert isinstance(title, str)
         assert isinstance(textinput_id, str)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
@@ -170,11 +172,14 @@ class TextInput(Widget):
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
 
-        super(TextInput, self).__init__(widget_id=textinput_id,
-                                        onchange=onchange,
-                                        onreturn=onreturn,
-                                        args=args,
-                                        kwargs=kwargs)
+        super(TextInput, self).__init__(
+            title=title,
+            widget_id=textinput_id,
+            onchange=onchange,
+            onreturn=onreturn,
+            args=args,
+            kwargs=kwargs
+        )
 
         self._input_string = ''  # Inputted text
         self._ignore_keys = (  # Ignore keys on input-gathering events
@@ -255,8 +260,6 @@ class TextInput(Widget):
         self._input_underline = input_underline
         self._input_underline_size = 0.0  # type: float
         self._keychar_size = {'': 0}  # type: dict
-        self._label = label
-        self._label_size = 0.0  # type: float
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygame_menu__last_render_string__'  # type: str
         self._last_rendered_surface = None  # type: (pygame.Surface,None)
@@ -269,10 +272,11 @@ class TextInput(Widget):
         self._password = password
         self._password_char = password_char
         self._tab_size = tab_size
+        self._title_size = 0.0  # type: float
 
     def _apply_font(self):
         self._ellipsis_size = self._font.size(self._ellipsis)[0]
-        self._label_size = self._font.size(self._label)[0]
+        self._title_size = self._font.size(self._title)[0]
 
         # Generate the underline surface
         self._input_underline_size = self._font.size(self._input_underline)[0]
@@ -344,7 +348,7 @@ class TextInput(Widget):
                                                 self._rect.y + self._cursor_surface_pos[1]))
 
     def _render(self):
-        string = self._label + self._get_input_string()  # Render string
+        string = self._title + self._get_input_string()  # Render string
 
         if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
                                          self._selection_enabled, self.active):
@@ -403,8 +407,8 @@ class TextInput(Widget):
             string_init = string[self._renderbox[0]:pos[0]]
             string_final = string[self._renderbox[0]:pos[1]]
 
-            x1 = self._cursor_offset + self._font.size(self._label + string_init)[0]
-            x2 = self._cursor_offset + self._font.size(self._label + string_final)[0] + 1
+            x1 = self._cursor_offset + self._font.size(self._title + string_init)[0]
+            x2 = self._cursor_offset + self._font.size(self._title + string_final)[0] + 1
 
             self._last_selection_render[0] = self._selection_box[0]
             self._last_selection_render[1] = self._selection_box[1]
@@ -413,7 +417,7 @@ class TextInput(Widget):
             if x <= 1:
                 self._selection_surface = None
                 return
-            y = self._font.size(self._label)[1]
+            y = self._font.size(self._title)[1]
 
             # Add ellipsis
             delta = self._ellipsis_size
@@ -481,8 +485,8 @@ class TextInput(Widget):
             current_rect = self._surface.get_rect()  # type: pygame.Rect
             menu_rect = menu.get_rect()
             posx2 = menu_rect.x + menu_rect.width
-            space_between_label = posx2 - self._label_size - self._rect.x
-            char = math.ceil(space_between_label * 1.0 / self._input_underline_size)  # floor does not work
+            space_between_title = posx2 - self._title_size - self._rect.x
+            char = math.ceil(space_between_title * 1.0 / self._input_underline_size)  # floor does not work
 
             # If char limit
             max_width_current = 0
@@ -503,14 +507,14 @@ class TextInput(Widget):
             underline = self.font_render_string(underline_string, color)
 
             # Create a new surface
-            new_width = max(self._label_size + underline.get_size()[0],
+            new_width = max(self._title_size + underline.get_size()[0],
                             max_width_current,
                             self._last_rendered_surface_underline_width)
             new_surface = make_surface(new_width + 1, current_rect.height + 3, alpha=True)
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))
-            new_surface.blit(underline, (self._label_size - 1, 6))  # Position (x, y)
+            new_surface.blit(underline, (self._title_size - 1, 6))  # Position (x, y)
             self._last_rendered_surface_with_underline = new_surface
             self._last_rendered_surface_underline_width = new_width
         else:
@@ -541,10 +545,10 @@ class TextInput(Widget):
         # Calculate x position
         if self._maxwidth == 0:  # If no limit is provided
             cursor_x_pos = self._cursor_offset + \
-                           self._font.size(self._label + string[:self._cursor_position])[0]
+                           self._font.size(self._title + string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             string = string[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
-            cursor_x_pos = self._cursor_offset + self._font.size(self._label + string)[0]
+            cursor_x_pos = self._cursor_offset + self._font.size(self._title + string)[0]
 
             # Add ellipsis
             delta = self._ellipsis_size
@@ -557,7 +561,7 @@ class TextInput(Widget):
             else:
                 delta *= 0
             cursor_x_pos += delta
-        if self._cursor_position > 0 or (self._label and self._cursor_position == 0):
+        if self._cursor_position > 0 or (self._title and self._cursor_position == 0):
             # Without this, the cursor is invisible when self._cursor_position > 0:
             cursor_x_pos -= self._cursor_surface.get_width()
 
@@ -830,7 +834,7 @@ class TextInput(Widget):
         cursor_pos = len(string)
         for i in range(len(string)):
             size_sum += string_size[i] / 2
-            if self._label_size + size_sum >= mousex:
+            if self._title_size + size_sum >= mousex:
                 cursor_pos = i
                 break
             size_sum += string_size[i] / 2
@@ -1167,8 +1171,8 @@ class TextInput(Widget):
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
-            text[0:text_end] + \
-            self._input_string[self._cursor_position:len(self._input_string)]
+                     text[0:text_end] + \
+                     self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

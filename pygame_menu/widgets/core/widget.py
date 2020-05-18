@@ -45,6 +45,8 @@ class Widget(object):
     """
     Widget abstract class.
 
+    :param title: Widget title
+    :type title: str
     :param widget_id: Widget identifier
     :type widget_id: str
     :param onchange: Callback when changing the selector
@@ -56,12 +58,14 @@ class Widget(object):
     """
 
     def __init__(self,
+                 title='',
                  widget_id='',
                  onchange=None,
                  onreturn=None,
                  args=None,
                  kwargs=None
                  ):
+        assert isinstance(title, str)
         assert isinstance(widget_id, str)
         if onchange:
             assert callable(onchange), 'onchange must be callable or None'
@@ -75,10 +79,11 @@ class Widget(object):
         self._background_color = None
         self._background_inflate = (0, 0)
         self._id = str(widget_id)
-        self._selected_rect = None  # type: (pygame.rect.Rect,None)
-        self._rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (pygame.Rect,None)
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
+        self._rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (pygame.Rect,None)
+        self._selected_rect = None  # type: (pygame.rect.Rect,None)
+        self._title = title
 
         self._args = args or []  # type: list
         self._kwargs = kwargs or {}  # type: dict
@@ -117,7 +122,7 @@ class Widget(object):
         # then the widget should render and update the hash
         self._last_render_hash = 0  # type: int
 
-        # Stores the last render surface size, updated by
+        # Stores the last render surface size, updated by _check_render_size_changed()
         self._last_render_surface_size = (0, 0)
 
         self._selection_effect = None  # type: Selection
@@ -158,6 +163,29 @@ class Widget(object):
             self._last_render_hash = _hash
             return True
         return False
+
+    def set_title(self, title):
+        """
+        Update the widget title.
+
+        :param title: New title
+        :type title: str
+        :return: None
+        """
+        assert isinstance(title, str)
+        self._title = title
+        self._apply_font()
+        self._render()
+        self._check_render_size_changed()
+
+    def get_title(self):
+        """
+        Return the widget title.
+
+        :return: Widget title
+        :rtype: str
+        """
+        return self._title
 
     def set_background_color(self, color, inflate=(0, 0)):
         """
@@ -384,7 +412,10 @@ class Widget(object):
     def _check_render_size_changed(self):
         """
         Check the size changed after rendering.
-        This method should be used only on widgets that can change in size.
+        This method should be used only on widgets that can change in size, or if the size
+        is changed during execution time (like set_title).
+        The update status (needs update if render size changed) is returned by
+        Widget.surface_needs_update() method.
 
         :return: Boolean, if True the size changed
         :rtype: bool

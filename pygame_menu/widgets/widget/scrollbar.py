@@ -90,11 +90,13 @@ class ScrollBar(Widget):
         assert isinstance(page_ctrl_thick, (int, float))
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
-        super(ScrollBar, self).__init__(widget_id=scrollbar_id,
-                                        onchange=onchange,
-                                        onreturn=onreturn,
-                                        args=args,
-                                        kwargs=kwargs)
+        super(ScrollBar, self).__init__(
+            widget_id=scrollbar_id,
+            onchange=onchange,
+            onreturn=onreturn,
+            args=args,
+            kwargs=kwargs
+        )
         self._values_range = list(values_range)
         self.scrolling = False  # type: bool
         self._orientation = 0  # type: int
