@@ -87,6 +87,17 @@ class Button(Widget):
         self._surface = self._render_string(self._label, color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
+    def set_title(self, label):
+        """
+        Update button title/label.
+
+        :param label: New button title
+        :type label: str
+        :return: None
+        """
+        self._label = label
+        self._render()
+
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
