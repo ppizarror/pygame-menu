@@ -126,6 +126,7 @@ class ScrollBar(Widget):
     def _apply_size_changes(self):
         """
         Apply scrollbar changes.
+
         :return: None
         """
         dims = ('width', 'height')
@@ -181,6 +182,7 @@ class ScrollBar(Widget):
     def get_value(self):
         """
         Return the value according to the slider position.
+
         :return: Position in pixels
         :rtype: int
         """
@@ -217,11 +219,13 @@ class ScrollBar(Widget):
         """
         Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
+
         :param pixels: Number of pixels to scroll
-        :type pixels: int
+        :type pixels: int, float
         :return: True is scroll position has changed
         :rtype: bool
         """
+        assert isinstance(pixels, (int, float))
         if not pixels:
             return False
 
@@ -245,6 +249,7 @@ class ScrollBar(Widget):
     def set_length(self, value):
         """
         Set the length of the page control area.
+
         :param value: Length of the area
         :type value: int, float
         :return: None
@@ -258,6 +263,7 @@ class ScrollBar(Widget):
     def set_maximum(self, value):
         """
         Set the greatest acceptable value.
+
         :param value: Maximum value
         :type value: int, float
         :return: None
@@ -269,6 +275,7 @@ class ScrollBar(Widget):
     def set_minimum(self, value):
         """
         Set the smallest acceptable value.
+
         :param value: Minimum value
         :type value: int, float
         :return: None
@@ -280,7 +287,8 @@ class ScrollBar(Widget):
     def set_orientation(self, orientation):
         """
         Set the scroll bar orientation to vertical or horizontal.
-        :param orientation: Widget orientation, could be ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+
+        :param orientation: Widget orientation, could be `ORIENTATION_HORIZONTAL / ORIENTATION_VERTICAL`
         :type orientation: str
         :return: None
         """
@@ -299,10 +307,12 @@ class ScrollBar(Widget):
         The length of the slider is related to this value, and typically
         represents the proportion of the document area shown in a scrolling
         view.
+
         :param value: Page step
-        :type value: int
+        :type value: int, float
         :return: None
         """
+        assert isinstance(value, (int, float))
         assert 0 < value, 'Page step shall be > 0'
 
         # Slider length shall represent the same ratio
@@ -317,10 +327,12 @@ class ScrollBar(Widget):
     def set_value(self, value):
         """
         Set the position of the scrollbar.
+
         :param value: Position
         :type value: int, float
         :return: None
         """
+        assert isinstance(value, (int, float))
         assert self._values_range[0] <= value <= self._values_range[1], \
             '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
