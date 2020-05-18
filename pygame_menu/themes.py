@@ -77,6 +77,8 @@ class Theme(object):
     :type scrollbar_thick: int, float
     :param selection_color: Color of the selector widget
     :type selection_color: tuple, list
+    :param surface_clear_color: Surface clear color before applying background function
+    :type surface_clear_color: tuple, list
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
     :param title_bar_style: Style of the title, use menubar widget styles
@@ -150,6 +152,8 @@ class Theme(object):
                                          (int, float), 20)  # type: (int,float)
         self.selection_color = self._get(kwargs, 'selection_color',
                                          'color', (255, 255, 255))  # type: tuple
+        self.surface_clear_color = self._get(kwargs, 'surface_clear_color',
+                                             'color', (0, 0, 0))  # type: tuple
         self.title_background_color = self._get(kwargs, 'title_background_color',
                                                 'color', (70, 70, 70))  # type: tuple
         self.title_bar_style = self._get(kwargs, 'title_bar_style',
@@ -229,6 +233,7 @@ class Theme(object):
         self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
         self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
         self.selection_color = self._format_opacity(self.selection_color)
+        self.surface_clear_color = self._format_opacity(self.surface_clear_color)
         self.title_background_color = self._format_opacity(self.title_background_color)
         self.title_font_color = self._format_opacity(self.title_font_color)
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)

@@ -44,8 +44,8 @@ class ColorInput(TextInput):
     """
     Color input widget.
 
-    :param label: Input label text
-    :type label: str
+    :param title: Color input title
+    :type title: str
     :param colorinput_id: ID of the text input
     :type colorinput_id: str
     :param color_type: Type of color input (rgb, hex)
@@ -73,7 +73,7 @@ class ColorInput(TextInput):
     """
 
     def __init__(self,
-                 label='',
+                 title='',
                  colorinput_id='',
                  color_type=TYPE_RGB,
                  input_separator=',',
@@ -87,7 +87,7 @@ class ColorInput(TextInput):
                  repeat_mouse_interval_ms=100,
                  *args,
                  **kwargs):
-        assert isinstance(label, str)
+        assert isinstance(title, str)
         assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
         assert isinstance(input_separator, str)
@@ -119,7 +119,7 @@ class ColorInput(TextInput):
         _maxwidth = 0
         _password = False
         super(ColorInput, self).__init__(
-            label=label,
+            title=title,
             textinput_id=colorinput_id,
             input_type=_input_type,
             input_underline=input_underline,

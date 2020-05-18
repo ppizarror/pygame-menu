@@ -37,16 +37,18 @@ class Label(Widget):
     """
     Label widget.
 
-    :param label: Text of the label
-    :type label: str
+    :param title: Label title/text
+    :type title: str
     :param label_id: Label ID
     :type label_id: str
     """
 
-    def __init__(self, label, label_id=''):
-        assert isinstance(label, str)
-        super(Label, self).__init__(widget_id=label_id)
-        self._label = label
+    def __init__(self, title, label_id=''):
+        assert isinstance(title, str)
+        super(Label, self).__init__(
+            title=title,
+            widget_id=label_id
+        )
         self.is_selectable = False
 
     def _apply_font(self):
@@ -55,14 +57,14 @@ class Label(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
-        if self._label != '':  # The minimal width of any surface is 1px, so the background will be a line
+        if self._title != '':  # The minimal width of any surface is 1px, so the background will be a line
             self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
-        if not self._render_hash_changed(self._label, self._font_color):
+        if not self._render_hash_changed(self._title, self._font_color):
             return
-        self._surface = self._render_string(self._label, self._font_color)
+        self._surface = self._render_string(self._title, self._font_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
     # noinspection PyMissingOrEmptyDocstring

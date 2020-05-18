@@ -8,3 +8,4 @@ Image
 .. autoclass:: pygame_menu.widgets.Image
     :members:
     :show-inheritance:
+    :inherited-members:

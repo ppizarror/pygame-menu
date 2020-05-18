@@ -50,8 +50,8 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-    :param label: Title of the Menu
-    :type label: str
+    :param title: Title of the menubar
+    :type title: str
     :param width: Width of the widget, generally width of the Menu
     :type width: int, float
     :param background_color: Background color
@@ -71,7 +71,7 @@ class MenuBar(Widget):
     """
 
     def __init__(self,
-                 label,
+                 title,
                  width,
                  background_color,
                  back_box=False,
@@ -80,26 +80,28 @@ class MenuBar(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
-        assert isinstance(label, str)
+        assert isinstance(title, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
         assert_color(background_color)
 
         # MenuBar has no ID
-        super(MenuBar, self).__init__(onchange=onchange,
-                                      onreturn=onreturn,
-                                      args=args,
-                                      kwargs=kwargs)
+        super(MenuBar, self).__init__(
+            title=title,
+            onchange=onchange,
+            onreturn=onreturn,
+            args=args,
+            kwargs=kwargs
+        )
 
-        self._background_color = background_color
         self._backbox = back_box
         self._backbox_pos = None  # type: (tuple,None)
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
-        self._label = label
-        self._style = mode
+        self._background_color = background_color
         self._offsetx = 0.0
         self._offsety = 0.0
         self._polygon_pos = None  # type: (tuple,None)
+        self._style = mode
         self._width = width
 
     def _apply_font(self):
@@ -120,24 +122,15 @@ class MenuBar(Widget):
                      (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
 
-    def get_title(self):
-        """
-        Return the title of the Menu.
-
-        :return: Menu title
-        :rtype: str
-        """
-        return self._label
-
     def _render(self):
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
-        if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._label,
+        if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title,
                                          self._font_selected_color, menu_prev_condition):
             return
 
-        self._surface = self._render_string(self._label, self._font_selected_color)
+        self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 
         if self._style == MENUBAR_STYLE_ADAPTIVE:
@@ -287,7 +280,7 @@ class MenuBar(Widget):
         assert isinstance(title, str)
         assert isinstance(offsetx, (int, float))
         assert isinstance(offsety, (int, float))
-        self._label = title
+        self._title = title
         self._offsety = offsety
         self._offsetx = offsetx
 

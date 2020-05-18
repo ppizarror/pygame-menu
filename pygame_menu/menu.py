@@ -242,7 +242,7 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Create Menu bar (title)
-        self._menubar = _widgets.MenuBar(label=title,
+        self._menubar = _widgets.MenuBar(title=title,
                                          width=self._width,
                                          back_box=back_box,
                                          mode=self._theme.title_bar_style,
@@ -434,10 +434,10 @@ class Menu(object):
             cursor_color=self._theme.cursor_color,
             input_separator=input_separator,
             input_underline=input_underline,
-            label=title,
             onchange=onchange,
             onreturn=onreturn,
             prev_size=previsualization_width,
+            title=title,
             **kwargs
         )
         self._configure_widget(widget=widget, **attributes)
@@ -543,14 +543,14 @@ class Menu(object):
         # Wrap text to menu width (imply additional calls to render functions)
         if max_char < 0:
             dummy_attrs = self._filter_widget_attributes(kwargs.copy())
-            dummy = _widgets.Label(label=title)
+            dummy = _widgets.Label(title=title)
             self._configure_widget(dummy, **dummy_attrs)
             max_char = int(1.0 * self._width * len(title) / dummy.get_rect().width)
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
             attributes = self._filter_widget_attributes(kwargs)
-            widget = _widgets.Label(label=title, label_id=label_id)
+            widget = _widgets.Label(title=title, label_id=label_id)
             widget.is_selectable = selectable
             self._configure_widget(widget=widget, **attributes)
             self._append_widget(widget)
@@ -626,10 +626,10 @@ class Menu(object):
         widget = _widgets.Selector(
             default=default,
             elements=items,
-            label=title,
             onchange=onchange,
             onreturn=onreturn,
             selector_id=selector_id,
+            title=title,
             **kwargs
         )
         self._configure_widget(widget=widget, **attributes)
@@ -727,7 +727,6 @@ class Menu(object):
             cursor_selection_enable=cursor_selection_enable,
             input_type=input_type,
             input_underline=input_underline,
-            label=title,
             maxchar=maxchar,
             maxwidth=maxwidth,
             onchange=onchange,
@@ -735,6 +734,7 @@ class Menu(object):
             password=password,
             tab_size=tab_size,
             textinput_id=textinput_id,
+            title=title,
             valid_chars=valid_chars,
             **kwargs
         )
@@ -1225,7 +1225,7 @@ class Menu(object):
         self._widget_offset[1] = self._height * new_pos
         self._current._widgets_surface = None  # Rebuild on the next draw
 
-    def draw(self, surface):
+    def draw(self, surface, clear_surface=False):
         """
         Draw the current Menu into the given surface.
 
@@ -1233,8 +1233,13 @@ class Menu(object):
 
         :param surface: Pygame surface to draw the Menu
         :type surface: :py:class:`pygame.Surface`
+        :param clear_surface: Clear surface using theme default color
+        :type clear_surface: bool
         :return: None
         """
+        assert isinstance(surface, pygame.Surface)
+        assert isinstance(clear_surface, bool)
+
         if not self.is_enabled():
             raise RuntimeError('menu is not enabled, it cannot be drawn')
 
@@ -1243,7 +1248,11 @@ class Menu(object):
         if not self._current._widgets_surface:
             self._current._build_widget_surface()
 
-        # Fill the surface with background function (set from mainloop)
+        # Clear surface
+        if clear_surface:
+            surface.fill(self._theme.surface_clear_color)
+
+        # Call background function (set from mainloop)
         if self._top._background_function is not None:
             self._top._background_function()
 
@@ -1408,9 +1417,6 @@ class Menu(object):
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
 
-        # Surface needs an update
-        menu_surface_needs_update = False
-
         selected_widget = None  # type: _widgets.core.Widget
         if len(self._current._widgets) >= 1:
             selected_widget = self._current._widgets[self._current._index % len(self._current._widgets)]
@@ -1542,16 +1548,15 @@ class Menu(object):
                         new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
                         new_event.pos = self._current._scroll.to_world_position(event.pos)
                         selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
-                        menu_surface_needs_update = menu_surface_needs_update or selected_widget.surface_needs_update()
                         updated = True  # It is updated
                         break
 
-        # Check if the position has changed
+        # Check if the menu widgets size changed, if True, updates the surface
+        # forcing the rendering of all widgets
+        menu_surface_needs_update = False
         if len(self._current._widgets) > 0:
-            menu_surface_needs_update = menu_surface_needs_update or self._current._widgets[
-                self._current._index].surface_needs_update()
-
-        # This forces the rendering of all widgets
+            for widget in self._current._widgets:  # type: _widgets.core.Widget
+                menu_surface_needs_update = menu_surface_needs_update or widget.surface_needs_update()
         if menu_surface_needs_update:
             self._current._widgets_surface = None
 
@@ -1603,7 +1608,7 @@ class Menu(object):
         while True:
             self._current._clock.tick(fps_limit)
 
-            self.draw(surface=surface)
+            self.draw(surface=surface, clear_surface=True)
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break

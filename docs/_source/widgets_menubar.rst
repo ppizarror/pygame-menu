@@ -8,3 +8,4 @@ MenuBar
 .. autoclass:: pygame_menu.widgets.MenuBar
     :members:
     :show-inheritance:
+    :inherited-members:

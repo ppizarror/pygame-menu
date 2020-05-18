@@ -39,8 +39,8 @@ class Button(Widget):
     """
     Button widget.
 
-    :param label: Text of the button
-    :type label: str
+    :param title: Button title
+    :type title: str
     :param button_id: Button ID
     :type button_id: str
     :param onchange: Callback when changing the selector
@@ -54,19 +54,21 @@ class Button(Widget):
     """
 
     def __init__(self,
-                 label,
+                 title,
                  button_id='',
                  onchange=None,
                  onreturn=None,
                  *args,
                  **kwargs):
-        assert isinstance(label, str)
-        super(Button, self).__init__(widget_id=button_id,
-                                     onchange=onchange,
-                                     onreturn=onreturn,
-                                     args=args,
-                                     kwargs=kwargs)
-        self._label = label
+        assert isinstance(title, str)
+        super(Button, self).__init__(
+            title=title,
+            widget_id=button_id,
+            onchange=onchange,
+            onreturn=onreturn,
+            args=args,
+            kwargs=kwargs
+        )
 
     def _apply_font(self):
         pass
@@ -78,25 +80,14 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
-        if not self._render_hash_changed(self.selected, self._label):
+        if not self._render_hash_changed(self.selected, self._title):
             return
         if self.selected:
             color = self._font_selected_color
         else:
             color = self._font_color
-        self._surface = self._render_string(self._label, color)
+        self._surface = self._render_string(self._title, color)
         self._rect.width, self._rect.height = self._surface.get_size()
-
-    def set_title(self, label):
-        """
-        Update button title/label.
-
-        :param label: New button title
-        :type label: str
-        :return: None
-        """
-        self._label = label
-        self._render()
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
