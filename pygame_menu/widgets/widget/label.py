@@ -57,8 +57,9 @@ class Label(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
-        if self._title != '':  # The minimal width of any surface is 1px, so the background will be a line
-            self._fill_background_color(surface)
+        if self._title == '':  # The minimal width of any surface is 1px, so the background will be a line
+            return
+        self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
