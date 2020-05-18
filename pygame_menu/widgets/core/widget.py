@@ -103,11 +103,12 @@ class Widget(object):
 
         # Modified in set_font() method
         self._font = None  # type: (pygame.font.Font,None)
-        self._font_name = ''  # type: str
-        self._font_size = 0  # type: int
-        self._font_color = (0, 0, 0)  # type: tuple
-        self._font_selected_color = (255, 255, 255)  # type: tuple
         self._font_antialias = True  # type: bool
+        self._font_background_color = None  # type: (tuple, None)
+        self._font_color = (0, 0, 0)  # type: tuple
+        self._font_name = ''  # type: str
+        self._font_selected_color = (255, 255, 255)  # type: tuple
+        self._font_size = 0  # type: int
 
         # Text shadow
         self._shadow = False  # type: bool
@@ -396,7 +397,7 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def font_render_string(self, text, color=(0, 0, 0)):
+    def _font_render_string(self, text, color=(0, 0, 0)):
         """
         Render text.
 
@@ -407,8 +408,9 @@ class Widget(object):
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
+        assert isinstance(text, str)
         assert isinstance(color, tuple)
-        return self._font.render(text, self._font_antialias, color)
+        return self._font.render(text, self._font_antialias, color, self._font_background_color)
 
     def _check_render_size_changed(self):
         """
@@ -438,7 +440,7 @@ class Widget(object):
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
-        text = self.font_render_string(string, color)
+        text = self._font_render_string(string, color)
 
         # Create surface
         surface = make_surface(width=text.get_width(),
@@ -447,7 +449,7 @@ class Widget(object):
 
         # Draw shadow first
         if self._shadow:
-            text_bg = self._font.render(string, self._font_antialias, self._shadow_color)
+            text_bg = self._font_render_string(string, self._shadow_color)
             surface.blit(text_bg, self._shadow_tuple)
 
         surface.blit(text, (0, 0))
@@ -473,7 +475,7 @@ class Widget(object):
             return True
         return False
 
-    def set_font(self, font, font_size, color, selected_color, antialias=True):
+    def set_font(self, font, font_size, color, selected_color, background_color, antialias=True):
         """
         Set the text font.
 
@@ -485,6 +487,8 @@ class Widget(object):
         :type color: tuple
         :param selected_color: Text color when widget is selected
         :type selected_color: tuple
+        :param background_color: Font background color
+        :type background_color: tuple
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :type antialias: bool
         :return: None
@@ -493,13 +497,17 @@ class Widget(object):
         assert isinstance(font_size, int)
         assert isinstance(color, tuple)
         assert isinstance(selected_color, tuple)
+        assert isinstance(background_color, (tuple, type(None)))
         assert isinstance(antialias, bool)
-        self._font_name = font
+
         self._font = _fonts.get_font(font, font_size)
-        self._font_size = font_size
-        self._font_color = color
-        self._font_selected_color = selected_color
         self._font_antialias = antialias
+        self._font_background_color = background_color
+        self._font_color = color
+        self._font_name = font
+        self._font_selected_color = selected_color
+        self._font_size = font_size
+
         self._apply_font()
 
     def get_font_info(self):
@@ -740,8 +748,10 @@ class Widget(object):
         """
         if len(self._events) == 0:
             return events
-        events = events.copy()
+        copy_events = []
+        for e in events:
+            copy_events.append(e)
         for e in self._events:
-            events.append(e)
+            copy_events.append(e)
         self._events = []
-        return events
+        return copy_events

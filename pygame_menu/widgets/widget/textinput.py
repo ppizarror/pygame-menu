@@ -285,11 +285,11 @@ class TextInput(Widget):
         self._input_underline_size = self._font.size(self._input_underline)[0]
 
         # Size of maxwidth if not zero
-        self._maxwidthsize = self.font_render_string('O' * self._maxwidth_base).get_size()[0]
+        self._maxwidthsize = self._font_render_string('O' * self._maxwidth_base).get_size()[0]
 
         # Update password char size
         if self._password:
-            password_size = self.font_render_string(self._password_char).get_size()[0]
+            password_size = self._font_render_string(self._password_char).get_size()[0]
             if password_size == 0:
                 raise ValueError(
                     'Password character is not valid, the size of the font is zero, use another character or change the font')
@@ -498,7 +498,7 @@ class TextInput(Widget):
                 basechar = 'O'
                 if self._password:
                     basechar = self._password_char
-                max_size = self.font_render_string(basechar * max_chars)
+                max_size = self._font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
                 maxchar_char = math.ceil((max_size + 4 * self._ellipsis_size) / self._input_underline_size)
                 char = min(char, maxchar_char)
@@ -507,7 +507,7 @@ class TextInput(Widget):
             underline_string = self._input_underline * int(char)
 
             # Render char
-            underline = self.font_render_string(underline_string, color)
+            underline = self._font_render_string(underline_string, color)
 
             # Create a new surface
             new_width = max(self._title_size + underline.get_size()[0],
@@ -1122,7 +1122,7 @@ class TextInput(Widget):
         """
         if char in self._keychar_size.keys():
             return self._keychar_size[char]
-        self._keychar_size[char] = self.font_render_string(char).get_size()[0]
+        self._keychar_size[char] = self._font_render_string(char).get_size()[0]
         return self._keychar_size[char]
 
     def _paste(self):
