@@ -8,3 +8,4 @@ Selector
 .. autoclass:: pygame_menu.widgets.Selector
     :members:
     :show-inheritance:
+    :inherited-members:

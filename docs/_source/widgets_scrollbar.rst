@@ -8,3 +8,4 @@ ScrollBar
 .. autoclass:: pygame_menu.widgets.ScrollBar
     :members:
     :show-inheritance:
+    :inherited-members:
