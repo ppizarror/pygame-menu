@@ -78,6 +78,7 @@ class Widget(object):
         self._alignment = _locals.ALIGN_CENTER
         self._background_color = None
         self._background_inflate = (0, 0)
+        self._events = []  # type: list
         self._id = str(widget_id)
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
@@ -590,6 +591,7 @@ class Widget(object):
             self._focus()
         else:
             self._blur()
+            self._events = []  # Remove events
         self._render()
 
     def _focus(self):
@@ -717,3 +719,29 @@ class Widget(object):
         :rtype: bool
         """
         raise NotImplementedError('override is mandatory')
+
+    def _add_event(self, event):
+        """
+        Add a custom event to the widget for the next update().
+
+        :param event: Custom event
+        :type event: :py:class:`pygame.event.Event`
+        """
+        self._events.append(event)
+
+    def _merge_events(self, events):
+        """
+        Append widget events to events list.
+
+        :param events: Event list
+        :type events: list[:py:class:`pygame.event.Event`]
+        :return: Augmented event list
+        :rtype: list[:py:class:`pygame.event.Event`]
+        """
+        if len(self._events) == 0:
+            return events
+        events = events.copy()
+        for e in self._events:
+            events.append(e)
+        self._events = []
+        return events
