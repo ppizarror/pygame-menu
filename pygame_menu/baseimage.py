@@ -98,6 +98,22 @@ class BaseImage(object):
         self._surface = pygame.image.load(image_path)  # type: pygame.Surface
         self._original_surface = self._surface.copy()
 
+    def __str__(self):
+        """
+        :return: String definition of the object
+        :rtype: str
+        """
+        msg = 'BaseImage Object {3}\n\tPath: {0}\n\tDrawing mode: {1}\n\tDrawing offset: {2}'
+        return msg.format(self._filepath, self._drawing_mode, self._drawing_offset, hex(id(self)))
+
+    def __repr__(self):
+        """
+        Prints the object.
+
+        :return: None
+        """
+        print(self.__str__())
+
     def get_size(self):
         """
         Return the size in pixels of the image.
