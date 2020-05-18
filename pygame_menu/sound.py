@@ -207,6 +207,7 @@ class Sound(object):
         """
         assert isinstance(sound_type, str)
         assert isinstance(sound_file, (str, type(None)))
+        assert isinstance(volume, float)
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
         assert isinstance(fade_ms, (int, float))
@@ -261,6 +262,7 @@ class Sound(object):
         :type volume: float
         :return: None
         """
+        assert isinstance(volume, float)
         sound_dir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
 
         # Must be in the same order of self._type_sounds

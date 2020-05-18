@@ -226,6 +226,7 @@ class BaseImage(object):
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
+        assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
         if w == width and h == height:
@@ -277,7 +278,12 @@ class BaseImage(object):
         :type position: tuple
         :return: None
         """
+        assert isinstance(surface, pygame.Surface)
+        assert isinstance(area, pygame.Rect)
+        assert isinstance(position, tuple)
+
         if self._drawing_mode == IMAGE_MODE_FILL:
+
             surface.blit(pygame.transform.scale(self._surface, (area.width, area.height)),
                          (
                              self._drawing_offset[0] + position[0],
@@ -285,6 +291,7 @@ class BaseImage(object):
                          ))
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_X:
+
             w = self._surface.get_width()
             times = int(math.ceil(float(area.width) / w))
             assert times > 0, \
@@ -297,6 +304,7 @@ class BaseImage(object):
                              )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_Y:
+
             h = self._surface.get_height()
             times = int(math.ceil(float(area.height) / h))
             assert times > 0, \
@@ -309,6 +317,7 @@ class BaseImage(object):
                              area)
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_XY:
+
             w, h = self._surface.get_size()
             timesx = int(math.ceil(float(area.width) / w))
             timesy = int(math.ceil(float(area.height) / h))
@@ -324,6 +333,7 @@ class BaseImage(object):
                                  area)
 
         elif self._drawing_mode == IMAGE_MODE_CENTER:
+
             sw, hw = area.width, area.height  # Window
             w, h = self._surface.get_size()  # Image
             surface.blit(self._surface,
@@ -334,6 +344,7 @@ class BaseImage(object):
                          area)
 
         elif self._drawing_mode == IMAGE_MODE_SIMPLE:
+
             surface.blit(
                 self._surface,
                 (

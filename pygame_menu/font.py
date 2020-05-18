@@ -93,9 +93,9 @@ def get_font(name, size):
                         most_similar = sim
                         most_similar_index = i
                 sys_font_sim = system_fonts[most_similar_index]
-                sys_suggestion = 'System font "{0}" unknown, use "{1}" instead'.format(font_name,
+                sys_suggestion = 'system font "{0}" unknown, use "{1}" instead'.format(font_name,
                                                                                        sys_font_sim)
-                sys_message = 'Check system fonts with pygame.font.get_fonts() function'
+                sys_message = 'check system fonts with pygame.font.get_fonts() function'
 
                 # Get examples
                 examples_number = 3
@@ -110,7 +110,7 @@ def get_font(name, size):
                         break
                 examples.sort()
                 fonts_random = ', '.join(examples)
-                sys_message_2 = 'Some examples: {0}'.format(fonts_random)
+                sys_message_2 = 'some examples: {0}'.format(fonts_random)
 
                 # Raise the exception
                 raise ValueError('{0}\n{1}\n{2}'.format(sys_suggestion,
