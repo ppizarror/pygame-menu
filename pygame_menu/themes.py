@@ -85,6 +85,8 @@ class Theme(object):
     :type title_bar_style: int
     :param title_font: Optional title font, if None use the Menu default font
     :type title_font: str, None
+    :param title_font_antialias: Title font renders with antialiasing
+    :type title_font_antialias: bool
     :param title_font_color: Title font color, if None use the widget font color
     :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
@@ -105,6 +107,10 @@ class Theme(object):
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param widget_font: Widget font path or name
     :type widget_font: str
+    :param widget_font_antialias: Widget font renders with antialiasing
+    :type widget_font_antialias: bool
+    :param widget_font_background_color_from_menu: Use menu background color as font background color
+    :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
@@ -160,6 +166,8 @@ class Theme(object):
                                          int, _widgets.MENUBAR_STYLE_ADAPTIVE)  # type: int
         self.title_font = self._get(kwargs, 'title_font',
                                     str, pygame_menu.font.FONT_OPEN_SANS)  # type: str
+        self.title_font_antialias = self._get(kwargs, 'title_font_antialias',
+                                              bool, True)  # type: bool
         self.title_font_color = self._get(kwargs, 'title_font_color',
                                           'color', (220, 220, 220))  # type: tuple
         self.title_font_size = self._get(kwargs, 'title_font_size',
@@ -182,6 +190,12 @@ class Theme(object):
                                                  'color_image_none')  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate',
                                                    'tuple2', (16, 8))  # type: tuple
+        self.widget_font_antialias = self._get(kwargs,
+                                               'widget_font_antialias',
+                                               bool, True)  # type: bool
+        self.widget_font_background_color_from_menu = self._get(kwargs,
+                                                                'widget_font_background_color_from_menu',
+                                                                bool, True)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size',

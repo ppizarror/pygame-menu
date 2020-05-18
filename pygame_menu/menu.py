@@ -255,7 +255,9 @@ class Menu(object):
         self._menubar.set_font(font=self._theme.title_font,
                                font_size=self._theme.title_font_size,
                                color=self._theme.title_font_color,
-                               selected_color=self._theme.title_font_color)
+                               selected_color=self._theme.title_font_color,
+                               background_color=None,
+                               antialias=self._theme.title_font_antialias)
         self._menubar.set_shadow(enabled=self._theme.title_shadow,
                                  color=self._theme.title_shadow_color,
                                  position=self._theme.title_shadow_position,
@@ -800,6 +802,14 @@ class Menu(object):
         _utils.assert_vector2(background_inflate)
         attributes['background_inflate'] = background_inflate
 
+        attributes['font_antialias'] = self._theme.widget_font_antialias
+
+        font_background_color = None
+        if self._theme.widget_font_background_color_from_menu:
+            if isinstance(self._theme.background_color, tuple):
+                font_background_color = self._theme.background_color
+        attributes['font_background_color'] = font_background_color
+
         font_color = kwargs.pop('font_color', self._theme.widget_font_color)
         _utils.assert_color(font_color)
         attributes['font_color'] = font_color
@@ -875,16 +885,22 @@ class Menu(object):
         _col = int((len(self._widgets) - 1) // self._rows)  # Column position
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(font=kwargs['font_name'],
-                        font_size=kwargs['font_size'],
-                        color=kwargs['font_color'],
-                        selected_color=kwargs['selection_color'])
+        widget.set_font(
+            font=kwargs['font_name'],
+            font_size=kwargs['font_size'],
+            color=kwargs['font_color'],
+            selected_color=kwargs['selection_color'],
+            background_color=kwargs['font_background_color'],
+            antialias=kwargs['font_antialias']
+        )
         if self._force_fit_text and self._column_max_width[_col] is not None:
             widget.set_max_width(self._column_max_width[_col] - kwargs['selection_effect'].get_width())
-        widget.set_shadow(enabled=kwargs['shadow'],
-                          color=kwargs['shadow_color'],
-                          position=kwargs['shadow_position'],
-                          offset=kwargs['shadow_offset'])
+        widget.set_shadow(
+            enabled=kwargs['shadow'],
+            color=kwargs['shadow_color'],
+            position=kwargs['shadow_position'],
+            offset=kwargs['shadow_offset']
+        )
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(kwargs['align'])
         widget.set_margin(*kwargs['margin'])
