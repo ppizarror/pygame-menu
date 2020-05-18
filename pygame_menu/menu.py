@@ -1303,7 +1303,7 @@ class Menu(object):
         :return: None
         """
         assert isinstance(surface, pygame.Surface)
-        assert isinstance(widget, _widgets.core.Widget)
+        assert isinstance(widget, (_widgets.core.Widget, type(None)))
 
         if widget is None or not widget.active or not self._mouse_motion_selection:
             return
