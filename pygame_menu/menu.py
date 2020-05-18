@@ -1225,7 +1225,7 @@ class Menu(object):
         self._widget_offset[1] = self._height * new_pos
         self._current._widgets_surface = None  # Rebuild on the next draw
 
-    def draw(self, surface):
+    def draw(self, surface, clear_surface=False):
         """
         Draw the current Menu into the given surface.
 
@@ -1233,8 +1233,13 @@ class Menu(object):
 
         :param surface: Pygame surface to draw the Menu
         :type surface: :py:class:`pygame.Surface`
+        :param clear_surface: Clear surface using theme default color
+        :type clear_surface: bool
         :return: None
         """
+        assert isinstance(surface, pygame.Surface)
+        assert isinstance(clear_surface, bool)
+        
         if not self.is_enabled():
             raise RuntimeError('menu is not enabled, it cannot be drawn')
 
@@ -1243,7 +1248,11 @@ class Menu(object):
         if not self._current._widgets_surface:
             self._current._build_widget_surface()
 
-        # Fill the surface with background function (set from mainloop)
+        # Clear surface
+        if clear_surface:
+            surface.fill(self._theme.surface_clear_color)
+
+        # Call background function (set from mainloop)
         if self._top._background_function is not None:
             self._top._background_function()
 
@@ -1603,7 +1612,7 @@ class Menu(object):
         while True:
             self._current._clock.tick(fps_limit)
 
-            self.draw(surface=surface)
+            self.draw(surface=surface, clear_surface=True)
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
