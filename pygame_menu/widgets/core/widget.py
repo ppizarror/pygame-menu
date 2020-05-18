@@ -164,7 +164,7 @@ class Widget(object):
             return True
         return False
 
-    def set_title(self, title):
+    def set_title(self, title):  # lgtm [py/inheritance/incorrect-overridden-signature]
         """
         Update the widget title.
 
