@@ -182,27 +182,30 @@ class TextInput(Widget):
         )
 
         self._input_string = ''  # Inputted text
-        self._ignore_keys = (  # Ignore keys on input-gathering events
+        self._ignore_keys = (  # Ignore keys on keyrepeat event
             _controls.KEY_MOVE_DOWN,
             _controls.KEY_MOVE_UP,
             pygame.K_CAPSLOCK,
+            pygame.K_END,
+            pygame.K_ESCAPE,
+            pygame.K_HOME,
             pygame.K_LCTRL,
             pygame.K_LSHIFT,
             pygame.K_NUMLOCK,
             pygame.K_RCTRL,
             pygame.K_RETURN,
             pygame.K_RSHIFT,
-            pygame.K_TAB
+            pygame.K_TAB,
         )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
+        self._absolute_origin = (0, 0)  # To calculate mouse collide point
         self._block_copy_paste = False  # Blocks event
         self._key_is_pressed = False
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
         self._last_key = 0  # type: int
-        self._absolute_origin = (0, 0)  # To calculate mouse collide point
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0.0  # type: float
@@ -1366,6 +1369,7 @@ class TextInput(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+        events = self._merge_events(events)  # Extend events with custom events
 
         for event in events:  # type: pygame.event.Event
 
@@ -1663,14 +1667,14 @@ class TextInput(Widget):
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
                 try:
                     # noinspection PyArgumentList
-                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN,
-                                                         key=event_key,
-                                                         unicode=event_unicode)
-                                      )
+                    self._add_event(
+                        pygame.event.Event(pygame.KEYDOWN,
+                                           key=event_key,
+                                           unicode=event_unicode)
+                    )
                 except pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
                     pass
 
-        # Update self._cursor_visible
         self._cursor_ms_counter += time_clock
         if self._cursor_ms_counter >= self._cursor_switch_ms:
             self._cursor_ms_counter %= self._cursor_switch_ms
