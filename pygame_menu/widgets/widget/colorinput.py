@@ -40,7 +40,7 @@ TYPE_HEX = 'hex'
 TYPE_RGB = 'rgb'
 
 
-class ColorInput(TextInput):
+class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     """
     Color input widget.
 
@@ -118,6 +118,7 @@ class ColorInput(TextInput):
         _input_type = _locals.INPUT_TEXT
         _maxwidth = 0
         _password = False
+
         super(ColorInput, self).__init__(
             title=title,
             textinput_id=colorinput_id,
