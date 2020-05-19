@@ -291,7 +291,10 @@ class TextInput(Widget):
         self._input_underline_size = self._font.size(self._input_underline)[0]
 
         # Size of maxwidth if not zero
-        self._maxwidthsize = self._font_render_string('O' * self._maxwidth_base).get_size()[0]
+        max_char = 'O'
+        if self._password:
+            max_char = self._password_char
+        self._maxwidthsize = self._font_render_string(max_char * self._maxwidth_base).get_size()[0]
 
         # Update password char size
         if self._password:
@@ -503,11 +506,13 @@ class TextInput(Widget):
             if self._maxchar != 0 or self._maxwidth != 0:
                 max_chars = max(self._maxchar, self._maxwidth_base)
                 basechar = 'O'
+                multif = 4  # Factor of ellipsis
                 if self._password:
                     basechar = self._password_char
+                    multif = 2
                 max_size = self._font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
-                maxchar_char = math.ceil((max_size + 4 * self._ellipsis_size) / self._input_underline_size)
+                maxchar_char = math.ceil((max_size + multif * self._ellipsis_size) / self._input_underline_size)
                 char = min(char, maxchar_char)
                 max_width_current = current_rect.width
 
@@ -1645,19 +1650,22 @@ class TextInput(Widget):
                 self._key_is_pressed = False
 
             elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
-                self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
-                self._selection_active = False
-                self._check_mouse_collide_input(event.pos)
-                self._cursor_ms_counter = 0
+                if self._rect.collidepoint(*event.pos) and \
+                        self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
+                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
+                    self._selection_active = False
+                    self._check_mouse_collide_input(event.pos)
+                    self._cursor_ms_counter = 0
 
             elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
-                self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
-                if self._selection_active:
-                    self._unselect_text()
-                self._cursor_ms_counter = 0
-                self._selection_active = True
-                self._selection_mouse_first_position = -1
-                self.active = True
+                if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
+                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
+                    if self._selection_active:
+                        self._unselect_text()
+                    self._cursor_ms_counter = 0
+                    self._selection_active = True
+                    self._selection_mouse_first_position = -1
+                    self.active = True
 
         # Get time clock
         time_clock = self._clock.get_time()
