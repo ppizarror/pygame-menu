@@ -144,6 +144,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         )
 
         # Store inner variables
+        self._auto_separator_pos = []  # This stores indexes of auto separator added
         self._separator = input_separator
 
         # Previsualization surface, if -1 previsualization does not show
@@ -158,20 +159,21 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def clear(self):
         super(ColorInput, self).clear()
         self._previsualization_surface = None
+        self._auto_separator_pos = []
         if self._color_type == TYPE_HEX:
             super(ColorInput, self).set_value('#')
         self.change()
 
     # noinspection PyMissingOrEmptyDocstring
-    def set_value(self, rgb_tuple):
+    def set_value(self, color):
         _color = ''
         if self._color_type == TYPE_RGB:
-            if rgb_tuple == '':
+            if color == '':
                 super(ColorInput, self).set_value('')
                 return
-            assert isinstance(rgb_tuple, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
-            assert len(rgb_tuple) == 3, 'Tuple must contain only 3 colors, R,G,B'
-            r, g, b = rgb_tuple
+            assert isinstance(color, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
+            assert len(color) == 3, 'Tuple must contain only 3 colors, R,G,B'
+            r, g, b = color
             assert isinstance(r, int), 'Red color must be an integer'
             assert isinstance(g, int), 'Blue color must be an integer'
             assert isinstance(b, int), 'Green color must be an integer'
@@ -179,8 +181,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             assert 0 <= g <= 255, 'Blue color must be between 0 and 255'
             assert 0 <= b <= 255, 'Green color must be between 0 and 255'
             _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
+            self._auto_separator_pos = [0, 1]
         elif self._color_type == TYPE_HEX:
-            text = str(rgb_tuple).strip()
+            text = str(color).strip()
             if text == '':
                 _color = '#'
             else:
@@ -197,10 +200,10 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if ch == '#':
                         count_hash += 1
                 if count_hash == 1:
-                    assert text[0] == '#', 'Color format must be "#RRGGBB"'
+                    assert text[0] == '#', 'color format must be "#RRGGBB"'
                 if count_hash == 0:
                     text = '#' + text
-                assert len(text) == 7, 'Color invalid, only formats "#RRGGBB" and "RRGGBB" are allowed'
+                assert len(text) == 7, 'invalid color, only formats "#RRGGBB" and "RRGGBB" are allowed'
                 _color = text
 
         super(ColorInput, self).set_value(_color)
@@ -225,6 +228,18 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 return tuple(int(_color[i:i + 2], 16) for i in (0, 2, 4))
         return -1, -1, -1
 
+    def is_valid(self):
+        """
+        Return true if the current value of the input is a valid color or not.
+
+        :return: True if valid
+        :rtype: bool
+        """
+        r, g, b = self.get_value()
+        if r == -1 or g == -1 or b == -1:
+            return False
+        return True
+
     def _previsualize_color(self, surface):
         """
         Changes the color of the previsualization box.
@@ -234,7 +249,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         :return: None
         """
         r, g, b = self.get_value()
-        if r == -1 or g == -1 or b == -1:  # Remove previsualization if invalid color
+        if not self.is_valid():  # Remove previsualization if invalid color
             self._previsualization_surface = None
             return
 
@@ -382,6 +397,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # After
         if self._color_type == TYPE_RGB:
+
             _total_separator = 0
             for _ch in _input:
                 if _ch == self._separator:
@@ -402,5 +418,23 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     self._input_string = _input
                     self._cursor_position = _curpos
                     break
+
+            if len(colors) == 3:
+                self._auto_separator_pos = [0, 1]
+
+            # Add an auto separator if the number can't continue growing and the cursor
+            # is at the end of the line
+            if _total_separator < 2 and len(self._input_string) == self._cursor_position:
+                autopos = len(colors) - 1
+                last_num = colors[autopos]
+                if (len(last_num) == 2 and int(last_num) > 25 or len(last_num) == 3 and int(last_num) <= 255) and \
+                        autopos not in self._auto_separator_pos:
+                    self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
+                    self._auto_separator_pos.append(autopos)
+
+            # If the user cleared all the string, reset auto separator
+            if _total_separator == 0 and \
+                    (len(self._input_string) < 2 or len(self._input_string) == 2 and int(colors[0]) <= 25):
+                self._auto_separator_pos = []
 
         return updated
