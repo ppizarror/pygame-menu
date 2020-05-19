@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.locals as _locals
-from pygame_menu.utils import make_surface, assert_orientation
+from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 
 
@@ -90,6 +90,9 @@ class ScrollBar(Widget):
         assert isinstance(page_ctrl_thick, (int, float))
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
+        assert_color(slider_color)
+        assert_color(page_ctrl_color)
+
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
             onchange=onchange,
@@ -97,6 +100,7 @@ class ScrollBar(Widget):
             args=args,
             kwargs=kwargs
         )
+
         self._values_range = list(values_range)
         self.scrolling = False  # type: bool
         self._orientation = 0  # type: int
@@ -356,12 +360,12 @@ class ScrollBar(Widget):
                     self.change()
                     updated = True
 
-            elif self.mouse_enabled and event.type is pygame.MOUSEMOTION and self.scrolling:
+            elif self.mouse_enabled and event.type == pygame.MOUSEMOTION and self.scrolling:
                 if self._scroll(event.rel[self._orientation]):
                     self.change()
                     updated = True
 
-            elif self.mouse_enabled and event.type is pygame.MOUSEBUTTONDOWN:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button in (4, 5) and self._orientation == 1:
                     # Vertical bar: scroll down (4) or up (5)
                     direction = -1 if event.button == 4 else 1
@@ -383,7 +387,7 @@ class ScrollBar(Widget):
                             self.change()
                             updated = True
 
-            elif self.mouse_enabled and event.type is pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self.scrolling:
                     self.scrolling = False
                     updated = True

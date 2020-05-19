@@ -35,7 +35,7 @@ import math
 import pygame
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
-from pygame_menu.utils import check_key_pressed_valid, make_surface
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 
 try:
@@ -129,7 +129,7 @@ class TextInput(Widget):
                  input_underline='',
                  copy_paste_enable=True,
                  cursor_color=(0, 0, 0),
-                 cursor_selection_color=(30, 30, 30),
+                 cursor_selection_color=(30, 30, 30, 100),
                  cursor_selection_enable=True,
                  history=50,
                  maxchar=0,
@@ -172,6 +172,12 @@ class TextInput(Widget):
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
 
+        assert_color(cursor_color)
+        assert_color(cursor_selection_color)
+        if pygame.vernum.major == 2:
+            assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
+            assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
+
         super(TextInput, self).__init__(
             title=title,
             widget_id=textinput_id,
@@ -182,27 +188,30 @@ class TextInput(Widget):
         )
 
         self._input_string = ''  # Inputted text
-        self._ignore_keys = (  # Ignore keys on input-gathering events
+        self._ignore_keys = (  # Ignore keys on keyrepeat event
             _controls.KEY_MOVE_DOWN,
             _controls.KEY_MOVE_UP,
             pygame.K_CAPSLOCK,
+            pygame.K_END,
+            pygame.K_ESCAPE,
+            pygame.K_HOME,
             pygame.K_LCTRL,
             pygame.K_LSHIFT,
             pygame.K_NUMLOCK,
             pygame.K_RCTRL,
             pygame.K_RETURN,
             pygame.K_RSHIFT,
-            pygame.K_TAB
+            pygame.K_TAB,
         )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
+        self._absolute_origin = (0, 0)  # To calculate mouse collide point
         self._block_copy_paste = False  # Blocks event
         self._key_is_pressed = False
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
         self._keyrepeat_initial_interval_ms = repeat_keys_initial_ms
         self._keyrepeat_interval_ms = repeat_keys_interval_ms
         self._last_key = 0  # type: int
-        self._absolute_origin = (0, 0)  # To calculate mouse collide point
 
         # Mouse handling
         self._keyrepeat_mouse_ms = 0.0  # type: float
@@ -282,11 +291,11 @@ class TextInput(Widget):
         self._input_underline_size = self._font.size(self._input_underline)[0]
 
         # Size of maxwidth if not zero
-        self._maxwidthsize = self.font_render_string('O' * self._maxwidth_base).get_size()[0]
+        self._maxwidthsize = self._font_render_string('O' * self._maxwidth_base).get_size()[0]
 
         # Update password char size
         if self._password:
-            password_size = self.font_render_string(self._password_char).get_size()[0]
+            password_size = self._font_render_string(self._password_char).get_size()[0]
             if password_size == 0:
                 raise ValueError(
                     'Password character is not valid, the size of the font is zero, use another character or change the font')
@@ -334,12 +343,14 @@ class TextInput(Widget):
         # Draw background color
         self._fill_background_color(surface)
 
-        # Draw selection first
-        if self._selection_surface is not None:
-            surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
-
-        # Draw string
-        surface.blit(self._surface, (self._rect.x, self._rect.y))
+        if pygame.vernum.major == 2:
+            surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
+            if self._selection_surface is not None:  # Draw selection
+                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+        else:
+            if self._selection_surface is not None:  # Draw selection
+                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+            surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
 
         # Draw cursor
         if self.selected and self._cursor_surface and \
@@ -433,8 +444,7 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            self._selection_surface = make_surface(x, y)
-            self._selection_surface.fill(self._selection_color)
+            self._selection_surface = make_surface(x, y, fill_color=self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
 
@@ -495,7 +505,7 @@ class TextInput(Widget):
                 basechar = 'O'
                 if self._password:
                     basechar = self._password_char
-                max_size = self.font_render_string(basechar * max_chars)
+                max_size = self._font_render_string(basechar * max_chars)
                 max_size = max_size.get_size()[0]
                 maxchar_char = math.ceil((max_size + 4 * self._ellipsis_size) / self._input_underline_size)
                 char = min(char, maxchar_char)
@@ -504,7 +514,7 @@ class TextInput(Widget):
             underline_string = self._input_underline * int(char)
 
             # Render char
-            underline = self.font_render_string(underline_string, color)
+            underline = self._font_render_string(underline_string, color, use_background_color=False)
 
             # Create a new surface
             new_width = max(self._title_size + underline.get_size()[0],
@@ -1036,18 +1046,25 @@ class TextInput(Widget):
         """
         return self._input_string[self._selection_box[0]:self._selection_box[1]]
 
-    def _update_input_string(self, new_string):
+    def _update_input_string(self, new_string, update_history=True):
         """
         Update input string with a new string, store changes into history.
 
         :param new_string: New string of text input
         :type new_string: str
+        :param update_history: Updates history
+        :type update_history: bool
         :return: None
         """
+        assert isinstance(new_string, str)
+        assert isinstance(update_history, bool)
+
         l_history = len(self._history)
 
         # If last edition is different than the new one -> updates the history
-        if ((l_history > 0 and self._history[l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
+        if update_history and \
+                ((l_history > 0 and self._history[
+                    l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
 
             # If index is not at last add the current status as new
             if self._history_index != l_history:
@@ -1119,7 +1136,7 @@ class TextInput(Widget):
         """
         if char in self._keychar_size.keys():
             return self._keychar_size[char]
-        self._keychar_size[char] = self.font_render_string(char).get_size()[0]
+        self._keychar_size[char] = self._font_render_string(char).get_size()[0]
         return self._keychar_size[char]
 
     def _paste(self):
@@ -1248,40 +1265,44 @@ class TextInput(Widget):
 
         for i in range(removed):
             if left:
-                self._delete()
+                self._delete(update_history=i == removed - 1)
             else:
-                self._backspace()
+                self._backspace(update_history=i == removed - 1)
 
         # Destroy selection
         self._unselect_text()
 
-    def _backspace(self):
+    def _backspace(self, update_history=True):
         """
         Backspace event.
 
+        :param update_history: Updates history on deletion
+        :type update_history: bool
         :return: None
         """
         new_string = (
                 self._input_string[:max(self._cursor_position - 1, 0)]
                 + self._input_string[self._cursor_position:]
         )
-        self._update_input_string(new_string)
+        self._update_input_string(new_string, update_history=update_history)
         self._update_renderbox(left=-1, addition=True)
 
         # Subtract one from cursor_pos, but do not go below zero:
         self._cursor_position = max(self._cursor_position - 1, 0)
 
-    def _delete(self):
+    def _delete(self, update_history=True):
         """
         Delete event.
 
+        :param update_history: Updates history on deletion
+        :type update_history: bool
         :return: None
         """
         new_string = (
                 self._input_string[:self._cursor_position]
                 + self._input_string[self._cursor_position + 1:]
         )
-        self._update_input_string(new_string)
+        self._update_input_string(new_string, update_history=update_history)
         self._update_renderbox(right=-1, addition=True)
 
     def _select_all(self):
@@ -1366,6 +1387,7 @@ class TextInput(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+        events = self._merge_events(events)  # Extend events with custom events
 
         for event in events:  # type: pygame.event.Event
 
@@ -1663,14 +1685,14 @@ class TextInput(Widget):
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
                 try:
                     # noinspection PyArgumentList
-                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN,
-                                                         key=event_key,
-                                                         unicode=event_unicode)
-                                      )
+                    self._add_event(
+                        pygame.event.Event(pygame.KEYDOWN,
+                                           key=event_key,
+                                           unicode=event_unicode)
+                    )
                 except pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
                     pass
 
-        # Update self._cursor_visible
         self._cursor_ms_counter += time_clock
         if self._cursor_ms_counter >= self._cursor_switch_ms:
             self._cursor_ms_counter %= self._cursor_switch_ms

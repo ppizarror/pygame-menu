@@ -83,6 +83,7 @@ class MenuBar(Widget):
         assert isinstance(title, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
+
         assert_color(background_color)
 
         # MenuBar has no ID

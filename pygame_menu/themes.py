@@ -30,13 +30,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import copy
-
-import pygame_menu
 import pygame_menu.font
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
+
+import copy
+import pygame
 
 
 class Theme(object):
@@ -85,6 +85,8 @@ class Theme(object):
     :type title_bar_style: int
     :param title_font: Optional title font, if None use the Menu default font
     :type title_font: str, None
+    :param title_font_antialias: Title font renders with antialiasing
+    :type title_font_antialias: bool
     :param title_font_color: Title font color, if None use the widget font color
     :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
@@ -105,6 +107,10 @@ class Theme(object):
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param widget_font: Widget font path or name
     :type widget_font: str
+    :param widget_font_antialias: Widget font renders with antialiasing
+    :type widget_font_antialias: bool
+    :param widget_font_background_color_from_menu: Use menu background color as font background color, True by default in pygame v2
+    :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
@@ -131,7 +137,7 @@ class Theme(object):
         self.cursor_color = self._get(kwargs, 'cursor_color',
                                       'color', (0, 0, 0))  # type: tuple
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
-                                                'color', (30, 30, 30))  # type: tuple
+                                                'color', (30, 30, 30, 120))  # type: tuple
         self.focus_background_color = self._get(kwargs, 'focus_background_color',
                                                 'color', (0, 0, 0, 180))  # type: tuple
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
@@ -160,6 +166,8 @@ class Theme(object):
                                          int, _widgets.MENUBAR_STYLE_ADAPTIVE)  # type: int
         self.title_font = self._get(kwargs, 'title_font',
                                     str, pygame_menu.font.FONT_OPEN_SANS)  # type: str
+        self.title_font_antialias = self._get(kwargs, 'title_font_antialias',
+                                              bool, True)  # type: bool
         self.title_font_color = self._get(kwargs, 'title_font_color',
                                           'color', (220, 220, 220))  # type: tuple
         self.title_font_size = self._get(kwargs, 'title_font_size',
@@ -182,6 +190,12 @@ class Theme(object):
                                                  'color_image_none')  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate',
                                                    'tuple2', (16, 8))  # type: tuple
+        self.widget_font_antialias = self._get(kwargs,
+                                               'widget_font_antialias',
+                                               bool, True)  # type: bool
+        self.widget_font_background_color_from_menu = self._get(kwargs,
+                                                                'widget_font_background_color_from_menu',
+                                                                bool, pygame.vernum.major == 2)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
@@ -228,6 +242,8 @@ class Theme(object):
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
+        self.cursor_color = self._format_opacity(self.cursor_color)
+        self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)
         self.focus_background_color = self._format_opacity(self.focus_background_color)
         self.scrollbar_color = self._format_opacity(self.scrollbar_color)
         self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
@@ -238,6 +254,7 @@ class Theme(object):
         self.title_font_color = self._format_opacity(self.title_font_color)
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
+        self.widget_font_color = self._format_opacity(self.widget_font_color)
 
         # List to tuple
         self.title_offset = self._vec_2tuple(self.title_offset)
@@ -371,7 +388,7 @@ THEME_DEFAULT = Theme()
 THEME_DARK = Theme(
     background_color=(40, 41, 35),
     cursor_color=(255, 255, 255),
-    cursor_selection_color=(80, 80, 80),
+    cursor_selection_color=(80, 80, 80, 120),
     scrollbar_color=(39, 41, 42),
     scrollbar_slider_color=(65, 66, 67),
     selection_color=(255, 255, 255),
@@ -414,7 +431,7 @@ THEME_ORANGE = Theme(
 THEME_SOLARIZED = Theme(
     background_color=(239, 231, 211),
     cursor_color=(0, 0, 0),
-    cursor_selection_color=(146, 160, 160),
+    cursor_selection_color=(146, 160, 160, 120),
     selection_color=(207, 62, 132),
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),

@@ -156,12 +156,15 @@ def make_surface(width, height, alpha=False, fill_color=None):
     :param alpha: Enable alpha channel on surface
     :type alpha: bool
     :param fill_color: Fill surface with a certain color
-    :type fill_color: tuple, list, None
+    :type fill_color: tuple, None
     :return: Pygame surface
     :rtype: :py:class:`pygame.Surface`
     """
-    assert width > 0 and height > 0, 'surface width and height must be greater than zero'
+    assert isinstance(width, (int, float))
+    assert isinstance(height, (int, float))
     assert isinstance(alpha, bool)
+    assert isinstance(fill_color, (type(None), tuple))
+    assert width > 0 and height > 0, 'surface width and height must be greater than zero'
     surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
     if alpha:
         surface = pygame.Surface.convert_alpha(surface)

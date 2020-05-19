@@ -255,7 +255,9 @@ class Menu(object):
         self._menubar.set_font(font=self._theme.title_font,
                                font_size=self._theme.title_font_size,
                                color=self._theme.title_font_color,
-                               selected_color=self._theme.title_font_color)
+                               selected_color=self._theme.title_font_color,
+                               background_color=None,
+                               antialias=self._theme.title_font_antialias)
         self._menubar.set_shadow(enabled=self._theme.title_shadow,
                                  color=self._theme.title_shadow_color,
                                  position=self._theme.title_shadow_position,
@@ -362,6 +364,7 @@ class Menu(object):
         # Configure and add the button
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+
         return widget
 
     def add_color_input(self,
@@ -440,9 +443,11 @@ class Menu(object):
             title=title,
             **kwargs
         )
+
         self._configure_widget(widget=widget, **attributes)
         widget.set_value(default)
         self._append_widget(widget)
+
         return widget
 
     def add_image(self,
@@ -493,6 +498,7 @@ class Menu(object):
             scale=scale,
             scale_smooth=scale_smooth,
         )
+
         widget.is_selectable = selectable
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
@@ -632,8 +638,10 @@ class Menu(object):
             title=title,
             **kwargs
         )
+
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+
         return widget
 
     def add_text_input(self,
@@ -738,9 +746,11 @@ class Menu(object):
             valid_chars=valid_chars,
             **kwargs
         )
+
         self._configure_widget(widget=widget, **attributes)
         widget.set_value(default)
         self._append_widget(widget)
+
         return widget
 
     def add_vertical_margin(self, margin):
@@ -752,10 +762,16 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
+        assert isinstance(margin, (int, float))
+
+        # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes({'margin': (0, margin)})
+
         widget = _widgets.VMargin()
+
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+
         return widget
 
     def _filter_widget_attributes(self, kwargs):
@@ -764,9 +780,9 @@ class Menu(object):
         The valid (key, value) are removed from the initial
         dictionary.
 
-        :param kwargs: input attributes
+        :param kwargs: Input attributes
         :type kwargs: dict
-        :return: dictionary of valid  attributes
+        :return: Dictionary of valid attributes
         :rtype: dict
         """
         attributes = {}
@@ -785,6 +801,14 @@ class Menu(object):
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         _utils.assert_vector2(background_inflate)
         attributes['background_inflate'] = background_inflate
+
+        attributes['font_antialias'] = self._theme.widget_font_antialias
+
+        font_background_color = None
+        if self._theme.widget_font_background_color_from_menu:
+            if isinstance(self._theme.background_color, tuple):
+                font_background_color = self._theme.background_color
+        attributes['font_background_color'] = font_background_color
 
         font_color = kwargs.pop('font_color', self._theme.widget_font_color)
         _utils.assert_color(font_color)
@@ -856,19 +880,27 @@ class Menu(object):
         :type kwargs: any
         :return: None
         """
+        assert isinstance(widget, _widgets.core.Widget)
+        assert widget.get_menu() is None, 'widget cannot have an instance of menu'
         _col = int((len(self._widgets) - 1) // self._rows)  # Column position
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
-        widget.set_font(font=kwargs['font_name'],
-                        font_size=kwargs['font_size'],
-                        color=kwargs['font_color'],
-                        selected_color=kwargs['selection_color'])
+        widget.set_font(
+            font=kwargs['font_name'],
+            font_size=kwargs['font_size'],
+            color=kwargs['font_color'],
+            selected_color=kwargs['selection_color'],
+            background_color=kwargs['font_background_color'],
+            antialias=kwargs['font_antialias']
+        )
         if self._force_fit_text and self._column_max_width[_col] is not None:
             widget.set_max_width(self._column_max_width[_col] - kwargs['selection_effect'].get_width())
-        widget.set_shadow(enabled=kwargs['shadow'],
-                          color=kwargs['shadow_color'],
-                          position=kwargs['shadow_position'],
-                          offset=kwargs['shadow_offset'])
+        widget.set_shadow(
+            enabled=kwargs['shadow'],
+            color=kwargs['shadow_color'],
+            position=kwargs['shadow_position'],
+            offset=kwargs['shadow_offset']
+        )
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(kwargs['align'])
         widget.set_margin(*kwargs['margin'])
@@ -877,12 +909,13 @@ class Menu(object):
 
     def _append_widget(self, widget):
         """
-        Add a widget to the list.
+        Add a widget to the list of widgets.
 
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         """
         assert isinstance(widget, _widgets.core.Widget)
+        assert widget.get_menu() == self, 'widget cannot have a different instance of menu'
         if self._columns > 1:
             max_elements = self._columns * self._rows
             assert len(self._widgets) + 1 <= max_elements, \
@@ -903,6 +936,7 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :return: None
         """
+        assert widget is not None, 'widget cannot be None'
         assert isinstance(widget, _widgets.core.Widget)
         try:
             indx = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1110,6 +1144,7 @@ class Menu(object):
         :type widget_id: str
         :return: None
         """
+        assert isinstance(widget_id, str)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
                 raise ValueError('widget ID="{0}" is duplicated'.format(widget_id))
@@ -1283,6 +1318,9 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         :return: None
         """
+        assert isinstance(surface, pygame.Surface)
+        assert isinstance(widget, (_widgets.core.Widget, type(None)))
+
         if widget is None or not widget.active or not self._mouse_motion_selection:
             return
         window_width, window_height = pygame.display.get_surface().get_size()
@@ -1696,7 +1734,7 @@ class Menu(object):
         :type recursive: bool
         :return: None
         """
-        assert isinstance(sound, (type(self._sounds), type(None)))
+        assert isinstance(sound, (type(self._sounds), type(None))), 'sound must be pygame_menu.Sound type or None'
         if sound is None:
             sound = Sound()
         self._sounds = sound
@@ -1807,11 +1845,17 @@ class Menu(object):
                 dwidget = 1
 
         # Limit the index to the length
-        new_index %= len(current._widgets)
+        total_current = len(current._widgets)
+        new_index %= total_current
         if new_index == current._index:  # Index has not changed
             return
 
         # Get both widgets
+        if current._index >= total_current:  # The length of the menu changed during execution time
+            for i in range(total_current):  # Unselect all posible candidates
+                current._widgets[i].set_selected(False)
+            current._index = 0
+
         old_widget = current._widgets[current._index]  # type: _widgets.core.Widget
         new_widget = current._widgets[new_index]  # type:_widgets.core.Widget
 
@@ -1863,6 +1907,8 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`
         """
+        assert isinstance(widget_id, str)
+        assert isinstance(recursive, bool)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
                 return widget

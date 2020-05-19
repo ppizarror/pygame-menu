@@ -105,7 +105,7 @@ class Sound(object):
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if (mixer.get_init() is None and SOUND_INITIALIZED[0] is False) or force_init:
+        if (mixer.get_init() is None and not SOUND_INITIALIZED[0]) or force_init:
 
             # Set sound as initialized globally
             SOUND_INITIALIZED[0] = True
@@ -207,6 +207,7 @@ class Sound(object):
         """
         assert isinstance(sound_type, str)
         assert isinstance(sound_file, (str, type(None)))
+        assert isinstance(volume, float)
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
         assert isinstance(fade_ms, (int, float))
@@ -261,6 +262,7 @@ class Sound(object):
         :type volume: float
         :return: None
         """
+        assert isinstance(volume, float)
         sound_dir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
 
         # Must be in the same order of self._type_sounds
