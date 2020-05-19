@@ -360,12 +360,12 @@ class ScrollBar(Widget):
                     self.change()
                     updated = True
 
-            elif self.mouse_enabled and event.type is pygame.MOUSEMOTION and self.scrolling:
+            elif self.mouse_enabled and event.type == pygame.MOUSEMOTION and self.scrolling:
                 if self._scroll(event.rel[self._orientation]):
                     self.change()
                     updated = True
 
-            elif self.mouse_enabled and event.type is pygame.MOUSEBUTTONDOWN:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button in (4, 5) and self._orientation == 1:
                     # Vertical bar: scroll down (4) or up (5)
                     direction = -1 if event.button == 4 else 1
@@ -387,7 +387,7 @@ class ScrollBar(Widget):
                             self.change()
                             updated = True
 
-            elif self.mouse_enabled and event.type is pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self.scrolling:
                     self.scrolling = False
                     updated = True

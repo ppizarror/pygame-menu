@@ -158,13 +158,13 @@ def main(test=False):
         # Application events
         events = pygame.event.get()
         for event in events:
-            if event.type is pygame.QUIT:
+            if event.type == pygame.QUIT:
                 exit()
 
-            if event.type is pygame.KEYDOWN and event.key == pygame.K_h:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_h:
                 sb_h.set_value(100)
 
-            if event.type is pygame.KEYDOWN and event.key == pygame.K_v:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_v:
                 sb_v.set_value(200)
 
             sb_h.update([event])
