@@ -397,7 +397,7 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def _font_render_string(self, text, color=(0, 0, 0)):
+    def _font_render_string(self, text, color=(0, 0, 0), use_background_color=True):
         """
         Render text.
 
@@ -405,12 +405,18 @@ class Widget(object):
         :type text: str
         :param color: Text color
         :type color: tuple
+        :param use_background_color: Use default background color
+        :type use_background_color: bool
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
         assert isinstance(text, str)
         assert isinstance(color, tuple)
-        return self._font.render(text, self._font_antialias, color, self._font_background_color)
+        assert isinstance(use_background_color, bool)
+        bgcolor = self._font_background_color
+        if not use_background_color:
+            bgcolor = None
+        return self._font.render(text, self._font_antialias, color, bgcolor)
 
     def _check_render_size_changed(self):
         """

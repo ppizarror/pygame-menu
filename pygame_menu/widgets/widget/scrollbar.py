@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.locals as _locals
-from pygame_menu.utils import make_surface, assert_orientation
+from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 
 
@@ -90,6 +90,9 @@ class ScrollBar(Widget):
         assert isinstance(page_ctrl_thick, (int, float))
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
+        assert_color(slider_color)
+        assert_color(page_ctrl_color)
+
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
             onchange=onchange,
@@ -97,6 +100,7 @@ class ScrollBar(Widget):
             args=args,
             kwargs=kwargs
         )
+
         self._values_range = list(values_range)
         self.scrolling = False  # type: bool
         self._orientation = 0  # type: int

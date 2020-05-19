@@ -35,7 +35,7 @@ import math
 import pygame
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
-from pygame_menu.utils import check_key_pressed_valid, make_surface
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 
 try:
@@ -129,7 +129,7 @@ class TextInput(Widget):
                  input_underline='',
                  copy_paste_enable=True,
                  cursor_color=(0, 0, 0),
-                 cursor_selection_color=(30, 30, 30),
+                 cursor_selection_color=(30, 30, 30, 100),
                  cursor_selection_enable=True,
                  history=50,
                  maxchar=0,
@@ -171,6 +171,11 @@ class TextInput(Widget):
         assert maxwidth >= 0, 'maxwidth must be equal or greater than zero'
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
+
+        assert_color(cursor_color)
+        assert_color(cursor_selection_color)
+        assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
+        assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
         super(TextInput, self).__init__(
             title=title,
@@ -337,12 +342,12 @@ class TextInput(Widget):
         # Draw background color
         self._fill_background_color(surface)
 
-        # Draw selection first
-        if self._selection_surface is not None:
-            surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
-
         # Draw string
         surface.blit(self._surface, (self._rect.x, self._rect.y))
+
+        # Draw selection
+        if self._selection_surface is not None:
+            surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
 
         # Draw cursor
         if self.selected and self._cursor_surface and \
@@ -436,8 +441,7 @@ class TextInput(Widget):
             x2 += delta
 
             # Create surface and fill
-            self._selection_surface = make_surface(x, y)
-            self._selection_surface.fill(self._selection_color)
+            self._selection_surface = make_surface(x, y, fill_color=self._selection_color)
             self._selection_position[0] = x1 + self._rect.x
             self._selection_position[1] = self._rect.y
 
@@ -507,7 +511,7 @@ class TextInput(Widget):
             underline_string = self._input_underline * int(char)
 
             # Render char
-            underline = self._font_render_string(underline_string, color)
+            underline = self._font_render_string(underline_string, color, use_background_color=False)
 
             # Create a new surface
             new_width = max(self._title_size + underline.get_size()[0],

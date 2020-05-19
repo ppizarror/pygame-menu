@@ -137,7 +137,7 @@ class Theme(object):
         self.cursor_color = self._get(kwargs, 'cursor_color',
                                       'color', (0, 0, 0))  # type: tuple
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
-                                                'color', (30, 30, 30))  # type: tuple
+                                                'color', (30, 30, 30, 120))  # type: tuple
         self.focus_background_color = self._get(kwargs, 'focus_background_color',
                                                 'color', (0, 0, 0, 180))  # type: tuple
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
@@ -242,6 +242,8 @@ class Theme(object):
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
+        self.cursor_color = self._format_opacity(self.cursor_color)
+        self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)
         self.focus_background_color = self._format_opacity(self.focus_background_color)
         self.scrollbar_color = self._format_opacity(self.scrollbar_color)
         self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
@@ -252,6 +254,7 @@ class Theme(object):
         self.title_font_color = self._format_opacity(self.title_font_color)
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
+        self.widget_font_color = self._format_opacity(self.widget_font_color)
 
         # List to tuple
         self.title_offset = self._vec_2tuple(self.title_offset)
@@ -385,7 +388,7 @@ THEME_DEFAULT = Theme()
 THEME_DARK = Theme(
     background_color=(40, 41, 35),
     cursor_color=(255, 255, 255),
-    cursor_selection_color=(80, 80, 80),
+    cursor_selection_color=(80, 80, 80, 120),
     scrollbar_color=(39, 41, 42),
     scrollbar_slider_color=(65, 66, 67),
     selection_color=(255, 255, 255),
@@ -428,7 +431,7 @@ THEME_ORANGE = Theme(
 THEME_SOLARIZED = Theme(
     background_color=(239, 231, 211),
     cursor_color=(0, 0, 0),
-    cursor_selection_color=(146, 160, 160),
+    cursor_selection_color=(146, 160, 160, 120),
     selection_color=(207, 62, 132),
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),
