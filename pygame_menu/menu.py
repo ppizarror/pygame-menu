@@ -88,7 +88,7 @@ class Menu(object):
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
     :param theme: Menu theme object, if None use the default theme
-    :type theme: :py:class:`pygame_menu.themes.Theme`, None
+    :type theme: :py:class:`pygame_menu.themes.Theme`
     """
 
     def __init__(self,
@@ -126,7 +126,7 @@ class Menu(object):
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
-        assert isinstance(theme, _themes.Theme), 'theme bust be an Theme object instance'
+        assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
         assert isinstance(title, str)
 
         # Assert theme
@@ -242,42 +242,52 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Create Menu bar (title)
-        self._menubar = _widgets.MenuBar(title=title,
-                                         width=self._width,
-                                         back_box=back_box,
-                                         mode=self._theme.title_bar_style,
-                                         onreturn=self._back,
-                                         background_color=self._theme.title_background_color)
+        self._menubar = _widgets.MenuBar(
+            title=title,
+            width=self._width,
+            back_box=back_box,
+            mode=self._theme.title_bar_style,
+            onreturn=self._back,
+            background_color=self._theme.title_background_color
+        )
         self._menubar.set_menu(self)
-        self._menubar.set_title(title=title,
-                                offsetx=theme.title_offset[0],
-                                offsety=theme.title_offset[1])
-        self._menubar.set_font(font=self._theme.title_font,
-                               font_size=self._theme.title_font_size,
-                               color=self._theme.title_font_color,
-                               selected_color=self._theme.title_font_color,
-                               background_color=None,
-                               antialias=self._theme.title_font_antialias)
-        self._menubar.set_shadow(enabled=self._theme.title_shadow,
-                                 color=self._theme.title_shadow_color,
-                                 position=self._theme.title_shadow_position,
-                                 offset=self._theme.title_shadow_offset)
+        self._menubar.set_title(
+            title=title,
+            offsetx=theme.title_offset[0],
+            offsety=theme.title_offset[1]
+        )
+        self._menubar.set_font(
+            font=self._theme.title_font,
+            font_size=self._theme.title_font_size,
+            color=self._theme.title_font_color,
+            selected_color=self._theme.title_font_color,
+            background_color=None,
+            antialias=self._theme.title_font_antialias
+        )
+        self._menubar.set_shadow(
+            enabled=self._theme.title_shadow,
+            color=self._theme.title_shadow_color,
+            position=self._theme.title_shadow_position,
+            offset=self._theme.title_shadow_offset
+        )
         self._menubar.set_controls(self._joystick, self._mouse)
 
         # Scrolling area
         self._widgets_surface = None
-        self._scroll = ScrollArea(area_width=self._width,
-                                  area_color=self._theme.background_color,
-                                  area_height=self._height - self._menubar.get_rect().height,
-                                  extend_y=self._menubar.get_rect().height,
-                                  scrollbar_color=self._theme.scrollbar_color,
-                                  scrollbar_slider_color=self._theme.scrollbar_slider_color,
-                                  scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
-                                  scrollbar_thick=self._theme.scrollbar_thick,
-                                  shadow=self._theme.scrollbar_shadow,
-                                  shadow_color=self._theme.scrollbar_shadow_color,
-                                  shadow_offset=self._theme.scrollbar_shadow_offset,
-                                  shadow_position=self._theme.scrollbar_shadow_position)
+        self._scroll = ScrollArea(
+            area_width=self._width,
+            area_color=self._theme.background_color,
+            area_height=self._height - self._menubar.get_rect().height,
+            extend_y=self._menubar.get_rect().height,
+            scrollbar_color=self._theme.scrollbar_color,
+            scrollbar_slider_color=self._theme.scrollbar_slider_color,
+            scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
+            scrollbar_thick=self._theme.scrollbar_thick,
+            shadow=self._theme.scrollbar_shadow,
+            shadow_color=self._theme.scrollbar_shadow_color,
+            shadow_offset=self._theme.scrollbar_shadow_offset,
+            shadow_position=self._theme.scrollbar_shadow_position
+        )
 
     def get_current(self):
         """
@@ -564,11 +574,15 @@ class Menu(object):
             self._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
             for line in textwrap.wrap(title, max_char):
-                widget.append(self.add_label(title=line,
-                                             label_id=label_id + '+' + str(len(widget) + 1),
-                                             max_char=max_char,
-                                             selectable=selectable,
-                                             **kwargs))
+                widget.append(
+                    self.add_label(
+                        title=line,
+                        label_id=label_id + '+' + str(len(widget) + 1),
+                        max_char=max_char,
+                        selectable=selectable,
+                        **kwargs
+                    )
+                )
         return widget
 
     def add_selector(self,
