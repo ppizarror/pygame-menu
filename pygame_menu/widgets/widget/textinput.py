@@ -343,12 +343,14 @@ class TextInput(Widget):
         # Draw background color
         self._fill_background_color(surface)
 
-        # Draw string
-        surface.blit(self._surface, (self._rect.x, self._rect.y))
-
-        # Draw selection
-        if self._selection_surface is not None:
-            surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+        if pygame.vernum.major == 2:
+            surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
+            if self._selection_surface is not None:  # Draw selection
+                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+        else:
+            if self._selection_surface is not None:  # Draw selection
+                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+            surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
 
         # Draw cursor
         if self.selected and self._cursor_surface and \
@@ -1044,18 +1046,25 @@ class TextInput(Widget):
         """
         return self._input_string[self._selection_box[0]:self._selection_box[1]]
 
-    def _update_input_string(self, new_string):
+    def _update_input_string(self, new_string, update_history=True):
         """
         Update input string with a new string, store changes into history.
 
         :param new_string: New string of text input
         :type new_string: str
+        :param update_history: Updates history
+        :type update_history: bool
         :return: None
         """
+        assert isinstance(new_string, str)
+        assert isinstance(update_history, bool)
+
         l_history = len(self._history)
 
         # If last edition is different than the new one -> updates the history
-        if ((l_history > 0 and self._history[l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
+        if update_history and \
+                ((l_history > 0 and self._history[
+                    l_history - 1] != new_string) or l_history == 0) and self._max_history > 0:
 
             # If index is not at last add the current status as new
             if self._history_index != l_history:
@@ -1256,40 +1265,44 @@ class TextInput(Widget):
 
         for i in range(removed):
             if left:
-                self._delete()
+                self._delete(update_history=i == removed - 1)
             else:
-                self._backspace()
+                self._backspace(update_history=i == removed - 1)
 
         # Destroy selection
         self._unselect_text()
 
-    def _backspace(self):
+    def _backspace(self, update_history=True):
         """
         Backspace event.
 
+        :param update_history: Updates history on deletion
+        :type update_history: bool
         :return: None
         """
         new_string = (
                 self._input_string[:max(self._cursor_position - 1, 0)]
                 + self._input_string[self._cursor_position:]
         )
-        self._update_input_string(new_string)
+        self._update_input_string(new_string, update_history=update_history)
         self._update_renderbox(left=-1, addition=True)
 
         # Subtract one from cursor_pos, but do not go below zero:
         self._cursor_position = max(self._cursor_position - 1, 0)
 
-    def _delete(self):
+    def _delete(self, update_history=True):
         """
         Delete event.
 
+        :param update_history: Updates history on deletion
+        :type update_history: bool
         :return: None
         """
         new_string = (
                 self._input_string[:self._cursor_position]
                 + self._input_string[self._cursor_position + 1:]
         )
-        self._update_input_string(new_string)
+        self._update_input_string(new_string, update_history=update_history)
         self._update_renderbox(right=-1, addition=True)
 
     def _select_all(self):
