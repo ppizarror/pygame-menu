@@ -174,8 +174,9 @@ class TextInput(Widget):
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
-        assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
-        assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
+        if pygame.vernum.major == 2:
+            assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
+            assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
         super(TextInput, self).__init__(
             title=title,

@@ -30,13 +30,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import copy
-
-import pygame_menu
 import pygame_menu.font
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
+
+import copy
+import pygame
 
 
 class Theme(object):
@@ -109,7 +109,7 @@ class Theme(object):
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
-    :param widget_font_background_color_from_menu: Use menu background color as font background color
+    :param widget_font_background_color_from_menu: Use menu background color as font background color, True by default in pygame v2
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
@@ -195,7 +195,7 @@ class Theme(object):
                                                bool, True)  # type: bool
         self.widget_font_background_color_from_menu = self._get(kwargs,
                                                                 'widget_font_background_color_from_menu',
-                                                                bool, True)  # type: bool
+                                                                bool, pygame.vernum.major == 2)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size',
