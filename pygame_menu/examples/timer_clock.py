@@ -270,7 +270,9 @@ def main(test=False):
                 if event.key == pygame.K_ESCAPE:
                     main_menu.toggle()
 
-        if main_menu.get_title() != 'Main Menu' or not main_menu.is_enabled():
+        # Title is evaluated at current level as the title of the base pointer object (main_menu)
+        # can change if user opens submenus
+        if main_menu.get_current().get_title() != 'Main Menu' or not main_menu.is_enabled():
             # Draw timer
             surface.fill(COLOR_BACKGROUND)
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
