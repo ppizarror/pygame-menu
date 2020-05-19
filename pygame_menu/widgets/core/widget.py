@@ -39,6 +39,7 @@ from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2
 
 from uuid import uuid4
+import time
 
 
 class Widget(object):
@@ -84,6 +85,7 @@ class Widget(object):
         self._max_width = None  # type: (int,float)
         self._rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (pygame.Rect,None)
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
+        self._selection_time = 0  # type: float
         self._title = title
 
         self._args = args or []  # type: list
@@ -610,10 +612,23 @@ class Widget(object):
         self.active = False
         if selected:
             self._focus()
+            self._selection_time = time.time()
         else:
             self._blur()
             self._events = []  # Remove events
         self._render()
+
+    def get_selected_time(self):
+        """
+        Return time the widget has been selected in miliseconds.
+        If the widget is not currently selected, return 0.
+
+        :return: Time in ms
+        :rtype: float
+        """
+        if not self.selected:
+            return 0
+        return (time.time() - self._selection_time) * 1000
 
     def _focus(self):
         """
