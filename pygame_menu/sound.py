@@ -105,7 +105,7 @@ class Sound(object):
         assert buffer > 0, 'buffer size must be greater than zero'
 
         # Initialize sounds if not initialized
-        if (mixer.get_init() is None and SOUND_INITIALIZED[0] is False) or force_init:
+        if (mixer.get_init() is None and not SOUND_INITIALIZED[0]) or force_init:
 
             # Set sound as initialized globally
             SOUND_INITIALIZED[0] = True
