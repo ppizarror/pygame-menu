@@ -414,8 +414,15 @@ class Widget(object):
         assert isinstance(color, tuple)
         assert isinstance(use_background_color, bool)
         bgcolor = self._font_background_color
+
+        # Background color must be opaque, otherwise the results are quite bad
+        if isinstance(bgcolor, (tuple, list)) and len(bgcolor) == 4 and bgcolor[3] != 255:
+            bgcolor = None
+
+        # Disable
         if not use_background_color:
             bgcolor = None
+
         return self._font.render(text, self._font_antialias, color, bgcolor)
 
     def _check_render_size_changed(self):
