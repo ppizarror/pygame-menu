@@ -76,6 +76,7 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
+        self._attributes = {}  # Stores widget attributes
         self._alignment = _locals.ALIGN_CENTER
         self._background_color = None
         self._background_inflate = (0, 0)
@@ -137,7 +138,30 @@ class Widget(object):
         self.joystick_enabled = True
         self.mouse_enabled = True
         self.selected = False
+        self.selection_effect_enabled = True  # Some widgets cannot have selection effect
         self.sound = Sound()  # type: Sound
+
+    def set_attribute(self, key, value):
+        """
+        Set widget attribute.
+
+        :param key: Key of the attribute
+        :param value: Value of the attribute
+        :return: None
+        """
+        self._attributes[key] = value
+
+    def get_attribute(self, key, default):
+        """
+        Get attribute value.
+
+        :param key: Key of the attribute
+        :param default: Value if does not exists
+        :return: Attribute data
+        """
+        if key not in self._attributes.keys():
+            return default
+        return self._attributes[key]
 
     @staticmethod
     def _hash_variables(*args):
@@ -173,11 +197,11 @@ class Widget(object):
         Update the widget title.
 
         :param title: New title
-        :type title: str
+        :type title: str, int, float
         :return: None
         """
-        assert isinstance(title, str)
-        self._title = title
+        assert isinstance(title, (str, int, float))
+        self._title = str(title)
         self._apply_font()
         self._render()
         self._check_render_size_changed()
@@ -321,7 +345,7 @@ class Widget(object):
         :type surface: :py:class:`pygame.Surface`
         :return: None
         """
-        if not self.is_selectable or self._selection_effect is None:
+        if not self.is_selectable or self._selection_effect is None or not self.selection_effect_enabled:
             return
         self._selection_effect.draw(surface, self)
 
