@@ -19,5 +19,5 @@ build/
 dist/
 build.bat
 
-# Other example files
-other/
+# Other
+run_gource.bat

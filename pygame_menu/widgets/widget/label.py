@@ -49,7 +49,7 @@ class Label(Widget):
             title=title,
             widget_id=label_id
         )
-        self.is_selectable = False
+        self.selection_effect_enabled = False
 
     def _apply_font(self):
         pass

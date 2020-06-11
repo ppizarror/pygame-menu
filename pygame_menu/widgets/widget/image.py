@@ -61,8 +61,7 @@ class Image(Widget):
         self._image = BaseImage(image_path)
         self._image.rotate(angle)
         self._image.scale(scale[0], scale[1], smooth=scale_smooth)
-
-        self.is_selectable = False
+        self.selection_effect_enabled = False
 
     def _apply_font(self):
         pass
