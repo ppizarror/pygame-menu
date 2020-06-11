@@ -132,6 +132,9 @@ class Menu(object):
         # Assert theme
         theme.validate()
 
+        # Assert pygame was initialized
+        assert pygame.get_init(), 'pygame is not initialized'
+
         # Column/row asserts
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if columns > 1:
@@ -160,7 +163,11 @@ class Menu(object):
             'menu width and height must be greater than zero'
 
         # Get window size
-        window_width, window_height = pygame.display.get_surface().get_size()
+        surface = pygame.display.get_surface()
+        if surface is None:
+            msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
+            raise RuntimeError(msg)
+        window_width, window_height = surface.get_size()
         assert width <= window_width and height <= window_height, \
             'menu size must be lower than the size of the window'
 
@@ -330,7 +337,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the button
-        :type title: str
+        :type title: str, int, float
         :param action: Action of the button, can be a Menu, an event or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable
         :param args: Additional arguments used by a function
@@ -340,7 +347,8 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
-        assert isinstance(title, str)
+        assert isinstance(title, (str, int, float))
+        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -518,7 +526,7 @@ class Menu(object):
                   title,
                   label_id='',
                   max_char=0,
-                  selectable=False,
+                  selectable=True,
                   **kwargs):
         """
         Add a simple text to the Menu.
@@ -537,7 +545,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Text to be displayed
-        :type title: str
+        :type title: str, int, float
         :param label_id: ID of the label
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds. (0: don't split, -1: split to menu width)
@@ -549,12 +557,14 @@ class Menu(object):
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
+        assert isinstance(title, (str, int, float))
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
         assert isinstance(selectable, bool)
         assert max_char >= -1
         if len(label_id) == 0:
             label_id = str(uuid4())  # If wrap
+        title = str(title)
 
         # Wrap text to menu width (imply additional calls to render functions)
         if max_char < 0:
