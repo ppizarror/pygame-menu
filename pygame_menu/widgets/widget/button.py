@@ -30,9 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pygame_menu.widgets.core import Widget
 import pygame
 import pygame_menu.controls as _controls
-from pygame_menu.widgets.core import Widget
+import types
 
 
 class Button(Widget):
@@ -72,6 +73,20 @@ class Button(Widget):
 
     def _apply_font(self):
         pass
+
+    def update_callback(self, func, *args):
+        """
+        Update function triggered by the button. Button cannot point to a Menu, as that is only
+        valid using Menu.add_button() method
+
+        :param func: Function
+        :type func: Callable
+        :param args: Arguments used by the function once triggered
+        """
+        assert isinstance(func, (types.FunctionType, types.MethodType)) or callable(func), 'Only function are allowed'
+        self._args = args or []  # type: list
+        self._on_change = None  # type: callable
+        self._on_return = func
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
