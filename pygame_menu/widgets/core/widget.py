@@ -146,9 +146,12 @@ class Widget(object):
         Set widget attribute.
 
         :param key: Key of the attribute
+        :type key: str
         :param value: Value of the attribute
+        :type value: Any
         :return: None
         """
+        assert isinstance(key, str)
         self._attributes[key] = value
 
     def get_attribute(self, key, default):
@@ -156,9 +159,13 @@ class Widget(object):
         Get attribute value.
 
         :param key: Key of the attribute
+        :type key: str
         :param default: Value if does not exists
+        :type default: Any
         :return: Attribute data
+        :rtype: Any
         """
+        assert isinstance(key, str)
         if key not in self._attributes.keys():
             return default
         return self._attributes[key]
