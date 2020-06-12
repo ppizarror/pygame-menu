@@ -352,7 +352,7 @@ class Menu(object):
         :param title: Title of the button
         :type title: str
         :param action: Action of the button, can be a Menu, an event or a function
-        :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable
+        :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
         :param kwargs: Additional keyword arguments
@@ -368,6 +368,9 @@ class Menu(object):
         # Get ID
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'ID must be a string'
+
+        if action is None:
+            action = _events.NONE
 
         # If element is a Menu
         onchange = None

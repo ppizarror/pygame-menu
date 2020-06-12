@@ -26,7 +26,7 @@ def add_dynamic_button():
     Append a button to the menu on demand.
     """
     print('Adding a button dynamically')
-    btn = menu.add_button(randrange(0, 10), pygame_menu.events.NONE)
+    btn = menu.add_button(randrange(0, 10), None)
 
     def _update_button():
         count = btn.get_attribute('count', int(btn.get_title())) + 1
