@@ -168,7 +168,8 @@ class Menu(object):
             raise RuntimeError(msg)
         window_width, window_height = surface.get_size()
         assert width <= window_width and height <= window_height, \
-            'menu size must be lower than the size of the window'
+            'menu size ({0}x{1}) must be lower than the size of the window ({2}x{3})'.format(
+                width, height, window_width, window_height)
 
         # Generate ID if empty
         if len(menu_id) == 0:
