@@ -435,7 +435,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the color input
-        :type title: str
+        :type title: str, int, float
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: str
         :param color_id: ID of the color input
@@ -457,7 +457,9 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
         """
+        assert isinstance(title, (str, int, float))
         assert isinstance(default, (str, tuple))
+        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -575,6 +577,7 @@ class Menu(object):
         assert isinstance(max_char, int)
         assert isinstance(selectable, bool)
         assert max_char >= -1
+
         if len(label_id) == 0:
             label_id = str(uuid4())  # If wrap
         title = str(title)
@@ -647,7 +650,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the selector
-        :type title: str
+        :type title: str, int, float
         :param items: Elements of the selector [('Item1', var1..), ('Item2'...)]
         :type items: list
         :param default: Index of default value to display
@@ -663,6 +666,9 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
+        assert isinstance(title, (str, int, float))
+        title = str(title)
+
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
@@ -724,7 +730,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the text input
-        :type title: str
+        :type title: str, int, float
         :param default: Default value to display
         :type default: str, int, float
         :param copy_paste_enable: Enable text copy, paste and cut
@@ -756,7 +762,9 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
+        assert isinstance(title, (str, int, float))
         assert isinstance(default, (str, int, float))
+        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
