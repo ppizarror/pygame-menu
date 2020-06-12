@@ -59,6 +59,8 @@ class Theme(object):
     :type cursor_selection_color: tuple, list
     :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements. And must be transparent
     :type focus_background_color: tuple, list
+    :param menubar_close_button: Draw a back-box button on header to close the menu
+    :type menubar_close_button: bool
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -140,6 +142,8 @@ class Theme(object):
                                                 'color', (30, 30, 30, 120))  # type: tuple
         self.focus_background_color = self._get(kwargs, 'focus_background_color',
                                                 'color', (0, 0, 0, 180))  # type: tuple
+        self.menubar_close_button = self._get(kwargs, 'menubar_close_button',
+                                              bool, True)  # type: bool
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
                                          'color', (220, 220, 220))  # type: tuple
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
@@ -218,7 +222,8 @@ class Theme(object):
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
-            raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
+            msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
+            raise ValueError(msg)
 
     def validate(self):
         """

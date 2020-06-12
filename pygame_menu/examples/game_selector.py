@@ -248,12 +248,15 @@ def main(test=False):
     # -------------------------------------------------------------------------
     # Create menus: Main
     # -------------------------------------------------------------------------
+    main_theme = pygame_menu.themes.THEME_DEFAULT.copy()
+    main_theme.menubar_close_button = False  # Disable close button
+
     main_menu = pygame_menu.Menu(
-        back_box=False,
         height=WINDOW_SIZE[1] * 0.6,
         onclose=pygame_menu.events.DISABLE_CLOSE,
         title='Main Menu',
-        width=WINDOW_SIZE[0] * 0.6,
+        theme=main_theme,
+        width=WINDOW_SIZE[0] * 0.6
     )
 
     main_menu.add_button('Play', play_menu)

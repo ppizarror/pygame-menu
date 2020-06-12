@@ -35,6 +35,7 @@ from uuid import uuid4
 import sys
 import textwrap
 import types
+import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -61,8 +62,6 @@ class Menu(object):
     :type title: str
     :param center_content: Auto centers the menu on the vertical position after a widget is added/deleted
     :type center_content: bool
-    :param back_box: Draw a back-box button on header
-    :type back_box: bool
     :param column_force_fit_text: Force text fitting of widgets if the width exceeds the column max width
     :type column_force_fit_text: bool
     :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
@@ -89,13 +88,13 @@ class Menu(object):
     :type rows: int, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
+    :param kwargs: Optional keyword parameters
     """
 
     def __init__(self,
                  height,
                  width,
                  title,
-                 back_box=True,
                  center_content=True,
                  column_force_fit_text=False,
                  column_max_width=None,
@@ -110,10 +109,10 @@ class Menu(object):
                  onclose=None,
                  rows=None,
                  theme=_themes.THEME_DEFAULT,
+                 **kwargs
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
-        assert isinstance(back_box, bool)
         assert isinstance(center_content, bool)
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
@@ -249,6 +248,14 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Create Menu bar (title)
+        back_box = kwargs.get('back_box', None)
+        if back_box is not None:  # Check compatibility
+            assert isinstance(back_box, bool)
+            msg = 'back_box Menu constructor parameter moved to Theme.menubar_close_button. ' \
+                  'back_box will be removed in v3.3'
+            warnings.warn(msg)
+        else:  # Use theme
+            back_box = theme.menubar_close_button
         self._menubar = _widgets.MenuBar(
             title=title,
             width=self._width,
@@ -295,6 +302,11 @@ class Menu(object):
             shadow_offset=self._theme.scrollbar_shadow_offset,
             shadow_position=self._theme.scrollbar_shadow_position
         )
+
+        # Upon this, no more kwargs should exist, raise exception if there's more
+        for invalid_keyword in kwargs.keys():
+            msg = 'Menu constructor parameter {} does not exist'.format(invalid_keyword)
+            raise ValueError(msg)
 
     def get_current(self):
         """
