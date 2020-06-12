@@ -197,10 +197,9 @@ class Widget(object):
         Update the widget title.
 
         :param title: New title
-        :type title: str, int, float
+        :type title: str
         :return: None
         """
-        assert isinstance(title, (str, int, float))
         self._title = str(title)
         self._apply_font()
         self._render()

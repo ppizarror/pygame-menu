@@ -350,7 +350,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the button
-        :type title: str, int, float
+        :type title: str
         :param action: Action of the button, can be a Menu, an event or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable
         :param args: Additional arguments used by a function
@@ -360,7 +360,6 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
-        assert isinstance(title, (str, int, float))
         title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
@@ -435,7 +434,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the color input
-        :type title: str, int, float
+        :type title: str
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: str
         :param color_id: ID of the color input
@@ -457,9 +456,7 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
         """
-        assert isinstance(title, (str, int, float))
         assert isinstance(default, (str, tuple))
-        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -473,7 +470,7 @@ class Menu(object):
             onchange=onchange,
             onreturn=onreturn,
             prev_size=previsualization_width,
-            title=title,
+            title=str(title),
             **kwargs
         )
 
@@ -560,7 +557,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Text to be displayed
-        :type title: str, int, float
+        :type title: str
         :param label_id: ID of the label
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds. (0: don't split, -1: split to menu width)
@@ -572,15 +569,14 @@ class Menu(object):
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
-        assert isinstance(title, (str, int, float))
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
         assert isinstance(selectable, bool)
         assert max_char >= -1
 
+        title = str(title)
         if len(label_id) == 0:
             label_id = str(uuid4())  # If wrap
-        title = str(title)
 
         # Wrap text to menu width (imply additional calls to render functions)
         if max_char < 0:
@@ -650,7 +646,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the selector
-        :type title: str, int, float
+        :type title: str
         :param items: Elements of the selector [('Item1', var1..), ('Item2'...)]
         :type items: list
         :param default: Index of default value to display
@@ -666,8 +662,6 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
-        assert isinstance(title, (str, int, float))
-        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -678,7 +672,7 @@ class Menu(object):
             onchange=onchange,
             onreturn=onreturn,
             selector_id=selector_id,
-            title=title,
+            title=str(title),
             **kwargs
         )
 
@@ -730,7 +724,7 @@ class Menu(object):
             - ``shadow_offset``         Text shadow offset (int, float, None)
 
         :param title: Title of the text input
-        :type title: str, int, float
+        :type title: str
         :param default: Default value to display
         :type default: str, int, float
         :param copy_paste_enable: Enable text copy, paste and cut
@@ -762,9 +756,7 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
-        assert isinstance(title, (str, int, float))
         assert isinstance(default, (str, int, float))
-        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -787,7 +779,7 @@ class Menu(object):
             password=password,
             tab_size=tab_size,
             textinput_id=textinput_id,
-            title=title,
+            title=str(title),
             valid_chars=valid_chars,
             **kwargs
         )
