@@ -44,6 +44,14 @@ Scroll menu example
 
 .. image:: ../_static/example_scroll_menu.gif
     :align: center
+    :alt: Since v3, menu supports scrolls
+    :width: 590
+
+Columns example
+-------------------
+
+.. image:: ../_static/example_columns.gif
+    :align: center
     :alt: Since v3, menu supports columns and scrolls
     :width: 590
 
