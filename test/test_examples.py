@@ -39,6 +39,9 @@ import pygame_menu.examples.timer_clock as timer_clock
 import pygame_menu.widgets.examples.scrollbar as scroll_bar
 import pygame_menu.widgets.examples.scrollbar_area as scroll_area
 
+import pygame_menu.examples.other.dynamic_button_append as dynamic_button
+import pygame_menu.examples.other.image_background as image_background
+
 
 class ExamplesTest(unittest.TestCase):
 
@@ -89,6 +92,20 @@ class ExamplesTest(unittest.TestCase):
         Test scroll area example.
         """
         scroll_area.main(test=True)
+
+    @staticmethod
+    def test_example_dynamic_button():
+        """
+        Test dynamic button example.
+        """
+        dynamic_button.main(test=True)
+
+    @staticmethod
+    def test_example_background_image():
+        """
+        Test background image example.
+        """
+        image_background.main(test=True)
 
     @staticmethod
     def test_example_simple():

@@ -72,7 +72,6 @@ def mainmenu_background():
 
     :return: None
     """
-    global surface
     surface.fill((40, 0, 40))
 
 
@@ -82,7 +81,6 @@ def reset_timer():
 
     :return: None
     """
-    global timer
     timer[0] = 0
 
 
