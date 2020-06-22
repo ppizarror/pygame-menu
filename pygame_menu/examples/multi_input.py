@@ -60,7 +60,6 @@ def main_background():
 
     :return: None
     """
-    global surface
     surface.fill((40, 40, 40))
 
 
@@ -86,8 +85,6 @@ def update_menu_sound(value, enabled):
     :type enabled: bool
     :return: None
     """
-    global main_menu
-    global sound
     if enabled:
         main_menu.set_sound(sound, recursive=True)
         print('Menu sounds were enabled')

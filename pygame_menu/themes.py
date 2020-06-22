@@ -274,6 +274,19 @@ class Theme(object):
         assert self.focus_background_color[3] != 0, \
             'focus background color cannot be fully transparent, suggested opacity between 1 and 255'
 
+    def set_background_color_opacity(self, opacity):
+        """
+        Modify menu background color with given opacity.
+
+        :param opacity: Opacity value, from 0 (transparent) to 1 (transparent)
+        :type opacity: int
+        :return: None
+        """
+        assert isinstance(opacity, float)
+        assert 0 <= opacity <= 1, 'Opacity must be a number between 0 (transparent) and 1 (opaque)'
+        self.background_color = (self.background_color[0], self.background_color[1],
+                                 self.background_color[2], int(opacity * 255))
+
     @staticmethod
     def _vec_2tuple(obj):
         """
