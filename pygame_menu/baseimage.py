@@ -44,6 +44,7 @@ IMAGE_EXAMPLE_CARBON_FIBER = __fontdir.format('carbon_fiber.png')
 IMAGE_EXAMPLE_GRAY_LINES = __fontdir.format('gray_lines.png')
 IMAGE_EXAMPLE_METAL = __fontdir.format('metal.png')
 IMAGE_EXAMPLE_PYGAME_MENU = __fontdir.format('pygame_menu.png')
+IMAGE_EXAMPLE_WALLPAPER = __fontdir.format('wallpaper.jpg')
 
 # Drawing modes
 IMAGE_MODE_CENTER = 100
@@ -282,21 +283,24 @@ class BaseImage(object):
         """
         return self._drawing_mode
 
-    def draw(self, surface, area, position=(0, 0)):
+    def draw(self, surface, area=None, position=(0, 0)):
         """
         Draw the image in a given surface.
 
         :param surface: Pygame surface object
         :type surface: :py:class:`pygame.Surface`
-        :param area: Area to draw
-        :type area: :py:class:`pygame.Rect`
+        :param area: Area to draw, if None, Image will be drawn on entire surface
+        :type area: :py:class:`pygame.Rect`, None
         :param position: Position to draw
         :type position: tuple
         :return: None
         """
         assert isinstance(surface, pygame.Surface)
-        assert isinstance(area, pygame.Rect)
+        assert isinstance(area, (pygame.Rect, type(None)))
         assert isinstance(position, tuple)
+
+        if area is None:
+            area = surface.get_rect()
 
         if self._drawing_mode == IMAGE_MODE_FILL:
 
