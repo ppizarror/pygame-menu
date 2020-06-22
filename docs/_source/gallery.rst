@@ -22,6 +22,8 @@ Them can also be imported as follows:
 
     main()
 
+Examples can also be found in the `Github repo <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples>`_.
+
 
 Simple example
 --------------
