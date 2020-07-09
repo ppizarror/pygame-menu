@@ -246,26 +246,26 @@ class Theme(object):
             'widget offset must be greater or equal than zero'
 
         # Format colors, this converts all color lists to tuples automatically
-        self.background_color = self._format_opacity(self.background_color)
-        self.cursor_color = self._format_opacity(self.cursor_color)
-        self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)
-        self.focus_background_color = self._format_opacity(self.focus_background_color)
-        self.scrollbar_color = self._format_opacity(self.scrollbar_color)
-        self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
-        self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
-        self.selection_color = self._format_opacity(self.selection_color)
-        self.surface_clear_color = self._format_opacity(self.surface_clear_color)
-        self.title_background_color = self._format_opacity(self.title_background_color)
-        self.title_font_color = self._format_opacity(self.title_font_color)
-        self.title_shadow_color = self._format_opacity(self.title_shadow_color)
-        self.widget_background_color = self._format_opacity(self.widget_background_color)
-        self.widget_font_color = self._format_opacity(self.widget_font_color)
+        self.background_color = self._format_opacity(self.background_color)  # type: tuple
+        self.cursor_color = self._format_opacity(self.cursor_color)  # type: tuple
+        self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)  # type: tuple
+        self.focus_background_color = self._format_opacity(self.focus_background_color)  # type: tuple
+        self.scrollbar_color = self._format_opacity(self.scrollbar_color)  # type: tuple
+        self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)  # type: tuple
+        self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)  # type: tuple
+        self.selection_color = self._format_opacity(self.selection_color)  # type: tuple
+        self.surface_clear_color = self._format_opacity(self.surface_clear_color)  # type: tuple
+        self.title_background_color = self._format_opacity(self.title_background_color)  # type: tuple
+        self.title_font_color = self._format_opacity(self.title_font_color)  # type: tuple
+        self.title_shadow_color = self._format_opacity(self.title_shadow_color)  # type: tuple
+        self.widget_background_color = self._format_opacity(self.widget_background_color)  # type: tuple
+        self.widget_font_color = self._format_opacity(self.widget_font_color)  # type: tuple
 
         # List to tuple
-        self.title_offset = self._vec_2tuple(self.title_offset)
-        self.widget_background_inflate = self._vec_2tuple(self.widget_background_inflate)
-        self.widget_margin = self._vec_2tuple(self.widget_margin)
-        self.widget_offset = self._vec_2tuple(self.widget_offset)
+        self.title_offset = self._vec_2tuple(self.title_offset)  # type: tuple
+        self.widget_background_inflate = self._vec_2tuple(self.widget_background_inflate)  # type: tuple
+        self.widget_margin = self._vec_2tuple(self.widget_margin)  # type: tuple
+        self.widget_offset = self._vec_2tuple(self.widget_offset)  # type: tuple
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
@@ -285,7 +285,7 @@ class Theme(object):
         assert isinstance(opacity, float)
         assert 0 <= opacity <= 1, 'Opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
-                                 self.background_color[2], int(opacity * 255))
+                                 self.background_color[2], int(opacity * 255))  # type: tuple
 
     @staticmethod
     def _vec_2tuple(obj):
