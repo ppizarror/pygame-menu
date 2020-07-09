@@ -109,7 +109,7 @@ class ScrollArea(object):
         assert area_width > 0 and area_height > 0, \
             'area size must be greater than zero'
 
-        self._rect = pygame.Rect(0.0, 0.0, area_width, area_height)
+        self._rect = pygame.Rect(0, 0, int(area_width), int(area_height))
         self._world = world  # type: pygame.Surface
         self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique

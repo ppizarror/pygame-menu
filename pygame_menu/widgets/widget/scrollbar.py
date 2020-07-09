@@ -136,7 +136,7 @@ class ScrollBar(Widget):
         dims = ('width', 'height')
         setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
         setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
-        self._slider_rect = pygame.Rect(0, 0, self._rect.width, self._rect.height)
+        self._slider_rect = pygame.Rect(0, 0, int(self._rect.width), int(self._rect.height))
         setattr(self._slider_rect, dims[self._orientation], self._page_step)
         setattr(self._slider_rect, dims[self._opp_orientation], self._page_ctrl_thick)
 

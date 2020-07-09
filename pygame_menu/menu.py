@@ -1758,7 +1758,7 @@ class Menu(object):
         :return: Rect
         :rtype: :py:class:`pygame.Rect`
         """
-        return pygame.Rect(self._pos_x, self._pos_y, self._width, self._height)
+        return pygame.Rect(int(self._pos_x), int(self._pos_y), int(self._width), int(self._height))
 
     def set_sound(self, sound, recursive=False):
         """
@@ -1915,7 +1915,7 @@ class Menu(object):
         # Scroll to rect
         rect = new_widget.get_rect()
         if current._index == 0:  # Scroll to the top of the Menu
-            rect = pygame.Rect(rect.x, 0, rect.width, rect.height)
+            rect = pygame.Rect(int(rect.x), 0, int(rect.width), int(rect.height))
         current._scroll.scroll_to_rect(rect)
 
         # Play widget selection sound

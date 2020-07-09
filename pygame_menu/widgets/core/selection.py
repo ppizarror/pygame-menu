@@ -97,10 +97,10 @@ class Selection(object):
         :type rect: :py:class:`pygame.Rect`
         """
         assert isinstance(rect, pygame.Rect)
-        return pygame.Rect(rect.x - self.margin_left,
-                           rect.y - self.margin_top,
-                           rect.width + self.margin_left + self.margin_right,
-                           rect.height + self.margin_top + self.margin_bottom)
+        return pygame.Rect(int(rect.x - self.margin_left),
+                           int(rect.y - self.margin_top),
+                           int(rect.width + self.margin_left + self.margin_right),
+                           int(rect.height + self.margin_top + self.margin_bottom))
 
     def get_height(self):
         """

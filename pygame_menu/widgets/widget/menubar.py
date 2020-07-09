@@ -236,10 +236,10 @@ class MenuBar(Widget):
         # Create the back box
         if self._backbox:
             backbox_margin = 4
-            self._backbox_rect = pygame.Rect(self._rect.x + self._width - cross_size + backbox_margin,
-                                             self._rect.y + backbox_margin,
-                                             cross_size - 2 * backbox_margin,
-                                             cross_size - 2 * backbox_margin)
+            self._backbox_rect = pygame.Rect(int(self._rect.x + self._width - cross_size + backbox_margin),
+                                             int(self._rect.y + backbox_margin),
+                                             int(cross_size - 2 * backbox_margin),
+                                             int(cross_size - 2 * backbox_margin))
             if menu_prev_condition:
                 # Make a cross for top menu
                 self._backbox_pos = (
