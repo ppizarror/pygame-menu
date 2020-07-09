@@ -84,7 +84,7 @@ class Widget(object):
         self._id = str(widget_id)
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
-        self._rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)  # type: (pygame.Rect,None)
+        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._selection_time = 0  # type: float
         self._title = title
