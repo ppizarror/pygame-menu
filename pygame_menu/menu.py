@@ -541,7 +541,7 @@ class Menu(object):
                   title,
                   label_id='',
                   max_char=0,
-                  selectable=True,
+                  selectable=False,
                   **kwargs):
         """
         Add a simple text to the Menu.
@@ -565,7 +565,7 @@ class Menu(object):
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds. (0: don't split, -1: split to menu width)
         :type max_char: int
-        :param selectable: Label accepts user selection
+        :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
         :param kwargs: Optional keywords arguments
         :type kwargs: any
@@ -1594,15 +1594,14 @@ class Menu(object):
                         for index in range(len(self._current._widgets)):
                             widget = self._current._widgets[index]
                             # Don't consider the mouse wheel (button 4 & 5)
-                            if event.button in (1, 2, 3) and \
-                                    self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
+                            if event.button in (1, 2, 3) and self._current._scroll.collide(widget, event) and \
+                                    widget.is_selectable:
                                 self._current._select(index)
 
                     # If mouse motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
                     else:
-                        if not self._current._scroll.to_real_position(selected_widget.get_rect()).collidepoint(
-                                *event.pos):
+                        if not self._current._scroll.collide(selected_widget, event):
                             selected_widget.active = False
 
                 # Select widgets by mouse motion, this is valid only if the current selected widget
@@ -1611,17 +1610,14 @@ class Menu(object):
                         not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]  # type: _widgets.core.Widget
-                        if self._current._scroll.to_real_position(widget.get_rect()).collidepoint(*event.pos):
-                            if not widget.is_selectable:
-                                continue
+                        if self._current._scroll.collide(widget, event) and widget.is_selectable:
                             self._current._select(index)
 
-                # Mouse events to selected widget
+                # Mouse events in selected widget
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None:
                     self._current._sounds.play_click_mouse()
                     # Don't consider the mouse wheel (button 4 & 5)
-                    if event.button in (1, 2, 3) and \
-                            self._current._scroll.to_real_position(selected_widget.get_rect()).collidepoint(*event.pos):
+                    if event.button in (1, 2, 3) and self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(event.type, **event.dict)
                         new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
                         new_event.pos = self._current._scroll.to_world_position(event.pos)
