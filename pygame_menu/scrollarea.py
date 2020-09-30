@@ -525,3 +525,16 @@ class ScrollArea(object):
             elif sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and not updated[1]:
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
+
+    def collide(self, widget, event):
+        """
+        If user event collides a widget within the scroll area respect to the relative position.
+
+        :param widget: Widget
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :param event: Pygame event
+        :type event: :py:class:`pygame.event.Event`
+        :return: True if collide
+        :rtype: bool
+        """
+        return self.to_real_position(widget.get_rect()).collidepoint(*event.pos)
