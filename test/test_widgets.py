@@ -31,9 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from test._utils import *
-
 from pygame_menu import locals as _locals
 from pygame_menu.widgets import ScrollBar, Label
+import sys
 
 
 class WidgetsTest(unittest.TestCase):
@@ -43,6 +43,24 @@ class WidgetsTest(unittest.TestCase):
         Setup sound engine.
         """
         self.menu = MenuUtils.generic_menu()
+
+    def test_nonascii(self):
+        """
+        Test non-ascii.
+        """
+        m = MenuUtils.generic_menu(title=u'Ménu')
+        m.clear()
+        self.menu.add_button(0, pygame_menu.events.NONE)
+        self.menu.add_button('Test', pygame_menu.events.NONE)
+        self.menu.add_button(u'Menú', pygame_menu.events.NONE)
+        self.menu.add_color_input(u'Cólor', 'rgb')
+        self.menu.add_text_input(u'Téxt')
+        self.menu.add_label(u'Téxt')
+        if sys.version_info < (3, 0):
+            self.assertRaises(Exception, lambda: self.menu.add_selector(u'Sélect', [('a', 'a')]))  # Strict
+        self.menu.add_selector(u'Sélect'.encode('latin1'), [('a', 'a')])
+        self.menu.enable()
+        self.menu.draw(surface)
 
     def test_selector(self):
         """

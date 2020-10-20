@@ -35,7 +35,7 @@ import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 from pygame_menu.widgets.core import Widget
-from pygame_menu.utils import assert_color
+from pygame_menu.utils import assert_color, to_string
 
 MENUBAR_STYLE_ADAPTIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
@@ -60,6 +60,10 @@ class MenuBar(Widget):
     :type back_box: bool
     :param mode: Mode of drawing the bar
     :type mode: int
+    :param offsetx: Offset x-position of title (px)
+    :type offsetx: int, float
+    :param offsety: Offset y-position of title (px)
+    :type offsety: int, float
     :param onchange: Callback when changing the selector
     :type onchange: callable, None
     :param onreturn: Callback when pressing return button
@@ -76,11 +80,12 @@ class MenuBar(Widget):
                  background_color,
                  back_box=False,
                  mode=MENUBAR_STYLE_ADAPTIVE,
+                 offsetx=0.0,
+                 offsety=0.0,
                  onchange=None,
                  onreturn=None,
                  *args,
                  **kwargs):
-        assert isinstance(title, str)
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
 
@@ -103,7 +108,10 @@ class MenuBar(Widget):
         self._offsety = 0.0
         self._polygon_pos = None  # type: (tuple,None)
         self._style = mode
+        self._title = ''
         self._width = width
+
+        self.set_title(title, offsetx, offsety)
 
     def _apply_font(self):
         pass
@@ -280,7 +288,7 @@ class MenuBar(Widget):
         """
         assert isinstance(offsetx, (int, float))
         assert isinstance(offsety, (int, float))
-        self._title = str(title)
+        self._title = to_string(title)
         self._offsety = offsety
         self._offsetx = offsetx
 

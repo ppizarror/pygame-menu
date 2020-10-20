@@ -36,7 +36,7 @@ import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.sound import Sound
-from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2
+from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, to_string
 
 from uuid import uuid4
 import time
@@ -66,7 +66,6 @@ class Widget(object):
                  args=None,
                  kwargs=None
                  ):
-        assert isinstance(title, str)
         assert isinstance(widget_id, str)
         if onchange:
             assert callable(onchange), 'onchange must be callable or None'
@@ -87,7 +86,7 @@ class Widget(object):
         self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._selection_time = 0  # type: float
-        self._title = title
+        self._title = to_string(title)
 
         self._args = args or []  # type: list
         self._kwargs = kwargs or {}  # type: dict
@@ -207,7 +206,7 @@ class Widget(object):
         :type title: str
         :return: None
         """
-        self._title = str(title)
+        self._title = to_string(title)
         self._apply_font()
         self._render()
         self._check_render_size_changed()
@@ -442,7 +441,7 @@ class Widget(object):
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
-        assert isinstance(text, str)
+        # assert isinstance(text, str)
         assert isinstance(color, tuple)
         assert isinstance(use_background_color, bool)
         bgcolor = self._font_background_color
