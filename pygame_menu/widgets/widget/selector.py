@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.controls as _controls
-from pygame_menu.utils import check_key_pressed_valid
+from pygame_menu.utils import check_key_pressed_valid, to_string
 from pygame_menu.widgets.core import Widget
 
 
@@ -65,7 +65,6 @@ class Selector(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
-        assert isinstance(title, str)
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
@@ -83,7 +82,7 @@ class Selector(Widget):
         assert isinstance(default, int), 'default must be an integer'
 
         super(Selector, self).__init__(
-            title=title,
+            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
             widget_id=selector_id,
             onchange=onchange,
             onreturn=onreturn,
