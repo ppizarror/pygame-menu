@@ -56,7 +56,8 @@ class WidgetsTest(unittest.TestCase):
         self.menu.add_color_input(u'Cólor', 'rgb')
         self.menu.add_text_input(u'Téxt')
         self.menu.add_label(u'Téxt')
-        self.menu.add_selector(u'Sélect', [('a', 'a')])
+        self.assertRaises(Exception, lambda: self.menu.add_selector(u'Sélect', [('a', 'a')]))  # Strict
+        self.menu.add_selector(u'Sélect'.encode('latin1'), [('a', 'a')])
         self.menu.enable()
         self.menu.draw(surface)
 
