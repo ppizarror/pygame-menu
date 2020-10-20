@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.locals as _locals
-from pygame_menu.utils import check_key_pressed_valid, make_surface
+from pygame_menu.utils import check_key_pressed_valid, make_surface, to_string
 from pygame_menu.widgets.widget.textinput import TextInput
 
 TYPE_HEX = 'hex'
@@ -87,7 +87,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  repeat_mouse_interval_ms=100,
                  *args,
                  **kwargs):
-        assert isinstance(title, str)
         assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
         assert isinstance(input_separator, str)
@@ -183,7 +182,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
             self._auto_separator_pos = [0, 1]
         elif self._color_type == TYPE_HEX:
-            text = str(color).strip()
+            text = to_string(color).strip()
             if text == '':
                 _color = '#'
             else:
