@@ -71,11 +71,13 @@ class Selector(Widget):
         assert isinstance(default, int)
 
         # Check element list
+        assert len(elements) > 0, 'item list (elements) cannot be empty'
         for vl in elements:
             assert len(vl) >= 1, \
-                'Length of each element on item list must be greater or equal to 1'
+                'length of each element on item list must be greater or equal to 1'
             assert isinstance(vl[0], str), \
-                'First element of each item on list must be a string (the title of each item)'
+                'first element of each item on list must be a string (the title of each item)'
+        assert default >= 0, 'default position must be greater or equal than zero'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'ID must be a string'
         assert isinstance(default, int), 'default must be an integer'
