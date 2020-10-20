@@ -44,6 +44,22 @@ class WidgetsTest(unittest.TestCase):
         """
         self.menu = MenuUtils.generic_menu()
 
+    def test_nonascii(self):
+        """
+        Test non-ascii.
+        """
+        m = MenuUtils.generic_menu(title=u'Ménu')
+        m.clear()
+        self.menu.add_button(0, pygame_menu.events.NONE)
+        self.menu.add_button('Test', pygame_menu.events.NONE)
+        self.menu.add_button(u'Menú', pygame_menu.events.NONE)
+        self.menu.add_color_input(u'Cólor', 'rgb')
+        self.menu.add_text_input(u'Téxt')
+        self.menu.add_label(u'Téxt')
+        self.menu.add_selector(u'Sélect', [('a', 'a')])
+        self.menu.enable()
+        self.menu.draw(surface)
+
     def test_selector(self):
         """
         Test Selector widget.
