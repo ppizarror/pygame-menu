@@ -126,7 +126,6 @@ class Menu(object):
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
-        assert isinstance(title, str)
 
         # Assert theme
         theme.validate()
@@ -258,32 +257,29 @@ class Menu(object):
         else:  # Use theme
             back_box = theme.menubar_close_button
         self._menubar = _widgets.MenuBar(
-            title=title,
-            width=self._width,
             back_box=back_box,
+            background_color=self._theme.title_background_color,
             mode=self._theme.title_bar_style,
+            offsetx=theme.title_offset[0],
+            offsety=theme.title_offset[1],
             onreturn=self._back,
-            background_color=self._theme.title_background_color
+            title=title,
+            width=self._width
         )
         self._menubar.set_menu(self)
-        self._menubar.set_title(
-            title=title,
-            offsetx=theme.title_offset[0],
-            offsety=theme.title_offset[1]
-        )
         self._menubar.set_font(
+            antialias=self._theme.title_font_antialias,
+            background_color=None,
+            color=self._theme.title_font_color,
             font=self._theme.title_font,
             font_size=self._theme.title_font_size,
-            color=self._theme.title_font_color,
-            selected_color=self._theme.title_font_color,
-            background_color=None,
-            antialias=self._theme.title_font_antialias
+            selected_color=self._theme.title_font_color
         )
         self._menubar.set_shadow(
-            enabled=self._theme.title_shadow,
             color=self._theme.title_shadow_color,
-            position=self._theme.title_shadow_position,
-            offset=self._theme.title_shadow_offset
+            enabled=self._theme.title_shadow,
+            offset=self._theme.title_shadow_offset,
+            position=self._theme.title_shadow_position
         )
         self._menubar.set_controls(self._joystick, self._mouse)
 
@@ -360,7 +356,6 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
-        title = str(title)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -473,7 +468,7 @@ class Menu(object):
             onchange=onchange,
             onreturn=onreturn,
             prev_size=previsualization_width,
-            title=str(title),
+            title=title,
             **kwargs
         )
 
@@ -577,9 +572,9 @@ class Menu(object):
         assert isinstance(selectable, bool)
         assert max_char >= -1
 
-        title = str(title)
+        title = _utils.to_string(title)
         if len(label_id) == 0:
-            label_id = str(uuid4())  # If wrap
+            label_id = str(uuid4())
 
         # Wrap text to menu width (imply additional calls to render functions)
         if max_char < 0:
@@ -675,7 +670,7 @@ class Menu(object):
             onchange=onchange,
             onreturn=onreturn,
             selector_id=selector_id,
-            title=str(title),
+            title=title,
             **kwargs
         )
 
@@ -782,7 +777,7 @@ class Menu(object):
             password=password,
             tab_size=tab_size,
             textinput_id=textinput_id,
-            title=str(title),
+            title=title,
             valid_chars=valid_chars,
             **kwargs
         )
