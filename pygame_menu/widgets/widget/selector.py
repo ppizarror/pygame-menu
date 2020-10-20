@@ -38,7 +38,19 @@ from pygame_menu.widgets.core import Widget
 
 class Selector(Widget):
     """
-    Selector widget.
+    Selector widget: several items with values and
+    two functions that are executed when changing the selector (left/right)
+    and pressing return button on the selected item.
+
+    The values of the selector are like::
+
+        values = [('Item1', a, b, c...), ('Item2', d, e, f..)]
+
+    The callbacks receive the current text, its index in the list,
+    the associated arguments and all unknown keyword arguments::
+
+        onchange((current_text, index), a, b, c..., **kwargs)
+        onreturn((current_text, index), a, b, c..., **kwargs)
 
     :param title: Selector title
     :type title: str
@@ -71,11 +83,10 @@ class Selector(Widget):
 
         # Check element list
         assert len(elements) > 0, 'item list (elements) cannot be empty'
-        for vl in elements:
-            assert len(vl) >= 1, \
+        for e in elements:
+            assert len(e) >= 1, \
                 'length of each element on item list must be greater or equal to 1'
-            assert isinstance(vl[0], str), \
-                'first element of each item on list must be a string (the title of each item)'
+            e[0] = to_string(e[0])  # Item title (first element) to string
         assert default >= 0, 'default position must be greater or equal than zero'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'ID must be a string'
@@ -235,9 +246,9 @@ class Selector(Widget):
         :type elements: Object
         :return: None
         """
-        for elem in elements:  # Check value list
-            assert len(elem) >= 1, 'length of each element in value list must be greater than 1'
-            assert isinstance(elem[0], str), 'first element of value list component must be a string'
+        for e in elements:  # Check value list
+            assert len(e) >= 1, 'length of each element in value list must be greater than 1'
+            e[0] = to_string(e[0])
         selected_element = self._elements[self._index]
         self._elements = elements
         try:
