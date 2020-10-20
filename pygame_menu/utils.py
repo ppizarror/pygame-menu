@@ -172,3 +172,18 @@ def make_surface(width, height, alpha=False, fill_color=None):
         assert_color(fill_color)
         surface.fill(fill_color)
     return surface
+
+
+def to_string(s):
+    """
+    Check if string, if not convert. See issue #215.
+    This function is compatible for py 2/3.
+
+    :param s: String
+    :type s: any
+    :return: String
+    :rtype: str
+    """
+    if isinstance(s, (str, bytes)):
+        return s
+    return str(s)
