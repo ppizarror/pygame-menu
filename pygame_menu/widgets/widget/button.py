@@ -61,7 +61,6 @@ class Button(Widget):
                  onreturn=None,
                  *args,
                  **kwargs):
-        assert isinstance(title, str)
         super(Button, self).__init__(
             title=title,
             widget_id=button_id,

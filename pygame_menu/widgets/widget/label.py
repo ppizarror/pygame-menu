@@ -44,7 +44,6 @@ class Label(Widget):
     """
 
     def __init__(self, title, label_id=''):
-        assert isinstance(title, str)
         super(Label, self).__init__(
             title=title,
             widget_id=label_id
