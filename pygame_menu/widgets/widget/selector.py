@@ -36,6 +36,22 @@ from pygame_menu.utils import check_key_pressed_valid, to_string
 from pygame_menu.widgets.core import Widget
 
 
+def _check_elements(elements):
+    """
+    Check the element list.
+
+    :param elements: Element list
+    :type elements: list
+    :return: None
+    """
+    assert len(elements) > 0, 'item list (elements) cannot be empty'
+    for e in elements:
+        assert len(e) >= 1, \
+            'length of each element on item list must be greater or equal to 1'
+        assert isinstance(e[0], (str, bytes)), \
+            'first element of each item on list must be a string (the title of each item)'
+
+
 class Selector(Widget):
     """
     Selector widget: several items with values and
@@ -82,12 +98,7 @@ class Selector(Widget):
         assert isinstance(default, int)
 
         # Check element list
-        assert len(elements) > 0, 'item list (elements) cannot be empty'
-        for e in elements:
-            assert len(e) >= 1, \
-                'length of each element on item list must be greater or equal to 1'
-            assert (e[0], (str, bytes)), \
-                'first element of each item on list must be a string (the title of each item)'
+        _check_elements(elements)
         assert default >= 0, 'default position must be greater or equal than zero'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'ID must be a string'
@@ -228,7 +239,6 @@ class Selector(Widget):
                     topright, _ = self._rect.topright
                     dist = mousex - (topleft + self._title_size)  # Distance from label
                     if dist > 0:  # User clicked the options, not label
-
                         # Position in percentage, if <0.5 user clicked left
                         pos = dist / float(topright - topleft - self._title_size)
                         if pos <= 0.5:
@@ -247,9 +257,7 @@ class Selector(Widget):
         :type elements: Object
         :return: None
         """
-        for e in elements:  # Check value list
-            assert len(e) >= 1, 'length of each element in value list must be greater than 1'
-            assert isinstance(e[0], (str, bytes)), 'first element of value list component must be a string'
+        _check_elements(elements)
         selected_element = self._elements[self._index]
         self._elements = elements
         try:
