@@ -330,14 +330,14 @@ class Menu(object):
             action(*args, **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``button_id``             Widget ID (str)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
@@ -417,13 +417,13 @@ class Menu(object):
             onreturn(current_color, **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
@@ -490,10 +490,10 @@ class Menu(object):
         Add a simple image to the Menu.
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
 
@@ -542,13 +542,13 @@ class Menu(object):
         Add a simple text to the Menu.
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
@@ -629,13 +629,13 @@ class Menu(object):
             onreturn((current_text, index), a, b, c..., **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
@@ -707,13 +707,13 @@ class Menu(object):
             onreturn(current_text, **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)
@@ -792,7 +792,7 @@ class Menu(object):
         """
         Adds a vertical margin to the current Menu.
 
-        :param margin: Margin in px
+        :param margin: Vertical margin in px
         :type margin: int, float
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
@@ -895,13 +895,13 @@ class Menu(object):
         the Menu level.
 
         kwargs (Optional):
-            - ``align``                 Widget alignment (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin (tuple, list)
+            - ``margin``                (x,y) margin in px (tuple, list)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
             - ``shadow``                Shadow is enabled or disabled (bool)

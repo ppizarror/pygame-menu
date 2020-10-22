@@ -16,17 +16,14 @@ aspects of the menu.
 
 The less trivial ones are explained here.
 
-Widgets position
-^^^^^^^^^^^^^^^^
+Widgets alignment
+^^^^^^^^^^^^^^^^^
 
 By default, the widgets are centered horizontally (``widget_alignment=ALIGN_CENTER``).
 All are included in a virtual rectangle positioned at 0 pixel below the title bar and
 0 pixel from the left border (``widget_offset=(0, 0)``).
 
-In the same way, an offset can be defined for the title using the parameter
-``title_offset``.
-
-The horizontal alignment can be changed with one of the following values:
+The widget alignment (str) can be changed with one of the following values:
 
 ==============================================  ========================
 Alignment                                       Description
@@ -36,17 +33,22 @@ Alignment                                       Description
 :py:data:`pygame_menu.locals.ALIGN_RIGHT`       Right alignment
 ==============================================  ========================
 
+In the same way, an offset can be defined for the title using the parameter
+``title_offset``.
+
 The content of the menu can be centered vertically after all widgets have
 been added by calling the method :py:meth:`pygame_menu.Menu.center_content`:
 
 .. code-block:: python
+    :emphasize-lines: 6
 
     menu = pygame_menu.Menu(...)
 
     menu.add_text_input(...)
     menu.add_selector(...)
     menu.add_button(...)
-    menu.add_button(...)
+    menu.center_content()
+
 
 .. note:: If the menu size is insufficient to show all of the widgets, horizontal
           and/or vertical scrollbar(s) will appear automatically.
