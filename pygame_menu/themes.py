@@ -57,7 +57,7 @@ class Theme(object):
     :type cursor_color: tuple, list
     :param cursor_selection_color: Selection box color
     :type cursor_selection_color: tuple, list
-    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements. And must be transparent
+    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements. Also must be transparent
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu
     :type menubar_close_button: bool
@@ -103,7 +103,7 @@ class Theme(object):
     :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title
     :type title_shadow_position: str
-    :param widget_alignment: Widget default alignment
+    :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
@@ -117,7 +117,7 @@ class Theme(object):
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
-    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0, 10)
+    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0,10)
     :type widget_margin: tuple, list
     :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default *(0, 0)*
     :type widget_offset: tuple, list

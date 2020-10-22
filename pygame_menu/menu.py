@@ -330,7 +330,7 @@ class Menu(object):
             action(*args, **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``button_id``             Widget ID (str)
@@ -417,7 +417,7 @@ class Menu(object):
             onreturn(current_color, **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
@@ -490,7 +490,7 @@ class Menu(object):
         Add a simple image to the Menu.
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``margin``                (x,y) margin in px (tuple, list)
@@ -542,7 +542,7 @@ class Menu(object):
         Add a simple text to the Menu.
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
@@ -629,7 +629,7 @@ class Menu(object):
             onreturn((current_text, index), a, b, c..., **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
@@ -707,7 +707,7 @@ class Menu(object):
             onreturn(current_text, **kwargs)
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
@@ -895,7 +895,7 @@ class Menu(object):
         the Menu level.
 
         kwargs (Optional):
-            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.htmll#widgets-alignment/>`_ (str)
+            - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``font_color``            Widget font color (tuple, list)
