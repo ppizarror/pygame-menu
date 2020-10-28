@@ -317,7 +317,7 @@ class TextInput(Widget):
 
     def get_value(self):
         """
-        Returns the value of the text.
+        Return the value of the text.
 
         :return: Text inside the widget
         :rtype: str
@@ -619,7 +619,7 @@ class TextInput(Widget):
 
     def _get_input_string_filtered(self):
         """
-        Returns input string where all filters have been applied.
+        Return the input string where all filters have been applied.
 
         :return: Filtered string
         :rtype: str
@@ -1043,7 +1043,7 @@ class TextInput(Widget):
 
     def _get_selected_text(self):
         """
-        Return text selected.
+        Return the selected text.
 
         :return: Text
         :rtype: str
@@ -1134,7 +1134,7 @@ class TextInput(Widget):
 
     def _get_char_size(self, char):
         """
-        Return char size in pixels.
+        Return the widget char size in pixels.
 
         :param char: Char
         """

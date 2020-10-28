@@ -351,7 +351,7 @@ class ScrollArea(object):
 
     def get_world_size(self):
         """
-        Return world size.
+        Return the world size.
 
         :return: width, height in pixels
         :rtype: tuple
@@ -499,7 +499,7 @@ class ScrollArea(object):
 
     def is_scrolling(self):
         """
-        Returns true if the user is scrolling.
+        Return true if the user is scrolling.
 
         :return: True if user scrolls
         :rtype: bool
