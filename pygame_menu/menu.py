@@ -165,13 +165,15 @@ class Menu(object):
         # Get window size if not given explicitly
         if screen_dimension is not None:
             _utils.assert_vector2(screen_dimension)
-            window_width, window_height = screen_dimension
+            self.window_size = screen_dimension
         else:
             surface = pygame.display.get_surface()
             if surface is None:
                 msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
                 raise RuntimeError(msg)
-            window_width, window_height = surface.get_size()
+            self.window_size = surface.get_size()
+
+        window_width, window_height = self.window_size
         assert width <= window_width and height <= window_height, \
             'menu size ({0}x{1}) must be lower than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
@@ -1274,7 +1276,7 @@ class Menu(object):
 
         position_x = float(position_x) / 100
         position_y = float(position_y) / 100
-        window_width, window_height = pygame.display.get_surface().get_size()
+        window_width, window_height = self.window_size
         self._pos_x = (window_width - self._width) * position_x
         self._pos_y = (window_height - self._height) * position_y
         self._widgets_surface = None  # This forces an update of the widgets
@@ -1364,7 +1366,7 @@ class Menu(object):
 
         if widget is None or not widget.active or not self._mouse_motion_selection:
             return
-        window_width, window_height = pygame.display.get_surface().get_size()
+        window_width, window_height = self.window_size
 
         rect = widget.get_rect()
         if widget.selected and widget.get_selection_effect():
