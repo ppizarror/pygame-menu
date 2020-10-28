@@ -167,8 +167,8 @@ class Menu(object):
         # Get window size if not given explicitly
         if screen_dimension is not None:
             _utils.assert_vector2(screen_dimension)
-            assert screen_dimension[0] > 0, 'screen width has to be higher than 0.'
-            assert screen_dimension[1] > 0, 'screen height has to be higher than 0.'
+            assert screen_dimension[0] > 0, 'screen width has to be higher than zero'
+            assert screen_dimension[1] > 0, 'screen height has to be higher than zero'
             self._window_size = screen_dimension
         else:
             surface = pygame.display.get_surface()
@@ -179,7 +179,7 @@ class Menu(object):
 
         window_width, window_height = self._window_size
         assert width <= window_width and height <= window_height, \
-            'menu size ({0}x{1}) must be lower than the size of the window ({2}x{3})'.format(
+            'menu size ({0}x{1}) must be lower or equal than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
 
         # Generate ID if empty
@@ -823,7 +823,7 @@ class Menu(object):
 
     def _filter_widget_attributes(self, kwargs):
         """
-        Return valid widgets attributes from a dictionary.
+        Return the valid widgets attributes from a dictionary.
         The valid (key, value) are removed from the initial
         dictionary.
 
@@ -1135,7 +1135,7 @@ class Menu(object):
 
     def _get_widget_max_position(self):
         """
-        Returns the lower rightmost position of each widgets in Menu.
+        Return the lower rightmost position of each widgets in Menu.
 
         :return: Rightmost position
         :rtype: tuple
@@ -1756,7 +1756,7 @@ class Menu(object):
 
     def get_rect(self):
         """
-        Return Menu rect.
+        Return the Menu rect.
 
         :return: Rect
         :rtype: :py:class:`pygame.Rect`
@@ -1926,12 +1926,31 @@ class Menu(object):
 
     def get_id(self):
         """
-        Returns the ID of the current/base Menu.
+        Return the ID of the current/base Menu.
 
         :return: Menu ID
         :rtype: str
         """
         return self._id
+
+    def get_window_size(self):
+        """
+        Return the window size (px) as a tuple of (width, height).
+
+        :return: Window size in px
+        :rtype: tuple
+        """
+        w, h = self._window_size
+        return w, h
+
+    def get_size(self):
+        """
+        Return the Menu size (px) as a tuple of (width, height).
+
+        :return: Menu size in px
+        :rtype: tuple
+        """
+        return self._width, self._height
 
     def get_widget(self, widget_id, recursive=False):
         """
