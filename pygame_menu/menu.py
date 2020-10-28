@@ -86,6 +86,8 @@ class Menu(object):
     :type onclose: callable, None
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
+    :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode.
+    :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
     :param kwargs: Optional keyword parameters
@@ -165,15 +167,17 @@ class Menu(object):
         # Get window size if not given explicitly
         if screen_dimension is not None:
             _utils.assert_vector2(screen_dimension)
-            self.window_size = screen_dimension
+            assert screen_dimension[0] > 0, 'screen width has to be higher than 0.'
+            assert screen_dimension[1] > 0, 'screen height has to be higher than 0.'
+            self._window_size = screen_dimension
         else:
             surface = pygame.display.get_surface()
             if surface is None:
                 msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
                 raise RuntimeError(msg)
-            self.window_size = surface.get_size()
+            self._window_size = surface.get_size()
 
-        window_width, window_height = self.window_size
+        window_width, window_height = self._window_size
         assert width <= window_width and height <= window_height, \
             'menu size ({0}x{1}) must be lower than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
@@ -1276,7 +1280,7 @@ class Menu(object):
 
         position_x = float(position_x) / 100
         position_y = float(position_y) / 100
-        window_width, window_height = self.window_size
+        window_width, window_height = self._window_size
         self._pos_x = (window_width - self._width) * position_x
         self._pos_y = (window_height - self._height) * position_y
         self._widgets_surface = None  # This forces an update of the widgets
@@ -1366,7 +1370,7 @@ class Menu(object):
 
         if widget is None or not widget.active or not self._mouse_motion_selection:
             return
-        window_width, window_height = self.window_size
+        window_width, window_height = self._window_size
 
         rect = widget.get_rect()
         if widget.selected and widget.get_selection_effect():
