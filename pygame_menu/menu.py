@@ -108,6 +108,7 @@ class Menu(object):
                  mouse_visible=True,
                  onclose=None,
                  rows=None,
+                 screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
                  **kwargs
                  ):
@@ -125,6 +126,7 @@ class Menu(object):
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
+        assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
 
         # Assert theme
@@ -160,12 +162,16 @@ class Menu(object):
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
 
-        # Get window size
-        surface = pygame.display.get_surface()
-        if surface is None:
-            msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
-            raise RuntimeError(msg)
-        window_width, window_height = surface.get_size()
+        # Get window size if not given explicitly
+        if screen_dimension is not None:
+            _utils.assert_vector2(screen_dimension)
+            window_width, window_height = screen_dimension
+        else:
+            surface = pygame.display.get_surface()
+            if surface is None:
+                msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
+                raise RuntimeError(msg)
+            window_width, window_height = surface.get_size()
         assert width <= window_width and height <= window_height, \
             'menu size ({0}x{1}) must be lower than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
