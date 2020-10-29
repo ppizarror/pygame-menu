@@ -78,11 +78,11 @@ class ArrowSelection(Selection):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        return
+        raise NotImplementedError('override is mandatory')
 
-    def draw_arrow(self, surface, widget, a, b, c):
+    def _draw_arrow(self, surface, widget, a, b, c):
         """
-        Draw the selection.
+        Draw the selection arrow.
 
         :param surface: Surface to draw
         :type surface: :py:class:`pygame.Surface`
