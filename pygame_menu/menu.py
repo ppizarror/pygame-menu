@@ -35,7 +35,6 @@ from uuid import uuid4
 import sys
 import textwrap
 import types
-import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -260,16 +259,8 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Create Menu bar (title)
-        back_box = kwargs.get('back_box', None)
-        if back_box is not None:  # Check compatibility
-            assert isinstance(back_box, bool)
-            msg = 'back_box Menu constructor parameter moved to Theme.menubar_close_button. ' \
-                  'back_box will be removed in v3.3'
-            warnings.warn(msg)
-        else:  # Use theme
-            back_box = theme.menubar_close_button
         self._menubar = _widgets.MenuBar(
-            back_box=back_box,
+            back_box=theme.menubar_close_button,
             background_color=self._theme.title_background_color,
             mode=self._theme.title_bar_style,
             offsetx=theme.title_offset[0],
@@ -1747,7 +1738,7 @@ class Menu(object):
                 subdata_keys = data_submenu.keys()
                 for key in subdata_keys:  # type: str
                     if key in data_keys:
-                        msg = 'Collision between widget data ID="{0}" at depth={1}'.format(key, depth)
+                        msg = 'collision between widget data ID="{0}" at depth={1}'.format(key, depth)
                         raise ValueError(msg)
 
                 # Update data
