@@ -55,7 +55,9 @@ class Widget(object):
     :param onreturn: Callback when pressing return button
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
+    :type args: any
     :param kwargs: Optional keyword-arguments for callbacks
+    :type kwargs: dict
     """
 
     def __init__(self,
@@ -147,7 +149,7 @@ class Widget(object):
         :param key: Key of the attribute
         :type key: str
         :param value: Value of the attribute
-        :type value: Any
+        :type value: any
         :return: None
         """
         assert isinstance(key, str)
@@ -160,9 +162,9 @@ class Widget(object):
         :param key: Key of the attribute
         :type key: str
         :param default: Value if does not exists
-        :type default: Any
+        :type default: any
         :return: Attribute data
-        :rtype: Any
+        :rtype: any
         """
         assert isinstance(key, str)
         if key not in self._attributes.keys():
@@ -175,7 +177,7 @@ class Widget(object):
         Compute hash from a series of variables.
 
         :param args: Variables to compute hash
-        :type args: Object
+        :type args: any
         :return: Hash data
         :rtype: int
         """
@@ -188,7 +190,7 @@ class Widget(object):
         If the render changed,
 
         :param args: Variables to check the hash
-        :type args: Object
+        :type args: any
         :return: Hash data
         :rtype: int
         """
@@ -264,6 +266,8 @@ class Widget(object):
 
     def get_selection_effect(self):
         """
+        Return the selection effect.
+
         :return: Selection effect
         :rtype: :py:class:`pygame_menu.widgets.core.Selection`
         """
@@ -296,6 +300,7 @@ class Widget(object):
             - ``kwargs`` of the widget
 
         :param args: Extra arguments passed to the callback
+        :param args: any
         :return: None
         """
         if self._on_return:
@@ -322,6 +327,7 @@ class Widget(object):
             - ``kwargs`` of the widget
 
         :param args: Extra arguments passed to the callback
+        :param args: any
         :return: None
         """
         if self._on_change:
@@ -368,6 +374,8 @@ class Widget(object):
 
     def get_margin(self):
         """
+        Return the widget margin.
+
         :return: Widget margin
         :rtype: tuple
         """
@@ -402,7 +410,7 @@ class Widget(object):
         Return the value. If exception ``ValueError`` is raised,
         no value will be passed to the callbacks.
 
-        :return: Value
+        :return: Widget data value
         :rtype: Object
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
@@ -412,7 +420,7 @@ class Widget(object):
         """
         Return the widget ID.
 
-        :return: ID
+        :return: Widget ID
         :rtype: str
         """
         return self._id
@@ -571,7 +579,7 @@ class Widget(object):
 
     def set_menu(self, menu):
         """
-        Set menu reference.
+        Set the menu reference.
 
         :param menu: Menu object
         :type menu: :py:class:`pygame_menu.Menu`
@@ -791,6 +799,7 @@ class Widget(object):
 
         :param event: Custom event
         :type event: :py:class:`pygame.event.Event`
+        :return: None
         """
         self._events.append(event)
 

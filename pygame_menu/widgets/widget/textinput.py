@@ -119,7 +119,7 @@ class TextInput(Widget):
     :param valid_chars: List of chars that are valid, None if all chars are valid
     :type valid_chars: list
     :param kwargs: Optional keyword-arguments for callbacks
-    :type kwargs: any
+    :type kwargs: dict
     """
 
     def __init__(self,
@@ -1118,7 +1118,7 @@ class TextInput(Widget):
         """
         Cut operation.
 
-        :return:
+        :return: None
         """
         self._copy()  # This is a safe operation, all checks have been passed
 
@@ -1139,6 +1139,8 @@ class TextInput(Widget):
 
         :param char: Char
         :type char: str
+        :return: Char size in px
+        :rtype: int
         """
         if char in self._keychar_size.keys():
             return self._keychar_size[char]

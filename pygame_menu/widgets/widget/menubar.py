@@ -71,7 +71,7 @@ class MenuBar(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword-arguments for callbacks
-    :type kwargs: any
+    :type kwargs: dict
     """
 
     def __init__(self,
@@ -276,7 +276,7 @@ class MenuBar(Widget):
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
-        Set Menu title.
+        Set the Menu title.
 
         :param title: Menu title
         :type title: str

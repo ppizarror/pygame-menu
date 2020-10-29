@@ -89,7 +89,8 @@ class Menu(object):
     :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
-    :param kwargs: Optional keyword parameters
+    :param kwargs: Optional keyword-parameters
+    :type kwargs: dict
     """
 
     def __init__(self,
@@ -358,8 +359,8 @@ class Menu(object):
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
-        :param kwargs: Additional keyword arguments
-        :type kwargs: any
+        :param kwargs: Additional keyword-arguments
+        :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
@@ -457,7 +458,7 @@ class Menu(object):
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Additional keyword-parameters
-        :type kwargs: any
+        :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
         """
@@ -516,8 +517,8 @@ class Menu(object):
         :type scale_smooth: bool
         :param selectable: Image accepts user selection
         :type selectable: bool
-        :param kwargs: Optional keywords arguments
-        :type kwargs: any
+        :param kwargs: Optional keyword-arguments
+        :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Image`
         """
@@ -569,8 +570,8 @@ class Menu(object):
         :type max_char: int
         :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
-        :param kwargs: Optional keywords arguments
-        :type kwargs: any
+        :param kwargs: Optional keyword-arguments
+        :type kwargs: dict
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
@@ -662,8 +663,8 @@ class Menu(object):
         :type onreturn: callable, None
         :param selector_id: ID of the selector
         :type selector_id: str
-        :param kwargs: Additional parameters
-        :type kwargs: any
+        :param kwargs: Additional keyword-parameters
+        :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
@@ -757,7 +758,7 @@ class Menu(object):
         :param valid_chars: List of authorized chars, None if all chars are valid
         :type valid_chars: list
         :param kwargs: Additional keyword-parameters
-        :type kwargs: any
+        :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
@@ -919,14 +920,16 @@ class Menu(object):
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param kwargs: Optional keywords arguments
-        :type kwargs: any
+        :type kwargs: dict
         :return: None
         """
         assert isinstance(widget, _widgets.core.Widget)
         assert widget.get_menu() is None, 'widget cannot have an instance of menu'
+
         _col = int((len(self._widgets) - 1) // self._rows)  # Column position
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
+
         widget.set_font(
             font=kwargs['font_name'],
             font_size=kwargs['font_size'],
@@ -935,8 +938,12 @@ class Menu(object):
             background_color=kwargs['font_background_color'],
             antialias=kwargs['font_antialias']
         )
+
+        selection_effect = kwargs['selection_effect']  # type: _widgets.core.Selection
+
         if self._force_fit_text and self._column_max_width[_col] is not None:
-            widget.set_max_width(self._column_max_width[_col] - kwargs['selection_effect'].get_width())
+            widget.set_max_width(self._column_max_width[_col] - selection_effect.get_width())
+
         widget.set_shadow(
             enabled=kwargs['shadow'],
             color=kwargs['shadow_color'],
@@ -946,7 +953,7 @@ class Menu(object):
         widget.set_controls(self._joystick, self._mouse)
         widget.set_alignment(kwargs['align'])
         widget.set_margin(*kwargs['margin'])
-        widget.set_selection_effect(kwargs['selection_effect'])
+        widget.set_selection_effect(selection_effect)
         widget.set_background_color(kwargs['background_color'], kwargs['background_inflate'])
 
     def _append_widget(self, widget):
@@ -955,6 +962,7 @@ class Menu(object):
 
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :return: None
         """
         assert isinstance(widget, _widgets.core.Widget)
         assert widget.get_menu() == self, 'widget cannot have a different instance of menu'
@@ -1225,9 +1233,9 @@ class Menu(object):
 
     def _get_depth(self):
         """
-        Find Menu depth.
+        Return the Menu depth.
 
-        :return: Depth
+        :return: Menu depth
         :rtype: int
         """
         if self._top is None:
@@ -1435,7 +1443,9 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        :return: True if the Menu is enabled
+        Return True if the menu is enabled.
+
+        :return: Menu enabled status
         :rtype: bool
         """
         return self._top._enabled

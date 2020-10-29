@@ -51,7 +51,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword-arguments for callbacks
-    :type kwargs: any
+    :type kwargs: dict
     """
 
     def __init__(self,
@@ -81,6 +81,8 @@ class Button(Widget):
         :param func: Function
         :type func: Callable
         :param args: Arguments used by the function once triggered
+        :type args: any
+        :return: None
         """
         assert isinstance(func, (types.FunctionType, types.MethodType)) or callable(func), 'Only function are allowed'
         self._args = args or []  # type: list
