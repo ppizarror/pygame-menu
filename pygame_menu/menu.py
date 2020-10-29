@@ -35,7 +35,6 @@ from uuid import uuid4
 import sys
 import textwrap
 import types
-import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -140,18 +139,22 @@ class Menu(object):
         # Column/row asserts
         assert columns >= 1, 'number of columns must be greater or equal than 1'
         if columns > 1:
-            assert rows is not None and rows >= 1, 'if columns greater than 1 then rows must be equal or greater than 1'
+            assert rows is not None and rows >= 1, \
+                'if columns greater than 1 then rows must be equal or greater than 1'
         else:
             if columns == 1:
                 if rows is None:
                     rows = 1e6  # Set rows as a big number
                 else:
-                    assert rows > 0, 'number of rows must be greater than 1'
+                    assert rows > 0, \
+                        'number of rows must be greater than 1'
         if column_max_width is not None:
             if isinstance(column_max_width, (int, float)):
-                assert columns == 1, 'column_max_width can be a single number if there is only 1 column'
+                assert columns == 1, \
+                    'column_max_width can be a single number if there is only 1 column'
                 column_max_width = [column_max_width]
-            assert len(column_max_width) == columns, 'column_max_width length must be the same as the number of columns'
+            assert len(column_max_width) == columns, \
+                'column_max_width length must be the same as the number of columns'
             for i in column_max_width:
                 assert isinstance(i, type(None)) or isinstance(i, (int, float)), \
                     'each column max width can be None (no limit) or an integer/float'
@@ -173,8 +176,8 @@ class Menu(object):
         else:
             surface = pygame.display.get_surface()
             if surface is None:
-                msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
-                raise RuntimeError(msg)
+                raise RuntimeError('pygame surface could not be retrieved, check '
+                                   'if pygame.display.set_mode() was called')
             self._window_size = surface.get_size()
 
         window_width, window_height = self._window_size
@@ -260,16 +263,8 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Create Menu bar (title)
-        back_box = kwargs.get('back_box', None)
-        if back_box is not None:  # Check compatibility
-            assert isinstance(back_box, bool)
-            msg = 'back_box Menu constructor parameter moved to Theme.menubar_close_button. ' \
-                  'back_box will be removed in v3.3'
-            warnings.warn(msg)
-        else:  # Use theme
-            back_box = theme.menubar_close_button
         self._menubar = _widgets.MenuBar(
-            back_box=back_box,
+            back_box=theme.menubar_close_button,
             background_color=self._theme.title_background_color,
             mode=self._theme.title_bar_style,
             offsetx=theme.title_offset[0],
@@ -314,7 +309,7 @@ class Menu(object):
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
-            msg = 'Menu constructor parameter {} does not exist'.format(invalid_keyword)
+            msg = 'menu constructor parameter {} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
     def get_current(self):
@@ -1747,7 +1742,7 @@ class Menu(object):
                 subdata_keys = data_submenu.keys()
                 for key in subdata_keys:  # type: str
                     if key in data_keys:
-                        msg = 'Collision between widget data ID="{0}" at depth={1}'.format(key, depth)
+                        msg = 'collision between widget data ID="{0}" at depth={1}'.format(key, depth)
                         raise ValueError(msg)
 
                 # Update data
@@ -1777,7 +1772,8 @@ class Menu(object):
         :type recursive: bool
         :return: None
         """
-        assert isinstance(sound, (type(self._sounds), type(None))), 'sound must be pygame_menu.Sound type or None'
+        assert isinstance(sound, (type(self._sounds), type(None))), \
+            'sound must be pygame_menu.Sound type or None'
         if sound is None:
             sound = Sound()
         self._sounds = sound

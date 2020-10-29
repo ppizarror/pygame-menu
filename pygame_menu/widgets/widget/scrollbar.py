@@ -273,7 +273,7 @@ class ScrollBar(Widget):
         :return: None
         """
         assert isinstance(value, (int, float))
-        assert value > self._values_range[0], 'Maximum value shall greater than {}'.format(self._values_range[0])
+        assert value > self._values_range[0], 'maximum value shall greater than {}'.format(self._values_range[0])
         self._values_range[1] = value
 
     def set_minimum(self, value):
@@ -285,7 +285,7 @@ class ScrollBar(Widget):
         :return: None
         """
         assert isinstance(value, (int, float))
-        assert 0 <= value < self._values_range[1], "Minimum value shall lower than {}".format(self._values_range[1])
+        assert 0 <= value < self._values_range[1], 'minimum value shall lower than {}'.format(self._values_range[1])
         self._values_range[0] = value
 
     def set_orientation(self, orientation):
@@ -317,7 +317,7 @@ class ScrollBar(Widget):
         :return: None
         """
         assert isinstance(value, (int, float))
-        assert 0 < value, 'Page step shall be > 0'
+        assert 0 < value, 'page step shall be > 0'
 
         # Slider length shall represent the same ratio
         self._page_step = round(1.0 * self._page_ctrl_length * value /

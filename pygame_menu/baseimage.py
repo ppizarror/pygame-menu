@@ -126,7 +126,7 @@ class BaseImage(object):
 
     def get_surface(self):
         """
-        Return the surface object.
+        Return the surface object of the image.
 
         :return: Image surface
         :rtype: :py:class:`pygame.Surface`
@@ -149,10 +149,10 @@ class BaseImage(object):
 
     def equals(self, image):
         """
-        Return true if the image is the same as the object
+        Return true if the image is the same as the object.
 
         :param image: Image object
-        :type image: BaseImage
+        :type image: :py:class:`pygame_menu.baseimage.BaseImage`
         :return: True if the image is the same (note, the surface)
         :rtype: bool
         """

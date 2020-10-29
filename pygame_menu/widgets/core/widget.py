@@ -389,7 +389,7 @@ class Widget(object):
 
     def get_rect(self):
         """
-        Return the Rect object, this forces the widget rendering
+        Return the Rect object, this forces the widget rendering.
 
         :return: Widget rect
         :rtype: :py:class:`pygame.Rect`
