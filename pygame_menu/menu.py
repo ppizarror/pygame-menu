@@ -85,7 +85,7 @@ class Menu(object):
     :type onclose: callable, None
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
-    :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode.
+    :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode
     :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
