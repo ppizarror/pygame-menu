@@ -153,21 +153,27 @@ class ScrollBar(Widget):
 
     def get_maximum(self):
         """
-        :return: Return the greatest acceptable value
+        Return the greatest acceptable value.
+
+        :return: Greatest acceptable value
         :rtype: int
         """
         return self._values_range[1]
 
     def get_minimum(self):
         """
-        :return: Return the smallest acceptable value
+        Return the smallest acceptable value.
+
+        :return: Smalles acceptable value
         :rtype: int
         """
         return self._values_range[0]
 
     def get_orientation(self):
         """
-        :return: Return the scroll bar orientation
+        Return the scrollbar orientation (pygame-menu locals).
+
+        :return: Scrollbar orientation
         :rtype: str
         """
         if self._orientation == 0:
@@ -177,7 +183,10 @@ class ScrollBar(Widget):
 
     def get_page_step(self):
         """
-        :return: Return amount that the value changes by when the user click on the page control surface
+        Return amount that the value changes by when the user
+        click on the page control surface.
+
+        :return: Page step
         :rtype: int
         """
         return self._page_step * (self._values_range[1] - self._values_range[0]) / \

@@ -135,14 +135,18 @@ class BaseImage(object):
 
     def get_namefile(self):
         """
-        :return: Return the name of the image file
+        Return the name of the image file.
+
+        :return: Filename
         :rtype: str
         """
         return self._filename
 
     def get_extension(self):
         """
-        :return: Return the extension of the image file
+        Return the extension of the image file.
+
+        :return: File extension
         :rtype: str
         """
         return self._extension
@@ -278,6 +282,8 @@ class BaseImage(object):
 
     def get_drawing_mode(self):
         """
+        Return the image drawing mode.
+
         :return: Image drawing mode
         :rtype: int
         """
