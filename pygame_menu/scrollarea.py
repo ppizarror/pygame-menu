@@ -353,7 +353,7 @@ class ScrollArea(object):
         """
         Return the world size.
 
-        :return: width, height in pixels
+        :return: Width, height in pixels
         :rtype: tuple
         """
         if self._world is None:
@@ -456,7 +456,7 @@ class ScrollArea(object):
         :type virtual: :py:class:`pygame.Rect`, tuple, list
         :param visible: If a rect is given, return only the visible width/height
         :type visible: bool
-        :return: real rect or real position
+        :return: Real rect or real position
         :rtype: :py:class:`pygame.Rect`, tuple
         """
         assert isinstance(virtual, (pygame.Rect, tuple, list))
@@ -481,7 +481,7 @@ class ScrollArea(object):
 
         :param real: Position/Rect according scroll area origin
         :type real: :py:class:`pygame.Rect`, tuple, list
-        :return: rect in world or position in world
+        :return: Rect in world or position in world
         :rtype: :py:class:`pygame.Rect`, tuple
         """
         assert isinstance(real, (pygame.Rect, tuple, list))

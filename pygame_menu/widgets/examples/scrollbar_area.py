@@ -80,6 +80,7 @@ def make_world(width, height, text=''):
     :param text: Text to write
     :type: str
     :return: World surface
+    :rtype: :py:class:`pygame.Surface`
     """
     world = make_surface(width, height)
     world.fill((210, 210, 210))

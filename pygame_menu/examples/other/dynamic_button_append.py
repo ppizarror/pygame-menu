@@ -50,6 +50,8 @@ menu = pygame_menu.Menu(height=300,
 def add_dynamic_button():
     """
     Append a button to the menu on demand.
+
+    :return: None
     """
     print('Adding a button dynamically')
     btn = menu.add_button(randrange(0, 10), None)

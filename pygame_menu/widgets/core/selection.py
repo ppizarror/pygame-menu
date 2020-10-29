@@ -95,6 +95,8 @@ class Selection(object):
 
         :param rect: rectangle
         :type rect: :py:class:`pygame.Rect`
+        :return: Inflated rect
+        :rtype: :py:class:`pygame.Rect`
         """
         assert isinstance(rect, pygame.Rect)
         return pygame.Rect(int(rect.x - self.margin_left),
