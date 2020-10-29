@@ -634,7 +634,7 @@ class TextInput(Widget):
 
     def _get_input_string(self, add_ellipsis=True):
         """
-        Return input string, apply overflow if enabled.
+        Return the input string, apply overflow if enabled.
 
         :param add_ellipsis: Adds ellipsis text
         :type add_ellipsis: bool
@@ -1137,6 +1137,7 @@ class TextInput(Widget):
         Return the widget char size in pixels.
 
         :param char: Char
+        :type char: str
         """
         if char in self._keychar_size.keys():
             return self._keychar_size[char]
@@ -1415,6 +1416,7 @@ class TextInput(Widget):
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
+                        # noinspection PyArgumentList
                         pygame.key.set_mods(pygame.KMOD_NONE)
 
                     # Ctrl+C copy
@@ -1671,6 +1673,7 @@ class TextInput(Widget):
         self._keyrepeat_mouse_ms += time_clock
 
         # Check mouse pressed
+        # noinspection PyArgumentList
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = mouse_left or mouse_right or mouse_middle
 

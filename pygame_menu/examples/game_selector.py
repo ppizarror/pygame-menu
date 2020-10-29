@@ -77,7 +77,7 @@ def change_difficulty(value, difficulty):
 
 def random_color():
     """
-    Return random color.
+    Return a random color.
 
     :return: Color tuple
     :rtype: tuple

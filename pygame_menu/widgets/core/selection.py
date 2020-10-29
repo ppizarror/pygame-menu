@@ -72,7 +72,7 @@ class Selection(object):
 
     def get_margin(self):
         """
-        Return top, left, bottom and right margins of the selection.
+        Return the top, left, bottom and right margins of the selection.
 
         :return: Tuple of (t,l,b,r) margins in px
         :rtype: tuple, list
@@ -81,7 +81,7 @@ class Selection(object):
 
     def get_width(self):
         """
-        Return width as sum of left and right margins.
+        Return the selection width (px) as sum of left and right margins.
 
         :return: Width in px
         :rtype: int, float
@@ -104,7 +104,7 @@ class Selection(object):
 
     def get_height(self):
         """
-        Return the selection height as sum of top and bottom margins.
+        Return the selection height (px) as sum of top and bottom margins.
 
         :return: Height in px
         :rtype: int, float
