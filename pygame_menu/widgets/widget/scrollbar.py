@@ -164,7 +164,7 @@ class ScrollBar(Widget):
         """
         Return the smallest acceptable value.
 
-        :return: Smalles acceptable value
+        :return: Smallest acceptable value
         :rtype: int
         """
         return self._values_range[0]
