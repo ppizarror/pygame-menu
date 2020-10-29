@@ -178,12 +178,8 @@ class Sound(object):
         :return: Channel
         :rtype: :py:class:`pygame.mixer.Channel`
         """
-        version_major, _, _ = pygame_version
-        if version_major < 2:
-            # noinspection PyArgumentList
-            channel = mixer.find_channel()  # force only available on pygame v2
-        else:
-            channel = mixer.find_channel(force=False)
+        # noinspection PyArgumentList
+        channel = mixer.find_channel()  # force only available on pygame v2
         if self._uniquechannel:  # If the channel is unique
             if self._channel is None:  # If the channel has not been set
                 self._channel = channel
@@ -239,7 +235,7 @@ class Sound(object):
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
             if self._verbose:
-                stderr.write('The sound format is not valid, the sound has been disabled\n')
+                stderr.write('the sound format is not valid, the sound has been disabled\n')
             self._sound[sound_type] = {}
             return False
 
