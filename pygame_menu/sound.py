@@ -178,7 +178,12 @@ class Sound(object):
         :return: Channel
         :rtype: :py:class:`pygame.mixer.Channel`
         """
-        channel = mixer.find_channel()
+        version_major, _, _ = pygame_version
+        if version_major < 2:
+            # noinspection PyArgumentList
+            channel = mixer.find_channel()  # force only available on pygame v2
+        else:
+            channel = mixer.find_channel(force=False)
         if self._uniquechannel:  # If the channel is unique
             if self._channel is None:  # If the channel has not been set
                 self._channel = channel
