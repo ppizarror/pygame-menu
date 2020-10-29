@@ -410,7 +410,7 @@ class Widget(object):
 
     def get_id(self):
         """
-        Returns the widget ID.
+        Return the widget ID.
 
         :return: ID
         :rtype: str
@@ -581,7 +581,7 @@ class Widget(object):
 
     def get_menu(self):
         """
-        Return menu reference (if exists).
+        Return the menu reference (if exists).
 
         :return: Menu reference
         :rtype: :py:class:`pygame_menu.Menu`
@@ -622,7 +622,7 @@ class Widget(object):
 
     def get_alignment(self):
         """
-        Returns widget alignment.
+        Return the widget alignment.
 
         :return: Widget align, see locals
         :rtype: str

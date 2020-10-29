@@ -149,7 +149,7 @@ class BaseImage(object):
 
     def equals(self, image):
         """
-        Returns true if the image is the same as the object
+        Return true if the image is the same as the object
 
         :param image: Image object
         :type image: BaseImage

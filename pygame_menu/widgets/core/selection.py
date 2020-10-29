@@ -104,7 +104,7 @@ class Selection(object):
 
     def get_height(self):
         """
-        Return height as sum of top and bottom margins.
+        Return the selection height as sum of top and bottom margins.
 
         :return: Height in px
         :rtype: int, float

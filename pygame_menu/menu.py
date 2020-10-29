@@ -86,6 +86,8 @@ class Menu(object):
     :type onclose: callable, None
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
+    :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode.
+    :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
     :param kwargs: Optional keyword parameters
@@ -108,6 +110,7 @@ class Menu(object):
                  mouse_visible=True,
                  onclose=None,
                  rows=None,
+                 screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
                  **kwargs
                  ):
@@ -125,6 +128,7 @@ class Menu(object):
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
+        assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
 
         # Assert theme
@@ -160,14 +164,22 @@ class Menu(object):
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
 
-        # Get window size
-        surface = pygame.display.get_surface()
-        if surface is None:
-            msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
-            raise RuntimeError(msg)
-        window_width, window_height = surface.get_size()
+        # Get window size if not given explicitly
+        if screen_dimension is not None:
+            _utils.assert_vector2(screen_dimension)
+            assert screen_dimension[0] > 0, 'screen width has to be higher than zero'
+            assert screen_dimension[1] > 0, 'screen height has to be higher than zero'
+            self._window_size = screen_dimension
+        else:
+            surface = pygame.display.get_surface()
+            if surface is None:
+                msg = 'pygame surface could not be retrieved, check if pygame.display.set_mode() was called'
+                raise RuntimeError(msg)
+            self._window_size = surface.get_size()
+
+        window_width, window_height = self._window_size
         assert width <= window_width and height <= window_height, \
-            'menu size ({0}x{1}) must be lower than the size of the window ({2}x{3})'.format(
+            'menu size ({0}x{1}) must be lower or equal than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
 
         # Generate ID if empty
@@ -811,7 +823,7 @@ class Menu(object):
 
     def _filter_widget_attributes(self, kwargs):
         """
-        Return valid widgets attributes from a dictionary.
+        Return the valid widgets attributes from a dictionary.
         The valid (key, value) are removed from the initial
         dictionary.
 
@@ -1123,7 +1135,7 @@ class Menu(object):
 
     def _get_widget_max_position(self):
         """
-        Returns the lower rightmost position of each widgets in Menu.
+        Return the lower rightmost position of each widgets in Menu.
 
         :return: Rightmost position
         :rtype: tuple
@@ -1268,7 +1280,7 @@ class Menu(object):
 
         position_x = float(position_x) / 100
         position_y = float(position_y) / 100
-        window_width, window_height = pygame.display.get_surface().get_size()
+        window_width, window_height = self._window_size
         self._pos_x = (window_width - self._width) * position_x
         self._pos_y = (window_height - self._height) * position_y
         self._widgets_surface = None  # This forces an update of the widgets
@@ -1358,7 +1370,7 @@ class Menu(object):
 
         if widget is None or not widget.active or not self._mouse_motion_selection:
             return
-        window_width, window_height = pygame.display.get_surface().get_size()
+        window_width, window_height = self._window_size
 
         rect = widget.get_rect()
         if widget.selected and widget.get_selection_effect():
@@ -1744,7 +1756,7 @@ class Menu(object):
 
     def get_rect(self):
         """
-        Return Menu rect.
+        Return the Menu rect.
 
         :return: Rect
         :rtype: :py:class:`pygame.Rect`
@@ -1914,12 +1926,31 @@ class Menu(object):
 
     def get_id(self):
         """
-        Returns the ID of the current/base Menu.
+        Return the ID of the current/base Menu.
 
         :return: Menu ID
         :rtype: str
         """
         return self._id
+
+    def get_window_size(self):
+        """
+        Return the window size (px) as a tuple of (width, height).
+
+        :return: Window size in px
+        :rtype: tuple
+        """
+        w, h = self._window_size
+        return w, h
+
+    def get_size(self):
+        """
+        Return the Menu size (px) as a tuple of (width, height).
+
+        :return: Menu size in px
+        :rtype: tuple
+        """
+        return self._width, self._height
 
     def get_widget(self, widget_id, recursive=False):
         """

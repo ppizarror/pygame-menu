@@ -165,7 +165,7 @@ def make_surface(width, height, alpha=False, fill_color=None):
     assert isinstance(height, (int, float))
     assert isinstance(alpha, bool)
     assert isinstance(fill_color, (type(None), tuple))
-    assert width > 0 and height > 0, 'surface width and height must be greater than zero'
+    assert width >= 0 and height >= 0, 'surface width and height must be greater or equal than zero'
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
     if alpha:
         surface = pygame.Surface.convert_alpha(surface)
