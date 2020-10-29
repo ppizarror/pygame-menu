@@ -283,7 +283,7 @@ class Theme(object):
         :return: None
         """
         assert isinstance(opacity, float)
-        assert 0 <= opacity <= 1, 'Opacity must be a number between 0 (transparent) and 1 (opaque)'
+        assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
                                  self.background_color[2], int(opacity * 255))  # type: tuple
 

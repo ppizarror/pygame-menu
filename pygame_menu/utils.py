@@ -191,6 +191,7 @@ def to_string(s, strict=False):
         return s
     if sys.version_info < (3, 0) and str(type(s)) == "<type 'unicode'>":
         if strict:
-            raise Exception("use a encoding for the unicode string, for example u'your_string'.encode('latin1')")
+            raise Exception("use a encoding for the unicode string, "
+                            "for example u'your_string'.encode('latin1')")
         return s
     return str(s)

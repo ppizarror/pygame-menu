@@ -190,7 +190,7 @@ class Selector(Widget):
                 if element[0] == item:
                     self._index = self._elements.index(element)
                     return
-            raise ValueError("No value '{}' found in selector".format(item))
+            raise ValueError('no value "{}" found in selector'.format(item))
         elif isinstance(item, int):
             assert 0 <= item < len(self._elements), \
                 'item index must be greater than zero and lower than the number of elements on the selector'

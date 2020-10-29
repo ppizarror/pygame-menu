@@ -170,15 +170,15 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             if color == '':
                 super(ColorInput, self).set_value('')
                 return
-            assert isinstance(color, tuple), 'Color in rgb format must be a tuple in (r,g,b) format'
-            assert len(color) == 3, 'Tuple must contain only 3 colors, R,G,B'
+            assert isinstance(color, tuple), 'color in rgb format must be a tuple in (r,g,b) format'
+            assert len(color) == 3, 'tuple must contain only 3 colors, R,G,B'
             r, g, b = color
-            assert isinstance(r, int), 'Red color must be an integer'
-            assert isinstance(g, int), 'Blue color must be an integer'
-            assert isinstance(b, int), 'Green color must be an integer'
-            assert 0 <= r <= 255, 'Red color must be between 0 and 255'
-            assert 0 <= g <= 255, 'Blue color must be between 0 and 255'
-            assert 0 <= b <= 255, 'Green color must be between 0 and 255'
+            assert isinstance(r, int), 'red color must be an integer'
+            assert isinstance(g, int), 'blue color must be an integer'
+            assert isinstance(b, int), 'green color must be an integer'
+            assert 0 <= r <= 255, 'red color must be between 0 and 255'
+            assert 0 <= g <= 255, 'blue color must be between 0 and 255'
+            assert 0 <= b <= 255, 'green color must be between 0 and 255'
             _color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
             self._auto_separator_pos = [0, 1]
         elif self._color_type == TYPE_HEX:

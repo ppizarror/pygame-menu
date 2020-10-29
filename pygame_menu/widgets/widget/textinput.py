@@ -257,8 +257,8 @@ class TextInput(Widget):
             for ch in range(len(valid_chars)):
                 _char = to_string(valid_chars[ch])
                 valid_chars[ch] = _char
-                assert isinstance(_char, str), 'Element "{0}" of valid_chars must be a string'.format(_char)
-                assert len(_char) == 1, 'Element "{0}" of valid_chars must be character'.format(_char)
+                assert isinstance(_char, str), 'element "{0}" of valid_chars must be a string'.format(_char)
+                assert len(_char) == 1, 'element "{0}" of valid_chars must be character'.format(_char)
             assert len(valid_chars) > 0, 'valid_chars list must contain at least 1 element'
         self._valid_chars = valid_chars
 
@@ -300,7 +300,8 @@ class TextInput(Widget):
             password_size = self._font_render_string(self._password_char).get_size()[0]
             if password_size == 0:
                 raise ValueError(
-                    'Password character is not valid, the size of the font is zero, use another character or change the font')
+                    'password character is not valid, the size of the font is zero, '
+                    'use another character or change the font')
             self._keychar_size[self._password_char] = password_size
 
     def clear(self):
