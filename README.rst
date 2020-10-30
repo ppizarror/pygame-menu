@@ -26,8 +26,8 @@ pygame-menu
     :target: https://pypi.org/project/pygame-menu
     :alt: PyPi package
 
-.. image:: https://travis-ci.org/ppizarror/pygame-menu.svg?branch=master
-    :target: https://travis-ci.org/ppizarror/pygame-menu
+.. image:: https://travis-ci.com/ppizarror/pygame-menu.svg?branch=master
+    :target: https://travis-ci.com/ppizarror/pygame-menu
     :alt: Travis
 
 .. image:: https://img.shields.io/lgtm/alerts/g/ppizarror/pygame-menu.svg?logo=lgtm&logoWidth=18
