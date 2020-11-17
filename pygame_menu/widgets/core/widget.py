@@ -753,7 +753,7 @@ class Widget(object):
             x = -1
         self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
 
-    def set_controls(self, joystick=True, mouse=True):
+    def set_controls(self, joystick=True, mouse=True, touchscreen=True):
         """
         Enable interfaces to control the widget.
 
@@ -765,6 +765,7 @@ class Widget(object):
         """
         self.joystick_enabled = joystick
         self.mouse_enabled = mouse
+        self.touchscreen_enabled = touchscreen
 
     def set_value(self, value):
         """
