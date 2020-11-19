@@ -81,10 +81,6 @@ class Menu(object):
     :type mouse_motion_selection: bool
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
-    :param touchscreen_enabled: Enable/disable touch action inside the Menu
-    :type touchscreen_enabled: bool
-    :param touchscreen_motion_selection: Select widgets using touchscreen motion
-    :type touchscreen_motion_selection: bool
     :param onclose: Function applied when closing the Menu
     :type onclose: callable, None
     :param rows: Number of rows of each column, None if there's only 1 column
@@ -93,6 +89,10 @@ class Menu(object):
     :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
+    :param touchscreen_enabled: Enable/disable touch action inside the Menu
+    :type touchscreen_enabled: bool
+    :param touchscreen_motion_selection: Select widgets using touchscreen motion
+    :type touchscreen_motion_selection: bool
     :param kwargs: Optional keyword-parameters
     :type kwargs: dict
     """
@@ -112,32 +112,34 @@ class Menu(object):
                  mouse_enabled=True,
                  mouse_motion_selection=False,
                  mouse_visible=True,
-                 touchscreen_enable=True,
-                 touchscreen_motion_selection=False,
                  onclose=None,
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
+                 touchscreen_enable=True,
+                 touchscreen_motion_selection=False,
                  **kwargs
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
+        # assert isinstance(title, str)
+
         assert isinstance(center_content, bool)
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_position, (tuple, list))
         assert isinstance(menu_id, str)
+        assert isinstance(menu_position, (tuple, list))
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
-        assert isinstance(touchscreen_enable, bool)
-        assert isinstance(touchscreen_motion_selection, bool)
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
+        assert isinstance(touchscreen_enable, bool)
+        assert isinstance(touchscreen_motion_selection, bool)
 
         # Assert theme
         theme.validate()
