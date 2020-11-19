@@ -112,6 +112,8 @@ class TextInput(Widget):
     :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :type repeat_mouse_interval_ms: int, float
+    :param repeat_touch_interval_ms: Interval between mouse events when held
+    :type repeat_touch_interval_ms: int, float
     :param tab_size: Tab whitespace characters
     :type tab_size: int
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
@@ -142,6 +144,7 @@ class TextInput(Widget):
                  repeat_keys_initial_ms=450,
                  repeat_keys_interval_ms=80,
                  repeat_mouse_interval_ms=100,
+                 repeat_touch_interval_ms=100,
                  tab_size=4,
                  text_ellipsis='...',
                  valid_chars=None,
@@ -162,6 +165,7 @@ class TextInput(Widget):
         assert isinstance(repeat_keys_initial_ms, (int, float))
         assert isinstance(repeat_keys_interval_ms, (int, float))
         assert isinstance(repeat_mouse_interval_ms, (int, float))
+        assert isinstance(repeat_touch_interval_ms, (int, float))
         assert isinstance(tab_size, int)
         assert isinstance(text_ellipsis, str)
 
@@ -217,6 +221,9 @@ class TextInput(Widget):
         self._keyrepeat_mouse_interval_ms = repeat_mouse_interval_ms
         self._mouse_is_pressed = False  # type: bool
 
+        # Touchscreen handling
+        self._keyrepeat_touch_interval_ms = repeat_touch_interval_ms
+
         # Render box (overflow)
         self._ellipsis = text_ellipsis
         self._ellipsis_size = 0.0  # type: float
@@ -246,6 +253,7 @@ class TextInput(Widget):
         self._selection_active = False
         self._selection_box = [0, 0]  # [from, to], (int)
         self._selection_mouse_first_position = -1  # type: int
+        self._selection_touch_first_position = -1  # type: int
         self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
         self._selection_surface = None  # type: (pygame.Surface,None)
@@ -826,7 +834,7 @@ class TextInput(Widget):
 
     def _update_cursor_mouse(self, mousex):
         """
-        Updates cursor position after mouse click in text.
+        Updates cursor position after mouse click our touch action in text.
 
         :param mousex: Mouse distance relative to surface
         :type mousex: int
@@ -908,6 +916,22 @@ class TextInput(Widget):
             mousex, _ = pos
             topleft, _ = self._rect.topleft
             self._update_cursor_mouse(mousex - topleft)
+            return True  # Prevents double click
+        self._cursor_render = True
+
+    def _check_touch_collide_input(self, pos):
+        """
+        Check touchscreen collision, if true update cursor.
+
+        :param pos: Position
+        :type pos: tuple
+        :return: None
+        """
+        if self._rect.collidepoint(*pos):
+            # Check if touchscreen collides left or right as percentage, use only X coordinate
+            touchx, _ = pos
+            topleft, _ = self._rect.topleft
+            self._update_cursor_mouse(touchx - topleft)
             return True  # Prevents double click
 
     def set_value(self, text):
@@ -1669,6 +1693,26 @@ class TextInput(Widget):
                     self._cursor_ms_counter = 0
                     self._selection_active = True
                     self._selection_mouse_first_position = -1
+                    self.active = True
+
+            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                # <Event(1793-FingerUp {'touch_id': 6, 'finger_id': 442, 'x': 0.678337574005127, 'y': 0.3632512390613556, 'dx': 0.0, 'dy': 0.0, 'pressure': 0.0})>
+                finger_pos = (event.x * self._menu._window_size[0], event.y * self._menu._window_size[1])
+                if self._rect.collidepoint(finger_pos) and \
+                        self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
+                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
+                    self._selection_active = False
+                    self._check_touch_collide_input(finger_pos)
+                    self._cursor_ms_counter = 0
+
+            elif self.touchscreen_enabled and event.type == pygame.FINGERDOWN:
+                if self.get_selected_time() > self._keyrepeat_touch_interval_ms:
+                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
+                    if self._selection_active:
+                        self._unselect_text()
+                    self._cursor_ms_counter = 0
+                    self._selection_active = True
+                    self._selection_touch_first_position = -1
                     self.active = True
 
         # Get time clock
