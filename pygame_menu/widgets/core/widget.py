@@ -141,6 +141,7 @@ class Widget(object):
         self.selected = False
         self.selection_effect_enabled = True  # Some widgets cannot have selection effect
         self.sound = Sound()  # type: Sound
+        self.touchscreen_enabled = True
 
     def set_attribute(self, key, value):
         """
@@ -761,6 +762,8 @@ class Widget(object):
         :type joystick: bool
         :param mouse: Use mouse
         :type mouse: bool
+        :param touchscreen: Use touchscreen
+        :type touchscreen: bool
         :return: None
         """
         self.joystick_enabled = joystick
