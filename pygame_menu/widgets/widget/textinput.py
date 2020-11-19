@@ -252,13 +252,13 @@ class TextInput(Widget):
         self._last_selection_render = [0, 0]  # Position (int)
         self._selection_active = False
         self._selection_box = [0, 0]  # [from, to], (int)
+        self._selection_color = cursor_selection_color
+        self._selection_enabled = cursor_selection_enable
         self._selection_mouse_first_position = -1  # type: int
-        self._selection_touch_first_position = -1  # type: int
         self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
         self._selection_surface = None  # type: (pygame.Surface,None)
-        self._selection_color = cursor_selection_color
-        self._selection_enabled = cursor_selection_enable
+        self._selection_touch_first_position = -1  # type: int
 
         # List of valid chars
         if valid_chars is not None:
@@ -834,7 +834,7 @@ class TextInput(Widget):
 
     def _update_cursor_mouse(self, mousex):
         """
-        Updates cursor position after mouse click our touch action in text.
+        Updates cursor position after mouse click or touch action in text.
 
         :param mousex: Mouse distance relative to surface
         :type mousex: int
