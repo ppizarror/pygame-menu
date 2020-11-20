@@ -917,7 +917,6 @@ class TextInput(Widget):
             topleft, _ = self._rect.topleft
             self._update_cursor_mouse(mousex - topleft)
             return True  # Prevents double click
-        self._cursor_render = True
 
     def _check_touch_collide_input(self, pos):
         """
