@@ -116,7 +116,7 @@ class Menu(object):
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
-                 touchscreen_enable=True,
+                 touchscreen_enabled=True,
                  touchscreen_motion_selection=False,
                  **kwargs
                  ):
@@ -138,7 +138,7 @@ class Menu(object):
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
-        assert isinstance(touchscreen_enable, bool)
+        assert isinstance(touchscreen_enabled, bool)
         assert isinstance(touchscreen_motion_selection, bool)
 
         # Assert theme
@@ -274,7 +274,7 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Init touchscreen
-        self._touchscreen = touchscreen_enable
+        self._touchscreen = touchscreen_enabled
         self._touchscreen_motion_selection = touchscreen_motion_selection
 
         # Create Menu bar (title)
