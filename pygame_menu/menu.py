@@ -38,6 +38,8 @@ import types
 
 import pygame
 import pygame.gfxdraw as gfxdraw
+from pygame import vernum as pygame_version
+
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.controls as _controls
 import pygame_menu.events as _events
@@ -116,7 +118,7 @@ class Menu(object):
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
-                 touchscreen_enabled=True,
+                 touchscreen_enabled=False,
                  touchscreen_motion_selection=False,
                  **kwargs
                  ):
@@ -274,10 +276,13 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Init touchscreen
+        if touchscreen_enabled:
+            version_major, _, _ = pygame_version
+            assert version_major > 1, 'touchscreen is only supported in pygame v2+'
         self._touchscreen = touchscreen_enabled
         self._touchscreen_motion_selection = touchscreen_motion_selection
 
-        # Create Menu bar (title)
+        # Create menubar (title)
         self._menubar = _widgets.MenuBar(
             back_box=theme.menubar_close_button,
             background_color=self._theme.title_background_color,
