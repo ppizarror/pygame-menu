@@ -247,6 +247,24 @@ class Selector(Widget):
                             self.right()
                         updated = True
 
+            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                window_size = self.get_menu().get_window_size()
+                finger_pos = (event.x * window_size[0], event.y * window_size[1])
+                if self._rect.collidepoint(finger_pos):
+                    # Check if mouse collides left or right as percentage, use only X coordinate
+                    mousex, _ = finger_pos
+                    topleft, _ = self._rect.topleft
+                    topright, _ = self._rect.topright
+                    dist = mousex - (topleft + self._title_size)  # Distance from label
+                    if dist > 0:  # User clicked the options, not label
+                        # Position in percentage, if <0.5 user clicked left
+                        pos = dist / float(topright - topleft - self._title_size)
+                        if pos <= 0.5:
+                            self.left()
+                        else:
+                            self.right()
+                        updated = True
+
         return updated
 
     def update_elements(self, elements):

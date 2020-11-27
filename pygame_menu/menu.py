@@ -89,6 +89,10 @@ class Menu(object):
     :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
+    :param touchscreen_enabled: Enable/disable touch action inside the Menu
+    :type touchscreen_enabled: bool
+    :param touchscreen_motion_selection: Select widgets using touchscreen motion
+    :type touchscreen_motion_selection: bool
     :param kwargs: Optional keyword-parameters
     :type kwargs: dict
     """
@@ -112,24 +116,30 @@ class Menu(object):
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
+                 touchscreen_enabled=True,
+                 touchscreen_motion_selection=False,
                  **kwargs
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
+        # assert isinstance(title, str)
+
         assert isinstance(center_content, bool)
         assert isinstance(column_force_fit_text, bool)
         assert isinstance(column_max_width, (tuple, type(None), (int, float), list))
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_position, (tuple, list))
         assert isinstance(menu_id, str)
+        assert isinstance(menu_position, (tuple, list))
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
+        assert isinstance(touchscreen_enabled, bool)
+        assert isinstance(touchscreen_motion_selection, bool)
 
         # Assert theme
         theme.validate()
@@ -263,6 +273,10 @@ class Menu(object):
         self._mouse_visible = mouse_visible
         self._mouse_visible_default = mouse_visible
 
+        # Init touchscreen
+        self._touchscreen = touchscreen_enabled
+        self._touchscreen_motion_selection = touchscreen_motion_selection
+
         # Create Menu bar (title)
         self._menubar = _widgets.MenuBar(
             back_box=theme.menubar_close_button,
@@ -289,7 +303,7 @@ class Menu(object):
             offset=self._theme.title_shadow_offset,
             position=self._theme.title_shadow_position
         )
-        self._menubar.set_controls(self._joystick, self._mouse)
+        self._menubar.set_controls(self._joystick, self._mouse, self._touchscreen)
 
         # Scrolling area
         self._widgets_surface = None
@@ -950,7 +964,7 @@ class Menu(object):
             position=kwargs['shadow_position'],
             offset=kwargs['shadow_offset']
         )
-        widget.set_controls(self._joystick, self._mouse)
+        widget.set_controls(self._joystick, self._mouse, self._touchscreen)
         widget.set_alignment(kwargs['align'])
         widget.set_margin(*kwargs['margin'])
         widget.set_selection_effect(selection_effect)
@@ -1633,6 +1647,45 @@ class Menu(object):
                         new_event = pygame.event.Event(event.type, **event.dict)
                         new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
                         new_event.pos = self._current._scroll.to_world_position(event.pos)
+                        selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
+                        updated = True  # It is updated
+                        break
+
+                # Touchscreen event:
+                elif self._current._touchscreen and event.type == pygame.FINGERDOWN:
+                    # If the touchscreen motion selection is disabled then select a widget by clicking
+                    if not self._current._touchscreen_motion_selection:
+                        for index in range(len(self._current._widgets)):
+                            widget = self._current._widgets[index]
+                            # Don't consider the mouse wheel (button 4 & 5)
+                            if self._current._scroll.collide(widget, event) and \
+                                    widget.is_selectable:
+                                self._current._select(index)
+
+                    # If touchscreen motion selection, clicking will disable the active state
+                    # only if the user clicked outside the widget
+                    else:
+                        if not self._current._scroll.collide(selected_widget, event):
+                            selected_widget.active = False
+
+                # Select widgets by touchscreen motion, this is valid only if the current selected widget
+                # is not active and the pointed widget is selectable
+                elif self._current._touchscreen_motion_selection and event.type == pygame.FINGERMOTION and \
+                        not selected_widget.active:
+                    for index in range(len(self._current._widgets)):
+                        widget = self._current._widgets[index]  # type: _widgets.core.Widget
+                        if self._current._scroll.collide(widget, event) and widget.is_selectable:
+                            self._current._select(index)
+
+                # Touchscreen events in selected widget
+                elif self._current._touchscreen and event.type == pygame.FINGERUP and selected_widget is not None:
+                    self._current._sounds.play_click_mouse()
+
+                    if self._current._scroll.collide(selected_widget, event):
+                        new_event = pygame.event.Event(pygame.MOUSEBUTTONUP, **event.dict)
+                        new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
+                        finger_pos = (event.x * self._window_size[0], event.y * self._window_size[1])
+                        new_event.pos = self._current._scroll.to_world_position(finger_pos)
                         selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
                         updated = True  # It is updated
                         break

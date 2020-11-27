@@ -537,4 +537,9 @@ class ScrollArea(object):
         :return: True if collide
         :rtype: bool
         """
-        return self.to_real_position(widget.get_rect()).collidepoint(*event.pos)
+        if event.type == pygame.FINGERDOWN or event.type == pygame.FINGERUP or event.type == pygame.FINGERMOTION:
+            display_size = pygame.display.get_surface().get_size()
+            finger_pos = (event.x * display_size[0], event.y * display_size[1])
+            return self.to_real_position(widget.get_rect()).collidepoint(finger_pos)
+        else:
+            return self.to_real_position(widget.get_rect()).collidepoint(*event.pos)

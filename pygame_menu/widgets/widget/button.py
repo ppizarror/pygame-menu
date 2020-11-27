@@ -122,4 +122,12 @@ class Button(Widget):
                     self.apply()
                     updated = True
 
+            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                self.sound.play_click_mouse()
+                window_size = self.get_menu().get_window_size()
+                finger_pos = (event.x * window_size[0], event.y * window_size[1])
+                if self._rect.collidepoint(finger_pos):
+                    self.apply()
+                    updated = True
+
         return updated

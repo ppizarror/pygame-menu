@@ -309,4 +309,12 @@ class MenuBar(Widget):
                     self.apply()
                     updated = True
 
+            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                window_size = self.get_menu().get_window_size()
+                finger_pos = (event.x * window_size[0], event.y * window_size[1])
+                if self._backbox_rect and self._backbox_rect.collidepoint(finger_pos):
+                    self.sound.play_click_mouse()
+                    self.apply()
+                    updated = True
+
         return updated
