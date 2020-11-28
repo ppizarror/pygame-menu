@@ -50,6 +50,7 @@ def save_font_image(font_name, text, filename, font_size=50, image_height=26):
     :type font_size: int
     :param image_height: Image size in px
     :type image_height: int
+    :return: None
     """
     assert isinstance(font_size, int)
     assert isinstance(image_height, int)

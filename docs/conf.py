@@ -50,6 +50,7 @@ import pygame_menu
 # -- Project information ------------------------------------------------------
 
 project = 'pygame-menu'
+# noinspection PyShadowingBuiltins
 copyright = '2020, Pablo Pizarro R. @ppizarror'
 author = 'Pablo Pizarro R.'
 
