@@ -156,6 +156,9 @@ class ScrollArea(object):
 
         self._apply_size_changes()
 
+        # Menu reference
+        self._menu = None
+
     def _apply_size_changes(self):
         """
         Apply size changes to scrollbar.
@@ -526,6 +529,27 @@ class ScrollArea(object):
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
+    def set_menu(self, menu):
+        """
+        Set the menu reference.
+
+        :param menu: Menu object
+        :type menu: :py:class:`pygame_menu.Menu`
+        :return: None
+        """
+        self._menu = menu
+        for sbar in self._scrollbars:  # type: ScrollBar
+            sbar.set_menu(menu)
+
+    def get_menu(self):
+        """
+        Return the menu reference (if exists).
+
+        :return: Menu reference
+        :rtype: :py:class:`pygame_menu.Menu`, None
+        """
+        return self._menu
+
     def collide(self, widget, event):
         """
         If user event collides a widget within the scroll area respect to the relative position.
@@ -538,7 +562,7 @@ class ScrollArea(object):
         :rtype: bool
         """
         if event.type == pygame.FINGERDOWN or event.type == pygame.FINGERUP or event.type == pygame.FINGERMOTION:
-            display_size = pygame.display.get_surface().get_size()
+            display_size = self._menu.get_window_size()
             finger_pos = (event.x * display_size[0], event.y * display_size[1])
             return self.to_real_position(widget.get_rect()).collidepoint(finger_pos)
         else:

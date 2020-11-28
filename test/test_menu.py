@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
+import pygame
 from pygame_menu import events
 import timeit
 
@@ -204,16 +205,18 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
 
         # Add a menu and a method that set a function
+        event_val = [False]
+
         def _some_event():
+            event_val[0] = True
             return 'the value'
 
         # Add some widgets
         button = None
-        first_button = None
+        wid = []
         for i in range(5):
             button = self.menu.add_button('button', _some_event)
-            if i == 0:
-                first_button = button
+            wid.append(button.get_id())
 
         # Create a event in pygame
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
@@ -249,11 +252,10 @@ class MenuTest(unittest.TestCase):
         self.menu.update(PygameUtils.joy_motion(1, -1))
         self.assertEqual(self.menu.get_index(), 4)
 
-        # Check mouse, get last widget
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
         self.menu.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
-        click_pos = PygameUtils.get_middle_rect(first_button.get_rect())
-        self.menu.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        self.assertTrue(event_val[0])
+        event_val[0] = False
 
     def test_back_event(self):
         """
@@ -346,3 +348,34 @@ class MenuTest(unittest.TestCase):
         _column_menu.disable()
         self.assertRaises(RuntimeError, lambda: _column_menu.draw(surface))
         self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygame_menu.events.BACK))  # 9th item
+
+    def test_touchscreen(self):
+        """
+        Test menu touchscreen behaviour.
+        """
+        vmajor, _, _ = pygame.version.vernum
+        if vmajor < 2:
+            return
+
+        menu = MenuUtils.generic_menu('mainmenu', touchscreen_enabled=True)
+        menu.mainloop(surface, bgfun=dummy_function)
+
+        # Add a menu and a method that set a function
+        event_val = [False]
+
+        def _some_event():
+            event_val[0] = True
+            return 'the value'
+
+        # Add some widgets
+        button = menu.add_button('button', _some_event)
+
+        # Check touch
+        click_pos = PygameUtils.get_middle_rect(button.get_rect())
+        menu.update(PygameUtils.touch_click(click_pos[0], click_pos[1], normalize=False))  # Event must be normalized
+        self.assertFalse(event_val[0])
+
+        menu.update(PygameUtils.touch_click(click_pos[0], click_pos[1], menu=menu))
+        self.assertTrue(event_val[0])
+        event_val[0] = False
+        self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())

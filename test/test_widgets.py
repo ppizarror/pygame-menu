@@ -286,7 +286,6 @@ class WidgetsTest(unittest.TestCase):
                                     max_char=33,
                                     margin=(3, 5),
                                     align=_locals.ALIGN_LEFT,
-                                    selectable=False,
                                     font_size=3)  # type: list
         self.assertEqual(len(label), 15)
         _w = label[0]  # type: Label
@@ -452,7 +451,7 @@ class WidgetsTest(unittest.TestCase):
     def test_scrollbar(self):
         """
         Test ScrollBar widget.
-            """
+        """
         screen_size = surface.get_size()
         world = MenuUtils.get_large_surface()
 

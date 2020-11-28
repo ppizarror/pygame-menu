@@ -86,13 +86,22 @@ Metadata: Information about the project
 __author__ = 'ppizarror'
 __contributors__ = [
     'anxuae',
+    'arpruss',
     'asierrayk',
+    'DA820',
     'eforgacs',
     'i96751414',
     'ironsmile',
+    'jwllee',
     'maditnerd',
+    'notrurs',
+    'NullP01nt',
+    'PandaRoux8',
+    'ppizarror',
     'Rifqi31',
     'thisIsMikeKane',
+    'werdeil',
+    'zPaw'
 ]
 __copyright__ = 'Copyright 2017-2020 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'

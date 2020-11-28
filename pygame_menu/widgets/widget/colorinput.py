@@ -68,7 +68,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type repeat_keys_interval_ms: int, float
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :type repeat_mouse_interval_ms: int, float
-    :param kwargs: Optional keyword-arguments for callbacks
+    :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
 

@@ -80,7 +80,7 @@ class Selector(Widget):
     :type onchange: callable, None
     :param onreturn: Callback when pressing return button
     :type onreturn: callable, None
-    :param kwargs: Optional keyword-arguments for callbacks
+    :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
 
