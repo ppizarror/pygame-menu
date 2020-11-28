@@ -38,7 +38,6 @@ import types
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-from pygame import vernum as pygame_version
 
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.controls as _controls
@@ -277,8 +276,8 @@ class Menu(object):
 
         # Init touchscreen
         if touchscreen_enabled:
-            version_major, _, _ = pygame_version
-            assert version_major > 1, 'touchscreen is only supported in pygame v2+'
+            version_major, _, _ = pygame.version.vernum
+            assert version_major >= 2, 'touchscreen is only supported in pygame v2+'
         self._touchscreen = touchscreen_enabled
         self._touchscreen_motion_selection = touchscreen_motion_selection
 

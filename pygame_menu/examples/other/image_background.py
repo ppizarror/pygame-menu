@@ -53,8 +53,7 @@ main_menu = None  # type: pygame_menu.Menu
 # Load image
 # -----------------------------------------------------------------------------
 background_image = pygame_menu.baseimage.BaseImage(
-    image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER,
-    drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
+    image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER
 )
 
 
