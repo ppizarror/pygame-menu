@@ -538,6 +538,8 @@ class ScrollArea(object):
         :return: None
         """
         self._menu = menu
+        for sbar in self._scrollbars:  # type: ScrollBar
+            sbar.set_menu(menu)
 
     def get_menu(self):
         """
