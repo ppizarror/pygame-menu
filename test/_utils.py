@@ -77,16 +77,18 @@ class PygameUtils(object):
         event_obj = None
         if x != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
-                                           {'value': x,
-                                            'axis': pygame_menu.controls.JOY_AXIS_X,
-                                            'test': testmode
-                                            })
+                                           {
+                                               'value': x,
+                                               'axis': pygame_menu.controls.JOY_AXIS_X,
+                                               'test': testmode
+                                           })
         if y != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
-                                           {'value': y,
-                                            'axis': pygame_menu.controls.JOY_AXIS_Y,
-                                            'test': testmode
-                                            })
+                                           {
+                                               'value': y,
+                                               'axis': pygame_menu.controls.JOY_AXIS_Y,
+                                               'test': testmode
+                                           })
         if inlist:
             event_obj = [event_obj]
         return event_obj
@@ -121,9 +123,10 @@ class PygameUtils(object):
         :rtype: :py:class:`pygame.event.Event`
         """
         event_obj = pygame.event.Event(pygame.JOYHATMOTION,
-                                       {'value': key,
-                                        'test': testmode
-                                        })
+                                       {
+                                           'value': key,
+                                           'test': testmode
+                                       })
         if inlist:
             event_obj = [event_obj]
         return event_obj
@@ -140,11 +143,13 @@ class PygameUtils(object):
         :return: Event
         :rtype: :py:class:`pygame.event.Event`
         """
+        # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_CTRL)
         event_obj = pygame.event.Event(pygame.KEYDOWN,
-                                       {'key': key,
-                                        'test': True,
-                                        })
+                                       {
+                                           'key': key,
+                                           'test': True
+                                       })
         if inlist:
             event_obj = [event_obj]
         return event_obj
@@ -179,9 +184,10 @@ class PygameUtils(object):
         if keyup:
             event = pygame.KEYUP
         event_obj = pygame.event.Event(event,
-                                       {'key': key,
-                                        'test': testmode,
-                                        })
+                                       {
+                                           'key': key,
+                                           'test': testmode
+                                       })
         if len(char) == 1:
             event_obj.dict['unicode'] = char
         if inlist:
@@ -205,10 +211,48 @@ class PygameUtils(object):
         :rtype: :py:class:`pygame.event.Event`
         """
         event_obj = pygame.event.Event(evtype,
-                                       {'pos': [float(x), float(y)],
-                                        'test': True,
-                                        'button': 3
-                                        })
+                                       {
+                                           'pos': [float(x), float(y)],
+                                           'test': True,
+                                           'button': 3
+                                       })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
+
+    @staticmethod
+    def touch_click(x, y, inlist=True, evtype=pygame.FINGERUP, normalize=True, menu=None):
+        """
+        Generate a mouse click event.
+
+        :param x: X coordinate
+        :type x: int, float
+        :param y: Y coordinate
+        :type y: int, float
+        :param inlist: Return event in a list
+        :type inlist: bool
+        :param evtype: Event type, it can be FINGERUP, FINGERDOWN or FINGERMOTION
+        :type evtype: int
+        :param normalize: Normalize event position
+        :type normalize: bool
+        :param menu: Menu reference
+        :type menu: :py:class:`pygame_menu.Menu`
+        :return: Event
+        :rtype: :py:class:`pygame.event.Event`
+        """
+        vmajor, _, _ = pygame.version.vernum
+        assert vmajor >= 2, 'function only available in pygame v2+'
+        if normalize:
+            assert menu is not None, 'menu reference must be provided if normalize is used'
+            display_size = menu.get_window_size()
+            x /= float(display_size[0])
+            y /= float(display_size[1])
+        event_obj = pygame.event.Event(evtype,
+                                       {
+                                           'test': True,
+                                           'x': float(x),
+                                           'y': float(y)
+                                       })
         if inlist:
             event_obj = [event_obj]
         return event_obj
