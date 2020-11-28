@@ -325,6 +325,7 @@ class Menu(object):
             shadow_offset=self._theme.scrollbar_shadow_offset,
             shadow_position=self._theme.scrollbar_shadow_position
         )
+        self._scroll.set_menu(self)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
