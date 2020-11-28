@@ -94,7 +94,7 @@ class Menu(object):
     :type touchscreen_enabled: bool
     :param touchscreen_motion_selection: Select widgets using touchscreen motion
     :type touchscreen_motion_selection: bool
-    :param kwargs: Optional keyword-parameters
+    :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
 
@@ -378,7 +378,7 @@ class Menu(object):
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
-        :param kwargs: Additional keyword-arguments
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
@@ -476,7 +476,7 @@ class Menu(object):
         :type onreturn: callable, None
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
-        :param kwargs: Additional keyword-parameters
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
@@ -536,7 +536,7 @@ class Menu(object):
         :type scale_smooth: bool
         :param selectable: Image accepts user selection
         :type selectable: bool
-        :param kwargs: Optional keyword-arguments
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Image`
@@ -589,7 +589,7 @@ class Menu(object):
         :type max_char: int
         :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
-        :param kwargs: Optional keyword-arguments
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
@@ -682,7 +682,7 @@ class Menu(object):
         :type onreturn: callable, None
         :param selector_id: ID of the selector
         :type selector_id: str
-        :param kwargs: Additional keyword-parameters
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
@@ -776,7 +776,7 @@ class Menu(object):
         :type textinput_id: str
         :param valid_chars: List of authorized chars, None if all chars are valid
         :type valid_chars: list
-        :param kwargs: Additional keyword-parameters
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
@@ -842,7 +842,7 @@ class Menu(object):
         The valid (key, value) are removed from the initial
         dictionary.
 
-        :param kwargs: Input attributes
+        :param kwargs: Optional keyword arguments (input attributes)
         :type kwargs: dict
         :return: Dictionary of valid attributes
         :rtype: dict

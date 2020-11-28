@@ -70,7 +70,7 @@ class MenuBar(Widget):
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :type args: any
-    :param kwargs: Optional keyword-arguments for callbacks
+    :param kwargs: Optional keyword arguments for callbacks
     :type kwargs: dict
     """
 
@@ -149,6 +149,7 @@ class MenuBar(Widget):
             |      D------------C
             F----E/
             """
+
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
@@ -165,6 +166,7 @@ class MenuBar(Widget):
             |****             x | *1,0 height
             D-------------------C
             """
+
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
@@ -178,6 +180,7 @@ class MenuBar(Widget):
             | *** |           x        *0,6 height
             D-----C
             """
+
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
@@ -192,6 +195,7 @@ class MenuBar(Widget):
             | **** /          x        *0,6 height
             D-----C
             """
+
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
@@ -205,6 +209,7 @@ class MenuBar(Widget):
             A------------------B
              ****             x        *0,6 height
             """
+
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             self._polygon_pos = a, b
@@ -216,6 +221,7 @@ class MenuBar(Widget):
             A-------------------B      *0,20 height
             D-------------------C
             """
+
             dy = 3
             a = self._rect.x, self._rect.y + 0.9 * self._rect.height + dy
             b = self._rect.x + self._width - 1, self._rect.y + 0.9 * self._rect.height + dy
@@ -230,6 +236,7 @@ class MenuBar(Widget):
             A----B                     *0,20 height
             D----C
             """
+
             dy = 3
             a = self._rect.x, self._rect.y + 0.9 * self._rect.height + dy
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.9 * self._rect.height + dy

@@ -56,7 +56,7 @@ class Widget(object):
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :type args: any
-    :param kwargs: Optional keyword-arguments for callbacks
+    :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
 
@@ -593,7 +593,7 @@ class Widget(object):
         Return the menu reference (if exists).
 
         :return: Menu reference
-        :rtype: :py:class:`pygame_menu.Menu`
+        :rtype: :py:class:`pygame_menu.Menu`, None
         """
         return self._menu
 

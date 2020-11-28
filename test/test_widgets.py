@@ -451,7 +451,7 @@ class WidgetsTest(unittest.TestCase):
     def test_scrollbar(self):
         """
         Test ScrollBar widget.
-            """
+        """
         screen_size = surface.get_size()
         world = MenuUtils.get_large_surface()
 

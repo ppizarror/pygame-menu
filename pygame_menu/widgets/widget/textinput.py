@@ -120,7 +120,7 @@ class TextInput(Widget):
     :type text_ellipsis: str
     :param valid_chars: List of chars that are valid, None if all chars are valid
     :type valid_chars: list
-    :param kwargs: Optional keyword-arguments for callbacks
+    :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
 

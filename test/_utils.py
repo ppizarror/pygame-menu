@@ -100,6 +100,7 @@ class PygameUtils(object):
 
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :return: None
         """
         widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
         widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
@@ -383,7 +384,8 @@ class MenuUtils(object):
         :param position_y: Y position of the menu
         :type position_y: int, float
         :param args: Additional args
-        :param kwargs: Additional key parameters
+        :type args: any
+        :param kwargs: Optional keyword arguments
         :type kwargs: dict
         :return: Menu
         :rtype: :py:class:`pygame_menu.Menu`
@@ -403,7 +405,10 @@ class MenuUtils(object):
     @staticmethod
     def get_large_surface():
         """
-        Create a large surface to tst scrolls.
+        Create a large surface to test scrolls.
+
+        :return: Surface
+        :rtype: :py:class:`pygame.Surface`
         """
         world = pygame.Surface((W_SIZE * 2, H_SIZE * 3))
         world.fill((200, 200, 200))

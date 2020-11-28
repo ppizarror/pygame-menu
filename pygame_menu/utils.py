@@ -119,6 +119,7 @@ def assert_position(position):
 def check_key_pressed_valid(event):
     """
     Checks if the pressed key is valid.
+
     :param event: Key press event
     :type event: :py:class:`pygame.event.Event`
     :return: True if a key is pressed

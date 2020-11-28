@@ -50,7 +50,7 @@ class Button(Widget):
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :type args: any
-    :param kwargs: Optional keyword-arguments for callbacks
+    :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
 
