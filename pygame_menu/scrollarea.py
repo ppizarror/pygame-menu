@@ -539,6 +539,15 @@ class ScrollArea(object):
         """
         self._menu = menu
 
+    def get_menu(self):
+        """
+        Return the menu reference (if exists).
+
+        :return: Menu reference
+        :rtype: :py:class:`pygame_menu.Menu`, None
+        """
+        return self._menu
+
     def collide(self, widget, event):
         """
         If user event collides a widget within the scroll area respect to the relative position.
