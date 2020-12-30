@@ -945,7 +945,7 @@ class Menu(object):
         assert isinstance(widget, _widgets.core.Widget)
         assert widget.get_menu() is None, 'widget cannot have an instance of menu'
 
-        _col = int((len(self._widgets) - 1) // self._rows)  # Column position
+        _col = int(len(self._widgets) // self._rows)  # Column position
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
 
@@ -961,7 +961,7 @@ class Menu(object):
         selection_effect = kwargs['selection_effect']  # type: _widgets.core.Selection
 
         if self._force_fit_text and self._column_max_width[_col] is not None:
-            widget.set_max_width(self._column_max_width[_col] - selection_effect.get_width())
+            widget.set_max_width(int(self._column_max_width[_col] - selection_effect.get_width()))
 
         widget.set_shadow(
             enabled=kwargs['shadow'],
