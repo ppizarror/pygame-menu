@@ -63,7 +63,7 @@ class Label(Widget):
 
     def _render(self):
         if not self._render_hash_changed(self._title, self._font_color):
-            return
+            return True
         self._surface = self._render_string(self._title, self._font_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 

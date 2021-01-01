@@ -137,7 +137,7 @@ class MenuBar(Widget):
 
         if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title,
                                          self._font_selected_color, menu_prev_condition):
-            return
+            return True
 
         self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()

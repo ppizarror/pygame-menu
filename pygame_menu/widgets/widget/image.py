@@ -73,7 +73,7 @@ class Image(Widget):
 
     def _render(self):
         if self._surface is not None:
-            return
+            return True
         self._surface = self._image.get_surface()
         self._rect.width, self._rect.height = self._surface.get_size()
 

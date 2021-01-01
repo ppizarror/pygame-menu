@@ -54,7 +54,7 @@ class VMargin(Widget):
 
     def _render(self):
         if self._surface is not None:
-            return
+            return True
         self._surface = make_surface(1, 1, alpha=True)
         self._rect.width = 0.0
         self._rect.height = 0.0

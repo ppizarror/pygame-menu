@@ -210,7 +210,7 @@ class ScrollBar(Widget):
     def _render(self):
         if not self._render_hash_changed(self._rect.size, self._slider_rect.x, self._slider_rect.y,
                                          self._slider_rect.width, self._slider_rect.height):
-            return
+            return True
 
         self._surface = make_surface(*self._rect.size)
         self._surface.fill(self._page_ctrl_color)

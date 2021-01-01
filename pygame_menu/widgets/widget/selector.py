@@ -162,7 +162,7 @@ class Selector(Widget):
     def _render(self):
         string = self._sformat.format(self._title, self.get_value()[0])
         if not self._render_hash_changed(string, self.selected):
-            return
+            return True
         if self.selected:
             color = self._font_selected_color
         else:

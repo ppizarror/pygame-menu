@@ -97,7 +97,7 @@ class Button(Widget):
 
     def _render(self):
         if not self._render_hash_changed(self.selected, self._title):
-            return
+            return True
         if self.selected:
             color = self._font_selected_color
         else:
