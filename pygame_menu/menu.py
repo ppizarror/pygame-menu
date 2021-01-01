@@ -247,9 +247,9 @@ class Menu(object):
             self._widget_offset[1] *= self._height
 
         # If center is enabled, but widget offset in the vertical is different than zero a warning is raised
-        if center_content and self._widget_offset[1] != 0:
-            msg = 'menu is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({0}px). Auto-centering has been disabled'
-            msg = msg.format(self._widget_offset[1])
+        if self._center_content and self._widget_offset[1] != 0:
+            msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = msg.format(title, round(self._widget_offset[1], 3))
             warnings.warn(msg)
             self._center_content = False
 
