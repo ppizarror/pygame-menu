@@ -50,6 +50,16 @@ pygame.init()
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 
 
+def test_reset_surface():
+    """
+    Reset test surface.
+
+    :return: None
+    """
+    global surface
+    surface = pygame.display.set_mode((W_SIZE, H_SIZE))
+
+
 class PygameUtils(object):
     """
     Static class for pygame testing.
