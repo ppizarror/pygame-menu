@@ -138,7 +138,7 @@ def play_function(difficulty, font, test=False):
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 317
+                    # Quit this function, then skip to loop of main-menu on line 284
                     return
 
         # Pass events to main_menu
@@ -198,7 +198,7 @@ def main(test=False):
         height=WINDOW_SIZE[1] * 0.7,
         onclose=pygame_menu.events.DISABLE_CLOSE,
         title='Play Menu',
-        width=WINDOW_SIZE[0] * 0.7,
+        width=WINDOW_SIZE[0] * 0.7
     )
 
     submenu_theme = pygame_menu.themes.THEME_DEFAULT.copy()
@@ -207,7 +207,7 @@ def main(test=False):
         height=WINDOW_SIZE[1] * 0.5,
         theme=submenu_theme,
         title='Submenu',
-        width=WINDOW_SIZE[0] * 0.7,
+        width=WINDOW_SIZE[0] * 0.7
     )
     for i in range(30):
         play_submenu.add_button('Back {0}'.format(i), pygame_menu.events.BACK)
@@ -231,14 +231,14 @@ def main(test=False):
     # -------------------------------------------------------------------------
     about_theme = pygame_menu.themes.THEME_DEFAULT.copy()
     about_theme.widget_margin = (0, 0)
-    about_theme.widget_offset = (0, 0.05)
 
     about_menu = pygame_menu.Menu(
+        center_content=False,
         height=WINDOW_SIZE[1] * 0.6,
         onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=about_theme,
         title='About',
-        width=WINDOW_SIZE[0] * 0.6,
+        width=WINDOW_SIZE[0] * 0.6
     )
     for m in ABOUT:
         about_menu.add_label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)

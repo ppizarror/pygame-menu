@@ -105,10 +105,10 @@ def main(test=False):
 
     main_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.7,
-        width=WINDOW_SIZE[0] * 0.8,
         onclose=pygame_menu.events.EXIT,  # User press ESC button
-        title='Epic Menu',
         theme=main_menu_theme,
+        title='Epic Menu',
+        width=WINDOW_SIZE[0] * 0.8
     )
 
     main_menu.add_button('Button 1', None)
