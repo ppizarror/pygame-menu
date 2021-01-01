@@ -263,7 +263,6 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu_theme = pygame_menu.themes.THEME_ORANGE.copy()
-    main_menu_theme.widget_offset = (0, 0.09)
     main_menu_theme.title_font = pygame_menu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font = pygame_menu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font_size = 30
@@ -276,7 +275,7 @@ def main(test=False):
         theme=main_menu_theme,
     )
 
-    main_menu.add_button('Settings', settings_menu)
+    main_menu.add_button('Settings', settings_menu, padding=(0, 0, 0, 0))
     main_menu.add_button('More Settings', more_settings_menu)
     main_menu.add_button('Menu in textures and columns', button_column_menu)
     main_menu.add_selector('Menu sounds ',
