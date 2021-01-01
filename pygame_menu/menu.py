@@ -146,7 +146,7 @@ class Menu(object):
         theme.validate()
 
         # Assert pygame was initialized
-        assert pygame.get_init(), 'pygame is not initialized'
+        assert not hasattr(pygame,'get_init') or pygame.get_init(), 'pygame is not initialized'
 
         # Column/row asserts
         assert columns >= 1, 'number of columns must be greater or equal than 1'

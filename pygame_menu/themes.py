@@ -199,7 +199,7 @@ class Theme(object):
                                                bool, True)  # type: bool
         self.widget_font_background_color_from_menu = self._get(kwargs,
                                                                 'widget_font_background_color_from_menu',
-                                                                bool, pygame.vernum.major == 2)  # type: bool
+                                                                bool, pygame.vernum[0] == 2)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size',

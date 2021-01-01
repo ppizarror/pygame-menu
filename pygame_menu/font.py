@@ -49,6 +49,7 @@ FONT_OPEN_SANS_ITALIC = __fontdir__.format('opensans_italic.ttf')
 FONT_OPEN_SANS_LIGHT = __fontdir__.format('opensans_light.ttf')
 FONT_PT_SERIF = __fontdir__.format('pt_serif.ttf')
 
+fontCache = {}
 
 def get_font(name, size):
     """
@@ -119,6 +120,8 @@ def get_font(name, size):
 
         # Try to load the font
         font = None  # type: (_font.Font,None)
+        if (name,size) in fontCache:
+            return fontCache[(name,size)]
         try:
             font = _font.Font(name, size)
         except IOError:
@@ -127,4 +130,5 @@ def get_font(name, size):
         # If font was not loaded throw an exception
         if font is None:
             raise IOError('font file "{0}" cannot be loaded'.format(font))
+        fontCache[(name,size)] = font
         return font
