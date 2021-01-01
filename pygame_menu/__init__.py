@@ -9,7 +9,7 @@ A menu for pygame, simple, lightweight and easy to use.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -103,7 +103,7 @@ __contributors__ = [
     'werdeil',
     'zPaw'
 ]
-__copyright__ = 'Copyright 2017-2020 Pablo Pizarro R. @ppizarror'
+__copyright__ = 'Copyright 2017-2021 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'
 __email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu'
