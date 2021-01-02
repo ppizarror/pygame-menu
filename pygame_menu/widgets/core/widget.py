@@ -577,8 +577,8 @@ class Widget(object):
         """
         Set the text font.
 
-        :param font: Name or list of names for font (see pygame.font.match_font for precise format)
-        :type font: str, list
+        :param font: Font name (see pygame.font.match_font for precise format)
+        :type font: str
         :param font_size: Size of font in pixels
         :type font_size: int
         :param color: Text color
@@ -608,19 +608,48 @@ class Widget(object):
 
         self._apply_font()
 
+    def update_font(self, style):
+        """
+        Updates font. This method receives a style dict (non empty) containing the following keys:
+
+        - antialias (bool): Font antialias
+        - background_color (tuple): Background color
+        - color (tuple): Font color
+        - name (str): Name of the font
+        - selected_color (tuple): Selected color
+        - size (int): Size of the font
+
+        If a key is not defined it will be rewritten using current font style from .get_font_info() method.
+
+        :param style: Font style dict
+        :type style: dict
+        :return: None
+        """
+        assert isinstance(style, dict)
+        assert 1 <= len(style.keys()) <= 6
+        current_font = self.get_font_info()
+        for k in current_font.keys():
+            if k not in style.keys():
+                style[k] = current_font[k]
+        self.set_font(font=style['name'], font_size=style['size'], color=style['color'],
+                      selected_color=style['selected_color'], background_color=style['background_color'],
+                      antialias=style['antialias'])
+        self._render()
+
     def get_font_info(self):
         """
         Return a dict with the information of the widget font.
 
-        :return: Dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
+        :return: Dict
         :rtype: dict
         """
         return {
-            'size': self._font_size,
-            'name': self._font_name,
-            'color': self._font_color,
-            'selected_color': self._font_selected_color,
             'antialias': self._font_antialias,
+            'background_color': self._font_background_color,
+            'color': self._font_color,
+            'name': self._font_name,
+            'selected_color': self._font_selected_color,
+            'size': self._font_size
         }
 
     def set_menu(self, menu):
