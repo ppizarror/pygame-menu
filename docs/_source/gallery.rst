@@ -19,6 +19,7 @@ Other examples that show specific use cases of the menu are also provided:
 .. code-block:: bash
 
     $> python -m pygame_menu.examples.other.dynamic_button_append
+    $> python -m pygame_menu.examples.other.dynamic_widget_update
     $> python -m pygame_menu.examples.other.image_background
 
 Them can also be imported as follows:
@@ -91,17 +92,27 @@ Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/
 
 .. image:: ../_static/example_other_dynamic_button_append.gif
     :align: center
-    :alt: Timer clock
+    :alt: Dynamic button append
     :width: 590
 
 Source: `examples/other/dynamic_button_append.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/dynamic_button_append.py>`_
+
+(Other) Dynamic widget update (OPP style)
+-----------------------------------------
+
+.. image:: ../_static/example_other_dynamic_widgets.gif
+    :align: center
+    :alt: Dynamic widget update
+    :width: 590
+
+Source: `examples/other/dynamic_widget_update.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/dynamic_widget_update.py>`_
 
 (Other) Image background
 ------------------------
 
 .. image:: ../_static/example_other_image_background.gif
     :align: center
-    :alt: Timer clock
+    :alt: Image background
     :width: 590
 
 Source: `examples/other/image_background.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/image_background.py>`_
