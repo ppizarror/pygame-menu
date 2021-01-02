@@ -136,3 +136,9 @@ class BaseImageTest(unittest.TestCase):
 
         # Scale should not change
         image.scale(1, 1)
+
+        # Image bw
+        image.to_bw()
+
+        # Image channels
+        image.pick_channels(('r', 'g', 'b'))

@@ -217,6 +217,7 @@ class MenuTest(unittest.TestCase):
         for i in range(5):
             button = self.menu.add_button('button', _some_event)
             wid.append(button.get_id())
+        self.assertEqual(len(self.menu.get_widgets()), 5)
 
         # Create a event in pygame
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
