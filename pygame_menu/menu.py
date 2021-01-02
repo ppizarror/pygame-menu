@@ -534,8 +534,8 @@ class Menu(object):
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
 
-        :param image_path: Path of the image of the widget
-        :type image_path: str
+        :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided, angle and scale are ignored
+        :type image_path: str, :py:class:`pygame_menu.baseimage.BaseImage`
         :param angle: Angle of the image in degrees (clockwise)
         :type angle: int, float
         :param image_id: ID of the label
