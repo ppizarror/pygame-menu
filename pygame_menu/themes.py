@@ -9,7 +9,7 @@ Theme class and predefined themes.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -119,7 +119,9 @@ class Theme(object):
     :type widget_font_size: int
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0,10)
     :type widget_margin: tuple, list
-    :param widget_offset: X,Y axis offset of widgets inside Menu (px). If value less than 1 use percentage of width/height. Default *(0, 0)*
+    :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements
+    :type widget_padding: int, float, tuple, list
+    :param widget_offset: X,Y axis offset of widgets inside Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default *(0, 0)*
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
@@ -206,6 +208,8 @@ class Theme(object):
                                           int, 30)  # type: int
         self.widget_margin = self._get(kwargs, 'widget_margin',
                                        'tuple2', (0, 10))  # type: tuple
+        self.widget_padding = self._get(kwargs, 'widget_padding',
+                                        (int, float), 0)  # type: (int,float,tuple)
         self.widget_offset = self._get(kwargs, 'widget_offset',
                                        'tuple2', (0, 0))  # type: tuple
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect',
@@ -262,10 +266,13 @@ class Theme(object):
         self.widget_font_color = self._format_opacity(self.widget_font_color)  # type: tuple
 
         # List to tuple
-        self.title_offset = self._vec_2tuple(self.title_offset)  # type: tuple
-        self.widget_background_inflate = self._vec_2tuple(self.widget_background_inflate)  # type: tuple
-        self.widget_margin = self._vec_2tuple(self.widget_margin)  # type: tuple
-        self.widget_offset = self._vec_2tuple(self.widget_offset)  # type: tuple
+        self.title_offset = self._vec_to_tuple(self.title_offset, 2)  # type: tuple
+        self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)  # type: tuple
+        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)  # type: tuple
+        if isinstance(self.widget_padding, (list, tuple)):
+            self.widget_padding = self._vec_to_tuple(self.widget_padding)  # type: tuple
+            assert 2 <= self.widget_padding <= 4, 'widget padding tuple length must be 2, 3 or 4'
+        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)  # type: tuple
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
@@ -288,21 +295,26 @@ class Theme(object):
                                  self.background_color[2], int(opacity * 255))  # type: tuple
 
     @staticmethod
-    def _vec_2tuple(obj):
+    def _vec_to_tuple(obj, check_length=0):
         """
         Return a tuple from a list or tuple object.
 
         :param obj: Object
         :type obj: list, tuple
+        :param check_length: Check length if not zero
         :return: Tuple
         :rtype: tuple
         """
         if isinstance(obj, tuple):
-            return obj
+            v = obj
         elif isinstance(obj, list):
-            return obj[0], obj[1]
+            v = tuple(obj)
         else:
-            raise ValueError('object is not a 2 vector')
+            raise ValueError('object is not a vector')
+        if check_length > 0:
+            if len(v) != check_length:
+                raise ValueError('object is not a {0}-length vector'.format(check_length))
+        return v
 
     def copy(self):
         """

@@ -9,7 +9,7 @@ Menu fonts.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -49,7 +49,9 @@ FONT_OPEN_SANS_ITALIC = __fontdir__.format('opensans_italic.ttf')
 FONT_OPEN_SANS_LIGHT = __fontdir__.format('opensans_light.ttf')
 FONT_PT_SERIF = __fontdir__.format('pt_serif.ttf')
 
-fontCache = {}
+# Stores font cache
+_cache = {}
+
 
 def get_font(name, size):
     """
@@ -120,8 +122,8 @@ def get_font(name, size):
 
         # Try to load the font
         font = None  # type: (_font.Font,None)
-        if (name,size) in fontCache:
-            return fontCache[(name,size)]
+        if (name, size) in _cache:
+            return _cache[(name, size)]
         try:
             font = _font.Font(name, size)
         except IOError:
@@ -130,5 +132,5 @@ def get_font(name, size):
         # If font was not loaded throw an exception
         if font is None:
             raise IOError('font file "{0}" cannot be loaded'.format(font))
-        fontCache[(name,size)] = font
+        _cache[(name, size)] = font
         return font

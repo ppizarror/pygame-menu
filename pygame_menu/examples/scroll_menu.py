@@ -9,7 +9,7 @@ Shows scrolling in menu.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -89,7 +89,7 @@ def make_long_menu():
         rows=3,
         theme=pygame_menu.themes.THEME_GREEN,
         title='Menu with columns',
-        width=600,
+        width=600
     )
 
     _menu_text = pygame_menu.Menu(
@@ -97,7 +97,7 @@ def make_long_menu():
         onclose=pygame_menu.events.EXIT,
         theme=pygame_menu.themes.THEME_DARK,
         title='Text with scroll',
-        width=600,
+        width=600
     )
 
     _menu.add_button('Rows and Columns', _menu_sub)

@@ -9,7 +9,7 @@ MenuBar class to display menu title.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -137,7 +137,7 @@ class MenuBar(Widget):
 
         if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title,
                                          self._font_selected_color, menu_prev_condition):
-            return
+            return True
 
         self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()

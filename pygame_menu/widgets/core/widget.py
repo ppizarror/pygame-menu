@@ -9,7 +9,7 @@ Base class for widgets.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -83,6 +83,7 @@ class Widget(object):
         self._background_inflate = (0, 0)
         self._events = []  # type: list
         self._id = str(widget_id)
+        self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
         self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
@@ -377,24 +378,64 @@ class Widget(object):
         """
         Return the widget margin.
 
-        :return: Widget margin
+        :return: Widget margin (left, top)
         :rtype: tuple
         """
         return self._margin
 
     def set_margin(self, x, y):
         """
-        Set Widget margin.
+        Set Widget margin (left, top).
 
-        :param x: Margin on x axis
+        :param x: Margin on x axis (left)
         :type x: int, float
-        :param y: Margin on y axis
+        :param y: Margin on y axis (top)
         :type y: int, float
         :return: None
         """
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
         self._margin = (x, y)
+
+    def get_padding(self):
+        """
+        Return the widget padding.
+
+        :return: Widget padding (top, right, bottom, left)
+        :rtype: tuple
+        """
+        return self._padding
+
+    def set_padding(self, padding):
+        """
+        Set the Widget padding according to CSS rules.
+
+        - If an integer or float is provided: top, right, bottom and left values will be the same
+        - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
+        - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
+        - If 4-item tuple is provided: padding will be (top, right, bottom, left)
+
+        :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
+        :type padding: int, float, tuple
+        :return: None
+        """
+        assert isinstance(padding, (int, float, tuple))
+        if isinstance(padding, (int, float)):
+            assert padding >= 0, 'padding cant be a negative number'
+            self._padding = (padding, padding, padding, padding)
+        else:
+            assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
+            for i in range(len(padding)):
+                assert isinstance(padding[i], (int, float)), 'all padding elements must be integers or floats'
+                assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
+            if len(padding) == 1:
+                self._padding = (padding[0], padding[0], padding[0], padding[0])
+            elif len(padding) == 2:
+                self._padding = (padding[0], padding[1], padding[0], padding[1])
+            elif len(padding) == 3:
+                self._padding = (padding[0], padding[1], padding[2], padding[1])
+            else:
+                self._padding = (padding[0], padding[1], padding[2], padding[3])
 
     def get_rect(self):
         """
@@ -404,7 +445,10 @@ class Widget(object):
         :rtype: :py:class:`pygame.Rect`
         """
         self._render()
-        return self._rect.copy()
+        return pygame.Rect(int(self._rect.x - self._padding[3]),
+                           int(self._rect.y - self._padding[0]),
+                           int(self._rect.width + self._padding[3] + self._padding[1]),
+                           int(self._rect.height + self._padding[0] + self._padding[2]))
 
     def get_value(self):
         """
@@ -433,7 +477,8 @@ class Widget(object):
         This method shall update the attribute ``_surface`` with a pygame.Surface
         representing the outer borders of the widget.
 
-        :return: None
+        :return: True if widget has rendered a new state, None if the widget has not changed, so render used a cache
+        :rtype: bool, None
         """
         raise NotImplementedError('override is mandatory')
 

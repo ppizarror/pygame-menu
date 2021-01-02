@@ -9,7 +9,7 @@ Menu with dynamic buttons.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -41,10 +41,12 @@ pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 surface = pygame.display.set_mode((600, 400))
 
-menu = pygame_menu.Menu(height=300,
-                        width=400,
-                        theme=pygame_menu.themes.THEME_BLUE,
-                        title='Welcome')
+menu = pygame_menu.Menu(
+    height=300,
+    theme=pygame_menu.themes.THEME_BLUE,
+    title='Welcome',
+    width=400
+)
 
 
 def add_dynamic_button():

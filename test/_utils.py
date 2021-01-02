@@ -9,7 +9,7 @@ Test suite utility functions and classes.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -48,6 +48,16 @@ W_SIZE = 600  # Window width
 # Init pygame
 pygame.init()
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
+
+
+def test_reset_surface():
+    """
+    Reset test surface.
+
+    :return: None
+    """
+    global surface
+    surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 
 
 class PygameUtils(object):

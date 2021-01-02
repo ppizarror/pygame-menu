@@ -9,7 +9,7 @@ Label class, adds a simple text to the Menu.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -63,7 +63,7 @@ class Label(Widget):
 
     def _render(self):
         if not self._render_hash_changed(self._title, self._font_color):
-            return
+            return True
         self._surface = self._render_string(self._title, self._font_color)
         self._rect.width, self._rect.height = self._surface.get_size()
 

@@ -9,7 +9,7 @@ Example file, timer clock with in-menu options.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -159,28 +159,29 @@ def main(test=False):
 
     # Timer
     timer_menu = pygame_menu.Menu(
-        theme=timer_theme,
         height=400,
-        width=600,
         onclose=pygame_menu.events.RESET,
+        theme=timer_theme,
         title='Timer Menu',
+        width=600
     )
 
     # Add widgets
     timer_menu.add_button('Reset timer', reset_timer)
 
     # Adds a selector (element that can handle functions)
-    timer_menu.add_selector(title='Change color ',
-                            items=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
-                                   ('Default', (128, 0, 128)),
-                                   ('Black', (0, 0, 0)),
-                                   ('Blue', (12, 12, 200))],
-                            default=1,  # Optional parameter that sets default item of selector
-                            onchange=change_color_bg,  # Action when changing element with left/right
-                            onreturn=change_color_bg,  # Action when pressing return on an element
-                            # Optional parameters to change_color_bg function
-                            write_on_console=True,
-                            )
+    timer_menu.add_selector(
+        title='Change color ',
+        items=[('Random', (-1, -1, -1)),  # Values of selector, call to change_color_bg
+               ('Default', (128, 0, 128)),
+               ('Black', (0, 0, 0)),
+               ('Blue', (12, 12, 200))],
+        default=1,  # Optional parameter that sets default item of selector
+        onchange=change_color_bg,  # Action when changing element with left/right
+        onreturn=change_color_bg,  # Action when pressing return on an element
+        # Optional parameters to change_color_bg function
+        write_on_console=True
+    )
     timer_menu.add_button('Update game object', TestCallClassMethod().update_game_settings)
     timer_menu.add_button('Return to Menu', pygame_menu.events.BACK)
     timer_menu.add_button('Close Menu', pygame_menu.events.CLOSE)
@@ -197,7 +198,7 @@ def main(test=False):
         widget_font_color=(170, 170, 170),
         widget_font_size=45,
         widget_shadow=False,
-        widget_shadow_position=pygame_menu.locals.POSITION_SOUTHEAST,
+        widget_shadow_position=pygame_menu.locals.POSITION_SOUTHEAST
     )
 
     help_menu = pygame_menu.Menu(
@@ -205,7 +206,7 @@ def main(test=False):
         onclose=pygame_menu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
         theme=help_theme,
         title='Help',
-        width=800,
+        width=800
     )
     for m in HELP:
         help_menu.add_label(m, align=pygame_menu.locals.ALIGN_CENTER)
@@ -222,12 +223,13 @@ def main(test=False):
     about_theme.widget_offset = (0, 0.14)
 
     about_menu = pygame_menu.Menu(
+        center_content=False,
         height=400,
         mouse_visible=False,
         onclose=pygame_menu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
         theme=about_theme,
         title='About',
-        width=600,
+        width=600
     )
     for m in ABOUT:
         about_menu.add_label(m, margin=(0, 0))
@@ -242,7 +244,7 @@ def main(test=False):
         height=400,
         theme=pygame_menu.themes.THEME_DARK,
         title='Main Menu',
-        width=600,
+        width=600
     )
 
     main_menu.add_button(timer_menu.get_title(), timer_menu)  # Add timer submenu

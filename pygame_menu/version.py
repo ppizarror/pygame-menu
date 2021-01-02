@@ -9,7 +9,7 @@ Library version.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -54,6 +54,6 @@ class Version(tuple):
     patch = property(lambda self: self[2])
 
 
-vernum = Version(3, 3, 2)
+vernum = Version(3, 4, 0)
 ver = str(vernum)
 rev = ''

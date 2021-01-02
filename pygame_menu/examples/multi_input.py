@@ -9,7 +9,7 @@ Shows different inputs (widgets).
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -145,43 +145,55 @@ def main(test=False):
         onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=settings_menu_theme,
         title='Settings',
-        width=WINDOW_SIZE[0] * 0.9,
+        width=WINDOW_SIZE[0] * 0.9
     )
 
     # Add text inputs with different configurations
-    wid1 = settings_menu.add_text_input('First name: ',
-                                        default='John',
-                                        onreturn=check_name_test,
-                                        textinput_id='first_name')
-    wid2 = settings_menu.add_text_input('Last name: ',
-                                        default='Rambo',
-                                        maxchar=10,
-                                        textinput_id='last_name',
-                                        input_underline='.')
-    settings_menu.add_text_input('Your age: ',
-                                 default=25,
-                                 maxchar=3,
-                                 maxwidth=3,
-                                 textinput_id='age',
-                                 input_type=pygame_menu.locals.INPUT_INT,
-                                 cursor_selection_enable=False)
-    settings_menu.add_text_input('Some long text: ',
-                                 maxwidth=19,
-                                 textinput_id='long_text',
-                                 input_underline='_')
-    settings_menu.add_text_input('Password: ',
-                                 maxchar=6,
-                                 password=True,
-                                 textinput_id='pass',
-                                 input_underline='_')
+    wid1 = settings_menu.add_text_input(
+        'First name: ',
+        default='John',
+        onreturn=check_name_test,
+        textinput_id='first_name'
+    )
+    wid2 = settings_menu.add_text_input(
+        'Last name: ',
+        default='Rambo',
+        maxchar=10,
+        textinput_id='last_name',
+        input_underline='.'
+    )
+    settings_menu.add_text_input(
+        'Your age: ',
+        default=25,
+        maxchar=3,
+        maxwidth=3,
+        textinput_id='age',
+        input_type=pygame_menu.locals.INPUT_INT,
+        cursor_selection_enable=False
+    )
+    settings_menu.add_text_input(
+        'Some long text: ',
+        maxwidth=19,
+        textinput_id='long_text',
+        input_underline='_'
+    )
+    settings_menu.add_text_input(
+        'Password: ',
+        maxchar=6,
+        password=True,
+        textinput_id='pass',
+        input_underline='_'
+    )
 
     # Create selector with 3 difficulty options
-    settings_menu.add_selector('Select difficulty ',
-                               [('Easy', 'EASY'),
-                                ('Medium', 'MEDIUM'),
-                                ('Hard', 'HARD')],
-                               selector_id='difficulty',
-                               default=1)
+    settings_menu.add_selector(
+        'Select difficulty ',
+        [('Easy', 'EASY'),
+         ('Medium', 'MEDIUM'),
+         ('Hard', 'HARD')],
+        selector_id='difficulty',
+        default=1
+    )
 
     def data_fun():
         """
@@ -203,17 +215,27 @@ def main(test=False):
     # -------------------------------------------------------------------------
     more_settings_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.85,
-        width=WINDOW_SIZE[0] * 0.9,
         onclose=pygame_menu.events.DISABLE_CLOSE,
-        title='More Settings',
         theme=settings_menu_theme,
+        title='More Settings',
+        width=WINDOW_SIZE[0] * 0.9
     )
 
-    more_settings_menu.add_image(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
-                                 scale=(0.25, 0.25),
-                                 align=pygame_menu.locals.ALIGN_CENTER)
-    more_settings_menu.add_color_input('Color 1 RGB: ', color_type='rgb')
-    more_settings_menu.add_color_input('Color 2 RGB: ', color_type='rgb', default=(255, 0, 0), input_separator='-')
+    more_settings_menu.add_image(
+        pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
+        scale=(0.25, 0.25),
+        align=pygame_menu.locals.ALIGN_CENTER
+    )
+    more_settings_menu.add_color_input(
+        'Color 1 RGB: ',
+        color_type='rgb'
+    )
+    more_settings_menu.add_color_input(
+        'Color 2 RGB: ',
+        color_type='rgb',
+        default=(255, 0, 0),
+        input_separator='-'
+    )
 
     def print_color(color):
         """
@@ -225,11 +247,18 @@ def main(test=False):
         """
         print('Returned color: ', color)
 
-    more_settings_menu.add_color_input('Color in Hex: ', color_type='hex', onreturn=print_color)
+    more_settings_menu.add_color_input(
+        'Color in Hex: ',
+        color_type='hex',
+        onreturn=print_color
+    )
 
     more_settings_menu.add_vertical_margin(25)
-    more_settings_menu.add_button('Return to main menu', pygame_menu.events.BACK,
-                                  align=pygame_menu.locals.ALIGN_CENTER)
+    more_settings_menu.add_button(
+        'Return to main menu',
+        pygame_menu.events.BACK,
+        align=pygame_menu.locals.ALIGN_CENTER
+    )
 
     # -------------------------------------------------------------------------
     # Create menus: Column buttons
@@ -248,7 +277,7 @@ def main(test=False):
         rows=3,
         theme=button_column_menu_theme,
         title='Textures+Columns',
-        width=WINDOW_SIZE[0] * 0.9,
+        width=WINDOW_SIZE[0] * 0.9
     )
     for i in range(4):
         button_column_menu.add_button('Button {0}'.format(i), pygame_menu.events.BACK)
@@ -263,20 +292,19 @@ def main(test=False):
     # Create menus: Main menu
     # -------------------------------------------------------------------------
     main_menu_theme = pygame_menu.themes.THEME_ORANGE.copy()
-    main_menu_theme.widget_offset = (0, 0.09)
     main_menu_theme.title_font = pygame_menu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font = pygame_menu.font.FONT_COMIC_NEUE
     main_menu_theme.widget_font_size = 30
 
     main_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.7,
-        width=WINDOW_SIZE[0] * 0.8,
         onclose=pygame_menu.events.EXIT,  # User press ESC button
-        title='Main menu',
         theme=main_menu_theme,
+        title='Main menu',
+        width=WINDOW_SIZE[0] * 0.8
     )
 
-    main_menu.add_button('Settings', settings_menu)
+    main_menu.add_button('Settings', settings_menu, padding=(0, 0, 0, 0))
     main_menu.add_button('More Settings', more_settings_menu)
     main_menu.add_button('Menu in textures and columns', button_column_menu)
     main_menu.add_selector('Menu sounds ',

@@ -9,7 +9,7 @@ Test widgets.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -61,6 +61,47 @@ class WidgetsTest(unittest.TestCase):
         self.menu.add_selector(u'Sélect'.encode('latin1'), [('a', 'a')])
         self.menu.enable()
         self.menu.draw(surface)
+
+    def test_padding(self):
+        """
+        Test widget padding.
+        """
+        self.assertRaises(Exception, lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding=-1))
+        self.assertRaises(Exception, lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding='a'))
+        self.assertRaises(Exception,
+                          lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding=(0, 0, 0, 0, 0)))
+        self.assertRaises(Exception,
+                          lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding=(0, 0, -1, 0)))
+        self.assertRaises(Exception,
+                          lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding=(0, 0, 'a', 0)))
+
+        w = self.menu.add_button(0, pygame_menu.events.NONE, padding=25)
+        p = w.get_padding()
+        self.assertEqual(p[0], 25)
+        self.assertEqual(p[1], 25)
+        self.assertEqual(p[2], 25)
+        self.assertEqual(p[3], 25)
+
+        w = self.menu.add_button(0, pygame_menu.events.NONE, padding=(25, 50, 75, 100))
+        p = w.get_padding()
+        self.assertEqual(p[0], 25)
+        self.assertEqual(p[1], 50)
+        self.assertEqual(p[2], 75)
+        self.assertEqual(p[3], 100)
+
+        w = self.menu.add_button(0, pygame_menu.events.NONE, padding=(25, 50))
+        p = w.get_padding()
+        self.assertEqual(p[0], 25)
+        self.assertEqual(p[1], 50)
+        self.assertEqual(p[2], 25)
+        self.assertEqual(p[3], 50)
+
+        w = self.menu.add_button(0, pygame_menu.events.NONE, padding=(25, 75, 50))
+        p = w.get_padding()
+        self.assertEqual(p[0], 25)
+        self.assertEqual(p[1], 75)
+        self.assertEqual(p[2], 50)
+        self.assertEqual(p[3], 75)
 
     def test_selector(self):
         """

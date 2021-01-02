@@ -9,7 +9,7 @@ Test example files.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -53,6 +53,7 @@ class ExamplesTest(unittest.TestCase):
         timer_clock.main(test=True)
         timer_clock.mainmenu_background()
         timer_clock.reset_timer()
+        test_reset_surface()
 
     @staticmethod
     def test_example_difficulty_selector():
@@ -64,6 +65,7 @@ class ExamplesTest(unittest.TestCase):
         game_selector.play_function(['EASY'], font, test=True)
         game_selector.play_function(['MEDIUM'], font, test=True)
         game_selector.play_function(['HARD'], font, test=True)
+        test_reset_surface()
 
     @staticmethod
     def test_example_multi_input():
@@ -71,13 +73,7 @@ class ExamplesTest(unittest.TestCase):
         Test multi-input example.
         """
         multi_input.main(test=True)
-
-    @staticmethod
-    def test_example_scroll_bar():
-        """
-        Test scroll bar example.
-        """
-        scroll_bar.main(test=True)
+        test_reset_surface()
 
     @staticmethod
     def test_example_scroll_menu():
@@ -85,27 +81,7 @@ class ExamplesTest(unittest.TestCase):
         Test scroll menu example.
         """
         scroll_menu.main(test=True)
-
-    @staticmethod
-    def test_example_area_menu():
-        """
-        Test scroll area example.
-        """
-        scroll_area.main(test=True)
-
-    @staticmethod
-    def test_example_dynamic_button():
-        """
-        Test dynamic button example.
-        """
-        dynamic_button.main(test=True)
-
-    @staticmethod
-    def test_example_background_image():
-        """
-        Test background image example.
-        """
-        image_background.main(test=True)
+        test_reset_surface()
 
     @staticmethod
     def test_example_simple():
@@ -114,3 +90,36 @@ class ExamplesTest(unittest.TestCase):
         """
         # noinspection PyUnresolvedReferences
         import pygame_menu.examples.simple
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_widget_area_menu():
+        """
+        Test scroll area example.
+        """
+        scroll_area.main(test=True)
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_widget_scroll_bar():
+        """
+        Test scroll bar example.
+        """
+        scroll_bar.main(test=True)
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_other_dynamic_button():
+        """
+        Test dynamic button example.
+        """
+        dynamic_button.main(test=True)
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_other_background_image():
+        """
+        Test background image example.
+        """
+        image_background.main(test=True)
+        test_reset_surface()

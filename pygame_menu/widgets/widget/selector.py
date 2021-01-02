@@ -9,7 +9,7 @@ Selector class, manage elements and adds entries to menu.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -162,7 +162,7 @@ class Selector(Widget):
     def _render(self):
         string = self._sformat.format(self._title, self.get_value()[0])
         if not self._render_hash_changed(string, self.selected):
-            return
+            return True
         if self.selected:
             color = self._font_selected_color
         else:

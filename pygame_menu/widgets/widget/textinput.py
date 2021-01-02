@@ -9,7 +9,7 @@ Text input class, this widget lets user to write text.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -374,7 +374,7 @@ class TextInput(Widget):
 
         if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
                                          self._selection_enabled, self.active):
-            return
+            return True
 
         if self.selected:
             color = self._font_selected_color

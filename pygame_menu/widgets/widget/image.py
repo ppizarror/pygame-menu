@@ -9,7 +9,7 @@ Image widget class, adds a simple image.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -73,7 +73,7 @@ class Image(Widget):
 
     def _render(self):
         if self._surface is not None:
-            return
+            return True
         self._surface = self._image.get_surface()
         self._rect.width, self._rect.height = self._surface.get_size()
 

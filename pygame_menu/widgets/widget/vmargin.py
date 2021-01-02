@@ -9,7 +9,7 @@ Vertical box margin.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -54,7 +54,7 @@ class VMargin(Widget):
 
     def _render(self):
         if self._surface is not None:
-            return
+            return True
         self._surface = make_surface(1, 1, alpha=True)
         self._rect.width = 0.0
         self._rect.height = 0.0

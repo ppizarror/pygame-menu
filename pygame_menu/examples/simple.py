@@ -9,7 +9,7 @@ Super simple example of pygame-menu usage, featuring a selector and a button.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -54,10 +54,12 @@ def start_the_game():
     print('Do the job here !')
 
 
-menu = pygame_menu.Menu(height=300,
-                        width=400,
-                        theme=pygame_menu.themes.THEME_BLUE,
-                        title='Welcome')
+menu = pygame_menu.Menu(
+    height=300,
+    theme=pygame_menu.themes.THEME_BLUE,
+    title='Welcome',
+    width=400
+)
 
 menu.add_text_input('Name: ', default='John Doe')
 menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)

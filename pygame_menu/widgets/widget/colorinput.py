@@ -10,7 +10,7 @@ for entering and previewing colors in RGB and HEX format.
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
-Copyright 2017-2020 Pablo Pizarro R. @ppizarror
+Copyright 2017-2021 Pablo Pizarro R. @ppizarror
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -277,11 +277,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._previsualize_color(surface)
 
     def _render(self):
-        super(ColorInput, self)._render()
+        r = super(ColorInput, self)._render()
 
         # Maybe TextInput did not rendered, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
         self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
+        return r
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
