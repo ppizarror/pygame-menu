@@ -62,6 +62,14 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+    def test_font(self):
+        """
+        Test widget font.
+        """
+        w = self.menu.add_label('Text')  # type: Label
+        self.assertRaises(AssertionError, lambda: w.update_font({}))
+        w.update_font({'color': (255, 0, 0)})
+
     def test_padding(self):
         """
         Test widget padding.
@@ -142,7 +150,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: selector.set_value(200))
         selector.set_value(1)
         self.assertEqual(selector.get_value()[1], 1)
-        self.assertEqual(selector.get_value()[0], '5 - Medium')
+        self.assertEqual(selector.get_value()[0][0], '5 - Medium')
 
     # noinspection PyArgumentEqualDefault
     def test_colorinput(self):
