@@ -54,6 +54,10 @@ IMAGE_MODE_REPEAT_XY = 103
 IMAGE_MODE_REPEAT_Y = 104
 IMAGE_MODE_SIMPLE = 105  # Just draw the image without any effect
 
+# Other constants
+_VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
+                        '.pbm', '.pgm', '.ppm', '.xpm']
+
 
 class BaseImage(object):
     """
@@ -66,24 +70,26 @@ class BaseImage(object):
     :type drawing_mode: int
     :param drawing_offset: Offset of the image in drawing method
     :type drawing_offset: tuple, list
+    :param load_from_file: Loads the image from the given path
+    :type load_from_file: bool
     """
 
     def __init__(self,
                  image_path,
                  drawing_mode=IMAGE_MODE_FILL,
-                 drawing_offset=(0, 0)
+                 drawing_offset=(0, 0),
+                 load_from_file=True
                  ):
         assert isinstance(image_path, str)
         assert isinstance(drawing_mode, int)
+        assert isinstance(load_from_file, bool)
         assert_vector2(drawing_offset)
 
         _, file_extension = path.splitext(image_path)
         file_extension = file_extension.lower()
 
-        valid_formats = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
-                         '.pbm', '.pgm', '.ppm', '.xpm']
-        assert file_extension in valid_formats, \
-            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(valid_formats))
+        assert file_extension in _VALID_IMAGE_FORMATS, \
+            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
         assert path.isfile(image_path), 'file {0} does not exist or could not be found, please ' \
                                         'check if the path of the image is valid'.format(image_path)
 
@@ -96,8 +102,9 @@ class BaseImage(object):
         self._drawing_offset = (drawing_offset[0], drawing_offset[1])
 
         # Load the image and store as a surface
-        self._surface = pygame.image.load(image_path)  # type: pygame.Surface
-        self._original_surface = self._surface.copy()
+        if load_from_file:
+            self._surface = pygame.image.load(image_path)  # type: pygame.Surface
+            self._original_surface = self._surface.copy()
 
     def __str__(self):
         """
@@ -114,6 +121,22 @@ class BaseImage(object):
         :return: None
         """
         print(self.__str__())
+
+    def copy(self):
+        """
+        Return a copy of the image.
+
+        :return: Image
+        :rtype: BaseImage
+        """
+        image = BaseImage(
+            image_path=self._filepath,
+            drawing_mode=self._drawing_mode,
+            drawing_offset=self._drawing_offset
+        )
+        image._surface = self._surface.copy()
+        image._original_surface = self._surface.copy()
+        return image
 
     def get_size(self):
         """

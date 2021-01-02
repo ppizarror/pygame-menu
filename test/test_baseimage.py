@@ -77,6 +77,14 @@ class BaseImageTest(unittest.TestCase):
         image.restore()
         self.assertFalse(image.equals(image_original))
 
+    def test_copy(self):
+        """
+        Test copy image.
+        """
+        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image_copied = image.copy()
+        self.assertTrue(image.equals(image_copied))
+
     def test_transform(self):
         """
         Test the image transformation.
