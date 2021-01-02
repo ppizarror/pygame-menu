@@ -281,6 +281,13 @@ class MenuBar(Widget):
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
 
+            # The following check belongs to the case if the menu displays a "x" button to close
+            # the menu, but onclose Menu method is None (Nothing is executed), then the button will
+            # not be displayed
+            # noinspection PyProtectedMember
+            if menu_prev_condition and self.get_menu()._onclose is None:
+                self._backbox = False
+
     def set_title(self, title, offsetx=0, offsety=0):
         """
         Set the Menu title.
