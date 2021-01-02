@@ -2035,6 +2035,15 @@ class Menu(object):
         """
         return self._width, self._height
 
+    def get_widgets(self):
+        """
+        Return widgets as a tuple.
+
+        :return: Widgets tuple
+        :rtype: tuple
+        """
+        return tuple(self._widgets)
+
     def get_widget(self, widget_id, recursive=False):
         """
         Return a widget by a given ID from the Menu.
