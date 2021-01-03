@@ -87,7 +87,7 @@ Timer clock example
 
 Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/timer_clock.py>`_
 
-(Other) Dynamic button append
+Other - Dynamic button append
 -----------------------------
 
 .. image:: ../_static/example_other_dynamic_button_append.gif
@@ -97,17 +97,17 @@ Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/
 
 Source: `examples/other/dynamic_button_append.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/dynamic_button_append.py>`_
 
-(Other) Dynamic widget update (OPP style)
+Other - Dynamic widget update (OOP style)
 -----------------------------------------
 
-.. image:: ../_static/example_other_dynamic_widgets.gif
+.. image:: ../_static/example_other_dynamic_widget_update.gif
     :align: center
-    :alt: Dynamic widget update
+    :alt: Dynamic widget update in object oriented programming style
     :width: 590
 
 Source: `examples/other/dynamic_widget_update.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/dynamic_widget_update.py>`_
 
-(Other) Image background
+Other - Image background
 ------------------------
 
 .. image:: ../_static/example_other_image_background.gif
