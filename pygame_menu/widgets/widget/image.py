@@ -38,8 +38,8 @@ class Image(Widget):
     """
     Image widget.
 
-    :param image_path: Path of the image or BaseImage object
-    :type image_path: str
+    :param image_path: Path of the image or BaseImage object. If BaseImage object is provided drawing mode is not considered
+    :type image_path: str, BaseImage
     :param image_id: Image ID
     :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
