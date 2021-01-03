@@ -51,7 +51,7 @@ import pygame_menu
 
 project = 'pygame-menu'
 # noinspection PyShadowingBuiltins
-copyright = '2020, Pablo Pizarro R. @ppizarror'
+copyright = '2017-2021, Pablo Pizarro R. @ppizarror'
 author = 'Pablo Pizarro R.'
 
 # The full version, including alpha/beta/rc tags
