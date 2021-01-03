@@ -44,9 +44,7 @@ class Button(Widget):
     :type title: str
     :param button_id: Button ID
     :type button_id: str
-    :param onchange: Callback when changing the selector
-    :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Callback when pressing the button
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :type args: any
@@ -57,7 +55,6 @@ class Button(Widget):
     def __init__(self,
                  title,
                  button_id='',
-                 onchange=None,
                  onreturn=None,
                  *args,
                  **kwargs
@@ -65,19 +62,24 @@ class Button(Widget):
         super(Button, self).__init__(
             title=title,
             widget_id=button_id,
-            onchange=onchange,
             onreturn=onreturn,
             args=args,
             kwargs=kwargs
         )
+        self.to_menu = False  # True if the button opens a new menu
 
     def _apply_font(self):
         pass
 
     def update_callback(self, func, *args):
         """
-        Update function triggered by the button. Button cannot point to a Menu, as that is only
-        valid using ``Menu.add_button()`` method.
+        Update function triggered by the button; ``func`` cannot point to a Menu, that behaviour
+        is only valid using ``Menu.add_button()`` method.
+
+        .. note::
+
+            If button points to a submenu, and the callback is changed to a function,
+            the submenu will be removed from the parent menu. Thus preserving the structure.
 
         :param func: Function
         :type func: callable
@@ -86,8 +88,18 @@ class Button(Widget):
         :return: None
         """
         assert is_callable(func), 'only function are allowed'
+
+        # If return is a Menu object, remove it from submenus list
+        if self._menu is not None and self._on_return is not None and self.to_menu:
+            assert len(self._args) == 1
+            submenu = self._args[0]  # Menu
+            assert self._menu.in_submenu(submenu, recursive=False), \
+                'pointed menu is not in submenu list of parent container'
+            # noinspection PyProtectedMember
+            assert self._menu._remove_submenu(submenu, recursive=False), 'submenu could not be removed'
+            self.to_menu = False
+
         self._args = args or []  # type: list
-        self._on_change = None  # type: callable
         self._on_return = func
 
     # noinspection PyMissingOrEmptyDocstring
