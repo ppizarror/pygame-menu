@@ -208,7 +208,7 @@ class BaseImage(object):
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
         colors and must return the same values. The color pixel will be overriden by the function output.
-        See .to_bw() method as an example.
+        See ``.to_bw()`` method as an example.
 
         :param func: Color function, takes colors as function=myfunc(r, g, b, a). Returns the same tuple (r, g, b, a)
         :type func: function
@@ -220,7 +220,11 @@ class BaseImage(object):
             for y in range(h):
                 r, g, b, a = self._surface.get_at((x, y))
                 r, g, b, a = func(r, g, b, a)
-                self._surface.set_at((x, y), pygame.Color(int(r), int(g), int(b), int(a)))
+                r = int(max(0, min(r, 255)))
+                g = int(max(0, min(g, 255)))
+                b = int(max(0, min(b, 255)))
+                a = int(max(0, min(a, 255)))
+                self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
     def to_bw(self):
@@ -240,7 +244,7 @@ class BaseImage(object):
     def pick_channels(self, channels):
         """
         Pick certain channels of the image, channels are 'r' (red), 'g' (green) and 'b' (blue). channels param is
-        a list/tuple of channels (non empty). For example: pick_channels(['r', 'g']). All channels not included on
+        a list/tuple of channels (non empty). For example: ``pick_channels(['r', 'g'])``. All channels not included on
         the list will be discarded.
 
         :param channels: Channels, list or tuple containing 'r', 'g' or 'b' (all combinations are possible)
