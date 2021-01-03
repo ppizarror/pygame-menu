@@ -60,7 +60,8 @@ class Button(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs):
+                 **kwargs
+                 ):
         super(Button, self).__init__(
             title=title,
             widget_id=button_id,
@@ -76,15 +77,15 @@ class Button(Widget):
     def update_callback(self, func, *args):
         """
         Update function triggered by the button. Button cannot point to a Menu, as that is only
-        valid using Menu.add_button() method
+        valid using ``Menu.add_button()`` method.
 
         :param func: Function
-        :type func: Callable
+        :type func: callable
         :param args: Arguments used by the function once triggered
         :type args: any
         :return: None
         """
-        assert isinstance(func, (types.FunctionType, types.MethodType)) or callable(func), 'Only function are allowed'
+        assert isinstance(func, (types.FunctionType, types.MethodType)) or callable(func), 'only function are allowed'
         self._args = args or []  # type: list
         self._on_change = None  # type: callable
         self._on_return = func

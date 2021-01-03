@@ -211,7 +211,7 @@ class BaseImage(object):
         See ``.to_bw()`` method as an example.
 
         :param func: Color function, takes colors as function=myfunc(r, g, b, a). Returns the same tuple (r, g, b, a)
-        :type func: function
+        :type func: callable
         :return: Self reference
         :rtype: BaseImage
         """
@@ -243,9 +243,10 @@ class BaseImage(object):
 
     def pick_channels(self, channels):
         """
-        Pick certain channels of the image, channels are 'r' (red), 'g' (green) and 'b' (blue). channels param is
-        a list/tuple of channels (non empty). For example: ``pick_channels(['r', 'g'])``. All channels not included on
-        the list will be discarded.
+        Pick certain channels of the image, channels are 'r' (red), 'g' (green) and 'b' (blue),
+        ``channels param`` is a list/tuple of channels (non empty).
+
+        For example, ``pick_channels(['r', 'g'])``: All channels not included on the list will be discarded.
 
         :param channels: Channels, list or tuple containing 'r', 'g' or 'b' (all combinations are possible)
         :type channels: tuple, list, str
@@ -365,12 +366,14 @@ class BaseImage(object):
         Unfiltered counterclockwise rotation. The angle argument represents degrees
         and can be any floating point value. Negative angle amounts will rotate clockwise.
 
-        Unless rotating by 90 degree increments, the image will be padded larger to hold
-        the new size. If the image has pixel alphas, the padded area will be transparent.
-        Otherwise pygame will pick a color that matches the image colorkey or the topleft
-        pixel value.
+        .. note::
 
-        :param angle: Rotation angle
+            Unless rotating by 90 degree increments, the image will be padded larger to hold
+            the new size. If the image has pixel alphas, the padded area will be transparent.
+            Otherwise pygame will pick a color that matches the image colorkey or the topleft
+            pixel value.
+
+        :param angle: Rotation angle (degrees 0-360)
         :type angle: int, float
         :return: Self reference
         :rtype: BaseImage
@@ -409,11 +412,12 @@ class BaseImage(object):
 
         if self._drawing_mode == IMAGE_MODE_FILL:
 
-            surface.blit(pygame.transform.scale(self._surface, (area.width, area.height)),
-                         (
-                             self._drawing_offset[0] + position[0],
-                             self._drawing_offset[1] + position[1]
-                         ))
+            surface.blit(
+                pygame.transform.scale(self._surface, (area.width, area.height)),
+                (
+                    self._drawing_offset[0] + position[0],
+                    self._drawing_offset[1] + position[1]
+                ))
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_X:
 
@@ -422,11 +426,14 @@ class BaseImage(object):
             assert times > 0, \
                 'invalid size, width must be greater than zero'
             for x in range(times):
-                surface.blit(self._surface,
-                             (x * w + self._drawing_offset[0] + position[0],
-                              self._drawing_offset[1] + position[1]),
-                             area
-                             )
+                surface.blit(
+                    self._surface,
+                    (
+                        x * w + self._drawing_offset[0] + position[0],
+                        self._drawing_offset[1] + position[1]
+                    ),
+                    area
+                )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_Y:
 
@@ -435,11 +442,14 @@ class BaseImage(object):
             assert times > 0, \
                 'invalid size, height must be greater than zero'
             for y in range(times):
-                surface.blit(self._surface,
-                             (
-                                 0 + self._drawing_offset[0] + position[0],
-                                 y * h + self._drawing_offset[1] + position[1]),
-                             area)
+                surface.blit(
+                    self._surface,
+                    (
+                        0 + self._drawing_offset[0] + position[0],
+                        y * h + self._drawing_offset[1] + position[1]
+                    ),
+                    area
+                )
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_XY:
 
@@ -450,23 +460,27 @@ class BaseImage(object):
                 'invalid size, width and height must be greater than zero'
             for x in range(timesx):
                 for y in range(timesy):
-                    surface.blit(self._surface,
-                                 (
-                                     x * w + self._drawing_offset[0] + position[0],
-                                     y * h + self._drawing_offset[1] + position[1],
-                                 ),
-                                 area)
+                    surface.blit(
+                        self._surface,
+                        (
+                            x * w + self._drawing_offset[0] + position[0],
+                            y * h + self._drawing_offset[1] + position[1]
+                        ),
+                        area
+                    )
 
         elif self._drawing_mode == IMAGE_MODE_CENTER:
 
             sw, hw = area.width, area.height  # Window
             w, h = self._surface.get_size()  # Image
-            surface.blit(self._surface,
-                         (
-                             float(sw - w) / 2 + self._drawing_offset[0] + position[0],
-                             float(hw - h) / 2 + self._drawing_offset[1] + position[1],
-                         ),
-                         area)
+            surface.blit(
+                self._surface,
+                (
+                    float(sw - w) / 2 + self._drawing_offset[0] + position[0],
+                    float(hw - h) / 2 + self._drawing_offset[1] + position[1]
+                ),
+                area
+            )
 
         elif self._drawing_mode == IMAGE_MODE_SIMPLE:
 
@@ -476,7 +490,8 @@ class BaseImage(object):
                     self._drawing_offset[0] + position[0],
                     self._drawing_offset[1] + position[1]
                 ),
-                area)
+                area
+            )
 
         else:
             raise ValueError('invalid image mode')

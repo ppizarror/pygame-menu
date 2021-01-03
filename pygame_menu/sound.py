@@ -251,7 +251,7 @@ class Sound(object):
             'volume': volume,
             'loops': loops,
             'maxtime': maxtime,
-            'fade_ms': fade_ms,
+            'fade_ms': fade_ms
         }
         return True
 
@@ -439,7 +439,7 @@ class Sound(object):
         """
         Return the current channel information of the sound engine.
 
-        :return: An info dict e.g.: {'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}
+        :return: An info dict e.g.: ``{'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}``
         :rtype: dict
         """
         channel = self.get_channel()  # type: mixer.Channel

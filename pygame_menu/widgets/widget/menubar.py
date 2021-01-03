@@ -85,7 +85,8 @@ class MenuBar(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs):
+                 **kwargs
+                 ):
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
 

@@ -42,8 +42,7 @@ class VMargin(Widget):
     :type widget_id: str
     """
 
-    def __init__(self,
-                 widget_id=''):
+    def __init__(self, widget_id=''):
         super(VMargin, self).__init__(widget_id=widget_id)
         self.is_selectable = False
 

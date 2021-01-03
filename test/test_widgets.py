@@ -30,10 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import sys
+
 from test._utils import *
 from pygame_menu import locals as _locals
-from pygame_menu.widgets import ScrollBar, Label
-import sys
+from pygame_menu.widgets import ScrollBar, Label, Button
 
 
 class WidgetsTest(unittest.TestCase):
@@ -64,7 +65,7 @@ class WidgetsTest(unittest.TestCase):
 
     def test_visibility(self):
         """
-        Test widget font.
+        Test widget visibility.
         """
         w = self.menu.add_label('Text')  # type: Label
         lasthash = w._last_render_hash
@@ -75,6 +76,10 @@ class WidgetsTest(unittest.TestCase):
         w.show()
         self.assertTrue(w.visible)
         self.assertNotEqual(w._last_render_hash, lasthash)
+
+        w = Button('title')
+        self.menu.add_generic_widget(w)
+        w.hide()
 
     def test_font(self):
         """

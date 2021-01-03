@@ -39,8 +39,9 @@ class NoneSelection(Selection):
     """
 
     def __init__(self):
-        super(NoneSelection, self).__init__(margin_left=0, margin_right=0,
-                                            margin_top=0, margin_bottom=0)
+        super(NoneSelection, self).__init__(
+            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
+        )
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):

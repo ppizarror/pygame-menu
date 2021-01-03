@@ -50,7 +50,13 @@ class Image(Widget):
     :type scale_smooth: bool
     """
 
-    def __init__(self, image_path, image_id='', angle=0, scale=(1, 1), scale_smooth=True):
+    def __init__(self,
+                 image_path,
+                 image_id='',
+                 angle=0,
+                 scale=(1, 1),
+                 scale_smooth=True
+                 ):
         assert isinstance(image_path, (str, BaseImage))
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))

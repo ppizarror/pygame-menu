@@ -60,10 +60,12 @@ class ArrowSelection(Selection):
 
     def __init__(self, margin_left, margin_right, margin_top, margin_bottom,
                  arrow_size=(10, 15), arrow_vertical_offset=0, blink_ms=0):
-        super(ArrowSelection, self).__init__(margin_left=margin_left,
-                                             margin_right=margin_right,
-                                             margin_top=margin_top,
-                                             margin_bottom=margin_bottom)
+        super(ArrowSelection, self).__init__(
+            margin_left=margin_left,
+            margin_right=margin_right,
+            margin_top=margin_top,
+            margin_bottom=margin_bottom
+        )
         assert_vector2(arrow_size)
         assert isinstance(arrow_vertical_offset, (int, float))
         assert isinstance(blink_ms, int)

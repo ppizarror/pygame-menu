@@ -92,7 +92,7 @@ class ScrollArea(object):
                  shadow_color=(0, 0, 0),
                  shadow_offset=2,
                  shadow_position=_locals.POSITION_SOUTHEAST,
-                 world=None,
+                 world=None
                  ):
         assert isinstance(area_width, (int, float))
         assert isinstance(area_height, (int, float))

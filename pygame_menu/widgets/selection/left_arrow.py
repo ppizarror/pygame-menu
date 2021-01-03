@@ -48,16 +48,22 @@ class LeftArrowSelection(ArrowSelection):
     :type blink_ms: int
     """
 
-    def __init__(self, arrow_size=(10, 15), arrow_right_margin=5, arrow_vertical_offset=0, blink_ms=0):
+    def __init__(self,
+                 arrow_size=(10, 15),
+                 arrow_right_margin=5,
+                 arrow_vertical_offset=0,
+                 blink_ms=0
+                 ):
         assert isinstance(arrow_right_margin, (int, float))
         assert arrow_right_margin >= 0, 'margin cannot be negative'
-        super(LeftArrowSelection, self).__init__(margin_left=arrow_size[0] + arrow_right_margin,
-                                                 margin_right=0,
-                                                 margin_top=0,
-                                                 margin_bottom=0,
-                                                 arrow_vertical_offset=arrow_vertical_offset,
-                                                 blink_ms=blink_ms
-                                                 )
+        super(LeftArrowSelection, self).__init__(
+            margin_left=arrow_size[0] + arrow_right_margin,
+            margin_right=0,
+            margin_top=0,
+            margin_bottom=0,
+            arrow_vertical_offset=arrow_vertical_offset,
+            blink_ms=blink_ms
+        )
         self._arrow_right_margin = arrow_right_margin
 
     # noinspection PyMissingOrEmptyDocstring

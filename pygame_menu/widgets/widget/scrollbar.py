@@ -46,7 +46,7 @@ class ScrollBar(Widget):
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
 
-    .. warning:: Arrows are not yet implemented
+    .. warning:: Arrows are not yet implemented.
 
     :param length: Length of the page control
     :type length: int
@@ -82,7 +82,8 @@ class ScrollBar(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs):
+                 **kwargs
+                 ):
         assert isinstance(length, (int, float))
         assert isinstance(values_range, (tuple, list))
         assert values_range[1] > values_range[0], 'minimum value first is expected'
@@ -317,9 +318,12 @@ class ScrollBar(Widget):
         """
         Set the amount that the value changes by when the user click on the
         page control surface.
-        The length of the slider is related to this value, and typically
-        represents the proportion of the document area shown in a scrolling
-        view.
+
+        .. note::
+
+            The length of the slider is related to this value, and typically
+            represents the proportion of the document area shown in a scrolling
+            view.
 
         :param value: Page step
         :type value: int, float

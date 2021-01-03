@@ -86,7 +86,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  repeat_keys_interval_ms=80,
                  repeat_mouse_interval_ms=100,
                  *args,
-                 **kwargs):
+                 **kwargs
+                 ):
         assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
         assert isinstance(input_separator, str)

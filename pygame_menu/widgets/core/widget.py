@@ -51,7 +51,7 @@ class Widget(object):
     :param widget_id: Widget identifier
     :type widget_id: str
     :param onchange: Callback when changing the selector
-    :type onchange: function, None
+    :type onchange: callable, None
     :param onreturn: Callback when pressing return button
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
@@ -132,7 +132,9 @@ class Widget(object):
         # Stores the last render surface size, updated by _check_render_size_changed()
         self._last_render_surface_size = (0, 0)
 
-        self._selection_effect = None  # type: Selection
+        # Selection effect, for avoiding exception while getting object rect, NullSelection
+        # was created. Initially it was None
+        self._selection_effect = _NullSelection()  # type: Selection
 
         # Public attributes
         self.active = False  # Widget requests focus
@@ -189,8 +191,8 @@ class Widget(object):
     def _render_hash_changed(self, *args):
         """
         This method checks if the widget must render because the inner variables changed.
-        This method should include all the variables.
-        If the render changed,
+        This method should include all the variables used by the render method, for example,
+        visibility, selected, etc.
 
         :param args: Variables to check the hash
         :type args: any
@@ -238,7 +240,7 @@ class Widget(object):
         if color is not None:
             if isinstance(color, _baseimage.BaseImage):
                 assert color.get_drawing_mode() == _baseimage.IMAGE_MODE_FILL, \
-                    'currently widget only support IMAGE_MODE_FILL drawing mode'
+                    'currently widget only supports IMAGE_MODE_FILL drawing mode'
             else:
                 assert_color(color)
         assert_vector2(inflate)
@@ -294,7 +296,7 @@ class Widget(object):
 
         .. code-block:: python
 
-            callback_func( value, *args, *widget._args, **widget._kwargs )
+            callback_func(value, *args, *widget._args, **widget._kwargs)
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -321,7 +323,7 @@ class Widget(object):
 
         .. code-block:: python
 
-            callback_func( value, *args, *widget._args, **widget._kwargs )
+            callback_func(value, *args, *widget._args, **widget._kwargs)
 
         with:
             - ``value`` (if something is returned by ``get_value()``)
@@ -416,11 +418,13 @@ class Widget(object):
         - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
         - If 4-item tuple is provided: padding will be (top, right, bottom, left)
 
+        .. note:: See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
+
         :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
-        :type padding: int, float, tuple
+        :type padding: int, float, tuple, list
         :return: None
         """
-        assert isinstance(padding, (int, float, tuple))
+        assert isinstance(padding, (int, float, tuple, list))
         if isinstance(padding, (int, float)):
             assert padding >= 0, 'padding cant be a negative number'
             self._padding = (padding, padding, padding, padding)
@@ -499,7 +503,7 @@ class Widget(object):
 
     def _font_render_string(self, text, color=(0, 0, 0), use_background_color=True):
         """
-        Render text.
+        Render text. If the font is not defined returns a zero-width surface.
 
         :param text: Text to render
         :type text: str
@@ -523,6 +527,8 @@ class Widget(object):
         if not use_background_color:
             bgcolor = None
 
+        if self._font is None:
+            return make_surface(0, 0)
         return self._font.render(text, self._font_antialias, color, bgcolor)
 
     def _check_render_size_changed(self):
@@ -556,9 +562,11 @@ class Widget(object):
         text = self._font_render_string(string, color)
 
         # Create surface
-        surface = make_surface(width=text.get_width(),
-                               height=text.get_height(),
-                               alpha=True)
+        surface = make_surface(
+            width=text.get_width(),
+            height=text.get_height(),
+            alpha=True
+        )
 
         # Draw shadow first
         if self._shadow:
@@ -627,14 +635,14 @@ class Widget(object):
         """
         Updates font. This method receives a style dict (non empty) containing the following keys:
 
-        - antialias (bool): Font antialias
-        - background_color (tuple): Background color
-        - color (tuple): Font color
-        - name (str): Name of the font
-        - selected_color (tuple): Selected color
-        - size (int): Size of the font
+        - ``antialias``             Font antialias (bool)
+        - ``background_color``      Background color (tuple)
+        - ``color``                 Font color (tuple)
+        - ``name``                  Name of the font (str)
+        - ``selected_color``        Selected color (tuple)
+        - ``size``                  Size of the font (int)
 
-        If a key is not defined it will be rewritten using current font style from ``.get_font_info()`` method.
+        .. note:: If a key is not defined it will be rewritten using current font style from ``.get_font_info()`` method.
 
         :param style: Font style dict
         :type style: dict
@@ -654,6 +662,15 @@ class Widget(object):
     def get_font_info(self):
         """
         Return a dict with the information of the widget font.
+
+        Dict values:
+
+        - ``antialias``             Font antialias (bool)
+        - ``background_color``      Background color (tuple)
+        - ``color``                 Font color (tuple)
+        - ``name``                  Name of the font (str)
+        - ``selected_color``        Selected color (tuple)
+        - ``size``                  Size of the font (int)
 
         :return: Dict
         :rtype: dict
@@ -863,9 +880,11 @@ class Widget(object):
         """
         Set the value.
 
-        .. warning:: This method does not fire the callbacks as it is
-                     called programmatically. This behavior is deliberately
-                     chosen to avoid infinite loops.
+        .. warning::
+
+            This method does not fire the callbacks as it is
+            called programmatically. This behavior is deliberately
+            chosen to avoid infinite loops.
 
         :param value: Value to be set on the widget
         :type value: Object
@@ -938,3 +957,19 @@ class Widget(object):
         if self._menu is not None:
             # noinspection PyProtectedMember
             self._menu._update_selection_if_hidden()
+
+
+class _NullSelection(Selection):
+    """
+    Null selection. It redefines NoneSelection because that class cannot be
+    imported.
+    """
+
+    def __init__(self):
+        super(_NullSelection, self).__init__(
+            margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
+        )
+
+    # noinspection PyMissingOrEmptyDocstring
+    def draw(self, surface, widget):
+        return

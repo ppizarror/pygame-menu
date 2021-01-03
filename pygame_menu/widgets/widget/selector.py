@@ -58,12 +58,16 @@ class Selector(Widget):
     two functions that are executed when changing the selector (left/right)
     and pressing return button on the selected item.
 
-    The values of the selector are like::
+    The values of the selector are like:
+
+    .. code-block:: python
 
         values = [('Item1', a, b, c...), ('Item2', d, e, f..)]
 
     The callbacks receive the current text, its index in the list,
-    the associated arguments and all unknown keyword arguments::
+    the associated arguments and all unknown keyword arguments:
+
+    .. code-block:: python
 
         onchange((current_text, index), a, b, c..., **kwargs)
         onreturn((current_text, index), a, b, c..., **kwargs)
@@ -92,7 +96,8 @@ class Selector(Widget):
                  onchange=None,
                  onreturn=None,
                  *args,
-                 **kwargs):
+                 **kwargs
+                 ):
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
@@ -101,7 +106,7 @@ class Selector(Widget):
         _check_elements(elements)
         assert default >= 0, 'default position must be greater or equal than zero'
         assert default < len(elements), 'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'ID must be a string'
+        assert isinstance(selector_id, str), 'id must be a string'
         assert isinstance(default, int), 'default must be an integer'
 
         super(Selector, self).__init__(
@@ -177,8 +182,9 @@ class Selector(Widget):
         the text if item is a string, or the index of the position of item is an integer.
 
         For example, if selector is *[['a',0],['b',1],['a',2]]*:
-            - *widget*.set_value('a') -> Widget selects 0 (first match)
-            - *widget*.set_value(2) -> Widget selects 2.
+
+        - *widget*.set_value('a') -> Widget selects 0 (first match)
+        - *widget*.set_value(2) -> Widget selects 2.
 
         :param item: Item to select, can be a string or an integer.
         :type item: str, int
