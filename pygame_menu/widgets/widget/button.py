@@ -96,7 +96,7 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self):
-        if not self._render_hash_changed(self.selected, self._title):
+        if not self._render_hash_changed(self.selected, self._title, self.visible):
             return True
         if self.selected:
             color = self._font_selected_color

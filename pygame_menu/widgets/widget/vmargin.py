@@ -37,10 +37,14 @@ from pygame_menu.widgets.core import Widget
 class VMargin(Widget):
     """
     Vertical margin widget.
+
+    :param widget_id: ID of the widget
+    :type widget_id: str
     """
 
-    def __init__(self):
-        super(VMargin, self).__init__()
+    def __init__(self,
+                 widget_id=''):
+        super(VMargin, self).__init__(widget_id=widget_id)
         self.is_selectable = False
 
     def _apply_font(self):
@@ -58,6 +62,8 @@ class VMargin(Widget):
         self._surface = make_surface(1, 1, alpha=True)
         self._rect.width = 0.0
         self._rect.height = 0.0
+        if not self._render_hash_changed(self.visible):
+            return True
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

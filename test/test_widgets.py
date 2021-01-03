@@ -62,6 +62,20 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+    def test_visibility(self):
+        """
+        Test widget font.
+        """
+        w = self.menu.add_label('Text')  # type: Label
+        lasthash = w._last_render_hash
+        w.hide()
+        self.assertFalse(w.visible)
+        self.assertNotEqual(w._last_render_hash, lasthash)
+        lasthash = w._last_render_hash
+        w.show()
+        self.assertTrue(w.visible)
+        self.assertNotEqual(w._last_render_hash, lasthash)
+
     def test_font(self):
         """
         Test widget font.
@@ -480,6 +494,19 @@ class WidgetsTest(unittest.TestCase):
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+    def test_change_id(self):
+        """
+        Test widget id change.
+        """
+        menu = MenuUtils.generic_menu()
+        menu.add_button('b1', None, button_id='id')
+        w = menu.add_button('b1', None, button_id='other')
+        self.assertRaises(IndexError, lambda: w.change_id('id'))
+        w.change_id('id2')
+        v = menu.add_vertical_margin(10, 'margin')
+        self.assertEqual(menu.get_widget('margin'), v)
+        self.assertRaises(IndexError, lambda: v.change_id('id2'))
 
     def test_vmargin(self):
         """

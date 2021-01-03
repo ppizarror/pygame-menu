@@ -98,7 +98,7 @@ class App(object):
             width=640
         )
 
-        sel = self.menu.add_selector(
+        self.selector_widget = self.menu.add_selector(
             title='Pick one option: ',
             items=[('The first', 1),
                    ('The second', 2),
@@ -113,11 +113,21 @@ class App(object):
 
         self.item_description_widget = self.menu.add_label(title='')  # type: pygame_menu.widgets.Label
 
-        self.menu.add_button('Quit', pygame_menu.events.EXIT)
+        self.quit_button = self.menu.add_button('Quit', pygame_menu.events.EXIT)
+        self.quit_button_fake = self.menu.add_button('You cannot quit', self.fake_quit)
 
         # Update the widgets based on selected value from selector
         # get_value returns selected item tuple and index, so [0][1] means the second object from ('The first', 1) tuple
-        self._update_from_selection(sel.get_value()[0][1])
+        self._update_from_selection(self.selector_widget.get_value()[0][1])
+
+    @staticmethod
+    def fake_quit():
+        """
+        Function executed by fake quit button.
+
+        :return: None
+        """
+        print('I said that you cannot quit')
 
     def _update_from_selection(self, index):
         """
@@ -133,6 +143,13 @@ class App(object):
             {'color': self.modes[index]['label']['color'],
              'size': self.modes[index]['label']['size']}
         )
+        # Swap buttons using hide/show
+        if index == 3:
+            self.quit_button.hide()
+            self.quit_button_fake.show()
+        else:
+            self.quit_button.show()
+            self.quit_button_fake.hide()
 
     def _on_selector_change(self, selected, value):
         """
@@ -144,7 +161,7 @@ class App(object):
         :type value: int
         :return: None
         """
-        print('Selected data', selected)
+        print('Selected data:', selected)
         self._update_from_selection(value)
 
     def mainloop(self, test):
