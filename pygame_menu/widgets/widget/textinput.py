@@ -98,9 +98,9 @@ class TextInput(Widget):
     :type maxwidth: int
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
     :type maxwidth_dynamically_update: bool
-    :param onchange: Callback when changing the selector
+    :param onchange: Callback when changing the text input
     :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Callback when pressing return on the text input
     :type onreturn: callable, None
     :param password: Input string is displayed as a password
     :type password: bool

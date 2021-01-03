@@ -56,9 +56,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type input_underline: str
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
-    :param onchange: Callback when changing the selector
+    :param onchange: Function when changing the values of the color text
     :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Function when pressing return on the color text input
     :type onreturn: callable, None
     :param prev_size: Width of the previsualization box in terms of the height of the widget
     :type prev_size: int, float
