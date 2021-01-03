@@ -45,6 +45,9 @@ MENUBAR_STYLE_NONE = 1004
 MENUBAR_STYLE_UNDERLINE = 1005
 MENUBAR_STYLE_UNDERLINE_TITLE = 1006
 
+_MODE_CLOSE = 1020
+_MODE_BACK = 1021
+
 
 class MenuBar(Widget):
     """
@@ -64,9 +67,7 @@ class MenuBar(Widget):
     :type offsetx: int, float
     :param offsety: Offset y-position of title (px)
     :type offsety: int, float
-    :param onchange: Callback when changing the selector
-    :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Callback when pressing the back-box button
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :type args: any
@@ -82,7 +83,6 @@ class MenuBar(Widget):
                  mode=MENUBAR_STYLE_ADAPTIVE,
                  offsetx=0.0,
                  offsety=0.0,
-                 onchange=None,
                  onreturn=None,
                  *args,
                  **kwargs
@@ -95,7 +95,6 @@ class MenuBar(Widget):
         # MenuBar has no ID
         super(MenuBar, self).__init__(
             title=title,
-            onchange=onchange,
             onreturn=onreturn,
             args=args,
             kwargs=kwargs
@@ -105,6 +104,7 @@ class MenuBar(Widget):
         self._backbox_pos = None  # type: (tuple,None)
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
         self._background_color = background_color
+        self._box_mode = 0
         self._offsetx = 0.0
         self._offsety = 0.0
         self._polygon_pos = None  # type: (tuple,None)
@@ -124,9 +124,18 @@ class MenuBar(Widget):
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
+        # Draw backbox if enabled
         if self.mouse_enabled and self._backbox:
-            pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
-            pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
+
+            # The following check belongs to the case if the menu displays a "x" button to close
+            # the menu, but onclose Menu method is None (Nothing is executed), then the button will
+            # not be displayed
+            # noinspection PyProtectedMember
+            if self._box_mode == _MODE_CLOSE and self.get_menu()._onclose is None:
+                pass
+            else:
+                pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
+                pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
         surface.blit(self._surface,
                      (self._rect.topleft[0] + self._offsetx,
@@ -139,6 +148,12 @@ class MenuBar(Widget):
         if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title,
                                          self._font_selected_color, menu_prev_condition, self.visible):
             return True
+
+        # Update box mode
+        if menu_prev_condition:
+            self._box_mode = _MODE_CLOSE
+        else:
+            self._box_mode = _MODE_BACK
 
         self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
@@ -252,11 +267,15 @@ class MenuBar(Widget):
         # Create the back box
         if self._backbox:
             backbox_margin = 4
-            self._backbox_rect = pygame.Rect(int(self._rect.x + self._width - cross_size + backbox_margin),
-                                             int(self._rect.y + backbox_margin),
-                                             int(cross_size - 2 * backbox_margin),
-                                             int(cross_size - 2 * backbox_margin))
-            if menu_prev_condition:
+
+            self._backbox_rect = pygame.Rect(
+                int(self._rect.x + self._width - cross_size + backbox_margin),
+                int(self._rect.y + backbox_margin),
+                int(cross_size - 2 * backbox_margin),
+                int(cross_size - 2 * backbox_margin)
+            )
+
+            if self._box_mode == _MODE_CLOSE:
                 # Make a cross for top menu
                 self._backbox_pos = (
                     (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
@@ -269,7 +288,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
                     (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
                 )
-            else:
+            elif self._box_mode == _MODE_BACK:
                 # Make a back arrow for sub-menus
                 self._backbox_pos = (
                     (self._backbox_rect.left + 5, self._backbox_rect.centery),
@@ -281,13 +300,6 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
-
-            # The following check belongs to the case if the menu displays a "x" button to close
-            # the menu, but onclose Menu method is None (Nothing is executed), then the button will
-            # not be displayed
-            # noinspection PyProtectedMember
-            if menu_prev_condition and self.get_menu()._onclose is None:
-                self._backbox = False
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
