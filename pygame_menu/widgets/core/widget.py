@@ -36,7 +36,8 @@ import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.sound import Sound
-from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, to_string
+from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, \
+    to_string, is_callable
 
 from uuid import uuid4
 import time
@@ -70,9 +71,9 @@ class Widget(object):
                  ):
         assert isinstance(widget_id, str)
         if onchange:
-            assert callable(onchange), 'onchange must be callable or None'
+            assert is_callable(onchange), 'onchange must be callable or None'
         if onreturn:
-            assert callable(onreturn), 'onreturn must be callable or None'
+            assert is_callable(onreturn), 'onreturn must be callable or None'
 
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:

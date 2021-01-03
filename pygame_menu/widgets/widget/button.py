@@ -30,10 +30,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pygame_menu.utils import is_callable
 from pygame_menu.widgets.core import Widget
 import pygame
 import pygame_menu.controls as _controls
-import types
 
 
 class Button(Widget):
@@ -85,7 +85,7 @@ class Button(Widget):
         :type args: any
         :return: None
         """
-        assert isinstance(func, (types.FunctionType, types.MethodType)) or callable(func), 'only function are allowed'
+        assert is_callable(func), 'only function are allowed'
         self._args = args or []  # type: list
         self._on_change = None  # type: callable
         self._on_return = func

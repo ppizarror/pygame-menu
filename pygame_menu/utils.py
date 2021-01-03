@@ -30,9 +30,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import sys
+
+import types
+import functools
+
 import pygame
 import pygame_menu.locals as _locals
-import sys
 
 
 def assert_alignment(align):
@@ -174,6 +178,18 @@ def make_surface(width, height, alpha=False, fill_color=None):
         assert_color(fill_color)
         surface.fill(fill_color)
     return surface
+
+
+def is_callable(func):
+    """
+    Return true if ``func`` is callable.
+
+    :param func: Function object
+    :type func: any
+    :return: Bool
+    :rtype: bool
+    """
+    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
 
 
 def to_string(s, strict=False):
