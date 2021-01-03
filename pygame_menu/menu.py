@@ -368,12 +368,15 @@ class Menu(object):
                    title,
                    action,
                    *args,
-                   **kwargs):
+                   **kwargs
+                   ):
         """
         Adds a button to the Menu.
 
         The arguments and unknown keyword arguments are passed to
-        the action::
+        the action:
+
+        .. code-block:: python
 
             action(*args, **kwargs)
 
@@ -411,7 +414,7 @@ class Menu(object):
 
         # Get ID
         button_id = kwargs.pop('button_id', '')
-        assert isinstance(button_id, str), 'ID must be a string'
+        assert isinstance(button_id, str), 'id must be a string'
 
         if action is None:
             action = _events.NONE
@@ -454,13 +457,16 @@ class Menu(object):
                         onchange=None,
                         onreturn=None,
                         previsualization_width=3,
-                        **kwargs):
+                        **kwargs
+                        ):
         """
         Add a color widget with RGB or Hex format to the Menu.
         Includes a preview box that renders the given color.
 
         The callbacks receive the current value and all unknown keyword
-        arguments::
+        arguments:
+
+        .. code-block:: python
 
             onchange(current_color, **kwargs)
             onreturn(current_color, **kwargs)
@@ -535,7 +541,8 @@ class Menu(object):
                   scale=(1, 1),
                   scale_smooth=False,
                   selectable=False,
-                  **kwargs):
+                  **kwargs
+                  ):
         """
         Add a simple image to the Menu.
 
@@ -575,7 +582,7 @@ class Menu(object):
             image_id=image_id,
             image_path=image_path,
             scale=scale,
-            scale_smooth=scale_smooth,
+            scale_smooth=scale_smooth
         )
 
         widget.is_selectable = selectable
@@ -588,7 +595,8 @@ class Menu(object):
                   label_id='',
                   max_char=0,
                   selectable=False,
-                  **kwargs):
+                  **kwargs
+                  ):
         """
         Add a simple text to the Menu.
 
@@ -664,18 +672,23 @@ class Menu(object):
                      onchange=None,
                      onreturn=None,
                      selector_id='',
-                     **kwargs):
+                     **kwargs
+                     ):
         """
         Add a selector to the Menu: several items with values and
         two functions that are executed when changing the selector (left/right)
         and pressing return button on the selected item.
 
-        The values of the selector are like::
+        The values of the selector are like:
+
+        .. code-block:: python
 
             values = [('Item1', a, b, c...), ('Item2', d, e, f..)]
 
         The callbacks receive the current text, its index in the list,
-        the associated arguments and all unknown keyword arguments::
+        the associated arguments and all unknown keyword arguments:
+
+        .. code-block:: python
 
             onchange((current_text, index), a, b, c..., **kwargs)
             onreturn((current_text, index), a, b, c..., **kwargs)
@@ -747,14 +760,17 @@ class Menu(object):
                        tab_size=4,
                        textinput_id='',
                        valid_chars=None,
-                       **kwargs):
+                       **kwargs
+                       ):
         """
         Add a text input to the Menu: free text area and two functions
         that execute when changing the text and pressing return button
         on the element.
 
         The callbacks receive the current value and all unknown keyword
-        arguments::
+        arguments:
+
+        .. code-block:: python
 
             onchange(current_text, **kwargs)
             onreturn(current_text, **kwargs)
@@ -868,7 +884,10 @@ class Menu(object):
     def add_generic_widget(self, widget, configure_defaults=False):
         """
         Add generic widget to current Menu.
-        The widget should be fully configured by the user: font, padding, etc.
+
+        .. note::
+
+            The widget should be fully configured by the user: font, padding, etc.
 
         :param widget: Widget to be added
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
@@ -898,8 +917,7 @@ class Menu(object):
     def _filter_widget_attributes(self, kwargs):
         """
         Return the valid widgets attributes from a dictionary.
-        The valid (key, value) are removed from the initial
-        dictionary.
+        The valid (key, value) are removed from the initial dictionary.
 
         :param kwargs: Optional keyword arguments (input attributes)
         :type kwargs: dict
@@ -1287,8 +1305,7 @@ class Menu(object):
 
     def _build_widget_surface(self):
         """
-        Create the surface used to draw widgets according the
-        required width and height.
+        Create the surface used to draw widgets according the required width and height.
 
         :return: None
         """
@@ -1335,7 +1352,7 @@ class Menu(object):
 
     def _check_id_duplicated(self, widget_id):
         """
-        Check if widget ID is duplicated. Throws ``IndexError`` if the index is duplicated
+        Check if widget ID is duplicated. Throws ``IndexError`` if the index is duplicated.
 
         :param widget_id: New widget ID
         :type widget_id: str
@@ -1409,13 +1426,15 @@ class Menu(object):
         """
         Set the menu position relative to the window.
 
-        - Menu left position (x) must be between 0 and 100, if 0 the margin
-          is at the left of the window, if 100 the menu is at the right
-          of the window.
+        .. note::
 
-        - Menu top position (y) must be between 0 and 100, if 0 the margin is
-          at the top of the window, if 100 the margin is at the bottom of
-          the window.
+            - Menu left position (x) must be between 0 and 100, if 0 the margin
+              is at the left of the window, if 100 the menu is at the right
+              of the window.
+
+            - Menu top position (y) must be between 0 and 100, if 0 the margin is
+              at the top of the window, if 100 the margin is at the bottom of
+              the window.
 
         :param position_x: Left position of the window
         :type position_x: int, float
@@ -1440,8 +1459,10 @@ class Menu(object):
         Update draw_region_y based on the current widgets, centering the content
         of the window.
 
-        If the height of the widgets is greater than the height of the Menu,
-        the drawing region will start at zero, using all the height for the scrollbar.
+        .. note::
+
+            If the height of the widgets is greater than the height of the Menu,
+            the drawing region will start at zero, using all the height for the scrollbar.
 
         :return: None
         """
@@ -1966,8 +1987,10 @@ class Menu(object):
         Add a sound engine to the Menu. If ``recursive=True``, the sound is
         applied to all submenus.
 
-        The sound is applied only to the base Menu (not the currently displayed,
-        stored in _current pointer).
+        .. note::
+
+            The sound is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer).
 
         :param sound: Sound object
         :type sound: :py:class:`pygame_menu.sound.Sound`, None

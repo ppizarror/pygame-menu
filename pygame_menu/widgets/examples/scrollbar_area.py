@@ -173,10 +173,11 @@ def main(test=False):
         # Paint background
         screen.fill(COLOR_BACKGROUND)
 
-        pygame.draw.rect(screen,
-                         (20, 89, 20),
-                         area.get_rect().inflate(20, 20),  # Inflate to see area overflow in case of bug
-                         )
+        pygame.draw.rect(
+            screen,
+            (20, 89, 20),
+            area.get_rect().inflate(20, 20),  # Inflate to see area overflow in case of bug
+        )
 
         # Application events
         events = pygame.event.get()

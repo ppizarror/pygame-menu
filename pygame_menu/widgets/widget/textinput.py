@@ -149,7 +149,8 @@ class TextInput(Widget):
                  text_ellipsis='...',
                  valid_chars=None,
                  *args,
-                 **kwargs):
+                 **kwargs
+                 ):
         assert isinstance(textinput_id, str)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)

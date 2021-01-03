@@ -48,18 +48,20 @@ class HighlightSelection(Selection):
 
     def __init__(self,
                  border_width=1,
-                 margin_x=16.0,
-                 margin_y=8.0,
+                 margin_x=16,
+                 margin_y=8
                  ):
         assert isinstance(border_width, int)
         assert margin_x >= 0 and margin_y >= 0
         assert border_width >= 0
         margin_x = float(margin_x)
         margin_y = float(margin_y)
-        super(HighlightSelection, self).__init__(margin_left=margin_x / 2 + border_width,
-                                                 margin_right=margin_x / 2 + border_width,
-                                                 margin_top=margin_y / 2 + border_width,
-                                                 margin_bottom=margin_y / 2 + border_width)
+        super(HighlightSelection, self).__init__(
+            margin_left=margin_x / 2 + border_width,
+            margin_right=margin_x / 2 + border_width,
+            margin_top=margin_y / 2 + border_width,
+            margin_bottom=margin_y / 2 + border_width
+        )
         self._border_width = border_width
 
     # noinspection PyMissingOrEmptyDocstring

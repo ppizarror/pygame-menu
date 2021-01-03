@@ -138,7 +138,7 @@ def play_function(difficulty, font, test=False):
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 284
+                    # Quit this function, then skip to loop of main-menu on line 285
                     return
 
         # Pass events to main_menu
@@ -240,6 +240,7 @@ def main(test=False):
         title='About',
         width=WINDOW_SIZE[0] * 0.6
     )
+
     for m in ABOUT:
         about_menu.add_label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)
     about_menu.add_label('')

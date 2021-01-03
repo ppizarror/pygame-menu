@@ -49,10 +49,10 @@ class Selection(object):
     """
 
     def __init__(self, margin_left, margin_right, margin_top, margin_bottom):
-        assert margin_left >= 0, 'left margin of widget cannot be negative'
-        assert margin_right >= 0, 'right margin of widget cannot be negative'
-        assert margin_top >= 0, 'top margin of widget cannot be negative'
-        assert margin_bottom >= 0, 'bottom margin of widget cannot be negative'
+        assert margin_left >= 0, 'left margin of widget selection cannot be negative'
+        assert margin_right >= 0, 'right margin of widget selection cannot be negative'
+        assert margin_top >= 0, 'top margin of widget selection cannot be negative'
+        assert margin_bottom >= 0, 'bottom margin of widget selection cannot be negative'
         self.color = (0, 0, 0)
         self.margin_bottom = margin_bottom
         self.margin_left = margin_left
@@ -74,7 +74,7 @@ class Selection(object):
         """
         Return the top, left, bottom and right margins of the selection.
 
-        :return: Tuple of (t,l,b,r) margins in px
+        :return: Tuple of (top,left,bottom,right) margins in px
         :rtype: tuple, list
         """
         return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
