@@ -54,6 +54,10 @@ IMAGE_MODE_REPEAT_XY = 103
 IMAGE_MODE_REPEAT_Y = 104
 IMAGE_MODE_SIMPLE = 105  # Just draw the image without any effect
 
+# Other constants
+_VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
+                        '.pbm', '.pgm', '.ppm', '.xpm']
+
 
 class BaseImage(object):
     """
@@ -66,24 +70,26 @@ class BaseImage(object):
     :type drawing_mode: int
     :param drawing_offset: Offset of the image in drawing method
     :type drawing_offset: tuple, list
+    :param load_from_file: Loads the image from the given path
+    :type load_from_file: bool
     """
 
     def __init__(self,
                  image_path,
                  drawing_mode=IMAGE_MODE_FILL,
-                 drawing_offset=(0, 0)
+                 drawing_offset=(0, 0),
+                 load_from_file=True
                  ):
         assert isinstance(image_path, str)
         assert isinstance(drawing_mode, int)
+        assert isinstance(load_from_file, bool)
         assert_vector2(drawing_offset)
 
         _, file_extension = path.splitext(image_path)
         file_extension = file_extension.lower()
 
-        valid_formats = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
-                         '.pbm', '.pgm', '.ppm', '.xpm']
-        assert file_extension in valid_formats, \
-            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(valid_formats))
+        assert file_extension in _VALID_IMAGE_FORMATS, \
+            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
         assert path.isfile(image_path), 'file {0} does not exist or could not be found, please ' \
                                         'check if the path of the image is valid'.format(image_path)
 
@@ -96,8 +102,9 @@ class BaseImage(object):
         self._drawing_offset = (drawing_offset[0], drawing_offset[1])
 
         # Load the image and store as a surface
-        self._surface = pygame.image.load(image_path)  # type: pygame.Surface
-        self._original_surface = self._surface.copy()
+        if load_from_file:
+            self._surface = pygame.image.load(image_path)  # type: pygame.Surface
+            self._original_surface = self._surface.copy()
 
     def __str__(self):
         """
@@ -114,6 +121,22 @@ class BaseImage(object):
         :return: None
         """
         print(self.__str__())
+
+    def copy(self):
+        """
+        Return a copy of the image.
+
+        :return: Image
+        :rtype: BaseImage
+        """
+        image = BaseImage(
+            image_path=self._filepath,
+            drawing_mode=self._drawing_mode,
+            drawing_offset=self._drawing_offset
+        )
+        image._surface = self._surface.copy()
+        image._original_surface = self._surface.copy()
+        return image
 
     def get_size(self):
         """
@@ -181,6 +204,72 @@ class BaseImage(object):
         """
         self._original_surface = self._surface.copy()
 
+    def apply_image_function(self, func):
+        """
+        Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
+        colors and must return the same values. The color pixel will be overriden by the function output.
+        See ``.to_bw()`` method as an example.
+
+        :param func: Color function, takes colors as function=myfunc(r, g, b, a). Returns the same tuple (r, g, b, a)
+        :type func: function
+        :return: Self reference
+        :rtype: BaseImage
+        """
+        w, h = self._surface.get_size()
+        for x in range(w):
+            for y in range(h):
+                r, g, b, a = self._surface.get_at((x, y))
+                r, g, b, a = func(r, g, b, a)
+                r = int(max(0, min(r, 255)))
+                g = int(max(0, min(g, 255)))
+                b = int(max(0, min(b, 255)))
+                a = int(max(0, min(a, 255)))
+                self._surface.set_at((x, y), pygame.Color(r, g, b, a))
+        return self
+
+    def to_bw(self):
+        """
+        Converts the image to black and white.
+
+        :return: Self reference
+        :rtype: BaseImage
+        """
+
+        def bw(r, g, b, a):
+            c = (r + g + b) / 3
+            return c, c, c, a
+
+        return self.apply_image_function(func=bw)
+
+    def pick_channels(self, channels):
+        """
+        Pick certain channels of the image, channels are 'r' (red), 'g' (green) and 'b' (blue). channels param is
+        a list/tuple of channels (non empty). For example: ``pick_channels(['r', 'g'])``. All channels not included on
+        the list will be discarded.
+
+        :param channels: Channels, list or tuple containing 'r', 'g' or 'b' (all combinations are possible)
+        :type channels: tuple, list, str
+        :return: Self reference
+        :rtype: BaseImage
+        """
+        if isinstance(channels, str):
+            channels = [channels]
+        assert isinstance(channels, (list, tuple))
+        assert 1 <= len(channels) <= 3, 'maximum size of channels can be 3'
+
+        w, h = self._surface.get_size()
+        for x in range(w):
+            for y in range(h):
+                r, g, b, a = self._surface.get_at((x, y))
+                if 'r' not in channels:
+                    r = 0
+                if 'g' not in channels:
+                    g = 0
+                if 'b' not in channels:
+                    b = 0
+                self._surface.set_at((x, y), pygame.Color(r, g, b, a))
+        return self
+
     def flip(self, x, y):
         """
         This can flip the image either vertically, horizontally, or both.
@@ -190,12 +279,14 @@ class BaseImage(object):
         :type x: bool
         :param y: Flip on y axis
         :type y: bool
-        :return: None
+        :return: Self reference
+        :rtype: BaseImage
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
         assert not (x and y), 'at least one axis should be True'
         self._surface = pygame.transform.flip(self._surface, x, y)
+        return self
 
     def scale(self, width, height, smooth=False):
         """
@@ -207,7 +298,8 @@ class BaseImage(object):
         :type height: int, float
         :param smooth: Smooth scaling
         :type smooth: bool
-        :return: None
+        :return: Self reference
+        :rtype: BaseImage
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -218,6 +310,7 @@ class BaseImage(object):
             self._surface = pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
         else:
             self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
+        return self
 
     def scale2x(self):
         """
@@ -228,9 +321,11 @@ class BaseImage(object):
         This really only has an effect on simple images with solid colors.
         On photographic and antialiased images it will look like a regular unfiltered scale.
 
-        :return: None
+        :return: Self reference
+        :rtype: BaseImage
         """
         self._surface = pygame.transform.scale2x(self._surface)
+        return self
 
     def resize(self, width, height, smooth=False):
         """
@@ -243,7 +338,8 @@ class BaseImage(object):
         :type height: int, float
         :param smooth: Smooth scaling
         :type smooth: bool
-        :return: None
+        :return: Self reference
+        :rtype: BaseImage
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -253,6 +349,7 @@ class BaseImage(object):
         if w == width and h == height:
             return
         self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
+        return self
 
     def get_rect(self):
         """
@@ -275,10 +372,12 @@ class BaseImage(object):
 
         :param angle: Rotation angle
         :type angle: int, float
-        :return: None
+        :return: Self reference
+        :rtype: BaseImage
         """
         assert isinstance(angle, (int, float))
         self._surface = pygame.transform.rotate(self._surface, angle)
+        return self
 
     def get_drawing_mode(self):
         """

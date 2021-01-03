@@ -34,6 +34,7 @@ from test._utils import *
 
 import pygame
 from pygame_menu import events
+from pygame_menu.widgets import Label
 import timeit
 
 # Configure the tests
@@ -195,8 +196,92 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
 
+        # Test widget selection and removal
         widget = self.menu.add_text_input('test', default='some_id')
         self.assertEqual(widget, self.menu.get_selected_widget())
+        self.menu.remove_widget(widget)
+        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertEqual(self.menu.get_index(), -1)
+
+        # Add two widgets, first widget will be selected first, but if removed the second should be selected
+        widget1 = self.menu.add_text_input('test', default='some_id', textinput_id='epic')
+        self.assertRaises(IndexError, lambda: self.menu.add_text_input('test', default='some_id', textinput_id='epic'))
+        widget2 = self.menu.add_text_input('test', default='some_id')
+        self.assertEqual(widget1.get_menu(), self.menu)
+        self.assertEqual(widget1, self.menu.get_selected_widget())
+        self.menu.remove_widget(widget1)
+        self.assertEqual(widget1.get_menu(), None)
+        self.assertEqual(widget2, self.menu.get_selected_widget())
+        self.menu.remove_widget(widget2)
+        self.assertEqual(widget2.get_menu(), None)
+        self.assertEqual(len(self.menu.get_widgets()), 0)
+
+        # Add 3 widgets, select the last one and remove it, then the selected widget must be the first
+        w1 = self.menu.add_button('1', None)
+        w2 = Label('2')
+        self.menu.add_generic_widget(w2, configure_defaults=True)
+        w3 = self.menu.add_button('3', None)
+        self.assertEqual(self.menu.get_selected_widget(), w1)
+        self.menu.select_widget(w3)
+        self.assertEqual(self.menu.get_selected_widget(), w3)
+        self.menu.remove_widget(w3)
+        # 3 was deleted, so 1 should be selected
+        self.assertEqual(self.menu.get_selected_widget(), w1)
+
+        # Hides w1, then w2 should be selected
+        w1.hide()
+        self.assertEqual(self.menu.get_selected_widget(), w2)
+
+        # Unhide w1, w2 should be keep selected
+        w1.show()
+        self.assertEqual(self.menu.get_selected_widget(), w2)
+
+        # Mark w1 as unselectable and remove w2, then no widget should be selected
+        w1.is_selectable = False
+        self.menu.remove_widget(w2)
+        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertRaises(ValueError, lambda: self.menu.select_widget(w1))
+
+        # Mark w1 as selectable
+        w1.is_selectable = True
+        self.menu.add_generic_widget(w2)
+        self.assertEqual(self.menu.get_selected_widget(), w2)
+
+        # Add a new widget that cannot be selected
+        self.menu.add_label('not selectable')
+        self.menu.add_label('not selectable')
+        wlast = self.menu.add_label('not selectable', selectable=True)
+
+        # If w2 is removed, then menu will try to select labels, but as them are not selectable it should select the last one
+        w2.hide()
+        self.assertEqual(self.menu.get_selected_widget(), wlast)
+
+        # Mark w1 as unselectable, then w1 is not selectable, nor w2, and labels are unselectable too
+        # so the selected should be the same
+        w1.is_selectable = False
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        self.assertEqual(self.menu.get_selected_widget(), wlast)
+
+        # Show w2, then if DOWN is pressed again, the selected status should be 2
+        w2.show()
+        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        self.assertEqual(self.menu.get_selected_widget(), w2)
+
+        # Hide w2, pass again to wlast
+        w2.hide()
+        self.assertEqual(self.menu.get_selected_widget(), wlast)
+
+        # Hide wlast, then nothing is selected
+        wlast.hide()
+        self.assertEqual(self.menu.get_selected_widget(), None)
+
+        # Unhide w2, then it should be selected
+        w2.show()
+        self.assertEqual(self.menu.get_selected_widget(), w2)
+
+        # Remove w2, then nothing should be selected
+        self.menu.remove_widget(w2)
+        self.assertEqual(self.menu.get_selected_widget(), None)
 
     def test_generic_events(self):
         """
@@ -217,6 +302,7 @@ class MenuTest(unittest.TestCase):
         for i in range(5):
             button = self.menu.add_button('button', _some_event)
             wid.append(button.get_id())
+        self.assertEqual(len(self.menu.get_widgets()), 5)
 
         # Create a event in pygame
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
@@ -304,7 +390,7 @@ class MenuTest(unittest.TestCase):
         self.menu.add_text_input('text1', textinput_id='id2', default=1.5, input_type=pygame_menu.locals.INPUT_INT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id2'], 1)  # Cast to int
-        self.assertRaises(ValueError, lambda: self.menu.add_text_input('text1', textinput_id='id1', default=1))
+        self.assertRaises(IndexError, lambda: self.menu.add_text_input('text1', textinput_id='id1', default=1))
 
         self.menu.add_text_input('text1', textinput_id='id3', default=1.5, input_type=pygame_menu.locals.INPUT_FLOAT)
         data = self.menu.get_input_data(True)

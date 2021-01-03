@@ -143,6 +143,7 @@ class Widget(object):
         self.selection_effect_enabled = True  # Some widgets cannot have selection effect
         self.sound = Sound()  # type: Sound
         self.touchscreen_enabled = True
+        self.visible = True  # Use .show() or .hide() to modify this status
 
     def set_attribute(self, key, value):
         """
@@ -364,7 +365,7 @@ class Widget(object):
 
     def set_max_width(self, width):
         """
-        Set widget max width (column support) if force_fit_text is enabled.
+        Set widget max width (column support) if ``force_fit_text`` is enabled.
 
         :param width: Width in px, None if max width is disabled
         :type width: int, float, None
@@ -470,11 +471,25 @@ class Widget(object):
         """
         return self._id
 
+    def change_id(self, widget_id):
+        """
+        Change widget id.
+
+        :param widget_id: Widget ID
+        :type widget_id: str
+        :return: None
+        """
+        assert isinstance(widget_id, str)
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            self._menu._check_id_duplicated(widget_id)
+        self._id = widget_id
+
     def _render(self):
         """
         Render the widget surface.
 
-        This method shall update the attribute ``_surface`` with a pygame.Surface
+        This method shall update the attribute ``_surface`` with a :py:class:`pygame.Surface`
         representing the outer borders of the widget.
 
         :return: True if widget has rendered a new state, None if the widget has not changed, so render used a cache
@@ -514,9 +529,9 @@ class Widget(object):
         """
         Check the size changed after rendering.
         This method should be used only on widgets that can change in size, or if the size
-        is changed during execution time (like set_title).
+        is changed during execution time (like ``set_title``).
         The update status (needs update if render size changed) is returned by
-        Widget.surface_needs_update() method.
+        ``Widget.surface_needs_update()`` method.
 
         :return: Boolean, if True the size changed
         :rtype: bool
@@ -563,7 +578,7 @@ class Widget(object):
         """
         Checks if the widget width/height has changed because events. If so, return true and
         set the status of the widget (menu widget position needs update) as false. This method
-        is used by .update() from Menu class.
+        is used by ``.update()`` from Menu class.
 
         :return: True if the widget position has changed by events after the rendering.
         :rtype: bool
@@ -577,8 +592,8 @@ class Widget(object):
         """
         Set the text font.
 
-        :param font: Name or list of names for font (see pygame.font.match_font for precise format)
-        :type font: str, list
+        :param font: Font name (see :py:class:`pygame.font.match_font` for precise format)
+        :type font: str
         :param font_size: Size of font in pixels
         :type font_size: int
         :param color: Text color
@@ -608,19 +623,48 @@ class Widget(object):
 
         self._apply_font()
 
+    def update_font(self, style):
+        """
+        Updates font. This method receives a style dict (non empty) containing the following keys:
+
+        - antialias (bool): Font antialias
+        - background_color (tuple): Background color
+        - color (tuple): Font color
+        - name (str): Name of the font
+        - selected_color (tuple): Selected color
+        - size (int): Size of the font
+
+        If a key is not defined it will be rewritten using current font style from ``.get_font_info()`` method.
+
+        :param style: Font style dict
+        :type style: dict
+        :return: None
+        """
+        assert isinstance(style, dict)
+        assert 1 <= len(style.keys()) <= 6
+        current_font = self.get_font_info()
+        for k in current_font.keys():
+            if k not in style.keys():
+                style[k] = current_font[k]
+        self.set_font(font=style['name'], font_size=style['size'], color=style['color'],
+                      selected_color=style['selected_color'], background_color=style['background_color'],
+                      antialias=style['antialias'])
+        self._render()
+
     def get_font_info(self):
         """
         Return a dict with the information of the widget font.
 
-        :return: Dict, keys: size (int), name (str), color (tuple), selected_color (tuple), antialias (bool)
+        :return: Dict
         :rtype: dict
         """
         return {
-            'size': self._font_size,
-            'name': self._font_name,
-            'color': self._font_color,
-            'selected_color': self._font_selected_color,
             'antialias': self._font_antialias,
+            'background_color': self._font_background_color,
+            'color': self._font_color,
+            'name': self._font_name,
+            'selected_color': self._font_selected_color,
+            'size': self._font_size
         }
 
     def set_menu(self, menu):
@@ -870,3 +914,27 @@ class Widget(object):
             copy_events.append(e)
         self._events = []
         return copy_events
+
+    def show(self):
+        """
+        Set widget visible.
+
+        :return: None
+        """
+        self.visible = True
+        self._render()
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            self._menu._update_selection_if_hidden()
+
+    def hide(self):
+        """
+        Hides widget.
+
+        :return: None
+        """
+        self.visible = False
+        self._render()
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            self._menu._update_selection_if_hidden()

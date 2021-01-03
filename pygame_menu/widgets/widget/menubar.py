@@ -136,7 +136,7 @@ class MenuBar(Widget):
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
         if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title,
-                                         self._font_selected_color, menu_prev_condition):
+                                         self._font_selected_color, menu_prev_condition, self.visible):
             return True
 
         self._surface = self._render_string(self._title, self._font_selected_color)
@@ -280,6 +280,13 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.bottom - 5),
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
+
+            # The following check belongs to the case if the menu displays a "x" button to close
+            # the menu, but onclose Menu method is None (Nothing is executed), then the button will
+            # not be displayed
+            # noinspection PyProtectedMember
+            if menu_prev_condition and self.get_menu()._onclose is None:
+                self._backbox = False
 
     def set_title(self, title, offsetx=0, offsety=0):
         """

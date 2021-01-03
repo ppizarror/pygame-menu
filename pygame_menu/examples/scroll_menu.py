@@ -79,7 +79,7 @@ def make_long_menu():
         onclose=pygame_menu.events.EXIT,
         theme=pygame_menu.themes.THEME_BLUE,
         title='Main Menu',
-        width=600,  # px
+        width=600
     )
 
     _menu_sub = pygame_menu.Menu(
@@ -127,15 +127,17 @@ def make_long_menu():
         _menu_sub.add_button(txt, on_button_click, 100 * i)
     _menu_sub.add_button('Back', pygame_menu.events.BACK)
 
-    _menu_text.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
-                         'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
-                         'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
-                         'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
-                         'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in '
-                         'culpa qui officia deserunt mollit anim id est laborum.',
-                         max_char=33,
-                         align=pygame_menu.locals.ALIGN_LEFT,
-                         margin=(0, -1))
+    _menu_text.add_label(
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+        'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
+        'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
+        'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in '
+        'culpa qui officia deserunt mollit anim id est laborum.',
+        max_char=33,
+        align=pygame_menu.locals.ALIGN_LEFT,
+        margin=(0, -1)
+    )
     return _menu
 
 
@@ -170,10 +172,12 @@ def main(test=False):
         paint_background(screen)
 
         # Execute main from principal menu if is enabled
-        menu.mainloop(surface=screen,
-                      bgfun=partial(paint_background, screen),
-                      disable_loop=test,
-                      fps_limit=FPS)
+        menu.mainloop(
+            surface=screen,
+            bgfun=partial(paint_background, screen),
+            disable_loop=test,
+            fps_limit=FPS
+        )
 
         # Update surface
         pygame.display.flip()

@@ -139,7 +139,7 @@ class Selector(Widget):
         :return: Value and index as a tuple, (value, index)
         :rtype: tuple
         """
-        return self._elements[self._index][0], self._index
+        return self._elements[self._index], self._index
 
     def left(self):
         """
@@ -160,8 +160,8 @@ class Selector(Widget):
         self.change(*self._elements[self._index][1:])
 
     def _render(self):
-        string = self._sformat.format(self._title, self.get_value()[0])
-        if not self._render_hash_changed(string, self.selected):
+        string = self._sformat.format(self._title, self.get_value()[0][0])
+        if not self._render_hash_changed(string, self.selected, self.visible):
             return True
         if self.selected:
             color = self._font_selected_color

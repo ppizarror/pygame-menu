@@ -40,6 +40,7 @@ import pygame_menu.widgets.examples.scrollbar as scroll_bar
 import pygame_menu.widgets.examples.scrollbar_area as scroll_area
 
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
+import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
 
 
@@ -114,6 +115,14 @@ class ExamplesTest(unittest.TestCase):
         Test dynamic button example.
         """
         dynamic_button.main(test=True)
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_other_dynamic_widget():
+        """
+        Test dynamic widget update example.
+        """
+        dynamic_widget.main(test=True)
         test_reset_surface()
 
     @staticmethod

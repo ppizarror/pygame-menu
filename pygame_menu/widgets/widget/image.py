@@ -38,7 +38,7 @@ class Image(Widget):
     """
     Image widget.
 
-    :param image_path: Path of the image
+    :param image_path: Path of the image or BaseImage object
     :type image_path: str
     :param image_id: Image ID
     :type image_id: str
@@ -51,17 +51,42 @@ class Image(Widget):
     """
 
     def __init__(self, image_path, image_id='', angle=0, scale=(1, 1), scale_smooth=True):
-        assert isinstance(image_path, str)
+        assert isinstance(image_path, (str, BaseImage))
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
         assert isinstance(scale, (tuple, list))
         assert isinstance(scale_smooth, bool)
         super(Image, self).__init__(widget_id=image_id)
 
-        self._image = BaseImage(image_path)
-        self._image.rotate(angle)
-        self._image.scale(scale[0], scale[1], smooth=scale_smooth)
+        if isinstance(image_path, BaseImage):
+            self._image = image_path
+        else:
+            self._image = BaseImage(image_path)
+            self._image.rotate(angle)
+            self._image.scale(scale[0], scale[1], smooth=scale_smooth)
+
         self.selection_effect_enabled = False
+
+    def get_image(self):
+        """
+        Gets the BaseImage object from widget.
+
+        :return: Widget image
+        :rtype: BaseImage
+        """
+        return self._image
+
+    def set_image(self, image):
+        """
+        Set the BaseImage object from widget.
+
+        :param image: BaseImage object
+        :type image: BaseImage
+        :return: None
+        """
+        self._image = image
+        self._surface = None
+        self._render()
 
     def _apply_font(self):
         pass
@@ -76,6 +101,8 @@ class Image(Widget):
             return True
         self._surface = self._image.get_surface()
         self._rect.width, self._rect.height = self._surface.get_size()
+        if not self._render_hash_changed(self.visible):
+            return True
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
