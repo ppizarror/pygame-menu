@@ -51,9 +51,9 @@ class Widget(object):
     :type title: str
     :param widget_id: Widget identifier
     :type widget_id: str
-    :param onchange: Callback when changing the selector
+    :param onchange: Callback when updating the status of the widget, executed in ``widget.change()``
     :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Callback when applying on the widget (return), executed in ``widget.apply()``
     :type onreturn: callable, None
     :param args: Optional arguments for callbacks
     :type args: any

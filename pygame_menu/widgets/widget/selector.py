@@ -82,7 +82,7 @@ class Selector(Widget):
     :type default: int
     :param onchange: Callback when changing the selector
     :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Callback when pressing return on the selector
     :type onreturn: callable, None
     :param kwargs: Optional keyword arguments
     :type kwargs: dict

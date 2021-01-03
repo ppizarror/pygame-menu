@@ -381,6 +381,7 @@ class Menu(object):
 
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
+            - ``back_count``            Number of menus to go back if action is `:py:class:`pygame_menu.events.BACK` event, default is 1 (int)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background color if enabled (bool)
             - ``button_id``             Widget ID (str)
@@ -407,6 +408,8 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
+        total_back = kwargs.pop('back_count', 1)
+        assert isinstance(total_back, int) and 1 <= total_back
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -419,24 +422,46 @@ class Menu(object):
             action = _events.NONE
 
         # If element is a Menu
-        onchange = None
         if isinstance(action, Menu):
+
+            # Check for recursive
+            if action == self or action.in_submenu(self, recursive=True):
+                _msg = 'Menu \'{0}\' is already on submenu structure, recursive menus lead ' \
+                       'to unexpected behaviours. For returning to previous menu use ' \
+                       'pygame_menu.events.BACK event defining an optional back_count ' \
+                       'number of menus to return from, default is 1'.format(action.get_title())
+                raise ValueError(_msg)
+
             self._submenus.append(action)
-            widget = _widgets.Button(title, button_id, onchange, self._open, action)
+            widget = _widgets.Button(title, button_id, self._open, action)
+            widget.to_menu = True
+
         # If element is a PyMenuAction
         elif action == _events.BACK:  # Back to Menu
-            widget = _widgets.Button(title, button_id, onchange, self.reset, 1)  # reset is public, so no _current
+
+            widget = _widgets.Button(title, button_id, self.reset, total_back)  # reset is public, so no _current
+
         elif action == _events.RESET:  # Back to Top Menu
-            widget = _widgets.Button(title, button_id, onchange, self.full_reset)  # no _current
+
+            widget = _widgets.Button(title, button_id, self.full_reset)  # no _current
+
         elif action == _events.CLOSE:  # Close Menu
-            widget = _widgets.Button(title, button_id, onchange, self._close)
+
+            widget = _widgets.Button(title, button_id, self._close)
+
         elif action == _events.EXIT:  # Exit program
-            widget = _widgets.Button(title, button_id, onchange, self._exit)
+
+            widget = _widgets.Button(title, button_id, self._exit)
+
         elif action == _events.NONE:  # None action
+
             widget = _widgets.Button(title, button_id)
+
         # If element is a function
         elif _utils.is_callable(action):
-            widget = _widgets.Button(title, button_id, onchange, action, *args)
+
+            widget = _widgets.Button(title, button_id, action, *args)
+
         else:
             raise ValueError('element must be a Menu, a PymenuAction or a function')
 
@@ -498,9 +523,9 @@ class Menu(object):
         :type input_separator: str
         :param input_underline: Underline character
         :type input_underline: str
-        :param onchange: Function when changing the selector
+        :param onchange: Function when changing the values of the color text
         :type onchange: callable, None
-        :param onreturn: Function when pressing return button
+        :param onreturn: Function when pressing return on the color text input
         :type onreturn: callable, None
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
@@ -806,9 +831,9 @@ class Menu(object):
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
         :type maxwidth: int
-        :param onchange: Function when changing the selector
+        :param onchange: Callback when changing the text input
         :type onchange: callable, None
-        :param onreturn: Function when pressing return button
+        :param onreturn: Callback when pressing return on the text input
         :type onreturn: callable, None
         :param password: Text input is a password
         :type password: bool
@@ -888,6 +913,11 @@ class Menu(object):
 
             The widget should be fully configured by the user: font, padding, etc.
 
+        .. warning::
+
+            Unintended behaviours may happen while using this method, use only with caution.
+            Specially while creating nested submenus with buttons.
+
         :param widget: Widget to be added
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param configure_defaults: Apply defaults widget configuration
@@ -897,6 +927,11 @@ class Menu(object):
         assert isinstance(widget, _widgets.core.Widget)
         if widget.get_menu() is not None:
             raise ValueError('widget to be added is already appended to another Menu')
+
+        # Raise warning if adding button with menu
+        if isinstance(widget, _widgets.Button) and widget.to_menu:
+            _msg = 'Prefer adding nested submenus using add_button method istead, unintended behaviours may occur'
+            warnings.warn(_msg)
 
         # Configure widget
         if configure_defaults:
@@ -1121,7 +1156,7 @@ class Menu(object):
         """
         Update widgets after removal or hidden.
 
-        :param index: Removed index
+        :param index: Removed index, if ``-1`` then select next index, if equal to ``self._index`` select the same
         :type index: int
         :param update_surface: Updates menu surface
         :type update_surface: bool
@@ -2216,6 +2251,46 @@ class Menu(object):
                 if widget:
                     return widget
         return None
+
+    def in_submenu(self, menu, recursive=False):
+        """
+        Returns true if ``menu`` is a submenu of the Menu.
+
+        :param menu: Menu to check
+        :type menu: Menu
+        :param recursive: Check recursively
+        :type recursive: bool
+        :return: True if ``menu`` is in submenus
+        :rtype: bool
+        """
+        if menu in self._submenus:
+            return True
+        if recursive:
+            for sm in self._submenus:  # type: Menu
+                if sm.in_submenu(menu, recursive):
+                    return True
+        return False
+
+    def _remove_submenu(self, menu, recursive=False):
+        """
+        Removes menu from submenu if ``menu`` is a submenu of the Menu.
+
+        :param menu: Menu to remove
+        :type menu: Menu
+        :param recursive: Check recursively
+        :type recursive: bool
+        :return: True if ``menu`` was removed
+        :rtype: bool
+        """
+        if menu in self._submenus:
+            self._submenus.remove(menu)
+            self._update_after_remove_or_hidden(self._index)
+            return True
+        if recursive:
+            for sm in self._submenus:  # type: Menu
+                if sm._remove_submenu(menu, recursive):
+                    return True
+        return False
 
     def get_index(self):
         """

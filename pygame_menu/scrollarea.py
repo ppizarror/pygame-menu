@@ -132,24 +132,32 @@ class ScrollArea(object):
         for pos in self._scrollbar_positions:  # type:str
             assert_position(pos)
             if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
-                sbar = ScrollBar(self._view_rect.height, (0, max(1, self.get_hidden_height())),
-                                 orientation=_locals.ORIENTATION_VERTICAL,
-                                 slider_pad=scrollbar_slider_pad,
-                                 slider_color=scrollbar_slider_color,
-                                 page_ctrl_thick=scrollbar_thick,
-                                 page_ctrl_color=scrollbar_color,
-                                 onchange=self._on_vertical_scroll)
+                sbar = ScrollBar(
+                    length=self._view_rect.height,
+                    values_range=(0, max(1, self.get_hidden_height())),
+                    orientation=_locals.ORIENTATION_VERTICAL,
+                    slider_pad=scrollbar_slider_pad,
+                    slider_color=scrollbar_slider_color,
+                    page_ctrl_thick=scrollbar_thick,
+                    page_ctrl_color=scrollbar_color,
+                    onchange=self._on_vertical_scroll
+                )
             else:
-                sbar = ScrollBar(self._view_rect.width, (0, max(1, self.get_hidden_width())),
-                                 slider_pad=scrollbar_slider_pad,
-                                 slider_color=scrollbar_slider_color,
-                                 page_ctrl_thick=scrollbar_thick,
-                                 page_ctrl_color=scrollbar_color,
-                                 onchange=self._on_horizontal_scroll)
-            sbar.set_shadow(enabled=shadow,
-                            color=shadow_color,
-                            position=shadow_position,
-                            offset=shadow_offset)
+                sbar = ScrollBar(
+                    length=self._view_rect.width,
+                    values_range=(0, max(1, self.get_hidden_width())),
+                    slider_pad=scrollbar_slider_pad,
+                    slider_color=scrollbar_slider_color,
+                    page_ctrl_thick=scrollbar_thick,
+                    page_ctrl_color=scrollbar_color,
+                    onchange=self._on_horizontal_scroll
+                )
+            sbar.set_shadow(
+                enabled=shadow,
+                color=shadow_color,
+                position=shadow_position,
+                offset=shadow_offset
+            )
             sbar.set_controls(joystick=False)
 
             self._scrollbars.append(sbar)

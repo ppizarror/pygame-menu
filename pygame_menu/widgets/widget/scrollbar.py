@@ -40,7 +40,7 @@ class ScrollBar(Widget):
     """
     A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control:
 
-        a. The slider provides a way to quickly go to any part of the document
+        a. The slider provides a way to quickly go to any part of the document.
         b. The scroll arrows are push buttons which can be used to accurately navigate
            to a particular place in a document.
         c. The page control is the area over which the slider is dragged (the scroll bar's
@@ -54,7 +54,7 @@ class ScrollBar(Widget):
     :type values_range: tuple, list
     :param scrollbar_id: Bar identifier
     :type scrollbar_id: str
-    :param orientation: Bar orientation ORIENTATION_HORIZONTAL/ORIENTATION_VERTICAL
+    :param orientation: Bar orientation ``ORIENTATION_HORIZONTAL``/``ORIENTATION_VERTICAL``
     :type orientation: str
     :param slider_pad: Space between slider and page control
     :type slider_pad: int, float
@@ -64,9 +64,7 @@ class ScrollBar(Widget):
     :type page_ctrl_thick: int, float
     :param page_ctrl_color: Page control color
     :type page_ctrl_color: tuple, list
-    :param onchange: Callback when changing the selector
-    :type onchange: callable, None
-    :param onreturn: Callback when pressing return button
+    :param onreturn: Callback when pressind and moving the scroll
     :type onreturn: callable, None
     """
 
@@ -79,7 +77,6 @@ class ScrollBar(Widget):
                  slider_color=(200, 200, 200),
                  page_ctrl_thick=20,
                  page_ctrl_color=(235, 235, 235),
-                 onchange=None,
                  onreturn=None,
                  *args,
                  **kwargs
@@ -96,7 +93,6 @@ class ScrollBar(Widget):
 
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
-            onchange=onchange,
             onreturn=onreturn,
             args=args,
             kwargs=kwargs
