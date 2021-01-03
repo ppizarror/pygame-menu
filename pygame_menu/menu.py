@@ -828,12 +828,14 @@ class Menu(object):
 
         return widget
 
-    def add_vertical_margin(self, margin):
+    def add_vertical_margin(self, margin, margin_id=''):
         """
         Adds a vertical margin to the current Menu.
 
         :param margin: Vertical margin in px
         :type margin: int, float
+        :param margin_id: ID of the margin
+        :type margin_id: str
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
@@ -842,12 +844,42 @@ class Menu(object):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes({'margin': (0, margin), 'padding': 0})
 
-        widget = _widgets.VMargin()
+        widget = _widgets.VMargin(widget_id=margin_id)
 
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
         return widget
+
+    def add_generic_widget(self, widget, configure_defaults=False):
+        """
+        Add generic widget to current Menu.
+        The widget should be fully configured by the user: font, padding, etc.
+
+        :param widget: Widget to be added
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :param configure_defaults: Apply defaults widget configuration
+        :type configure_defaults: bool
+        :return: None
+        """
+        assert isinstance(widget, _widgets.core.Widget)
+        if widget.get_menu() is not None:
+            raise ValueError('widget to be added is already appended to another Menu')
+
+        # Configure widget
+        if configure_defaults:
+            self._configure_widget(widget, **self._filter_widget_attributes({}))
+        col = int(len(self._widgets) // self._rows)  # Column position
+        widget.set_menu(self)
+        self._check_id_duplicated(widget.get_id())
+        selection_effect = widget.get_selection_effect()  # type: _widgets.core.Selection
+
+        if self._force_fit_text and self._column_max_width[col] is not None:
+            widget.set_max_width(int(self._column_max_width[col] - selection_effect.get_width()))
+
+        widget.set_controls(self._joystick, self._mouse, self._touchscreen)
+
+        self._append_widget(widget)
 
     def _filter_widget_attributes(self, kwargs):
         """
@@ -963,7 +995,7 @@ class Menu(object):
         assert isinstance(widget, _widgets.core.Widget)
         assert widget.get_menu() is None, 'widget cannot have an instance of menu'
 
-        _col = int(len(self._widgets) // self._rows)  # Column position
+        col = int(len(self._widgets) // self._rows)  # Column position
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
 
@@ -978,8 +1010,8 @@ class Menu(object):
 
         selection_effect = kwargs['selection_effect']  # type: _widgets.core.Selection
 
-        if self._force_fit_text and self._column_max_width[_col] is not None:
-            widget.set_max_width(int(self._column_max_width[_col] - selection_effect.get_width()))
+        if self._force_fit_text and self._column_max_width[col] is not None:
+            widget.set_max_width(int(self._column_max_width[col] - selection_effect.get_width()))
 
         widget.set_shadow(
             enabled=kwargs['shadow'],
@@ -1016,6 +1048,26 @@ class Menu(object):
             self.center_content()
         self._widgets_surface = None  # If added on execution time forces the update of the surface
 
+    def select_widget(self, widget):
+        """
+        Select a widget from the Menu.
+
+        :param widget: Widget to be selected
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :return: None
+        """
+        assert isinstance(widget, _widgets.core.Widget)
+        if not widget.is_selectable:
+            raise ValueError('widget is not selectable')
+        if not widget.visible:
+            raise ValueError('widget is not visible')
+        try:
+            index = self._widgets.index(widget)  # If not exists this raises ValueError
+        except ValueError:
+            raise ValueError('widget is not in Menu, check if exists on the current '
+                             'with menu.get_current().remove_widget(widget)')
+        self._select(index)
+
     def remove_widget(self, widget):
         """
         Remove a widget from the Menu.
@@ -1024,21 +1076,32 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :return: None
         """
-        assert widget is not None, 'widget cannot be None'
         assert isinstance(widget, _widgets.core.Widget)
         try:
-            indx = self._widgets.index(widget)  # If not exists this raises ValueError
+            index = self._widgets.index(widget)  # If not exists this raises ValueError
         except ValueError:
             raise ValueError('widget is not in Menu, check if exists on the current '
                              'with menu.get_current().remove_widget(widget)')
-        self._widgets.pop(indx)
+        self._widgets.pop(index)
+        self._update_after_remove_or_hidden(index)
+        widget.set_menu(None)  # Removes menu reference from widget
 
+    def _update_after_remove_or_hidden(self, index, update_surface=True):
+        """
+        Update widgets after removal or hidden.
+
+        :param index: Removed index
+        :type index: int
+        :param update_surface: Updates menu surface
+        :type update_surface: bool
+        :return: None
+        """
         # Check if there's more selectable widgets
         nselect = 0
         last_selectable = 0
         for indx in range(len(self._widgets)):
             wid = self._widgets[indx]  # type: _widgets.core.Widget
-            if wid.is_selectable:
+            if wid.is_selectable and wid.visible:
                 nselect += 1
                 last_selectable = indx
 
@@ -1047,13 +1110,16 @@ class Menu(object):
         elif nselect == 1:
             self._select(last_selectable)  # Select the unique selectable option
         elif nselect > 1:
-            if self._index > indx:  # If the selected widget was after this
+            if index == -1:  # Index was hidden
+                self._select(self._index + 1)
+            elif self._index > index:  # If the selected widget was after this
                 self._select(self._index - 1)
             else:
                 self._select(self._index)
-        if self._center_content:
-            self.center_content()
-        self._widgets_surface = None  # If added on execution time forces the update of the surface
+        if update_surface:
+            if self._center_content:
+                self.center_content()
+            self._widgets_surface = None  # If added on execution time forces the update of the surface
 
     def _back(self):
         """
@@ -1141,6 +1207,10 @@ class Menu(object):
             rect = widget_rects[widget.get_id()]  # type: pygame.Rect
             selection = widget.get_selection_effect()
 
+            if not widget.visible:
+                widget.set_position(self._widget_offset[0], self._widget_offset[1])
+                continue
+
             # Get column and row position
             col = int(index // self._rows)
             row = int(index % self._rows)
@@ -1168,7 +1238,8 @@ class Menu(object):
             ysum = 0  # Compute the total height from the current row position to the top of the column
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
-                ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
+                if rwidget.visible:
+                    ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
             y_coord = max(1, self._widget_offset[1]) + ysum + sel_bottom + widget.get_padding()[0]
 
             # Update the position of the widget
@@ -1189,6 +1260,17 @@ class Menu(object):
             max_y = max(max_y, y)
         return max_x, max_y
 
+    def _update_selection_if_hidden(self):
+        """
+        Updates menu widget selection if a widget was hidden.
+
+        :return: None
+        """
+        if len(self._widgets) > 0:
+            selected_widget = self._widgets[self._index % len(self._widgets)]
+            if not selected_widget.visible:
+                self._update_after_remove_or_hidden(-1, update_surface=False)
+
     def _build_widget_surface(self):
         """
         Create the surface used to draw widgets according the
@@ -1196,6 +1278,7 @@ class Menu(object):
 
         :return: None
         """
+        self._update_selection_if_hidden()
         self._update_widget_position()
 
         menubar_height = self._menubar.get_rect().height
@@ -1226,7 +1309,7 @@ class Menu(object):
 
     def _check_id_duplicated(self, widget_id):
         """
-        Check if widget ID is duplicated.
+        Check if widget ID is duplicated. Throws ``IndexError`` if the index is duplicated
 
         :param widget_id: New widget ID
         :type widget_id: str
@@ -1235,7 +1318,7 @@ class Menu(object):
         assert isinstance(widget_id, str)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
-                raise ValueError('widget ID="{0}" is duplicated'.format(widget_id))
+                raise IndexError('widget ID="{0}" is duplicated'.format(widget_id))
 
     def _close(self):
         """
@@ -1369,6 +1452,8 @@ class Menu(object):
         # The surface may has been erased because the number
         # of widgets has changed and thus size shall be calculated.
         if not self._current._widgets_surface:
+            if self._current._center_content:
+                self._current.center_content()
             self._current._build_widget_surface()
 
         # Clear surface
@@ -1385,6 +1470,8 @@ class Menu(object):
         # Draw widgets
         selected_widget = None
         for widget in self._current._widgets:  # type: _widgets.core.Widget
+            if not widget.visible:
+                continue
             widget.draw(self._current._widgets_surface)
             if widget.selected:
                 widget.draw_selection(self._current._widgets_surface)
@@ -1547,7 +1634,10 @@ class Menu(object):
 
         selected_widget = None  # type: _widgets.core.Widget
         if len(self._current._widgets) >= 1:
-            selected_widget = self._current._widgets[self._current._index % len(self._current._widgets)]
+            index = self._current._index % len(self._current._widgets)
+            selected_widget = self._current._widgets[index]
+            if not selected_widget.visible or not selected_widget.is_selectable:
+                selected_widget = None
 
         # Update scroll bars
         if self._current._scroll.update(events):
@@ -1645,7 +1735,7 @@ class Menu(object):
                             widget = self._current._widgets[index]
                             # Don't consider the mouse wheel (button 4 & 5)
                             if event.button in (1, 2, 3) and self._current._scroll.collide(widget, event) and \
-                                    widget.is_selectable:
+                                    widget.is_selectable and widget.visible:
                                 self._current._select(index)
 
                     # If mouse motion selection, clicking will disable the active state
@@ -1660,7 +1750,7 @@ class Menu(object):
                         not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]  # type: _widgets.core.Widget
-                        if self._current._scroll.collide(widget, event) and widget.is_selectable:
+                        if self._current._scroll.collide(widget, event) and widget.is_selectable and widget.visible:
                             self._current._select(index)
 
                 # Mouse events in selected widget
@@ -1683,7 +1773,7 @@ class Menu(object):
                             widget = self._current._widgets[index]
                             # Don't consider the mouse wheel (button 4 & 5)
                             if self._current._scroll.collide(widget, event) and \
-                                    widget.is_selectable:
+                                    widget.is_selectable and widget.visible:
                                 self._current._select(index)
 
                     # If touchscreen motion selection, clicking will disable the active state
@@ -1985,10 +2075,10 @@ class Menu(object):
         old_widget = current._widgets[current._index]  # type: _widgets.core.Widget
         new_widget = current._widgets[new_index]  # type:_widgets.core.Widget
 
-        # If new widget is not selectable
-        if not new_widget.is_selectable:
+        # If new widget is not selectable or visible
+        if not new_widget.is_selectable or not new_widget.visible:
             if current._index >= 0:  # There's at least 1 selectable option (if only text this would be false)
-                current._select(new_index + dwidget)
+                current._select(new_index + dwidget, dwidget)
                 return
             else:  # No selectable options, quit
                 return
@@ -2075,7 +2165,7 @@ class Menu(object):
 
     def get_index(self):
         """
-        Get selected widget from the Menu.
+        Get selected widget index from the Menu.
 
         :return: Selected widget index
         :rtype: int
@@ -2086,7 +2176,12 @@ class Menu(object):
         """
         Return the selected widget on the Menu.
 
-        :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :return: Widget object, None if no widget is selected
+        :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
-        return self._widgets[self._index]
+        if self._index < 0:
+            return None
+        try:
+            return self._widgets[self._index % len(self._widgets)]
+        except (IndexError, ZeroDivisionError):
+            return None
