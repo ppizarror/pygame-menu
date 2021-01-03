@@ -530,6 +530,7 @@ class WidgetsTest(unittest.TestCase):
         Test certain effects on buttons.
         """
         menu = MenuUtils.generic_menu()
+        menu2 = MenuUtils.generic_menu()
 
         # Valid
         def test():
@@ -555,7 +556,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Valid
         valid = [
-            menu,
+            menu2,
             test,
             pygame_menu.events.NONE,
             None,
@@ -564,6 +565,14 @@ class WidgetsTest(unittest.TestCase):
         ]
         for v in valid:
             self.assertTrue(menu.add_button('b1', v) is not None)
+
+        btn = menu.add_button('b1', menu2)  # type: Button
+        for v in [menu, 1, bool, object, [1, 2, 3], (1, 2, 3)]:
+            self.assertRaises(AssertionError, lambda: btn.update_callback(v))
+        btn.update_callback(test)
+
+        # Invalid recursive menu
+        self.assertRaises(ValueError, lambda: menu.add_button('bt', menu))
 
     def test_change_id(self):
         """

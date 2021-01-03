@@ -294,6 +294,29 @@ class MenuTest(unittest.TestCase):
         self.menu._widgets = []
         self.assertEqual(self.menu.get_selected_widget(), None)
 
+    def test_submenu(self):
+        """
+        Test submenus.
+        """
+        menu = MenuUtils.generic_menu()
+        menu2 = MenuUtils.generic_menu()
+        btn = menu.add_button('btn', menu2)
+        self.assertTrue(btn.to_menu)
+        self.assertTrue(menu.in_submenu(menu2))
+        self.assertFalse(menu2.in_submenu(menu))
+
+        btn.update_callback(lambda: None)
+        self.assertFalse(btn.to_menu)
+        self.assertFalse(menu.in_submenu(menu2))
+
+        # Test recursive
+        menu.clear()
+        menu2.clear()
+
+        self.assertRaises(ValueError, lambda: menu.add_button('to self', menu))
+        menu.add_button('to2', menu2)
+        self.assertRaises(ValueError, lambda: menu2.add_button('to1', menu))
+
     def test_centering(self):
         """
         Test centering menu.
