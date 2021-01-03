@@ -45,11 +45,11 @@ class Theme(object):
 
     .. note:: All colors must be defined with a tuple of 3 or 4 numbers in the formats:
 
-                  - (R,G,B)
-                  - (R,G,B,A)
+                - (R,G,B)
+                - (R,G,B,A)
 
-              Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
-              A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
+            Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
+            A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
 
     :param background_color: Menu background color
     :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
@@ -61,7 +61,7 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0, 0)*. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default (0,0). It cannot be negative values
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -123,7 +123,7 @@ class Theme(object):
     :type widget_margin: tuple, list
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default *(0, 0)*. It cannot be negative values
+    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default (0,0). It cannot be negative values
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
@@ -138,6 +138,7 @@ class Theme(object):
     """
 
     def __init__(self, **kwargs):
+        
         self.background_color = self._get(kwargs, 'background_color',
                                           'color_image', (220, 220, 220))  # type: tuple
         self.cursor_color = self._get(kwargs, 'cursor_color',
@@ -200,11 +201,9 @@ class Theme(object):
                                                  'color_image_none')  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate',
                                                    'tuple2', (16, 8))  # type: tuple
-        self.widget_font_antialias = self._get(kwargs,
-                                               'widget_font_antialias',
+        self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias',
                                                bool, True)  # type: bool
-        self.widget_font_background_color_from_menu = self._get(kwargs,
-                                                                'widget_font_background_color_from_menu',
+        self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
                                                                 bool, pygame.vernum[0] == 2)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color',
                                            'color', (70, 70, 70))  # type: tuple
@@ -216,8 +215,7 @@ class Theme(object):
                                         (int, float), 0)  # type: (int,float,tuple)
         self.widget_offset = self._get(kwargs, 'widget_offset',
                                        'tuple2', (0, 0))  # type: tuple
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect',
-                                                 _widgets.core.Selection,
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
                                                  _widgets.HighlightSelection())  # type: _widgets.core.Selection
         self.widget_shadow = self._get(kwargs, 'widget_shadow',
                                        bool, False)  # type: bool
