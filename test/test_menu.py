@@ -32,9 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
-import pygame
 from pygame_menu import events
-from pygame_menu.widgets import Label
+from pygame_menu.widgets import Label, Button
+import pygame
 import timeit
 
 # Configure the tests
@@ -188,6 +188,13 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
         self.assertEqual(self.menu.get_widget('deep_selector', recursive=True), deep_selector)
+
+    def test_add_generic_widget(self):
+        """
+        Test generic widget.
+        """
+        w = Button('title')
+        self.menu.add_generic_widget(w)
 
     # noinspection PyArgumentEqualDefault
     def test_get_selected_widget(self):
