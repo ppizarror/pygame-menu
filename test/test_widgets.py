@@ -34,7 +34,10 @@ import sys
 
 from test._utils import *
 from pygame_menu import locals as _locals
-from pygame_menu.widgets import ScrollBar, Label, Button
+from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar
+
+from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE, \
+    MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
 
 
 class WidgetsTest(unittest.TestCase):
@@ -67,6 +70,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget visibility.
         """
+        self.menu.clear()
         w = self.menu.add_label('Text')  # type: Label
         lasthash = w._last_render_hash
         w.hide()
@@ -85,6 +89,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget font.
         """
+        self.menu.clear()
         w = self.menu.add_label('Text')  # type: Label
         self.assertRaises(AssertionError, lambda: w.update_font({}))
         w.update_font({'color': (255, 0, 0)})
@@ -93,6 +98,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget padding.
         """
+        self.menu.clear()
         self.assertRaises(Exception, lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding=-1))
         self.assertRaises(Exception, lambda: self.menu.add_button(0, pygame_menu.events.NONE, padding='a'))
         self.assertRaises(Exception,
@@ -130,10 +136,25 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(p[2], 50)
         self.assertEqual(p[3], 75)
 
+    def test_menubar(self):
+        """
+        Test menubar widget.
+        """
+        self.menu.clear()
+        self.menu.enable()
+        for mode in [MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
+                     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, MENUBAR_STYLE_TITLE_ONLY,
+                     MENUBAR_STYLE_TITLE_ONLY_DIAGONAL]:
+            mb = MenuBar('Menu', 500, (0, 0, 0), True, mode=mode)
+            self.menu.add_generic_widget(mb)
+        self.menu.draw(surface)
+        self.menu.disable()
+
     def test_selector(self):
         """
-        Test Selector widget.
+        Test selector widget.
         """
+        self.menu.clear()
         selector = self.menu.add_selector('selector',
                                           [('1 - Easy', 'EASY'),
                                            ('2 - Medium', 'MEDIUM'),
@@ -199,6 +220,8 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(_r, cr)
             self.assertEqual(_g, cg)
             self.assertEqual(_b, cb)
+
+        self.menu.clear()
 
         # Base rgb
         widget = self.menu.add_color_input('title', color_type='rgb', input_separator=',')
@@ -345,6 +368,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test label widget.
         """
+        self.menu.clear()
         label = self.menu.add_label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                                     'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
                                     'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
@@ -369,6 +393,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test TextInput widget.
         """
+        self.menu.clear()
 
         # Assert bad settings
         self.assertRaises(ValueError,
@@ -499,6 +524,46 @@ class WidgetsTest(unittest.TestCase):
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+    def test_button(self):
+        """
+        Test certain effects on buttons.
+        """
+        menu = MenuUtils.generic_menu()
+
+        # Valid
+        def test():
+            return True
+
+        # Invalid ones
+        invalid = [
+            bool,  # type
+            object,  # object
+            1,  # int
+            'a',  # str
+            True,  # bool
+            _locals,  # module
+            surface,  # pygame
+            1.1,  # float
+            menu.add_button('eee', None),  # widget
+            [1, 2, 3],  # list
+            (1, 2, 3),  # tuple
+            pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
+        ]
+        for i in invalid:
+            self.assertRaises(ValueError, lambda: menu.add_button('b1', i))
+
+        # Valid
+        valid = [
+            menu,
+            test,
+            pygame_menu.events.NONE,
+            None,
+            lambda: test(),
+            None
+        ]
+        for v in valid:
+            self.assertTrue(menu.add_button('b1', v) is not None)
 
     def test_change_id(self):
         """

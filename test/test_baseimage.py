@@ -32,8 +32,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
+from pygame_menu.baseimage import *
+
 
 class BaseImageTest(unittest.TestCase):
+
+    def test_modes(self):
+        """
+        Test drawing modes.
+        """
+        for mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, IMAGE_MODE_REPEAT_XY,
+                     IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE]:
+            image = pygame_menu.baseimage.BaseImage(
+                pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+                drawing_mode=mode
+            )
+            image.draw(surface)
+
+        # Attempt to draw an invalid mode
+        image = pygame_menu.baseimage.BaseImage(
+            pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+            drawing_mode=-1
+        )
+        self.assertRaises(ValueError, lambda: image.draw(surface))
 
     def test_extension_validation(self):
         """

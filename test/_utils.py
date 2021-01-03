@@ -367,32 +367,39 @@ class MenuUtils(object):
 
     @staticmethod
     def generic_menu(
-            title='',
+            center_content=True,
             columns=1,
-            rows=None,
-            width=600,
             height=400,
             position_x=50,
             position_y=50,
+            rows=None,
+            theme=pygame_menu.themes.THEME_DEFAULT,
+            title='',
+            width=600,
             *args,
-            **kwargs):
+            **kwargs
+    ):
         """
         Generate a generic test menu.
 
-        :param title: Menu title
-        :type title: str
+        :param center_content: Center menu content
+        :type center_content: bool
         :param columns: Number of columns
         :type columns: int
-        :param rows: Number of rows
-        :type rows: int, None
-        :param width: Menu width (px)
-        :type width: int
         :param height: Menu height (px)
         :type height: int
         :param position_x: X position of the menu
         :type position_x: int, float
         :param position_y: Y position of the menu
         :type position_y: int, float
+        :param rows: Number of rows
+        :type rows: int, None
+        :param theme: Menu theme
+        :type theme: :py:class:`pygame_menu.themes.Theme`
+        :param title: Menu title
+        :type title: str
+        :param width: Menu width (px)
+        :type width: int
         :param args: Additional args
         :type args: any
         :param kwargs: Optional keyword arguments
@@ -401,13 +408,15 @@ class MenuUtils(object):
         :rtype: :py:class:`pygame_menu.Menu`
         """
         return pygame_menu.Menu(
+            center_content=center_content,
             columns=columns,
             enabled=False,
             height=height,
             menu_position=(position_x, position_y),
-            width=width,
             rows=rows,
             title=title,
+            theme=theme,
+            width=width,
             *args,
             **kwargs
         )

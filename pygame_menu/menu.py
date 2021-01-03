@@ -34,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from uuid import uuid4
 import sys
 import textwrap
-import types
 import warnings
 
 import pygame
@@ -237,7 +236,7 @@ class Menu(object):
         self._pos_y = 0  # type: int
         self.set_relative_position(menu_position[0], menu_position[1])
 
-        # Menu widgets
+        # Menu widgets, it should not be accessed outside the object as strange issues can occur
         self._widgets = []  # type: list
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]  # type: list
 
@@ -436,7 +435,7 @@ class Menu(object):
         elif action == _events.NONE:  # None action
             widget = _widgets.Button(title, button_id)
         # If element is a function
-        elif isinstance(action, (types.FunctionType, types.MethodType)) or callable(action):
+        elif _utils.is_callable(action):
             widget = _widgets.Button(title, button_id, onchange, action, *args)
         else:
             raise ValueError('element must be a Menu, a PymenuAction or a function')
@@ -1371,13 +1370,17 @@ class Menu(object):
         :rtype: bool
         """
         onclose = self._onclose
+
+        # Apply action
         if onclose is None:
             close = False
         else:
             close = True
-            a = isinstance(onclose, _events.MenuAction)
-            b = str(type(onclose)) == "<class 'pygame_menu.events.PymenuAction'>"  # python compatibility
-            if a or b:
+
+            # If action is an event
+            if isinstance(onclose, _events.MenuAction) or \
+                    str(type(onclose)) == "<class 'pygame_menu.events.PymenuAction'>":
+
                 if onclose == _events.DISABLE_CLOSE:
                     close = False
                 else:
@@ -1391,8 +1394,10 @@ class Menu(object):
                     elif onclose == _events.EXIT:
                         self._exit()
 
-            elif isinstance(onclose, (types.FunctionType, types.MethodType)):
+            # If action is callable (function)
+            elif _utils.is_callable(onclose):
                 onclose()
+
         return close
 
     def _get_depth(self):
@@ -1894,7 +1899,7 @@ class Menu(object):
         """
         assert isinstance(surface, pygame.Surface)
         if bgfun:
-            assert callable(bgfun), 'background function must be callable (a function)'
+            assert _utils.is_callable(bgfun), 'background function must be callable (a function)'
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
