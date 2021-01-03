@@ -32,6 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from test._utils import *
 
+from pygame_menu.widgets import Button
+
 import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
 import pygame_menu.examples.scroll_menu as scroll_menu
@@ -114,6 +116,9 @@ class ExamplesTest(unittest.TestCase):
         """
         Test dynamic button example.
         """
+        dynamic_button.add_dynamic_button()
+        btn = dynamic_button.menu.get_selected_widget()  # type: Button
+        btn.apply()
         dynamic_button.main(test=True)
         test_reset_surface()
 

@@ -47,7 +47,7 @@ class MenuTest(unittest.TestCase):
         """
         Test setup.
         """
-        self.menu = MenuUtils.generic_menu('mainmenu')
+        self.menu = MenuUtils.generic_menu(title='mainmenu')
         self.menu.mainloop(surface, bgfun=dummy_function)
 
     @staticmethod
@@ -120,7 +120,7 @@ class MenuTest(unittest.TestCase):
         menu_prev = self.menu
         menu = None
         for i in range(1, 11):
-            menu = MenuUtils.generic_menu('submenu {0}'.format(i))
+            menu = MenuUtils.generic_menu(title='submenu {0}'.format(i))
             button = menu_prev.add_button('open', menu)
             button.apply()
             menu_prev = menu
@@ -290,6 +290,32 @@ class MenuTest(unittest.TestCase):
         self.menu.remove_widget(w2)
         self.assertEqual(self.menu.get_selected_widget(), None)
 
+        # Clear all widgets and get index
+        self.menu._widgets = []
+        self.assertEqual(self.menu.get_selected_widget(), None)
+
+    def test_centering(self):
+        """
+        Test centering menu.
+        """
+
+        # Vertical offset disables centering
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.widget_offset = (0, 100)
+        menu = MenuUtils.generic_menu(theme=theme)
+        self.assertFalse(menu._center_content)
+
+        # Outer scrollarea margin disables centering
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.scrollarea_outer_margin = (0, 100)
+        menu = MenuUtils.generic_menu(theme=theme)
+        self.assertFalse(menu._center_content)
+
+        # Normal
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        menu = MenuUtils.generic_menu(theme=theme)
+        self.assertTrue(menu._center_content)
+
     def test_generic_events(self):
         """
         Test key events.
@@ -356,7 +382,7 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
         self.assertEqual(self.menu._get_depth(), 0)
-        menu = MenuUtils.generic_menu('submenu')
+        menu = MenuUtils.generic_menu(title='submenu')
         button = self.menu.add_button('open', menu)
         button.apply()
         self.assertEqual(self.menu._get_depth(), 1)
@@ -450,7 +476,7 @@ class MenuTest(unittest.TestCase):
         if vmajor < 2:
             return
 
-        menu = MenuUtils.generic_menu('mainmenu', touchscreen_enabled=True)
+        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen_enabled=True)
         menu.mainloop(surface, bgfun=dummy_function)
 
         # Add a menu and a method that set a function
