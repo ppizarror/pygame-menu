@@ -68,7 +68,6 @@ class RightArrowSelection(ArrowSelection):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        super(RightArrowSelection, self).draw(surface, widget)
         #                 /A
         # widget        B
         #                \ C
