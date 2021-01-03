@@ -246,10 +246,24 @@ class Menu(object):
         if abs(self._widget_offset[1]) < 1:
             self._widget_offset[1] *= self._height
 
-        # If center is enabled, but widget offset in the vertical is different than zero a warning is raised
+        # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
         if self._center_content and self._widget_offset[1] != 0:
             msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._widget_offset[1], 3))
+            warnings.warn(msg)
+            self._center_content = False
+
+        # Scrollarea outer margin
+        self._scrollarea_margin = [theme.scrollarea_outer_margin[0], theme.scrollarea_outer_margin[1]]
+        if abs(self._scrollarea_margin[0]) < 1:
+            self._scrollarea_margin[0] *= self._width
+        if abs(self._scrollarea_margin[1]) < 1:
+            self._scrollarea_margin[1] *= self._height
+
+        # If centering is enabled, but scrollarea margin in the vertical is different than zero a warning is raised
+        if self._center_content and self._scrollarea_margin[1] != 0:
+            msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = msg.format(title, round(self._scrollarea_margin[1], 3))
             warnings.warn(msg)
             self._center_content = False
 
@@ -1284,24 +1298,36 @@ class Menu(object):
         menubar_height = self._menubar.get_rect().height
         max_x, max_y = self._get_widget_max_position()
 
+        # Get scrollbars size
+        sx = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        sy = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
+
+        # Remove the thick of the scrollbar to avoid displaying an horizontal one
+        # If overflow in both axis
         if max_x > self._width and max_y > self._height - menubar_height:
-            width, height = max_x + 20, max_y + 20
+            width, height = max_x + sy * 0.5, max_y + sx * 0.25
             if not self._mouse_visible:
                 self._mouse_visible = True
+
+        # If horizontal overflow
         elif max_x > self._width:
-            # Remove the thick of the scrollbar
-            # to avoid displaying an vertical one
-            width, height = max_x + 20, self._height - menubar_height - 20
+            width, height = max_x + 0.50 * sx, self._height - menubar_height - sx
             self._mouse_visible = self._mouse_visible_default
+
+        # If vertical overflow
         elif max_y > self._height - menubar_height:
-            # Remove the thick of the scrollbar
-            # to avoid displaying an horizontal one
-            width, height = self._width - 20, max_y + 20
+            width, height = self._width - sy, max_y + sy * 0.25
             if not self._mouse_visible:
                 self._mouse_visible = True
+
+        # No overflow
         else:
             width, height = self._width, self._height - menubar_height
             self._mouse_visible = self._mouse_visible_default
+
+        # Adds scrollarea margin
+        width += self._scrollarea_margin[0]
+        height += self._scrollarea_margin[1]
 
         self._widgets_surface = _utils.make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)

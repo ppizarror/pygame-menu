@@ -61,6 +61,8 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu
     :type menubar_close_button: bool
+    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0, 0)*. It cannot be negative values
+    :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -121,7 +123,7 @@ class Theme(object):
     :type widget_margin: tuple, list
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: X,Y axis offset of widgets inside Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default *(0, 0)*
+    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default *(0, 0)*. It cannot be negative values
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
@@ -146,6 +148,8 @@ class Theme(object):
                                                 'color', (0, 0, 0, 180))  # type: tuple
         self.menubar_close_button = self._get(kwargs, 'menubar_close_button',
                                               bool, True)  # type: bool
+        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin',
+                                                 'tuple2', (0, 0))  # type: tuple
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
                                          'color', (220, 220, 220))  # type: tuple
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
@@ -246,8 +250,6 @@ class Theme(object):
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
         assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
-        assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
-            'widget offset must be greater or equal than zero'
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)  # type: tuple
@@ -266,6 +268,7 @@ class Theme(object):
         self.widget_font_color = self._format_opacity(self.widget_font_color)  # type: tuple
 
         # List to tuple
+        self.scrollarea_outer_margin = self._vec_to_tuple(self.scrollarea_outer_margin, 2)  # type: tuple
         self.title_offset = self._vec_to_tuple(self.title_offset, 2)  # type: tuple
         self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)  # type: tuple
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)  # type: tuple
@@ -273,6 +276,12 @@ class Theme(object):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)  # type: tuple
             assert 2 <= self.widget_padding <= 4, 'widget padding tuple length must be 2, 3 or 4'
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)  # type: tuple
+
+        # Check sizes
+        assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
+            'scrollarea outer margin must be greater or equal than zero'
+        assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
+            'widget offset must be greater or equal than zero'
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
@@ -432,7 +441,6 @@ THEME_BLUE = Theme(
     scrollbar_shadow=True,
     scrollbar_slider_color=(150, 200, 230),
     scrollbar_slider_pad=2,
-    scrollbar_thick=14,
     selection_color=(100, 62, 132),
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),

@@ -198,7 +198,7 @@ def main(test=False):
         height=WINDOW_SIZE[1] * 0.7,
         onclose=pygame_menu.events.DISABLE_CLOSE,
         title='Play Menu',
-        width=WINDOW_SIZE[0] * 0.7
+        width=WINDOW_SIZE[0] * 0.75
     )
 
     submenu_theme = pygame_menu.themes.THEME_DEFAULT.copy()
