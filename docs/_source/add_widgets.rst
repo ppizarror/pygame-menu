@@ -3,57 +3,6 @@
 Adding widgets
 ==============
 
-Add a text
-----------
-
-A label is used to display a text. If the text is too large, it
-can be wrapped in order to fit the menu size.
-
-**Example:**
-
-.. image:: ../_static/widget_label.png
-    :scale: 30%
-    :align: center
-
-.. code-block:: python
-
-    HELP = "Press ESC to enable/disable Menu "\
-           "Press ENTER to access a Sub-Menu or use an option "\
-           "Press UP/DOWN to move through Menu "\
-           "Press LEFT/RIGHT to move through Selectors."
-
-    menu = pygame_menu.Menu(...)
-    menu.add_label(HELP, max_char=-1, font_size=20)
-
-.. automethod:: pygame_menu.Menu.add_label
-
-
-Add an image
-------------
-
-An image can be displayed on a menu.
-The ``scale`` parameter represent the scaling ratio of the image width
-and height. When ``scale_smooth=True``, the rendering is better but it
-requires more CPU resources.
-
-**Example:**
-
-.. image:: ../_static/widget_image.png
-    :scale: 30%
-    :align: center
-
-.. code-block:: python
-
-    PATH = os.path.join(os.path.dirname(pygame_menu.__file__),
-                        'resources', 'images', 'pygame_menu.png')
-
-    menu = pygame_menu.Menu(...)
-
-    menu.add_image(PATH, angle=10, scale=(0.15, 0.15))
-    menu.add_image(PATH, angle=-10, scale=(0.15, 0.15), scale_smooth=True)
-
-.. automethod:: pygame_menu.Menu.add_image
-
 
 Add a button
 ------------
@@ -140,33 +89,6 @@ displayed, the others are the arguments passed to the callbacks
 .. automethod:: pygame_menu.Menu.add_selector
 
 
-Add a text entry
-----------------
-
-A text input permits to enter a string using a keyboard. Restriction
-on entered characters can be set using ``input_type``, ``maxchar``,
-``maxwidth`` and ``valid_chars`` parameters.
-
-**Example:**
-
-.. image:: ../_static/widget_textinput.png
-    :scale: 30%
-    :align: center
-
-.. code-block:: python
-
-    def check_name(value):
-        print('User name:', value)
-
-    menu = pygame_menu.Menu(...)
-
-    menu.add_text_input('First name: ', default='John', onreturn=check_name)
-    menu.add_text_input('Last name: ', default='Doe', maxchar=20)
-    menu.add_text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
-
-.. automethod:: pygame_menu.Menu.add_text_input
-
-
 Add a color entry
 -----------------
 
@@ -195,6 +117,83 @@ is a comma (``,``).
 .. automethod:: pygame_menu.Menu.add_color_input
 
 
+Add a generic widget
+--------------------
+
+A user-created widget can also be added to the menu. The widget must be fully
+configured before the addition.
+
+**Example:**
+
+.. code-block:: python
+
+    def check_color(value):
+        print('New color:', value)
+
+    widget_label = pygame_menu.widgets.Label(...)
+    widget_image = pygame_menu.widgets.Image(...)
+
+    # This applies menu default widget configuration
+    menu.add_generic_widget(widget_label, configure_defaults=True)
+
+    # Adds menu without default configuration
+    menu.add_generic_widget(widget_image)
+
+.. automethod:: pygame_menu.Menu.add_generic_widget
+
+
+Add a label
+-----------
+
+A label is used to display a text. If the text is too large, it
+can be wrapped in order to fit the menu size.
+
+**Example:**
+
+.. image:: ../_static/widget_label.png
+    :scale: 30%
+    :align: center
+
+.. code-block:: python
+
+    HELP = "Press ESC to enable/disable Menu "\
+           "Press ENTER to access a Sub-Menu or use an option "\
+           "Press UP/DOWN to move through Menu "\
+           "Press LEFT/RIGHT to move through Selectors."
+
+    menu = pygame_menu.Menu(...)
+    menu.add_label(HELP, max_char=-1, font_size=20)
+
+.. automethod:: pygame_menu.Menu.add_label
+
+
+Add a text entry
+----------------
+
+A text input permits to enter a string using a keyboard. Restriction
+on entered characters can be set using ``input_type``, ``maxchar``,
+``maxwidth`` and ``valid_chars`` parameters.
+
+**Example:**
+
+.. image:: ../_static/widget_textinput.png
+    :scale: 30%
+    :align: center
+
+.. code-block:: python
+
+    def check_name(value):
+        print('User name:', value)
+
+    menu = pygame_menu.Menu(...)
+
+    menu.add_text_input('First name: ', default='John', onreturn=check_name)
+    menu.add_text_input('Last name: ', default='Doe', maxchar=20)
+    menu.add_text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
+
+.. automethod:: pygame_menu.Menu.add_text_input
+
+
 Add a vertical spacer
 ---------------------
 
@@ -216,3 +215,30 @@ visual rendering of the menu.
     menu.add_label('Text #2')
 
 .. automethod:: pygame_menu.Menu.add_vertical_margin
+
+
+Add an image
+------------
+
+An image can be displayed on a menu.
+The ``scale`` parameter represent the scaling ratio of the image width
+and height. When ``scale_smooth=True``, the rendering is better but it
+requires more CPU resources.
+
+**Example:**
+
+.. image:: ../_static/widget_image.png
+    :scale: 30%
+    :align: center
+
+.. code-block:: python
+
+    PATH = os.path.join(os.path.dirname(pygame_menu.__file__),
+                        'resources', 'images', 'pygame_menu.png')
+
+    menu = pygame_menu.Menu(...)
+
+    menu.add_image(PATH, angle=10, scale=(0.15, 0.15))
+    menu.add_image(PATH, angle=-10, scale=(0.15, 0.15), scale_smooth=True)
+
+.. automethod:: pygame_menu.Menu.add_image
