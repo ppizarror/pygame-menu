@@ -331,11 +331,12 @@ class Menu(object):
 
         # Scrolling area
         self._widgets_surface = None
+        menubar_rect = self._menubar.get_rect()
         self._scroll = ScrollArea(
             area_width=self._width,
             area_color=self._theme.background_color,
-            area_height=self._height - self._menubar.get_rect().height,
-            extend_y=self._menubar.get_rect().height,
+            area_height=self._height - menubar_rect.height,
+            extend_y=menubar_rect.height,
             scrollbar_color=self._theme.scrollbar_color,
             scrollbar_slider_color=self._theme.scrollbar_slider_color,
             scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
@@ -383,7 +384,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``back_count``            Number of menus to go back if action is `:py:class:`pygame_menu.events.BACK` event, default is 1 (int)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``button_id``             Widget ID (str)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
@@ -498,7 +499,7 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -573,7 +574,7 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``margin``                (x,y) margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
@@ -627,7 +628,7 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -720,7 +721,7 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -802,7 +803,7 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -896,7 +897,7 @@ class Menu(object):
         assert isinstance(margin, (int, float))
 
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes({'margin': (0, margin), 'padding': 0})
+        attributes = self._filter_widget_attributes({'margin': (0, margin)})
 
         widget = _widgets.VMargin(widget_id=margin_id)
 
@@ -973,6 +974,8 @@ class Menu(object):
 
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         _utils.assert_vector2(background_inflate)
+        assert background_inflate[0] >= 0 and background_inflate[1] >= 0, \
+            'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
 
         attributes['font_antialias'] = self._theme.widget_font_antialias
