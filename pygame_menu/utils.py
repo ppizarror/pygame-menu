@@ -99,9 +99,12 @@ def assert_vector2(num_vector):
     :type num_vector: tuple, list
     :return: None
     """
-    assert isinstance(num_vector, (tuple, list)), 'object {0} must be a list or tuple of 2 items'.format(num_vector)
-    assert len(num_vector) == 2 and isinstance(num_vector[0], (int, float)) and \
-           isinstance(num_vector[1], (int, float)), 'each object of {0} must be integer or float'.format(num_vector)
+    assert isinstance(num_vector, (tuple, list)), \
+        'object \'{0}\' must be a list or tuple of 2 items'.format(num_vector)
+    assert len(num_vector) == 2, 'object list \'{0}\' must contain 2 items only'.format(num_vector)
+    vector_numeric = isinstance(num_vector[0], (int, float)) and \
+                     isinstance(num_vector[1], (int, float))
+    assert vector_numeric, 'each item of \'{0}\' vector must be integer or float'.format(num_vector)
 
 
 def assert_position(position):

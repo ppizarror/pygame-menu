@@ -107,8 +107,10 @@ class Theme(object):
     :type title_shadow_position: str
     :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
     :type widget_alignment: str
-    :param widget_background_color: Background color of a widget
+    :param widget_background_color: Background color of a widget, it can be a color or a BaseImage object. Background fills the entire widget + the padding
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
+    :param widget_background_inflate: Inflate background in (x,y) in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
+    :type widget_background_inflate: tuple, list
     :param widget_font: Widget font path or name
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
@@ -121,11 +123,11 @@ class Theme(object):
     :type widget_font_size: int
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default (0,10)
     :type widget_margin: tuple, list
-    :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements
+    :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements. Padding modifies widget width/height
     :type widget_padding: int, float, tuple, list
     :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default (0,0). It cannot be negative values
     :type widget_offset: tuple, list
-    :param widget_selection_effect: Widget selection effect object
+    :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
     :param widget_shadow: Indicate if a shadow is drawn on each widget
     :type widget_shadow: bool
@@ -138,93 +140,96 @@ class Theme(object):
     """
 
     def __init__(self, **kwargs):
-        
-        self.background_color = self._get(kwargs, 'background_color',
-                                          'color_image', (220, 220, 220))  # type: tuple
-        self.cursor_color = self._get(kwargs, 'cursor_color',
-                                      'color', (0, 0, 0))  # type: tuple
-        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color',
-                                                'color', (30, 30, 30, 120))  # type: tuple
-        self.focus_background_color = self._get(kwargs, 'focus_background_color',
-                                                'color', (0, 0, 0, 180))  # type: tuple
-        self.menubar_close_button = self._get(kwargs, 'menubar_close_button',
-                                              bool, True)  # type: bool
-        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin',
-                                                 'tuple2', (0, 0))  # type: tuple
-        self.scrollbar_color = self._get(kwargs, 'scrollbar_color',
-                                         'color', (220, 220, 220))  # type: tuple
-        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow',
-                                          bool, False)  # type: bool
-        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color',
-                                                'color', (0, 0, 0))  # type: bool
-        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset',
-                                                 (int, float), 2)  # type: (int, float)
-        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position',
-                                                   'position', pygame_menu.locals.POSITION_NORTHWEST)  # type: str
-        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color',
-                                                'color', (200, 200, 200))  # type: tuple
-        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad',
-                                              (int, float), 0)  # type: (int,float)
-        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick',
-                                         (int, float), 20)  # type: (int,float)
-        self.selection_color = self._get(kwargs, 'selection_color',
-                                         'color', (255, 255, 255))  # type: tuple
-        self.surface_clear_color = self._get(kwargs, 'surface_clear_color',
-                                             'color', (0, 0, 0))  # type: tuple
-        self.title_background_color = self._get(kwargs, 'title_background_color',
-                                                'color', (70, 70, 70))  # type: tuple
-        self.title_bar_style = self._get(kwargs, 'title_bar_style',
-                                         int, _widgets.MENUBAR_STYLE_ADAPTIVE)  # type: int
-        self.title_font = self._get(kwargs, 'title_font',
-                                    str, pygame_menu.font.FONT_OPEN_SANS)  # type: str
-        self.title_font_antialias = self._get(kwargs, 'title_font_antialias',
-                                              bool, True)  # type: bool
-        self.title_font_color = self._get(kwargs, 'title_font_color',
-                                          'color', (220, 220, 220))  # type: tuple
-        self.title_font_size = self._get(kwargs, 'title_font_size',
-                                         int, 40)  # type: int
-        self.title_offset = self._get(kwargs, 'title_offset',
-                                      'tuple2', (5, 0))  # type: tuple
-        self.title_shadow = self._get(kwargs, 'title_shadow',
-                                      bool, False)  # type: bool
-        self.title_shadow_color = self._get(kwargs, 'title_shadow_color',
-                                            'color', (0, 0, 0))  # type: tuple
-        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset',
-                                             (int, float), 2)  # type: (int,float)
-        self.title_shadow_position = self._get(kwargs, 'title_shadow_position',
-                                               'position', pygame_menu.locals.POSITION_NORTHWEST)  # type: str
-        self.widget_font = self._get(kwargs, 'widget_font',
-                                     str, pygame_menu.font.FONT_OPEN_SANS)  # type: str
-        self.widget_alignment = self._get(kwargs, 'widget_alignment',
-                                          'alignment', pygame_menu.locals.ALIGN_CENTER)  # type: str
-        self.widget_background_color = self._get(kwargs, 'widget_background_color',
-                                                 'color_image_none')  # type: (tuple, type(None))
-        self.widget_background_inflate = self._get(kwargs, 'background_inflate',
-                                                   'tuple2', (16, 8))  # type: tuple
-        self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias',
-                                               bool, True)  # type: bool
+
+        # Set independant parameters
+        self.background_color = self._get(kwargs, 'background_color', 'color_image',
+                                          (220, 220, 220))  # type: tuple
+        self.cursor_color = self._get(kwargs, 'cursor_color', 'color',
+                                      (0, 0, 0))  # type: tuple
+        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color',
+                                                (30, 30, 30, 120))  # type: tuple
+        self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color',
+                                                (0, 0, 0, 180))  # type: tuple
+        self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool,
+                                              True)  # type: bool
+        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2',
+                                                 (0, 0))  # type: tuple
+        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color',
+                                         (220, 220, 220))  # type: tuple
+        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool,
+                                          False)  # type: bool
+        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color',
+                                                (0, 0, 0))  # type: bool
+        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float),
+                                                 2)  # type: (int, float)
+        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
+                                                   pygame_menu.locals.POSITION_NORTHWEST)  # type: str
+        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color',
+                                                (200, 200, 200))  # type: tuple
+        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float),
+                                              0)  # type: (int,float)
+        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float),
+                                         20)  # type: (int,float)
+        self.selection_color = self._get(kwargs, 'selection_color', 'color',
+                                         (255, 255, 255))  # type: tuple
+        self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color',
+                                             (0, 0, 0))  # type: tuple
+        self.title_background_color = self._get(kwargs, 'title_background_color', 'color',
+                                                (70, 70, 70))  # type: tuple
+        self.title_bar_style = self._get(kwargs, 'title_bar_style', int,
+                                         _widgets.MENUBAR_STYLE_ADAPTIVE)  # type: int
+        self.title_font = self._get(kwargs, 'title_font', str,
+                                    pygame_menu.font.FONT_OPEN_SANS)  # type: str
+        self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool,
+                                              True)  # type: bool
+        self.title_font_color = self._get(kwargs, 'title_font_color', 'color',
+                                          (220, 220, 220))  # type: tuple
+        self.title_font_size = self._get(kwargs, 'title_font_size', int,
+                                         40)  # type: int
+        self.title_offset = self._get(kwargs, 'title_offset', 'tuple2',
+                                      (5, 0))  # type: tuple
+        self.title_shadow = self._get(kwargs, 'title_shadow', bool,
+                                      False)  # type: bool
+        self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color',
+                                            (0, 0, 0))  # type: tuple
+        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float),
+                                             2)  # type: (int,float)
+        self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
+                                               pygame_menu.locals.POSITION_NORTHWEST)  # type: str
+        self.widget_font = self._get(kwargs, 'widget_font', str,
+                                     pygame_menu.font.FONT_OPEN_SANS)  # type: str
+        self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment',
+                                          pygame_menu.locals.ALIGN_CENTER)  # type: str
+        self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none',
+                                                 )  # type: (tuple, type(None))
+        self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool,
+                                               True)  # type: bool
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
                                                                 bool, pygame.vernum[0] == 2)  # type: bool
-        self.widget_font_color = self._get(kwargs, 'widget_font_color',
-                                           'color', (70, 70, 70))  # type: tuple
-        self.widget_font_size = self._get(kwargs, 'widget_font_size',
-                                          int, 30)  # type: int
-        self.widget_margin = self._get(kwargs, 'widget_margin',
-                                       'tuple2', (0, 10))  # type: tuple
-        self.widget_padding = self._get(kwargs, 'widget_padding',
-                                        (int, float), 0)  # type: (int,float,tuple)
-        self.widget_offset = self._get(kwargs, 'widget_offset',
-                                       'tuple2', (0, 0))  # type: tuple
+        self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color',
+                                           (70, 70, 70))  # type: tuple
+        self.widget_font_size = self._get(kwargs, 'widget_font_size', int,
+                                          30)  # type: int
+        self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2',
+                                       (0, 10))  # type: tuple
+        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float),
+                                        0)  # type: (int,float,tuple)
+        self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2',
+                                       (0, 0))  # type: tuple
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
                                                  _widgets.HighlightSelection())  # type: _widgets.core.Selection
-        self.widget_shadow = self._get(kwargs, 'widget_shadow',
-                                       bool, False)  # type: bool
-        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color',
-                                             'color', (0, 0, 0))  # type: tuple
-        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset',
-                                              (int, float), 2)  # type: (int,float)
-        self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position',
-                                                'position', pygame_menu.locals.POSITION_NORTHWEST)  # type: str
+        self.widget_shadow = self._get(kwargs, 'widget_shadow', bool,
+                                       False)  # type: bool
+        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color',
+                                             (0, 0, 0))  # type: tuple
+        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float),
+                                              2)  # type: (int,float)
+        self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
+                                                pygame_menu.locals.POSITION_NORTHWEST)  # type: str
+
+        # Set dependant parameters
+        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2',
+                                                   self.widget_selection_effect.get_xy_margin())  # type: tuple
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
