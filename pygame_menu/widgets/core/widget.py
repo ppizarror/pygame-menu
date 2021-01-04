@@ -260,15 +260,17 @@ class Widget(object):
         """
         if self._background_color is None:
             return
+        rect = self.get_rect(
+            inflate=(self._background_inflate[0] / 2, self._background_inflate[1] / 2)
+        )
         if isinstance(self._background_color, _baseimage.BaseImage):
             self._background_color.draw(
                 surface=surface,
-                area=self._rect.inflate(*self._background_inflate),
-                position=(self._rect.x - self._background_inflate[0] / 2,
-                          self._rect.y - self._background_inflate[1] / 2)
+                area=rect,
+                position=(rect.x, rect.y)
             )
         else:
-            surface.fill(self._background_color, self._rect.inflate(*self._background_inflate))
+            surface.fill(self._background_color, rect)
 
     def get_selection_effect(self):
         """
@@ -443,18 +445,31 @@ class Widget(object):
             else:
                 self._padding = (padding[0], padding[1], padding[2], padding[3])
 
-    def get_rect(self):
+    def get_rect(self, inflate=None):
         """
         Return the Rect object, this forces the widget rendering.
 
+        :param inflate: Inflate rect (x,y) in px
+        :type inflate: None, tuple, list
         :return: Widget rect
         :rtype: :py:class:`pygame.Rect`
         """
         self._render()
-        return pygame.Rect(int(self._rect.x - self._padding[3]),
-                           int(self._rect.y - self._padding[0]),
-                           int(self._rect.width + self._padding[3] + self._padding[1]),
-                           int(self._rect.height + self._padding[0] + self._padding[2]))
+
+        # Padding + inflate
+        if inflate is None:
+            inflate = (0, 0)
+        apply_padding = 1
+
+        pad_top = self._padding[0] * apply_padding + inflate[1]
+        pad_right = self._padding[1] * apply_padding + inflate[0]
+        pad_bottom = self._padding[2] * apply_padding + inflate[1]
+        pad_left = self._padding[3] * apply_padding + inflate[0]
+
+        return pygame.Rect(int(self._rect.x - pad_left),
+                           int(self._rect.y - pad_top),
+                           int(self._rect.width + pad_left + pad_right),
+                           int(self._rect.height + pad_bottom + pad_top))
 
     def get_value(self):
         """
