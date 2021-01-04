@@ -100,11 +100,13 @@ def assert_vector2(num_vector):
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \
-        'object \'{0}\' must be a list or tuple of 2 items'.format(num_vector)
-    assert len(num_vector) == 2, 'object list \'{0}\' must contain 2 items only'.format(num_vector)
+        'object "{0}" must be a list or tuple of 2 items'.format(num_vector)
+    assert len(num_vector) == 2, \
+        'object list "{0}" must contain 2 items only'.format(num_vector)
     vector_numeric = isinstance(num_vector[0], (int, float)) and \
                      isinstance(num_vector[1], (int, float))
-    assert vector_numeric, 'each item of \'{0}\' vector must be integer or float'.format(num_vector)
+    assert vector_numeric, \
+        'each item of "{0}" vector must be integer or float'.format(num_vector)
 
 
 def assert_position(position):
@@ -173,7 +175,8 @@ def make_surface(width, height, alpha=False, fill_color=None):
     assert isinstance(height, (int, float))
     assert isinstance(alpha, bool)
     assert isinstance(fill_color, (type(None), tuple))
-    assert width >= 0 and height >= 0, 'surface width and height must be greater or equal than zero'
+    assert width >= 0 and height >= 0, \
+        'surface width and height must be equal or greater than zero'
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
     if alpha:
         surface = pygame.Surface.convert_alpha(surface)
