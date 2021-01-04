@@ -117,6 +117,7 @@ class Button(Widget):
             color = self._font_color
         self._surface = self._render_string(self._title, color)
         self._rect.width, self._rect.height = self._surface.get_size()
+        self._menu_surface_needs_update = True  # Force menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
@@ -143,4 +144,6 @@ class Button(Widget):
                     self.apply()
                     updated = True
 
+        if updated:
+            self.apply_update_callbacks()
         return updated

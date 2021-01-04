@@ -407,4 +407,7 @@ class ScrollBar(Widget):
                     self.scrolling = False
                     updated = True
 
+        if updated:
+            self.apply_update_callbacks()
+
         return updated

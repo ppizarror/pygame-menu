@@ -344,4 +344,7 @@ class MenuBar(Widget):
                     self.apply()
                     updated = True
 
+        if updated:
+            self.apply_update_callbacks()
+
         return updated

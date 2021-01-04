@@ -272,6 +272,7 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Other
+        self._apply_widget_update_callbacks = True  # If False, apply_widget_update will not be called
         self._copy_paste_enabled = copy_paste_enable
         self._input_type = input_type
         self._input_underline = input_underline
@@ -398,8 +399,8 @@ class TextInput(Widget):
         # Update the size of the render
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        # Check if the size changed
-        self._check_render_size_changed()
+        # Force menu update
+        self._menu_surface_needs_update = True
 
     def _render_selection_box(self, force=False):
         """
@@ -1754,5 +1755,8 @@ class TextInput(Widget):
         if self._cursor_ms_counter >= self._cursor_switch_ms:
             self._cursor_ms_counter %= self._cursor_switch_ms
             self._cursor_visible = not self._cursor_visible
+
+        if updated and self._apply_widget_update_callbacks:
+            self.apply_update_callbacks()
 
         return updated

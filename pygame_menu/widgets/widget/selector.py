@@ -47,7 +47,7 @@ def _check_elements(elements):
     assert len(elements) > 0, 'item list (elements) cannot be empty'
     for e in elements:
         assert len(e) >= 1, \
-            'length of each element on item list must be greater or equal to 1'
+            'length of each element on item list must be equal or greater than 1'
         assert isinstance(e[0], (str, bytes)), \
             'first element of each item on list must be a string (the title of each item)'
 
@@ -104,7 +104,7 @@ class Selector(Widget):
 
         # Check element list
         _check_elements(elements)
-        assert default >= 0, 'default position must be greater or equal than zero'
+        assert default >= 0, 'default position must be equal or greater than zero'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'id must be a string'
         assert isinstance(default, int), 'default must be an integer'
@@ -174,7 +174,7 @@ class Selector(Widget):
             color = self._font_color
         self._surface = self._render_string(string, color)
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._check_render_size_changed()
+        self._menu_surface_needs_update = True  # Force menu update
 
     def set_value(self, item):
         """
@@ -201,6 +201,23 @@ class Selector(Widget):
             assert 0 <= item < len(self._elements), \
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
+
+    def update_elements(self, elements):
+        """
+        Update selector elements.
+
+        :param elements: Elements of the selector
+        :type elements: Object
+        :return: None
+        """
+        _check_elements(elements)
+        selected_element = self._elements[self._index]
+        self._elements = elements
+        try:
+            self._index = self._elements.index(selected_element)
+        except ValueError:
+            if self._index >= len(self._elements):
+                self._index = len(self._elements) - 1
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
@@ -271,21 +288,7 @@ class Selector(Widget):
                             self.right()
                         updated = True
 
+        if updated:
+            self.apply_update_callbacks()
+
         return updated
-
-    def update_elements(self, elements):
-        """
-        Update selector elements.
-
-        :param elements: Elements of the selector
-        :type elements: Object
-        :return: None
-        """
-        _check_elements(elements)
-        selected_element = self._elements[self._index]
-        self._elements = elements
-        try:
-            self._index = self._elements.index(selected_element)
-        except ValueError:
-            if self._index >= len(self._elements):
-                self._index = len(self._elements) - 1

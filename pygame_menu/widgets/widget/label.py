@@ -66,6 +66,7 @@ class Label(Widget):
             return True
         self._surface = self._render_string(self._title, self._font_color)
         self._rect.width, self._rect.height = self._surface.get_size()
+        self._menu_surface_needs_update = True  # Force menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
