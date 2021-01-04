@@ -149,7 +149,7 @@ class Menu(object):
         assert not hasattr(pygame, 'get_init') or pygame.get_init(), 'pygame is not initialized'
 
         # Column/row asserts
-        assert columns >= 1, 'number of columns must be greater or equal than 1'
+        assert columns >= 1, 'number of columns must be equal or greater than 1'
         if columns > 1:
             assert rows is not None and rows >= 1, \
                 'if columns greater than 1 then rows must be equal or greater than 1'
@@ -247,7 +247,7 @@ class Menu(object):
 
         # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
         if self._center_content and self._widget_offset[1] != 0:
-            msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._widget_offset[1], 3))
             warnings.warn(msg)
             self._center_content = False
@@ -261,7 +261,7 @@ class Menu(object):
 
         # If centering is enabled, but scrollarea margin in the vertical is different than zero a warning is raised
         if self._center_content and self._scrollarea_margin[1] != 0:
-            msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._scrollarea_margin[1], 3))
             warnings.warn(msg)
             self._center_content = False
@@ -386,6 +386,7 @@ class Menu(object):
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``button_id``             Widget ID (str)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -427,7 +428,7 @@ class Menu(object):
 
             # Check for recursive
             if action == self or action.in_submenu(self, recursive=True):
-                _msg = 'Menu \'{0}\' is already on submenu structure, recursive menus lead ' \
+                _msg = 'Menu "{0}" is already on submenu structure, recursive menus lead ' \
                        'to unexpected behaviours. For returning to previous menu use ' \
                        'pygame_menu.events.BACK event defining an optional back_count ' \
                        'number of menus to return from, default is 1'.format(action.get_title())
@@ -500,6 +501,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -629,6 +631,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -722,6 +725,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -804,6 +808,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -964,12 +969,14 @@ class Menu(object):
         assert isinstance(align, str)
         attributes['align'] = align
 
+        background_is_color = False
         background_color = kwargs.pop('background_color', self._theme.widget_background_color)
         if background_color is not None:
             if isinstance(background_color, _baseimage.BaseImage):
                 pass
             else:
                 _utils.assert_color(background_color)
+                background_is_color = True
         attributes['background_color'] = background_color
 
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
@@ -980,9 +987,12 @@ class Menu(object):
 
         attributes['font_antialias'] = self._theme.widget_font_antialias
 
-        font_background_color = None
-        if self._theme.widget_font_background_color_from_menu:
-            if isinstance(self._theme.background_color, tuple):
+        font_background_color = kwargs.pop('font_background_color', self._theme.widget_font_background_color)
+        if font_background_color is None and \
+                self._theme.widget_font_background_color_from_menu and \
+                not background_is_color:
+            if isinstance(self._theme.background_color, tuple):  # Is color
+                _utils.assert_color(self._theme.background_color)
                 font_background_color = self._theme.background_color
         attributes['font_background_color'] = font_background_color
 
@@ -1560,6 +1570,7 @@ class Menu(object):
         # Draw widgets
         selected_widget = None
         for widget in self._current._widgets:  # type: _widgets.core.Widget
+            widget.apply_draw_callbacks()
             if not widget.visible:
                 continue
             widget.draw(self._current._widgets_surface)
@@ -2294,6 +2305,15 @@ class Menu(object):
                 if sm._remove_submenu(menu, recursive):
                     return True
         return False
+
+    def get_clock(self):
+        """
+        Returns the pygame menu timer.
+
+        :return: Pygame clock object
+        :rtype: py:class:`pygame.time.Clock`
+        """
+        return self._clock
 
     def get_index(self):
         """

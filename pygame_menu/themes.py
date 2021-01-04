@@ -35,8 +35,8 @@ import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 
+from pygame.version import vernum as pygame_vernum
 import copy
-import pygame
 
 
 class Theme(object):
@@ -115,6 +115,8 @@ class Theme(object):
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
+    :param widget_font_background_color: Widget font background color. By default it is None. If None the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is True and ``widget_background_color`` is None
+    :type widget_font_background_color: tuple, list, None
     :param widget_font_background_color_from_menu: Use menu background color as font background color, True by default in pygame v2
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
@@ -204,8 +206,10 @@ class Theme(object):
                                                  )  # type: (tuple, type(None))
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool,
                                                True)  # type: bool
+        self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none',
+                                                      )  # type: tuple
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
-                                                                bool, pygame.vernum[0] == 2)  # type: bool
+                                                                bool, pygame_vernum[0] == 2)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color',
                                            (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int,
@@ -248,8 +252,9 @@ class Theme(object):
         """
 
         # Size asserts
-        assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
+        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater tham zero'
+        assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
         assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
@@ -268,6 +273,7 @@ class Theme(object):
         self.title_font_color = self._format_opacity(self.title_font_color)  # type: tuple
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)  # type: tuple
         self.widget_background_color = self._format_opacity(self.widget_background_color)  # type: tuple
+        self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)  # type: tuple
         self.widget_font_color = self._format_opacity(self.widget_font_color)  # type: tuple
 
         # List to tuple
@@ -282,9 +288,9 @@ class Theme(object):
 
         # Check sizes
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
-            'scrollarea outer margin must be greater or equal than zero'
+            'scrollarea outer margin must be equal or greater than zero'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
-            'widget offset must be greater or equal than zero'
+            'widget offset must be equal or greater than zero'
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)
