@@ -71,9 +71,9 @@ class Button(Widget):
     def _apply_font(self):
         pass
 
-    def update_callback(self, func, *args):
+    def update_callback(self, callback, *args):
         """
-        Update function triggered by the button; ``func`` cannot point to a Menu, that behaviour
+        Update function triggered by the button; ``callback`` cannot point to a Menu, that behaviour
         is only valid using ``Menu.add_button()`` method.
 
         .. note::
@@ -81,13 +81,13 @@ class Button(Widget):
             If button points to a submenu, and the callback is changed to a function,
             the submenu will be removed from the parent menu. Thus preserving the structure.
 
-        :param func: Function
-        :type func: callable
+        :param callback: Function
+        :type callback: callable
         :param args: Arguments used by the function once triggered
         :type args: any
         :return: None
         """
-        assert is_callable(func), 'only function are allowed'
+        assert is_callable(callback), 'only function are allowed'
 
         # If return is a Menu object, remove it from submenus list
         if self._menu is not None and self._on_return is not None and self.to_menu:
@@ -100,7 +100,7 @@ class Button(Widget):
             self.to_menu = False
 
         self._args = args or []  # type: list
-        self._on_return = func
+        self._on_return = callback
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):

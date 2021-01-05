@@ -38,7 +38,7 @@ class RightArrowSelection(ArrowSelection):
     Widget selection right arrow class.
     Creates an arrow to the right of the selected menu item.
 
-    :param arrow_size: Size of arrow on x,y axis (width, height)
+    :param arrow_size: Size of arrow on *(x,y)* axis *(width,height)*
     :type arrow_size: tuple, list
     :param arrow_left_margin: Distance from the arrow to the widget
     :type arrow_left_margin: int, float

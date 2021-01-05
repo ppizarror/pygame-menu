@@ -216,7 +216,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def get_value(self):
         """
         Return the color value as a tuple or red blue and green channels.
-        If the data is invalid the widget returns (-1,-1,-1).
+
+        .. note :: If the data is invalid the widget returns *(-1,-1,-1)*.
 
         :return: Color tuple as (R,G,B)
         :rtype: tuple

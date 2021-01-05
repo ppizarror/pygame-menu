@@ -44,7 +44,7 @@ class Image(Widget):
     :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
     :type angle: int, float
-    :param scale: Scale of the image (x,y), float or int
+    :param scale: Scale of the image *(x,y)*
     :type scale: tuple, list
     :param scale_smooth: Scale is smoothed
     :type scale_smooth: bool

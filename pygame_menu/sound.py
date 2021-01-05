@@ -259,7 +259,7 @@ class Sound(object):
         """
         Load the example sounds provided by the package.
 
-        :param volume: Volume of the sound, (0-1)
+        :param volume: Volume of the sound, *(0-1)*
         :type volume: float
         :return: None
         """

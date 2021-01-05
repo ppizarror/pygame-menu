@@ -204,14 +204,14 @@ class BaseImage(object):
         """
         self._original_surface = self._surface.copy()
 
-    def apply_image_function(self, func):
+    def apply_image_function(self, image_function):
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
         colors and must return the same values. The color pixel will be overriden by the function output.
-        See ``.to_bw()`` method as an example.
+        See ``BaseImage.to_bw()`` method as an example.
 
-        :param func: Color function, takes colors as function=myfunc(r, g, b, a). Returns the same tuple (r, g, b, a)
-        :type func: callable
+        :param image_function: Color function, takes colors as ``image_function=myfunc(r, g, b, a)``. Returns the same tuple *(r,g,b,a)*
+        :type image_function: callable
         :return: Self reference
         :rtype: BaseImage
         """
@@ -219,7 +219,7 @@ class BaseImage(object):
         for x in range(w):
             for y in range(h):
                 r, g, b, a = self._surface.get_at((x, y))
-                r, g, b, a = func(r, g, b, a)
+                r, g, b, a = image_function(r, g, b, a)
                 r = int(max(0, min(r, 255)))
                 g = int(max(0, min(g, 255)))
                 b = int(max(0, min(b, 255)))
@@ -239,7 +239,7 @@ class BaseImage(object):
             c = (r + g + b) / 3
             return c, c, c, a
 
-        return self.apply_image_function(func=bw)
+        return self.apply_image_function(image_function=bw)
 
     def pick_channels(self, channels):
         """
@@ -273,7 +273,7 @@ class BaseImage(object):
 
     def flip(self, x, y):
         """
-        This can flip the image either vertically, horizontally, or both.
+        This method can flip the image either vertically, horizontally, or both.
         Flipping a image is non-destructive and does not change the dimensions.
 
         :param x: Flip in x axis
@@ -331,7 +331,6 @@ class BaseImage(object):
     def resize(self, width, height, smooth=False):
         """
         Set the image size to another size.
-        This is a fast scale operation.
 
         :param width: New width of the image in px
         :type width: int, float
