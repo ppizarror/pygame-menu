@@ -272,7 +272,7 @@ class Widget(object):
 
         :param color: Widget background color
         :type color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-        :param inflate: Inflate background in x,y. If None, the widget value is not updated
+        :param inflate: Inflate background in *(x,y)*. If None, the widget value is not updated
         :type inflate: tuple, list, None
         :return: None
         """
@@ -452,7 +452,7 @@ class Widget(object):
         """
         Return the widget padding.
 
-        :return: Widget padding (top, right, bottom, left)
+        :return: Widget padding *(top,right,bottom,left)*
         :rtype: tuple
         """
         return self._padding
@@ -500,7 +500,7 @@ class Widget(object):
             This is the only method that returns the rect with the padding applied.
             If widget._rect is used, the padding has not been applied.
 
-        :param inflate: Inflate rect (x,y) in px
+        :param inflate: Inflate rect *(x,y)* in px
         :type inflate: None, tuple, list
         :return: Widget rect
         :rtype: :py:class:`pygame.Rect`
@@ -586,9 +586,6 @@ class Widget(object):
         assert isinstance(use_background_color, bool)
         bgcolor = self._font_background_color
 
-        # if self._background_color is not None and isinstance(self._background_color, tuple):
-        #    bgcolor = self._background_color
-
         # Background color must be opaque, otherwise the results are quite bad
         if isinstance(bgcolor, (tuple, list)) and len(bgcolor) == 4 and bgcolor[3] != 255:
             bgcolor = None
@@ -600,7 +597,6 @@ class Widget(object):
         if self._font is None:
             return make_surface(0, 0)
         surface = self._font.render(text, self._font_antialias, color, bgcolor)
-        # surface = pygame.Surface.convert_alpha(surface)
         return surface
 
     def _render_string(self, string, color, enable_fill=True):
@@ -675,7 +671,7 @@ class Widget(object):
         """
         Checks if the widget width/height has changed because events. If so, return true and
         set the status of the widget (menu widget position needs update) as false. This method
-        is used by ``.update()`` from Menu class.
+        is used by ``Menu.update()``.
 
         :return: True if the widget position has changed by events after the rendering.
         :rtype: bool
@@ -732,7 +728,7 @@ class Widget(object):
         - ``selected_color``        Selected color (tuple)
         - ``size``                  Size of the font (int)
 
-        .. note:: If a key is not defined it will be rewritten using current font style from ``.get_font_info()`` method.
+        .. note:: If a key is not defined it will be rewritten using current font style from ``Widget.get_font_info()`` method.
 
         :param style: Font style dict
         :type style: dict
@@ -825,7 +821,7 @@ class Widget(object):
 
     def flip(self, x, y):
         """
-        This can flip the widget either vertically, horizontally, or both.
+        This method can flip the widget either vertically, horizontally, or both.
         Flipping a widget is non-destructive and does not change the dimensions.
 
         :param x: Flip in x axis
@@ -865,7 +861,6 @@ class Widget(object):
     def resize(self, width, height, smooth=False):
         """
         Set the widget size to another size.
-        This is a fast scale operation.
 
         .. note ::
 
@@ -885,9 +880,9 @@ class Widget(object):
 
     def translate(self, x, y):
         """
-        Translate to (+x,+y) according to default position.
+        Translate to *(+x,+y)* according to default position.
 
-        .. note:: To revert changes, only set to (0,0).
+        .. note:: To revert changes, only set to *(0,0)*.
 
         :param x: +X in px
         :type x: int, float
@@ -975,7 +970,7 @@ class Widget(object):
         .. warning:: Use with caution.
 
         :return: Widget surface
-        :rtype:: :py:class:`pygame.Surface`
+        :rtype: :py:class:`pygame.Surface`
         """
         return self._surface
 
@@ -1083,7 +1078,7 @@ class Widget(object):
 
     def set_value(self, value):
         """
-        Set the value.
+        Set the widget value.
 
         .. warning::
 
@@ -1110,7 +1105,7 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def add_draw_callback(self, func):
+    def add_draw_callback(self, draw_callback):
         """
         Adds a function to the widget to be executed each time the widget is drawn.
 
@@ -1130,30 +1125,30 @@ class Widget(object):
             button.set_draw_callback(draw_update_function)
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
-        anytime using widget.remove_draw_callback(id).
+        anytime using ``widget.remove_draw_callback(id)``.
 
-        :param func: Function
-        :type func: callable
-        :return: Call ID
+        :param draw_callback: Function
+        :type draw_callback: callable
+        :return: Callback ID
         :rtype: str
         """
-        assert is_callable(func), 'draw callback must be a function type'
-        funcid = str(uuid4())
-        self._draw_callbacks[funcid] = func
-        return funcid
+        assert is_callable(draw_callback), 'draw callback must be a function type'
+        callback_id = str(uuid4())
+        self._draw_callbacks[callback_id] = draw_callback
+        return callback_id
 
-    def remove_draw_callback(self, callid):
+    def remove_draw_callback(self, callback_id):
         """
         Removes draw callback from ID.
 
-        :param callid: Callback ID
-        :type callid: str
+        :param callback_id: Callback ID
+        :type callback_id: str
         :return: None
         """
-        assert isinstance(callid, str)
-        if callid not in self._draw_callbacks.keys():
-            raise IndexError('callback ID "{0}" does not exist'.format(callid))
-        del self._draw_callbacks[callid]
+        assert isinstance(callback_id, str)
+        if callback_id not in self._draw_callbacks.keys():
+            raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
+        del self._draw_callbacks[callback_id]
 
     def apply_draw_callbacks(self):
         """
@@ -1163,10 +1158,10 @@ class Widget(object):
         """
         if len(self._draw_callbacks) == 0:
             return
-        for func in self._draw_callbacks.values():
-            func(self, self._menu)
+        for callback in self._draw_callbacks.values():
+            callback(self, self._menu)
 
-    def add_update_callback(self, func):
+    def add_update_callback(self, update_callback):
         """
         Adds a function to the widget to be executed each time the widget is updated.
 
@@ -1174,32 +1169,32 @@ class Widget(object):
         the menu reference. It is similar to ``add_draw_callback``.
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
-        anytime using widget.remove_update_callback(id).
+        anytime using ``widget.remove_update_callback(id)``.
 
         .. note:: Not all widgets are updated, so the provided function may never be executed.
 
-        :param func: Function
-        :type func: callable
-        :return: Call ID
+        :param update_callback: Function
+        :type update_callback: callable
+        :return: Callback ID
         :rtype: str
         """
-        assert is_callable(func), 'update callback must be a function type'
-        funcid = str(uuid4())
-        self._update_callbacks[funcid] = func
-        return funcid
+        assert is_callable(update_callback), 'update callback must be a function type'
+        callback_id = str(uuid4())
+        self._update_callbacks[callback_id] = update_callback
+        return callback_id
 
-    def remove_update_callback(self, callid):
+    def remove_update_callback(self, callback_id):
         """
         Removes update callback from ID.
 
-        :param callid: Callback ID
-        :type callid: str
+        :param callback_id: Callback ID
+        :type callback_id: str
         :return: None
         """
-        assert isinstance(callid, str)
-        if callid not in self._update_callbacks.keys():
-            raise IndexError('callback ID "{0}" does not exist'.format(callid))
-        del self._update_callbacks[callid]
+        assert isinstance(callback_id, str)
+        if callback_id not in self._update_callbacks.keys():
+            raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
+        del self._update_callbacks[callback_id]
 
     def apply_update_callbacks(self):
         """
@@ -1209,8 +1204,8 @@ class Widget(object):
         """
         if len(self._update_callbacks) == 0:
             return
-        for func in self._update_callbacks.values():
-            func(self, self._menu)
+        for callback in self._update_callbacks.values():
+            callback(self, self._menu)
 
     def _add_event(self, event):
         """
