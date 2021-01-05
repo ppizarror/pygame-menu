@@ -135,6 +135,7 @@ class MenuBar(Widget):
         :return: None
         """
         assert isinstance(width, int)
+        assert width > 0
         self._backbox_border_width = width
 
     # noinspection PyMissingOrEmptyDocstring

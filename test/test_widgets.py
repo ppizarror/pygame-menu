@@ -209,6 +209,8 @@ class WidgetsTest(unittest.TestCase):
         mb = MenuBar('Menu', 500, (0, 0, 0), True)
         mb.set_backbox_border_width(2)
         self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(1.5))
+        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(0))
+        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(-1))
         self.assertEqual(mb._backbox_border_width, 2)
         self.menu.draw(surface)
         self.menu.disable()
