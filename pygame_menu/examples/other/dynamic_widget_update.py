@@ -33,9 +33,10 @@ import sys
 
 sys.path.insert(0, '../../')
 
-import pygame_menu
-import pygame
+import math
 import os
+import pygame
+import pygame_menu
 
 
 class App(object):
@@ -114,11 +115,32 @@ class App(object):
         self.item_description_widget = self.menu.add_label(title='')  # type: pygame_menu.widgets.Label
 
         self.quit_button = self.menu.add_button('Quit', pygame_menu.events.EXIT)
-        self.quit_button_fake = self.menu.add_button('You cannot quit', self.fake_quit)
+
+        self.quit_button_fake = self.menu.add_button('You cannot quit', self.fake_quit, font_color=(255, 255, 255))
+        self.quit_button_fake.add_draw_callback(self.animate_quit_button)
 
         # Update the widgets based on selected value from selector
         # get_value returns selected item tuple and index, so [0][1] means the second object from ('The first', 1) tuple
         self._update_from_selection(self.selector_widget.get_value()[0][1])
+
+    def animate_quit_button(self, widget, menu):
+        """
+        Animate widgets if the last option is selected.
+
+        :param widget: Widget to be updated
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :param menu: Menu
+        :type menu: :py:class:`pygame_menu.Menu`
+        :return: None
+        """
+        if self.current == 3:
+            t = widget.get_attribute('t', default=math.pi)
+            t += menu.get_clock().get_time() * 0.001
+            widget.set_attribute('t', t)
+            widget.set_padding(10 * (1 + math.sin(t)))  # Oscillating padding
+            new_color = (int(125 * (1 + math.sin(t))), 0, 0)
+            widget.set_background_color(new_color, None)
+            widget.update_font({'background_color': new_color})
 
     @staticmethod
     def fake_quit():
@@ -137,6 +159,7 @@ class App(object):
         :type index: int
         :return: None
         """
+        self.current = index
         self.image_widget.set_image(self.modes[index]['image'])
         self.item_description_widget.set_title(self.modes[index]['label']['text'])
         self.item_description_widget.update_font(

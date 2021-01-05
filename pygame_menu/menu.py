@@ -84,6 +84,8 @@ class Menu(object):
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
     :type onclose: callable, None
+    :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: (overflow_x, overflow_y)
+    :type overflow: tuple, list
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
     :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode
@@ -114,6 +116,7 @@ class Menu(object):
                  mouse_motion_selection=False,
                  mouse_visible=True,
                  onclose=None,
+                 overflow=(True, True),
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
@@ -136,6 +139,7 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
+        assert isinstance(overflow, (tuple, list))
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
@@ -149,7 +153,7 @@ class Menu(object):
         assert not hasattr(pygame, 'get_init') or pygame.get_init(), 'pygame is not initialized'
 
         # Column/row asserts
-        assert columns >= 1, 'number of columns must be greater or equal than 1'
+        assert columns >= 1, 'number of columns must be equal or greater than 1'
         if columns > 1:
             assert rows is not None and rows >= 1, \
                 'if columns greater than 1 then rows must be equal or greater than 1'
@@ -195,6 +199,11 @@ class Menu(object):
         assert width <= window_width and height <= window_height, \
             'menu size ({0}x{1}) must be lower or equal than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
+
+        # Assert overflow
+        assert len(overflow) == 2, 'overflow must be a 2-item tuple/list of booleans (x-axis,y-axis)'
+        assert isinstance(overflow[0], bool), 'overflow in x axis must be a boolean object'
+        assert isinstance(overflow[1], bool), 'overflow in x axis must be a boolean object'
 
         # Generate ID if empty
         if len(menu_id) == 0:
@@ -247,7 +256,7 @@ class Menu(object):
 
         # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
         if self._center_content and self._widget_offset[1] != 0:
-            msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._widget_offset[1], 3))
             warnings.warn(msg)
             self._center_content = False
@@ -261,7 +270,7 @@ class Menu(object):
 
         # If centering is enabled, but scrollarea margin in the vertical is different than zero a warning is raised
         if self._center_content and self._scrollarea_margin[1] != 0:
-            msg = 'menu (title \'{0}\') is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._scrollarea_margin[1], 3))
             warnings.warn(msg)
             self._center_content = False
@@ -331,11 +340,12 @@ class Menu(object):
 
         # Scrolling area
         self._widgets_surface = None
+        menubar_rect = self._menubar.get_rect()
         self._scroll = ScrollArea(
             area_width=self._width,
             area_color=self._theme.background_color,
-            area_height=self._height - self._menubar.get_rect().height,
-            extend_y=self._menubar.get_rect().height,
+            area_height=self._height - menubar_rect.height,
+            extend_y=menubar_rect.height,
             scrollbar_color=self._theme.scrollbar_color,
             scrollbar_slider_color=self._theme.scrollbar_slider_color,
             scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
@@ -346,6 +356,7 @@ class Menu(object):
             shadow_position=self._theme.scrollbar_shadow_position
         )
         self._scroll.set_menu(self)
+        self._overflow = tuple(overflow)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
@@ -383,8 +394,9 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``back_count``            Number of menus to go back if action is `:py:class:`pygame_menu.events.BACK` event, default is 1 (int)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``button_id``             Widget ID (str)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -426,7 +438,7 @@ class Menu(object):
 
             # Check for recursive
             if action == self or action.in_submenu(self, recursive=True):
-                _msg = 'Menu \'{0}\' is already on submenu structure, recursive menus lead ' \
+                _msg = 'Menu "{0}" is already on submenu structure, recursive menus lead ' \
                        'to unexpected behaviours. For returning to previous menu use ' \
                        'pygame_menu.events.BACK event defining an optional back_count ' \
                        'number of menus to return from, default is 1'.format(action.get_title())
@@ -498,7 +510,8 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -573,7 +586,7 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
             - ``margin``                (x,y) margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
@@ -627,7 +640,8 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -720,7 +734,8 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -776,6 +791,7 @@ class Menu(object):
                        cursor_selection_enable=True,
                        input_type=_locals.INPUT_TEXT,
                        input_underline='',
+                       input_underline_len=0,
                        maxchar=0,
                        maxwidth=0,
                        onchange=None,
@@ -802,7 +818,8 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background color if enabled (bool)
+            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
@@ -827,9 +844,11 @@ class Menu(object):
         :type input_type: str
         :param input_underline: Underline character
         :type input_underline: str
+        :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
+        :type input_underline_len: int
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
-        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
+        :param maxwidth: Maximum size of the text widget (in number of chars), if 0 there's no limit
         :type maxwidth: int
         :param onchange: Callback when changing the text input
         :type onchange: callable, None
@@ -864,6 +883,7 @@ class Menu(object):
             cursor_selection_enable=cursor_selection_enable,
             input_type=input_type,
             input_underline=input_underline,
+            input_underline_len=input_underline_len,
             maxchar=maxchar,
             maxwidth=maxwidth,
             onchange=onchange,
@@ -896,7 +916,7 @@ class Menu(object):
         assert isinstance(margin, (int, float))
 
         # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes({'margin': (0, margin), 'padding': 0})
+        attributes = self._filter_widget_attributes({'margin': (0, margin)})
 
         widget = _widgets.VMargin(widget_id=margin_id)
 
@@ -963,23 +983,30 @@ class Menu(object):
         assert isinstance(align, str)
         attributes['align'] = align
 
+        background_is_color = False
         background_color = kwargs.pop('background_color', self._theme.widget_background_color)
         if background_color is not None:
             if isinstance(background_color, _baseimage.BaseImage):
                 pass
             else:
                 _utils.assert_color(background_color)
+                background_is_color = True
         attributes['background_color'] = background_color
 
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         _utils.assert_vector2(background_inflate)
+        assert background_inflate[0] >= 0 and background_inflate[1] >= 0, \
+            'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
 
         attributes['font_antialias'] = self._theme.widget_font_antialias
 
-        font_background_color = None
-        if self._theme.widget_font_background_color_from_menu:
-            if isinstance(self._theme.background_color, tuple):
+        font_background_color = kwargs.pop('font_background_color', self._theme.widget_font_background_color)
+        if font_background_color is None and \
+                self._theme.widget_font_background_color_from_menu and \
+                not background_is_color:
+            if isinstance(self._theme.background_color, tuple):  # Is color
+                _utils.assert_color(self._theme.background_color)
                 font_background_color = self._theme.background_color
         attributes['font_background_color'] = font_background_color
 
@@ -1362,7 +1389,7 @@ class Menu(object):
 
         # If horizontal overflow
         elif max_x > self._width:
-            width, height = max_x + 0.50 * sx, self._height - menubar_height - sx
+            width, height = max_x + 0.5 * sx, self._height - menubar_height - sx
             self._mouse_visible = self._mouse_visible_default
 
         # If vertical overflow
@@ -1375,6 +1402,12 @@ class Menu(object):
         else:
             width, height = self._width, self._height - menubar_height
             self._mouse_visible = self._mouse_visible_default
+
+        # Checks overflow
+        if not self._overflow[0]:
+            width = self._width
+        if not self._overflow[1]:
+            height = self._height - menubar_height
 
         # Adds scrollarea margin
         width += self._scrollarea_margin[0]
@@ -1557,6 +1590,7 @@ class Menu(object):
         # Draw widgets
         selected_widget = None
         for widget in self._current._widgets:  # type: _widgets.core.Widget
+            widget.apply_draw_callbacks()
             if not widget.visible:
                 continue
             widget.draw(self._current._widgets_surface)
@@ -2291,6 +2325,15 @@ class Menu(object):
                 if sm._remove_submenu(menu, recursive):
                     return True
         return False
+
+    def get_clock(self):
+        """
+        Returns the pygame menu timer.
+
+        :return: Pygame clock object
+        :rtype: py:class:`pygame.time.Clock`
+        """
+        return self._clock
 
     def get_index(self):
         """

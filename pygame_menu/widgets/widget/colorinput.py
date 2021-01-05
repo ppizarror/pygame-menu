@@ -155,6 +155,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._previsualization_surface = None  # type: (pygame.Surface,None)
         self._prev_size = prev_size  # type: int
 
+        # Disable parent update callbacks
+        self._apply_widget_update_callbacks = False
+
     # noinspection PyMissingOrEmptyDocstring
     def clear(self):
         super(ColorInput, self).clear()
@@ -437,5 +440,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             if _total_separator == 0 and \
                     (len(self._input_string) < 2 or len(self._input_string) == 2 and int(colors[0]) <= 25):
                 self._auto_separator_pos = []
+
+        if updated:
+            self.apply_update_callbacks()
 
         return updated

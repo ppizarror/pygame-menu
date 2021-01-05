@@ -78,19 +78,28 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._attributes = {}  # Stores widget attributes
+
         self._alignment = _locals.ALIGN_CENTER
+        self._attributes = {}  # Stores widget attributes
         self._background_color = None
         self._background_inflate = (0, 0)
         self._events = []  # type: list
         self._id = str(widget_id)
-        self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
-        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
+        self._padding = (0, 0, 0, 0)  # top, right, bottom, left
+        self._position_set = False
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._selection_time = 0  # type: float
         self._title = to_string(title)
+
+        # Widget rect. This object does not contain padding. For getting the widget+padding
+        # use .get_rect() Widget method instead
+        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
+
+        # Callbacks
+        self._draw_callbacks = {}  # type: dict
+        self._update_callbacks = {}  # type: dict
 
         self._args = args or []  # type: list
         self._kwargs = kwargs or {}  # type: dict
@@ -130,9 +139,6 @@ class Widget(object):
         # then the widget should render and update the hash
         self._last_render_hash = 0  # type: int
 
-        # Stores the last render surface size, updated by _check_render_size_changed()
-        self._last_render_surface_size = (0, 0)
-
         # Selection effect, for avoiding exception while getting object rect, NullSelection
         # was created. Initially it was None
         self._selection_effect = _NullSelection()  # type: Selection
@@ -141,6 +147,7 @@ class Widget(object):
         self.active = False  # Widget requests focus
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True
+        self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
         self.mouse_enabled = True
         self.selected = False
         self.selection_effect_enabled = True  # Some widgets cannot have selection effect
@@ -161,7 +168,7 @@ class Widget(object):
         assert isinstance(key, str)
         self._attributes[key] = value
 
-    def get_attribute(self, key, default):
+    def get_attribute(self, key, default=None):
         """
         Get attribute value.
 
@@ -173,9 +180,33 @@ class Widget(object):
         :rtype: any
         """
         assert isinstance(key, str)
-        if key not in self._attributes.keys():
+        if not self.has_attribute(key):
             return default
         return self._attributes[key]
+
+    def has_attribute(self, key):
+        """
+        Returns true if widget has the given attribute.
+
+        :param key: Key of the attribute
+        :type key: str
+        :return: True if exists
+        :rtype: bool
+        """
+        assert isinstance(key, str)
+        return key in self._attributes.keys()
+
+    def remove_attribute(self, key):
+        """
+        Removes the given attribute from the widget. Throws ``IndexError`` if given key does not exist.
+
+        :param key: Key of the attribute
+        :type key: str
+        :return: None
+        """
+        if not self.has_attribute(key):
+            raise IndexError('attribute "{0}" does not exists on widget'.format(key))
+        del self._attributes[key]
 
     @staticmethod
     def _hash_variables(*args):
@@ -216,8 +247,8 @@ class Widget(object):
         """
         self._title = to_string(title)
         self._apply_font()
+        self._last_render_hash = 0  # Force widget render
         self._render()
-        self._check_render_size_changed()
 
     def get_title(self):
         """
@@ -234,8 +265,8 @@ class Widget(object):
 
         :param color: Widget background color
         :type color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-        :param inflate: Inflate background in x,y
-        :type inflate: tuple, list
+        :param inflate: Inflate background in x,y. If None, the widget value is not updated
+        :type inflate: tuple, list, None
         :return: None
         """
         if color is not None:
@@ -244,11 +275,14 @@ class Widget(object):
                     'currently widget only supports IMAGE_MODE_FILL drawing mode'
             else:
                 assert_color(color)
+        if inflate is None:
+            inflate = self._background_inflate
         assert_vector2(inflate)
         assert inflate[0] >= 0 and inflate[1] >= 0, \
             'widget background inflate must be equal or greater than zero in both axis'
         self._background_color = color
         self._background_inflate = inflate
+        self._last_render_hash = 0  # Force widget render
 
     def _fill_background_color(self, surface):
         """
@@ -260,15 +294,17 @@ class Widget(object):
         """
         if self._background_color is None:
             return
+        rect = self.get_rect(
+            inflate=(self._background_inflate[0] / 2, self._background_inflate[1] / 2)
+        )
         if isinstance(self._background_color, _baseimage.BaseImage):
             self._background_color.draw(
                 surface=surface,
-                area=self._rect.inflate(*self._background_inflate),
-                position=(self._rect.x - self._background_inflate[0] / 2,
-                          self._rect.y - self._background_inflate[1] / 2)
+                area=rect,
+                position=(rect.x, rect.y)
             )
         else:
-            surface.fill(self._background_color, self._rect.inflate(*self._background_inflate))
+            surface.fill(self._background_color, rect)
 
     def get_selection_effect(self):
         """
@@ -289,6 +325,7 @@ class Widget(object):
         """
         assert isinstance(selection, Selection)
         self._selection_effect = selection
+        self._last_render_hash = 0  # Force widget render
 
     def apply(self, *args):
         """
@@ -400,6 +437,7 @@ class Widget(object):
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
         self._margin = (x, y)
+        self._last_render_hash = 0  # Force widget render
 
     def get_padding(self):
         """
@@ -442,19 +480,38 @@ class Widget(object):
                 self._padding = (padding[0], padding[1], padding[2], padding[1])
             else:
                 self._padding = (padding[0], padding[1], padding[2], padding[3])
+        self._last_render_hash = 0  # Force widget render
 
-    def get_rect(self):
+    def get_rect(self, inflate=None):
         """
         Return the Rect object, this forces the widget rendering.
 
+        .. note::
+
+            This is the only method that returns the rect with the padding applied.
+            If widget._rect is used, the padding has not been applied.
+
+        :param inflate: Inflate rect (x,y) in px
+        :type inflate: None, tuple, list
         :return: Widget rect
         :rtype: :py:class:`pygame.Rect`
         """
         self._render()
-        return pygame.Rect(int(self._rect.x - self._padding[3]),
-                           int(self._rect.y - self._padding[0]),
-                           int(self._rect.width + self._padding[3] + self._padding[1]),
-                           int(self._rect.height + self._padding[0] + self._padding[2]))
+
+        # Padding + inflate
+        if inflate is None:
+            inflate = (0, 0)
+        apply_padding = 1
+
+        pad_top = self._padding[0] * apply_padding + inflate[1]
+        pad_right = self._padding[1] * apply_padding + inflate[0]
+        pad_bottom = self._padding[2] * apply_padding + inflate[1]
+        pad_left = self._padding[3] * apply_padding + inflate[0]
+
+        return pygame.Rect(int(self._rect.x - pad_left),
+                           int(self._rect.y - pad_top),
+                           int(self._rect.width + pad_left + pad_right),
+                           int(self._rect.height + pad_bottom + pad_top))
 
     def get_value(self):
         """
@@ -520,6 +577,9 @@ class Widget(object):
         assert isinstance(use_background_color, bool)
         bgcolor = self._font_background_color
 
+        # if self._background_color is not None and isinstance(self._background_color, tuple):
+        #    bgcolor = self._background_color
+
         # Background color must be opaque, otherwise the results are quite bad
         if isinstance(bgcolor, (tuple, list)) and len(bgcolor) == 4 and bgcolor[3] != 255:
             bgcolor = None
@@ -530,26 +590,11 @@ class Widget(object):
 
         if self._font is None:
             return make_surface(0, 0)
-        return self._font.render(text, self._font_antialias, color, bgcolor)
+        surface = self._font.render(text, self._font_antialias, color, bgcolor)
+        # surface = pygame.Surface.convert_alpha(surface)
+        return surface
 
-    def _check_render_size_changed(self):
-        """
-        Check the size changed after rendering.
-        This method should be used only on widgets that can change in size, or if the size
-        is changed during execution time (like ``set_title``).
-        The update status (needs update if render size changed) is returned by
-        ``Widget.surface_needs_update()`` method.
-
-        :return: Boolean, if True the size changed
-        :rtype: bool
-        """
-        if self._rect.size != self._last_render_surface_size:
-            self._last_render_surface_size = self._rect.size
-            self._menu_surface_needs_update = True
-            return True
-        return False
-
-    def _render_string(self, string, color):
+    def _render_string(self, string, color, enable_fill=True):
         """
         Render text and turn it into a surface.
 
@@ -557,16 +602,22 @@ class Widget(object):
         :type string: str
         :param color: Text color
         :type color: tuple
+        :param enable_fill: Enable font fill
+        :type enable_fill: bool
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
         text = self._font_render_string(string, color)
 
         # Create surface
+        fill_color = self._background_color
+        if not isinstance(fill_color, tuple) or not enable_fill:
+            fill_color = None
         surface = make_surface(
             width=text.get_width(),
             height=text.get_height(),
-            alpha=True
+            alpha=True,
+            fill_color=fill_color
         )
 
         # Draw shadow first
@@ -630,6 +681,7 @@ class Widget(object):
         self._font_selected_color = selected_color
         self._font_size = font_size
 
+        self._last_render_hash = 0  # Force widget render
         self._apply_font()
 
     def update_font(self, style):
@@ -655,10 +707,14 @@ class Widget(object):
         for k in current_font.keys():
             if k not in style.keys():
                 style[k] = current_font[k]
-        self.set_font(font=style['name'], font_size=style['size'], color=style['color'],
-                      selected_color=style['selected_color'], background_color=style['background_color'],
-                      antialias=style['antialias'])
-        self._render()
+        self.set_font(
+            font=style['name'],
+            font_size=style['size'],
+            color=style['color'],
+            selected_color=style['selected_color'],
+            background_color=style['background_color'],
+            antialias=style['antialias']
+        )
 
     def get_font_info(self):
         """
@@ -722,8 +778,11 @@ class Widget(object):
         :type posy: int, float
         :return: None
         """
+        if self._position_set and self.lock_position:
+            return
         self._rect.x = posx
         self._rect.y = posy
+        self._position_set = True
 
     def set_alignment(self, align):
         """
@@ -755,13 +814,13 @@ class Widget(object):
         """
         self.selected = selected
         self.active = False
+        self._last_render_hash = 0  # Force widget render
         if selected:
             self._focus()
             self._selection_time = time.time()
         else:
             self._blur()
             self._events = []  # Remove events
-        self._render()
 
     def get_selected_time(self):
         """
@@ -818,8 +877,8 @@ class Widget(object):
                 raise ValueError('shadow offset must be greater than zero')
             self._shadow_offset = offset
 
-        # Create shadow tuple position
-        self._create_shadow_tuple()
+        self._create_shadow_tuple()  # Create shadow tuple position
+        self._last_render_hash = 0  # Force widget render
 
     def set_sound(self, sound):
         """
@@ -905,6 +964,108 @@ class Widget(object):
         :rtype: bool
         """
         raise NotImplementedError('override is mandatory')
+
+    def add_draw_callback(self, func):
+        """
+        Adds a function to the widget to be executed each time the widget is drawn.
+
+        The function that this method receives receives two objects: the widget itself and
+        the menu reference.
+
+        .. code-block:: python
+
+            import math
+
+            def draw_update_function(widget, menu):
+                t = widget.get_attribute('t', 0)
+                t += menu.get_clock().get_time()
+                widget.set_padding(10*(1 + math.sin(t)))) # Oscillating padding
+
+            button = menu.add_button('This button updates its padding', None)
+            button.set_draw_callback(draw_update_function)
+
+        After creating a new callback, this functions returns the ID of the call. It can be removed
+        anytime using widget.remove_draw_callback(id).
+
+        :param func: Function
+        :type func: callable
+        :return: Call ID
+        :rtype: str
+        """
+        assert is_callable(func), 'draw callback must be a function type'
+        funcid = str(uuid4())
+        self._draw_callbacks[funcid] = func
+        return funcid
+
+    def remove_draw_callback(self, callid):
+        """
+        Removes draw callback from ID.
+
+        :param callid: Callback ID
+        :type callid: str
+        :return: None
+        """
+        assert isinstance(callid, str)
+        if callid not in self._draw_callbacks.keys():
+            raise IndexError('callback ID "{0}" does not exist'.format(callid))
+        del self._draw_callbacks[callid]
+
+    def apply_draw_callbacks(self):
+        """
+        Apply callbacks on widget draw.
+
+        :return: None
+        """
+        if len(self._draw_callbacks) == 0:
+            return
+        for func in self._draw_callbacks.values():
+            func(self, self._menu)
+
+    def add_update_callback(self, func):
+        """
+        Adds a function to the widget to be executed each time the widget is updated.
+
+        The function that this method receives receives two objects: the widget itself and
+        the menu reference. It is similar to ``add_draw_callback``.
+
+        After creating a new callback, this functions returns the ID of the call. It can be removed
+        anytime using widget.remove_update_callback(id).
+
+        .. note:: Not all widgets are updated, so the provided function may never be executed.
+
+        :param func: Function
+        :type func: callable
+        :return: Call ID
+        :rtype: str
+        """
+        assert is_callable(func), 'update callback must be a function type'
+        funcid = str(uuid4())
+        self._update_callbacks[funcid] = func
+        return funcid
+
+    def remove_update_callback(self, callid):
+        """
+        Removes update callback from ID.
+
+        :param callid: Callback ID
+        :type callid: str
+        :return: None
+        """
+        assert isinstance(callid, str)
+        if callid not in self._update_callbacks.keys():
+            raise IndexError('callback ID "{0}" does not exist'.format(callid))
+        del self._update_callbacks[callid]
+
+    def apply_update_callbacks(self):
+        """
+        Apply callbacks on widget update.
+
+        :return: None
+        """
+        if len(self._update_callbacks) == 0:
+            return
+        for func in self._update_callbacks.values():
+            func(self, self._menu)
 
     def _add_event(self, event):
         """

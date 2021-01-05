@@ -109,6 +109,7 @@ class Image(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._render_hash_changed(self.visible):
             return True
+        self._menu_surface_needs_update = True  # Force menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

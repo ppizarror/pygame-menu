@@ -47,7 +47,7 @@ def _check_elements(elements):
     assert len(elements) > 0, 'item list (elements) cannot be empty'
     for e in elements:
         assert len(e) >= 1, \
-            'length of each element on item list must be greater or equal to 1'
+            'length of each element on item list must be equal or greater than 1'
         assert isinstance(e[0], (str, bytes)), \
             'first element of each item on list must be a string (the title of each item)'
 
@@ -104,7 +104,7 @@ class Selector(Widget):
 
         # Check element list
         _check_elements(elements)
-        assert default >= 0, 'default position must be greater or equal than zero'
+        assert default >= 0, 'default position must be equal or greater than zero'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'id must be a string'
         assert isinstance(default, int), 'default must be an integer'
@@ -174,7 +174,7 @@ class Selector(Widget):
             color = self._font_color
         self._surface = self._render_string(string, color)
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._check_render_size_changed()
+        self._menu_surface_needs_update = True  # Force menu update
 
     def set_value(self, item):
         """
@@ -202,9 +202,28 @@ class Selector(Widget):
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
 
+    def update_elements(self, elements):
+        """
+        Update selector elements.
+
+        :param elements: Elements of the selector
+        :type elements: Object
+        :return: None
+        """
+        _check_elements(elements)
+        selected_element = self._elements[self._index]
+        self._elements = elements
+        try:
+            self._index = self._elements.index(selected_element)
+        except ValueError:
+            if self._index >= len(self._elements):
+                self._index = len(self._elements) - 1
+
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+        rect = self.get_rect()
+
         for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN:  # Check key is valid
@@ -238,11 +257,11 @@ class Selector(Widget):
                 updated = True
 
             elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
-                if self._rect.collidepoint(*event.pos):
+                if rect.collidepoint(*event.pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
-                    topleft, _ = self._rect.topleft
-                    topright, _ = self._rect.topright
+                    topleft, _ = rect.topleft
+                    topright, _ = rect.topright
                     dist = mousex - (topleft + self._title_size)  # Distance from label
                     if dist > 0:  # User clicked the options, not label
                         # Position in percentage, if <0.5 user clicked left
@@ -256,11 +275,11 @@ class Selector(Widget):
             elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if self._rect.collidepoint(finger_pos):
+                if rect.collidepoint(finger_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = finger_pos
-                    topleft, _ = self._rect.topleft
-                    topright, _ = self._rect.topright
+                    topleft, _ = rect.topleft
+                    topright, _ = rect.topright
                     dist = mousex - (topleft + self._title_size)  # Distance from label
                     if dist > 0:  # User clicked the options, not label
                         # Position in percentage, if <0.5 user clicked left
@@ -271,21 +290,7 @@ class Selector(Widget):
                             self.right()
                         updated = True
 
+        if updated:
+            self.apply_update_callbacks()
+
         return updated
-
-    def update_elements(self, elements):
-        """
-        Update selector elements.
-
-        :param elements: Elements of the selector
-        :type elements: Object
-        :return: None
-        """
-        _check_elements(elements)
-        selected_element = self._elements[self._index]
-        self._elements = elements
-        try:
-            self._index = self._elements.index(selected_element)
-        except ValueError:
-            if self._index >= len(self._elements):
-                self._index = len(self._elements) - 1

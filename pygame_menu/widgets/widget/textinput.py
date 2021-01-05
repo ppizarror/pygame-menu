@@ -82,6 +82,8 @@ class TextInput(Widget):
     :type input_type: str
     :param input_underline: Character drawn under the input
     :type input_underline: str
+    :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
+    :type input_underline_len: int
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
     :param cursor_selection_color: Selection box color
@@ -129,6 +131,7 @@ class TextInput(Widget):
                  textinput_id='',
                  input_type=_locals.INPUT_TEXT,
                  input_underline='',
+                 input_underline_len=0,
                  copy_paste_enable=True,
                  cursor_color=(0, 0, 0),
                  cursor_selection_color=(30, 30, 30, 100),
@@ -154,6 +157,7 @@ class TextInput(Widget):
         assert isinstance(textinput_id, str)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
+        assert isinstance(input_underline_len, int)
         assert isinstance(cursor_color, tuple)
         assert isinstance(copy_paste_enable, bool)
         assert isinstance(cursor_selection_enable, bool)
@@ -175,6 +179,7 @@ class TextInput(Widget):
         assert maxwidth >= 0, 'maxwidth must be equal or greater than zero'
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
+        assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
@@ -272,9 +277,11 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Other
+        self._apply_widget_update_callbacks = True  # If False, apply_widget_update will not be called
         self._copy_paste_enabled = copy_paste_enable
         self._input_type = input_type
         self._input_underline = input_underline
+        self._input_underline_len = input_underline_len
         self._input_underline_size = 0.0  # type: float
         self._keychar_size = {'': 0}  # type: dict
         self._last_char = ''  # type: str
@@ -296,7 +303,7 @@ class TextInput(Widget):
         self._title_size = self._font.size(self._title)[0]
 
         # Generate the underline surface
-        self._input_underline_size = self._font.size(self._input_underline)[0]
+        self._input_underline_size = self._font.size(self._input_underline * 3)[0] / 3
 
         # Size of maxwidth if not zero
         max_char = 'O'
@@ -398,8 +405,8 @@ class TextInput(Widget):
         # Update the size of the render
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        # Check if the size changed
-        self._check_render_size_changed()
+        # Force menu update
+        self._menu_surface_needs_update = True
 
     def _render_selection_box(self, force=False):
         """
@@ -515,7 +522,7 @@ class TextInput(Widget):
             if self._maxchar != 0 or self._maxwidth != 0:
                 max_chars = max(self._maxchar, self._maxwidth_base)
                 basechar = 'O'
-                multif = 4  # Factor of ellipsis
+                multif = 2  # Factor of ellipsis
                 if self._password:
                     basechar = self._password_char
                     multif = 2
@@ -524,6 +531,9 @@ class TextInput(Widget):
                 maxchar_char = math.ceil((max_size + multif * self._ellipsis_size) / self._input_underline_size)
                 char = min(char, maxchar_char)
                 max_width_current = current_rect.width
+
+            if self._input_underline_len != 0:
+                char = self._input_underline_len
 
             underline_string = self._input_underline * int(char)
 
@@ -1754,5 +1764,8 @@ class TextInput(Widget):
         if self._cursor_ms_counter >= self._cursor_switch_ms:
             self._cursor_ms_counter %= self._cursor_switch_ms
             self._cursor_visible = not self._cursor_visible
+
+        if updated and self._apply_widget_update_callbacks:
+            self.apply_update_callbacks()
 
         return updated

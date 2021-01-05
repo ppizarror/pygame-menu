@@ -117,21 +117,25 @@ class Button(Widget):
             color = self._font_color
         self._surface = self._render_string(self._title, color)
         self._rect.width, self._rect.height = self._surface.get_size()
+        self._menu_surface_needs_update = True  # Force menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+        rect = self.get_rect()  # Padding increases the extents of the button
+
         for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
-                    self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and event.button == _controls.JOY_BUTTON_SELECT:
+                    self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
+                    event.button == _controls.JOY_BUTTON_SELECT:
                 self.sound.play_open_menu()
                 self.apply()
                 updated = True
 
             elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 self.sound.play_click_mouse()
-                if self._rect.collidepoint(*event.pos):
+                if rect.collidepoint(*event.pos):
                     self.apply()
                     updated = True
 
@@ -139,8 +143,11 @@ class Button(Widget):
                 self.sound.play_click_mouse()
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if self._rect.collidepoint(finger_pos):
+                if rect.collidepoint(finger_pos):
                     self.apply()
                     updated = True
+
+        if updated:
+            self.apply_update_callbacks()
 
         return updated

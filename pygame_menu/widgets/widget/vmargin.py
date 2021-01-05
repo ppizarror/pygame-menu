@@ -50,6 +50,9 @@ class VMargin(Widget):
         self._font_size = 0
         self._shadow = False
 
+    def set_padding(self, padding):  # Don't accept padding
+        pass
+
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()

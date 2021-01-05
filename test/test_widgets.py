@@ -574,6 +574,60 @@ class WidgetsTest(unittest.TestCase):
         # Invalid recursive menu
         self.assertRaises(ValueError, lambda: menu.add_button('bt', menu))
 
+    def test_draw_callback(self):
+        """
+        Test drawing callback.
+        """
+        self.menu.clear()
+        self.menu.enable()
+
+        def call(widget, _):
+            widget.set_attribute('attr', True)
+
+        btn = self.menu.add_button('btn', None)
+        callid = btn.add_draw_callback(call)
+        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.menu.draw(surface)
+        self.assertEqual(btn.get_attribute('attr', False), True)
+        btn.remove_draw_callback(callid)
+        self.assertRaises(IndexError, lambda: btn.remove_draw_callback(callid))  # Already removed
+        self.menu.disable()
+
+    def test_update_callback(self):
+        """
+        Test update callback.
+        """
+
+        def update(widget, _):
+            widget.set_attribute('attr', True)
+
+        menu = MenuUtils.generic_menu()
+        btn = menu.add_button('button', None)
+        callid = btn.add_update_callback(update)
+        self.assertEqual(btn.get_attribute('attr', False), False)
+        click_pos = PygameUtils.get_middle_rect(btn.get_rect())
+        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        self.assertEqual(btn.get_attribute('attr', False), True)
+        btn.set_attribute('attr', False)
+        btn.remove_update_callback(callid)
+        self.assertRaises(IndexError, lambda: btn.remove_update_callback(callid))
+        self.assertEqual(btn.get_attribute('attr', False), False)
+        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        self.assertEqual(btn.get_attribute('attr', False), False)
+
+        def update2(widget, _):
+            widget.set_attribute('epic', 'bass')
+
+        btn.add_update_callback(update2)
+        self.assertFalse(btn.has_attribute('epic'))
+        btn.draw(surface)
+        self.assertFalse(btn.has_attribute('epic'))
+        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        self.assertTrue(btn.has_attribute('epic'))
+        btn.remove_attribute('epic')
+        self.assertRaises(IndexError, lambda: btn.remove_attribute('epic'))
+        self.assertFalse(btn.has_attribute('epic'))
+
     def test_change_id(self):
         """
         Test widget id change.
