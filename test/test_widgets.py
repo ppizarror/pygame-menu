@@ -46,6 +46,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Setup sound engine.
         """
+        test_reset_surface()
         self.menu = MenuUtils.generic_menu()
 
     def test_nonascii(self):
@@ -638,6 +639,22 @@ class WidgetsTest(unittest.TestCase):
 
         # Invalid recursive menu
         self.assertRaises(ValueError, lambda: menu.add_button('bt', menu))
+
+    def test_attributes(self):
+        """
+        Test widget attributes.
+        """
+        widget = self.menu.add_label('epic')
+        self.assertFalse(widget.has_attribute('epic'))
+        self.assertRaises(IndexError, lambda: widget.remove_attribute('epic'))
+        widget.set_attribute('epic', True)
+        self.assertTrue(widget.has_attribute('epic'))
+        self.assertTrue(widget.get_attribute('epic'))
+        widget.set_attribute('epic', False)
+        self.assertFalse(widget.get_attribute('epic'))
+        widget.remove_attribute('epic')
+        self.assertFalse(widget.has_attribute('epic'))
+        self.assertEqual(widget.get_attribute('epic', 420), 420)
 
     def test_draw_callback(self):
         """

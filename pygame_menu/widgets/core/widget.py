@@ -70,7 +70,7 @@ class Widget(object):
                  args=None,
                  kwargs=None
                  ):
-        assert isinstance(widget_id, str)
+        assert isinstance(widget_id, str), 'widget id must be a string'
         if onchange:
             assert is_callable(onchange), 'onchange must be callable or None'
         if onreturn:

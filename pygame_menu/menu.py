@@ -82,8 +82,8 @@ class Menu(object):
     :type mouse_motion_selection: bool
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
-    :param onclose: Function applied when closing the Menu
-    :type onclose: callable, None
+    :param onclose: Event or function applied when closing the Menu
+    :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
     :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: (overflow_x, overflow_y)
     :type overflow: tuple, list
     :param rows: Number of rows of each column, None if there's only 1 column
@@ -216,17 +216,21 @@ class Menu(object):
             menu_id = str(uuid4())
 
         # General properties of the Menu
+        self._attributes = {}
         self._background_function = None  # type: (None,callable)
         self._center_content = center_content
         self._clock = pygame.time.Clock()  # Inner clock
         self._height = float(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
-        self._onclose = onclose  # Function that calls after closing Menu
+        self._onclose = None  # Function or event called on menu close
         self._sounds = Sound()  # type: Sound
         self._submenus = []  # type: list
         self._theme = theme
         self._width = float(width)
+
+        # Set onclose
+        self.set_onclose(onclose)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accessing self should be through "_current", because user can move through submenus
@@ -372,6 +376,18 @@ class Menu(object):
             msg = 'menu constructor parameter {} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
+    def set_onclose(self, onclose):
+        """
+        Set onclose callback.
+
+        :param onclose: Onclose callback, it can be a function, an event or None
+        :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
+        :return: None
+        """
+        assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
+            'onclose must be a MenuAction, a function or None'
+        self._onclose = onclose
+
     def get_current(self):
         """
         Get current active Menu. If the user has not opened any submenu
@@ -439,9 +455,6 @@ class Menu(object):
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'id must be a string'
 
-        if action is None:
-            action = _events.NONE
-
         # If element is a Menu
         if isinstance(action, Menu):
 
@@ -457,7 +470,7 @@ class Menu(object):
             widget = _widgets.Button(title, button_id, self._open, action)
             widget.to_menu = True
 
-        # If element is a PyMenuAction
+        # If element is a MenuAction
         elif action == _events.BACK:  # Back to Menu
 
             widget = _widgets.Button(title, button_id, self.reset, total_back)  # reset is public, so no _current
@@ -474,17 +487,17 @@ class Menu(object):
 
             widget = _widgets.Button(title, button_id, self._exit)
 
-        elif action == _events.NONE:  # None action
+        elif action == _events.NONE or action is None:  # None action
 
             widget = _widgets.Button(title, button_id)
 
-        # If element is a function
+        # If element is a function or callable
         elif _utils.is_callable(action):
 
             widget = _widgets.Button(title, button_id, action, *args)
 
         else:
-            raise ValueError('element must be a Menu, a PymenuAction or a function')
+            raise ValueError('action must be a Menu, a MenuAction, a function or None')
 
         # Configure and add the button
         self._configure_widget(widget=widget, **attributes)
@@ -1439,7 +1452,7 @@ class Menu(object):
         assert isinstance(widget_id, str)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
-                raise IndexError('widget ID="{0}" is duplicated'.format(widget_id))
+                raise IndexError('widget ID="{0}" already exists on the menu'.format(widget_id))
 
     def _close(self):
         """
@@ -1457,8 +1470,7 @@ class Menu(object):
             close = True
 
             # If action is an event
-            if isinstance(onclose, _events.MenuAction) or \
-                    str(type(onclose)) == "<class 'pygame_menu.events.PymenuAction'>":
+            if _events.is_event(onclose):
 
                 if onclose == _events.DISABLE_CLOSE:
                     close = False
@@ -2396,9 +2408,65 @@ class Menu(object):
         :return: Widget object, None if no widget is selected
         :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
+        if not isinstance(self._index, int):
+            self._index = 0
+            return None
         if self._index < 0:
             return None
         try:
             return self._widgets[self._index % len(self._widgets)]
         except (IndexError, ZeroDivisionError):
             return None
+
+    def set_attribute(self, key, value):
+        """
+        Set menu attribute.
+
+        :param key: Key of the attribute
+        :type key: str
+        :param value: Value of the attribute
+        :type value: any
+        :return: None
+        """
+        assert isinstance(key, str)
+        self._attributes[key] = value
+
+    def get_attribute(self, key, default=None):
+        """
+        Get attribute value.
+
+        :param key: Key of the attribute
+        :type key: str
+        :param default: Value if does not exists
+        :type default: any
+        :return: Attribute data
+        :rtype: any
+        """
+        assert isinstance(key, str)
+        if not self.has_attribute(key):
+            return default
+        return self._attributes[key]
+
+    def has_attribute(self, key):
+        """
+        Returns true if widget has the given attribute.
+
+        :param key: Key of the attribute
+        :type key: str
+        :return: True if exists
+        :rtype: bool
+        """
+        assert isinstance(key, str)
+        return key in self._attributes.keys()
+
+    def remove_attribute(self, key):
+        """
+        Removes the given attribute from the menu. Throws ``IndexError`` if given key does not exist.
+
+        :param key: Key of the attribute
+        :type key: str
+        :return: None
+        """
+        if not self.has_attribute(key):
+            raise IndexError('attribute "{0}" does not exists on menu'.format(key))
+        del self._attributes[key]

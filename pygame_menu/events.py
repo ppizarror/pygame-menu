@@ -51,6 +51,19 @@ class MenuAction(object):
         return False
 
 
+def is_event(event):
+    """
+    Check if event is pygame_menu event type.
+
+    :param event: Event
+    :type event: any
+    :return: True if it's event
+    :rtype: bool
+    """
+    return isinstance(event, MenuAction) or \
+           str(type(event)) == "<class 'pygame_menu.events.MenuAction'>"
+
+
 # Events
 BACK = MenuAction(0)  # Menu back
 CLOSE = MenuAction(1)  # Close menu

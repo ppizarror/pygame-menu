@@ -47,6 +47,7 @@ class MenuTest(unittest.TestCase):
         """
         Test setup.
         """
+        test_reset_surface()
         self.menu = MenuUtils.generic_menu(title='mainmenu')
         self.menu.mainloop(surface, bgfun=dummy_function)
 
@@ -94,11 +95,45 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(position_x=0, position_y=0)
         menu.set_relative_position(20, 40)
 
+    def test_attributes(self):
+        """
+        Test menu attributes.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertFalse(menu.has_attribute('epic'))
+        self.assertRaises(IndexError, lambda: menu.remove_attribute('epic'))
+        menu.set_attribute('epic', True)
+        self.assertTrue(menu.has_attribute('epic'))
+        self.assertTrue(menu.get_attribute('epic'))
+        menu.set_attribute('epic', False)
+        self.assertFalse(menu.get_attribute('epic'))
+        menu.remove_attribute('epic')
+        self.assertFalse(menu.has_attribute('epic'))
+        self.assertEqual(menu.get_attribute('epic', 420), 420)
+
+    def test_close(self):
+        """
+        Test menu close.
+        """
+        menu = MenuUtils.generic_menu()
+        menu.set_attribute('epic', False)
+        menu._back()
+
+        def test_close():
+            menu.set_attribute('epic', True)
+
+        menu.set_onclose(test_close)
+        self.assertTrue(not menu.is_enabled())
+        menu.enable()
+        self.assertFalse(menu.get_attribute('epic'))
+        menu._close()
+        self.assertTrue(menu.get_attribute('epic'))
+
     def test_enabled(self):
         """
         Test menu enable/disable feature.
         """
-        menu = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(onclose=events.NONE)
         self.assertTrue(not menu.is_enabled())
         menu.enable()
         self.assertTrue(menu.is_enabled())
@@ -193,8 +228,14 @@ class MenuTest(unittest.TestCase):
         """
         Test generic widget.
         """
+        self.menu.clear()
+        menu = MenuUtils.generic_menu()
+        btn = menu.add_button('nice', None)
         w = Button('title')
         self.menu.add_generic_widget(w)
+        self.assertRaises(ValueError, lambda: menu.add_generic_widget(w))
+        btn._menu = None
+        self.menu.add_generic_widget(btn)
 
     # noinspection PyArgumentEqualDefault
     def test_get_selected_widget(self):
@@ -292,7 +333,13 @@ class MenuTest(unittest.TestCase):
 
         # Clear all widgets and get index
         self.menu._widgets = []
+        self._index = 100
         self.assertEqual(self.menu.get_selected_widget(), None)
+
+        # Destroy index
+        self.menu._index = '0'
+        self.assertEqual(None, self.menu.get_selected_widget())
+        self.assertEqual(self.menu._index, 0)
 
     def test_submenu(self):
         """
@@ -321,11 +368,11 @@ class MenuTest(unittest.TestCase):
         """
         Test centering menu.
         """
-
         # Vertical offset disables centering
         theme = pygame_menu.themes.THEME_BLUE.copy()
         theme.widget_offset = (0, 100)
         menu = MenuUtils.generic_menu(theme=theme)
+        self.assertEqual(menu.get_theme(), theme)
         self.assertFalse(menu._center_content)
 
         # Outer scrollarea margin disables centering
@@ -338,6 +385,21 @@ class MenuTest(unittest.TestCase):
         theme = pygame_menu.themes.THEME_BLUE.copy()
         menu = MenuUtils.generic_menu(theme=theme)
         self.assertTrue(menu._center_content)
+
+    def test_getters(self):
+        """
+        Test other getters.
+        """
+        self.assertTrue(self.menu.get_menubar_widget() is not None)
+        self.assertTrue(self.menu.get_scrollarea() is not None)
+
+        w, h = self.menu.get_size()
+        self.assertEqual(int(w), 600)
+        self.assertEqual(int(h), 400)
+
+        w, h = self.menu.get_window_size()
+        self.assertEqual(int(w), 600)
+        self.assertEqual(int(h), 600)
 
     def test_generic_events(self):
         """
