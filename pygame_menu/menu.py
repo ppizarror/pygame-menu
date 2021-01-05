@@ -203,7 +203,7 @@ class Menu(object):
         # Assert overflow
         assert len(overflow) == 2, 'overflow must be a 2-item tuple/list of booleans (x-axis,y-axis)'
         assert isinstance(overflow[0], bool), 'overflow in x axis must be a boolean object'
-        assert isinstance(overflow[1], bool), 'overflow in x axis must be a boolean object'
+        assert isinstance(overflow[1], bool), 'overflow in y axis must be a boolean object'
 
         # Generate ID if empty
         if len(menu_id) == 0:
