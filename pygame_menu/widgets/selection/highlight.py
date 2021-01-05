@@ -38,6 +38,8 @@ class HighlightSelection(Selection):
     """
     Widget selection highlight class.
 
+    .. note:: Widget background color may not reach the entire selection area
+
     :param border_width: Border width of the highlight box
     :type border_width: int
     :param margin_x: X margin of selected highlight box
@@ -66,6 +68,7 @@ class HighlightSelection(Selection):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
+        # noinspection PyArgumentList
         pygame.draw.rect(
             surface,
             self.color,

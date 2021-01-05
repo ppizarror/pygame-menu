@@ -69,6 +69,7 @@ WORLDS = {
 }
 
 
+# noinspection PyArgumentList
 def make_world(width, height, text=''):
     """
     Create a test surface.

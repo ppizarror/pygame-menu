@@ -276,7 +276,7 @@ class Selector(Widget):
             elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if rect.collidepoint(finger_pos):
+                if rect.collidepoint(*finger_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = finger_pos
                     topleft, _ = rect.topleft

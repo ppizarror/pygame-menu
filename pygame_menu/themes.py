@@ -35,7 +35,6 @@ import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 
-from pygame.version import vernum as pygame_vernum
 import copy
 
 
@@ -125,7 +124,7 @@ class Theme(object):
     :type widget_font_antialias: bool
     :param widget_font_background_color: Widget font background color. By default it is None. If None the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is True and ``widget_background_color`` is None
     :type widget_font_background_color: tuple, list, None
-    :param widget_font_background_color_from_menu: Use menu background color as font background color, True by default in pygame v2
+    :param widget_font_background_color_from_menu: Use menu background color as font background color; disabled by default
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
@@ -151,7 +150,6 @@ class Theme(object):
 
     def __init__(self, **kwargs):
 
-        # Set independant parameters
         self.background_color = self._get(kwargs, 'background_color', 'color_image',
                                           (220, 220, 220))  # type: tuple
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color',
@@ -212,12 +210,14 @@ class Theme(object):
                                           pygame_menu.locals.ALIGN_CENTER)  # type: str
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none',
                                                  )  # type: (tuple, type(None))
+        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2',
+                                                   (0, 0))  # type: tuple
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool,
                                                True)  # type: bool
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none',
                                                       )  # type: tuple
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
-                                                                bool, pygame_vernum[0] == 2)  # type: bool
+                                                                bool, False)  # type: bool
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color',
                                            (70, 70, 70))  # type: tuple
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int,
@@ -238,10 +238,6 @@ class Theme(object):
                                               2)  # type: (int,float)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
                                                 pygame_menu.locals.POSITION_NORTHWEST)  # type: str
-
-        # Set dependant parameters
-        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2',
-                                                   self.widget_selection_effect.get_xy_margin())  # type: tuple
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():

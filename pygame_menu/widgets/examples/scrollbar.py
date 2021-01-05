@@ -64,8 +64,10 @@ def make_world(width, height):
         for y in range(100, height, 200):
             if numberx in (0, maxx - 1) or numbery in (0, maxy - 1):
                 # White circles to delimit world boundaries
+                # noinspection PyArgumentList
                 pygame.draw.circle(world, (255, 255, 255), (x, y), 100, 10)
             else:
+                # noinspection PyArgumentList
                 pygame.draw.circle(world, color, (x, y), 100, 10)
                 if color[0] + 15 < 255:
                     color[0] += 15
