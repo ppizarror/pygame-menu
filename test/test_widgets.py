@@ -66,6 +66,20 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+    def test_background(self):
+        """
+        Test widget background.
+        """
+        self.menu.clear()
+        self.menu.enable()
+        w = self.menu.add_label('Text')  # type: Label
+        w.set_background_color((255, 255, 255), (10, 10))
+        w.draw(surface)
+        self.assertEqual(w._background_inflate[0], 10)
+        self.assertEqual(w._background_inflate[1], 10)
+        w.set_background_color(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
+        w.draw(surface)
+
     def test_transform(self):
         """
         Transform widgets.
@@ -76,6 +90,7 @@ class WidgetsTest(unittest.TestCase):
         w.rotate(45)
         w.translate(10, 10)
         w.scale(1, 1)
+        w.set_max_width(150)
         self.assertFalse(w._scale[0])  # Scalling is disabled
         w.scale(1.5, 1)
         self.assertTrue(w._scale[0])  # Scalling is enabled
