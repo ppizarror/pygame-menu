@@ -141,6 +141,8 @@ class App(object):
             new_color = (int(125 * (1 + math.sin(t))), 0, 0)
             widget.set_background_color(new_color, None)
             widget.update_font({'background_color': new_color})
+            widget.translate(10 * math.cos(t), 10 * math.sin(t))
+            widget.rotate(5 * t)
 
     @staticmethod
     def fake_quit():

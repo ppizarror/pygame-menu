@@ -127,6 +127,9 @@ class ExamplesTest(unittest.TestCase):
         """
         Test dynamic widget update example.
         """
+        app = dynamic_widget.App()
+        app.current = 3
+        app.animate_quit_button(app.quit_button, app.menu)
         dynamic_widget.main(test=True)
         test_reset_surface()
 

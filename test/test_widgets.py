@@ -66,6 +66,50 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+    def test_transform(self):
+        """
+        Transform widgets.
+        """
+        self.menu.clear()
+        self.menu.enable()
+        w = self.menu.add_label('Text')  # type: Label
+        w.rotate(45)
+        w.translate(10, 10)
+        w.scale(1, 1)
+        self.assertFalse(w._scale[0])  # Scalling is disabled
+        w.scale(1.5, 1)
+        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertFalse(w._scale[4])  # use_same_xy
+        w.scale(1, 1)
+        self.assertFalse(w._scale[0])
+        w.resize(40, 40)
+        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[4])  # use_same_xy
+        w.scale(1, 1)
+        self.assertFalse(w._scale[0])
+        self.assertFalse(w._scale[4])  # use_same_xy
+        w.flip(False, False)
+
+        # Test all widgets
+        widgs = [
+            self.menu.add_button('e', None),
+            self.menu.add_selector('e', [('The first', 1),
+                                         ('The second', 2),
+                                         ('The final mode', 3)]),
+            self.menu.add_color_input('color', 'rgb'),
+            self.menu.add_label('nice'),
+            self.menu.add_image(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
+            self.menu.add_vertical_margin(10),
+            self.menu.add_text_input('nice')
+        ]
+        for w in widgs:
+            w.rotate(45)
+            w.translate(10, 10)
+            w.scale(1.5, 1.5)
+            w.resize(10, 10)
+            w.flip(True, True)
+        self.menu.draw(surface)
+
     def test_visibility(self):
         """
         Test widget visibility.

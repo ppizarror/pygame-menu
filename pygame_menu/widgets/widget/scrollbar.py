@@ -48,6 +48,8 @@ class ScrollBar(Widget):
 
     .. warning:: Arrows are not yet implemented.
 
+    .. note:: This widget only accepts translation transformation.
+
     :param length: Length of the page control
     :type length: int
     :param values_range: Min and max values

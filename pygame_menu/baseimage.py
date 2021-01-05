@@ -285,7 +285,7 @@ class BaseImage(object):
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
-        assert not (x and y), 'at least one axis should be True'
+        assert (x or y), 'at least one axis should be True'
         self._surface = pygame.transform.flip(self._surface, x, y)
         return self
 
@@ -333,9 +333,9 @@ class BaseImage(object):
         Set the image size to another size.
         This is a fast scale operation.
 
-        :param width: New width of the image
+        :param width: New width of the image in px
         :type width: int, float
-        :param height: New height of the image
+        :param height: New height of the image in px
         :type height: int, float
         :param smooth: Smooth scaling
         :type smooth: bool

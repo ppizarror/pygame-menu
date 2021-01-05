@@ -66,7 +66,9 @@ class HighlightSelection(Selection):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
-        pygame.draw.rect(surface,
-                         self.color,
-                         self.inflate(widget.get_rect()),
-                         self._border_width)
+        pygame.draw.rect(
+            surface,
+            self.color,
+            self.inflate(widget.get_rect()),
+            self._border_width
+        )
