@@ -116,7 +116,7 @@ class App(object):
 
         self.quit_button = self.menu.add_button('Quit', pygame_menu.events.EXIT)
 
-        self.quit_button_fake = self.menu.add_button('You cannot quit', self.fake_quit)
+        self.quit_button_fake = self.menu.add_button('You cannot quit', self.fake_quit, font_color=(255, 255, 255))
         self.quit_button_fake.add_draw_callback(self.animate_quit_button)
 
         # Update the widgets based on selected value from selector
@@ -134,7 +134,7 @@ class App(object):
         :return: None
         """
         if self.current == 3:
-            t = widget.get_attribute('t', math.pi)
+            t = widget.get_attribute('t', default=math.pi)
             t += menu.get_clock().get_time() * 0.001
             widget.set_attribute('t', t)
             widget.set_padding(10 * (1 + math.sin(t)))  # Oscillating padding

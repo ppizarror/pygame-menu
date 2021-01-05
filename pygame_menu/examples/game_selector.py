@@ -233,7 +233,6 @@ def main(test=False):
     about_theme.widget_margin = (0, 0)
 
     about_menu = pygame_menu.Menu(
-        center_content=False,
         height=WINDOW_SIZE[1] * 0.6,
         onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=about_theme,

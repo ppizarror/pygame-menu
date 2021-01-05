@@ -61,7 +61,7 @@ menu = pygame_menu.Menu(
     width=400
 )
 
-menu.add_text_input('Name: ', default='John Doe')
+menu.add_text_input('Name: ', default='John Doe', maxchar=10, input_underline='.', input_underline_len=30)
 menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
 menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygame_menu.events.EXIT)
