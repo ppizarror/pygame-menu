@@ -43,13 +43,21 @@ class Theme(object):
     """
     Class defining the visual rendering of menus and widgets.
 
-    .. note:: All colors must be defined with a tuple of 3 or 4 numbers in the formats:
+    .. note::
 
-                - (R,G,B)
-                - (R,G,B,A)
+        All colors must be defined with a tuple of 3 or 4 numbers in the formats:
 
-            Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
-            A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
+            - (R,G,B)
+            - (R,G,B,A)
+
+        Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
+        A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
+
+    .. note::
+
+        Themes only modify visual behaviour of the Menu. For other options
+        like rows/columns, enabling or disabling overflow, position or menu
+        width/height see Menu parameters.
 
     :param background_color: Menu background color
     :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
@@ -189,7 +197,7 @@ class Theme(object):
         self.title_font_size = self._get(kwargs, 'title_font_size', int,
                                          40)  # type: int
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2',
-                                      (5, 0))  # type: tuple
+                                      (5, -1))  # type: tuple
         self.title_shadow = self._get(kwargs, 'title_shadow', bool,
                                       False)  # type: bool
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color',

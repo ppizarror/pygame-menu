@@ -84,6 +84,8 @@ class Menu(object):
     :type mouse_visible: bool
     :param onclose: Function applied when closing the Menu
     :type onclose: callable, None
+    :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: (overflow_x, overflow_y)
+    :type overflow: tuple, list
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
     :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode
@@ -114,6 +116,7 @@ class Menu(object):
                  mouse_motion_selection=False,
                  mouse_visible=True,
                  onclose=None,
+                 overflow=(True, True),
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT,
@@ -136,6 +139,7 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
+        assert isinstance(overflow, (tuple, list))
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
@@ -195,6 +199,11 @@ class Menu(object):
         assert width <= window_width and height <= window_height, \
             'menu size ({0}x{1}) must be lower or equal than the size of the window ({2}x{3})'.format(
                 width, height, window_width, window_height)
+
+        # Assert overflow
+        assert len(overflow) == 2, 'overflow must be a 2-item tuple/list of booleans (x-axis,y-axis)'
+        assert isinstance(overflow[0], bool), 'overflow in x axis must be a boolean object'
+        assert isinstance(overflow[1], bool), 'overflow in x axis must be a boolean object'
 
         # Generate ID if empty
         if len(menu_id) == 0:
@@ -347,6 +356,7 @@ class Menu(object):
             shadow_position=self._theme.scrollbar_shadow_position
         )
         self._scroll.set_menu(self)
+        self._overflow = tuple(overflow)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
@@ -781,6 +791,7 @@ class Menu(object):
                        cursor_selection_enable=True,
                        input_type=_locals.INPUT_TEXT,
                        input_underline='',
+                       input_underline_len=0,
                        maxchar=0,
                        maxwidth=0,
                        onchange=None,
@@ -833,9 +844,11 @@ class Menu(object):
         :type input_type: str
         :param input_underline: Underline character
         :type input_underline: str
+        :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
+        :type input_underline_len: int
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
-        :param maxwidth: Maximum size of the text widget, if 0 there's no limit
+        :param maxwidth: Maximum size of the text widget (in number of chars), if 0 there's no limit
         :type maxwidth: int
         :param onchange: Callback when changing the text input
         :type onchange: callable, None
@@ -870,6 +883,7 @@ class Menu(object):
             cursor_selection_enable=cursor_selection_enable,
             input_type=input_type,
             input_underline=input_underline,
+            input_underline_len=input_underline_len,
             maxchar=maxchar,
             maxwidth=maxwidth,
             onchange=onchange,
@@ -1375,7 +1389,7 @@ class Menu(object):
 
         # If horizontal overflow
         elif max_x > self._width:
-            width, height = max_x + 0.50 * sx, self._height - menubar_height - sx
+            width, height = max_x + 0.5 * sx, self._height - menubar_height - sx
             self._mouse_visible = self._mouse_visible_default
 
         # If vertical overflow
@@ -1388,6 +1402,12 @@ class Menu(object):
         else:
             width, height = self._width, self._height - menubar_height
             self._mouse_visible = self._mouse_visible_default
+
+        # Checks overflow
+        if not self._overflow[0]:
+            width = self._width
+        if not self._overflow[1]:
+            height = self._height - menubar_height
 
         # Adds scrollarea margin
         width += self._scrollarea_margin[0]
