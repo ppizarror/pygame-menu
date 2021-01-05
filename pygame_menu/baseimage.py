@@ -208,7 +208,8 @@ class BaseImage(object):
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
         colors and must return the same values. The color pixel will be overriden by the function output.
-        See ``BaseImage.to_bw()`` method as an example.
+
+        .. note:: See ``BaseImage.to_bw()`` method as an example.
 
         :param image_function: Color function, takes colors as ``image_function=myfunc(r, g, b, a)``. Returns the same tuple *(r,g,b,a)*
         :type image_function: callable
@@ -224,6 +225,7 @@ class BaseImage(object):
                 g = int(max(0, min(g, 255)))
                 b = int(max(0, min(b, 255)))
                 a = int(max(0, min(a, 255)))
+                # noinspection PyArgumentList
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
@@ -268,6 +270,7 @@ class BaseImage(object):
                     g = 0
                 if 'b' not in channels:
                     b = 0
+                # noinspection PyArgumentList
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 

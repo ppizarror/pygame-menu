@@ -119,7 +119,7 @@ class Menu(object):
                  overflow=(True, True),
                  rows=None,
                  screen_dimension=None,
-                 theme=_themes.THEME_DEFAULT,
+                 theme=_themes.THEME_DEFAULT.copy(),
                  touchscreen_enabled=False,
                  touchscreen_motion_selection=False,
                  **kwargs
@@ -409,7 +409,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -524,7 +524,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -596,7 +596,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
-            - ``margin``                (x,y) margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -649,12 +649,12 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
             - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(x,y)* margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
@@ -743,12 +743,12 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
             - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(x,y)* margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -827,12 +827,12 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
             - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(x,y)* margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -1079,7 +1079,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin in px (tuple)
+            - ``margin``                *(left,bottom)* margin in px (tuple)
             - ``padding``               Widget padding according to CSS rules (int, float, tuple)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -1291,6 +1291,8 @@ class Menu(object):
         """
         Update the position dict for each widget.
 
+        .. note:: Selection effect does not affect widget positioning.
+
         :return: None
         """
         self._update_column_width()
@@ -1319,16 +1321,15 @@ class Menu(object):
 
             # Calculate X position
             column_width = self._column_widths[col]
-            _, sel_left, sel_bottom, sel_right = selection.get_margin()
             selection_margin = 0
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
                 dx = -float(rect.width) / 2
             elif align == _locals.ALIGN_LEFT:
-                selection_margin = sel_left
+                selection_margin = selection.get_margin()[1]  # left
                 dx = -column_width / 2 + selection_margin
             elif align == _locals.ALIGN_RIGHT:
-                selection_margin = sel_right
+                selection_margin = selection.get_margin()[3]  # right
                 dx = column_width / 2 - rect.width - selection_margin
             else:
                 dx = 0
@@ -1341,8 +1342,9 @@ class Menu(object):
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
                 if rwidget.visible:
-                    ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
-            y_coord = max(1, self._widget_offset[1]) + ysum + sel_bottom + widget.get_padding()[0]
+                    ysum += widget_rects[rwidget.get_id()].height  # Height
+                    ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
+            y_coord = max(1, self._widget_offset[1]) + ysum + widget.get_padding()[0]
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
@@ -2357,6 +2359,17 @@ class Menu(object):
                 if sm._remove_submenu(menu, recursive):
                     return True
         return False
+
+    def get_theme(self):
+        """
+        Returns the menu theme.
+
+        .. warning:: Use with caution.
+
+        :return: Menu theme
+        :rtype: :py:class:`pygame_menu.themes.Theme`
+        """
+        return self._theme
 
     def get_clock(self):
         """
