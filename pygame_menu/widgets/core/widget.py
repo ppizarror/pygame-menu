@@ -78,19 +78,24 @@ class Widget(object):
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
-        self._attributes = {}  # Stores widget attributes
+
         self._alignment = _locals.ALIGN_CENTER
+        self._attributes = {}  # Stores widget attributes
         self._background_color = None
         self._background_inflate = (0, 0)
         self._events = []  # type: list
         self._id = str(widget_id)
-        self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
-        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
+        self._padding = (0, 0, 0, 0)  # top, right, bottom, left
+        self._position_set = False
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._selection_time = 0  # type: float
         self._title = to_string(title)
+
+        # Widget rect. This object does not contain padding. For getting the widget+padding
+        # use .get_rect() Widget method instead
+        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
 
         # Callbacks
         self._draw_callbacks = {}  # type: dict
@@ -142,6 +147,7 @@ class Widget(object):
         self.active = False  # Widget requests focus
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True
+        self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
         self.mouse_enabled = True
         self.selected = False
         self.selection_effect_enabled = True  # Some widgets cannot have selection effect
@@ -480,6 +486,11 @@ class Widget(object):
         """
         Return the Rect object, this forces the widget rendering.
 
+        .. note::
+
+            This is the only method that returns the rect with the padding applied.
+            If widget._rect is used, the padding has not been applied.
+
         :param inflate: Inflate rect (x,y) in px
         :type inflate: None, tuple, list
         :return: Widget rect
@@ -583,7 +594,7 @@ class Widget(object):
         # surface = pygame.Surface.convert_alpha(surface)
         return surface
 
-    def _render_string(self, string, color):
+    def _render_string(self, string, color, enable_fill=True):
         """
         Render text and turn it into a surface.
 
@@ -591,6 +602,8 @@ class Widget(object):
         :type string: str
         :param color: Text color
         :type color: tuple
+        :param enable_fill: Enable font fill
+        :type enable_fill: bool
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
@@ -598,7 +611,7 @@ class Widget(object):
 
         # Create surface
         fill_color = self._background_color
-        if not isinstance(fill_color, tuple):
+        if not isinstance(fill_color, tuple) or not enable_fill:
             fill_color = None
         surface = make_surface(
             width=text.get_width(),
@@ -765,8 +778,11 @@ class Widget(object):
         :type posy: int, float
         :return: None
         """
+        if self._position_set and self.lock_position:
+            return
         self._rect.x = posx
         self._rect.y = posy
+        self._position_set = True
 
     def set_alignment(self, align):
         """
