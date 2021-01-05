@@ -74,6 +74,8 @@ class TextInput(Widget):
     """
     Text input widget.
 
+    .. note:: This widget only accepts vertical flip and translation transformations.
+
     :param title: Text input title
     :type title: str
     :param textinput_id: ID of the text input
@@ -354,6 +356,15 @@ class TextInput(Widget):
                 value = 0
         return value
 
+    def rotate(self, angle):  # Widget don't support rotation (yet)
+        pass
+
+    def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
+        pass
+
+    def flip(self, x, y):  # Actually flip on x axis is disabled
+        super(TextInput, self).flip(False, y)
+
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
@@ -374,8 +385,10 @@ class TextInput(Widget):
         # Draw cursor
         if self.selected and self._cursor_surface and \
                 (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
-            surface.blit(self._cursor_surface, (self._rect.x + self._cursor_surface_pos[0],
-                                                self._rect.y + self._cursor_surface_pos[1]))
+            x = self._rect.x + self._cursor_surface_pos[0]
+            if self._flip[0]:  # Flip on x axis (bug)
+                x = self._surface.get_width() - x
+            surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
 
     def _render(self):
         string = self._title + self._get_input_string()  # Render string
@@ -392,6 +405,7 @@ class TextInput(Widget):
 
         # Apply underline if exists
         self._surface = self._render_underline(string, color, updated_surface)
+        self._apply_surface_transforms()
 
         # Render the cursor
         self._render_cursor()

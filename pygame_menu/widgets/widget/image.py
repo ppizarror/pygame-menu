@@ -97,6 +97,23 @@ class Image(Widget):
     def _apply_font(self):
         pass
 
+    def rotate(self, angle):
+        self._image.rotate(angle)
+        self._surface = None
+
+    def flip(self, x, y):
+        if x or y:
+            self._image.flip(x, y)
+            self._surface = None
+
+    def scale(self, width, height, smooth=False):
+        self._image.scale(width, height, smooth)
+        self._surface = None
+
+    def resize(self, width, height, smooth=False):
+        self._image.resize(width, height, smooth)
+        self._surface = None
+
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()

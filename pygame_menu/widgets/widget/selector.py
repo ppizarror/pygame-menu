@@ -173,6 +173,7 @@ class Selector(Widget):
         else:
             color = self._font_color
         self._surface = self._render_string(string, color)
+        self._apply_surface_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force menu update
 

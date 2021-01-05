@@ -53,6 +53,8 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
+    .. note:: This widget does not accept scale/resize transformation.
+
     :param title: Title of the menubar
     :type title: str
     :param width: Width of the widget, generally width of the Menu
@@ -120,6 +122,9 @@ class MenuBar(Widget):
     def set_padding(self, padding):  # Don't accept padding
         pass
 
+    def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
+        pass
+
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
@@ -160,6 +165,7 @@ class MenuBar(Widget):
 
         self._surface = self._render_string(self._title, self._font_selected_color, enable_fill=False)
         self._rect.width, self._rect.height = self._surface.get_size()
+        self._apply_surface_transforms()  # Rotation does not affect rect size
 
         if self._style == MENUBAR_STYLE_ADAPTIVE:
             """

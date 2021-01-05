@@ -41,6 +41,7 @@ from pygame_menu.utils import make_surface, assert_alignment, assert_color, asse
 
 from uuid import uuid4
 import time
+import warnings
 
 
 class Widget(object):
@@ -92,6 +93,12 @@ class Widget(object):
         self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._selection_time = 0  # type: float
         self._title = to_string(title)
+
+        # Widget transforms
+        self._angle = 0  # Rotation angle (degrees)
+        self._flip = (False, False)  # x, y
+        self._scale = [False, 1, 1, False, False]  # do_scale, x, y, smooth, use_same_xy
+        self._translate = (0.0, 0.0)  # type: tuple
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
         # use .get_rect() Widget method instead
@@ -309,6 +316,8 @@ class Widget(object):
     def get_selection_effect(self):
         """
         Return the selection effect.
+
+        .. warning:: Use with caution.
 
         :return: Selection effect
         :rtype: :py:class:`pygame_menu.widgets.core.Selection`
@@ -634,6 +643,34 @@ class Widget(object):
 
         return surface
 
+    def _apply_surface_transforms(self):
+        """
+        Apply surface transforms.
+
+        :return: None
+        """
+        if self._angle != 0:
+            self._surface = pygame.transform.rotate(self._surface, self._angle)
+
+        if self._flip[0] or self._flip[1]:
+            self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
+            
+        if self._scale[0] and (self._scale[1] != 1 or self._scale[2] != 1):
+            w = self._scale[1]
+            if w != 1:
+                warnings.warn('widget _max_width is not None, scalling factor in x-axes should be equal to 1')
+            h = self._scale[2]
+            width = self._surface.get_width()
+            height = self._surface.get_height()
+            use_same_xy = self._scale[4]
+            if not use_same_xy:
+                w = int(w * width)
+                h = int(h * height)
+            if not self._scale[3]:  # smooth
+                self._surface = pygame.transform.scale(self._surface, (w, h))
+            else:
+                self._surface = pygame.transform.smoothscale(self._surface, (w, h))
+
     def surface_needs_update(self):
         """
         Checks if the widget width/height has changed because events. If so, return true and
@@ -755,6 +792,8 @@ class Widget(object):
         """
         Return the menu reference (if exists).
 
+        .. warning:: Use with caution.
+
         :return: Menu reference
         :rtype: :py:class:`pygame_menu.Menu`, None
         """
@@ -770,7 +809,7 @@ class Widget(object):
 
     def set_position(self, posx, posy):
         """
-        Set the position.
+        Set the widget position.
 
         :param posx: X position
         :type posx: int, float
@@ -780,9 +819,104 @@ class Widget(object):
         """
         if self._position_set and self.lock_position:
             return
-        self._rect.x = posx
-        self._rect.y = posy
+        self._rect.x = posx + self._translate[0]
+        self._rect.y = posy + self._translate[1]
         self._position_set = True
+
+    def flip(self, x, y):
+        """
+        This can flip the widget either vertically, horizontally, or both.
+        Flipping a widget is non-destructive and does not change the dimensions.
+
+        :param x: Flip in x axis
+        :type x: bool
+        :param y: Flip on y axis
+        :type y: bool
+        :return: None
+        """
+        assert isinstance(x, bool)
+        assert isinstance(y, bool)
+        self._flip = (x, y)
+        self._last_render_hash = 0  # Force widget render
+
+    def scale(self, width, height, smooth=True):
+        """
+        Scale the widget to a desired width and height factor.
+
+        .. note:: Not all widgets are affected by scale.
+
+        :param width: Scale factor of the width
+        :type width: int, float
+        :param height: Scale factor of the height
+        :type height: int, float
+        :param smooth: Smooth scaling
+        :type smooth: bool
+        :return: None
+        """
+        assert isinstance(width, (int, float))
+        assert isinstance(height, (int, float))
+        assert isinstance(smooth, bool)
+        assert width > 0 and height > 0, 'width and height must be greater than zero'
+        self._scale = [True, width, height, smooth, False]
+        if width == 1 and height == 1:  # Disables scalling
+            self._scale[0] = False
+        self._last_render_hash = 0  # Force widget render
+
+    def resize(self, width, height, smooth=False):
+        """
+        Set the widget size to another size.
+        This is a fast scale operation.
+
+        .. note ::
+
+            This method calls ``widget.scale`` method; thus, some widgets
+            may not support this transformation.
+
+        :param width: New width of the widget in px
+        :type width: int, float
+        :param height: New height of the widget in px
+        :type height: int, float
+        :param smooth: Smooth scaling
+        :type smooth: bool
+        :return: None
+        """
+        self.scale(int(width), int(height), smooth)
+        self._scale[4] = True  # enables use_same_xy
+
+    def translate(self, x, y):
+        """
+        Translate to (+x,+y) according to default position.
+
+        .. note:: To revert changes, only set to (0,0).
+
+        :param x: +X in px
+        :type x: int, float
+        :param y: +Y in px
+        :type y: int, float
+        :return: None
+        """
+        assert isinstance(x, (int, float))
+        assert isinstance(y, (int, float))
+        self._translate = (x, y)
+        self._menu_surface_needs_update = True
+
+    def rotate(self, angle):
+        """
+        Unfiltered counterclockwise rotation. The angle argument represents degrees
+        and can be any floating point value. Negative angle amounts will rotate clockwise.
+
+        .. note::
+
+            Not all widgets accepts rotation. Also this rotation only affects the text or images,
+            the selection or background is not rotated.
+
+        :param angle: Rotation angle (degrees 0-360)
+        :type angle: int, float
+        :return: None
+        """
+        assert isinstance(angle, (int, float))
+        self._angle = angle
+        self._last_render_hash = 0  # Force widget render
 
     def set_alignment(self, align):
         """
@@ -833,6 +967,17 @@ class Widget(object):
         if not self.selected:
             return 0
         return (time.time() - self._selection_time) * 1000
+
+    def get_surface(self):
+        """
+        Return widget surface.
+
+        .. warning:: Use with caution.
+
+        :return: Widget surface
+        :rtype:: :py:class:`pygame.Surface`
+        """
+        return self._surface
 
     def _focus(self):
         """

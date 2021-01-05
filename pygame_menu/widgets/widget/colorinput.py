@@ -44,6 +44,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     """
     Color input widget.
 
+    .. note:: This widget implements the same transformations as TextInput.
+
     :param title: Color input title
     :type title: str
     :param colorinput_id: ID of the text input
