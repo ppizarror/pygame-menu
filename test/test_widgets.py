@@ -66,6 +66,29 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+    def test_transform(self):
+        """
+        Transform widgets.
+        """
+        self.menu.clear()
+        w = self.menu.add_label('Text')  # type: Label
+        w.rotate(45)
+        w.translate(10, 10)
+        w.scale(1, 1)
+        self.assertFalse(w._scale[0])  # Scalling is disabled
+        w.scale(1.5, 1)
+        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertFalse(w._scale[4])  # use_same_xy
+        w.scale(1, 1)
+        self.assertFalse(w._scale[0])
+        w.resize(40, 40)
+        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[4])  # use_same_xy
+        w.scale(1, 1)
+        self.assertFalse(w._scale[0])
+        self.assertFalse(w._scale[4])  # use_same_xy
+        w.flip(False, False)
+
     def test_visibility(self):
         """
         Test widget visibility.
