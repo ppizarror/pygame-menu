@@ -654,7 +654,7 @@ class Widget(object):
 
         if self._flip[0] or self._flip[1]:
             self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
-            
+
         if self._scale[0] and (self._scale[1] != 1 or self._scale[2] != 1):
             w = self._scale[1]
             if w != 1:
