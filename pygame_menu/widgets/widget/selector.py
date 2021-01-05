@@ -222,6 +222,8 @@ class Selector(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+        rect = self.get_rect()
+
         for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN:  # Check key is valid
@@ -255,11 +257,11 @@ class Selector(Widget):
                 updated = True
 
             elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
-                if self._rect.collidepoint(*event.pos):
+                if rect.collidepoint(*event.pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
-                    topleft, _ = self._rect.topleft
-                    topright, _ = self._rect.topright
+                    topleft, _ = rect.topleft
+                    topright, _ = rect.topright
                     dist = mousex - (topleft + self._title_size)  # Distance from label
                     if dist > 0:  # User clicked the options, not label
                         # Position in percentage, if <0.5 user clicked left
@@ -273,11 +275,11 @@ class Selector(Widget):
             elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if self._rect.collidepoint(finger_pos):
+                if rect.collidepoint(finger_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = finger_pos
-                    topleft, _ = self._rect.topleft
-                    topright, _ = self._rect.topright
+                    topleft, _ = rect.topleft
+                    topright, _ = rect.topright
                     dist = mousex - (topleft + self._title_size)  # Distance from label
                     if dist > 0:  # User clicked the options, not label
                         # Position in percentage, if <0.5 user clicked left

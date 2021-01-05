@@ -625,6 +625,7 @@ class WidgetsTest(unittest.TestCase):
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertTrue(btn.has_attribute('epic'))
         btn.remove_attribute('epic')
+        self.assertRaises(IndexError, lambda: btn.remove_attribute('epic'))
         self.assertFalse(btn.has_attribute('epic'))
 
     def test_change_id(self):
