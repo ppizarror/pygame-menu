@@ -117,6 +117,9 @@ class MenuBar(Widget):
     def _apply_font(self):
         pass
 
+    def set_padding(self, padding):  # Don't accept padding
+        pass
+
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
@@ -155,7 +158,7 @@ class MenuBar(Widget):
         else:
             self._box_mode = _MODE_BACK
 
-        self._surface = self._render_string(self._title, self._font_selected_color)
+        self._surface = self._render_string(self._title, self._font_selected_color, enable_fill=False)
         self._rect.width, self._rect.height = self._surface.get_size()
 
         if self._style == MENUBAR_STYLE_ADAPTIVE:
@@ -322,6 +325,7 @@ class MenuBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+
         for event in events:  # type: pygame.event.Event
 
             if self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:

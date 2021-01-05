@@ -124,6 +124,9 @@ class ScrollBar(Widget):
     def _apply_font(self):
         pass
 
+    def set_padding(self, padding):  # Don't accept padding
+        pass
+
     def _apply_size_changes(self):
         """
         Apply scrollbar changes.
@@ -361,6 +364,7 @@ class ScrollBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+
         for event in events:  # type: pygame.event.Event
 
             if event.type == pygame.KEYDOWN:
