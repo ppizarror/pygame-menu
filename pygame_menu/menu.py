@@ -164,6 +164,12 @@ class Menu(object):
                 else:
                     assert rows > 0, \
                         'number of rows must be greater than 1'
+        # If column fit text is enabled but column max width is None, raise a warning
+        if column_force_fit_text and column_max_width is None:
+            _msg = 'column_force_fit_text is True but column_max_width is None. ' \
+                   'column_force_fit_text was disabled'
+            warnings.warn(_msg)
+            column_force_fit_text = False
         if column_max_width is not None:
             if isinstance(column_max_width, (int, float)):
                 assert columns == 1, \
@@ -341,6 +347,9 @@ class Menu(object):
         # Scrolling area
         self._widgets_surface = None
         menubar_rect = self._menubar.get_rect()
+        if self._height - menubar_rect.height <= 0:
+            raise ValueError('menubar is higher than menu height. Try increasing the later value')
+
         self._scroll = ScrollArea(
             area_width=self._width,
             area_color=self._theme.background_color,
@@ -2252,10 +2261,34 @@ class Menu(object):
         """
         Return widgets as a tuple.
 
+        .. warning:: Use with caution.
+
         :return: Widgets tuple
         :rtype: tuple
         """
         return tuple(self._widgets)
+
+    def get_menubar_widget(self):
+        """
+        Return menubar widget.
+
+        .. warning:: Use with caution.
+
+        :return: MenuBar widget
+        :rtype: :py:class:`pygame_menu.widgets.MenuBar`
+        """
+        return self._menubar
+
+    def get_scrollarea(self):
+        """
+        Return menu scrollarea.
+
+        .. warning:: Use with caution.
+
+        :return: MenuBar widget
+        :rtype: :py:class:`pygame_menu.scrollarea.ScrollArea`
+        """
+        return self._scroll
 
     def get_widget(self, widget_id, recursive=False):
         """
@@ -2272,7 +2305,7 @@ class Menu(object):
         :param recursive: Look in Menu and submenus
         :type recursive: bool
         :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
         assert isinstance(widget_id, str)
         assert isinstance(recursive, bool)
