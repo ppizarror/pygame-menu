@@ -521,4 +521,5 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(event_val[0])
         event_val[0] = False
         self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
-        self.assertEqual(menu.get_selected_widget().get_selection_time(), 0)
+        btn = menu.get_selected_widget()  # type: Button
+        self.assertTrue(btn.get_selected_time() >= 0)
