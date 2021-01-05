@@ -82,8 +82,8 @@ class Menu(object):
     :type mouse_motion_selection: bool
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
-    :param onclose: Function applied when closing the Menu
-    :type onclose: callable, None
+    :param onclose: Event or function applied when closing the Menu
+    :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
     :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: (overflow_x, overflow_y)
     :type overflow: tuple, list
     :param rows: Number of rows of each column, None if there's only 1 column
@@ -119,7 +119,7 @@ class Menu(object):
                  overflow=(True, True),
                  rows=None,
                  screen_dimension=None,
-                 theme=_themes.THEME_DEFAULT,
+                 theme=_themes.THEME_DEFAULT.copy(),
                  touchscreen_enabled=False,
                  touchscreen_motion_selection=False,
                  **kwargs
@@ -216,17 +216,21 @@ class Menu(object):
             menu_id = str(uuid4())
 
         # General properties of the Menu
+        self._attributes = {}
         self._background_function = None  # type: (None,callable)
         self._center_content = center_content
         self._clock = pygame.time.Clock()  # Inner clock
         self._height = float(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
-        self._onclose = onclose  # Function that calls after closing Menu
+        self._onclose = None  # Function or event called on menu close
         self._sounds = Sound()  # type: Sound
         self._submenus = []  # type: list
         self._theme = theme
         self._width = float(width)
+
+        # Set onclose
+        self.set_onclose(onclose)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accessing self should be through "_current", because user can move through submenus
@@ -372,6 +376,18 @@ class Menu(object):
             msg = 'menu constructor parameter {} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
+    def set_onclose(self, onclose):
+        """
+        Set onclose callback.
+
+        :param onclose: Onclose callback, it can be a function, an event or None
+        :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
+        :return: None
+        """
+        assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
+            'onclose must be a MenuAction, a function or None'
+        self._onclose = onclose
+
     def get_current(self):
         """
         Get current active Menu. If the user has not opened any submenu
@@ -409,7 +425,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -439,9 +455,6 @@ class Menu(object):
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'id must be a string'
 
-        if action is None:
-            action = _events.NONE
-
         # If element is a Menu
         if isinstance(action, Menu):
 
@@ -457,7 +470,7 @@ class Menu(object):
             widget = _widgets.Button(title, button_id, self._open, action)
             widget.to_menu = True
 
-        # If element is a PyMenuAction
+        # If element is a MenuAction
         elif action == _events.BACK:  # Back to Menu
 
             widget = _widgets.Button(title, button_id, self.reset, total_back)  # reset is public, so no _current
@@ -474,17 +487,17 @@ class Menu(object):
 
             widget = _widgets.Button(title, button_id, self._exit)
 
-        elif action == _events.NONE:  # None action
+        elif action == _events.NONE or action is None:  # None action
 
             widget = _widgets.Button(title, button_id)
 
-        # If element is a function
+        # If element is a function or callable
         elif _utils.is_callable(action):
 
             widget = _widgets.Button(title, button_id, action, *args)
 
         else:
-            raise ValueError('element must be a Menu, a PymenuAction or a function')
+            raise ValueError('action must be a Menu, a MenuAction, a function or None')
 
         # Configure and add the button
         self._configure_widget(widget=widget, **attributes)
@@ -524,7 +537,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -596,7 +609,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
-            - ``margin``                (x,y) margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -649,12 +662,12 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
             - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(x,y)* margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
@@ -743,12 +756,12 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
             - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(x,y)* margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -827,12 +840,12 @@ class Menu(object):
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
-            - ``background_inflate``    Inflate background in (x,y) in px (tuple, list)
+            - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
             - ``font_background_color`` Widget font background color (tuple, list, None)
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(x,y)* margin in px (tuple, list)
+            - ``margin``                *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -1079,7 +1092,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                (x,y) margin in px (tuple)
+            - ``margin``                *(left,bottom)* margin in px (tuple)
             - ``padding``               Widget padding according to CSS rules (int, float, tuple)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -1291,6 +1304,8 @@ class Menu(object):
         """
         Update the position dict for each widget.
 
+        .. note:: Selection effect does not affect widget positioning.
+
         :return: None
         """
         self._update_column_width()
@@ -1319,16 +1334,15 @@ class Menu(object):
 
             # Calculate X position
             column_width = self._column_widths[col]
-            _, sel_left, sel_bottom, sel_right = selection.get_margin()
             selection_margin = 0
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
                 dx = -float(rect.width) / 2
             elif align == _locals.ALIGN_LEFT:
-                selection_margin = sel_left
+                selection_margin = selection.get_margin()[1]  # left
                 dx = -column_width / 2 + selection_margin
             elif align == _locals.ALIGN_RIGHT:
-                selection_margin = sel_right
+                selection_margin = selection.get_margin()[3]  # right
                 dx = column_width / 2 - rect.width - selection_margin
             else:
                 dx = 0
@@ -1341,8 +1355,9 @@ class Menu(object):
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
                 if rwidget.visible:
-                    ysum += widget_rects[rwidget.get_id()].height + rwidget.get_margin()[1]
-            y_coord = max(1, self._widget_offset[1]) + ysum + sel_bottom + widget.get_padding()[0]
+                    ysum += widget_rects[rwidget.get_id()].height  # Height
+                    ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
+            y_coord = max(1, self._widget_offset[1]) + ysum + widget.get_padding()[0]
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
@@ -1437,7 +1452,7 @@ class Menu(object):
         assert isinstance(widget_id, str)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
-                raise IndexError('widget ID="{0}" is duplicated'.format(widget_id))
+                raise IndexError('widget ID="{0}" already exists on the menu'.format(widget_id))
 
     def _close(self):
         """
@@ -1455,8 +1470,7 @@ class Menu(object):
             close = True
 
             # If action is an event
-            if isinstance(onclose, _events.MenuAction) or \
-                    str(type(onclose)) == "<class 'pygame_menu.events.PymenuAction'>":
+            if _events.is_event(onclose):
 
                 if onclose == _events.DISABLE_CLOSE:
                     close = False
@@ -2358,6 +2372,17 @@ class Menu(object):
                     return True
         return False
 
+    def get_theme(self):
+        """
+        Returns the menu theme.
+
+        .. warning:: Use with caution.
+
+        :return: Menu theme
+        :rtype: :py:class:`pygame_menu.themes.Theme`
+        """
+        return self._theme
+
     def get_clock(self):
         """
         Returns the pygame menu timer.
@@ -2383,9 +2408,65 @@ class Menu(object):
         :return: Widget object, None if no widget is selected
         :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
+        if not isinstance(self._index, int):
+            self._index = 0
+            return None
         if self._index < 0:
             return None
         try:
             return self._widgets[self._index % len(self._widgets)]
         except (IndexError, ZeroDivisionError):
             return None
+
+    def set_attribute(self, key, value):
+        """
+        Set menu attribute.
+
+        :param key: Key of the attribute
+        :type key: str
+        :param value: Value of the attribute
+        :type value: any
+        :return: None
+        """
+        assert isinstance(key, str)
+        self._attributes[key] = value
+
+    def get_attribute(self, key, default=None):
+        """
+        Get attribute value.
+
+        :param key: Key of the attribute
+        :type key: str
+        :param default: Value if does not exists
+        :type default: any
+        :return: Attribute data
+        :rtype: any
+        """
+        assert isinstance(key, str)
+        if not self.has_attribute(key):
+            return default
+        return self._attributes[key]
+
+    def has_attribute(self, key):
+        """
+        Returns true if widget has the given attribute.
+
+        :param key: Key of the attribute
+        :type key: str
+        :return: True if exists
+        :rtype: bool
+        """
+        assert isinstance(key, str)
+        return key in self._attributes.keys()
+
+    def remove_attribute(self, key):
+        """
+        Removes the given attribute from the menu. Throws ``IndexError`` if given key does not exist.
+
+        :param key: Key of the attribute
+        :type key: str
+        :return: None
+        """
+        if not self.has_attribute(key):
+            raise IndexError('attribute "{0}" does not exists on menu'.format(key))
+        del self._attributes[key]

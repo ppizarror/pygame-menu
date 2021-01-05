@@ -370,6 +370,7 @@ class MenuUtils(object):
             center_content=True,
             columns=1,
             height=400,
+            onclose=None,
             position_x=50,
             position_y=50,
             rows=None,
@@ -388,6 +389,8 @@ class MenuUtils(object):
         :type columns: int
         :param height: Menu height (px)
         :type height: int
+        :param onclose: Event or function applied when closing the Menu
+        :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param position_x: X position of the menu
         :type position_x: int, float
         :param position_y: Y position of the menu
@@ -413,9 +416,10 @@ class MenuUtils(object):
             enabled=False,
             height=height,
             menu_position=(position_x, position_y),
+            onclose=onclose,
             rows=rows,
-            title=title,
             theme=theme,
+            title=title,
             width=width,
             *args,
             **kwargs

@@ -46,6 +46,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Setup sound engine.
         """
+        test_reset_surface()
         self.menu = MenuUtils.generic_menu()
 
     def test_nonascii(self):
@@ -66,6 +67,20 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
         self.menu.draw(surface)
 
+    def test_background(self):
+        """
+        Test widget background.
+        """
+        self.menu.clear()
+        self.menu.enable()
+        w = self.menu.add_label('Text')  # type: Label
+        w.set_background_color((255, 255, 255), (10, 10))
+        w.draw(surface)
+        self.assertEqual(w._background_inflate[0], 10)
+        self.assertEqual(w._background_inflate[1], 10)
+        w.set_background_color(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
+        w.draw(surface)
+
     def test_transform(self):
         """
         Transform widgets.
@@ -76,6 +91,7 @@ class WidgetsTest(unittest.TestCase):
         w.rotate(45)
         w.translate(10, 10)
         w.scale(1, 1)
+        w.set_max_width(150)
         self.assertFalse(w._scale[0])  # Scalling is disabled
         w.scale(1.5, 1)
         self.assertTrue(w._scale[0])  # Scalling is enabled
@@ -191,6 +207,12 @@ class WidgetsTest(unittest.TestCase):
                      MENUBAR_STYLE_TITLE_ONLY_DIAGONAL]:
             mb = MenuBar('Menu', 500, (0, 0, 0), True, mode=mode)
             self.menu.add_generic_widget(mb)
+        mb = MenuBar('Menu', 500, (0, 0, 0), True)
+        mb.set_backbox_border_width(2)
+        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(1.5))
+        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(0))
+        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(-1))
+        self.assertEqual(mb._backbox_border_width, 2)
         self.menu.draw(surface)
         self.menu.disable()
 
@@ -617,6 +639,22 @@ class WidgetsTest(unittest.TestCase):
 
         # Invalid recursive menu
         self.assertRaises(ValueError, lambda: menu.add_button('bt', menu))
+
+    def test_attributes(self):
+        """
+        Test widget attributes.
+        """
+        widget = self.menu.add_label('epic')
+        self.assertFalse(widget.has_attribute('epic'))
+        self.assertRaises(IndexError, lambda: widget.remove_attribute('epic'))
+        widget.set_attribute('epic', True)
+        self.assertTrue(widget.has_attribute('epic'))
+        self.assertTrue(widget.get_attribute('epic'))
+        widget.set_attribute('epic', False)
+        self.assertFalse(widget.get_attribute('epic'))
+        widget.remove_attribute('epic')
+        self.assertFalse(widget.has_attribute('epic'))
+        self.assertEqual(widget.get_attribute('epic', 420), 420)
 
     def test_draw_callback(self):
         """

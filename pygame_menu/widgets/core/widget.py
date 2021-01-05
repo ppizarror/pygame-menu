@@ -70,7 +70,7 @@ class Widget(object):
                  args=None,
                  kwargs=None
                  ):
-        assert isinstance(widget_id, str)
+        assert isinstance(widget_id, str), 'widget id must be a string'
         if onchange:
             assert is_callable(onchange), 'onchange must be callable or None'
         if onreturn:
@@ -158,6 +158,7 @@ class Widget(object):
         self.mouse_enabled = True
         self.selected = False
         self.selection_effect_enabled = True  # Some widgets cannot have selection effect
+        self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
         self.sound = Sound()  # type: Sound
         self.touchscreen_enabled = True
         self.visible = True  # Use .show() or .hide() to modify this status
@@ -288,8 +289,22 @@ class Widget(object):
         assert inflate[0] >= 0 and inflate[1] >= 0, \
             'widget background inflate must be equal or greater than zero in both axis'
         self._background_color = color
-        self._background_inflate = inflate
+        self._background_inflate = tuple(inflate)
         self._last_render_hash = 0  # Force widget render
+
+    def expand_background_inflate_to_selection_effect(self):
+        """
+        Expand background inflate to match the selection effect
+        (the widget don't require to be selected).
+
+        This is a permanent change; for dynamic purpuoses, depending if the widget
+        is selected or not, setting ``widget.selection_expand_background`` to ``True`` may help.
+
+        .. note:: This method may have unexpected results with certain selection effects.
+
+        :return: None
+        """
+        self._background_inflate = self._selection_effect.get_xy_margin()
 
     def _fill_background_color(self, surface):
         """
@@ -301,9 +316,11 @@ class Widget(object):
         """
         if self._background_color is None:
             return
-        rect = self.get_rect(
-            inflate=(self._background_inflate[0] / 2, self._background_inflate[1] / 2)
-        )
+        if not (self.selection_expand_background and self.selected):
+            inflate = self._background_inflate
+        else:
+            inflate = self._selection_effect.get_xy_margin()
+        rect = self.get_rect(inflate=inflate)
         if isinstance(self._background_color, _baseimage.BaseImage):
             self._background_color.draw(
                 surface=surface,
@@ -421,25 +438,25 @@ class Widget(object):
         :return: None
         """
         if width is not None:
-            assert isinstance(width, (int, float))
+            assert isinstance(width, (int, float)), 'width must be numeric'
         self._max_width = width
 
     def get_margin(self):
         """
         Return the widget margin.
 
-        :return: Widget margin (left, top)
+        :return: Widget margin *(left,bottom)*
         :rtype: tuple
         """
         return self._margin
 
     def set_margin(self, x, y):
         """
-        Set Widget margin (left, top).
+        Set Widget margin (left, bottom).
 
         :param x: Margin on x axis (left)
         :type x: int, float
-        :param y: Margin on y axis (top)
+        :param y: Margin on y axis (bottom)
         :type y: int, float
         :return: None
         """
@@ -512,10 +529,10 @@ class Widget(object):
             inflate = (0, 0)
         apply_padding = 1
 
-        pad_top = self._padding[0] * apply_padding + inflate[1]
-        pad_right = self._padding[1] * apply_padding + inflate[0]
-        pad_bottom = self._padding[2] * apply_padding + inflate[1]
-        pad_left = self._padding[3] * apply_padding + inflate[0]
+        pad_top = self._padding[0] * apply_padding + inflate[1] / 2
+        pad_right = self._padding[1] * apply_padding + inflate[0] / 2
+        pad_bottom = self._padding[2] * apply_padding + inflate[1] / 2
+        pad_left = self._padding[3] * apply_padding + inflate[0] / 2
 
         return pygame.Rect(int(self._rect.x - pad_left),
                            int(self._rect.y - pad_top),
@@ -573,7 +590,7 @@ class Widget(object):
         Render text. If the font is not defined returns a zero-width surface.
 
         :param text: Text to render
-        :type text: str
+        :type text: str, None
         :param color: Text color
         :type color: tuple
         :param use_background_color: Use default background color
@@ -582,13 +599,9 @@ class Widget(object):
         :rtype: :py:class:`pygame.Surface`
         """
         # assert isinstance(text, str)
-        assert isinstance(color, tuple)
-        assert isinstance(use_background_color, bool)
+        assert isinstance(color, tuple), 'invalid color'
+        assert isinstance(use_background_color, bool), 'use_background_color must be boolean'
         bgcolor = self._font_background_color
-
-        # Background color must be opaque, otherwise the results are quite bad
-        if isinstance(bgcolor, (tuple, list)) and len(bgcolor) == 4 and bgcolor[3] != 255:
-            bgcolor = None
 
         # Disable
         if not use_background_color:
@@ -596,10 +609,11 @@ class Widget(object):
 
         if self._font is None:
             return make_surface(0, 0)
+
         surface = self._font.render(text, self._font_antialias, color, bgcolor)
         return surface
 
-    def _render_string(self, string, color, enable_fill=True):
+    def _render_string(self, string, color):
         """
         Render text and turn it into a surface.
 
@@ -607,22 +621,16 @@ class Widget(object):
         :type string: str
         :param color: Text color
         :type color: tuple
-        :param enable_fill: Enable font fill
-        :type enable_fill: bool
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
         text = self._font_render_string(string, color)
 
         # Create surface
-        fill_color = self._background_color
-        if not isinstance(fill_color, tuple) or not enable_fill:
-            fill_color = None
         surface = make_surface(
             width=text.get_width(),
             height=text.get_height(),
-            alpha=True,
-            fill_color=fill_color
+            alpha=True
         )
 
         # Draw shadow first
@@ -705,6 +713,13 @@ class Widget(object):
         assert isinstance(selected_color, tuple)
         assert isinstance(background_color, (tuple, type(None)))
         assert isinstance(antialias, bool)
+
+        # If background is a color and it's transparent raise a warning
+        # Font background color must be opaque, otherwise the results are quite bad
+        if isinstance(background_color, (tuple, list)) and \
+                len(background_color) == 4 and background_color[3] != 255:
+            background_color = None
+            warnings.warn('font background color must be opaque, alpha channel must be 255')
 
         self._font = _fonts.get_font(font, font_size)
         self._font_antialias = antialias

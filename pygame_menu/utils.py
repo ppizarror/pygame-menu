@@ -64,7 +64,7 @@ def assert_color(color):
     :type color: tuple, list
     :return: None
     """
-    assert isinstance(color, (tuple, list))
+    assert isinstance(color, (tuple, list)), 'color must be a tuple or list'
     assert 4 >= len(color) >= 3, 'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
@@ -72,7 +72,7 @@ def assert_color(color):
         assert 0 <= color[i] <= 255, \
             '"{0}" in element color {1} must be a number between 0 and 255'.format(color[i], color)
     if len(color) == 4:
-        assert isinstance(color[3], int)
+        assert isinstance(color[3], int), 'alpha channel must be an integer between 0 and 255'
         assert 0 <= color[3] <= 255, \
             'opacity of color {0} must be an integer between 0 and 255, ' \
             '0 is transparent, 255 is opaque'.format(color)
@@ -86,7 +86,7 @@ def assert_orientation(orientation):
     :type orientation: str
     :return: None
     """
-    assert isinstance(orientation, str)
+    assert isinstance(orientation, str), 'orientation must be a string'
     assert orientation in [_locals.ORIENTATION_HORIZONTAL, _locals.ORIENTATION_VERTICAL], \
         'invalid orientation value "{0}"'.format(orientation)
 
@@ -100,9 +100,9 @@ def assert_vector2(num_vector):
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \
-        'object "{0}" must be a list or tuple of 2 items'.format(num_vector)
+        'vector "{0}" must be a list or tuple of 2 items'.format(num_vector)
     assert len(num_vector) == 2, \
-        'object list "{0}" must contain 2 items only'.format(num_vector)
+        'vector "{0}" must contain 2 items only'.format(num_vector)
     vector_numeric = isinstance(num_vector[0], (int, float)) and \
                      isinstance(num_vector[1], (int, float))
     assert vector_numeric, \
@@ -117,7 +117,7 @@ def assert_position(position):
     :type position: str
     :return: None
     """
-    assert isinstance(position, str)
+    assert isinstance(position, str), 'position must be a string'
     assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
                         _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
                         _locals.POSITION_EAST, _locals.POSITION_NORTH,
@@ -179,6 +179,7 @@ def make_surface(width, height, alpha=False, fill_color=None):
         'surface width and height must be equal or greater than zero'
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
     if alpha:
+        # noinspection PyArgumentList
         surface = pygame.Surface.convert_alpha(surface)
     if fill_color is not None:
         assert_color(fill_color)

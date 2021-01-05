@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Import libraries
+from __future__ import print_function
 import sys
 
 sys.path.insert(0, '../../')
@@ -111,8 +112,38 @@ def main(test=False):
         width=WINDOW_SIZE[0] * 0.8
     )
 
-    main_menu.add_button('Button 1', None)
-    main_menu.add_button('Button 2', None)
+    widget_colors_theme = pygame_menu.themes.THEME_ORANGE.copy()
+    widget_colors_theme.widget_font_size = 20
+    widget_colors_theme.set_background_color_opacity(0.5)  # 50% opacity
+
+    widget_colors = pygame_menu.Menu(
+        height=WINDOW_SIZE[1] * 0.7,
+        theme=widget_colors_theme,
+        title='Widget backgrounds',
+        width=WINDOW_SIZE[0] * 0.8
+    )
+
+    button_image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_CARBON_FIBER)
+
+    widget_colors.add_button('Opaque color button', None,
+                             background_color=(100, 100, 100))
+    widget_colors.add_button('Transparent color button', None,
+                             background_color=(50, 50, 50, 200), font_size=40)
+    widget_colors.add_button('Transparent background inflate to selection effect', None,
+                             background_color=(50, 50, 50, 200), margin=(0, 15)
+                             ).expand_background_inflate_to_selection_effect()
+    widget_colors.add_button('Background inflate + font background color', None,
+                             background_color=(50, 50, 50, 200), font_background_color=(200, 200, 200)
+                             ).expand_background_inflate_to_selection_effect()
+    widget_colors.add_button('This inflates background to match selection effect', None,
+                             background_color=button_image, font_color=(255, 255, 255), font_size=15
+                             ).selection_expand_background = True
+    widget_colors.add_button('This is already inflated to match selection effect', None,
+                             background_color=button_image, font_color=(255, 255, 255), font_size=15
+                             ).expand_background_inflate_to_selection_effect()
+
+    main_menu.add_button('Test different widget colors', widget_colors)
+    main_menu.add_button('Another fancy button', lambda: print('This button has been pressed'))
     main_menu.add_button('Quit', pygame_menu.events.EXIT)
 
     # -------------------------------------------------------------------------
@@ -122,9 +153,6 @@ def main(test=False):
 
         # Tick
         clock.tick(FPS)
-
-        # Paint background
-        main_background()
 
         # Main menu
         main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
