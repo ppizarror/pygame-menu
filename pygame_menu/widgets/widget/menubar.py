@@ -103,6 +103,7 @@ class MenuBar(Widget):
         )
 
         self._backbox = back_box
+        self._backbox_border_width = 1  # px
         self._backbox_pos = None  # type: (tuple,None)
         self._backbox_rect = None  # type: (pygame.rect.Rect,None)
         self._background_color = background_color
@@ -125,6 +126,17 @@ class MenuBar(Widget):
     def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
         pass
 
+    def set_backbox_border_width(self, width):
+        """
+        Set backbox border width in px.
+
+        :param width: Width in px
+        :type width: int
+        :return: None
+        """
+        assert isinstance(width, int)
+        self._backbox_border_width = width
+
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
@@ -142,7 +154,8 @@ class MenuBar(Widget):
             if self._box_mode == _MODE_CLOSE and self.get_menu()._onclose is None:
                 pass
             else:
-                pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
+                # noinspection PyArgumentList
+                pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, self._backbox_border_width)
                 pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
         surface.blit(self._surface,
@@ -163,7 +176,7 @@ class MenuBar(Widget):
         else:
             self._box_mode = _MODE_BACK
 
-        self._surface = self._render_string(self._title, self._font_selected_color, enable_fill=False)
+        self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
         self._apply_surface_transforms()  # Rotation does not affect rect size
 
