@@ -206,6 +206,10 @@ class WidgetsTest(unittest.TestCase):
                      MENUBAR_STYLE_TITLE_ONLY_DIAGONAL]:
             mb = MenuBar('Menu', 500, (0, 0, 0), True, mode=mode)
             self.menu.add_generic_widget(mb)
+        mb = MenuBar('Menu', 500, (0, 0, 0), True)
+        mb.set_backbox_border_width(2)
+        self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(1.5))
+        self.assertEqual(mb._backbox_border_width, 2)
         self.menu.draw(surface)
         self.menu.disable()
 
