@@ -257,7 +257,7 @@ class BaseImage(object):
         """
         if isinstance(channels, str):
             channels = [channels]
-        assert isinstance(channels, (list, tuple))
+        assert isinstance(channels, (tuple, list))
         assert 1 <= len(channels) <= 3, 'maximum size of channels can be 3'
 
         w, h = self._surface.get_size()

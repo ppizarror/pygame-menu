@@ -363,7 +363,7 @@ class Widget(object):
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
         with:
-            - ``value`` (if something is returned by ``get_value()``)
+            - ``value`` if something is returned by ``get_value()``
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
@@ -390,7 +390,7 @@ class Widget(object):
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
         with:
-            - ``value`` (if something is returned by ``get_value()``)
+            - ``value`` if something is returned by ``get_value()``
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
@@ -515,7 +515,6 @@ class Widget(object):
         .. note::
 
             This is the only method that returns the rect with the padding applied.
-            If widget._rect is used, the padding has not been applied.
 
         :param inflate: Inflate rect *(x,y)* in px
         :type inflate: None, tuple, list
@@ -736,12 +735,12 @@ class Widget(object):
         """
         Updates font. This method receives a style dict (non empty) containing the following keys:
 
-        - ``antialias``             Font antialias (bool)
-        - ``background_color``      Background color (tuple)
-        - ``color``                 Font color (tuple)
-        - ``name``                  Name of the font (str)
-        - ``selected_color``        Selected color (tuple)
-        - ``size``                  Size of the font (int)
+        - ``antialias``             Font antialias *(bool)*
+        - ``background_color``      Background color *(tuple)*
+        - ``color``                 Font color *(tuple)*
+        - ``name``                  Name of the font *(str)*
+        - ``selected_color``        Selected color *(tuple)*
+        - ``size``                  Size of the font *(int)*
 
         .. note:: If a key is not defined it will be rewritten using current font style from ``Widget.get_font_info()`` method.
 
@@ -770,12 +769,12 @@ class Widget(object):
 
         Dict values:
 
-        - ``antialias``             Font antialias (bool)
-        - ``background_color``      Background color (tuple)
-        - ``color``                 Font color (tuple)
-        - ``name``                  Name of the font (str)
-        - ``selected_color``        Selected color (tuple)
-        - ``size``                  Size of the font (int)
+        - ``antialias``             Font antialias *(bool)*
+        - ``background_color``      Background color *(tuple)*
+        - ``color``                 Font color *(tuple)*
+        - ``name``                  Name of the font *(str)*
+        - ``selected_color``        Selected color *(tuple)*
+        - ``size``                  Size of the font *(int)*
 
         :return: Dict
         :rtype: dict
@@ -969,7 +968,7 @@ class Widget(object):
     def get_selected_time(self):
         """
         Return time the widget has been selected in miliseconds.
-        If the widget is not currently selected, return 0.
+        If the widget is not currently selected, return *0*.
 
         :return: Time in ms
         :rtype: float
@@ -1097,9 +1096,8 @@ class Widget(object):
 
         .. warning::
 
-            This method does not fire the callbacks as it is
-            called programmatically. This behavior is deliberately
-            chosen to avoid infinite loops.
+            This method does not fire the callbacks as it is called programmatically.
+            This behavior is deliberately chosen to avoid infinite loops.
 
         :param value: Value to be set on the widget
         :type value: Object

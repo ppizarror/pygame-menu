@@ -257,9 +257,9 @@ class TextInput(Widget):
         self._max_history = history
 
         # Text selection
-        self._last_selection_render = [0, 0]  # Position (int)
+        self._last_selection_render = [0, 0]  # Position, int
         self._selection_active = False
-        self._selection_box = [0, 0]  # [from, to], (int)
+        self._selection_box = [0, 0]  # [from, to], int
         self._selection_color = cursor_selection_color
         self._selection_enabled = cursor_selection_enable
         self._selection_mouse_first_position = -1  # type: int
