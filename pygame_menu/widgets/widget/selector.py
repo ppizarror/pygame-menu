@@ -62,7 +62,7 @@ class Selector(Widget):
 
     .. code-block:: python
 
-        values = [('Item1', a, b, c...), ('Item2', d, e, f..)]
+        values = [('Item1', a, b, c...), ('Item2', d, e, f...)]
 
     The callbacks receive the current text, its index in the list,
     the associated arguments and all unknown keyword arguments:
@@ -127,6 +127,13 @@ class Selector(Widget):
         default %= len(self._elements)
         for k in range(0, default):
             self.right()
+        self.set_default_value(default)
+
+    def set_default_value(self, index):
+        self._default_value = index
+
+    def reset_value(self):
+        self._index = self._default_value
 
     def _apply_font(self):
         self._title_size = self._font.size(self._title)[0]
@@ -136,6 +143,15 @@ class Selector(Widget):
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+
+    def get_index(self):
+        """
+        Get selected index.
+
+        :return: Selected index
+        :rtype: int
+        """
+        return self._index
 
     def get_value(self):
         """
@@ -166,7 +182,7 @@ class Selector(Widget):
 
     def _render(self):
         string = self._sformat.format(self._title, self.get_value()[0][0])
-        if not self._render_hash_changed(string, self.selected, self.visible):
+        if not self._render_hash_changed(string, self.selected, self.visible, self._index):
             return True
         if self.selected:
             color = self._font_selected_color
@@ -184,8 +200,8 @@ class Selector(Widget):
 
         For example, if selector is *[['a',0],['b',1],['a',2]]*:
 
-        - *widget*.set_value('a') -> Widget selects 0 (first match)
-        - *widget*.set_value(2) -> Widget selects 2.
+        - *widget*.set_value('a') -> Widget selects the first element (index 0)
+        - *widget*.set_value(2) -> Widget selects the third element (index 2)
 
         :param item: Item to select, can be a string or an integer.
         :type item: str, int
@@ -207,8 +223,13 @@ class Selector(Widget):
         """
         Update selector elements.
 
-        :param elements: Elements of the selector
-        :type elements: Object
+        .. note::
+
+            If the length of the list is different than the previous one,
+            the new index of the selector will be the first element of the list.
+
+        :param elements: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :type elements: list
         :return: None
         """
         _check_elements(elements)
@@ -218,7 +239,8 @@ class Selector(Widget):
             self._index = self._elements.index(selected_element)
         except ValueError:
             if self._index >= len(self._elements):
-                self._index = len(self._elements) - 1
+                self._index = 0
+                self._default_value = 0
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
