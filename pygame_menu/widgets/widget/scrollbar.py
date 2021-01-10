@@ -46,9 +46,13 @@ class ScrollBar(Widget):
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
 
-    .. warning:: Arrows are not yet implemented.
+    .. warning::
 
-    .. note:: This widget only accepts translation transformation.
+        Arrows are not yet implemented.
+
+    .. note::
+
+        This widget only accepts translation transformation.
 
     :param length: Length of the page control
     :type length: int
@@ -109,13 +113,13 @@ class ScrollBar(Widget):
         self._page_ctrl_thick = page_ctrl_thick
         self._page_ctrl_color = page_ctrl_color
 
-        self._slider_rect = None  # type: (pygame.Rect,None)
+        self._slider_rect = None  # type: (pygame.Rect, None)
         self._slider_pad = slider_pad
         self._slider_color = slider_color
         self._slider_position = 0  # type: int
 
         self._single_step = 20  # type: int
-        self._page_step = None  # type: (int,None)
+        self._page_step = None  # type: (int, None)
 
         if values_range[1] - values_range[0] > length:
             self.set_page_step(length)
@@ -274,6 +278,15 @@ class ScrollBar(Widget):
         self._page_ctrl_length = value
         self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
         self._apply_size_changes()
+
+    def get_thickness(self):
+        """
+        Return the thickness of the bar.
+
+        :return: Thickness
+        :rtype: int
+        """
+        return self._page_ctrl_thick
 
     def set_maximum(self, value):
         """
