@@ -175,9 +175,9 @@ class Theme(object):
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color',
                                                 (200, 200, 200))  # type: tuple
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float),
-                                              0)  # type: (int,float)
+                                              0)  # type: (int, float)
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float),
-                                         20)  # type: (int,float)
+                                         20)  # type: (int, float)
         self.selection_color = self._get(kwargs, 'selection_color', 'color',
                                          (255, 255, 255))  # type: tuple
         self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color',
@@ -201,7 +201,7 @@ class Theme(object):
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color',
                                             (0, 0, 0))  # type: tuple
         self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float),
-                                             2)  # type: (int,float)
+                                             2)  # type: (int, float)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
                                                pygame_menu.locals.POSITION_NORTHWEST)  # type: str
         self.widget_font = self._get(kwargs, 'widget_font', str,
@@ -225,7 +225,7 @@ class Theme(object):
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2',
                                        (0, 10))  # type: tuple
         self.widget_padding = self._get(kwargs, 'widget_padding', (int, float),
-                                        0)  # type: (int,float,tuple)
+                                        0)  # type: (int, float, tuple)
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2',
                                        (0, 0))  # type: tuple
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
@@ -235,7 +235,7 @@ class Theme(object):
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color',
                                              (0, 0, 0))  # type: tuple
         self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float),
-                                              2)  # type: (int,float)
+                                              2)  # type: (int, float)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
                                                 pygame_menu.locals.POSITION_NORTHWEST)  # type: str
 

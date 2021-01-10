@@ -74,7 +74,9 @@ class TextInput(Widget):
     """
     Text input widget.
 
-    .. note:: This widget only accepts vertical flip and translation transformations.
+    .. note::
+
+        This widget only accepts vertical flip and translation transformations.
 
     :param title: Text input title
     :type title: str
@@ -198,7 +200,7 @@ class TextInput(Widget):
             kwargs=kwargs
         )
 
-        self._input_string = ''  # Inputted text
+        self._input_string = ''  # type: str
         self._ignore_keys = (  # Ignore keys on keyrepeat event
             _controls.KEY_MOVE_DOWN,
             _controls.KEY_MOVE_UP,
@@ -244,7 +246,7 @@ class TextInput(Widget):
         self._cursor_offset = -1.0  # type: float
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
-        self._cursor_surface = None  # type: (pygame.Surface,None)
+        self._cursor_surface = None  # type: (pygame.Surface, None)
         self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500.0  # type: float
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
@@ -265,7 +267,7 @@ class TextInput(Widget):
         self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
-        self._selection_surface = None  # type: (pygame.Surface,None)
+        self._selection_surface = None  # type: (pygame.Surface, None)
         self._selection_touch_first_position = -1  # type: int
 
         # List of valid chars
@@ -288,7 +290,7 @@ class TextInput(Widget):
         self._keychar_size = {'': 0}  # type: dict
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygame_menu__last_render_string__'  # type: str
-        self._last_rendered_surface = None  # type: (pygame.Surface,None)
+        self._last_rendered_surface = None  # type: (pygame.Surface, None)
         self._last_rendered_surface_underline_width = 0  # type: int
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed

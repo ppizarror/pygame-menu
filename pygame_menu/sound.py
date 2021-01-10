@@ -145,7 +145,7 @@ class Sound(object):
                 print('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Channel where a sound is played
-        self._channel = None  # type: (mixer.Channel,None)
+        self._channel = None  # type: (mixer.Channel, None)
         self._uniquechannel = uniquechannel
 
         # Sound dict

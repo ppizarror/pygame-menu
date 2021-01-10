@@ -53,7 +53,9 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-    .. note:: This widget does not accept scale/resize transformation.
+    .. note::
+
+        This widget does not accept scale/resize transformation.
 
     :param title: Title of the menubar
     :type title: str
@@ -104,13 +106,13 @@ class MenuBar(Widget):
 
         self._backbox = back_box
         self._backbox_border_width = 1  # px
-        self._backbox_pos = None  # type: (tuple,None)
-        self._backbox_rect = None  # type: (pygame.rect.Rect,None)
+        self._backbox_pos = None  # type: (tuple, None)
+        self._backbox_rect = None  # type: (pygame.rect.Rect, None)
         self._background_color = background_color
         self._box_mode = 0
         self._offsetx = 0.0
         self._offsety = 0.0
-        self._polygon_pos = None  # type: (tuple,None)
+        self._polygon_pos = None  # type: (tuple, None)
         self._style = mode
         self._title = ''
         self._width = width

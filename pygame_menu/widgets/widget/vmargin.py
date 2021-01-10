@@ -38,7 +38,9 @@ class VMargin(Widget):
     """
     Vertical margin widget.
 
-    .. note:: This widget does not implement any transformation.
+    .. note::
+
+        This widget does not implement any transformation.
 
     :param widget_id: ID of the widget
     :type widget_id: str
