@@ -149,13 +149,13 @@ def main(test=False):
     )
 
     # Add text inputs with different configurations
-    wid1 = settings_menu.add_text_input(
+    settings_menu.add_text_input(
         'First name: ',
         default='John',
         onreturn=check_name_test,
         textinput_id='first_name'
     )
-    wid2 = settings_menu.add_text_input(
+    settings_menu.add_text_input(
         'Last name: ',
         default='Rambo',
         maxchar=10,
@@ -250,6 +250,7 @@ def main(test=False):
     more_settings_menu.add_color_input(
         'Color in Hex: ',
         color_type='hex',
+        hex_format='lower',
         onreturn=print_color
     )
 
@@ -311,10 +312,6 @@ def main(test=False):
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
     main_menu.add_button('Quit', pygame_menu.events.EXIT)
-
-    assert main_menu.get_widget('first_name', recursive=True) is wid1
-    assert main_menu.get_widget('last_name', recursive=True) is wid2
-    assert main_menu.get_widget('last_name') is None
 
     # -------------------------------------------------------------------------
     # Main loop
