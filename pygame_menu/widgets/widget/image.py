@@ -73,6 +73,9 @@ class Image(Widget):
 
         self.selection_effect_enabled = False
 
+    def set_title(self, title):
+        pass
+
     def get_image(self):
         """
         Gets the BaseImage object from widget.
