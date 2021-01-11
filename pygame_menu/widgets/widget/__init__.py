@@ -35,6 +35,7 @@ from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.colorinput import ColorInput
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
+from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu.widgets.widget.scrollbar import ScrollBar
 from pygame_menu.widgets.widget.selector import Selector
 from pygame_menu.widgets.widget.textinput import TextInput

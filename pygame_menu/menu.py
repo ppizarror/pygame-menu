@@ -62,9 +62,9 @@ class Menu(object):
     :type title: str
     :param center_content: Auto centers the menu on the vertical position after a widget is added/deleted
     :type center_content: bool
-    :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0` is given uses the maximum column width
+    :param column_max_width: List/Tuple representing the max width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0` is given uses the maximum column width
     :type column_max_width: int, float, list, tuple, None
-    :param columns: Number of columns, by default it's 1
+    :param columns: Number of columns, by default it's ``1``
     :type columns: int
     :param enabled: Menu is enabled by default or not
     :type enabled: bool
@@ -72,7 +72,7 @@ class Menu(object):
     :type joystick_enabled: bool
     :param menu_id: ID of the Menu
     :type menu_id: str
-    :param menu_position: Position in *(x,y)* axis (%). Default *(50,50)*, vertically and horizontally centered
+    :param menu_position: Position in *(x,y)* axis (%). Default ``(50,50)``, vertically and horizontally centered
     :type menu_position: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
@@ -82,11 +82,11 @@ class Menu(object):
     :type mouse_visible: bool
     :param onclose: Event or function applied when closing the Menu
     :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
-    :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: (overflow_x, overflow_y)
+    :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: *(overflow_x,overflow_y)*
     :type overflow: tuple, list
-    :param rows: Number of rows of each column, None if there's only 1 column. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3 and third 5)
+    :param rows: Number of rows of each column, ``None`` if there's only 1 column. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3 and third 5)
     :type rows: int, list, tuple, None
-    :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if None pygame is queried for the display mode
+    :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode
     :type screen_dimension: tuple, list, None
     :param theme: Menu theme object, if None use the default theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
@@ -578,7 +578,7 @@ class Menu(object):
         :type color_type: str
         :param color_id: ID of the color input
         :type color_id: str
-        :param default: Default value to display, if RGB must be a tuple *(r,g,b)*, if HEX must be a string `"#XXXXXX"`
+        :param default: Default value to display, if RGB type it must be a tuple ``(r,g,b)``, if HEX must be a string ``"#XXXXXX"``
         :type default: str, tuple
         :param hex_format: Hex format string mode (none, lower, upper)
         :type hex_format: str
@@ -707,7 +707,7 @@ class Menu(object):
         :type title: str
         :param label_id: ID of the label
         :type label_id: str
-        :param max_char: Split the title in several labels if length exceeds. *(0: don't split, -1: split to menu width)*
+        :param max_char: Split the title in several labels if length exceeds; ``0``: don't split, ``-1``: split to menu width
         :type max_char: int
         :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
@@ -895,11 +895,11 @@ class Menu(object):
         :type input_type: str
         :param input_underline: Underline character
         :type input_underline: str
-        :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
+        :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
         :type input_underline_len: int
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
-        :param maxwidth: Maximum size of the text widget (in number of chars), if 0 there's no limit
+        :param maxwidth: Maximum size of the text widget (in number of chars), if ``0`` there's no limit
         :type maxwidth: int
         :param onchange: Callback when changing the text input
         :type onchange: callable, None
@@ -911,7 +911,7 @@ class Menu(object):
         :type tab_size: int
         :param textinput_id: ID of the text input
         :type textinput_id: str
-        :param valid_chars: List of authorized chars, None if all chars are valid
+        :param valid_chars: List of authorized chars, ``None`` if all chars are valid
         :type valid_chars: list
         :param kwargs: Optional keyword arguments
         :type kwargs: dict
@@ -965,6 +965,7 @@ class Menu(object):
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
         assert isinstance(margin, (int, float))
+        assert margin > 0, 'zero margin is not valid, prefer adding a NoneWidget'
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes({'margin': (0, margin)})
@@ -975,6 +976,27 @@ class Menu(object):
         self._append_widget(widget)
 
         return widget
+
+    def add_none_widget(self, widget_id=''):
+        """
+        Add none widget to the current Menu.
+
+        .. note::
+
+            This widget is usefull to fill column/rows layout without
+            compromising any visuals. Also it can be used to store information
+            or even to add a ``draw_callback`` function to it for being called
+            on each menu draw.
+
+        :param widget_id: Widget ID
+        :type widget_id: str
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.NoneWidget`
+        """
+        attributes = self._filter_widget_attributes({})
+        widget = _widgets.NoneWidget(widget_id=widget_id)
+        self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
 
     def add_generic_widget(self, widget, configure_defaults=False):
         """
@@ -1247,7 +1269,8 @@ class Menu(object):
 
     def _update_widget_position(self):
         """
-        Update the position dict for each widget. Also sets the column/row of each widget
+        Update the position dict for each widget.
+        Also sets the column/row of each widget.
 
         :return: None
         """
@@ -1480,7 +1503,7 @@ class Menu(object):
         """
         Execute close callbacks and disable the Menu.
 
-        :return: True if Menu has been disabled
+        :return: ``True`` if Menu has been disabled
         :rtype: bool
         """
         onclose = self._onclose
@@ -1667,10 +1690,13 @@ class Menu(object):
             return
         window_width, window_height = self._window_size
 
-        rect = widget.get_rect()
+        rect = widget.get_rect()  # type: pygame.Rect
         if widget.selected and widget.get_selection_effect():
             rect = widget.get_selection_effect().inflate(rect)
         rect = self._current._scroll.to_real_position(rect, visible=True)
+
+        if rect.width == 0 or rect.height == 0:
+            return
 
         x1, y1, x2, y2 = rect.topleft + rect.bottomright
 
@@ -1735,7 +1761,7 @@ class Menu(object):
 
     def is_enabled(self):
         """
-        Return True if the menu is enabled.
+        Return ``True`` if menu is enabled.
 
         :return: Menu enabled status
         :rtype: bool
@@ -1746,7 +1772,7 @@ class Menu(object):
         """
         Move selected to left/right position (column support).
 
-        :param pos: If +1 selects right column, -1 left column
+        :param pos: If ``+1`` selects right column, ``-1`` left column
         :type pos: int
         :return: None
         """
@@ -1819,7 +1845,7 @@ class Menu(object):
 
         :param events: Pygame events as a list
         :type events: list[:py:class:`pygame.event.Event`]
-        :return: True if mainloop must be stopped
+        :return: ``True`` if mainloop must be stopped
         :rtype: bool
         """
         assert isinstance(events, list)
@@ -2038,9 +2064,9 @@ class Menu(object):
         :type surface: :py:class:`pygame.Surface`
         :param bgfun: Background function called on each loop iteration before drawing the Menu
         :type bgfun: callable, None
-        :param disable_loop: If true run this method for only 1 loop
+        :param disable_loop: If ``True`` run this method for only ``1`` loop
         :type disable_loop: bool
-        :param fps_limit: Limit frame per second of the loop, if 0 there's no limit
+        :param fps_limit: Limit frames per second of the loop, if ``0`` there's no limit
         :type fps_limit: int, float
         :return: None
         """
@@ -2084,7 +2110,7 @@ class Menu(object):
 
         :param recursive: Look in Menu and sub-menus
         :type recursive: bool
-        :return: Input dict e.g.: {'id1': value, 'id2': value, ...}
+        :return: Input dict e.g.: ``{'id1': value, 'id2': value, ...}``
         :rtype: dict
         """
         assert isinstance(recursive, bool)
@@ -2101,7 +2127,7 @@ class Menu(object):
         :type recursive: bool
         :param depth: Depth of the input data
         :type depth: int
-        :return: Input dict e.g.: {'id1': value, 'id2': value, ...}
+        :return: Input dict e.g.: ``{'id1': value, 'id2': value, ...}``
         :rtype: dict
         """
         data = {}
@@ -2249,7 +2275,7 @@ class Menu(object):
 
         :param new_index: Widget index
         :type new_index: int
-        :param dwidget: Direction to search if the *new_index* widget is non selectable
+        :param dwidget: Direction to search if ``new_index`` widget is non selectable
         :type dwidget: int
         :return: None
         """
@@ -2385,12 +2411,12 @@ class Menu(object):
         Return a widget by a given ID from the Menu.
 
         With ``recursive=True``: it looks for a widget in the Menu
-        and all sub-menus. Use ``current`` for getting from current and
+        and all sub-menus. Use ``._current`` for getting from current and
         base Menu.
 
         ..note::
 
-            None is returned if no widget found.
+            ``None`` is returned if no widget found.
 
         :param widget_id: Widget ID
         :type widget_id: str
@@ -2427,13 +2453,13 @@ class Menu(object):
 
     def in_submenu(self, menu, recursive=False):
         """
-        Returns true if ``menu`` is a submenu of the Menu.
+        Return ``True`` if ``menu`` is a submenu of the Menu.
 
         :param menu: Menu to check
         :type menu: Menu
         :param recursive: Check recursively
         :type recursive: bool
-        :return: True if ``menu`` is in submenus
+        :return: ``True`` if ``menu`` is in submenus
         :rtype: bool
         """
         if menu in self._submenus:
@@ -2452,7 +2478,7 @@ class Menu(object):
         :type menu: Menu
         :param recursive: Check recursively
         :type recursive: bool
-        :return: True if ``menu`` was removed
+        :return: ``True`` if ``menu`` was removed
         :rtype: bool
         """
         if menu in self._submenus:
@@ -2467,7 +2493,7 @@ class Menu(object):
 
     def get_theme(self):
         """
-        Returns the menu theme.
+        Return the menu theme.
 
         .. warning::
 
@@ -2480,7 +2506,7 @@ class Menu(object):
 
     def get_clock(self):
         """
-        Returns the pygame menu timer.
+        Return the pygame menu timer.
 
         :return: Pygame clock object
         :rtype: py:class:`pygame.time.Clock`
@@ -2544,11 +2570,11 @@ class Menu(object):
 
     def has_attribute(self, key):
         """
-        Returns true if widget has the given attribute.
+        Return ``True`` if widget has the given attribute.
 
         :param key: Key of the attribute
         :type key: str
-        :return: True if exists
+        :return: ``True`` if exists
         :rtype: bool
         """
         assert isinstance(key, str)

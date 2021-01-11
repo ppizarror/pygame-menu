@@ -167,6 +167,20 @@ can be wrapped in order to fit the menu size.
 .. automethod:: pygame_menu.Menu.add_label
 
 
+Add a none widget
+-----------------
+
+A none widget is used to fill column/row layout, store information
+or even add drawing callbacks for being executed on each menu draw.
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+    menu.add_none_widget()
+
+.. automethod:: pygame_menu.Menu.add_none_widget
+
+
 Add a text entry
 ----------------
 
