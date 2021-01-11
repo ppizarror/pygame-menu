@@ -39,8 +39,10 @@ from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_colo
 from pygame_menu.widgets.core import Widget
 
 try:
+
     # noinspection PyProtectedMember
     from pyperclip import copy, paste, PyperclipException
+
 except ImportError:
 
     # noinspection PyUnusedLocal

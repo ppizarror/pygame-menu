@@ -62,7 +62,7 @@ class NoneWidget(Widget):
     def set_title(self, title):
         pass
 
-    def get_rect(self, inflate=None):
+    def get_rect(self, inflate=None, apply_padding=True):
         return pygame.Rect(0, 0, 0, 0)
 
     def set_background_color(self, color, inflate=(0, 0)):

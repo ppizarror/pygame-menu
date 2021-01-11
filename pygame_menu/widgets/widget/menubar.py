@@ -128,6 +128,9 @@ class MenuBar(Widget):
     def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
         pass
 
+    def set_selection_effect(self, selection):
+        pass
+
     def set_backbox_border_width(self, width):
         """
         Set backbox border width in px.

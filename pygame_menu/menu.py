@@ -730,7 +730,7 @@ class Menu(object):
             dummy_attrs = self._filter_widget_attributes(kwargs.copy())
             dummy = _widgets.Label(title=title)
             self._configure_widget(dummy, **dummy_attrs)
-            max_char = int(1.0 * self._width * len(title) / dummy.get_rect().width)
+            max_char = int(1.0 * self._width * len(title) / dummy.get_width())
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
@@ -1326,11 +1326,8 @@ class Menu(object):
             if widget.floating:
                 continue
 
-            rect = widget_rects[widget.get_id()]  # type: pygame.Rect
-            selection_effect = widget.get_selection_effect()  # type: _widgets.core.Selection
             if self._column_max_width[col] is None:  # No limit
-                self._column_widths[col] = max(self._column_widths[col],
-                                               rect.width + selection_effect.get_width())
+                self._column_widths[col] = max(self._column_widths[col], widget.get_width(apply_selection=True))
 
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         if 0 < sum(self._column_widths) < self._width:
@@ -1380,7 +1377,7 @@ class Menu(object):
             selection_margin = 0
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
-                dx = -float(rect.width) / 2
+                dx = -widget.get_width(apply_selection=True) / 2
             elif align == _locals.ALIGN_LEFT:
                 selection_margin = selection_effect.get_margin()[1]  # left
                 dx = -column_width / 2 + selection_margin
@@ -1442,7 +1439,7 @@ class Menu(object):
         self._update_selection_if_hidden()
         self._update_widget_position()
 
-        menubar_height = self._menubar.get_rect().height
+        menubar_height = self._menubar.get_height()
         max_x, max_y = self._get_widget_max_position()
 
         # Get scrollbars size
@@ -1613,7 +1610,7 @@ class Menu(object):
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         _, max_y = self._get_widget_max_position()
         max_y -= self._widget_offset[1]  # Only use total height
-        available = self._height - self._menubar.get_rect().height - horizontal_scroll
+        available = self._height - self._menubar.get_height() - horizontal_scroll
         new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
         self._widget_offset[1] = self._height * new_pos
         self._current._widgets_surface = None  # Rebuild on the next draw
