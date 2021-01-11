@@ -40,6 +40,7 @@ from pygame_menu.utils import make_surface, assert_alignment, assert_color, asse
     to_string, is_callable
 
 from uuid import uuid4
+import random
 import time
 import warnings
 
@@ -84,13 +85,16 @@ class Widget(object):
         self._attributes = {}  # Stores widget attributes
         self._background_color = None
         self._background_inflate = (0, 0)
+        self._col_row_index = (0, 0, 0)
         self._events = []  # type: list
         self._id = str(widget_id)
         self._margin = (0.0, 0.0)  # type: tuple
-        self._max_width = None  # type: (int,float)
+        self._default_value = _NoWidgetValue()  # type: any
+        self._max_width = None  # type: (int, float)
+        self._max_width_scale_height = False
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._position_set = False
-        self._selected_rect = None  # type: (pygame.rect.Rect,None)
+        self._selected_rect = None  # type: (pygame.rect.Rect, None)
         self._selection_time = 0  # type: float
         self._title = to_string(title)
 
@@ -102,7 +106,7 @@ class Widget(object):
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
         # use .get_rect() Widget method instead
-        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
+        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect, None)
 
         # Callbacks
         self._draw_callbacks = {}  # type: dict
@@ -114,7 +118,7 @@ class Widget(object):
         self._on_return = onreturn  # type: callable
 
         # Surface of the widget
-        self._surface = None  # type: (pygame.Surface,None)
+        self._surface = None  # type: (pygame.Surface, None)
 
         # Menu reference
         self._menu = None
@@ -124,7 +128,7 @@ class Widget(object):
         self._menu_surface_needs_update = False
 
         # Modified in set_font() method
-        self._font = None  # type: (pygame.font.Font,None)
+        self._font = None  # type: (pygame.font.Font, None)
         self._font_antialias = True  # type: bool
         self._font_background_color = None  # type: (tuple, None)
         self._font_color = (0, 0, 0)  # type: tuple
@@ -137,8 +141,7 @@ class Widget(object):
         self._shadow_color = (0, 0, 0)  # type: tuple
         self._shadow_offset = 2.0  # type: float
         self._shadow_position = _locals.POSITION_NORTHWEST
-        self._shadow_tuple = None  # (x px offset, y px offset)
-        self._create_shadow_tuple()
+        self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
 
         # Rendering, this variable may be used by render() method
         # If the hash of the variables change respect to the last render hash
@@ -155,6 +158,7 @@ class Widget(object):
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True
         self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
+        self.floating = False  # If True, the widget don't contribute width/height to the menu widget positioning computation. Use .set_float() to modify this status
         self.mouse_enabled = True
         self.selected = False
         self.selection_effect_enabled = True  # Some widgets cannot have selection effect
@@ -162,6 +166,14 @@ class Widget(object):
         self.sound = Sound()  # type: Sound
         self.touchscreen_enabled = True
         self.visible = True  # Use .show() or .hide() to modify this status
+
+    def force_render(self):
+        """
+        Forces widget render.
+
+        :return: None
+        """
+        self._last_render_hash = 0
 
     def set_attribute(self, key, value):
         """
@@ -226,7 +238,10 @@ class Widget(object):
         :return: Hash data
         :rtype: int
         """
-        return hash(args)
+        h = hash(args)
+        if h == 0:  # Menu considers 0 as unrendered status
+            h = random.randrange(-100000, 100000)
+        return h
 
     def _render_hash_changed(self, *args):
         """
@@ -249,18 +264,28 @@ class Widget(object):
         """
         Update the widget title.
 
+        .. note::
+
+            Not all widgets implements this method, for example, images don't
+            accept a title.
+
         :param title: New title
         :type title: str
         :return: None
         """
         self._title = to_string(title)
         self._apply_font()
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
         self._render()
 
     def get_title(self):
         """
         Return the widget title.
+
+        .. note::
+
+            Not all widgets implements this method, for example, images don't accept
+            a title, and such widget would return an empty string if this method is called.
 
         :return: Widget title
         :rtype: str
@@ -290,7 +315,7 @@ class Widget(object):
             'widget background inflate must be equal or greater than zero in both axis'
         self._background_color = color
         self._background_inflate = tuple(inflate)
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def expand_background_inflate_to_selection_effect(self):
         """
@@ -300,7 +325,9 @@ class Widget(object):
         This is a permanent change; for dynamic purpuoses, depending if the widget
         is selected or not, setting ``widget.selection_expand_background`` to ``True`` may help.
 
-        .. note:: This method may have unexpected results with certain selection effects.
+        .. note::
+
+            This method may have unexpected results with certain selection effects.
 
         :return: None
         """
@@ -334,7 +361,9 @@ class Widget(object):
         """
         Return the selection effect.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Selection effect
         :rtype: :py:class:`pygame_menu.widgets.core.Selection`
@@ -351,7 +380,7 @@ class Widget(object):
         """
         assert isinstance(selection, Selection)
         self._selection_effect = selection
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def apply(self, *args):
         """
@@ -361,6 +390,10 @@ class Widget(object):
         .. code-block:: python
 
             callback_func(value, *args, *widget._args, **widget._kwargs)
+
+        .. note::
+
+            Not all widgets have an ``on_return`` method.
 
         with:
             - ``value`` if something is returned by ``get_value()``
@@ -389,6 +422,10 @@ class Widget(object):
 
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
+        .. note::
+
+            Not all widgets have an ``on_change`` method.
+
         with:
             - ``value`` if something is returned by ``get_value()``
             - ``args`` given to this method
@@ -409,7 +446,7 @@ class Widget(object):
 
     def draw(self, surface):
         """
-        Draw the widget shape.
+        Draw the widget on a given surface.
 
         :param surface: Surface to draw
         :type surface: :py:class:`pygame.Surface`
@@ -419,7 +456,7 @@ class Widget(object):
 
     def draw_selection(self, surface):
         """
-        Draw selection effect on widget.
+        Draw the selection widget effect on a given surface.
 
         :param surface: Surface to draw
         :type surface: :py:class:`pygame.Surface`
@@ -429,17 +466,33 @@ class Widget(object):
             return
         self._selection_effect.draw(surface, self)
 
-    def set_max_width(self, width):
+    def set_max_width(self, width, scale_height=False):
         """
-        Set widget max width (column support) if ``force_fit_text`` is enabled.
+        Set widget max width, it applies an scalling factor if the widget width is
+        greater than the limit.
+
+        .. note::
+
+            This method is automatically executed if Menu ``force_fit_text`` is enabled,
+            and the widget is not a floating one (``widget.floating=True``).
 
         :param width: Width in px, None if max width is disabled
         :type width: int, float, None
+        :param scale_height: If ``True`` the height is also scaled if the width e
         :return: None
         """
-        if width is not None:
+        assert isinstance(scale_height, bool)
+        if width is None:
+            self._max_width = None
+        else:
             assert isinstance(width, (int, float)), 'width must be numeric'
-        self._max_width = width
+            self._max_width = width
+            if self._scale[0]:
+                _msg = 'widget already has a scalling factor applied. Scalling has been' \
+                       'disabled'
+                warnings.warn(_msg)
+                self._scale[0] = False
+            self._max_width_scale_height = scale_height
 
     def get_margin(self):
         """
@@ -463,7 +516,7 @@ class Widget(object):
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
         self._margin = (x, y)
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def get_padding(self):
         """
@@ -483,7 +536,9 @@ class Widget(object):
         - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
         - If 4-item tuple is provided: padding will be (top, right, bottom, left)
 
-        .. note:: See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
+        .. note::
+
+            See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
 
         :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
         :type padding: int, float, tuple, list
@@ -506,7 +561,7 @@ class Widget(object):
                 self._padding = (padding[0], padding[1], padding[2], padding[1])
             else:
                 self._padding = (padding[0], padding[1], padding[2], padding[3])
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def get_rect(self, inflate=None):
         """
@@ -540,11 +595,15 @@ class Widget(object):
 
     def get_value(self):
         """
-        Return the value. If exception ``ValueError`` is raised,
+        Return the widget value. If exception ``ValueError`` is raised,
         no value will be passed to the callbacks.
 
+        .. warning::
+
+            Not all widgets return a value.
+
         :return: Widget data value
-        :rtype: Object
+        :rtype: any
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
                                                                self.get_id()))
@@ -638,12 +697,6 @@ class Widget(object):
             surface.blit(text_bg, self._shadow_tuple)
 
         surface.blit(text, (0, 0))
-        new_width = surface.get_size()[0]
-        new_height = surface.get_size()[1]
-
-        if self._max_width is not None and new_width > self._max_width:
-            surface = pygame.transform.smoothscale(surface, (self._max_width, new_height))
-
         return surface
 
     def _apply_surface_transforms(self):
@@ -658,27 +711,38 @@ class Widget(object):
         if self._flip[0] or self._flip[1]:
             self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
 
-        if self._scale[0] and (self._scale[1] != 1 or self._scale[2] != 1):
-            w = self._scale[1]
-            if w != 1:
-                warnings.warn('widget _max_width is not None, scalling factor in x-axes should be equal to 1')
-            h = self._scale[2]
+        if self._max_width is None:
+            if self._scale[0] and (self._scale[1] != 1 or self._scale[2] != 1):
+                w = self._scale[1]
+                h = self._scale[2]
+                width = self._surface.get_width()
+                height = self._surface.get_height()
+                use_same_xy = self._scale[4]
+                if not use_same_xy:
+                    w = int(w * width)
+                    h = int(h * height)
+                if not self._scale[3]:  # smooth
+                    self._surface = pygame.transform.scale(self._surface, (w, h))
+                else:
+                    self._surface = pygame.transform.smoothscale(self._surface, (w, h))
+        else:
             width = self._surface.get_width()
             height = self._surface.get_height()
-            use_same_xy = self._scale[4]
-            if not use_same_xy:
-                w = int(w * width)
-                h = int(h * height)
-            if not self._scale[3]:  # smooth
-                self._surface = pygame.transform.scale(self._surface, (w, h))
-            else:
-                self._surface = pygame.transform.smoothscale(self._surface, (w, h))
+            if width > self._max_width:
+                if self._max_width_scale_height:
+                    height *= self._max_width / width
+                self._surface = pygame.transform.smoothscale(self._surface, (int(self._max_width), int(height)))
 
     def surface_needs_update(self):
         """
         Checks if the widget width/height has changed because events. If so, return true and
         set the status of the widget (menu widget position needs update) as false. This method
         is used by ``Menu.update()``.
+
+        .. note::
+        
+            Generally, widget ``_render()`` method set ``_menu_surface_needs_update`` as true
+            after rendering has finished.
 
         :return: True if the widget position has changed by events after the rendering.
         :rtype: bool
@@ -728,8 +792,8 @@ class Widget(object):
         self._font_selected_color = selected_color
         self._font_size = font_size
 
-        self._last_render_hash = 0  # Force widget render
         self._apply_font()
+        self.force_render()
 
     def update_font(self, style):
         """
@@ -742,7 +806,10 @@ class Widget(object):
         - ``selected_color``        Selected color *(tuple)*
         - ``size``                  Size of the font *(int)*
 
-        .. note:: If a key is not defined it will be rewritten using current font style from ``Widget.get_font_info()`` method.
+        .. note::
+
+            If a key is not defined it will be rewritten using current font style
+            from :py:meth:`pygame_menu.widgets.core.Widget.get_font_info` method.
 
         :param style: Font style dict
         :type style: dict
@@ -802,7 +869,9 @@ class Widget(object):
         """
         Return the menu reference (if exists).
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Menu reference
         :rtype: :py:class:`pygame_menu.Menu`, None
@@ -833,6 +902,15 @@ class Widget(object):
         self._rect.y = posy + self._translate[1]
         self._position_set = True
 
+    def get_position(self):
+        """
+        Return the widget position tuple *(x,y)*.
+
+        :return: Widget position
+        :rtype: tuple
+        """
+        return self._rect.x, self._rect.y
+
     def flip(self, x, y):
         """
         This method can flip the widget either vertically, horizontally, or both.
@@ -847,13 +925,15 @@ class Widget(object):
         assert isinstance(x, bool)
         assert isinstance(y, bool)
         self._flip = (x, y)
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def scale(self, width, height, smooth=True):
         """
         Scale the widget to a desired width and height factor.
 
-        .. note:: Not all widgets are affected by scale.
+        .. note::
+
+            Not all widgets are affected by scale.
 
         :param width: Scale factor of the width
         :type width: int, float
@@ -867,19 +947,25 @@ class Widget(object):
         assert isinstance(height, (int, float))
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
+        if self._max_width is not None:
+            _msg = 'widget max width is not None. Set widget.set_max_width() to ' \
+                   'None for disabling such feature. This scalling will be ignored'
+            warnings.warn(_msg)
+            self._scale[0] = False
+            return
         self._scale = [True, width, height, smooth, False]
         if width == 1 and height == 1:  # Disables scalling
             self._scale[0] = False
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def resize(self, width, height, smooth=False):
         """
         Set the widget size to another size.
 
-        .. note ::
+        .. note::
 
-            This method calls ``widget.scale`` method; thus, some widgets
-            may not support this transformation.
+            This method calls :py:meth:`pygame_menu.widgets.core.Widget.scale` method;
+            thus, some widgets may not support this transformation.
 
         :param width: New width of the widget in px
         :type width: int, float
@@ -896,7 +982,9 @@ class Widget(object):
         """
         Translate to *(+x,+y)* according to default position.
 
-        .. note:: To revert changes, only set to *(0,0)*.
+        .. note::
+
+            To revert changes, only set to *(0,0)*.
 
         :param x: +X in px
         :type x: int, float
@@ -907,7 +995,7 @@ class Widget(object):
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
         self._translate = (x, y)
-        self._menu_surface_needs_update = True
+        self.force_render()
 
     def rotate(self, angle):
         """
@@ -925,7 +1013,7 @@ class Widget(object):
         """
         assert isinstance(angle, (int, float))
         self._angle = angle
-        self._last_render_hash = 0  # Force widget render
+        self.force_render()
 
     def set_alignment(self, align):
         """
@@ -937,6 +1025,7 @@ class Widget(object):
         """
         assert_alignment(align)
         self._alignment = align
+        self.force_render()
 
     def get_alignment(self):
         """
@@ -957,13 +1046,13 @@ class Widget(object):
         """
         self.selected = selected
         self.active = False
-        self._last_render_hash = 0  # Force widget render
         if selected:
             self._focus()
             self._selection_time = time.time()
         else:
             self._blur()
             self._events = []  # Remove events
+        self.force_render()
 
     def get_selected_time(self):
         """
@@ -981,7 +1070,9 @@ class Widget(object):
         """
         Return widget surface.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Widget surface
         :rtype: :py:class:`pygame.Surface`
@@ -1031,25 +1122,7 @@ class Widget(object):
                 raise ValueError('shadow offset must be greater than zero')
             self._shadow_offset = offset
 
-        self._create_shadow_tuple()  # Create shadow tuple position
-        self._last_render_hash = 0  # Force widget render
-
-    def set_sound(self, sound):
-        """
-        Set sound engine to the widget.
-
-        :param sound: Sound object
-        :type sound: :py:class:`pygame_menu.sound.Sound`
-        :return: None
-        """
-        self.sound = sound
-
-    def _create_shadow_tuple(self):
-        """
-        Create shadow position tuple.
-
-        :return: None
-        """
+        # Set position
         x = 0
         y = 0
         if self._shadow_position == _locals.POSITION_NORTHWEST:
@@ -1074,6 +1147,18 @@ class Widget(object):
             x = -1
         self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
 
+        self.force_render()
+
+    def set_sound(self, sound):
+        """
+        Set sound engine to the widget.
+
+        :param sound: Sound object
+        :type sound: :py:class:`pygame_menu.sound.Sound`
+        :return: None
+        """
+        self.sound = sound
+
     def set_controls(self, joystick=True, mouse=True, touchscreen=True):
         """
         Enable interfaces to control the widget.
@@ -1094,17 +1179,50 @@ class Widget(object):
         """
         Set the widget value.
 
+        .. note::
+
+            Not all widgets accepts a value, for example the image widget.
+
         .. warning::
 
             This method does not fire the callbacks as it is called programmatically.
             This behavior is deliberately chosen to avoid infinite loops.
 
         :param value: Value to be set on the widget
-        :type value: Object
+        :type value: any
         :return: None
         """
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
                                                                self.get_id()))
+
+    def set_default_value(self, value):
+        """
+        Set the widget value and set it as default.
+
+        .. note::
+
+            This method is intended to be used along :py:meth:`pygame_menu.widgets.core.Widget.reset_value`
+            method that sets the widget value back to the default setted with this method.
+
+        .. note::
+
+            Not all widgets accepts a value, for example the image widget.
+
+        :param value: Default widget value
+        :type value: any
+        :return: None
+        """
+        self._default_value = value
+        self.set_value(value)
+
+    def reset_value(self):
+        """
+        Reset the widget value to the default one.
+
+        :return: None
+        """
+        if not isinstance(self._default_value, _NoWidgetValue):
+            self.set_value(self._default_value)
 
     def update(self, events):
         """
@@ -1179,12 +1297,14 @@ class Widget(object):
         Adds a function to the widget to be executed each time the widget is updated.
 
         The function that this method receives receives two objects: the widget itself and
-        the menu reference. It is similar to ``add_draw_callback``.
+        the menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.Widget.add_draw_callback`.
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
-        anytime using ``widget.remove_update_callback(id)``.
+        anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_update_callback`.
 
-        .. note:: Not all widgets are updated, so the provided function may never be executed.
+        .. note::
+
+            Not all widgets are updated, so the provided function may never be executed.
 
         :param update_callback: Function
         :type update_callback: callable
@@ -1249,6 +1369,19 @@ class Widget(object):
         self._events = []
         return copy_events
 
+    def set_float(self, float_status):
+        """
+        Set the floating status. If ``True`` the widget don't contributes
+        the width/height to the Menu widget positioning computation.
+
+        :param float_status: Float status
+        :type float_status: bool
+        :return: None
+        """
+        assert isinstance(float_status, bool)
+        self.floating = float_status
+        self._menu_surface_needs_update = True
+
     def show(self):
         """
         Set widget visible.
@@ -1273,6 +1406,33 @@ class Widget(object):
             # noinspection PyProtectedMember
             self._menu._update_selection_if_hidden()
 
+    def set_col_row_index(self, col, row, index):
+        """
+        Set the (column,row,index) position. If column or row is -1 then the widget is not assigned
+        to a certain column/row (for example, if it's hidden).
+
+        :param col: Column
+        :type col: int
+        :param row: Row
+        :type row: int
+        :param index: Index in menu widget list
+        :type index: int
+        :return: None
+        """
+        assert isinstance(col, int)
+        assert isinstance(row, int)
+        assert isinstance(index, int)
+        self._col_row_index = (col, row, index)
+
+    def get_col_row_index(self):
+        """
+        Get the widget *(column, row, index)* position.
+
+        :return: Column, row, index tuple
+        :rtype: tuple
+        """
+        return self._col_row_index
+
 
 class _NullSelection(Selection):
     """
@@ -1288,3 +1448,12 @@ class _NullSelection(Selection):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
         return
+
+
+class _NoWidgetValue(object):
+    """
+    No value class.
+    """
+
+    def __init__(self):
+        pass
