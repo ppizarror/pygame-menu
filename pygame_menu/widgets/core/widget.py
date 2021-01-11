@@ -540,7 +540,7 @@ class Widget(object):
                 self._padding = (padding[0], padding[1], padding[2], padding[3])
         self.force_render()
 
-    def get_rect(self, inflate=None):
+    def get_rect(self, inflate=None, apply_padding=True):
         """
         Return the Rect object, this forces the widget rendering.
 
@@ -550,6 +550,8 @@ class Widget(object):
 
         :param inflate: Inflate rect *(x,y)* in px
         :type inflate: None, tuple, list
+        :param apply_padding: Apply widget padding
+        :type apply_padding: bool
         :return: Widget rect
         :rtype: :py:class:`pygame.Rect`
         """
@@ -558,7 +560,6 @@ class Widget(object):
         # Padding + inflate
         if inflate is None:
             inflate = (0, 0)
-        apply_padding = 1
 
         pad_top = self._padding[0] * apply_padding + inflate[1] / 2
         pad_right = self._padding[1] * apply_padding + inflate[0] / 2
@@ -608,12 +609,31 @@ class Widget(object):
             self._menu._check_id_duplicated(widget_id)
         self._id = widget_id
 
+    def render(self):
+        """
+        Public rendering method. It calls widget ``_render`` private method.
+
+        .. note::
+
+            Before rendering, check out if the widget font/title/values are
+            set. If not, it is probable that a zero-size surface is set.
+
+        :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
+        :rtype: bool, None
+        """
+        return self._render()
+
     def _render(self):
         """
         Render the widget surface.
 
         This method shall update the attribute ``_surface`` with a :py:class:`pygame.Surface`
         representing the outer borders of the widget.
+
+        .. note::
+
+            Before rendering, check out if the widget font/title/values are
+            set. If not, it is probable that a zero-size surface is set.
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         :rtype: bool, None
@@ -813,14 +833,14 @@ class Widget(object):
         :type color: tuple
         :param selected_color: Text color when widget is selected
         :type selected_color: tuple
-        :param background_color: Font background color
-        :type background_color: tuple
+        :param background_color: Font background color. If ``None`` no background color is used
+        :type background_color: tuple, None
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :type antialias: bool
         :return: None
         """
         assert isinstance(font, str)
-        assert isinstance(font_size, int)
+        assert isinstance(font_size, (int, float))
         assert isinstance(color, tuple)
         assert isinstance(selected_color, tuple)
         assert isinstance(background_color, (tuple, type(None)))
@@ -833,6 +853,8 @@ class Widget(object):
             background_color = None
             _msg = 'font background color must be opaque, alpha channel must be 255'
             warnings.warn(_msg)
+
+        font_size = int(font_size)
 
         self._font = _fonts.get_font(font, font_size)
         self._font_antialias = antialias
@@ -1216,6 +1238,66 @@ class Widget(object):
         :rtype: :py:class:`pygame.Surface`
         """
         return self._surface
+
+    def get_width(self, apply_padding=True, apply_selection=False):
+        """
+        Return the widget width.
+
+        .. warning::
+
+            If the widget is not rendered, this method will return ``0``.
+
+        :param apply_padding: Apply padding
+        :type apply_selection: bool
+        :param apply_selection: Apply selection
+        :type apply_padding: bool
+        :return: Widget width
+        :rtype: int
+        """
+        rect = self.get_rect(apply_padding=apply_padding)
+        width = rect.width
+        if apply_selection:
+            width += self._selection_effect.get_width()
+        return width
+
+    def get_height(self, apply_padding=True, apply_selection=False):
+        """
+        Return the widget height.
+
+        .. warning::
+
+            If the widget is not rendered, this method will return ``0``.
+
+        :param apply_padding: Apply padding
+        :type apply_selection: bool
+        :param apply_selection: Apply selection
+        :type apply_padding: bool
+        :return: Widget width
+        :rtype: int
+        """
+        rect = self.get_rect(apply_padding=apply_padding)
+        height = rect.height
+        if apply_selection:
+            height += self._selection_effect.get_height()
+        return height
+
+    def get_size(self, apply_padding=True, apply_selection=False):
+        """
+        Return the widget size (width/height).
+
+        .. warning::
+
+            If the widget is not rendered, this method will return ``0``.
+
+        :param apply_padding: Apply padding
+        :type apply_selection: bool
+        :param apply_selection: Apply selection
+        :type apply_padding: bool
+        :return: Widget width
+        :rtype: int
+        """
+        return self.get_width(apply_padding=apply_padding, apply_selection=apply_selection), \
+               self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
 
     def _focus(self):
         """
