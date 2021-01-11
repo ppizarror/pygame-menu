@@ -1007,11 +1007,11 @@ class Widget(object):
                 _msg = 'widget already has a scalling factor applied. Scalling has been' \
                        'disabled'
                 warnings.warn(_msg)
-                self._scale[0] = False
+                self._disable_scale()
             if self._max_height[0] is not None:
                 _msg = 'widget already has a max_height. Widget max height has been disabled'
                 warnings.warn(_msg)
-                self._max_height[0] = None
+                self._disable_scale()
         self.force_render()
 
     def set_max_height(self, height, scale_width=False, smooth=True):
@@ -1039,12 +1039,22 @@ class Widget(object):
                 _msg = 'widget already has a scalling factor applied. Scalling has been' \
                        'disabled'
                 warnings.warn(_msg)
-                self._scale[0] = False
+                self._disable_scale()
             if self._max_width[0] is not None:
                 _msg = 'widget already has a max_width. Widget max width has been disabled'
                 warnings.warn(_msg)
-                self._max_width[0] = None
+                self._disable_scale()
         self.force_render()
+
+    def _disable_scale(self):
+        """
+        Disables widget scale.
+
+        :return: None
+        """
+        self._scale[0] = False
+        self._scale[1] = 1
+        self._scale[2] = 1
 
     def scale(self, width, height, smooth=True):
         """
@@ -1075,14 +1085,12 @@ class Widget(object):
             _msg = 'widget max width is not None. Set widget.set_max_width(None) ' \
                    'for disabling such feature. This scalling will be ignored'
             warnings.warn(_msg)
-            self._scale[0] = False
-            return
+            return self._disable_scale()
         if self._max_height[0] is not None:
             _msg = 'widget max height is not None. Set widget.set_max_height(None) ' \
                    'for disabling such feature. This scalling will be ignored'
             warnings.warn(_msg)
-            self._scale[0] = False
-            return
+            return self._disable_scale()
         self._scale = [True, width, height, smooth, False]
         if width == 1 and height == 1:  # Disables scalling
             self._scale[0] = False
@@ -1380,7 +1388,8 @@ class Widget(object):
 
         .. note::
 
-            Not all widgets are updated, so the provided function may never be executed.
+            Not all widgets are updated, so the provided function may never be executed
+            in some widgets (for example, label or images).
 
         :param update_callback: Function
         :type update_callback: callable
