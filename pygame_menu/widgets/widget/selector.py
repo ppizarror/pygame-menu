@@ -143,6 +143,7 @@ class Selector(Widget):
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def get_index(self):
         """

@@ -280,8 +280,11 @@ class TextInput(Widget):
             assert len(valid_chars) > 0, 'valid_chars list must contain at least 1 element'
         self._valid_chars = valid_chars
 
+        # Callbacks
+        self._apply_widget_draw_callback = True
+        self._apply_widget_update_callback = True
+
         # Other
-        self._apply_widget_update_callbacks = True  # If False, apply_widget_update will not be called
         self._copy_paste_enabled = copy_paste_enable
         self._input_type = input_type
         self._input_underline = input_underline
@@ -391,6 +394,9 @@ class TextInput(Widget):
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
             surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
+
+        if self._apply_widget_draw_callback:
+            self.apply_draw_callbacks()
 
     def _render(self):
         string = self._title + self._get_input_string()  # Render string
@@ -1791,7 +1797,7 @@ class TextInput(Widget):
             self._cursor_ms_counter %= self._cursor_switch_ms
             self._cursor_visible = not self._cursor_visible
 
-        if updated and self._apply_widget_update_callbacks:
+        if updated and self._apply_widget_update_callback:
             self.apply_update_callbacks()
 
         return updated

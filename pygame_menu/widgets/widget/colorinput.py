@@ -173,8 +173,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._previsualization_surface = None  # type: (pygame.Surface, None)
         self._prev_size = prev_size  # type: int
 
-        # Disable parent update callbacks
-        self._apply_widget_update_callbacks = False
+        # Disable parent callbacks
+        self._apply_widget_update_callback = False
+        self._apply_widget_draw_callback = False
 
     # noinspection PyMissingOrEmptyDocstring
     def clear(self):
@@ -306,6 +307,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def draw(self, surface):
         super(ColorInput, self).draw(surface)  # This calls _render()
         self._previsualize_color(surface)
+        self.apply_draw_callbacks()
 
     def _render(self):
         r = super(ColorInput, self)._render()

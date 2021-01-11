@@ -1659,7 +1659,6 @@ class Menu(object):
         # Draw widgets
         selected_widget = None
         for widget in self._current._widgets:  # type: _widgets.core.Widget
-            widget.apply_draw_callbacks()
             if not widget.visible:
                 continue
             widget.draw(self._current._widgets_surface)

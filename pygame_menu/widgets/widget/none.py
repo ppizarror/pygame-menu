@@ -81,7 +81,7 @@ class NoneWidget(Widget):
         pass
 
     def draw(self, surface):
-        pass
+        self.apply_draw_callbacks()
 
     def _render(self):
         pass

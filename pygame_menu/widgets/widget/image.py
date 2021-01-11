@@ -121,6 +121,7 @@ class Image(Widget):
     def draw(self, surface):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def _render(self):
         if self._surface is not None:

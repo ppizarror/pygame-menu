@@ -60,6 +60,7 @@ class Label(Widget):
             return
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def _render(self):
         if not self._render_hash_changed(self._title, self._font_color, self.visible):
