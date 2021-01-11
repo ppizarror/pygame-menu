@@ -328,7 +328,7 @@ class MenuBar(Widget):
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
-        Set the Menu title.
+        Set the menubar title.
 
         :param title: Menu title
         :type title: str

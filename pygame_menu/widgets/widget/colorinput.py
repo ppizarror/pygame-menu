@@ -236,7 +236,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         .. note::
 
-            If the data is invalid the widget returns *(-1,-1,-1)*.
+            If the data is invalid the widget returns ``(-1,-1,-1)``.
 
         :param as_string: If ``True`` returns the widget value as plain text
         :type as_string: bool
@@ -260,9 +260,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     def is_valid(self):
         """
-        Return true if the current value of the input is a valid color or not.
+        Return ``True`` if the current value of the input is a valid color or not.
 
-        :return: True if valid
+        :return: ``True`` if valid
         :rtype: bool
         """
         r, g, b = self.get_value()

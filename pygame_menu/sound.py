@@ -195,7 +195,7 @@ class Sound(object):
         :type sound_type: str
         :param sound_file: Sound file
         :type sound_file: str, None
-        :param volume: Volume of the sound, from *0.0* to *1.0*
+        :param volume: Volume of the sound, from ``0.0`` to ``1.0``
         :type volume: float
         :param loops: Loops of the sound
         :type loops: int
@@ -203,7 +203,7 @@ class Sound(object):
         :type maxtime: int, float
         :param fade_ms: Fading ms
         :type fade_ms: int, float
-        :return: The status of the sound load, *True* if the sound was loaded
+        :return: The status of the sound load, ``True`` if the sound was loaded
         :rtype: bool
         """
         assert isinstance(sound_type, str)
@@ -259,7 +259,7 @@ class Sound(object):
         """
         Load the example sounds provided by the package.
 
-        :param volume: Volume of the sound, *(0-1)*
+        :param volume: Volume of the sound, ``(0-1)``
         :type volume: float
         :return: None
         """
@@ -288,7 +288,7 @@ class Sound(object):
 
         :param sound: Sound to be played
         :type sound: :py:class:`pygame.mixer.Sound`, None
-        :return: True if the sound was played
+        :return: ``True`` if the sound was played
         :rtype: bool
         """
         if not sound:

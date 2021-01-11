@@ -142,7 +142,7 @@ class BaseImage(object):
         """
         Return the size in pixels of the image.
 
-        :return: (width,height)
+        :return: Image size tuple *(width,height)*
         :rtype: tuple
         """
         return self._surface.get_width(), self._surface.get_height()
@@ -176,11 +176,11 @@ class BaseImage(object):
 
     def equals(self, image):
         """
-        Return true if the image is the same as the object.
+        Return ``True`` if the image is the same as the object.
 
         :param image: Image object
         :type image: :py:class:`pygame_menu.baseimage.BaseImage`
-        :return: True if the image is the same (note, the surface)
+        :return: ``True`` if the image is the same (note, the surface)
         :rtype: bool
         """
         assert isinstance(image, BaseImage)
@@ -213,7 +213,7 @@ class BaseImage(object):
 
             See :py:meth:`pygame_menu.BaseImage.to_bw` method as an example.
 
-        :param image_function: Color function, takes colors as ``image_function=myfunc(r, g, b, a)``. Returns the same tuple *(r,g,b,a)*
+        :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r,g,b,a)*
         :type image_function: callable
         :return: Self reference
         :rtype: BaseImage
@@ -247,12 +247,12 @@ class BaseImage(object):
 
     def pick_channels(self, channels):
         """
-        Pick certain channels of the image, channels are 'r' (red), 'g' (green) and 'b' (blue),
+        Pick certain channels of the image, channels are ``"r"`` (red), ``"g"`` (green) and ``"b"`` (blue),
         ``channels param`` is a list/tuple of channels (non empty).
 
         For example, ``pick_channels(['r', 'g'])``: All channels not included on the list will be discarded.
 
-        :param channels: Channels, list or tuple containing 'r', 'g' or 'b' (all combinations are possible)
+        :param channels: Channels, list or tuple containing ``"r"``, ``"g"`` or ``"b"`` (all combinations are possible)
         :type channels: tuple, list, str
         :return: Self reference
         :rtype: BaseImage
@@ -321,7 +321,7 @@ class BaseImage(object):
     def scale2x(self):
         """
         This will return a new image that is double the size of the original.
-        It uses the AdvanceMAME Scale2X algorithm which does a 'jaggy-less'
+        It uses the AdvanceMAME Scale2X algorithm which does a "jaggy-less"
         scale of bitmap graphics.
 
         This really only has an effect on simple images with solid colors.
@@ -377,7 +377,7 @@ class BaseImage(object):
             Otherwise pygame will pick a color that matches the image colorkey or the topleft
             pixel value.
 
-        :param angle: Rotation angle (degrees 0-360)
+        :param angle: Rotation angle (degrees ``0-360``)
         :type angle: int, float
         :return: Self reference
         :rtype: BaseImage
@@ -401,7 +401,7 @@ class BaseImage(object):
 
         :param surface: Pygame surface object
         :type surface: :py:class:`pygame.Surface`
-        :param area: Area to draw, if None, Image will be drawn on entire surface
+        :param area: Area to draw; if ``None`` the image will be drawn on entire surface
         :type area: :py:class:`pygame.Rect`, None
         :param position: Position to draw
         :type position: tuple

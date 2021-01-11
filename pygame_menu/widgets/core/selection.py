@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SELECTION
-Widget selection class.
+Widget selection effect.
 
 License:
 -------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ from pygame_menu.utils import assert_color
 
 class Selection(object):
     """
-    Widget selection class.
+    Widget selection effect class.
 
     :param margin_left: Left margin
     :type margin_left: int, float
@@ -61,7 +61,7 @@ class Selection(object):
 
     def set_color(self, color):
         """
-        Set the selection color.
+        Set the selection effect color.
 
         :param color: Selection color
         :type color: tuple, list
@@ -81,7 +81,7 @@ class Selection(object):
 
     def get_xy_margin(self):
         """
-        Returns the x/y margins of the selection.
+        Return the x/y margins of the selection.
 
         :return: Tuple of *(x,y)* margins
         :rtype: tuple

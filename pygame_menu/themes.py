@@ -68,7 +68,7 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu, if user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default ``(0,0)``. It cannot be negative values
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -94,7 +94,7 @@ class Theme(object):
     :type title_background_color: tuple, list
     :param title_bar_style: Style of the title, use menubar widget styles
     :type title_bar_style: int
-    :param title_font: Optional title font, if None use the Menu default font
+    :param title_font: Optional title font, if ``None`` use the Menu default font
     :type title_font: str, None
     :param title_font_antialias: Title font renders with antialiasing
     :type title_font_antialias: bool
@@ -102,7 +102,7 @@ class Theme(object):
     :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
     :type title_font_size: int
-    :param title_offset: Offset (x-position,y-position) of title (px). Default *(0,0)*
+    :param title_offset: Offset *(x-position,y-position)* of title (px). Default ``(0,0)``
     :type title_offset: tuple, list
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
@@ -122,7 +122,7 @@ class Theme(object):
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
-    :param widget_font_background_color: Widget font background color. By default it is None. If None the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is True and ``widget_background_color`` is None
+    :param widget_font_background_color: Widget font background color. By default it is ``None``. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
     :type widget_font_background_color: tuple, list, None
     :param widget_font_background_color_from_menu: Use menu background color as font background color; disabled by default
     :type widget_font_background_color_from_menu: bool
@@ -130,11 +130,11 @@ class Theme(object):
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
-    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default *(0,10)*
+    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default ``(0,10)``
     :type widget_margin: tuple, list
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements. Padding modifies widget width/height
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
+    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default is ``(0,0)``. It cannot be negative values
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`

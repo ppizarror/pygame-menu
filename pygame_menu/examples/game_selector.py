@@ -93,7 +93,7 @@ def play_function(difficulty, font, test=False):
     :type difficulty: tuple, list
     :param font: Pygame font
     :type font: :py:class:`pygame.font.Font`
-    :param test: Test method, if true only one loop is allowed
+    :param test: Test method, if ``True`` only one loop is allowed
     :type test: bool
     :return: None
     """

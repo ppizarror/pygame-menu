@@ -57,7 +57,7 @@ def is_event(event):
 
     :param event: Event
     :type event: any
-    :return: True if it's event
+    :return: ``True`` if it's an event
     :rtype: bool
     """
     return isinstance(event, MenuAction) or \

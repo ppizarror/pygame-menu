@@ -517,9 +517,9 @@ class ScrollArea(object):
 
     def is_scrolling(self):
         """
-        Return true if the user is scrolling.
+        Return ``True`` if the user is scrolling.
 
-        :return: True if user scrolls
+        :return: ``True`` if user scrolls
         :rtype: bool
         """
         scroll = False
@@ -533,7 +533,7 @@ class ScrollArea(object):
 
         :param events: List of pygame events
         :type events: list
-        :return: True if updated
+        :return: ``True`` if updated
         :rtype: bool
         """
         updated = [0, 0]
@@ -573,7 +573,7 @@ class ScrollArea(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param event: Pygame event
         :type event: :py:class:`pygame.event.Event`
-        :return: True if collide
+        :return: ``True`` if collide
         :rtype: bool
         """
         if hasattr(pygame, 'FINGERDOWN') and (

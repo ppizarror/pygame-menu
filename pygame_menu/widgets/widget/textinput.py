@@ -86,7 +86,7 @@ class TextInput(Widget):
     :type input_type: str
     :param input_underline: Character drawn under the input
     :type input_underline: str
-    :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
+    :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
     :type input_underline_len: int
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
@@ -100,7 +100,7 @@ class TextInput(Widget):
     :type history: int
     :param maxchar: Maximum length of input
     :type maxchar: int
-    :param maxwidth: Maximum size of the text to be displayed (overflow), if 0 this feature is disabled
+    :param maxwidth: Maximum size of the text to be displayed (overflow), if ``0`` this feature is disabled
     :type maxwidth: int
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
     :type maxwidth_dynamically_update: bool
@@ -124,8 +124,8 @@ class TextInput(Widget):
     :type tab_size: int
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :type text_ellipsis: str
-    :param valid_chars: List of chars that are valid, None if all chars are valid
-    :type valid_chars: list
+    :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
+    :type valid_chars: list, None
     :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
@@ -495,7 +495,7 @@ class TextInput(Widget):
         :type string: str
         :param color: Color of the string to render
         :type color: tuple
-        :return: True if surface is updated
+        :return: ``True`` if surface is updated
         :rtype: bool
         """
         new_surface = self._render_string(string, color)
@@ -628,7 +628,7 @@ class TextInput(Widget):
 
     def _ellipsis_left(self):
         """
-        Return true if left ellipsis is active.
+        Return ``True`` if left ellipsis is active.
 
         :return: Boolean
         :rtype: bool
@@ -637,7 +637,7 @@ class TextInput(Widget):
 
     def _ellipsis_right(self):
         """
-        Return true if right ellipsis is active.
+        Return ``True`` if right ellipsis is active.
 
         :return: Boolean
         :rtype: bool
@@ -646,7 +646,7 @@ class TextInput(Widget):
 
     def _ellipsis_left_and_right(self):
         """
-        Return true if left and right ellipsis are active.
+        Return ``True`` if left and right ellipsis are active.
 
         :return: Boolean
         :rtype: bool
@@ -932,11 +932,16 @@ class TextInput(Widget):
 
     def _check_mouse_collide_input(self, pos):
         """
-        Check mouse collision, if true update cursor.
+        Check mouse collision.
+
+        .. note::
+
+            If this method returns ``True`` the cursor must be updated.
 
         :param pos: Position
         :type pos: tuple
-        :return: None
+        :return: Cursor update status
+        :rtype: bool
         """
         if self._rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
@@ -947,11 +952,16 @@ class TextInput(Widget):
 
     def _check_touch_collide_input(self, pos):
         """
-        Check touchscreen collision, if true update cursor.
+        Check touchscreen collision.
+
+        .. note::
+
+            If this method returns ``True`` the cursor must be updated.
 
         :param pos: Position
         :type pos: tuple
-        :return: None
+        :return: Cursor update status
+        :rtype: bool
         """
         if self._rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
@@ -1001,7 +1011,7 @@ class TextInput(Widget):
         """
         Check input size.
 
-        :return: True if the input must be limited
+        :return: ``True`` if the input must be limited
         :rtype: bool
         """
         if self._maxchar == 0:
@@ -1014,7 +1024,7 @@ class TextInput(Widget):
 
         :param string: String to validate
         :type string: str
-        :return: True if the input type is valid
+        :return: ``True`` if the input type is valid
         :rtype: bool
         """
         if string == '':  # Empty is valid
@@ -1078,7 +1088,7 @@ class TextInput(Widget):
         """
         Unselect text.
 
-        :return: True if the selected text was removed in the method call
+        :return: ``True`` if the selected text was removed in the method call
         :rtype: bool
         """
         removed = self._selection_surface is not None
@@ -1387,7 +1397,7 @@ class TextInput(Widget):
         :type keychar: str
         :param sounds: Use widget sounds
         :type sounds: bool
-        :return: If False the event loop breaks
+        :return: If ``False`` the event loop breaks
         :rtype: bool
         """
         # If selected text

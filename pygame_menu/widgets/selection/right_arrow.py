@@ -44,7 +44,7 @@ class RightArrowSelection(ArrowSelection):
     :type arrow_left_margin: int, float
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
-    :param blink_ms: Milliseconds between each blink, if *0* blinking is disabled
+    :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
     :type blink_ms: int
     """
 

@@ -44,7 +44,7 @@ class ScrollBar(Widget):
         b. The scroll arrows are push buttons which can be used to accurately navigate
            to a particular place in a document.
         c. The page control is the area over which the slider is dragged (the scroll bar's
-           background). Clicking here moves the scroll bar towards the click by one "page".
+           background). Clicking here moves the scroll bar towards the click by one page.
 
     .. warning::
 
@@ -316,7 +316,7 @@ class ScrollBar(Widget):
         """
         Set the scroll bar orientation to vertical or horizontal.
 
-        :param orientation: Widget orientation, could be `ORIENTATION_HORIZONTAL / ORIENTATION_VERTICAL`
+        :param orientation: Widget orientation, could be ``ORIENTATION_HORIZONTAL``/``ORIENTATION_VERTICAL``
         :type orientation: str
         :return: None
         """
@@ -336,8 +336,7 @@ class ScrollBar(Widget):
         .. note::
 
             The length of the slider is related to this value, and typically
-            represents the proportion of the document area shown in a scrolling
-            view.
+            represents the proportion of the document area shown in a scrolling view.
 
         :param value: Page step
         :type value: int, float

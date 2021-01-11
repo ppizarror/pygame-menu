@@ -198,7 +198,7 @@ class Selector(Widget):
         Set the current value of the widget, selecting the element that matches
         the text if item is a string, or the index of the position of item is an integer.
 
-        For example, if selector is *[['a',0],['b',1],['a',2]]*:
+        For example, if selector is ``[['a',0],['b',1],['a',2]]``:
 
         - *widget*.set_value('a') -> Widget selects the first element (index 0)
         - *widget*.set_value(2) -> Widget selects the third element (index 2)
