@@ -84,7 +84,7 @@ class Menu(object):
     :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
     :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: *(overflow_x,overflow_y)*
     :type overflow: tuple, list
-    :param rows: Number of rows of each column, ``None`` if there's only 1 column. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3 and third 5)
+    :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :type rows: int, list, tuple, None
     :param screen_dimension: List/Tuple representing the dimensions the menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode
     :type screen_dimension: tuple, list, None
@@ -154,9 +154,9 @@ class Menu(object):
 
             assert rows is not None, 'rows cannot be None if the number of columns is greater than 1'
             if isinstance(rows, int):
-                _msg = 'if number of columns is greater than 1 (current={0}) then the number ' \
-                       'of rows must be equal or greater than 1 (current={1})'.format(columns, rows)
-                assert rows >= 1, _msg
+                msg = 'if number of columns is greater than 1 (current={0}) then the number ' \
+                      'of rows must be equal or greater than 1 (current={1})'.format(columns, rows)
+                assert rows >= 1, msg
                 rows = [rows for _ in range(columns)]
             assert isinstance(rows, (tuple, list)), 'if rows is not an integer it must be a tuple/list'
             assert len(rows) == columns, \
@@ -167,20 +167,20 @@ class Menu(object):
         else:
 
             if rows is None:
-                rows = 1000000  # Set rows as a big number
+                rows = 10000000  # Set rows as a big number
             else:
                 assert isinstance(rows, int), 'rows cannot be a tuple/list as there\'s only 1 column'
                 assert rows > 0, \
-                    'number of rows must be greater than 1. If there is no limit rows must be None'
+                    'number of rows must be equal or greater than 1. If there is no limit rows must be None'
             rows = [rows]
 
         if column_max_width is not None:
             if isinstance(column_max_width, (int, float)):
-                _msg = 'column_max_width can be a single number if there is only 1 column, but ' \
-                       'there is {0} columns. Thus, column_max_width must be a vector of {0} items. ' \
-                       'By default a vector has been created using the same value for each column'.format(columns)
+                msg = 'column_max_width can be a single number if there is only 1 column, but ' \
+                      'there is {0} columns. Thus, column_max_width must be a vector of {0} items. ' \
+                      'By default a vector has been created using the same value for each column'.format(columns)
                 if columns != 1:
-                    warnings.warn(_msg)
+                    warnings.warn(msg)
                     column_max_width = [column_max_width for _ in range(columns)]
                 else:
                     column_max_width = [column_max_width]
@@ -306,7 +306,9 @@ class Menu(object):
         self._columns = columns  # type: int
         self._max_row_column_elements = 0
         self._rows = rows  # type: (list, tuple)
+        self._used_columns = 0  # Total columns used in widget positioning
         self._widget_columns = {}
+        self._widget_max_position = (0, 0)
 
         for r in self._rows:
             self._max_row_column_elements += r
@@ -392,9 +394,10 @@ class Menu(object):
         # Compatibility checks
         column_force_fit_text = kwargs.pop('column_force_fit_text', None)
         if column_force_fit_text is not None:
-            _msg = 'since v3.5.0 column_force_fit_text was removed from Menu constructor, prefer ' \
-                   'using widget.set_max_width(...) or widget.set_max_height(...)'
-            warnings.warn(_msg)
+            msg = 'since v3.5.0 column_force_fit_text was removed from Menu constructor, prefer ' \
+                  'using widget.set_max_width(...) or widget.set_max_height(...). This warnign will ' \
+                  'be removed in v4.0'
+            warnings.warn(msg)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
@@ -485,11 +488,11 @@ class Menu(object):
 
             # Check for recursive
             if action == self or action.in_submenu(self, recursive=True):
-                _msg = 'Menu "{0}" is already on submenu structure, recursive menus lead ' \
-                       'to unexpected behaviours. For returning to previous menu use ' \
-                       'pygame_menu.events.BACK event defining an optional back_count ' \
-                       'number of menus to return from, default is 1'.format(action.get_title())
-                raise ValueError(_msg)
+                msg = 'Menu "{0}" is already on submenu structure, recursive menus lead ' \
+                      'to unexpected behaviours. For returning to previous menu use ' \
+                      'pygame_menu.events.BACK event defining an optional back_count ' \
+                      'number of menus to return from, default is 1'.format(action.get_title())
+                raise ValueError(msg)
 
             self._submenus.append(action)
             widget = _widgets.Button(title, button_id, self._open, action)
@@ -1023,8 +1026,8 @@ class Menu(object):
 
         # Raise warning if adding button with menu
         if isinstance(widget, _widgets.Button) and widget.to_menu:
-            _msg = 'prefer adding nested submenus using add_button method istead, unintended behaviours may occur'
-            warnings.warn(_msg)
+            msg = 'prefer adding nested submenus using add_button method istead, unintended behaviours may occur'
+            warnings.warn(msg)
 
         # Configure widget
         if configure_defaults:
@@ -1158,12 +1161,28 @@ class Menu(object):
             position=kwargs['shadow_position'],
             offset=kwargs['shadow_offset']
         )
-        widget.set_controls(self._joystick, self._mouse, self._touchscreen)
-        widget.set_alignment(kwargs['align'])
-        widget.set_margin(*kwargs['margin'])
-        widget.set_padding(kwargs['padding'])
-        widget.set_selection_effect(kwargs['selection_effect'])
-        widget.set_background_color(kwargs['background_color'], kwargs['background_inflate'])
+        widget.set_controls(
+            joystick=self._joystick,
+            mouse=self._mouse,
+            touchscreen=self._touchscreen
+        )
+        widget.set_alignment(
+            align=kwargs['align']
+        )
+        widget.set_margin(
+            x=kwargs['margin'][0],
+            y=kwargs['margin'][1]
+        )
+        widget.set_padding(
+            padding=kwargs['padding']
+        )
+        widget.set_selection_effect(
+            selection=kwargs['selection_effect']
+        )
+        widget.set_background_color(
+            color=kwargs['background_color'],
+            inflate=kwargs['background_inflate']
+        )
 
     def _append_widget(self, widget):
         """
@@ -1279,17 +1298,18 @@ class Menu(object):
         for widget in self._widgets:  # type: _widgets.core.Widget
             widget_rects[widget.get_id()] = widget.get_rect()
 
-        # Compute the available width, that is the surface width minus the max width columns
+        # Set the column widths
+        self._widget_columns = {}
         self._column_widths = [0 for _ in range(self._columns)]
         for i in range(self._columns):
             if self._column_max_width[i] is not None:
                 self._column_widths[i] = self._column_max_width[i]
-
-        # Update None columns (max width not set) and column/row of each widget
-        self._widget_columns = {}
-        for i in range(self._columns):
             self._widget_columns[i] = []
 
+        # Set column/row of each widget and compute maximum width of each column if None
+        self._used_columns = 0
+        max_elements_msg = 'total visible/non-floating widgets cannot exceed columns*rows ({0} elements). ' \
+                           'Menu position update cannot continue'.format(self._max_row_column_elements)
         i_index = 0
         for index in range(len(self._widgets)):
             widget = self._widgets[index]
@@ -1300,10 +1320,7 @@ class Menu(object):
                 continue
 
             # Check if the maximum number of elements was reached, if so raise an exception
-            if self._columns > 1:
-                _msg = 'total visible/non-floating widgets cannot exceed columns*rows ({0} elements). ' \
-                       'Menu position update cannot continue'.format(self._max_row_column_elements)
-                assert i_index < self._max_row_column_elements, _msg
+            assert i_index < self._max_row_column_elements, max_elements_msg
 
             # Set widget column/row position
             row = i_index
@@ -1318,6 +1335,9 @@ class Menu(object):
             widget.set_col_row_index(col, row, index)
             self._widget_columns[col].append(widget)
 
+            # Update used columns
+            self._used_columns = max(self._used_columns, col + 1)
+
             # If widget is floating don't update the current index
             if not widget.floating:
                 i_index += 1
@@ -1329,29 +1349,31 @@ class Menu(object):
             if self._column_max_width[col] is None:  # No limit
                 self._column_widths[col] = max(self._column_widths[col], widget.get_width(apply_selection=True))
 
+        # If some columns were not used, set these widths to zero
+        for col in range(self._used_columns, self._columns):
+            self._column_widths[col] = 0
+            del self._widget_columns[col]
+
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         if 0 < sum(self._column_widths) < self._width:
             scale = float(self._width) / sum(self._column_widths)
-            for index in range(self._columns):
+            for index in range(self._used_columns):
                 self._column_widths[index] *= scale
 
         # Final column width
         total_col_width = float(sum(self._column_widths))
-
-        if self._columns > 1:
-
+        if self._used_columns > 1:
             # Calculate column width scale (weights)
             column_weights = tuple(
-                float(self._column_widths[i]) / max(total_col_width, 1) for i in range(self._columns))
+                float(self._column_widths[i]) / max(total_col_width, 1) for i in range(self._used_columns))
 
             # Calculate the position of each column
             self._column_pos_x = []
             cumulative = 0
-            for i in range(self._columns):
+            for i in range(self._used_columns):
                 w = column_weights[i]
                 self._column_pos_x.append(total_col_width * (cumulative + 0.5 * w))
                 cumulative += w
-
         else:
             self._column_pos_x = [total_col_width * 0.5]
             self._column_widths = [total_col_width]
@@ -1399,25 +1421,20 @@ class Menu(object):
                 if rwidget.visible and not rwidget.floating:
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
-            y_coord = max(1, self._widget_offset[1]) + ysum + widget.get_padding()[0] + selection_effect.get_margin()[0]
+            y_coord = max(1, self._widget_offset[1]) + ysum
+            y_coord += widget.get_padding()[0] + selection_effect.get_margin()[0]  # Add bottom distance
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
 
-    def _get_widget_max_position(self):
-        """
-        Return the lower rightmost position of each widgets in Menu.
-
-        :return: Rightmost position
-        :rtype: tuple
-        """
+        # Set widget max position
         max_x = -1e6
         max_y = -1e6
         for widget in self._widgets:  # type: _widgets.core.Widget
             x, y = widget.get_rect().bottomright
             max_x = max(max_x, x)
             max_y = max(max_y, y)
-        return max_x, max_y
+        self._widget_max_position = (max_x, max_y)
 
     def _update_selection_if_hidden(self):
         """
@@ -1440,7 +1457,7 @@ class Menu(object):
         self._update_widget_position()
 
         menubar_height = self._menubar.get_height()
-        max_x, max_y = self._get_widget_max_position()
+        max_x, max_y = self._widget_max_position
 
         # Get scrollbars size
         sx = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL, real=True)
@@ -1608,7 +1625,7 @@ class Menu(object):
             return
         self._build_widget_surface()  # For position
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
-        _, max_y = self._get_widget_max_position()
+        _, max_y = self._widget_max_position
         max_y -= self._widget_offset[1]  # Only use total height
         available = self._height - self._menubar.get_height() - horizontal_scroll
         new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
@@ -1781,7 +1798,7 @@ class Menu(object):
             else:
                 self._select(-1, -1)
 
-        if self._columns > 1:
+        if self._used_columns > 1:
 
             # Get current widget
             sel_widget = self.get_selected_widget()  # type: _widgets.core.Widget
@@ -1794,7 +1811,7 @@ class Menu(object):
             col, row, _ = sel_widget.get_col_row_index()
 
             # Move column to position
-            col = (col + pos) % self._columns
+            col = (col + pos) % self._used_columns
 
             # Get the first similar row in that column, if no widget is found then select the first widget
             for widget in self._widget_columns[col]:  # type: _widgets.core.Widget
@@ -1824,7 +1841,7 @@ class Menu(object):
             self._select(self._index - 1)
         if self._joy_event & self._joy_event_down:
             self._select(self._index + 1)
-        if self._current._columns > 1:
+        if self._current._used_columns > 1:
             if self._joy_event & self._joy_event_left:
                 self._move_selected_left_right(-1)
             if self._joy_event & self._joy_event_right:
@@ -1898,7 +1915,7 @@ class Menu(object):
                     elif event.key == _controls.KEY_LEFT:
                         self._current._move_selected_left_right(-1)
                         self._current._sounds.play_key_add()
-                    elif event.key == _controls.KEY_RIGHT and self._current._columns > 1:
+                    elif event.key == _controls.KEY_RIGHT and self._current._used_columns > 1:
                         self._current._move_selected_left_right(1)
                         self._current._sounds.play_key_add()
                     elif event.key == _controls.KEY_BACK and self._top._prev is not None:
@@ -1914,9 +1931,9 @@ class Menu(object):
                         self._current._select(self._current._index - 1)
                     elif event.value == _controls.JOY_DOWN:
                         self._current._select(self._current._index + 1)
-                    elif event.value == _controls.JOY_LEFT and self._columns > 1:
+                    elif event.value == _controls.JOY_LEFT and self._used_columns > 1:
                         self._current._select(self._current._index - 1)
-                    elif event.value == _controls.JOY_RIGHT and self._columns > 1:
+                    elif event.value == _controls.JOY_RIGHT and self._used_columns > 1:
                         self._current._select(self._current._index + 1)
 
                 elif self._current._joystick and event.type == pygame.JOYAXISMOTION:
@@ -1926,9 +1943,9 @@ class Menu(object):
                         self._current._joy_event |= self._current._joy_event_up
                     if event.axis == _controls.JOY_AXIS_Y and event.value > _controls.JOY_DEADZONE:
                         self._current._joy_event |= self._current._joy_event_down
-                    if event.axis == _controls.JOY_AXIS_X and event.value < -_controls.JOY_DEADZONE and self._columns > 1:
+                    if event.axis == _controls.JOY_AXIS_X and event.value < -_controls.JOY_DEADZONE and self._used_columns > 1:
                         self._current._joy_event |= self._current._joy_event_left
-                    if event.axis == _controls.JOY_AXIS_X and event.value > _controls.JOY_DEADZONE and self._columns > 1:
+                    if event.axis == _controls.JOY_AXIS_X and event.value > _controls.JOY_DEADZONE and self._used_columns > 1:
                         self._current._joy_event |= self._current._joy_event_right
                     if self._current._joy_event:
                         self._current._handle_joy_event()
