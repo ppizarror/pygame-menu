@@ -186,7 +186,7 @@ class MenuBar(Widget):
 
         self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._apply_surface_transforms()  # Rotation does not affect rect size
+        self._apply_transforms()  # Rotation does not affect rect size
 
         if self._style == MENUBAR_STYLE_ADAPTIVE:
             """

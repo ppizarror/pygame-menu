@@ -62,7 +62,7 @@ class NoneWidget(Widget):
     def set_title(self, title):
         pass
 
-    def get_rect(self, inflate=None, apply_padding=True):
+    def get_rect(self, inflate=None, apply_padding=True, use_transformed_padding=True):
         return pygame.Rect(0, 0, 0, 0)
 
     def set_background_color(self, color, inflate=(0, 0)):
@@ -92,7 +92,7 @@ class NoneWidget(Widget):
     def set_margin(self, x, y):
         pass
 
-    def _apply_surface_transforms(self):
+    def _apply_transforms(self):
         pass
 
     def set_font(self, font, font_size, color, selected_color, background_color, antialias=True):

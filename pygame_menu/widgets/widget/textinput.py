@@ -415,7 +415,7 @@ class TextInput(Widget):
 
         # Apply underline if exists
         self._surface = self._render_underline(string, color, updated_surface)
-        self._apply_surface_transforms()
+        self._apply_transforms()
 
         # Render the cursor
         self._render_cursor()
@@ -833,9 +833,9 @@ class TextInput(Widget):
 
                 biggest = 0
                 for char in curr_string:
-                    _char_size = self._get_char_size(char)
-                    accum_size += _char_size
-                    biggest = max(biggest, _char_size)
+                    char_size = self._get_char_size(char)
+                    accum_size += char_size
+                    biggest = max(biggest, char_size)
 
                 if self._ellipsis_right():
                     accum_size += self._ellipsis_size
@@ -990,26 +990,26 @@ class TextInput(Widget):
             raise ValueError('value cannot be set in password type')
         assert isinstance(text, (str, int, float))
         if self._check_input_type(text):
-            _default = to_string(text)
+            default_text = to_string(text)
 
             # Filter valid chars
             if self._valid_chars is not None:
-                _default_valid = ''
-                for ch in _default:
+                default_valid = ''
+                for ch in default_text:
                     if ch in self._valid_chars:
-                        _default_valid += ch
-                _default = _default_valid
+                        default_valid += ch
+                default_text = default_valid
 
             # Apply maxchar
-            _ls = len(_default)
-            if 0 < self._maxchar < _ls:
-                _default = _default[_ls - self._maxchar:_ls]
+            len_text = len(default_text)
+            if 0 < self._maxchar < len_text:
+                default_text = default_text[len_text - self._maxchar:len_text]
 
-            self._input_string = _default
-            for i in range(len(_default) + 1):
+            self._input_string = default_text
+            for i in range(len(default_text) + 1):
                 self._move_cursor_right()
                 self._update_renderbox(right=1, addition=True)
-            self._update_input_string(_default)
+            self._update_input_string(default_text)
         else:
             raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
         self._update_renderbox()  # Updates cursor
