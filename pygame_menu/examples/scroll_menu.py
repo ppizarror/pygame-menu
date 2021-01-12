@@ -74,7 +74,7 @@ def make_long_menu():
     :rtype: :py:class:`pygame_menu.Menu`
     """
     # Main menu, pauses execution of the application
-    _menu = pygame_menu.Menu(
+    menu = pygame_menu.Menu(
         height=400,
         onclose=pygame_menu.events.EXIT,
         theme=pygame_menu.themes.THEME_BLUE,
@@ -82,7 +82,7 @@ def make_long_menu():
         width=600
     )
 
-    _menu_sub = pygame_menu.Menu(
+    menu_sub = pygame_menu.Menu(
         columns=4,
         height=400,
         onclose=pygame_menu.events.EXIT,
@@ -92,7 +92,7 @@ def make_long_menu():
         width=600
     )
 
-    _menu_text = pygame_menu.Menu(
+    menu_text = pygame_menu.Menu(
         height=400,
         onclose=pygame_menu.events.EXIT,
         theme=pygame_menu.themes.THEME_DARK,
@@ -100,22 +100,22 @@ def make_long_menu():
         width=600
     )
 
-    _menu.add_button('Rows and Columns', _menu_sub)
-    _menu.add_button('Text scrolled', _menu_text)
-    _menu.add_vertical_margin(20)  # Adds margin
+    menu.add_button('Rows and Columns', menu_sub)
+    menu.add_button('Text scrolled', menu_text)
+    menu.add_vertical_margin(20)  # Adds margin
 
     label1 = 'Button n°{}'
     label2 = 'Text n°{}: '
     for i in range(1, 20):
         if i % 2 == 0:
-            _menu.add_button(label1.format(i),
-                             on_button_click,
-                             'Button n°{}'.format(i))
+            menu.add_button(label1.format(i),
+                            on_button_click,
+                            'Button n°{}'.format(i))
         else:
-            _menu.add_text_input(label2.format(i),
-                                 onchange=on_button_click,
-                                 text='Text n°{}'.format(i))
-    _menu.add_button('Exit', pygame_menu.events.EXIT)
+            menu.add_text_input(label2.format(i),
+                                onchange=on_button_click,
+                                text='Text n°{}'.format(i))
+    menu.add_button('Exit', pygame_menu.events.EXIT)
 
     label = 'Button n°{}'
     for i in range(1, 11):
@@ -124,10 +124,10 @@ def make_long_menu():
             txt = 'This is a very long button!'
         else:
             txt = label.format(100 * i)
-        _menu_sub.add_button(txt, on_button_click, 100 * i)
-    _menu_sub.add_button('Back', pygame_menu.events.BACK)
+        menu_sub.add_button(txt, on_button_click, 100 * i)
+    menu_sub.add_button('Back', pygame_menu.events.BACK)
 
-    _menu_text.add_label(
+    menu_text.add_label(
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
         'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
         'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
@@ -138,7 +138,7 @@ def make_long_menu():
         align=pygame_menu.locals.ALIGN_LEFT,
         margin=(0, -1)
     )
-    return _menu
+    return menu
 
 
 def main(test=False):

@@ -127,7 +127,7 @@ class BaseImage(object):
         Return a copy of the image.
 
         :return: Image
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         image = BaseImage(
             image_path=self._filepath,
@@ -216,7 +216,7 @@ class BaseImage(object):
         :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r,g,b,a)*
         :type image_function: callable
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         w, h = self._surface.get_size()
         for x in range(w):
@@ -236,7 +236,7 @@ class BaseImage(object):
         Converts the image to black and white.
 
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
 
         def bw(r, g, b, a):
@@ -255,7 +255,7 @@ class BaseImage(object):
         :param channels: Channels, list or tuple containing ``"r"``, ``"g"`` or ``"b"`` (all combinations are possible)
         :type channels: tuple, list, str
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         if isinstance(channels, str):
             channels = [channels]
@@ -286,7 +286,7 @@ class BaseImage(object):
         :param y: Flip on y axis
         :type y: bool
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
@@ -305,7 +305,7 @@ class BaseImage(object):
         :param smooth: Smooth scaling
         :type smooth: bool
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -328,7 +328,7 @@ class BaseImage(object):
         On photographic and antialiased images it will look like a regular unfiltered scale.
 
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         self._surface = pygame.transform.scale2x(self._surface)
         return self
@@ -344,7 +344,7 @@ class BaseImage(object):
         :param smooth: Smooth scaling
         :type smooth: bool
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -380,7 +380,7 @@ class BaseImage(object):
         :param angle: Rotation angle (degrees ``0-360``)
         :type angle: int, float
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(angle, (int, float))
         self._surface = pygame.transform.rotate(self._surface, angle)

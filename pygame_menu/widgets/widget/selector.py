@@ -36,7 +36,7 @@ from pygame_menu.utils import check_key_pressed_valid, to_string
 from pygame_menu.widgets.core import Widget
 
 
-def _check_elements(elements):
+def check_selector_elements(elements):
     """
     Check the element list.
 
@@ -103,7 +103,7 @@ class Selector(Widget):
         assert isinstance(default, int)
 
         # Check element list
-        _check_elements(elements)
+        check_selector_elements(elements)
         assert default >= 0, 'default position must be equal or greater than zero'
         assert default < len(elements), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'id must be a string'
@@ -190,7 +190,7 @@ class Selector(Widget):
         else:
             color = self._font_color
         self._surface = self._render_string(string, color)
-        self._apply_surface_transforms()
+        self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force menu update
 
@@ -233,7 +233,7 @@ class Selector(Widget):
         :type elements: list
         :return: None
         """
-        _check_elements(elements)
+        check_selector_elements(elements)
         selected_element = self._elements[self._index]
         self._elements = elements
         try:

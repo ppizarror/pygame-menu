@@ -332,9 +332,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
-        _input = self._input_string
-        _curpos = self._cursor_position
-        _disable_remove_separator = True
+        input_str = self._input_string
+        cursor_pos = self._cursor_position
+        disable_remove_separator = True
 
         key = ''  # Pressed key
         if self._color_type == TYPE_RGB:
@@ -345,71 +345,71 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if not check_key_pressed_valid(event):
                         return True
 
-                    if _disable_remove_separator and len(_input) > 0 and len(_input) > _curpos and (
-                            '{0}{0}'.format(self._separator) not in _input or
-                            _input[_curpos] == self._separator and len(_input) == _curpos + 1
+                    if disable_remove_separator and len(input_str) > 0 and len(input_str) > cursor_pos and (
+                            '{0}{0}'.format(self._separator) not in input_str or
+                            input_str[cursor_pos] == self._separator and len(input_str) == cursor_pos + 1
                     ):
 
                         # Backspace button, delete text from right
                         if event.key == pygame.K_BACKSPACE:
-                            if len(_input) >= 1 and _input[_curpos - 1] == self._separator:
+                            if len(input_str) >= 1 and input_str[cursor_pos - 1] == self._separator:
                                 return True
 
                         # Delete button, delete text from left
                         elif event.key == pygame.K_DELETE:
-                            if _input[_curpos] == self._separator:
+                            if input_str[cursor_pos] == self._separator:
                                 return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
                     key = str(event.unicode)
                     if key in self._valid_chars:
 
-                        _new_string = (
+                        new_string = (
                                 self._input_string[:self._cursor_position]
                                 + key
                                 + self._input_string[self._cursor_position:]
                         )
 
                         # Cannot be separator at first
-                        if len(_input) == 0 and key == self._separator:
+                        if len(input_str) == 0 and key == self._separator:
                             return False
 
-                        if len(_input) > 1:
+                        if len(input_str) > 1:
 
                             # Check separators
                             if key == self._separator:
 
                                 # If more than 2 separators
-                                _total_separator = 0
-                                for _ch in _input:
-                                    if _ch == self._separator:
-                                        _total_separator += 1
-                                if _total_separator >= 2:
+                                total_separator = 0
+                                for ch in input_str:
+                                    if ch == self._separator:
+                                        total_separator += 1
+                                if total_separator >= 2:
                                     return False
 
                             # Check the number between the current separators, this number must be between 0-255
                             if key != self._separator:
-                                _pos_before = 0
-                                _pos_after = 0
-                                for _i in range(_curpos):
-                                    if _new_string[_curpos - _i - 1] == self._separator:
-                                        _pos_before = _curpos - _i
+                                pos_before = 0
+                                pos_after = 0
+                                for i in range(cursor_pos):
+                                    if new_string[cursor_pos - i - 1] == self._separator:
+                                        pos_before = cursor_pos - i
                                         break
-                                for _i in range(len(_new_string) - _curpos):
-                                    if _new_string[_curpos + _i] == self._separator:
-                                        _pos_after = _curpos + _i
+                                for i in range(len(new_string) - cursor_pos):
+                                    if new_string[cursor_pos + i] == self._separator:
+                                        pos_after = cursor_pos + i
                                         break
-                                if _pos_after == 0:
-                                    _pos_after = len(_new_string)
-                                _num = _new_string[_pos_before:_pos_after].replace(',', '')
-                                if _num == '':
-                                    _num = '0'
+                                if pos_after == 0:
+                                    pos_after = len(new_string)
+                                num = new_string[pos_before:pos_after].replace(',', '')
+                                if num == '':
+                                    num = '0'
 
-                                if int(_num) > 255:  # Number exceeds 25X
+                                if int(num) > 255:  # Number exceeds 25X
                                     return False
-                                if _num != str(int(_num)) and key == '0':  # User adds 0 at left, example: 12 -> 012
+                                if num != str(int(num)) and key == '0':  # User adds 0 at left, example: 12 -> 012
                                     return False
-                                if len(_num) > 3:  # Number like 0XXX
+                                if len(num) > 3:  # Number like 0XXX
                                     return False
 
         elif self._color_type == TYPE_HEX:
@@ -424,12 +424,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
                     # Backspace button, delete text from right
                     if event.key == pygame.K_BACKSPACE:
-                        if _curpos == 1:
+                        if cursor_pos == 1:
                             return True
 
                     # Delete button, delete text from left
                     elif event.key == pygame.K_DELETE:
-                        if _curpos == 0:
+                        if cursor_pos == 0:
                             return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
@@ -437,7 +437,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if key in self._valid_chars:
                         if key == '#':
                             return True
-                        if _curpos == 0:
+                        if cursor_pos == 0:
                             return True
 
         # Update
@@ -446,13 +446,13 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # After
         if self._color_type == TYPE_RGB:
 
-            _total_separator = 0
-            for _ch in _input:
-                if _ch == self._separator:
-                    _total_separator += 1
+            total_separator = 0
+            for ch in input_str:
+                if ch == self._separator:
+                    total_separator += 1
 
             # Adds auto separator
-            if key == '0' and len(self._input_string) == self._cursor_position and _total_separator < 2 and \
+            if key == '0' and len(self._input_string) == self._cursor_position and total_separator < 2 and \
                     (len(self._input_string) == 1 or
                      (len(self._input_string) > 2 and self._input_string[
                          self._cursor_position - 2] == self._separator)):
@@ -463,8 +463,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             colors = self._input_string.split(self._separator)
             for c in colors:
                 if len(c) > 0 and (int(c) > 255 or int(c) < 0):
-                    self._input_string = _input
-                    self._cursor_position = _curpos
+                    self._input_string = input_str
+                    self._cursor_position = cursor_pos
                     break
 
             if len(colors) == 3:
@@ -472,7 +472,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
             # Add an auto separator if the number can't continue growing and the cursor
             # is at the end of the line
-            if _total_separator < 2 and len(self._input_string) == self._cursor_position:
+            if total_separator < 2 and len(self._input_string) == self._cursor_position:
                 autopos = len(colors) - 1
                 last_num = colors[autopos]
                 if (len(last_num) == 2 and int(last_num) > 25 or len(last_num) == 3 and int(last_num) <= 255) and \
@@ -481,7 +481,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     self._auto_separator_pos.append(autopos)
 
             # If the user cleared all the string, reset auto separator
-            if _total_separator == 0 and \
+            if total_separator == 0 and \
                     (len(self._input_string) < 2 or len(self._input_string) == 2 and int(colors[0]) <= 25):
                 self._auto_separator_pos = []
 
