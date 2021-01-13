@@ -85,7 +85,7 @@ class Widget(object):
         self._attributes = {}  # Stores widget attributes
         self._background_color = None
         self._background_inflate = (0, 0)
-        self._col_row_index = (0, 0, 0)
+        self._col_row_index = (-1, -1, -1)
         self._default_value = _NoWidgetValue()  # type: any
         self._events = []  # type: list
         self._id = str(widget_id)
@@ -356,7 +356,7 @@ class Widget(object):
         self._background_inflate = tuple(inflate)
         self._force_render()
 
-    def expand_background_inflate_to_selection_effect(self):
+    def background_inflate_to_selection_effect(self):
         """
         Expand background inflate to match the selection effect
         (the widget don't require to be selected).
@@ -976,10 +976,12 @@ class Widget(object):
         Set the menu reference.
 
         :param menu: Menu object
-        :type menu: :py:class:`pygame_menu.Menu`
+        :type menu: :py:class:`pygame_menu.Menu`, None
         :return: None
         """
         self._menu = menu
+        if menu is None:
+            self._col_row_index = (-1, -1, -1)
 
     def get_menu(self):
         """

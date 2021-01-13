@@ -131,16 +131,16 @@ def main(test=False):
                              background_color=(50, 50, 50, 200), font_size=40)
     widget_colors.add_button('Transparent background inflate to selection effect', None,
                              background_color=(50, 50, 50, 200), margin=(0, 15)
-                             ).expand_background_inflate_to_selection_effect()
+                             ).background_inflate_to_selection_effect()
     widget_colors.add_button('Background inflate + font background color', None,
                              background_color=(50, 50, 50, 200), font_background_color=(200, 200, 200)
-                             ).expand_background_inflate_to_selection_effect()
+                             ).background_inflate_to_selection_effect()
     widget_colors.add_button('This inflates background to match selection effect', None,
                              background_color=button_image, font_color=(255, 255, 255), font_size=15
                              ).selection_expand_background = True
     widget_colors.add_button('This is already inflated to match selection effect', None,
                              background_color=button_image, font_color=(255, 255, 255), font_size=15
-                             ).expand_background_inflate_to_selection_effect()
+                             ).background_inflate_to_selection_effect()
 
     main_menu.add_button('Test different widget colors', widget_colors)
     main_menu.add_button('Another fancy button', lambda: print('This button has been pressed'))
