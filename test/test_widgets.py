@@ -34,10 +34,12 @@ import sys
 
 from test._utils import *
 from pygame_menu import locals as _locals
-from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar
+from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
 
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE, \
     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
+
+from pygame import Surface
 
 
 class WidgetsTest(unittest.TestCase):
@@ -91,19 +93,16 @@ class WidgetsTest(unittest.TestCase):
         w.rotate(45)
         w.translate(10, 10)
         w.scale(1, 1)
-        w.set_max_width(150)
+        w.set_max_width(None)
         self.assertFalse(w._scale[0])  # Scalling is disabled
         w.scale(1.5, 1)
         self.assertTrue(w._scale[0])  # Scalling is enabled
-        self.assertFalse(w._scale[4])  # use_same_xy
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.resize(40, 40)
         self.assertTrue(w._scale[0])  # Scalling is enabled
-        self.assertTrue(w._scale[4])  # use_same_xy
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
-        self.assertFalse(w._scale[4])  # use_same_xy
         w.flip(False, False)
 
         # Test all widgets
@@ -125,6 +124,82 @@ class WidgetsTest(unittest.TestCase):
             w.resize(10, 10)
             w.flip(True, True)
         self.menu.draw(surface)
+
+        # If widget max width is enabled, disable scalling
+        w = self.menu.add_label('Text')  # type: Label
+        self.assertFalse(w._scale[0])  # Scalling is disabled
+        w.scale(1.5, 1)
+        self.assertTrue(w._scale[0])  # Scalling is enabled
+        w.set_max_width(100)
+        self.assertFalse(w._scale[0])
+
+    def test_max_width_height(self):
+        """
+        Test widget max width/height.
+        """
+        label = Label('my label is really long yeah, it should be scalled in the width')
+        label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0), (0, 0, 0))
+        label.render()
+
+        # The padding is zero, also the selection box and all transformations
+        self.assertEqual(label.get_width(), 692)
+        self.assertEqual(label.get_height(), 35)
+        self.assertEqual(label.get_size()[0], 692)
+        self.assertEqual(label.get_size()[1], 35)
+
+        # Add padding, this will increase the width of the widget
+        label.set_padding(54)
+        self.assertEqual(label.get_width(), 800)
+
+        # Apply scalling
+        label.scale(0.5, 0.5)
+        self.assertEqual(label.get_width(), 400)
+        label.scale(0.5, 0.5)
+        self.assertEqual(label.get_width(), 400)
+        self.assertEqual(label.get_padding()[0], 26.228571428571428)
+        self.assertEqual(label.get_padding(transformed=False)[0], 54)
+
+        # Set size
+        label.resize(450, 100)
+        self.assertEqual(label.get_width(), 449)
+        self.assertEqual(label.get_height(), 98)
+
+        # Set size back
+        label.scale(1, 1)
+        label.set_padding(0)
+        self.assertEqual(label.get_width(), 692)
+        self.assertEqual(label.get_height(), 35)
+
+        # Test max width
+        label.scale(2, 2)
+        label.set_padding(52)
+        label.set_max_width(250)
+        self.assertFalse(label._scale[0])  # max width disables scale
+        self.assertEqual(label.get_width(), 249)
+        self.assertEqual(label.get_height(), 35 + 52 * 2)
+
+        # Apply the same, but this time height is scaled
+        label.set_max_width(250, scale_height=True)
+        self.assertEqual(label.get_height(), 104)
+
+        # Set max height, this will disabled max width
+        label.set_max_height(100)
+        self.assertEqual(label._max_width[0], None)
+        self.assertEqual(label.get_height(), 99)
+
+        # Scale, disable both max width and max height
+        label.set_max_width(100)
+        label.set_max_height(100)
+        label.scale(1.5, 1.5)
+        self.assertEqual(label._max_width[0], None)
+        self.assertEqual(label._max_height[0], None)
+        self.assertEqual(label._scale[0], True)
+
+        # Set scale back
+        label.scale(1, 1)
+        label.set_padding(0)
+        self.assertEqual(label.get_width(), 692)
+        self.assertEqual(label.get_height(), 35)
 
     def test_visibility(self):
         """
@@ -430,6 +505,25 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 255, 255, 255)
         widget._previsualize_color(surface=None)
 
+        # Test hex formats
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='none')
+        widget.set_value('#ff00ff')
+        self.assertEqual(widget.get_value(as_string=True), '#ff00ff')
+        widget.set_value('#FF00ff')
+        self.assertEqual(widget.get_value(as_string=True), '#FF00ff')
+
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='lower')
+        widget.set_value('#FF00ff')
+        self.assertEqual(widget.get_value(as_string=True), '#ff00ff')
+        widget.set_value('AABBcc')
+        self.assertEqual(widget.get_value(as_string=True), '#aabbcc')
+
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='upper')
+        widget.set_value('#FF00ff')
+        self.assertEqual(widget.get_value(as_string=True), '#FF00FF')
+        widget.set_value('AABBcc')
+        self.assertEqual(widget.get_value(as_string=True), '#AABBCC')
+
     def test_label(self):
         """
         Test label widget.
@@ -593,7 +687,7 @@ class WidgetsTest(unittest.TestCase):
 
     def test_button(self):
         """
-        Test certain effects on buttons.
+        Test button widget.
         """
         menu = MenuUtils.generic_menu()
         menu2 = MenuUtils.generic_menu()
@@ -639,6 +733,24 @@ class WidgetsTest(unittest.TestCase):
 
         # Invalid recursive menu
         self.assertRaises(ValueError, lambda: menu.add_button('bt', menu))
+
+        # Test callback
+        test = [False]
+
+        def callback(t=False):
+            test[0] = t
+
+        btn = Button('epic', t=True, onreturn=callback)
+        btn.apply()
+        self.assertTrue(test[0])
+        test[0] = False
+
+        def callback():
+            test[0] = False
+
+        btn = Button('epic', onreturn=callback)
+        btn.apply()
+        self.assertFalse(test[0])
 
     def test_attributes(self):
         """
@@ -738,6 +850,126 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_margin()[1], 999)
         w.draw(surface)
 
+    def test_none(self):
+        """
+        Test none widget.
+        """
+        wid = NoneWidget()
+        wid.change_id('none')
+        self.assertEqual(wid.get_id(), 'none')
+
+        wid.set_margin(9, 9)
+        self.assertEqual(wid.get_margin()[0], 0)
+        self.assertEqual(wid.get_margin()[1], 0)
+
+        wid.set_padding(9)
+        t, l, b, r = wid.get_padding()
+        self.assertEqual(r, 0)
+        self.assertEqual(t, 0)
+        self.assertEqual(b, 0)
+        self.assertEqual(l, 0)
+
+        wid.set_background_color((1, 1, 1))
+        wid._fill_background_color(surface)
+        self.assertEqual(wid._background_color, None)
+
+        nosel = NoneSelection()
+        wid.set_selection_effect(nosel)
+        self.assertNotEqual(nosel, wid.get_selection_effect())
+
+        wid.set_title('none')
+        self.assertEqual(wid.get_title(), '')
+
+        r = wid.get_rect(inflate=(10, 10))
+        self.assertEqual(r.x, 0)
+        self.assertEqual(r.y, 0)
+        self.assertEqual(r.width, 0)
+        self.assertEqual(r.height, 0)
+
+        self.assertFalse(wid.is_selectable)
+        self.assertTrue(wid.visible)
+
+        wid.apply()
+        wid.change()
+
+        wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1))
+        wid.update_font({'name', ''})
+        wid._apply_font()
+        self.assertEqual(wid._font, None)
+
+        # Test font rendering
+        surf = wid._render_string('nice', (1, 1, 1))  # type: Surface
+        self.assertEqual(surf.get_width(), 0)
+        self.assertEqual(surf.get_height(), 0)
+
+        wid._apply_transforms()
+        wid.draw_selection(surface)
+
+        wid.hide()
+        self.assertFalse(wid.visible)
+        wid.show()
+        self.assertTrue(wid.visible)
+
+        wid.set_value('epic')
+        self.assertRaises(ValueError, lambda: wid.get_value())
+
+        wid.remove_update_callback('none')
+        wid.add_update_callback(None)
+
+        draw = [False]
+
+        surf = wid.get_surface()
+        self.assertEqual(surf.get_width(), 0)
+        self.assertEqual(surf.get_height(), 0)
+
+        # Apply transforms
+        wid.set_position(1, 1)
+        pos = wid.get_position()
+        self.assertEqual(pos[0], 0)
+        self.assertEqual(pos[1], 0)
+
+        wid.translate(1, 1)
+        self.assertEqual(wid._translate[0], 0)
+        self.assertEqual(wid._translate[1], 0)
+
+        wid.rotate(10)
+        self.assertEqual(wid._angle, 0)
+
+        wid.scale(100, 100)
+        self.assertEqual(wid._scale[0], False)
+        self.assertEqual(wid._scale[1], 1)
+        self.assertEqual(wid._scale[2], 1)
+
+        wid.flip(True, True)
+        self.assertFalse(wid._flip[0])
+        self.assertFalse(wid._flip[1])
+
+        wid.set_max_width(100)
+        self.assertEqual(wid._max_width[0], None)
+
+        wid.set_max_height(100)
+        self.assertEqual(wid._max_height[0], None)
+
+        # Selection
+        wid.set_selected()
+        self.assertFalse(wid.selected)
+        self.assertFalse(wid.is_selectable)
+
+        # noinspection PyUnusedLocal
+        def _draw(*args):
+            draw[0] = True
+
+        drawid = wid.add_draw_callback(_draw)
+        wid.draw(surface)
+        self.assertTrue(draw[0])
+        draw[0] = False
+        wid.remove_draw_callback(drawid)
+        wid.draw(surface)
+        self.assertFalse(draw[0])
+
+        wid.set_sound(None)
+        self.assertNotEqual(wid.sound, None)
+
     # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):
         """
@@ -761,6 +993,7 @@ class WidgetsTest(unittest.TestCase):
                        slider_color=(210, 120, 200),
                        page_ctrl_thick=thick,
                        page_ctrl_color=(235, 235, 230))
+        self.assertEqual(sb.get_thickness(), 80)
 
         sb.set_shadow(color=(245, 245, 245),
                       position=_locals.POSITION_SOUTHEAST,

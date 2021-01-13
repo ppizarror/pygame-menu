@@ -40,6 +40,13 @@ class Button(Widget):
     """
     Button widget.
 
+    The arguments and unknown keyword arguments are passed to the ``onreturn``
+    function:
+
+    .. code-block:: python
+
+        onreturn(*args, **kwargs)
+
     :param title: Button title
     :type title: str
     :param button_id: Button ID
@@ -73,8 +80,8 @@ class Button(Widget):
 
     def update_callback(self, callback, *args):
         """
-        Update function triggered by the button; ``callback`` cannot point to a Menu, that behaviour
-        is only valid using ``Menu.add_button()`` method.
+        Update function triggered by the button; ``callback`` cannot point to a Menu, that
+        behaviour is only valid using py:meth:`pygame_menu.Menu.add_button` method.
 
         .. note::
 
@@ -107,6 +114,7 @@ class Button(Widget):
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def _render(self):
         if not self._render_hash_changed(self.selected, self._title, self.visible):
@@ -116,7 +124,7 @@ class Button(Widget):
         else:
             color = self._font_color
         self._surface = self._render_string(self._title, color)
-        self._apply_surface_transforms()
+        self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force menu update
 

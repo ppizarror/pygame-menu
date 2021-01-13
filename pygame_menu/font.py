@@ -66,7 +66,7 @@ def get_font(name, size):
     """
     assert isinstance(size, int)
     if isinstance(name, _font.Font):
-        font = name  # type: (_font.Font,None)
+        font = name  # type: (_font.Font, None)
         return font
     else:
 
@@ -121,7 +121,7 @@ def get_font(name, size):
                                                         sys_message_2))
 
         # Try to load the font
-        font = None  # type: (_font.Font,None)
+        font = None  # type: (_font.Font, None)
         if (name, size) in _cache:
             return _cache[(name, size)]
         try:

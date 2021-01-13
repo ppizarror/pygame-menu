@@ -38,8 +38,12 @@ class Image(Widget):
     """
     Image widget.
 
-    :param image_path: Path of the image or BaseImage object. If BaseImage object is provided drawing mode is not considered
-    :type image_path: str, BaseImage
+    .. note::
+
+        This class redefines all widget transformations.
+
+    :param image_path: Path of the image or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
+    :type image_path: str, :py:class:`pygame_menu.baseimage.BaseImage`
     :param image_id: Image ID
     :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
@@ -71,23 +75,24 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-        self.selection_effect_enabled = False
+    def set_title(self, title):
+        pass
 
     def get_image(self):
         """
-        Gets the BaseImage object from widget.
+        Gets the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
         :return: Widget image
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         return self._image
 
     def set_image(self, image):
         """
-        Set the BaseImage object from widget.
+        Set the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
-        :param image: BaseImage object
-        :type image: BaseImage
+        :param image: Image object
+        :type image: :py:class:`pygame_menu.baseimage.BaseImage`
         :return: None
         """
         self._image = image
@@ -118,6 +123,7 @@ class Image(Widget):
     def draw(self, surface):
         self._render()
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def _render(self):
         if self._surface is not None:

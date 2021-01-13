@@ -48,7 +48,6 @@ class Label(Widget):
             title=title,
             widget_id=label_id
         )
-        self.selection_effect_enabled = False
 
     def _apply_font(self):
         pass
@@ -60,12 +59,13 @@ class Label(Widget):
             return
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def _render(self):
         if not self._render_hash_changed(self._title, self._font_color, self.visible):
             return True
         self._surface = self._render_string(self._title, self._font_color)
-        self._apply_surface_transforms()
+        self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force menu update
 

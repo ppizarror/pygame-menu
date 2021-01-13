@@ -53,7 +53,9 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-    .. note:: This widget does not accept scale/resize transformation.
+    .. note::
+
+        This widget does not accept scale/resize transformation.
 
     :param title: Title of the menubar
     :type title: str
@@ -104,13 +106,13 @@ class MenuBar(Widget):
 
         self._backbox = back_box
         self._backbox_border_width = 1  # px
-        self._backbox_pos = None  # type: (tuple,None)
-        self._backbox_rect = None  # type: (pygame.rect.Rect,None)
+        self._backbox_pos = None  # type: (tuple, None)
+        self._backbox_rect = None  # type: (pygame.rect.Rect, None)
         self._background_color = background_color
         self._box_mode = 0
         self._offsetx = 0.0
         self._offsety = 0.0
-        self._polygon_pos = None  # type: (tuple,None)
+        self._polygon_pos = None  # type: (tuple, None)
         self._style = mode
         self._title = ''
         self._width = width
@@ -124,6 +126,9 @@ class MenuBar(Widget):
         pass
 
     def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
+        pass
+
+    def set_selection_effect(self, selection):
         pass
 
     def set_backbox_border_width(self, width):
@@ -163,6 +168,8 @@ class MenuBar(Widget):
                      (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
 
+        self.apply_draw_callbacks()
+
     def _render(self):
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
@@ -179,7 +186,7 @@ class MenuBar(Widget):
 
         self._surface = self._render_string(self._title, self._font_selected_color)
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._apply_surface_transforms()  # Rotation does not affect rect size
+        self._apply_transforms()  # Rotation does not affect rect size
 
         if self._style == MENUBAR_STYLE_ADAPTIVE:
             """
@@ -326,7 +333,7 @@ class MenuBar(Widget):
 
     def set_title(self, title, offsetx=0, offsety=0):
         """
-        Set the Menu title.
+        Set the menubar title.
 
         :param title: Menu title
         :type title: str

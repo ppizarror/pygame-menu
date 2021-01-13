@@ -36,15 +36,31 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, to_string
 from pygame_menu.widgets.widget.textinput import TextInput
 
+# Input modes
 TYPE_HEX = 'hex'
 TYPE_RGB = 'rgb'
+
+# Apply format to hex color string
+HEX_FORMAT_LOWER = 'lower'
+HEX_FORMAT_NONE = 'none'
+HEX_FORMAT_UPPER = 'upper'
 
 
 class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     """
     Color input widget.
 
-    .. note:: This widget implements the same transformations as TextInput.
+    The callbacks receive the current value and all unknown keyword
+    arguments, where ``current_color=widget.get_value()``:
+
+    .. code-block:: python
+
+        onchange(current_color, **kwargs)
+        onreturn(current_color, **kwargs)
+
+    .. note::
+
+        This widget implements the same transformations as :py:class:`pygame_menu.widgets.widget.TextInput`.
 
     :param title: Color input title
     :type title: str
@@ -52,6 +68,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type colorinput_id: str
     :param color_type: Type of color input (rgb, hex)
     :type color_type: str
+    :param hex_format: Hex format string mode (none, lower, upper)
+    :type hex_format: str
     :param input_separator: Divisor between RGB channels
     :type input_separator: str
     :param input_underline: Character drawn under each number input
@@ -78,6 +96,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  title='',
                  colorinput_id='',
                  color_type=TYPE_RGB,
+                 hex_format=HEX_FORMAT_NONE,
                  input_separator=',',
                  input_underline='_',
                  cursor_color=(0, 0, 0),
@@ -92,6 +111,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  ):
         assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
+        assert isinstance(hex_format, str)
         assert isinstance(input_separator, str)
         assert isinstance(input_underline, str)
         assert isinstance(cursor_color, tuple)
@@ -105,7 +125,10 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert prev_size > 0, 'previsualization width must be greater than zero'
         assert input_separator not in ['0', '1', '2', '3', '4', '5', '6', '7', '8',
                                        '9'], 'input_separator cannot be a number'
-        assert color_type in [TYPE_HEX, TYPE_RGB], 'color type must be "{0}" or "{1}"'.format(TYPE_HEX, TYPE_RGB)
+        assert color_type in [TYPE_HEX, TYPE_RGB], \
+            'color type must be "{0}" or "{1}"'.format(TYPE_HEX, TYPE_RGB)
+        assert hex_format in [HEX_FORMAT_NONE, HEX_FORMAT_LOWER, HEX_FORMAT_UPPER], \
+            'invalid hex format mode, it must be "none", "lower" or "upper"'
 
         _maxchar = 0
         self._color_type = color_type.lower()  # type: str
@@ -147,6 +170,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Store inner variables
         self._auto_separator_pos = []  # This stores indexes of auto separator added
+        self._hex_format = hex_format
         self._separator = input_separator
 
         # Previsualization surface, if -1 previsualization does not show
@@ -154,11 +178,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._last_g = -1  # type: int
         self._last_b = -1  # type: int
         self._previsualization_position = (0.0, 0.0)
-        self._previsualization_surface = None  # type: (pygame.Surface,None)
+        self._previsualization_surface = None  # type: (pygame.Surface, None)
         self._prev_size = prev_size  # type: int
 
-        # Disable parent update callbacks
-        self._apply_widget_update_callbacks = False
+        # Disable parent callbacks
+        self._apply_widget_update_callback = False
+        self._apply_widget_draw_callback = False
 
     # noinspection PyMissingOrEmptyDocstring
     def clear(self):
@@ -212,16 +237,24 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 _color = text
 
         super(ColorInput, self).set_value(_color)
+        self._format_hex()
 
-    def get_value(self):
+    def get_value(self, as_string=False):
         """
         Return the color value as a tuple or red blue and green channels.
 
-        .. note :: If the data is invalid the widget returns *(-1,-1,-1)*.
+        .. note::
 
-        :return: Color tuple as (R,G,B)
-        :rtype: tuple
+            If the data is invalid the widget returns ``(-1,-1,-1)``.
+
+        :param as_string: If ``True`` returns the widget value as plain text
+        :type as_string: bool
+        :return: Color tuple as (R,G,B) or color string
+        :rtype: tuple, str
         """
+        assert isinstance(as_string, bool)
+        if as_string:
+            return self._input_string
         if self._color_type == TYPE_RGB:
             _color = self._input_string.split(self._separator)
             if len(_color) == 3 and _color[0] != '' and _color[1] != '' and _color[2] != '':
@@ -236,9 +269,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     def is_valid(self):
         """
-        Return true if the current value of the input is a valid color or not.
+        Return ``True`` if the current value of the input is a valid color or not.
 
-        :return: True if valid
+        :return: ``True`` if valid
         :rtype: bool
         """
         r, g, b = self.get_value()
@@ -282,6 +315,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def draw(self, surface):
         super(ColorInput, self).draw(surface)  # This calls _render()
         self._previsualize_color(surface)
+        self.apply_draw_callbacks()
 
     def _render(self):
         r = super(ColorInput, self)._render()
@@ -291,11 +325,24 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
         return r
 
+    def _format_hex(self):
+        """
+        Apply hex format.
+
+        :return: None
+        """
+        if self._color_type != TYPE_HEX or self._hex_format == HEX_FORMAT_NONE:
+            return
+        elif self._hex_format == HEX_FORMAT_LOWER:
+            self._input_string = self._input_string.lower()
+        elif self._hex_format == HEX_FORMAT_UPPER:
+            self._input_string = self._input_string.upper()
+
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
-        _input = self._input_string
-        _curpos = self._cursor_position
-        _disable_remove_separator = True
+        input_str = self._input_string
+        cursor_pos = self._cursor_position
+        disable_remove_separator = True
 
         key = ''  # Pressed key
         if self._color_type == TYPE_RGB:
@@ -306,74 +353,76 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if not check_key_pressed_valid(event):
                         return True
 
-                    if _disable_remove_separator and len(_input) > 0 and len(_input) > _curpos and (
-                            '{0}{0}'.format(self._separator) not in _input or
-                            _input[_curpos] == self._separator and len(_input) == _curpos + 1
+                    if disable_remove_separator and len(input_str) > 0 and len(input_str) > cursor_pos and (
+                            '{0}{0}'.format(self._separator) not in input_str or
+                            input_str[cursor_pos] == self._separator and len(input_str) == cursor_pos + 1
                     ):
 
                         # Backspace button, delete text from right
                         if event.key == pygame.K_BACKSPACE:
-                            if len(_input) >= 1 and _input[_curpos - 1] == self._separator:
+                            if len(input_str) >= 1 and input_str[cursor_pos - 1] == self._separator:
                                 return True
 
                         # Delete button, delete text from left
                         elif event.key == pygame.K_DELETE:
-                            if _input[_curpos] == self._separator:
+                            if input_str[cursor_pos] == self._separator:
                                 return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
                     key = str(event.unicode)
                     if key in self._valid_chars:
 
-                        _new_string = (
+                        new_string = (
                                 self._input_string[:self._cursor_position]
                                 + key
                                 + self._input_string[self._cursor_position:]
                         )
 
                         # Cannot be separator at first
-                        if len(_input) == 0 and key == self._separator:
+                        if len(input_str) == 0 and key == self._separator:
                             return False
 
-                        if len(_input) > 1:
+                        if len(input_str) > 1:
 
                             # Check separators
                             if key == self._separator:
 
                                 # If more than 2 separators
-                                _total_separator = 0
-                                for _ch in _input:
-                                    if _ch == self._separator:
-                                        _total_separator += 1
-                                if _total_separator >= 2:
+                                total_separator = 0
+                                for ch in input_str:
+                                    if ch == self._separator:
+                                        total_separator += 1
+                                if total_separator >= 2:
                                     return False
 
                             # Check the number between the current separators, this number must be between 0-255
                             if key != self._separator:
-                                _pos_before = 0
-                                _pos_after = 0
-                                for _i in range(_curpos):
-                                    if _new_string[_curpos - _i - 1] == self._separator:
-                                        _pos_before = _curpos - _i
+                                pos_before = 0
+                                pos_after = 0
+                                for i in range(cursor_pos):
+                                    if new_string[cursor_pos - i - 1] == self._separator:
+                                        pos_before = cursor_pos - i
                                         break
-                                for _i in range(len(_new_string) - _curpos):
-                                    if _new_string[_curpos + _i] == self._separator:
-                                        _pos_after = _curpos + _i
+                                for i in range(len(new_string) - cursor_pos):
+                                    if new_string[cursor_pos + i] == self._separator:
+                                        pos_after = cursor_pos + i
                                         break
-                                if _pos_after == 0:
-                                    _pos_after = len(_new_string)
-                                _num = _new_string[_pos_before:_pos_after].replace(',', '')
-                                if _num == '':
-                                    _num = '0'
+                                if pos_after == 0:
+                                    pos_after = len(new_string)
+                                num = new_string[pos_before:pos_after].replace(',', '')
+                                if num == '':
+                                    num = '0'
 
-                                if int(_num) > 255:  # Number exceeds 25X
+                                if int(num) > 255:  # Number exceeds 25X
                                     return False
-                                if _num != str(int(_num)) and key == '0':  # User adds 0 at left, example: 12 -> 012
+                                if num != str(int(num)) and key == '0':  # User adds 0 at left, example: 12 -> 012
                                     return False
-                                if len(_num) > 3:  # Number like 0XXX
+                                if len(num) > 3:  # Number like 0XXX
                                     return False
 
         elif self._color_type == TYPE_HEX:
+            self._format_hex()
+
             for event in events:  # type: pygame.event.Event
                 if event.type == pygame.KEYDOWN:
 
@@ -383,12 +432,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
                     # Backspace button, delete text from right
                     if event.key == pygame.K_BACKSPACE:
-                        if _curpos == 1:
+                        if cursor_pos == 1:
                             return True
 
                     # Delete button, delete text from left
                     elif event.key == pygame.K_DELETE:
-                        if _curpos == 0:
+                        if cursor_pos == 0:
                             return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
@@ -396,7 +445,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if key in self._valid_chars:
                         if key == '#':
                             return True
-                        if _curpos == 0:
+                        if cursor_pos == 0:
                             return True
 
         # Update
@@ -405,13 +454,13 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # After
         if self._color_type == TYPE_RGB:
 
-            _total_separator = 0
-            for _ch in _input:
-                if _ch == self._separator:
-                    _total_separator += 1
+            total_separator = 0
+            for ch in input_str:
+                if ch == self._separator:
+                    total_separator += 1
 
             # Adds auto separator
-            if key == '0' and len(self._input_string) == self._cursor_position and _total_separator < 2 and \
+            if key == '0' and len(self._input_string) == self._cursor_position and total_separator < 2 and \
                     (len(self._input_string) == 1 or
                      (len(self._input_string) > 2 and self._input_string[
                          self._cursor_position - 2] == self._separator)):
@@ -422,8 +471,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             colors = self._input_string.split(self._separator)
             for c in colors:
                 if len(c) > 0 and (int(c) > 255 or int(c) < 0):
-                    self._input_string = _input
-                    self._cursor_position = _curpos
+                    self._input_string = input_str
+                    self._cursor_position = cursor_pos
                     break
 
             if len(colors) == 3:
@@ -431,7 +480,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
             # Add an auto separator if the number can't continue growing and the cursor
             # is at the end of the line
-            if _total_separator < 2 and len(self._input_string) == self._cursor_position:
+            if total_separator < 2 and len(self._input_string) == self._cursor_position:
                 autopos = len(colors) - 1
                 last_num = colors[autopos]
                 if (len(last_num) == 2 and int(last_num) > 25 or len(last_num) == 3 and int(last_num) <= 255) and \
@@ -440,7 +489,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     self._auto_separator_pos.append(autopos)
 
             # If the user cleared all the string, reset auto separator
-            if _total_separator == 0 and \
+            if total_separator == 0 and \
                     (len(self._input_string) < 2 or len(self._input_string) == 2 and int(colors[0]) <= 25):
                 self._auto_separator_pos = []
 

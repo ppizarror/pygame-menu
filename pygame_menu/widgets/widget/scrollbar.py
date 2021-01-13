@@ -44,11 +44,15 @@ class ScrollBar(Widget):
         b. The scroll arrows are push buttons which can be used to accurately navigate
            to a particular place in a document.
         c. The page control is the area over which the slider is dragged (the scroll bar's
-           background). Clicking here moves the scroll bar towards the click by one "page".
+           background). Clicking here moves the scroll bar towards the click by one page.
 
-    .. warning:: Arrows are not yet implemented.
+    .. warning::
 
-    .. note:: This widget only accepts translation transformation.
+        Arrows are not yet implemented.
+
+    .. note::
+
+        This widget only accepts translation transformation.
 
     :param length: Length of the page control
     :type length: int
@@ -109,13 +113,13 @@ class ScrollBar(Widget):
         self._page_ctrl_thick = page_ctrl_thick
         self._page_ctrl_color = page_ctrl_color
 
-        self._slider_rect = None  # type: (pygame.Rect,None)
+        self._slider_rect = None  # type: (pygame.Rect, None)
         self._slider_pad = slider_pad
         self._slider_color = slider_color
         self._slider_position = 0  # type: int
 
         self._single_step = 20  # type: int
-        self._page_step = None  # type: (int,None)
+        self._page_step = None  # type: (int, None)
 
         if values_range[1] - values_range[0] > length:
             self.set_page_step(length)
@@ -152,6 +156,7 @@ class ScrollBar(Widget):
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self.apply_draw_callbacks()
 
     def get_maximum(self):
         """
@@ -275,6 +280,15 @@ class ScrollBar(Widget):
         self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
         self._apply_size_changes()
 
+    def get_thickness(self):
+        """
+        Return the thickness of the bar.
+
+        :return: Thickness
+        :rtype: int
+        """
+        return self._page_ctrl_thick
+
     def set_maximum(self, value):
         """
         Set the greatest acceptable value.
@@ -303,7 +317,7 @@ class ScrollBar(Widget):
         """
         Set the scroll bar orientation to vertical or horizontal.
 
-        :param orientation: Widget orientation, could be `ORIENTATION_HORIZONTAL / ORIENTATION_VERTICAL`
+        :param orientation: Widget orientation, could be ``ORIENTATION_HORIZONTAL``/``ORIENTATION_VERTICAL``
         :type orientation: str
         :return: None
         """
@@ -323,8 +337,7 @@ class ScrollBar(Widget):
         .. note::
 
             The length of the slider is related to this value, and typically
-            represents the proportion of the document area shown in a scrolling
-            view.
+            represents the proportion of the document area shown in a scrolling view.
 
         :param value: Page step
         :type value: int, float

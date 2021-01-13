@@ -30,15 +30,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.utils import make_surface
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.widget.none import NoneWidget
 
 
-class VMargin(Widget):
+class VMargin(NoneWidget):
     """
     Vertical margin widget.
 
-    .. note:: This widget does not implement any transformation.
+    .. note::
+
+        This widget does not implement any transformation.
 
     :param widget_id: ID of the widget
     :type widget_id: str
@@ -46,29 +47,8 @@ class VMargin(Widget):
 
     def __init__(self, widget_id=''):
         super(VMargin, self).__init__(widget_id=widget_id)
-        self.is_selectable = False
 
-    def _apply_font(self):
-        self._font_size = 0
-        self._shadow = False
-
-    def set_padding(self, padding):  # Don't accept padding
-        pass
-
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
-        self._render()
-        surface.blit(self._surface, self._rect.topleft)
-
-    def _render(self):
-        if self._surface is not None:
-            return True
-        self._surface = make_surface(1, 1, alpha=True)
-        self._rect.width = 0.0
-        self._rect.height = 0.0
-        if not self._render_hash_changed(self.visible):
-            return True
-
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
-        return False
+    def set_margin(self, x, y):
+        assert isinstance(x, (int, float))
+        assert isinstance(y, (int, float))
+        self._margin = (x, y)

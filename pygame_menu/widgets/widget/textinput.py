@@ -39,8 +39,10 @@ from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_colo
 from pygame_menu.widgets.core import Widget
 
 try:
+
     # noinspection PyProtectedMember
     from pyperclip import copy, paste, PyperclipException
+
 except ImportError:
 
     # noinspection PyUnusedLocal
@@ -74,7 +76,17 @@ class TextInput(Widget):
     """
     Text input widget.
 
-    .. note:: This widget only accepts vertical flip and translation transformations.
+    The callbacks receive the current value and all unknown keyword
+    arguments, where ``current_text=widget.get_value``:
+
+    .. code-block:: python
+
+        onchange(current_text, **kwargs)
+        onreturn(current_text, **kwargs)
+
+    .. note::
+
+        This widget only accepts vertical flip and translation transformations.
 
     :param title: Text input title
     :type title: str
@@ -84,7 +96,7 @@ class TextInput(Widget):
     :type input_type: str
     :param input_underline: Character drawn under the input
     :type input_underline: str
-    :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
+    :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
     :type input_underline_len: int
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
@@ -98,7 +110,7 @@ class TextInput(Widget):
     :type history: int
     :param maxchar: Maximum length of input
     :type maxchar: int
-    :param maxwidth: Maximum size of the text to be displayed (overflow), if 0 this feature is disabled
+    :param maxwidth: Maximum size of the text to be displayed (overflow), if ``0`` this feature is disabled
     :type maxwidth: int
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
     :type maxwidth_dynamically_update: bool
@@ -122,8 +134,8 @@ class TextInput(Widget):
     :type tab_size: int
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :type text_ellipsis: str
-    :param valid_chars: List of chars that are valid, None if all chars are valid
-    :type valid_chars: list
+    :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
+    :type valid_chars: list, None
     :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
@@ -198,7 +210,7 @@ class TextInput(Widget):
             kwargs=kwargs
         )
 
-        self._input_string = ''  # Inputted text
+        self._input_string = ''  # type: str
         self._ignore_keys = (  # Ignore keys on keyrepeat event
             _controls.KEY_MOVE_DOWN,
             _controls.KEY_MOVE_UP,
@@ -244,7 +256,7 @@ class TextInput(Widget):
         self._cursor_offset = -1.0  # type: float
         self._cursor_position = 0  # Inside text
         self._cursor_render = True  # If true cursor must be rendered
-        self._cursor_surface = None  # type: (pygame.Surface,None)
+        self._cursor_surface = None  # type: (pygame.Surface, None)
         self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500.0  # type: float
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
@@ -257,15 +269,15 @@ class TextInput(Widget):
         self._max_history = history
 
         # Text selection
-        self._last_selection_render = [0, 0]  # Position (int)
+        self._last_selection_render = [0, 0]  # Position, int
         self._selection_active = False
-        self._selection_box = [0, 0]  # [from, to], (int)
+        self._selection_box = [0, 0]  # [from, to], int
         self._selection_color = cursor_selection_color
         self._selection_enabled = cursor_selection_enable
         self._selection_mouse_first_position = -1  # type: int
         self._selection_position = [0.0, 0.0]  # x,y (float)
         self._selection_render = False
-        self._selection_surface = None  # type: (pygame.Surface,None)
+        self._selection_surface = None  # type: (pygame.Surface, None)
         self._selection_touch_first_position = -1  # type: int
 
         # List of valid chars
@@ -278,8 +290,11 @@ class TextInput(Widget):
             assert len(valid_chars) > 0, 'valid_chars list must contain at least 1 element'
         self._valid_chars = valid_chars
 
+        # Callbacks
+        self._apply_widget_draw_callback = True
+        self._apply_widget_update_callback = True
+
         # Other
-        self._apply_widget_update_callbacks = True  # If False, apply_widget_update will not be called
         self._copy_paste_enabled = copy_paste_enable
         self._input_type = input_type
         self._input_underline = input_underline
@@ -288,7 +303,7 @@ class TextInput(Widget):
         self._keychar_size = {'': 0}  # type: dict
         self._last_char = ''  # type: str
         self._last_rendered_string = '__pygame_menu__last_render_string__'  # type: str
-        self._last_rendered_surface = None  # type: (pygame.Surface,None)
+        self._last_rendered_surface = None  # type: (pygame.Surface, None)
         self._last_rendered_surface_underline_width = 0  # type: int
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
@@ -390,6 +405,9 @@ class TextInput(Widget):
                 x = self._surface.get_width() - x
             surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
 
+        if self._apply_widget_draw_callback:
+            self.apply_draw_callbacks()
+
     def _render(self):
         string = self._title + self._get_input_string()  # Render string
 
@@ -405,7 +423,7 @@ class TextInput(Widget):
 
         # Apply underline if exists
         self._surface = self._render_underline(string, color, updated_surface)
-        self._apply_surface_transforms()
+        self._apply_transforms()
 
         # Render the cursor
         self._render_cursor()
@@ -493,7 +511,7 @@ class TextInput(Widget):
         :type string: str
         :param color: Color of the string to render
         :type color: tuple
-        :return: True if surface is updated
+        :return: ``True`` if surface is updated
         :rtype: bool
         """
         new_surface = self._render_string(string, color)
@@ -626,7 +644,7 @@ class TextInput(Widget):
 
     def _ellipsis_left(self):
         """
-        Return true if left ellipsis is active.
+        Return ``True`` if left ellipsis is active.
 
         :return: Boolean
         :rtype: bool
@@ -635,7 +653,7 @@ class TextInput(Widget):
 
     def _ellipsis_right(self):
         """
-        Return true if right ellipsis is active.
+        Return ``True`` if right ellipsis is active.
 
         :return: Boolean
         :rtype: bool
@@ -644,7 +662,7 @@ class TextInput(Widget):
 
     def _ellipsis_left_and_right(self):
         """
-        Return true if left and right ellipsis are active.
+        Return ``True`` if left and right ellipsis are active.
 
         :return: Boolean
         :rtype: bool
@@ -823,9 +841,9 @@ class TextInput(Widget):
 
                 biggest = 0
                 for char in curr_string:
-                    _char_size = self._get_char_size(char)
-                    accum_size += _char_size
-                    biggest = max(biggest, _char_size)
+                    char_size = self._get_char_size(char)
+                    accum_size += char_size
+                    biggest = max(biggest, char_size)
 
                 if self._ellipsis_right():
                     accum_size += self._ellipsis_size
@@ -930,11 +948,16 @@ class TextInput(Widget):
 
     def _check_mouse_collide_input(self, pos):
         """
-        Check mouse collision, if true update cursor.
+        Check mouse collision.
+
+        .. note::
+
+            If this method returns ``True`` the cursor must be updated.
 
         :param pos: Position
         :type pos: tuple
-        :return: None
+        :return: Cursor update status
+        :rtype: bool
         """
         if self._rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
@@ -945,11 +968,16 @@ class TextInput(Widget):
 
     def _check_touch_collide_input(self, pos):
         """
-        Check touchscreen collision, if true update cursor.
+        Check touchscreen collision.
+
+        .. note::
+
+            If this method returns ``True`` the cursor must be updated.
 
         :param pos: Position
         :type pos: tuple
-        :return: None
+        :return: Cursor update status
+        :rtype: bool
         """
         if self._rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
@@ -970,26 +998,26 @@ class TextInput(Widget):
             raise ValueError('value cannot be set in password type')
         assert isinstance(text, (str, int, float))
         if self._check_input_type(text):
-            _default = to_string(text)
+            default_text = to_string(text)
 
             # Filter valid chars
             if self._valid_chars is not None:
-                _default_valid = ''
-                for ch in _default:
+                default_valid = ''
+                for ch in default_text:
                     if ch in self._valid_chars:
-                        _default_valid += ch
-                _default = _default_valid
+                        default_valid += ch
+                default_text = default_valid
 
             # Apply maxchar
-            _ls = len(_default)
-            if 0 < self._maxchar < _ls:
-                _default = _default[_ls - self._maxchar:_ls]
+            len_text = len(default_text)
+            if 0 < self._maxchar < len_text:
+                default_text = default_text[len_text - self._maxchar:len_text]
 
-            self._input_string = _default
-            for i in range(len(_default) + 1):
+            self._input_string = default_text
+            for i in range(len(default_text) + 1):
                 self._move_cursor_right()
                 self._update_renderbox(right=1, addition=True)
-            self._update_input_string(_default)
+            self._update_input_string(default_text)
         else:
             raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
         self._update_renderbox()  # Updates cursor
@@ -999,7 +1027,7 @@ class TextInput(Widget):
         """
         Check input size.
 
-        :return: True if the input must be limited
+        :return: ``True`` if the input must be limited
         :rtype: bool
         """
         if self._maxchar == 0:
@@ -1012,7 +1040,7 @@ class TextInput(Widget):
 
         :param string: String to validate
         :type string: str
-        :return: True if the input type is valid
+        :return: ``True`` if the input type is valid
         :rtype: bool
         """
         if string == '':  # Empty is valid
@@ -1076,7 +1104,7 @@ class TextInput(Widget):
         """
         Unselect text.
 
-        :return: True if the selected text was removed in the method call
+        :return: ``True`` if the selected text was removed in the method call
         :rtype: bool
         """
         removed = self._selection_surface is not None
@@ -1385,7 +1413,7 @@ class TextInput(Widget):
         :type keychar: str
         :param sounds: Use widget sounds
         :type sounds: bool
-        :return: If False the event loop breaks
+        :return: If ``False`` the event loop breaks
         :rtype: bool
         """
         # If selected text
@@ -1779,7 +1807,7 @@ class TextInput(Widget):
             self._cursor_ms_counter %= self._cursor_switch_ms
             self._cursor_visible = not self._cursor_visible
 
-        if updated and self._apply_widget_update_callbacks:
+        if updated and self._apply_widget_update_callback:
             self.apply_update_callbacks()
 
         return updated

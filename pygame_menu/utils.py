@@ -93,9 +93,9 @@ def assert_orientation(orientation):
 
 def assert_vector2(num_vector):
     """
-    Assert that a 2 item vector is numeric.
+    Assert that a 2-item vector is numeric.
 
-    :param num_vector: Numeric 2 item vector
+    :param num_vector: Numeric 2-item vector
     :type num_vector: tuple, list
     :return: None
     """
@@ -131,7 +131,7 @@ def check_key_pressed_valid(event):
 
     :param event: Key press event
     :type event: :py:class:`pygame.event.Event`
-    :return: True if a key is pressed
+    :return: ``True`` if a key is pressed
     :rtype: bool
     """
     # If the system detects that any key event has been pressed but
@@ -189,7 +189,7 @@ def make_surface(width, height, alpha=False, fill_color=None):
 
 def is_callable(func):
     """
-    Return true if ``func`` is callable.
+    Return ``True`` if ``func`` is callable.
 
     :param func: Function object
     :type func: any

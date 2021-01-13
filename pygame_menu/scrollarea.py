@@ -273,15 +273,22 @@ class ScrollArea(object):
         """
         return self._rect.copy()
 
-    def get_scrollbar_thickness(self, orientation):
+    def get_scrollbar_thickness(self, orientation, real=False):
         """
         Return the scroll thickness of the area. If it's hidden return zero.
 
         :param orientation: Orientation of the scroll
         :type orientation: str
+        :param real: If ``True`` returns the real thickness depending if it is shown or not
+        :type real: bool
         :return: Thickness in px
         :rtype: int
         """
+        assert isinstance(real, bool)
+        if real:
+            for sbar in self._scrollbars:  # type: ScrollBar
+                if sbar.get_orientation() == orientation:
+                    return sbar.get_thickness()
         if orientation == _locals.ORIENTATION_HORIZONTAL:
             return self._rect.height - self._view_rect.height
         elif orientation == _locals.ORIENTATION_VERTICAL:
@@ -413,11 +420,15 @@ class ScrollArea(object):
         """
         assert isinstance(margin, (int, float))
         real_rect = self.to_real_position(rect)
-        if self._view_rect.topleft[0] < real_rect.topleft[0] \
-                and self._view_rect.topleft[1] < real_rect.topleft[1] \
-                and self._view_rect.bottomright[0] > real_rect.bottomright[0] \
-                and self._view_rect.bottomright[1] > real_rect.bottomright[1]:
-            return  # rect is in viewable area
+
+        # Check rect is in viewable area
+        sx = self.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        sy = self.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        if self._view_rect.topleft[0] <= real_rect.topleft[0] + sx \
+                and self._view_rect.topleft[1] <= real_rect.topleft[1] + sy \
+                and self._view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
+                and self._view_rect.bottomright[1] + sy >= real_rect.bottomright[1]:
+            return
 
         for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
@@ -510,9 +521,9 @@ class ScrollArea(object):
 
     def is_scrolling(self):
         """
-        Return true if the user is scrolling.
+        Return ``True`` if the user is scrolling.
 
-        :return: True if user scrolls
+        :return: ``True`` if user scrolls
         :rtype: bool
         """
         scroll = False
@@ -526,7 +537,7 @@ class ScrollArea(object):
 
         :param events: List of pygame events
         :type events: list
-        :return: True if updated
+        :return: ``True`` if updated
         :rtype: bool
         """
         updated = [0, 0]
@@ -566,14 +577,15 @@ class ScrollArea(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param event: Pygame event
         :type event: :py:class:`pygame.event.Event`
-        :return: True if collide
+        :return: ``True`` if collide
         :rtype: bool
         """
+        widget_rect = widget.get_rect()
         if hasattr(pygame, 'FINGERDOWN') and (
                 event.type == pygame.FINGERDOWN or event.type == pygame.FINGERUP or
                 event.type == pygame.FINGERMOTION):
             display_size = self._menu.get_window_size()
             finger_pos = (event.x * display_size[0], event.y * display_size[1])
-            return self.to_real_position(widget.get_rect()).collidepoint(finger_pos)
+            return self.to_real_position(widget_rect).collidepoint(finger_pos)
         else:
-            return self.to_real_position(widget.get_rect()).collidepoint(*event.pos)
+            return self.to_real_position(widget_rect).collidepoint(*event.pos)

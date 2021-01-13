@@ -127,7 +127,7 @@ class BaseImage(object):
         Return a copy of the image.
 
         :return: Image
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         image = BaseImage(
             image_path=self._filepath,
@@ -142,7 +142,7 @@ class BaseImage(object):
         """
         Return the size in pixels of the image.
 
-        :return: (width,height)
+        :return: Image size tuple *(width,height)*
         :rtype: tuple
         """
         return self._surface.get_width(), self._surface.get_height()
@@ -176,11 +176,11 @@ class BaseImage(object):
 
     def equals(self, image):
         """
-        Return true if the image is the same as the object.
+        Return ``True`` if the image is the same as the object.
 
         :param image: Image object
         :type image: :py:class:`pygame_menu.baseimage.BaseImage`
-        :return: True if the image is the same (note, the surface)
+        :return: ``True`` if the image is the same (note, the surface)
         :rtype: bool
         """
         assert isinstance(image, BaseImage)
@@ -209,12 +209,14 @@ class BaseImage(object):
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
         colors and must return the same values. The color pixel will be overriden by the function output.
 
-        .. note:: See ``BaseImage.to_bw()`` method as an example.
+        .. note::
 
-        :param image_function: Color function, takes colors as ``image_function=myfunc(r, g, b, a)``. Returns the same tuple *(r,g,b,a)*
+            See :py:meth:`pygame_menu.BaseImage.to_bw` method as an example.
+
+        :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r,g,b,a)*
         :type image_function: callable
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         w, h = self._surface.get_size()
         for x in range(w):
@@ -234,7 +236,7 @@ class BaseImage(object):
         Converts the image to black and white.
 
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
 
         def bw(r, g, b, a):
@@ -245,19 +247,19 @@ class BaseImage(object):
 
     def pick_channels(self, channels):
         """
-        Pick certain channels of the image, channels are 'r' (red), 'g' (green) and 'b' (blue),
+        Pick certain channels of the image, channels are ``"r"`` (red), ``"g"`` (green) and ``"b"`` (blue),
         ``channels param`` is a list/tuple of channels (non empty).
 
         For example, ``pick_channels(['r', 'g'])``: All channels not included on the list will be discarded.
 
-        :param channels: Channels, list or tuple containing 'r', 'g' or 'b' (all combinations are possible)
+        :param channels: Channels, list or tuple containing ``"r"``, ``"g"`` or ``"b"`` (all combinations are possible)
         :type channels: tuple, list, str
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         if isinstance(channels, str):
             channels = [channels]
-        assert isinstance(channels, (list, tuple))
+        assert isinstance(channels, (tuple, list))
         assert 1 <= len(channels) <= 3, 'maximum size of channels can be 3'
 
         w, h = self._surface.get_size()
@@ -284,7 +286,7 @@ class BaseImage(object):
         :param y: Flip on y axis
         :type y: bool
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
@@ -303,7 +305,7 @@ class BaseImage(object):
         :param smooth: Smooth scaling
         :type smooth: bool
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -319,14 +321,14 @@ class BaseImage(object):
     def scale2x(self):
         """
         This will return a new image that is double the size of the original.
-        It uses the AdvanceMAME Scale2X algorithm which does a 'jaggy-less'
+        It uses the AdvanceMAME Scale2X algorithm which does a "jaggy-less"
         scale of bitmap graphics.
 
         This really only has an effect on simple images with solid colors.
         On photographic and antialiased images it will look like a regular unfiltered scale.
 
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         self._surface = pygame.transform.scale2x(self._surface)
         return self
@@ -342,7 +344,7 @@ class BaseImage(object):
         :param smooth: Smooth scaling
         :type smooth: bool
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -375,10 +377,10 @@ class BaseImage(object):
             Otherwise pygame will pick a color that matches the image colorkey or the topleft
             pixel value.
 
-        :param angle: Rotation angle (degrees 0-360)
+        :param angle: Rotation angle (degrees ``0-360``)
         :type angle: int, float
         :return: Self reference
-        :rtype: BaseImage
+        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(angle, (int, float))
         self._surface = pygame.transform.rotate(self._surface, angle)
@@ -399,7 +401,7 @@ class BaseImage(object):
 
         :param surface: Pygame surface object
         :type surface: :py:class:`pygame.Surface`
-        :param area: Area to draw, if None, Image will be drawn on entire surface
+        :param area: Area to draw; if ``None`` the image will be drawn on entire surface
         :type area: :py:class:`pygame.Rect`, None
         :param position: Position to draw
         :type position: tuple

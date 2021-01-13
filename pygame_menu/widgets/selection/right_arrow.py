@@ -44,7 +44,7 @@ class RightArrowSelection(ArrowSelection):
     :type arrow_left_margin: int, float
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
-    :param blink_ms: Milliseconds between each blink, if *0* blinking is disabled
+    :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
     :type blink_ms: int
     """
 
@@ -73,10 +73,11 @@ class RightArrowSelection(ArrowSelection):
         #                \ C
         #       <------>
         #        margin
-        a = (widget.get_rect().topright[0] + self._arrow_size[0] + self._arrow_left_margin,
-             widget.get_rect().midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        b = (widget.get_rect().midright[0] + self._arrow_left_margin,
-             widget.get_rect().midright[1] + self._arrow_vertical_offset)
-        c = (widget.get_rect().bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
-             widget.get_rect().midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+        rect = widget.get_rect()
+        a = (rect.topright[0] + self._arrow_size[0] + self._arrow_left_margin,
+             rect.midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+        b = (rect.midright[0] + self._arrow_left_margin,
+             rect.midright[1] + self._arrow_vertical_offset)
+        c = (rect.bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
+             rect.midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
         super(RightArrowSelection, self)._draw_arrow(surface, widget, a, b, c)

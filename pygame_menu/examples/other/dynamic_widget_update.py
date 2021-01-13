@@ -180,7 +180,7 @@ class App(object):
         """
         Function executed if selector changes.
 
-        :param selected: Selector data (tuple) containing text and index
+        :param selected: Selector data containing text and index
         :type selected: tuple
         :param value: Value from the selected option
         :type value: int

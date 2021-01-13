@@ -95,6 +95,60 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(position_x=0, position_y=0)
         menu.set_relative_position(20, 40)
 
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.widget_font_size = 20
+
+        menu = pygame_menu.Menu(
+            column_min_width=400,
+            columns=2,
+            height=300,
+            rows=4,
+            theme=theme,
+            title='Welcome',
+            width=400
+        )
+
+        quit1 = menu.add_button('Quit', pygame_menu.events.EXIT)
+        name1 = menu.add_text_input('Name: ', default='John Doe', maxchar=10, padding=30)
+        sel1 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        sel2 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        play1 = menu.add_button('Play', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_LEFT)
+        play1.set_float(True)
+        play2 = menu.add_button('Play 2', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_RIGHT)
+        hidden = menu.add_button('Hidden', None, font_size=100)
+        hidden.hide()
+        quit2 = menu.add_button('Quit', pygame_menu.events.EXIT)
+        label = menu.add_label('This label is really epic')
+        label.rotate(90)
+
+        x, y = quit1.get_position()
+        self.assertEqual(x, 180)
+        self.assertEqual(y, 14)
+        x, y = name1.get_position()
+        self.assertEqual(x, 125)
+        self.assertEqual(y, 82)
+        x, y = sel1.get_position()
+        self.assertEqual(x, 114)
+        self.assertEqual(y, 150)
+        x, y = sel2.get_position()
+        self.assertEqual(x, 114)
+        self.assertEqual(y, 188)
+        x, y = play1.get_position()
+        self.assertEqual(x, 409)
+        self.assertEqual(y, 14)
+        x, y = play2.get_position()
+        self.assertEqual(x, 737)
+        self.assertEqual(y, 14)
+        x, y = hidden.get_position()
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 0)
+        x, y = quit2.get_position()
+        self.assertEqual(x, 580)
+        self.assertEqual(y, 52)
+        x, y = label.get_position()
+        self.assertEqual(x, 497)
+        self.assertEqual(y, 90)
+
     def test_attributes(self):
         """
         Test menu attributes.
@@ -539,19 +593,370 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2, rows=0))
 
         # Assert append more widgets than number of rows*columns
-        _column_menu = MenuUtils.generic_menu(columns=2, rows=4)
+        column_menu = MenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
-            _column_menu.add_button('test', pygame_menu.events.BACK)
-        _column_menu.mainloop(surface, bgfun=dummy_function)
-        _column_menu._left()
-        _column_menu._right()
-        _column_menu.disable()
-        self.assertRaises(RuntimeError, lambda: _column_menu.draw(surface))
-        _column_menu.enable()
-        _column_menu.draw(surface)
-        _column_menu.disable()
-        self.assertRaises(RuntimeError, lambda: _column_menu.draw(surface))
-        self.assertRaises(AssertionError, lambda: _column_menu.add_button('test', pygame_menu.events.BACK))  # 9th item
+            column_menu.add_button('test', pygame_menu.events.BACK)
+        column_menu.mainloop(surface, bgfun=dummy_function)
+        column_menu._move_selected_left_right(-1)
+        column_menu._move_selected_left_right(1)
+        column_menu.disable()
+        self.assertRaises(RuntimeError, lambda: column_menu.draw(surface))
+        column_menu.enable()
+        column_menu.draw(surface)
+        column_menu.disable()
+        self.assertRaises(RuntimeError, lambda: column_menu.draw(surface))
+        self.assertRaises(AssertionError, lambda: column_menu.add_button('test', pygame_menu.events.BACK))
+        self.assertRaises(AssertionError, lambda: column_menu._update_widget_position())  # 9th item
+
+        # Test max width
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=[500, 500, 500, 500]))
+        column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_max_width=0)  # max menu width
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_max_width=-1))
+        column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_max_width=500)  # max menu width
+        self.assertEqual(len(column_menu._column_max_width), 3)
+        for i in range(3):
+            self.assertEqual(column_menu._column_max_width[i], 500)
+
+        # Test min width
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=[500, 500, 500, 500]))
+        column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_min_width=100)  # max menu width
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=-100))
+        column_menu = MenuUtils.generic_menu(columns=3, rows=4, column_min_width=500)  # max menu width
+        self.assertEqual(len(column_menu._column_min_width), 3)
+        for i in range(3):
+            self.assertEqual(column_menu._column_min_width[i], 500)
+
+        # Test max width should be greater than min width
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=2, rows=4, column_min_width=[500, 500],
+                                                         column_max_width=[100, 500]))
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=2, rows=4, column_min_width=[500, 500],
+                                                         column_max_width=[500, 100]))
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(rows=4, column_min_width=10, column_max_width=1))
+
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=-1, rows=4, column_max_width=500))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=0, column_max_width=500))
+        MenuUtils.generic_menu(column_max_width=[500])
+
+        # Test different rows
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2, rows=[3, 3, 3]))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2, rows=[3, -3]))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2, rows=[3]))
+
+        # Create widget positioning
+        width = 600.0
+        menu = MenuUtils.generic_menu(columns=3, rows=2, width=width)
+        btn1 = menu.add_button('btn', None)
+        btn2 = menu.add_button('btn', None)
+        btn3 = menu.add_button('btn', None)
+        btn4 = menu.add_button('btn', None)
+        btn5 = menu.add_button('btn', None)
+        btn6 = menu.add_button('btn', None)
+        c, r, i = btn1.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 0)
+        c, r, i = btn2.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 1)
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 2)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 3)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 2)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 4)
+        c, r, i = btn6.get_col_row_index()
+        self.assertEqual(c, 2)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 5)
+
+        # Check size
+        self.assertEqual(len(menu._column_widths), 3)
+        for colw in menu._column_widths:
+            self.assertEqual(colw, width / 3)
+
+        # If removing widget, all column row should change
+        menu.remove_widget(btn1)
+        c, r, i = btn1.get_col_row_index()
+        self.assertEqual(c, -1)
+        self.assertEqual(r, -1)
+        self.assertEqual(i, -1)
+        c, r, i = btn2.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 0)
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 1)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 2)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 3)
+        c, r, i = btn6.get_col_row_index()
+        self.assertEqual(c, 2)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 4)
+
+        # Hide widget, the column layout should change
+        btn2.hide()
+        menu.render()
+        c, r, i = btn2.get_col_row_index()
+        self.assertEqual(c, -1)
+        self.assertEqual(r, -1)
+        self.assertEqual(i, 0)
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 1)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 2)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 3)
+        c, r, i = btn6.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 4)
+
+        # Show again
+        btn2.show()
+        menu.render()
+        c, r, i = btn1.get_col_row_index()
+        self.assertEqual(c, -1)
+        self.assertEqual(r, -1)
+        self.assertEqual(i, -1)
+        c, r, i = btn2.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 0)
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 1)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 2)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 3)
+        c, r, i = btn6.get_col_row_index()
+        self.assertEqual(c, 2)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 4)
+
+        # Remove button
+        menu.remove_widget(btn2)
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 0)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 1)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 2)
+        c, r, i = btn6.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 3)
+
+        self.assertEqual(len(menu._column_widths), 2)
+        for colw in menu._column_widths:
+            self.assertEqual(colw, width / 2)  # 600/2
+
+        # Add a new button
+        btn7 = menu.add_button('btn', None)
+
+        # Layout:
+        # btn3 | btn5 | btn7
+        # btn4 | btn6 |
+
+        # Select second button
+        self.assertRaises(ValueError, lambda: menu.select_widget(btn2))
+        menu.select_widget(btn4)
+        self.assertTrue(btn4.selected)
+
+        # Move to right, btn6 should be selected
+        menu._move_selected_left_right(1)
+        self.assertFalse(btn4.selected)
+        self.assertTrue(btn6.selected)
+        self.assertFalse(btn7.selected)
+
+        # Move right, as third column only has 1 widget, that should be selected
+        menu._move_selected_left_right(1)
+        self.assertFalse(btn6.selected)
+        self.assertTrue(btn7.selected)
+
+        # Move right, moves from 3 to 1 column, then button 3 should be selected
+        menu._move_selected_left_right(1)
+        self.assertFalse(btn7.selected)
+        self.assertTrue(btn3.selected)
+
+        # Set btn4 as floating, then the layout should be
+        # btn3   | btn6
+        # btn4,5 | btn7
+        btn4.set_float(True)
+        menu.render()
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 0)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 1)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 2)
+        c, r, i = btn6.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 3)
+        c, r, i = btn7.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 4)
+
+        # Test sizing
+        # btn3   | btn6
+        # btn4,5 | btn7
+        self.assertEqual(btn3.get_width(apply_selection=True), 65)
+        for colw in menu._column_widths:
+            self.assertEqual(colw, width / 2)
+
+        # Scale 4, this should not change menu column widths
+        btn4.scale(5, 5)
+        menu.render()
+        for colw in menu._column_widths:
+            self.assertEqual(colw, width / 2)
+
+        # Scale 3, this should change menu column widths
+        btn3.scale(5, 1)
+        btn3_sz = btn3.get_width(apply_selection=True)
+        btn6_sz = btn6.get_width(apply_selection=True)
+        menu.render()
+        col_width1 = width * btn3_sz / (btn3_sz + btn6_sz)
+        col_width2 = width - col_width1
+        self.assertAlmostEqual(menu._column_widths[0], col_width1)
+        self.assertAlmostEqual(menu._column_widths[1], col_width2)
+
+        # Test different rows per column
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 1, 2], width=width, column_max_width=[300, None, 100])
+        btn1 = menu.add_button('btn', None)
+        btn2 = menu.add_button('btn', None)
+        btn3 = menu.add_button('btn', None)
+        btn4 = menu.add_button('btn', None)
+        btn5 = menu.add_button('btn', None)
+        c, r, i = btn1.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 0)
+        c, r, i = btn2.get_col_row_index()
+        self.assertEqual(c, 0)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 1)
+        c, r, i = btn3.get_col_row_index()
+        self.assertEqual(c, 1)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 2)
+        c, r, i = btn4.get_col_row_index()
+        self.assertEqual(c, 2)
+        self.assertEqual(r, 0)
+        self.assertEqual(i, 3)
+        c, r, i = btn5.get_col_row_index()
+        self.assertEqual(c, 2)
+        self.assertEqual(r, 1)
+        self.assertEqual(i, 4)
+
+        btn1.scale(10, 1)
+        menu.render()
+
+        self.assertEqual(menu._column_widths[0], 300)
+        self.assertEqual(menu._column_widths[1], 200)
+        self.assertEqual(menu._column_widths[2], 100)
+        self.assertEqual(menu._column_pos_x[0], 150)
+        self.assertEqual(menu._column_pos_x[1], 400)
+        self.assertEqual(menu._column_pos_x[2], 550)
+
+        # btn1 | btn3 | btn4
+        # btn2 |      | btn5
+
+        # Change menu max column width, this should
+        # fullfill third column to its maximum possible less than 300
+        # col2 should keep its current width
+        menu._column_max_width = [300, None, 300]
+        menu.render()
+        self.assertEqual(menu._column_widths[0], 300)
+        self.assertEqual(menu._column_widths[1], 65)
+        self.assertEqual(menu._column_widths[2], 235)
+        self.assertEqual(menu._column_pos_x[0], 150)
+        self.assertEqual(menu._column_pos_x[1], 332.5)
+        self.assertEqual(menu._column_pos_x[2], 482.5)
+
+        # Chance maximum width of third column and enlarge button 4, then
+        # middle column 3 will take 600-300-100 = 200
+        menu._column_max_width = [300, None, 100]
+        btn5.scale(10, 1)
+        menu.render()
+        self.assertEqual(menu._column_widths[0], 300)
+        self.assertEqual(menu._column_widths[1], 200)
+        self.assertEqual(menu._column_widths[2], 100)
+
+        # Test minimum width
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 1, 2], width=width,
+                                      column_max_width=[200, None, 150], column_min_width=[150, 150, 150])
+        # btn1 | btn3 | btn4
+        # btn2 |      | btn5
+        btn1 = menu.add_button('btn', None)
+        menu.add_button('btn', None)
+        menu.add_button('btn', None)
+        menu.add_button('btn', None)
+        menu.add_button('btn', None)
+        btn1.scale(10, 1)
+        menu.render()  # This should scale 2 column
+        self.assertEqual(menu._column_widths[0], 200)
+        self.assertEqual(menu._column_widths[1], 250)
+        self.assertEqual(menu._column_widths[2], 150)
+
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 1, 2], width=width,
+                                      column_max_width=[200, 150, 150], column_min_width=[150, 150, 150])
+        btn1 = menu.add_button('btn', None)
+        btn2 = menu.add_button('btn', None)
+        btn3 = menu.add_button('btn', None)
+        menu.add_button('btn', None)
+        menu.add_button('btn', None)
+        btn1.scale(10, 1)
+        btn2.scale(10, 1)
+        btn3.scale(10, 1)
+        menu.render()
+        self.assertEqual(menu._column_widths[0], 200)
+        self.assertEqual(menu._column_widths[1], 150)
+        self.assertEqual(menu._column_widths[2], 150)
 
     def test_touchscreen(self):
         """
@@ -585,3 +990,40 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
         btn = menu.get_selected_widget()  # type: Button
         self.assertTrue(btn.get_selected_time() >= 0)
+
+    def test_reset_value(self):
+        """
+        Test menu reset value.
+        """
+        menu = MenuUtils.generic_menu(title='mainmenu')
+        menu2 = MenuUtils.generic_menu(title='other')
+
+        color = menu.add_color_input('title', default='ff0000', color_type='hex')
+        text = menu.add_text_input('title', default='epic')
+        selector = menu.add_selector('title', items=[('a', 1), ('b', 2)], default=1)
+        text2 = menu2.add_text_input('titlesub', default='not epic')
+        menu.add_label('mylabel')
+        menu.add_button('submenu', menu2)
+
+        # Change values
+        color.set_value('aaaaaa')
+        text.set_value('changed')
+        text2.set_value('changed2')
+        selector.set_value(0)
+
+        # Reset values
+        color.reset_value()
+        self.assertEqual(color.get_value(as_string=True), '#ff0000')
+        color.set_value('aaaaaa')
+
+        # Check values changed
+        self.assertEqual(color.get_value(as_string=True), '#aaaaaa')
+        self.assertEqual(text.get_value(), 'changed')
+        self.assertEqual(selector.get_index(), 0)
+
+        # Reset values
+        menu.reset_value(recursive=True)
+        self.assertEqual(color.get_value(as_string=True), '#ff0000')
+        self.assertEqual(text.get_value(), 'epic')
+        self.assertEqual(text2.get_value(), 'not epic')
+        self.assertEqual(selector.get_index(), 1)

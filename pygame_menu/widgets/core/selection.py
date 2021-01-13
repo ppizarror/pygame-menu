@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SELECTION
-Widget selection class.
+Widget selection effect.
 
 License:
 -------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ from pygame_menu.utils import assert_color
 
 class Selection(object):
     """
-    Widget selection class.
+    Widget selection effect class.
 
     :param margin_left: Left margin
     :type margin_left: int, float
@@ -61,7 +61,7 @@ class Selection(object):
 
     def set_color(self, color):
         """
-        Set the selection color.
+        Set the selection effect color.
 
         :param color: Selection color
         :type color: tuple, list
@@ -81,7 +81,7 @@ class Selection(object):
 
     def get_xy_margin(self):
         """
-        Returns the x/y margins of the selection.
+        Return the x/y margins of the selection.
 
         :return: Tuple of *(x,y)* margins
         :rtype: tuple
@@ -98,6 +98,16 @@ class Selection(object):
         _, l, _, r = self.get_margin()
         return l + r
 
+    def get_height(self):
+        """
+        Return the selection height (px) as sum of top and bottom margins.
+
+        :return: Height in px
+        :rtype: int, float
+        """
+        t, _, b, _ = self.get_margin()
+        return t + b
+
     def inflate(self, rect):
         """
         Grow or shrink the rectangle size according to margins.
@@ -112,16 +122,6 @@ class Selection(object):
                            int(rect.y - self.margin_top),
                            int(rect.width + self.margin_left + self.margin_right),
                            int(rect.height + self.margin_top + self.margin_bottom))
-
-    def get_height(self):
-        """
-        Return the selection height (px) as sum of top and bottom margins.
-
-        :return: Height in px
-        :rtype: int, float
-        """
-        t, _, b, _ = self.get_height()
-        return t + b
 
     def draw(self, surface, widget):
         """
