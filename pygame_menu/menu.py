@@ -62,7 +62,7 @@ class Menu(object):
     :type title: str
     :param center_content: Auto centers the menu on the vertical position after a widget is added/deleted
     :type center_content: bool
-    :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0`` is given uses the menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
+    :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0`` uses the menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
     :type column_max_width: int, float, tuple, list, None
     :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default it's ``0``. Negative values are not accepted
     :type column_min_width: int, float, tuple, list
@@ -442,14 +442,6 @@ class Menu(object):
         )
         self._scroll.set_menu(self)
         self._overflow = tuple(overflow)
-
-        # Compatibility checks
-        column_force_fit_text = kwargs.pop('column_force_fit_text', None)
-        if column_force_fit_text is not None:
-            msg = 'since v3.5.0 column_force_fit_text was removed from Menu constructor, prefer ' \
-                  'using widget.set_max_width(...) or widget.set_max_height(...). This warning will ' \
-                  'be removed in v4.0'
-            warnings.warn(msg)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
