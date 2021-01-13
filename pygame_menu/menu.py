@@ -427,6 +427,19 @@ class Menu(object):
         """
         return self._current
 
+    @staticmethod
+    def _check_kwargs(kwargs):
+        """
+        Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
+
+        :param kwargs: Kwargs dict
+        :type kwargs: dict
+        :return: None
+        """
+        for invalid_keyword in kwargs.keys():
+            msg = 'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
+            raise ValueError(msg)
+
     def add_button(self,
                    title,
                    action,
@@ -436,16 +449,23 @@ class Menu(object):
         """
         Adds a button to the Menu.
 
-        The arguments and unknown keyword arguments are passed to
-        the action:
+        The arguments and unknown keyword arguments are passed to the action, if
+        it's a callable object:
+
+        .. code-block:: python
+
+            action(*args)
+
+        If ``accept_kwargs=True`` then the **kwargs are also unpacked on action call:
 
         .. code-block:: python
 
             action(*args, **kwargs)
 
         kwargs (Optional):
+            - ``accept_kwargs``         Button action accepts **kwargs if it's a callable object (function-type), ``False`` by default *(bool)*
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
-            - ``back_count``            Number of menus to go back if action is `:py:class:`pygame_menu.events.BACK` event, default is 1 *(int)*
+            - ``back_count``            Number of menus to go back if action is `:py:class:`pygame_menu.events.BACK` event, default is ``1`` *(int)*
             - ``background_color``      Color of the background (*tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in *(x,y)* in px *(tuple, list)*
             - ``button_id``             Widget ID *(str)*
@@ -455,12 +475,21 @@ class Menu(object):
             - ``font_size``             Font size of the widget *(int)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
             - ``padding``               Widget padding according to CSS rules *(int, float, list, tuple)*. General shape: *(top,right,bottom,left)*
-            - ``selection_color``       Widget selection color *(tuple, list)*
+            - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
-            - ``shadow``                Shadow is enabled or disabled *(bool)*
+            - ``shadow``                Text shadow is enabled or disabled *(bool)*
             - ``shadow_color``          Text shadow color *(tuple, list)*
             - ``shadow_position``       Text shadow position, see locals for position *(str)*
             - ``shadow_offset``         Text shadow offset *(int, float, None)*
+
+        .. note::
+
+            All theme-related optional kwargs use the default menu theme if not defined.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
 
         :param title: Title of the button
         :type title: str
@@ -476,12 +505,16 @@ class Menu(object):
         total_back = kwargs.pop('back_count', 1)
         assert isinstance(total_back, int) and 1 <= total_back
 
-        # Filter widget attributes to avoid passing them to the callbacks
-        attributes = self._filter_widget_attributes(kwargs)
-
         # Get ID
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'id must be a string'
+
+        # Accept kwargs
+        accept_kwargs = kwargs.pop('accept_kwargs', False)
+        assert isinstance(accept_kwargs, bool)
+
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
 
         # If element is a Menu
         if isinstance(action, Menu):
@@ -501,11 +534,11 @@ class Menu(object):
         # If element is a MenuAction
         elif action == _events.BACK:  # Back to Menu
 
-            widget = _widgets.Button(title, button_id, self.reset, total_back)  # reset is public, so no _current
+            widget = _widgets.Button(title, button_id, self.reset, total_back)
 
         elif action == _events.RESET:  # Back to Top Menu
 
-            widget = _widgets.Button(title, button_id, self.full_reset)  # no _current
+            widget = _widgets.Button(title, button_id, self.full_reset)
 
         elif action == _events.CLOSE:  # Close Menu
 
@@ -522,12 +555,16 @@ class Menu(object):
         # If element is a function or callable
         elif _utils.is_callable(action):
 
-            widget = _widgets.Button(title, button_id, action, *args)
+            if not accept_kwargs:
+                widget = _widgets.Button(title, button_id, action, *args)
+            else:
+                widget = _widgets.Button(title, button_id, action, *args, **kwargs)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction, a function or None')
+            raise ValueError('action must be a Menu, a MenuAction (event), a function (callable) or None')
 
         # Configure and add the button
+        self._check_kwargs(kwargs)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
@@ -551,7 +588,7 @@ class Menu(object):
         Includes a preview box that renders the given color.
 
         The callbacks receive the current value and all unknown keyword
-        arguments:
+        arguments, where ``current_color=widget.get_value()``:
 
         .. code-block:: python
 
@@ -568,12 +605,21 @@ class Menu(object):
             - ``font_size``             Font size of the widget *(int)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
             - ``padding``               Widget padding according to CSS rules *(int, float, list, tuple)*. General shape: *(top,right,bottom,left)*
-            - ``selection_color``       Widget selection color *(tuple, list)*
+            - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
-            - ``shadow``                Shadow is enabled or disabled *(bool)*
+            - ``shadow``                Text shadow is enabled or disabled *(bool)*
             - ``shadow_color``          Text shadow color *(tuple, list)*
             - ``shadow_position``       Text shadow position, see locals for position *(str)*
             - ``shadow_offset``         Text shadow offset *(int, float, None)*
+
+        .. note::
+
+            All theme-related optional kwargs use the default menu theme if not defined.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
 
         :param title: Title of the color input
         :type title: str
@@ -643,8 +689,12 @@ class Menu(object):
             - ``background_inflate``    Inflate background in *(x,y)* in px *(tuple, list)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
             - ``padding``               Widget padding according to CSS rules *(int, float, list, tuple)*. General shape: (top, right, bottom, left)
-            - ``selection_color``       Widget selection color *(tuple, list)*
+            - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
+
+        .. note::
+
+            All theme-related optional kwargs use the default menu theme if not defined.
 
         :param image_path: Path of the image (file) or a :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided, angle and scale are ignored
         :type image_path: str, :py:class:`pygame_menu.baseimage.BaseImage`
@@ -665,6 +715,11 @@ class Menu(object):
         """
         assert isinstance(selectable, bool)
 
+        # Remove invalid keys from kwargs
+        for key in ['font_background_color', 'font_color', 'font_name', 'font_size', 'shadow', 'shadow_color',
+                    'shadow_position', 'shadow_offset']:
+            kwargs.pop(key, None)
+
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
@@ -675,10 +730,12 @@ class Menu(object):
             scale=scale,
             scale_smooth=scale_smooth
         )
-
         widget.is_selectable = selectable
+
+        self._check_kwargs(kwargs)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+
         return widget
 
     def add_label(self,
@@ -701,10 +758,16 @@ class Menu(object):
             - ``font_size``             Font size of the widget *(int)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
             - ``padding``               Widget padding according to CSS rules *(int, float, list, tuple)*. General shape: *(top,right,bottom,left)*
-            - ``shadow``                Shadow is enabled or disabled *(bool)*
+            - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
+            - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
+            - ``shadow``                Text shadow is enabled or disabled *(bool)*
             - ``shadow_color``          Text shadow color *(tuple, list)*
             - ``shadow_position``       Text shadow position, see locals for position *(str)*
             - ``shadow_offset``         Text shadow offset *(int, float, None)*
+
+        .. note::
+
+            All theme-related optional kwargs use the default menu theme if not defined.
 
         :param title: Text to be displayed
         :type title: str
@@ -712,7 +775,7 @@ class Menu(object):
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds; ``0``: don't split, ``-1``: split to menu width
         :type max_char: int
-        :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
+        :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
         :param kwargs: Optional keyword arguments
         :type kwargs: dict
@@ -737,12 +800,16 @@ class Menu(object):
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
+
             attributes = self._filter_widget_attributes(kwargs)
             widget = _widgets.Label(title=title, label_id=label_id)
             widget.is_selectable = selectable
+            self._check_kwargs(kwargs)
             self._configure_widget(widget=widget, **attributes)
             self._append_widget(widget)
+
         else:
+
             self._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
             for line in textwrap.wrap(title, max_char):
@@ -755,6 +822,7 @@ class Menu(object):
                         **kwargs
                     )
                 )
+
         return widget
 
     def add_selector(self,
@@ -778,12 +846,15 @@ class Menu(object):
             values = [('Item1', a, b, c...), ('Item2', d, e, f...)]
 
         The callbacks receive the current text, its index in the list,
-        the associated arguments and all unknown keyword arguments:
+        the associated arguments, and all unknown keyword arguments, where
+        ``selected_value=widget.get_value()`` and ``selected_index=widget.get_index()``:
 
         .. code-block:: python
 
-            onchange((current_text, index), a, b, c..., **kwargs)
-            onreturn((current_text, index), a, b, c..., **kwargs)
+            onchange((selected_value, selected_index), a, b, c..., **kwargs)
+            onreturn((selected_value, selected_index), a, b, c..., **kwargs)
+
+        For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
 
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
@@ -795,12 +866,21 @@ class Menu(object):
             - ``font_size``             Font size of the widget *(int)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
             - ``padding``               Widget padding according to CSS rules *(int, float, list, tuple)*. General shape: (top, right, bottom, left)
-            - ``selection_color``       Widget selection color *(tuple, list)*
+            - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
-            - ``shadow``                Shadow is enabled or disabled *(bool)*
+            - ``shadow``                Text shadow is enabled or disabled *(bool)*
             - ``shadow_color``          Text shadow color *(tuple, list)*
             - ``shadow_position``       Text shadow position, see locals for position *(str)*
             - ``shadow_offset``         Text shadow offset *(int, float, None)*
+
+        .. note::
+
+            All theme-related optional kwargs use the default menu theme if not defined.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
 
         :param title: Title of the selector
         :type title: str
@@ -862,7 +942,7 @@ class Menu(object):
         on the element.
 
         The callbacks receive the current value and all unknown keyword
-        arguments:
+        arguments, where ``current_text=widget.get_value``:
 
         .. code-block:: python
 
@@ -879,12 +959,21 @@ class Menu(object):
             - ``font_size``             Font size of the widget *(int)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
             - ``padding``               Widget padding according to CSS rules *(int, float, list, tuple)*. General shape: *(top,right,bottom,left)*
-            - ``selection_color``       Widget selection color *(tuple, list)*
+            - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
-            - ``shadow``                Shadow is enabled or disabled *(bool)*
+            - ``shadow``                Text shadow is enabled or disabled *(bool)*
             - ``shadow_color``          Text shadow color *(tuple, list)*
             - ``shadow_position``       Text shadow position, see locals for position *(str)*
             - ``shadow_offset``         Text shadow offset *(int, float, None)*
+
+        .. note::
+
+            All theme-related optional kwargs use the default menu theme if not defined.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
 
         :param title: Title of the text input
         :type title: str
@@ -968,7 +1057,8 @@ class Menu(object):
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
         assert isinstance(margin, (int, float))
-        assert margin > 0, 'zero margin is not valid, prefer adding a NoneWidget'
+        assert margin > 0, \
+            'zero margin is not valid, prefer adding a NoneWidget menu.add_none_widget()'
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes({'margin': (0, margin)})
@@ -1347,11 +1437,14 @@ class Menu(object):
                 continue
 
             if self._column_max_width[col] is None:  # No limit
-                self._column_widths[col] = max(self._column_widths[col], widget.get_width(apply_selection=True))
+                self._column_widths[col] = max(
+                    self._column_widths[col],
+                    widget.get_width(apply_selection=True)
+                )
 
         # If some columns were not used, set these widths to zero
         for col in range(self._used_columns, self._columns):
-            self._column_widths[col] = 0
+            self._column_widths.pop()
             del self._widget_columns[col]
 
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
@@ -1399,7 +1492,7 @@ class Menu(object):
             selection_margin = 0
             align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
-                dx = -widget.get_width(apply_selection=True) / 2
+                dx = -widget.get_width() / 2
             elif align == _locals.ALIGN_LEFT:
                 selection_margin = selection_effect.get_margin()[1]  # left
                 dx = -column_width / 2 + selection_margin
