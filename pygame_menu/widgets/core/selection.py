@@ -98,6 +98,16 @@ class Selection(object):
         _, l, _, r = self.get_margin()
         return l + r
 
+    def get_height(self):
+        """
+        Return the selection height (px) as sum of top and bottom margins.
+
+        :return: Height in px
+        :rtype: int, float
+        """
+        t, _, b, _ = self.get_margin()
+        return t + b
+
     def inflate(self, rect):
         """
         Grow or shrink the rectangle size according to margins.
@@ -112,16 +122,6 @@ class Selection(object):
                            int(rect.y - self.margin_top),
                            int(rect.width + self.margin_left + self.margin_right),
                            int(rect.height + self.margin_top + self.margin_bottom))
-
-    def get_height(self):
-        """
-        Return the selection height (px) as sum of top and bottom margins.
-
-        :return: Height in px
-        :rtype: int, float
-        """
-        t, _, b, _ = self.get_margin()
-        return t + b
 
     def draw(self, surface, widget):
         """

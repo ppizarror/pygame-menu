@@ -76,6 +76,14 @@ class TextInput(Widget):
     """
     Text input widget.
 
+    The callbacks receive the current value and all unknown keyword
+    arguments, where ``current_text=widget.get_value``:
+
+    .. code-block:: python
+
+        onchange(current_text, **kwargs)
+        onreturn(current_text, **kwargs)
+
     .. note::
 
         This widget only accepts vertical flip and translation transformations.

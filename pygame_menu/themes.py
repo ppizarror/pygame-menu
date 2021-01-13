@@ -68,7 +68,7 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu, if user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default ``(0,0)``. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scoll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. Default ``(0,0)``. It cannot be negative values
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -86,7 +86,7 @@ class Theme(object):
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int, float
-    :param selection_color: Color of the selector widget
+    :param selection_color: Color of the selected widget, it affects font color and the selection effect (only the theme selection effect)
     :type selection_color: tuple, list
     :param surface_clear_color: Surface clear color before applying background function
     :type surface_clear_color: tuple, list
@@ -134,11 +134,11 @@ class Theme(object):
     :type widget_margin: tuple, list
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements. Padding modifies widget width/height
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than 1 use percentage of width/height. Default is ``(0,0)``. It cannot be negative values
+    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. Default is ``(0,0)``. It cannot be negative values
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
-    :param widget_shadow: Indicate if a shadow is drawn on each widget
+    :param widget_shadow: Indicate if text shadow is enabled
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the shadow
     :type widget_shadow_color: tuple, list
@@ -307,8 +307,8 @@ class Theme(object):
         """
         Modify menu background color with given opacity.
 
-        :param opacity: Opacity value, from 0 (transparent) to 1 (transparent)
-        :type opacity: int
+        :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (transparent)
+        :type opacity: float
         :return: None
         """
         assert isinstance(opacity, float)

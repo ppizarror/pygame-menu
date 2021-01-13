@@ -54,9 +54,8 @@ def check_selector_elements(elements):
 
 class Selector(Widget):
     """
-    Selector widget: several items with values and
-    two functions that are executed when changing the selector (left/right)
-    and pressing return button on the selected item.
+    Selector widget: several items with values and two functions that are executed
+    when changing the selector (left/right) and pressing return button on the selected item.
 
     The values of the selector are like:
 
@@ -64,13 +63,16 @@ class Selector(Widget):
 
         values = [('Item1', a, b, c...), ('Item2', d, e, f...)]
 
-    The callbacks receive the current text, its index in the list,
-    the associated arguments and all unknown keyword arguments:
+    The callbacks receive the current value, its index in the list,
+    the associated arguments, and all unknown keyword arguments, where
+    ``selected_value=widget.get_value()`` and ``selected_index=widget.get_index()``:
 
     .. code-block:: python
 
-        onchange((current_text, index), a, b, c..., **kwargs)
-        onreturn((current_text, index), a, b, c..., **kwargs)
+        onchange((selected_value, index), a, b, c..., **kwargs)
+        onreturn((selected_value, index), a, b, c..., **kwargs)
+
+    For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
 
     :param title: Selector title
     :type title: str

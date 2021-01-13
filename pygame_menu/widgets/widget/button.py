@@ -40,6 +40,13 @@ class Button(Widget):
     """
     Button widget.
 
+    The arguments and unknown keyword arguments are passed to the ``onreturn``
+    function:
+
+    .. code-block:: python
+
+        onreturn(*args, **kwargs)
+
     :param title: Button title
     :type title: str
     :param button_id: Button ID

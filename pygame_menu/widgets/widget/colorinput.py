@@ -50,6 +50,14 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     """
     Color input widget.
 
+    The callbacks receive the current value and all unknown keyword
+    arguments, where ``current_color=widget.get_value()``:
+
+    .. code-block:: python
+
+        onchange(current_color, **kwargs)
+        onreturn(current_color, **kwargs)
+
     .. note::
 
         This widget implements the same transformations as :py:class:`pygame_menu.widgets.widget.TextInput`.

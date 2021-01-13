@@ -93,9 +93,9 @@ def assert_orientation(orientation):
 
 def assert_vector2(num_vector):
     """
-    Assert that a 2 item vector is numeric.
+    Assert that a 2-item vector is numeric.
 
-    :param num_vector: Numeric 2 item vector
+    :param num_vector: Numeric 2-item vector
     :type num_vector: tuple, list
     :return: None
     """
