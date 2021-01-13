@@ -322,7 +322,7 @@ class Theme(object):
         Return a tuple from a list or tuple object.
 
         :param obj: Object
-        :type obj: list, tuple
+        :type obj: tuple, list
         :param check_length: Check length if not zero
         :return: Tuple
         :rtype: tuple

@@ -287,7 +287,7 @@ def main(test=False):
         background_color=pygame_menu.baseimage.BaseImage(
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_METAL
         )
-    )
+    ).background_inflate_to_selection_effect()
 
     # -------------------------------------------------------------------------
     # Create menus: Main menu
