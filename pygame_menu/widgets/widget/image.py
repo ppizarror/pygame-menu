@@ -75,8 +75,6 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-        self.selection_effect_enabled = False
-
     def set_title(self, title):
         pass
 

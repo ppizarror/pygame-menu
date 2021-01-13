@@ -162,7 +162,6 @@ class Widget(object):
         self.floating = False  # If True, the widget don't contribute width/height to the menu widget positioning computation. Use .set_float() to modify this status
         self.mouse_enabled = True
         self.selected = False
-        self.selection_effect_enabled = True  # Some widgets cannot have selection effect
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
         self.sound = Sound()  # type: Sound
         self.touchscreen_enabled = True
@@ -419,11 +418,18 @@ class Widget(object):
         """
         Set the selection effect handler.
 
+        .. note::
+
+            If ``selection=None`` the selection effect will be stablished
+            to ``_NullSelection`` class.
+
         :param selection: Selection effect class
         :type selection: :py:class:`pygame_menu.widgets.core.Selection`
         :return: None
         """
-        assert isinstance(selection, Selection)
+        assert isinstance(selection, (Selection, type(None)))
+        if selection is None:
+            selection = _NullSelection()
         self._selection_effect = selection
         self._force_render()
 
@@ -507,7 +513,7 @@ class Widget(object):
         :type surface: :py:class:`pygame.Surface`
         :return: None
         """
-        if not self.is_selectable or self._selection_effect is None or not self.selection_effect_enabled:
+        if not self.is_selectable:
             return
         self._selection_effect.draw(surface, self)
 
@@ -1252,7 +1258,7 @@ class Widget(object):
         if width == 1 and height == 1:
             msg = 'did you mean widget.scale(1,1) instead of widget.resize(1,1)?'
             warnings.warn(msg)
-        self.scale(width / self.get_width(), height / self.get_height(), smooth)
+        self.scale(float(width) / self.get_width(), float(height) / self.get_height(), smooth)
 
     def translate(self, x, y):
         """
@@ -1389,7 +1395,7 @@ class Widget(object):
         :param apply_selection: Apply selection
         :type apply_padding: bool
         :return: Widget width
-        :rtype: int
+        :rtype: float
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
@@ -1397,7 +1403,7 @@ class Widget(object):
         width = rect.width
         if apply_selection:
             width += self._selection_effect.get_width()
-        return width
+        return float(width)
 
     def get_height(self, apply_padding=True, apply_selection=False):
         """
@@ -1412,7 +1418,7 @@ class Widget(object):
         :param apply_selection: Apply selection
         :type apply_padding: bool
         :return: Widget height
-        :rtype: int
+        :rtype: float
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
@@ -1420,7 +1426,7 @@ class Widget(object):
         height = rect.height
         if apply_selection:
             height += self._selection_effect.get_height()
-        return height
+        return float(height)
 
     def get_size(self, apply_padding=True, apply_selection=False):
         """
@@ -1428,7 +1434,7 @@ class Widget(object):
 
         .. warning::
 
-            If the widget is not rendered, this method will return ``(0,0)``.
+            If the widget is not rendered this method might return ``(0,0)``.
 
         :param apply_padding: Apply padding
         :type apply_selection: bool
@@ -1748,7 +1754,11 @@ class Widget(object):
 class _NullSelection(Selection):
     """
     Null selection. It redefines :py:class:`pygame_menu.widgets.selection.NoneSelection`
-    because that class cannot be imported.
+    because that class cannot be imported directly from widget.py.
+
+    .. note::
+
+        Prefer using :py:class:`pygame_menu.widgets.selection.NoneSelection` class instead.
     """
 
     def __init__(self):
