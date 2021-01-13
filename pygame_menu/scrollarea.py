@@ -420,11 +420,15 @@ class ScrollArea(object):
         """
         assert isinstance(margin, (int, float))
         real_rect = self.to_real_position(rect)
-        if self._view_rect.topleft[0] <= real_rect.topleft[0] \
-                and self._view_rect.topleft[1] <= real_rect.topleft[1] \
-                and self._view_rect.bottomright[0] >= real_rect.bottomright[0] \
-                and self._view_rect.bottomright[1] >= real_rect.bottomright[1]:
-            return  # rect is in viewable area
+
+        # Check rect is in viewable area
+        sx = self.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        sy = self.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        if self._view_rect.topleft[0] <= real_rect.topleft[0] + sx \
+                and self._view_rect.topleft[1] <= real_rect.topleft[1] + sy \
+                and self._view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
+                and self._view_rect.bottomright[1] + sy >= real_rect.bottomright[1]:
+            return
 
         for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
