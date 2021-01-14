@@ -123,7 +123,7 @@ class Selection(object):
         :return: Height in px
         :rtype: int, float
         """
-        t, _, b, _ = self.get_height()
+        t, _, b, _ = self.get_margin()
         return t + b
 
     def draw(self, surface, widget):
