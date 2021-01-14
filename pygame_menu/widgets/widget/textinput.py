@@ -72,6 +72,7 @@ except ImportError:
         pass
 
 
+# noinspection PyMissingOrEmptyDocstring
 class TextInput(Widget):
     """
     Text input widget.
@@ -139,7 +140,7 @@ class TextInput(Widget):
     :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
     :type valid_chars: list, None
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

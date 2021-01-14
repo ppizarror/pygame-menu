@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # File constants no. 0
 
 from uuid import uuid4
+import os
 import sys
 import textwrap
 import warnings
@@ -88,16 +89,14 @@ class Menu(object):
     :type overflow: tuple, list
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :type rows: int, tuple, list, None
-    :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode
+    :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :type screen_dimension: tuple, list, None
     :param theme: Menu theme
     :type theme: :py:class:`pygame_menu.themes.Theme`
-    :param touchscreen_enabled: Enable/disable touch action inside the Menu
-    :type touchscreen_enabled: bool
+    :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
+    :type touchscreen: bool
     :param touchscreen_motion_selection: Select widgets using touchscreen motion
     :type touchscreen_motion_selection: bool
-    :param kwargs: Optional keyword arguments
-    :type kwargs: dict
     """
 
     def __init__(self,
@@ -120,9 +119,8 @@ class Menu(object):
                  rows=None,
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT.copy(),
-                 touchscreen_enabled=False,
-                 touchscreen_motion_selection=False,
-                 **kwargs
+                 touchscreen=False,
+                 touchscreen_motion_selection=False
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
@@ -143,7 +141,7 @@ class Menu(object):
         assert isinstance(rows, (int, type(None), tuple, list))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
-        assert isinstance(touchscreen_enabled, bool)
+        assert isinstance(touchscreen, bool)
         assert isinstance(touchscreen_motion_selection, bool)
 
         # Assert theme
@@ -182,31 +180,29 @@ class Menu(object):
                     'number of rows must be equal or greater than 1. If there is no limit rows must be None'
             rows = [rows]
 
-        if column_min_width is not None:
-            if isinstance(column_min_width, (int, float)):
-                assert column_min_width >= 0, 'column_min_width must be equal or greater than zero'
-                msg = 'column_min_width can be a single number if there is only 1 column, but ' \
-                      'there is {0} columns. Thus, column_min_width must be a vector of {0} items. ' \
-                      'By default a vector has been created using the same value for each column'.format(columns)
-                if columns != 1:
+        # Set column min width
+        if isinstance(column_min_width, (int, float)):
+            assert column_min_width >= 0, 'column_min_width must be equal or greater than zero'
+            msg = 'column_min_width can be a single number if there is only 1 column, but ' \
+                  'there is {0} columns. Thus, column_min_width should be a vector of {0} items. ' \
+                  'By default a vector has been created using the same value for each column'.format(columns)
+            if columns != 1:
+                if column_min_width > 0:  # Ignore the default value
                     warnings.warn(msg)
-                    column_min_width = [column_min_width for _ in range(columns)]
-                else:
-                    column_min_width = [column_min_width]
+                column_min_width = [column_min_width for _ in range(columns)]
+            else:
+                column_min_width = [column_min_width]
 
-            msg = 'column_min_width length must be the same as the ' \
-                  'number of columns, but size is different {0}!={1}'.format(len(column_min_width), columns)
-            assert len(column_min_width) == columns, msg
+        msg = 'column_min_width length must be the same as the ' \
+              'number of columns, but size is different {0}!={1}'.format(len(column_min_width), columns)
+        assert len(column_min_width) == columns, msg
+        for i in column_min_width:
+            assert isinstance(i, (int, float)), \
+                'each item of column_min_width must be an integer/float'
+            assert i >= 0, \
+                'each item of column_min_width must be equal or greater than zero'
 
-            for i in column_min_width:
-                assert isinstance(i, (int, float)), \
-                    'each item of column_min_width must be an integer/float'
-                assert i >= 0, \
-                    'each item of column_min_width must be equal or greater than zero'
-
-        else:
-            column_min_width = [0 for _ in range(columns)]
-
+        # Set column max width
         if column_max_width is not None:
             # if isinstance(column_max_width, (tuple, list)) and len(column_max_width) == 1:
             #     msg = 'as there is only 1 column, prefer using ' \
@@ -253,8 +249,8 @@ class Menu(object):
         # Get window size if not given explicitly
         if screen_dimension is not None:
             _utils.assert_vector2(screen_dimension)
-            assert screen_dimension[0] > 0, 'screen width has to be higher than zero'
-            assert screen_dimension[1] > 0, 'screen height has to be higher than zero'
+            assert screen_dimension[0] > 0, 'screen width must be higher than zero'
+            assert screen_dimension[1] > 0, 'screen height must be higher than zero'
             self._window_size = screen_dimension
         else:
             surface = pygame.display.get_surface()
@@ -361,6 +357,7 @@ class Menu(object):
         self._used_columns = 0  # Total columns used in widget positioning
         self._widget_columns = {}
         self._widget_max_position = (0, 0)
+        self._widget_min_position = (0, 0)
 
         for r in self._rows:
             self._max_row_column_elements += r
@@ -386,10 +383,12 @@ class Menu(object):
         self._mouse_visible_default = mouse_visible
 
         # Init touchscreen
-        if touchscreen_enabled:
+        if touchscreen:
             version_major, _, _ = pygame.version.vernum
             assert version_major >= 2, 'touchscreen is only supported in pygame v2+'
-        self._touchscreen = touchscreen_enabled
+        if touchscreen_motion_selection:
+            assert touchscreen, 'touchscreen_motion_selection cannot be enabled if touchscreen is disabled'
+        self._touchscreen = touchscreen
         self._touchscreen_motion_selection = touchscreen_motion_selection
 
         # Create menubar (title)
@@ -443,11 +442,6 @@ class Menu(object):
         self._scroll.set_menu(self)
         self._overflow = tuple(overflow)
 
-        # Upon this, no more kwargs should exist, raise exception if there's more
-        for invalid_keyword in kwargs.keys():
-            msg = 'menu constructor parameter {} does not exist'.format(invalid_keyword)
-            raise ValueError(msg)
-
     def set_onclose(self, onclose):
         """
         Set ``onclose`` callback.
@@ -477,7 +471,7 @@ class Menu(object):
         Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
 
         :param kwargs: Kwargs dict
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: None
         """
         for invalid_keyword in kwargs.keys():
@@ -553,13 +547,13 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the button
-        :type title: str
-        :param action: Action of the button, can be a Menu, an event or a function
+        :type title: str, any
+        :param action: Action of the button, can be a Menu, an event, or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
@@ -579,6 +573,12 @@ class Menu(object):
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+
+        # Change action if certain events
+        if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
+            action = _events.EXIT
+        elif action is None:
+            action = _events.NONE
 
         # If element is a Menu
         if isinstance(action, Menu):
@@ -612,7 +612,7 @@ class Menu(object):
 
             widget = _widgets.Button(title, button_id, self._exit)
 
-        elif action == _events.NONE or action is None:  # None action
+        elif action == _events.NONE:  # None action
 
             widget = _widgets.Button(title, button_id)
 
@@ -625,10 +625,11 @@ class Menu(object):
                 widget = _widgets.Button(title, button_id, action, *args, **kwargs)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction (event), a function (callable) or None')
+            raise ValueError('action must be a Menu, a MenuAction (event), a function (callable), or None')
 
         # Configure and add the button
-        self._check_kwargs(kwargs)
+        if not accept_kwargs:
+            self._check_kwargs(kwargs)
         self._configure_widget(widget=widget, **attributes)
         widget.set_selection_callback(onselect)
         self._append_widget(widget)
@@ -695,7 +696,7 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the color input
-        :type title: str
+        :type title: str, any
         :param color_type: Type of the color input, can be ``"rgb"`` or ``"hex"``
         :type color_type: str
         :param color_id: ID of the color input
@@ -717,7 +718,7 @@ class Menu(object):
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
         """
@@ -800,7 +801,7 @@ class Menu(object):
         :param selectable: Image accepts user selection
         :type selectable: bool
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Image`
         """
@@ -875,7 +876,7 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param title: Text to be displayed
-        :type title: str
+        :type title: str, any
         :param label_id: ID of the label
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds; ``0``: don't split, ``-1``: split to Menu width
@@ -885,7 +886,7 @@ class Menu(object):
         :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
@@ -1003,7 +1004,7 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the selector
-        :type title: str
+        :type title: str, any
         :param items: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :type items: list
         :param default: Index of default value to display
@@ -1017,7 +1018,7 @@ class Menu(object):
         :param selector_id: ID of the selector
         :type selector_id: str
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
@@ -1107,7 +1108,7 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the text input
-        :type title: str
+        :type title: str, any
         :param default: Default value to display
         :type default: str, int, float
         :param copy_paste_enable: Enable text copy, paste and cut
@@ -1139,7 +1140,7 @@ class Menu(object):
         :param valid_chars: List of authorized chars, ``None`` if all chars are valid
         :type valid_chars: list
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
@@ -1287,7 +1288,7 @@ class Menu(object):
         The valid (key, value) are removed from the initial dictionary.
 
         :param kwargs: Optional keyword arguments (input attributes)
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Dictionary of valid attributes
         :rtype: dict
         """
@@ -1379,7 +1380,7 @@ class Menu(object):
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param kwargs: Optional keywords arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: None
         """
         assert isinstance(widget, _widgets.core.Widget)
@@ -1439,9 +1440,10 @@ class Menu(object):
         if self._index < 0 and widget.is_selectable:
             widget.set_selected()
             self._index = len(self._widgets) - 1
+        self._widgets_surface = None  # If added on execution time forces the update of the surface
         if self._center_content:
             self.center_content()
-        self._widgets_surface = None  # If added on execution time forces the update of the surface
+        self._render()
 
     def select_widget(self, widget):
         """
@@ -1524,6 +1526,7 @@ class Menu(object):
                 self._select(self._index - 1)
             else:
                 self._select(self._index)
+        self._update_widget_position()
         if update_surface:
             if self._center_content:
                 self.center_content()
@@ -1677,6 +1680,12 @@ class Menu(object):
         # Update title position
         self._menubar.set_position(self._pos_x, self._pos_y)
 
+        # Widget max/min position
+        max_x = -1e8
+        max_y = -1e8
+        min_x = 1e8
+        min_y = 1e8
+
         # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]  # type: _widgets.core.Widget
@@ -1717,20 +1726,27 @@ class Menu(object):
                 if rwidget.visible and not rwidget.floating:
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
-            y_coord = max(1, self._widget_offset[1]) + ysum
-            y_coord += widget.get_padding()[0] + selection_effect.get_margin()[0]  # Add bottom distance
+            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
+
+            # If the widget offset is zero, then add the selection effect to the height
+            # of the widget to avoid visual glitches
+            if self._widget_offset[1] == 0:
+                y_coord += selection_effect.get_margin()[0] + 1  # add 1px of linewidth
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
 
-        # Set the widget max position
-        max_x = -1e6
-        max_y = -1e6
-        for widget in self._widgets:  # type: _widgets.core.Widget
+            # Update max/min position
             x, y = widget.get_rect().bottomright
             max_x = max(max_x, x)
             max_y = max(max_y, y)
+            x, y = widget.get_rect().topleft
+            min_x = min(min_x, x)
+            min_y = min(min_y, y)
+
+        # Save max/min position
         self._widget_max_position = (max_x, max_y)
+        self._widget_min_position = (min_x, min_y)
 
     def _update_selection_if_hidden(self):
         """
@@ -1739,8 +1755,9 @@ class Menu(object):
         :return: None
         """
         if len(self._widgets) > 0:
-            selected_widget = self._widgets[self._index % len(self._widgets)]
+            selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
             if not selected_widget.visible:
+                selected_widget.set_selected(False)  # Unselect
                 self._update_after_remove_or_hidden(-1, update_surface=False)
 
     def _build_widget_surface(self):
@@ -1913,7 +1930,7 @@ class Menu(object):
 
     def center_content(self):
         """
-        Centers the content of the Menu vertically.
+        Centers the content of the Menu vertically. This action rewrites theme ``widget_offset``.
 
         .. note::
 
@@ -1932,17 +1949,32 @@ class Menu(object):
             self._widget_offset[1] = 0
             return
         self._build_widget_surface()  # For position
-        horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
-        _, max_y = self._widget_max_position
-        max_y -= self._widget_offset[1]  # Only use total height
-        available = self._height - self._menubar.get_height() - horizontal_scroll
-        new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
-        self._widget_offset[1] = self._height * new_pos
+        available = self.get_height(inner=True)
+        widget_height = self.get_height(widget=True)
+        self._widget_offset[1] = max(float(available - widget_height) / 2, 0)
         self._widgets_surface = None  # Rebuild on the next draw
+
+    def get_height(self, inner=False, widget=False):
+        """
+        Get menu height.
+
+        :param inner: If ``True`` returns the available height (menu height minus scroll and menubar)
+        :type inner: bool
+        :param widget: If ``True`` returns the height of the drawn widgets
+        :type widget: bool
+        :return: Height in px
+        :rtype: int, float
+        """
+        if widget:
+            return self._widget_max_position[1] - self._widget_min_position[1]
+        if not inner:
+            return self._height
+        horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        return self._height - self._menubar.get_height() - horizontal_scroll
 
     def render(self):
         """
-        Force **current** Menu rendering.
+        Force **current** Menu rendering. Useful to force widget update.
 
         .. note::
 
@@ -1991,6 +2023,7 @@ class Menu(object):
         if not self.is_enabled():
             raise RuntimeError('menu is not enabled, it cannot be drawn')
 
+        # Render menu
         self._current._render()
 
         # Clear surface
@@ -2096,15 +2129,21 @@ class Menu(object):
         """
         self._top._enabled = not self._top._enabled
 
-    @staticmethod
-    def _exit():
+    def _exit(self):
         """
         Internal exit function.
 
         :return: None
         """
+        self.disable()
         pygame.quit()
-        sys.exit()
+        try:
+            sys.exit(0)
+        except SystemExit:
+            # noinspection PyUnresolvedReferences,PyProtectedMember
+            os._exit(1)
+        # This should be unrecheable
+        exit(0)
 
     def is_enabled(self):
         """
@@ -2204,7 +2243,7 @@ class Menu(object):
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
 
-        selected_widget = None  # type: _widgets.core.Widget
+        selected_widget = None  # type: (_widgets.core.Widget, None)
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]
@@ -2426,6 +2465,7 @@ class Menu(object):
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
+        fps_limit = int(fps_limit)
 
         # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
@@ -2558,6 +2598,28 @@ class Menu(object):
         :rtype: str
         """
         return self._menubar.get_title()
+
+    def set_title(self, title, offset=None):
+        """
+        Set the title of the Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param title: New menu title
+        :type title: str, any
+        :param offset: If ``None`` uses theme offset, else it defines the title offset in *(x, y)*
+        :type offset: None, tuple, list
+        :return: None
+        """
+        if offset is None:
+            offset = self._theme.title_offset
+        else:
+            _utils.assert_vector2(offset)
+        self._menubar.set_title(title, offsetx=offset[0], offsety=offset[1])
 
     def full_reset(self):
         """

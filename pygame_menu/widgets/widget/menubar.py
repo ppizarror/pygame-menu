@@ -49,6 +49,7 @@ _MODE_CLOSE = 1020
 _MODE_BACK = 1021
 
 
+# noinspection PyMissingOrEmptyDocstring
 class MenuBar(Widget):
     """
     MenuBar widget.
@@ -76,7 +77,7 @@ class MenuBar(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments for callbacks
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,
@@ -131,6 +132,15 @@ class MenuBar(Widget):
 
     def set_selection_effect(self, selection):
         pass
+
+    def get_title_offset(self):
+        """
+        Return the title offset in *(x, y)*.
+
+        :return: Title offset
+        :rtype: tuple
+        """
+        return self._offsetx, self._offsety
 
     def set_backbox_border_width(self, width):
         """
@@ -337,7 +347,7 @@ class MenuBar(Widget):
         Set the menubar title.
 
         :param title: Menu title
-        :type title: str
+        :type title: str, any
         :param offsetx: Offset x-position of title (px)
         :type offsetx: int, float
         :param offsety: Offset y-position of title (px)
@@ -349,6 +359,8 @@ class MenuBar(Widget):
         self._title = to_string(title)
         self._offsety = offsety
         self._offsetx = offsetx
+        if self._menu is not None:
+            self._render()
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

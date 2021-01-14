@@ -33,6 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from pygame_menu.widgets.widget.none import NoneWidget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class VMargin(NoneWidget):
     """
     Vertical margin widget.

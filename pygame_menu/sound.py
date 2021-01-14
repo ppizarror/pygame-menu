@@ -232,6 +232,7 @@ class Sound(object):
 
         # Load the sound
         try:
+            # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
             if self._verbose:

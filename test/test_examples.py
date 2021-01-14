@@ -38,12 +38,12 @@ import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
 import pygame_menu.examples.scroll_menu as scroll_menu
 import pygame_menu.examples.timer_clock as timer_clock
-import pygame_menu.widgets.examples.scrollbar as scroll_bar
-import pygame_menu.widgets.examples.scrollbar_area as scroll_area
 
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
+import pygame_menu.examples.other.scrollbar as scroll_bar
+import pygame_menu.examples.other.scrollbar_area as scroll_area
 
 
 class ExamplesTest(unittest.TestCase):
@@ -96,7 +96,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_widget_area_menu():
+    def test_example_other_area_menu():
         """
         Test scroll area example.
         """
@@ -104,7 +104,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_widget_scroll_bar():
+    def test_example_other_scroll_bar():
         """
         Test scroll bar example.
         """

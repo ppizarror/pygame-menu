@@ -74,3 +74,9 @@ RESET = MenuAction(5)  # Menu reset
 
 # Pygame events
 PYGAME_QUIT = __locals.QUIT
+
+PYGAME_WINDOWCLOSE = -1
+if hasattr(__locals, 'WINDOWCLOSE'):
+    PYGAME_WINDOWCLOSE = __locals.WINDOWCLOSE
+elif hasattr(__locals, 'WINDOWEVENT_CLOSE'):
+    PYGAME_WINDOWCLOSE = __locals.WINDOWEVENT_CLOSE

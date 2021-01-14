@@ -63,7 +63,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         This widget implements the same transformations as :py:class:`pygame_menu.widgets.widget.TextInput`.
 
     :param title: Color input title
-    :type title: str
+    :type title: str, any
     :param colorinput_id: ID of the text input
     :type colorinput_id: str
     :param color_type: Type of color input ``(rgb, hex)``
@@ -91,7 +91,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :type repeat_mouse_interval_ms: int, float
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

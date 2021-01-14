@@ -9,7 +9,6 @@ Its structure consists of several sub-packages::
     pygame_menu/
         widgets/
             core/           Main object classes for Widget and Selector
-            examples/       Some examples of widgets
             selection/      Selection effect applied to widgets
             widget/         Menu widget objects
 

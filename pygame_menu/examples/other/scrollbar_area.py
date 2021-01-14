@@ -34,6 +34,7 @@ import itertools
 import os
 import sys
 
+sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
 
 import pygame
@@ -41,7 +42,7 @@ from pygame_menu import locals
 from pygame_menu.scrollarea import ScrollArea
 from pygame_menu.utils import make_surface
 
-FPS = 30.0
+FPS = 30
 W_SIZE = 800  # Width of window size
 H_SIZE = 600  # Height of window size
 COLOR_BACKGROUND = (128, 230, 198)
@@ -65,7 +66,7 @@ WORLDS = {
           'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
     '6': {'pos': (10, 10),
           'win': (W_SIZE - 300, H_SIZE // 2),
-          'size': (W_SIZE - 200, H_SIZE // 2 - 10)},
+          'size': (W_SIZE - 200, H_SIZE // 2 - 10)}
 }
 
 
@@ -184,7 +185,7 @@ def main(test=False):
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                sys.exit()
+                exit(0)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     next(worlds)

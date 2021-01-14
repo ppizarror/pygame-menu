@@ -79,7 +79,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         if x != 0 and y != 0:
             return [PygameUtils.joy_motion(x=x, y=0, inlist=False, testmode=testmode),
@@ -131,7 +131,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         event_obj = pygame.event.Event(pygame.JOYHATMOTION,
                                        {
@@ -152,7 +152,7 @@ class PygameUtils(object):
         :param inlist: Return event in a list
         :type inlist: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_CTRL)
@@ -183,7 +183,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         if keyup and keydown:
             raise ValueError('keyup and keydown cannot be active at the same time')
@@ -219,7 +219,7 @@ class PygameUtils(object):
         :param evtype: event type
         :type evtype: int
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         event_obj = pygame.event.Event(evtype,
                                        {
@@ -249,7 +249,7 @@ class PygameUtils(object):
         :param menu: Menu reference
         :type menu: :py:class:`pygame_menu.Menu`
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         vmajor, _, _ = pygame.version.vernum
         assert vmajor >= 2, 'function only available in pygame v2+'
@@ -394,7 +394,7 @@ class MenuUtils(object):
         :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default it's ``0``. Negative values are not accepted
         :type column_min_width: int, float, tuple, list
         :param height: Menu height (px)
-        :type height: int
+        :type height: int, float
         :param onclose: Event or function applied when closing the Menu
         :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param position_x: X position of the menu
@@ -408,11 +408,11 @@ class MenuUtils(object):
         :param title: Menu title
         :type title: str
         :param width: Menu width (px)
-        :type width: int
+        :type width: int, float
         :param args: Additional args
         :type args: any
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Menu
         :rtype: :py:class:`pygame_menu.Menu`
         """
