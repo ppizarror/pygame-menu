@@ -144,7 +144,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(w.visible)
         self.assertNotEqual(w._last_render_hash, lasthash)
 
-        w = Button('title')
+        w = Button('title')  # type: Button
         self.menu.add_generic_widget(w)
         w.hide()
 
@@ -199,6 +199,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(p[2], 50)
         self.assertEqual(p[3], 75)
 
+    # noinspection PyTypeChecker
     def test_menubar(self):
         """
         Test menubar widget.
@@ -667,6 +668,9 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
 
         def call(widget, _):
+            """
+            Callback.
+            """
             widget.set_attribute('attr', True)
 
         btn = self.menu.add_button('btn', None)
@@ -684,6 +688,9 @@ class WidgetsTest(unittest.TestCase):
         """
 
         def update(widget, _):
+            """
+            Callback.
+            """
             widget.set_attribute('attr', True)
 
         menu = MenuUtils.generic_menu()
@@ -701,6 +708,9 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(btn.get_attribute('attr', False), False)
 
         def update2(widget, _):
+            """
+            Callback.
+            """
             widget.set_attribute('epic', 'bass')
 
         btn.add_update_callback(update2)
