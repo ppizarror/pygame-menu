@@ -801,5 +801,7 @@ class WidgetsTest(unittest.TestCase):
                        world_range,
                        '',
                        orientation,
-                       onreturn=True
+                       onreturn=-1
                        )
+        self.assertEqual(sb._on_return, None)
+        self.assertTrue(sb._kwargs.get('onreturn', 0))
