@@ -87,6 +87,38 @@ class MenuTest(unittest.TestCase):
         """
         Test position.
         """
+        # Test centering
+        menu = MenuUtils.generic_menu()
+        btn = menu.add_button('button', None)
+        menu.center_content()
+        self.assertEqual(menu.get_height(), 400)
+        self.assertEqual(menu.get_height(inner=True), 345)
+        self.assertEqual(menu.get_menubar_widget().get_height(), 55)
+        self.assertEqual(btn.get_height(), 41)
+        self.assertEqual(menu.get_height(widget=True), 41)
+
+        vpos = (345 - 41) / 2  # available_height - widget_height
+        self.assertEqual(menu._widget_offset[1], vpos)
+        self.assertEqual(btn.get_position()[1], vpos)
+
+        # If there's too many widgets, the centering should be disabled
+        for i in range(20):
+            menu.add_button('button', None)
+        self.assertEqual(menu._widget_offset[1], 0)
+
+        theme = menu.get_theme()
+        self.assertEqual(41 * 21 + theme.widget_margin[1] * 20, menu.get_height(widget=True))
+
+        # Anyway, as the widget is 0, the first button position should be the height of its selection effect
+        btneff = btn.get_selection_effect().get_margin()[0]
+        self.assertEqual(btn.get_position()[1], btneff + 1)
+
+        # Test menu not centered
+        menu = MenuUtils.generic_menu(center_content=False)
+        btn = menu.add_button('button', None)
+        btneff = btn.get_selection_effect().get_margin()[0]
+        self.assertEqual(btn.get_position()[1], btneff + 1)
+
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=-1, position_y=0))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=0, position_y=-1))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=-1, position_y=-1))
@@ -121,33 +153,35 @@ class MenuTest(unittest.TestCase):
         label = menu.add_label('This label is really epic')
         label.rotate(90)
 
+        menu.render()
+
         x, y = quit1.get_position()
         self.assertEqual(x, 180)
-        self.assertEqual(y, 14)
+        self.assertEqual(y, 6)
         x, y = name1.get_position()
         self.assertEqual(x, 125)
-        self.assertEqual(y, 82)
+        self.assertEqual(y, 74)
         x, y = sel1.get_position()
         self.assertEqual(x, 114)
-        self.assertEqual(y, 150)
+        self.assertEqual(y, 142)
         x, y = sel2.get_position()
         self.assertEqual(x, 114)
-        self.assertEqual(y, 188)
+        self.assertEqual(y, 180)
         x, y = play1.get_position()
         self.assertEqual(x, 409)
-        self.assertEqual(y, 14)
+        self.assertEqual(y, 6)
         x, y = play2.get_position()
         self.assertEqual(x, 737)
-        self.assertEqual(y, 14)
+        self.assertEqual(y, 6)
         x, y = hidden.get_position()
         self.assertEqual(x, 0)
         self.assertEqual(y, 0)
         x, y = quit2.get_position()
         self.assertEqual(x, 580)
-        self.assertEqual(y, 52)
+        self.assertEqual(y, 44)
         x, y = label.get_position()
-        self.assertEqual(x, 497)
-        self.assertEqual(y, 90)
+        self.assertEqual(x, 586)
+        self.assertEqual(y, 82)
 
     def test_attributes(self):
         """
@@ -591,6 +625,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=0))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(rows=-10))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2, rows=0))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2))  # none rows
 
         # Assert append more widgets than number of rows*columns
         column_menu = MenuUtils.generic_menu(columns=2, rows=4)
@@ -627,6 +662,8 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(len(column_menu._column_min_width), 3)
         for i in range(3):
             self.assertEqual(column_menu._column_min_width[i], 500)
+        self.assertRaises(AssertionError,
+                          lambda: MenuUtils.generic_menu(columns=3, rows=4, column_min_width=None))
 
         # Test max width should be greater than min width
         self.assertRaises(AssertionError,
@@ -958,15 +995,33 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu._column_widths[1], 150)
         self.assertEqual(menu._column_widths[2], 150)
 
+    def test_screen_dimension(self):
+        """
+        Test screen dim.
+        """
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', screen_dimension=1))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', screen_dimension=(-1, 1)))
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', screen_dimension=(1, -1)))
+
+        # The menu is 600x400, so using a lower screen throws an error
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', screen_dimension=(1, 1)))
+        menu = MenuUtils.generic_menu(title='mainmenu', screen_dimension=(888, 999))
+        self.assertEqual(menu.get_window_size()[0], 888)
+        self.assertEqual(menu.get_window_size()[1], 999)
+
     def test_touchscreen(self):
         """
         Test menu touchscreen behaviour.
         """
         vmajor, _, _ = pygame.version.vernum
         if vmajor < 2:
+            self.assertRaises(AssertionError,
+                              lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=True))
             return
 
-        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen_enabled=True)
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False,
+                                                                         touchscreen_motion_selection=True))
+        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True)
         menu.mainloop(surface, bgfun=dummy_function)
 
         # Add a menu and a method that set a function
@@ -1027,3 +1082,89 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(text.get_value(), 'epic')
         self.assertEqual(text2.get_value(), 'not epic')
         self.assertEqual(selector.get_index(), 1)
+
+    # noinspection PyArgumentList
+    def test_invalid_args(self):
+        """
+        Test menu invalid args.
+        """
+        self.assertRaises(TypeError, lambda: pygame_menu.Menu(height=100, width=100, title='nice', fake_option=True))
+
+    def test_set_title(self):
+        """
+        Test menu title.
+        """
+        menu = MenuUtils.generic_menu(title='menu')
+        theme = menu.get_theme()
+        menubar = menu.get_menubar_widget()
+
+        self.assertEqual(menu.get_title(), 'menu')
+        self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
+        self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
+
+        menu.set_title('nice')
+        self.assertEqual(menu.get_title(), 'nice')
+        self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
+        self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
+
+        menu.set_title('nice', offset=(9, 10))
+        self.assertEqual(menu.get_title(), 'nice')
+        self.assertEqual(menubar.get_title_offset()[0], 9)
+        self.assertEqual(menubar.get_title_offset()[1], 10)
+
+        menu.set_title('nice2')
+        self.assertEqual(menu.get_title(), 'nice2')
+        self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
+        self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
+
+    def test_visible(self):
+        """
+        Test visible.
+        """
+        menu = MenuUtils.generic_menu(title='menu')
+        btn1 = menu.add_button('nice', None)
+        btn2 = menu.add_button('nice', None)
+        self.assertTrue(btn1.selected)
+        btn2.hide()
+        menu.select_widget(btn1)
+
+        # btn2 cannot be selected as it is hidden
+        self.assertRaises(ValueError, lambda: menu.select_widget(btn2))
+        btn2.show()
+        menu.select_widget(btn2)
+
+        # Hide buttons
+        btn1.hide()
+        btn2.hide()
+
+        self.assertFalse(btn1.selected)
+        self.assertFalse(btn2.selected)
+
+        c1, r1, i1 = btn1.get_col_row_index()
+        c2, r2, i2 = btn2.get_col_row_index()
+        self.assertEqual(c1, -1)
+        self.assertEqual(c2, -1)
+        self.assertEqual(i1, 0)
+        self.assertEqual(c2, -1)
+        self.assertEqual(r2, -1)
+        self.assertEqual(i2, 1)
+
+        menu.remove_widget(btn1)
+        c1, r1, i1 = btn1.get_col_row_index()
+        c2, r2, i2 = btn2.get_col_row_index()
+        self.assertEqual(c1, -1)
+        self.assertEqual(c2, -1)
+        self.assertEqual(i1, -1)
+        self.assertEqual(c2, -1)
+        self.assertEqual(r2, -1)
+        self.assertEqual(i2, 0)
+
+        menu.remove_widget(btn2)
+        c1, r1, i1 = btn1.get_col_row_index()
+        c2, r2, i2 = btn2.get_col_row_index()
+        self.assertEqual(c1, -1)
+        self.assertEqual(c2, -1)
+        self.assertEqual(i1, -1)
+        self.assertEqual(c2, -1)
+        self.assertEqual(r2, -1)
+        self.assertEqual(i2, -1)

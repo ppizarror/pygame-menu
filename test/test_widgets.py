@@ -762,6 +762,9 @@ class WidgetsTest(unittest.TestCase):
 
         # Valid
         def test():
+            """
+            Callback.
+            """
             return True
 
         # Invalid ones
@@ -787,6 +790,8 @@ class WidgetsTest(unittest.TestCase):
             menu2,
             test,
             pygame_menu.events.NONE,
+            pygame_menu.events.PYGAME_QUIT,
+            pygame_menu.events.PYGAME_WINDOWCLOSE,
             None,
             lambda: test(),
             None
@@ -825,6 +830,48 @@ class WidgetsTest(unittest.TestCase):
         btn = Button('epic', onreturn=callback)
         btn.apply()
         self.assertFalse(test[0])
+
+        # Test with no kwargs
+        def callback(**kwargs):
+            """
+            Callback.
+            """
+            self.assertEqual(len(kwargs.keys()), 0)
+
+        btn = menu.add_button('epic', callback, accept_kwargs=False)
+        btn.apply()
+
+        # Test with kwargs
+        def callback(**kwargs):
+            """
+            Callback.
+            """
+            self.assertEqual(len(kwargs.keys()), 1)
+            self.assertTrue(kwargs.get('key', False))
+
+        btn = Button('epic', onreturn=callback, key=True)
+        btn.apply()
+        btn = menu.add_button('epic', callback, accept_kwargs=True, key=True)
+        btn.apply()
+
+        # Test pygame events
+        btn = menu.add_button('epic', pygame_menu.events.PYGAME_QUIT)
+        self.assertEqual(btn._on_return, menu._exit)
+        btn = menu.add_button('epic', pygame_menu.events.PYGAME_WINDOWCLOSE)
+        self.assertEqual(btn._on_return, menu._exit)
+
+        # Test None
+        btn = menu.add_button('epic', pygame_menu.events.NONE)
+        self.assertEqual(btn._on_return, None)
+        btn = menu.add_button('epic', None)
+        self.assertEqual(btn._on_return, None)
+
+        # Test invalid kwarg
+        self.assertRaises(ValueError, lambda: menu.add_button('epic', callback, key=True))
+
+        # Remove button
+        menu.remove_widget(btn)
+        self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
 
     def test_attributes(self):
         """

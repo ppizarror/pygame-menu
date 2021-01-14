@@ -33,41 +33,49 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 BaseImage: Provides basic image loading an manipulation with pygame
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.baseimage
 
 """
 Controls: Default controls of menu object and key definition
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.controls
 
 """
 Events: Menu events definition and locals
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.events
 
 """
 Fonts: Menu fonts
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.font
 
 """
 Locals: Local constants
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.locals
 
 """
 Sound: Sound class
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.sound
 
 """
 Themes: Menu themes class
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.themes
 
 """
 Version: Library version
 """
+# noinspection PyUnresolvedReferences
 import pygame_menu.version
 
 """
@@ -78,6 +86,7 @@ import pygame_menu.widgets
 """
 Menu: Menu class
 """
+# noinspection PyUnresolvedReferences
 from pygame_menu.menu import Menu
 
 """
