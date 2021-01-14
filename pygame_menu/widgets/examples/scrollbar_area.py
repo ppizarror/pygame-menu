@@ -65,7 +65,7 @@ WORLDS = {
           'size': (W_SIZE // 2, H_SIZE // 2 + 10)},
     '6': {'pos': (10, 10),
           'win': (W_SIZE - 300, H_SIZE // 2),
-          'size': (W_SIZE - 200, H_SIZE // 2 - 10)},
+          'size': (W_SIZE - 200, H_SIZE // 2 - 10)}
 }
 
 
@@ -184,7 +184,7 @@ def main(test=False):
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                sys.exit()
+                exit(0)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     next(worlds)

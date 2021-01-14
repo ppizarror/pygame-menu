@@ -1557,8 +1557,8 @@ class Widget(object):
         """
         Update according to the given events list and fire the callbacks.
 
-        :param events: List of pygame events
-        :type events: list[:py:class:`pygame.event.Event`]
+        :param events: List/Tuple of pygame events
+        :type events: list[:py:class:`pygame.event.Event`], list[:py:class:`pygame.event.Event`]
         :return: ``True`` if updated
         :rtype: bool
         """

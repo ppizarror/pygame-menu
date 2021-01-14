@@ -59,6 +59,9 @@ class WidgetsTest(unittest.TestCase):
         test = [None]
 
         def on_select(selected, widget, _):
+            """
+            Callback.
+            """
             if selected:
                 test[0] = widget
 
@@ -280,7 +283,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(w.visible)
         self.assertNotEqual(w._last_render_hash, lasthash)
 
-        w = Button('title')
+        w = Button('title')  # type: Button
         self.menu.add_generic_widget(w)
         w.hide()
 
@@ -335,6 +338,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(p[2], 50)
         self.assertEqual(p[3], 75)
 
+    # noinspection PyTypeChecker
     def test_menubar(self):
         """
         Test menubar widget.
@@ -802,6 +806,9 @@ class WidgetsTest(unittest.TestCase):
         test = [False]
 
         def callback(t=False):
+            """
+            Callback.
+            """
             test[0] = t
 
         btn = Button('epic', t=True, onreturn=callback)
@@ -810,6 +817,9 @@ class WidgetsTest(unittest.TestCase):
         test[0] = False
 
         def callback():
+            """
+            Callback.
+            """
             test[0] = False
 
         btn = Button('epic', onreturn=callback)
@@ -840,6 +850,9 @@ class WidgetsTest(unittest.TestCase):
         self.menu.enable()
 
         def call(widget, _):
+            """
+            Callback.
+            """
             widget.set_attribute('attr', True)
 
         btn = self.menu.add_button('btn', None)
@@ -857,6 +870,9 @@ class WidgetsTest(unittest.TestCase):
         """
 
         def update(widget, _):
+            """
+            Callback.
+            """
             widget.set_attribute('attr', True)
 
         menu = MenuUtils.generic_menu()
@@ -874,6 +890,9 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(btn.get_attribute('attr', False), False)
 
         def update2(widget, _):
+            """
+            Callback.
+            """
             widget.set_attribute('epic', 'bass')
 
         btn.add_update_callback(update2)
@@ -957,7 +976,7 @@ class WidgetsTest(unittest.TestCase):
         wid.change()
 
         wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1))
-        wid.update_font({'name', ''})
+        wid.update_font({'name': ''})
         wid._apply_font()
         self.assertEqual(wid._font, None)
 
@@ -1031,6 +1050,7 @@ class WidgetsTest(unittest.TestCase):
         wid.draw(surface)
         self.assertFalse(draw[0])
 
+        # noinspection PyTypeChecker
         wid.set_sound(None)
         self.assertNotEqual(wid.sound, None)
 
@@ -1079,3 +1099,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertAlmostEqual(sb.get_page_step(), length, delta=2)  # Scaling delta
 
         sb.draw(surface)
+
+        # Test remove onreturn
+        sb = ScrollBar(length,
+                       world_range,
+                       '',
+                       orientation,
+                       onreturn=-1
+                       )
+        self.assertEqual(sb._on_return, None)
+        self.assertTrue(sb._kwargs.get('onreturn', 0))

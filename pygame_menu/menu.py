@@ -453,7 +453,7 @@ class Menu(object):
         Set ``onclose`` callback.
 
         :param onclose: Onclose callback, it can be a function, an event or None
-        :type onclose: :py:class:`pygame_menu.events.MenuAction`, function, None
+        :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
         :return: None
         """
         assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
@@ -554,7 +554,7 @@ class Menu(object):
 
         :param title: Title of the button
         :type title: str, any
-        :param action: Action of the button, can be a Menu, an event or a function
+        :param action: Action of the button, can be a Menu, an event, or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
@@ -579,6 +579,12 @@ class Menu(object):
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+
+        # Change action if certain events
+        if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
+            action = _events.EXIT
+        elif action is None:
+            action = _events.NONE
 
         # If element is a Menu
         if isinstance(action, Menu):
@@ -612,7 +618,7 @@ class Menu(object):
 
             widget = _widgets.Button(title, button_id, self._exit)
 
-        elif action == _events.NONE or action is None:  # None action
+        elif action == _events.NONE:  # None action
 
             widget = _widgets.Button(title, button_id)
 
@@ -625,7 +631,7 @@ class Menu(object):
                 widget = _widgets.Button(title, button_id, action, *args, **kwargs)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction (event), a function (callable) or None')
+            raise ValueError('action must be a Menu, a MenuAction (event), a function (callable), or None')
 
         # Configure and add the button
         self._check_kwargs(kwargs)
