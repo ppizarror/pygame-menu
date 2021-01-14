@@ -37,8 +37,7 @@ import pygame_menu
 from functools import partial
 
 FPS = 30
-H_SIZE = 600  # Height of window size
-W_SIZE = 800  # Width of window size
+WINDOW_SIZE = (800, 600)
 
 
 def on_button_click(value=None, text=None):
@@ -154,7 +153,7 @@ def main(test=False):
     clock = pygame.time.Clock()
 
     # Create window
-    screen = pygame.display.set_mode((W_SIZE, H_SIZE))
+    screen = pygame.display.set_mode(WINDOW_SIZE)
     pygame.display.set_caption('Example - Scrolling Menu')
 
     # Create menu

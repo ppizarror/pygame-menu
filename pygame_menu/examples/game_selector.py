@@ -52,8 +52,13 @@ DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
+# noinspection PyTypeChecker
 clock = None  # type: pygame.time.Clock
+
+# noinspection PyTypeChecker
 main_menu = None  # type: pygame_menu.Menu
+
+# noinspection PyTypeChecker
 surface = None  # type: pygame.Surface
 
 

@@ -93,16 +93,16 @@ class Widget(object):
         self._col_row_index = (-1, -1, -1)
         self._default_value = _NoWidgetValue()  # type: any
         self._events = []  # type: list
-        self._id = str(widget_id)
+        self._id = str(widget_id)  # type: str
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_height = [None, False, True]  # size, width_scale, smooth
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
-        self._position_set = False
+        self._position_set = False  # type: bool
         self._selected_rect = None  # type: (pygame.rect.Rect, None)
         self._selection_time = 0  # type: float
-        self._title = to_string(title)
+        self._title = to_string(title)  # type: str
 
         # Widget transforms
         self._angle = 0  # Rotation angle (degrees)
@@ -315,7 +315,7 @@ class Widget(object):
             accept a title.
 
         :param title: New title
-        :type title: str
+        :type title: str, any
         :return: None
         """
         self._title = to_string(title)
