@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 BASEIMAGE
 Provides a class to perform basic image loading an manipulation with pygame.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -81,9 +84,7 @@ class BaseImage(object):
                  load_from_file=True
                  ):
         assert isinstance(image_path, str)
-        assert isinstance(drawing_mode, int)
         assert isinstance(load_from_file, bool)
-        assert_vector2(drawing_offset)
 
         _, file_extension = path.splitext(image_path)
         file_extension = file_extension.lower()
@@ -98,29 +99,68 @@ class BaseImage(object):
         self._extension = file_extension
 
         # Drawing mode
-        self._drawing_mode = drawing_mode
-        self._drawing_offset = (drawing_offset[0], drawing_offset[1])
+        self._drawing_mode = 0
+        self._drawing_offset = (0, 0)
+
+        self.set_drawing_mode(drawing_mode)
+        self.set_drawing_offset(drawing_offset)
 
         # Load the image and store as a surface
         if load_from_file:
             self._surface = pygame.image.load(image_path)  # type: pygame.Surface
             self._original_surface = self._surface.copy()
 
-    def __str__(self):
+    def get_path(self):
         """
-        :return: String definition of the object
+        Return the image path.
+
+        :return: Image path
         :rtype: str
         """
-        msg = 'BaseImage Object {3}\n\tPath: {0}\n\tDrawing mode: {1}\n\tDrawing offset: {2}'
-        return msg.format(self._filepath, self._drawing_mode, self._drawing_offset, hex(id(self)))
+        return self._filepath
 
-    def __repr__(self):
+    def get_drawing_mode(self):
         """
-        Prints the object.
+        Return the image drawing mode.
 
+        :return: Image drawing mode
+        :rtype: int
+        """
+        return self._drawing_mode
+
+    def set_drawing_mode(self, drawing_mode):
+        """
+        Set the image drawing mode.
+
+        :param drawing_mode: Drawing mode
+        :type drawing_mode: int
         :return: None
         """
-        print(self.__str__())
+        assert isinstance(drawing_mode, int)
+        assert drawing_mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
+                                IMAGE_MODE_REPEAT_Y, IMAGE_MODE_REPEAT_XY, IMAGE_MODE_SIMPLE], \
+            'unknown image drawing mode'
+        self._drawing_mode = drawing_mode
+
+    def get_drawing_offset(self):
+        """
+        Return the image drawing offset.
+
+        :return: Image drawing offset
+        :rtype: tuple
+        """
+        return self._drawing_offset
+
+    def set_drawing_offset(self, drawing_offset):
+        """
+        Set the image drawing offset.
+
+        :param drawing_offset: Drawing offset tuple *(x, y)*
+        :type drawing_offset: tuple, list
+        :return: None
+        """
+        assert_vector2(drawing_offset)
+        self._drawing_offset = (drawing_offset[0], drawing_offset[1])
 
     def copy(self):
         """
@@ -238,6 +278,9 @@ class BaseImage(object):
         """
 
         def bw(r, g, b, a):
+            """
+            To black-white function.
+            """
             c = (r + g + b) / 3
             return c, c, c, a
 
@@ -384,15 +427,6 @@ class BaseImage(object):
         self._surface = pygame.transform.rotate(self._surface, angle)
         return self
 
-    def get_drawing_mode(self):
-        """
-        Return the image drawing mode.
-
-        :return: Image drawing mode
-        :rtype: int
-        """
-        return self._drawing_mode
-
     def draw(self, surface, area=None, position=(0, 0)):
         """
         Draw the image in a given surface.
@@ -494,6 +528,3 @@ class BaseImage(object):
                 ),
                 area
             )
-
-        else:
-            raise ValueError('invalid image mode')
