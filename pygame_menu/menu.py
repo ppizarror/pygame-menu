@@ -443,7 +443,7 @@ class Menu(object):
 
         :param title: Title of the button
         :type title: str, any
-        :param action: Action of the button, can be a Menu, an event or a function
+        :param action: Action of the button, can be a Menu, an event, or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
@@ -461,6 +461,12 @@ class Menu(object):
         # Get ID
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'id must be a string'
+
+        # Change action if certain events
+        if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
+            action = _events.EXIT
+        elif action is None:
+            action = _events.NONE
 
         # If element is a Menu
         if isinstance(action, Menu):
@@ -494,7 +500,7 @@ class Menu(object):
 
             widget = _widgets.Button(title, button_id, self._exit)
 
-        elif action == _events.NONE or action is None:  # None action
+        elif action == _events.NONE:  # None action
 
             widget = _widgets.Button(title, button_id)
 
@@ -504,7 +510,7 @@ class Menu(object):
             widget = _widgets.Button(title, button_id, action, *args)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction, a function or None')
+            raise ValueError('action must be a Menu, a MenuAction, a function, or None')
 
         # Configure and add the button
         self._configure_widget(widget=widget, **attributes)
