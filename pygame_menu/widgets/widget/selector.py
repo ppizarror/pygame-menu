@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SELECTOR
-Selector class, manage elements and adds entries to menu.
+Selector class, manage elements and adds entries to Menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ class Selector(Widget):
         self._surface = self._render_string(string, color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     def set_value(self, item):
         """
