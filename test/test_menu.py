@@ -564,6 +564,8 @@ class MenuTest(unittest.TestCase):
         if vmajor < 2:
             return
 
+        self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen_enabled=False,
+                                                                         touchscreen_motion_selection=True))
         menu = MenuUtils.generic_menu(title='mainmenu', touchscreen_enabled=True)
         menu.mainloop(surface, bgfun=dummy_function)
 
@@ -588,3 +590,61 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
         btn = menu.get_selected_widget()  # type: Button
         self.assertTrue(btn.get_selected_time() >= 0)
+
+    # noinspection PyArgumentList
+    def test_invalid_args(self):
+        """
+        Test menu invalid args.
+        """
+        self.assertRaises(TypeError,
+                          lambda: pygame_menu.Menu(height=100, width=100, title='nice', fake_option=True))
+
+    def test_set_title(self):
+        """
+        Test menu title.
+        """
+        menu = MenuUtils.generic_menu(title='menu')
+        theme = menu.get_theme()
+        menubar = menu.get_menubar_widget()
+
+        self.assertEqual(menu.get_title(), 'menu')
+        self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
+        self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
+
+        menu.set_title('nice')
+        self.assertEqual(menu.get_title(), 'nice')
+        self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
+        self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
+
+        menu.set_title('nice', offset=(9, 10))
+        self.assertEqual(menu.get_title(), 'nice')
+        self.assertEqual(menubar.get_title_offset()[0], 9)
+        self.assertEqual(menubar.get_title_offset()[1], 10)
+
+        menu.set_title('nice2')
+        self.assertEqual(menu.get_title(), 'nice2')
+        self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
+        self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
+
+    def test_visible(self):
+        """
+        Test visible.
+        """
+        menu = MenuUtils.generic_menu(title='menu')
+        btn1 = menu.add_button('nice', None)
+        btn2 = menu.add_button('nice', None)
+        self.assertTrue(btn1.selected)
+        btn2.hide()
+        menu.select_widget(btn1)
+
+        # btn2 cannot be selected as it is hidden
+        self.assertRaises(ValueError, lambda: menu.select_widget(btn2))
+        btn2.show()
+        menu.select_widget(btn2)
+
+        # Hide buttons
+        btn1.hide()
+        btn2.hide()
+
+        self.assertFalse(btn1.selected)
+        self.assertFalse(btn2.selected)

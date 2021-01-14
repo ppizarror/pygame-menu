@@ -354,6 +354,8 @@ class MenuBar(Widget):
         self._title = to_string(title)
         self._offsety = offsety
         self._offsetx = offsetx
+        if self._menu is not None:
+            self._render()
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
