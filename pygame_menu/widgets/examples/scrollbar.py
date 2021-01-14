@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EXAMPLE - USE SCROLLBAR WIDGET
 Shows how the ScrollBar can be used on a surface.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)

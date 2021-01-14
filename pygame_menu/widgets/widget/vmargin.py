@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 VERTICAL MARGIN
 Vertical box margin.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -34,6 +37,7 @@ from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class VMargin(Widget):
     """
     Vertical margin widget.

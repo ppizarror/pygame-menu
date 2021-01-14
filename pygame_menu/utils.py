@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 UTILS
 Utility functions.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -196,6 +199,7 @@ def is_callable(func):
     :return: Bool
     :rtype: bool
     """
+    # noinspection PyTypeChecker
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
 
 
@@ -206,7 +210,7 @@ def to_string(s, strict=False):
 
     :param s: String
     :type s: any
-    :param strict: If True, deny any unicode string if python 2
+    :param strict: If ``True``, deny any unicode string if python 2
     :type strict: bool
     :return: String
     :rtype: str

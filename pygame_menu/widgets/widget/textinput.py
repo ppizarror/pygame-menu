@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 TEXT INPUT
 Text input class, this widget lets user to write text.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -70,6 +73,7 @@ except ImportError:
         pass
 
 
+# noinspection PyMissingOrEmptyDocstring
 class TextInput(Widget):
     """
     Text input widget.
@@ -125,7 +129,7 @@ class TextInput(Widget):
     :param valid_chars: List of chars that are valid, None if all chars are valid
     :type valid_chars: list
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

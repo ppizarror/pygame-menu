@@ -7,6 +7,9 @@ COLOR INPUT
 Color input class, Widget created in top of TextInput that provides a textbox
 for entering and previewing colors in RGB and HEX format.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -71,7 +74,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :type repeat_mouse_interval_ms: int, float
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

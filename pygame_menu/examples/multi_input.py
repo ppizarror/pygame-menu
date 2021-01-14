@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EXAMPLE - MULTI-INPUT
 Shows different inputs (widgets).
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -42,7 +45,7 @@ import pygame_menu
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-FPS = 60.0
+FPS = 60
 WINDOW_SIZE = (640, 480)
 
 sound = None  # type: pygame_menu.sound.Sound

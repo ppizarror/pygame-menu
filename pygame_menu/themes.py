@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 THEMES
 Theme class and predefined themes.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -287,7 +290,7 @@ class Theme(object):
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)  # type: tuple
         if isinstance(self.widget_padding, (list, tuple)):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)  # type: tuple
-            assert 2 <= self.widget_padding <= 4, 'widget padding tuple length must be 2, 3 or 4'
+            assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)  # type: tuple
 
         # Check sizes

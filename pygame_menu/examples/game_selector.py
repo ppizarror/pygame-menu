@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EXAMPLE - GAME SELECTOR
 Game with 3 difficulty options.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -49,7 +52,7 @@ ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
          '',  # new line
          'Email: {0}'.format(pygame_menu.__email__)]
 DIFFICULTY = ['EASY']
-FPS = 60.0
+FPS = 60
 WINDOW_SIZE = (640, 480)
 
 clock = None  # type: pygame.time.Clock
@@ -106,11 +109,11 @@ def play_function(difficulty, font, test=False):
     global clock
 
     if difficulty == 'EASY':
-        f = font.render('Playing as a baby (easy)', 1, (255, 255, 255))
+        f = font.render('Playing as a baby (easy)', True, (255, 255, 255))
     elif difficulty == 'MEDIUM':
-        f = font.render('Playing as a kid (medium)', 1, (255, 255, 255))
+        f = font.render('Playing as a kid (medium)', True, (255, 255, 255))
     elif difficulty == 'HARD':
-        f = font.render('Playing as a champion (hard)', 1, (255, 255, 255))
+        f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
         raise Exception('Unknown difficulty {0}'.format(difficulty))
 

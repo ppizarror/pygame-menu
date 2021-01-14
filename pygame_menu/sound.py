@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 SOUND
 Sound class.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -232,6 +235,7 @@ class Sound(object):
 
         # Load the sound
         try:
+            # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
             if self._verbose:

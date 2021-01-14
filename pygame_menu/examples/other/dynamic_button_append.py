@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EXAMPLE - DYNAMIC BUTTON
 Menu with dynamic buttons.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)

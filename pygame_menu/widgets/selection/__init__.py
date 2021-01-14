@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 SELECTION
 This module contains the widget highlight effects.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)

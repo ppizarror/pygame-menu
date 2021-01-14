@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EVENTS
 Menu events definition and locals.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -60,8 +63,7 @@ def is_event(event):
     :return: True if it's event
     :rtype: bool
     """
-    return isinstance(event, MenuAction) or \
-           str(type(event)) == "<class 'pygame_menu.events.MenuAction'>"
+    return isinstance(event, MenuAction) or str(type(event)) == "<class 'pygame_menu.events.MenuAction'>"
 
 
 # Events

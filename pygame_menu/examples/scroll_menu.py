@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 EXAMPLE - SCROLL MENU
 Shows scrolling in menu.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -36,7 +39,7 @@ import pygame_menu
 
 from functools import partial
 
-FPS = 30.0
+FPS = 30
 H_SIZE = 600  # Height of window size
 W_SIZE = 800  # Width of window size
 

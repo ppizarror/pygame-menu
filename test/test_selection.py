@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 TEST WIDGET SELECTION.
 Test widget selection effects.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
