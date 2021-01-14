@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 IMAGE
 Image widget class, adds a simple image.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -34,6 +37,7 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets.core import Widget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Image(Widget):
     """
     Image widget.

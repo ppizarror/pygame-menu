@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 WIDGET
 Base class for widgets.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -59,7 +62,7 @@ class Widget(object):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,
@@ -702,7 +705,7 @@ class Widget(object):
         :param selected_color: Text color when widget is selected
         :type selected_color: tuple
         :param background_color: Font background color
-        :type background_color: tuple
+        :type background_color: tuple, None
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :type antialias: bool
         :return: None
@@ -794,7 +797,7 @@ class Widget(object):
         Set the menu reference.
 
         :param menu: Menu object
-        :type menu: :py:class:`pygame_menu.Menu`
+        :type menu: :py:class:`pygame_menu.Menu`, None
         :return: None
         """
         self._menu = menu
@@ -1005,7 +1008,7 @@ class Widget(object):
         """
         pass
 
-    def set_shadow(self, enabled=True, color=None, position=None, offset=None):
+    def set_shadow(self, enabled=True, color=None, position=None, offset=2):
         """
         Show text shadow.
 
@@ -1026,11 +1029,10 @@ class Widget(object):
         if position is not None:
             assert_position(position)
             self._shadow_position = position
-        if offset is not None:
-            assert isinstance(offset, (int, float))
-            if offset <= 0:
-                raise ValueError('shadow offset must be greater than zero')
-            self._shadow_offset = offset
+        assert isinstance(offset, (int, float))
+        if offset <= 0:
+            raise ValueError('shadow offset must be greater than zero')
+        self._shadow_offset = offset
 
         self._create_shadow_tuple()  # Create shadow tuple position
         self._last_render_hash = 0  # Force widget render
@@ -1113,8 +1115,8 @@ class Widget(object):
         Update internal variable according to the given events list
         and fire the callbacks.
 
-        :param events: List of pygame events
-        :type events: list[:py:class:`pygame.event.Event`]
+        :param events: List/Tuple of pygame events
+        :type events: list[:py:class:`pygame.event.Event`], tuple[:py:class:`pygame.event.Event`]
         :return: True if updated
         :rtype: bool
         """

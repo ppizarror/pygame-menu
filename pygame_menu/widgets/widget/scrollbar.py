@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 SCROLLBAR
 ScrollBar class, manage the selection in a range of values.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -36,6 +39,7 @@ from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class ScrollBar(Widget):
     """
     A scroll bar include 3 separate controls: a slider, scroll arrows, and a page control:
@@ -66,8 +70,8 @@ class ScrollBar(Widget):
     :type page_ctrl_thick: int, float
     :param page_ctrl_color: Page control color
     :type page_ctrl_color: tuple, list
-    :param onreturn: Callback when pressind and moving the scroll
-    :type onreturn: callable, None
+    :param onchange: Callback when pressing and moving the scroll
+    :type onchange: callable, None
     """
 
     def __init__(self,
@@ -79,7 +83,7 @@ class ScrollBar(Widget):
                  slider_color=(200, 200, 200),
                  page_ctrl_thick=20,
                  page_ctrl_color=(235, 235, 235),
-                 onreturn=None,
+                 onchange=None,
                  *args,
                  **kwargs
                  ):
@@ -95,7 +99,7 @@ class ScrollBar(Widget):
 
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
-            onreturn=onreturn,
+            onchange=onchange,
             args=args,
             kwargs=kwargs
         )
@@ -191,8 +195,7 @@ class ScrollBar(Widget):
         :return: Page step
         :rtype: int
         """
-        return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-               self._page_ctrl_length
+        return self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
 
     def get_value(self):
         """

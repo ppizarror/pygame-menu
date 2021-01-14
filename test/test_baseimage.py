@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 TEST BASE IMAGE
 Test base image management.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -49,12 +52,40 @@ class BaseImageTest(unittest.TestCase):
             )
             image.draw(surface)
 
-        # Attempt to draw an invalid mode
-        image = pygame_menu.baseimage.BaseImage(
+        # Attempt to create an invalid drawing mode
+        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=-1
+        ))
+
+        # Get drawing mode
+        image = pygame_menu.baseimage.BaseImage(
+            pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+            drawing_mode=IMAGE_MODE_CENTER
         )
-        self.assertRaises(ValueError, lambda: image.draw(surface))
+        self.assertEqual(image.get_drawing_mode(), IMAGE_MODE_CENTER)
+
+    def test_drawing_offset(self):
+        """
+        Test drawing offset.
+        """
+        image = pygame_menu.baseimage.BaseImage(
+            pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+            drawing_mode=IMAGE_MODE_CENTER
+        )
+        image.set_drawing_offset((50, 150))
+        self.assertEqual(image.get_drawing_offset()[0], 50)
+        self.assertEqual(image.get_drawing_offset()[1], 150)
+
+    def test_image_path(self):
+        """
+        Test path.
+        """
+        image = pygame_menu.baseimage.BaseImage(
+            pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+            drawing_mode=IMAGE_MODE_CENTER
+        )
+        self.assertEqual(image.get_path(), pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
     def test_extension_validation(self):
         """

@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 MENUBAR
 MenuBar class to display menu title.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -49,6 +52,7 @@ _MODE_CLOSE = 1020
 _MODE_BACK = 1021
 
 
+# noinspection PyMissingOrEmptyDocstring
 class MenuBar(Widget):
     """
     MenuBar widget.
@@ -74,7 +78,7 @@ class MenuBar(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments for callbacks
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

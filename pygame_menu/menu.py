@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 MENU
 Menu class.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -32,6 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # File constants no. 0
 
 from uuid import uuid4
+import os
 import sys
 import textwrap
 import warnings
@@ -97,7 +101,7 @@ class Menu(object):
     :param touchscreen_motion_selection: Select widgets using touchscreen motion
     :type touchscreen_motion_selection: bool
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,
@@ -266,7 +270,8 @@ class Menu(object):
 
         # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
         if self._center_content and self._widget_offset[1] != 0:
-            msg = 'menu (title "{0}") is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), ' \
+                  'but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._widget_offset[1], 3))
             warnings.warn(msg)
             self._center_content = False
@@ -280,7 +285,9 @@ class Menu(object):
 
         # If centering is enabled, but scrollarea margin in the vertical is different than zero a warning is raised
         if self._center_content and self._scrollarea_margin[1] != 0:
-            msg = 'menu (title "{0}") is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), ' \
+                  'but scrollarea outer margin (from theme) is different than zero ({1}px). ' \
+                  'Auto-centering has been disabled'
             msg = msg.format(title, round(self._scrollarea_margin[1], 3))
             warnings.warn(msg)
             self._center_content = False
@@ -432,16 +439,16 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the button
-        :type title: str
-        :param action: Action of the button, can be a Menu, an event or a function
+        :type title: str, any
+        :param action: Action of the button, can be a Menu, an event, or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
@@ -454,6 +461,12 @@ class Menu(object):
         # Get ID
         button_id = kwargs.pop('button_id', '')
         assert isinstance(button_id, str), 'id must be a string'
+
+        # Change action if certain events
+        if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
+            action = _events.EXIT
+        elif action is None:
+            action = _events.NONE
 
         # If element is a Menu
         if isinstance(action, Menu):
@@ -487,7 +500,7 @@ class Menu(object):
 
             widget = _widgets.Button(title, button_id, self._exit)
 
-        elif action == _events.NONE or action is None:  # None action
+        elif action == _events.NONE:  # None action
 
             widget = _widgets.Button(title, button_id)
 
@@ -497,7 +510,7 @@ class Menu(object):
             widget = _widgets.Button(title, button_id, action, *args)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction, a function or None')
+            raise ValueError('action must be a Menu, a MenuAction, a function, or None')
 
         # Configure and add the button
         self._configure_widget(widget=widget, **attributes)
@@ -544,10 +557,10 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the color input
-        :type title: str
+        :type title: str, any
         :param color_type: Type of the color input, can be "rgb" or "hex"
         :type color_type: str
         :param color_id: ID of the color input
@@ -565,7 +578,7 @@ class Menu(object):
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
         """
@@ -627,7 +640,7 @@ class Menu(object):
         :param selectable: Image accepts user selection
         :type selectable: bool
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Image`
         """
@@ -672,10 +685,10 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Text to be displayed
-        :type title: str
+        :type title: str, any
         :param label_id: ID of the label
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds. *(0: don't split, -1: split to menu width)*
@@ -683,7 +696,7 @@ class Menu(object):
         :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
@@ -768,10 +781,10 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the selector
-        :type title: str
+        :type title: str, any
         :param items: Elements of the selector [('Item1', var1..), ('Item2'...)]
         :type items: list
         :param default: Index of default value to display
@@ -783,7 +796,7 @@ class Menu(object):
         :param selector_id: ID of the selector
         :type selector_id: str
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
@@ -852,10 +865,10 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the text input
-        :type title: str
+        :type title: str, any
         :param default: Default value to display
         :type default: str, int, float
         :param copy_paste_enable: Enable text copy, paste and cut
@@ -885,7 +898,7 @@ class Menu(object):
         :param valid_chars: List of authorized chars, None if all chars are valid
         :type valid_chars: list
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
@@ -996,7 +1009,7 @@ class Menu(object):
         The valid (key, value) are removed from the initial dictionary.
 
         :param kwargs: Optional keyword arguments (input attributes)
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Dictionary of valid attributes
         :rtype: dict
         """
@@ -1075,7 +1088,7 @@ class Menu(object):
         attributes['shadow_position'] = shadow_position
 
         shadow_offset = kwargs.pop('shadow_offset', self._theme.widget_shadow_offset)
-        assert isinstance(shadow_offset, (int, float, type(None)))
+        assert isinstance(shadow_offset, (int, float))
         attributes['shadow_offset'] = shadow_offset
 
         return attributes
@@ -1099,12 +1112,12 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param kwargs: Optional keywords arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: None
         """
         assert isinstance(widget, _widgets.core.Widget)
@@ -1699,15 +1712,21 @@ class Menu(object):
         """
         self._top._enabled = not self._top._enabled
 
-    @staticmethod
-    def _exit():
+    def _exit(self):
         """
         Internal exit function.
 
         :return: None
         """
+        self.disable()
         pygame.quit()
-        sys.exit()
+        try:
+            sys.exit(0)
+        except SystemExit:
+            # noinspection PyUnresolvedReferences,PyProtectedMember
+            os._exit(1)
+        # This should be unrecheable
+        exit(0)
 
     def is_enabled(self):
         """
@@ -1775,7 +1794,8 @@ class Menu(object):
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
 
-        selected_widget = None  # type: _widgets.core.Widget
+        # noinspection PyTypeChecker
+        selected_widget = None  # (type: _widgets.core.Widget, None)
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]

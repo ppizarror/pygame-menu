@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 SELECTOR
 Selector class, manage elements and adds entries to menu.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -85,7 +88,7 @@ class Selector(Widget):
     :param onreturn: Callback when pressing return on the selector
     :type onreturn: callable, None
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

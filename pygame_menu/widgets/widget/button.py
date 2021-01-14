@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 BUTTON
 Button class, manage elements and adds entries to menu.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -49,7 +52,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

@@ -6,6 +6,9 @@ https://github.com/ppizarror/pygame-menu
 UTILS
 Test suite utility functions and classes.
 
+NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
+upgrading to the latest version.
+
 License:
 -------------------------------------------------------------------------------
 The MIT License (MIT)
@@ -79,7 +82,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         if x != 0 and y != 0:
             return [PygameUtils.joy_motion(x=x, y=0, inlist=False, testmode=testmode),
@@ -131,7 +134,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         event_obj = pygame.event.Event(pygame.JOYHATMOTION,
                                        {
@@ -152,7 +155,7 @@ class PygameUtils(object):
         :param inlist: Return event in a list
         :type inlist: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_CTRL)
@@ -183,7 +186,7 @@ class PygameUtils(object):
         :param testmode: Key event is in test mode
         :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         if keyup and keydown:
             raise ValueError('keyup and keydown cannot be active at the same time')
@@ -219,7 +222,7 @@ class PygameUtils(object):
         :param evtype: event type
         :type evtype: int
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         event_obj = pygame.event.Event(evtype,
                                        {
@@ -249,7 +252,7 @@ class PygameUtils(object):
         :param menu: Menu reference
         :type menu: :py:class:`pygame_menu.Menu`
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         vmajor, _, _ = pygame.version.vernum
         assert vmajor >= 2, 'function only available in pygame v2+'
@@ -406,7 +409,7 @@ class MenuUtils(object):
         :param args: Additional args
         :type args: any
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Menu
         :rtype: :py:class:`pygame_menu.Menu`
         """
