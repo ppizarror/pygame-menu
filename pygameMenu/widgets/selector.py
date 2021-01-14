@@ -58,11 +58,11 @@ class Selector(Widget):
         Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Selector label text
-        :type label: basestring
+        :type label: str
         :param elements: Elements of the selector
         :type elements: list
         :param selector_id: ID of the selector
-        :type selector_id: basestring
+        :type selector_id: str
         :param default: Index of default element to display
         :type default: int
         :param onchange: Callback when changing the selector

@@ -83,7 +83,7 @@ def check_name_test(value):
     This function tests the text input widget.
 
     :param value: The widget value
-    :type value: basestring
+    :type value: str
     :return: None
     """
     print('User name: {0}'.format(value))

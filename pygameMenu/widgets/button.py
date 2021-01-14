@@ -55,9 +55,9 @@ class Button(Widget):
         Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Text of the button
-        :type label: basestring
+        :type label: str
         :param button_id: Button ID
-        :type button_id: basestring
+        :type button_id: str
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button

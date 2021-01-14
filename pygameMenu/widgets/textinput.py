@@ -62,7 +62,7 @@ except ImportError:
         Paste method.
 
         :return: Empty string
-        :rtype: basestring
+        :rtype: str
         """
         return ''
 
@@ -74,7 +74,7 @@ except ImportError:
         pass
 
 
-# noinspection PyTypeChecker
+# noinspection PyTypeChecker,PyArgumentList
 class TextInput(Widget):
     """
     Text input widget.
@@ -108,13 +108,13 @@ class TextInput(Widget):
         Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Input label text
-        :type label: basestring
+        :type label: str
         :param textinput_id: ID of the text input
-        :type textinput_id: basestring
+        :type textinput_id: str
         :param input_type: Type of data
-        :type input_type: basestring
+        :type input_type: str
         :param input_underline: Character drawn under the input
-        :type input_underline: basestring
+        :type input_underline: str
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
         :param enable_copy_paste: Enables copy, paste and cut
@@ -136,7 +136,7 @@ class TextInput(Widget):
         :param password: Input string is displayed as a password
         :type password: bool
         :param password_char: Character used by password type
-        :type password_char: basestring
+        :type password_char: str
         :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
         :type repeat_keys_initial_ms: float, int
         :param repeat_keys_interval_ms: Interval between key press repetition when held
@@ -146,7 +146,7 @@ class TextInput(Widget):
         :param selection_color: Selection box color
         :type selection_color: tuple
         :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
-        :type text_ellipsis: basestring
+        :type text_ellipsis: str
         :param valid_chars: List of chars that are valid, None if all chars are valid
         :type valid_chars: list
         :param kwargs: Optional keyword-arguments for callbacks
@@ -446,7 +446,7 @@ class TextInput(Widget):
         Renders string surface.
 
         :param string: String to render
-        :type string: basestring
+        :type string: str
         :param color: Color of the string to render
         :type color: tuple
         :return: True if surface is updated
@@ -464,7 +464,7 @@ class TextInput(Widget):
         Render underline surface.
 
         :param string: String to render
-        :type string: basestring
+        :type string: str
         :param color: Color of the string to render
         :type color: tuple
         :param updated: Render string has been updated or not
@@ -609,7 +609,7 @@ class TextInput(Widget):
         Returns input string where all filters have been applied.
 
         :return: Filtered string
-        :rtype: basestring
+        :rtype: str
         """
         string = self._input_string
 
@@ -626,7 +626,7 @@ class TextInput(Widget):
         :param add_ellipsis: Adds ellipsis text
         :type add_ellipsis: bool
         :return: String
-        :rtype: basestring
+        :rtype: str
         """
         string = self._get_input_string_filtered()
 
@@ -940,7 +940,7 @@ class TextInput(Widget):
         Check if input type is valid.
 
         :param string: String to validate
-        :type string: basestring
+        :type string: str
         :return: True if the input type is valid
         :rtype: bool
         """
@@ -1030,7 +1030,7 @@ class TextInput(Widget):
         Return text selected.
 
         :return: Text
-        :rtype: basestring
+        :rtype: str
         """
         return self._input_string[self._selection_box[0]:self._selection_box[1]]
 
@@ -1039,7 +1039,7 @@ class TextInput(Widget):
         Update input string with a new string, store changes into history.
 
         :param new_string: New string of text input
-        :type new_string: basestring
+        :type new_string: str
         :return: None
         """
         l_history = len(self._history)

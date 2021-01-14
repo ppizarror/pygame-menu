@@ -68,15 +68,15 @@ class ColorInput(TextInput):
         Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Input label text
-        :type label: basestring
+        :type label: str
         :param colorinput_id: ID of the text input
-        :type colorinput_id: basestring
+        :type colorinput_id: str
         :param color_type: Type of color input (rgb, hex)
-        :type color_type: basestring
+        :type color_type: str
         :param input_separator: Divisor between RGB channels
-        :type input_separator: basestring
+        :type input_separator: str
         :param input_underline: Character drawn under each number input
-        :type input_underline: basestring
+        :type input_underline: str
         :param cursor_color: Color of cursor
         :type cursor_color: tuple
         :param onchange: Callback when changing the selector

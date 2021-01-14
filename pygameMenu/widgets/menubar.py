@@ -58,7 +58,7 @@ class MenuBar(Widget):
         Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Title of the menu
-        :type label: basestring
+        :type label: str
         :param width: Width of the menu bar (generally width of the menu dialog)
         :type width: int
         :param back_box: Draw a back-box button on header
@@ -105,6 +105,7 @@ class MenuBar(Widget):
         _gfxdraw.filled_polygon(surface, self._polygon_pos, self._font_color)
 
         if self.mouse_enabled and self._backbox:
+            # noinspection PyArgumentList
             _pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, 1)
             _pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
@@ -117,7 +118,7 @@ class MenuBar(Widget):
         Return the title of the menu.
 
         :return: Title
-        :rtype: basestring
+        :rtype: str
         """
         return self._label
 

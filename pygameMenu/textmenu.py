@@ -75,7 +75,7 @@ class TextMenu(Menu):
         :param draw_text_region_x: X-Axis drawing region of the text
         :type draw_text_region_x: int, float
         :param text_align: Text default alignment
-        :type text_align: basestring
+        :type text_align: str
         :param text_color: Text color
         :type text_color: tuple
         :param text_fontsize: Text font size
