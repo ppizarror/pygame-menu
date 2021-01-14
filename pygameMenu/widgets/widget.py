@@ -7,7 +7,7 @@ WIDGET
 Base class for widgets.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ class Widget(object):
                  ):
         """
         :param widget_id: Widget identifier
-        :type widget_id: basestring
+        :type widget_id: str
         :param onchange: Callback when changing the selector
         :type onchange: function, NoneType
         :param onreturn: Callback when pressing return button
@@ -208,6 +208,7 @@ class Widget(object):
             rect = self._selected_rect
 
         # Draw rect
+        # noinspection PyArgumentList
         _pygame.draw.rect(surface,
                           selected_color,
                           rect,
@@ -240,7 +241,7 @@ class Widget(object):
         Returns widget ID.
 
         :return: ID
-        :rtype: basestring
+        :rtype: str
         """
         return self._id
 
@@ -270,7 +271,7 @@ class Widget(object):
         Render text.
 
         :param text: Text to render
-        :type text: basestring
+        :type text: str
         :param color: Text color
         :type color: tuple
         :return: Text surface
@@ -284,7 +285,7 @@ class Widget(object):
         Render text and turn it into a surface.
 
         :param string: Text to render
-        :type string: basestring
+        :type string: str
         :param color: Text color
         :type color: tuple
         :return: Text surface
@@ -298,6 +299,7 @@ class Widget(object):
             # Create surface
             size = (text.get_width() + 2, text.get_height() + 2)
             surface = _pygame.Surface(size, _pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
+            # noinspection PyArgumentList
             surface = _pygame.Surface.convert_alpha(surface)  # type: _pygame.SurfaceType
 
             # Draw shadow first
@@ -317,7 +319,7 @@ class Widget(object):
         Set the text font.
 
         :param font: Name or list of names for font (see pygame.font.match_font for precise format)
-        :type font: basestring, list
+        :type font: str, list
         :param font_size: Size of font in pixels
         :type font_size: int
         :param color: Text color
@@ -401,7 +403,7 @@ class Widget(object):
         Set the alignment of the widget.
 
         :param align: Widget align, could be ALIGN_LEFT/CENTER/RIGHT/TOP/BOTTOM
-        :type align: basestring
+        :type align: str
         :return: None
         """
         align = str(align)
@@ -418,7 +420,7 @@ class Widget(object):
         Returns widget alignment.
 
         :return: Widget align
-        :rtype: basestring
+        :rtype: str
         """
         return self._alignment
 
@@ -461,7 +463,7 @@ class Widget(object):
         :param color: Shadow color
         :type color: list, NoneType
         :param position: Shadow position
-        :type position: basestring, NoneType
+        :type position: str, NoneType
         :param offset: Shadow offset
         :type offset: int, NoneType
         :return: None

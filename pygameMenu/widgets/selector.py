@@ -7,7 +7,7 @@ SELECTOR
 Selector class, manage elements and adds entries to menu.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------
@@ -58,11 +58,11 @@ class Selector(Widget):
         Description of the specific parameters (see Widget class for generic ones):
 
         :param label: Selector label text
-        :type label: basestring
+        :type label: str
         :param elements: Elements of the selector
         :type elements: list
         :param selector_id: ID of the selector
-        :type selector_id: basestring
+        :type selector_id: str
         :param default: Index of default element to display
         :type default: int
         :param onchange: Callback when changing the selector

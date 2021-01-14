@@ -7,7 +7,7 @@ PYGAME-MENU
 A menu for pygame, simple, lightweight and easy to use.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------

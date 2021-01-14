@@ -7,7 +7,7 @@ FONTS
 Menu available fonts.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------

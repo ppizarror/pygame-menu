@@ -7,7 +7,7 @@ MENU
 Menu class.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import os
 import sys
 import types
 import warnings
@@ -103,13 +104,13 @@ class Menu(object):
         :param window_height: Window height size (px)
         :type window_height: int
         :param font: Font file path
-        :type font: basestring
+        :type font: str
         :param title: Title of the menu (main title)
-        :type title: basestring
+        :type title: str
         :param back_box: Draw a back-box button on header
         :type back_box: bool
         :param bgfun: Background drawing function (only if menu pause app)
-        :type bgfun: function
+        :type bgfun: function, None
         :param color_selected: Color of selected item
         :type color_selected: tuple
         :param dopause: Pause game
@@ -131,7 +132,7 @@ class Menu(object):
         :param font_size_title: Font size of the title
         :type font_size_title: int
         :param font_title: Alternative font of the title (file path)
-        :type font_title: basestring
+        :type font_title: str
         :param joystick_enabled: Enable/disable joystick on menu
         :type joystick_enabled: bool
         :param menu_alpha: Alpha of background (0=transparent, 100=opaque)
@@ -157,7 +158,7 @@ class Menu(object):
         :param option_shadow_offset: Offset of shadow
         :type option_shadow_offset: int
         :param option_shadow_position: Position of shadow
-        :type option_shadow_position: basestring
+        :type option_shadow_position: str
         :param rect_width: Border with of rectangle around selected item
         :type rect_width: int
         :param title_offsetx: Offset x-position of title (px)
@@ -165,7 +166,7 @@ class Menu(object):
         :param title_offsety: Offset y-position of title (px)
         :type title_offsety: int
         :param widget_alignment: Default widget alignment
-        :type widget_alignment: basestring
+        :type widget_alignment: str
         """
         assert isinstance(window_width, int)
         assert isinstance(window_height, int)
@@ -343,7 +344,7 @@ class Menu(object):
             - option_id     Option ID
 
         :param element_name: Name of the element
-        :type element_name: basestring
+        :type element_name: str
         :param element: Object
         :type element: Menu, _PymenuAction, function
         :param args: Additional arguments used by a function
@@ -408,19 +409,19 @@ class Menu(object):
             onreturn(current_text, **kwargs)
 
         :param title: Title of the color input
-        :type title: basestring
+        :type title: str
         :param color_type: Type of the color input, can be "rgb" or "hex"
-        :type color_type: basestring
+        :type color_type: str
         :param color_id: ID of the color input
-        :type color_id: basestring
+        :type color_id: str
         :param default: Default value to display, if RGB must be a tuple (r,g,b), if HEX must be a string "#XXXXXX"
-        :type default: basestring, tuple
+        :type default: str, tuple
         :param input_separator: Divisor between RGB channels, not valid in HEX format
-        :type input_separator: basestring
+        :type input_separator: str
         :param input_underline: Underline character
-        :type input_underline: basestring
+        :type input_underline: str
         :param align: Widget alignment
-        :type align: basestring
+        :type align: str
         :param font_size: Font size of the widget
         :type font_size: int
         :param onchange: Function when changing the selector
@@ -472,15 +473,15 @@ class Menu(object):
             onreturn(a, b, c..., **kwargs)
 
         :param title: Title of the selector
-        :type title: basestring
+        :type title: str
         :param values: Values of the selector [('Item1', var1..), ('Item2'...)]
         :type values: list
         :param selector_id: ID of the selector
-        :type selector_id: basestring
+        :type selector_id: str
         :param default: Index of default value to display
         :type default: int
         :param align: Widget alignment
-        :type align: basestring
+        :type align: str
         :param font_size: Font size of the widget
         :type font_size: int
         :param onchange: Function when changing the selector
@@ -530,21 +531,21 @@ class Menu(object):
             onreturn(current_text, **kwargs)
 
         :param title: Title of the text input
-        :type title: basestring
+        :type title: str
         :param textinput_id: ID of the text input
-        :type textinput_id: basestring
+        :type textinput_id: str
         :param default: Default value to display
-        :type default: basestring, int, float
+        :type default: str, int, float
         :param input_type: Data type of the input
-        :type input_type: basestring
+        :type input_type: str
         :param input_underline: Underline character
-        :type input_underline: basestring
+        :type input_underline: str
         :param maxchar: Maximum length of string, if 0 there's no limit
         :type maxchar: int
         :param maxwidth: Maximum size of the text widget, if 0 there's no limit
         :type maxwidth: int
         :param align: Widget alignment
-        :type align: basestring
+        :type align: str
         :param font_size: Font size of the widget
         :type font_size: int
         :param enable_copy_paste: Enable text copy, paste and cut
@@ -604,7 +605,7 @@ class Menu(object):
         Check if widget ID is duplicated.
 
         :param widget_id: New widget ID
-        :type widget_id: basestring
+        :type widget_id: str
         :return: Exception if ID is duplicated
         """
         for widget in self._option:
@@ -794,15 +795,21 @@ class Menu(object):
             self._enabled = True
             self._closelocked = True
 
-    @staticmethod
-    def _exit():
+    def _exit(self):
         """
         Internal exit function.
 
         :return: None
         """
+        self.disable()
         _pygame.quit()
-        sys.exit()
+        try:
+            sys.exit(0)
+        except SystemExit:
+            # noinspection PyUnresolvedReferences,PyProtectedMember
+            os._exit(1)
+        # This should be unrecheable
+        exit(0)
 
     def is_disabled(self):
         """
@@ -1056,7 +1063,7 @@ class Menu(object):
         :param current: Get the current title of the menu object (if a submenu has been opened)
         :type current: bool
         :return: Title
-        :rtype: basestring
+        :rtype: str
         """
         if current:
             return self._actual._menubar.get_title()
@@ -1160,7 +1167,7 @@ class Menu(object):
         None is returned if no widget found.
 
         :param widget_id: Widget ID
-        :type widget_id: basestring
+        :type widget_id: str
         :param recursive: Look in menu and submenus
         :type recursive: bool
         :return: Widget object

@@ -7,7 +7,7 @@ EXAMPLE - GAME SELECTOR
 Game with 3 difficulty options.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ def change_difficulty(value, difficulty):
     :param value: Tuple containing the data of the selected object
     :type value: tuple
     :param difficulty: Optional parameter passed as argument to add_selector
-    :type difficulty: basestring
+    :type difficulty: str
     :return: None
     """
     selected, index = value
