@@ -82,7 +82,7 @@ class Widget(object):
         if onselect:
             assert is_callable(onselect), 'onselect must be callable (function-type) or None'
 
-        # Store id, if None or empty create new ID based on UUID
+        # Store ID, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
             widget_id = uuid4()
 
@@ -111,7 +111,7 @@ class Widget(object):
         self._translate = (0.0, 0.0)  # type: tuple
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
-        # use .get_rect() Widget method instead
+        # use .get_rect() widget method instead
         self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect, None)
 
         # Callbacks
@@ -165,7 +165,7 @@ class Widget(object):
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True
         self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
-        self.floating = False  # If True, the widget don't contribute width/height to the menu widget positioning computation. Use .set_float() to modify this status
+        self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self.mouse_enabled = True
         self.selected = False
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
@@ -222,7 +222,7 @@ class Widget(object):
 
     def set_attribute(self, key, value):
         """
-        Set widget attribute.
+        Set a widget attribute.
 
         :param key: Key of the attribute
         :type key: str
@@ -235,7 +235,7 @@ class Widget(object):
 
     def get_attribute(self, key, default=None):
         """
-        Get attribute value.
+        Get an attribute value.
 
         :param key: Key of the attribute
         :type key: str
@@ -338,11 +338,11 @@ class Widget(object):
 
     def set_background_color(self, color, inflate=(0, 0)):
         """
-        Set widget background color.
+        Set the widget background color.
 
         :param color: Widget background color
         :type color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-        :param inflate: Inflate background in *(x,y)*. If None, the widget value is not updated
+        :param inflate: Inflate background in *(x, y)*. If None, the widget value is not updated
         :type inflate: tuple, list, None
         :return: None
         """
@@ -448,15 +448,15 @@ class Widget(object):
 
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
-        .. note::
-
-            Not all widgets have an ``on_return`` method.
-
-        with:
+        Where
             - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.Widget.get_value`
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
+
+        .. note::
+
+            Not all widgets have an ``on_return`` method.
 
         :param args: Extra arguments passed to the callback
         :param args: any
@@ -479,15 +479,15 @@ class Widget(object):
 
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
-        .. note::
-
-            Not all widgets have an ``on_change`` method.
-
-        with:
+        Where
             - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.Widget.get_value`
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
+
+        .. note::
+
+            Not all widgets have an ``on_change`` method.
 
         :param args: Extra arguments passed to the callback
         :param args: any
@@ -527,14 +527,14 @@ class Widget(object):
         """
         Return the widget margin.
 
-        :return: Widget margin *(left,bottom)*
+        :return: Widget margin *(left, bottom)*
         :rtype: tuple
         """
         return self._margin
 
     def set_margin(self, x, y):
         """
-        Set Widget margin *(left,bottom)*.
+        Set the widget margin *(left, bottom)*.
 
         :param x: Margin on x axis (left)
         :type x: int, float
@@ -551,9 +551,9 @@ class Widget(object):
         """
         Return the widget padding.
 
-        :param transformed: If True, returns the scaled padding if widget is transformed (flip, scale)
+        :param transformed: If ``True``, returns the scaled padding if widget is transformed (flip, scale)
         :type transformed: bool
-        :return: Widget padding *(top,right,bottom,left)*
+        :return: Widget padding *(top, right, bottom, left)*
         :rtype: tuple
         """
         if transformed:
@@ -562,12 +562,12 @@ class Widget(object):
 
     def set_padding(self, padding):
         """
-        Set the Widget padding according to CSS rules.
+        Set the widget padding according to CSS rules.
 
         - If an integer or float is provided: top, right, bottom and left values will be the same
         - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
         - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
-        - If 4-item tuple is provided: padding will be *(top,right,bottom,left)*
+        - If 4-item tuple is provided: padding will be *(top, right, bottom, left)*
 
         .. note::
 
@@ -601,19 +601,15 @@ class Widget(object):
 
     def get_rect(self, inflate=None, apply_padding=True, use_transformed_padding=True):
         """
-        Return the Rect object, this forces the widget rendering.
+        Return the ``Rect`` object, this forces the widget rendering.
 
-        .. note::
-
-            This is the only method that returns the rect with the padding applied.
-
-        :param inflate: Inflate rect *(x,y)* in px
+        :param inflate: Inflate rect *(x, y)* in px
         :type inflate: None, tuple, list
         :param apply_padding: Apply widget padding
         :type apply_padding: bool
         :param use_transformed_padding: Use scaled padding if widget is scaled
         :type use_transformed_padding: bool
-        :return: Widget rect
+        :return: Widget rect object
         :rtype: :py:class:`pygame.Rect`
         """
         self._render()
@@ -659,7 +655,7 @@ class Widget(object):
 
     def change_id(self, widget_id):
         """
-        Change widget id.
+        Change the widget ID.
 
         :param widget_id: Widget ID
         :type widget_id: str
@@ -731,7 +727,7 @@ class Widget(object):
                    enabled=True,
                    color=None,
                    position=None,
-                   offset=None
+                   offset=2
                    ):
         """
         Set text shadow.
@@ -743,7 +739,7 @@ class Widget(object):
         :param position: Shadow position
         :type position: str, None
         :param offset: Shadow offset
-        :type offset: int, float, None
+        :type offset: int, float
         :return: None
         """
         self._shadow = enabled
@@ -753,11 +749,9 @@ class Widget(object):
         if position is not None:
             assert_position(position)
             self._shadow_position = position
-        if offset is not None:
-            assert isinstance(offset, (int, float))
-            if offset <= 0:
-                raise ValueError('shadow offset must be greater than zero')
-            self._shadow_offset = offset
+        assert isinstance(offset, (int, float))
+        assert offset > 0, 'shadow offset must be greater than zero'
+        self._shadow_offset = offset
 
         # Set position
         x = 0
@@ -919,14 +913,15 @@ class Widget(object):
 
     def update_font(self, style):
         """
-        Updates font. This method receives a style dict (non empty) containing the following keys:
+        Updates the widget font. This method receives a style dict (non empty).
 
-        - ``antialias``             Font antialias *(bool)*
-        - ``background_color``      Background color *(tuple)*
-        - ``color``                 Font color *(tuple)*
-        - ``name``                  Name of the font *(str)*
-        - ``selected_color``        Selected color *(tuple)*
-        - ``size``                  Size of the font *(int)*
+        Optional style keys
+            - ``antialias``             *(bool)* - Font antialias
+            - ``background_color``      *(tuple)* - Background color
+            - ``color``                 *(tuple)* - Font color
+            - ``name``                  *(str)* - Name of the font
+            - ``selected_color``        *(tuple)* - Selected color
+            - ``size``                  *(int)* - Size of the font
 
         .. note::
 
@@ -956,16 +951,15 @@ class Widget(object):
         """
         Return a dict with the information of the widget font.
 
-        Dict values:
+        Dict values
+            - ``antialias``             *(bool)* - Font antialias
+            - ``background_color``      *(tuple)* - Background color
+            - ``color``                 *(tuple)* - Font color
+            - ``name``                  *(str)* - Name of the font
+            - ``selected_color``        *(tuple)* - Selected color
+            - ``size``                  *(int)* - Size of the font
 
-        - ``antialias``             Font antialias *(bool)*
-        - ``background_color``      Background color *(tuple)*
-        - ``color``                 Font color *(tuple)*
-        - ``name``                  Name of the font *(str)*
-        - ``selected_color``        Selected color *(tuple)*
-        - ``size``                  Size of the font *(int)*
-
-        :return: Dict
+        :return: Font information dict
         :rtype: dict
         """
         return {
@@ -979,7 +973,7 @@ class Widget(object):
 
     def set_menu(self, menu):
         """
-        Set the menu reference.
+        Set the Menu reference.
 
         :param menu: Menu object
         :type menu: :py:class:`pygame_menu.Menu`, None
@@ -991,7 +985,7 @@ class Widget(object):
 
     def get_menu(self):
         """
-        Return the menu reference (if exists).
+        Return the Menu reference, ``None`` if it has not been set.
 
         .. warning::
 
@@ -1033,7 +1027,7 @@ class Widget(object):
 
     def get_position(self):
         """
-        Return the widget position tuple *(x,y)*.
+        Return the widget position tuple *(x, y)*.
 
         :return: Widget position
         :rtype: tuple
@@ -1063,7 +1057,7 @@ class Widget(object):
 
     def set_max_width(self, width, scale_height=False, smooth=True):
         """
-        Set widget max width, it applies an scalling factor if the widget width is
+        Set the widget max width, it applies an scalling factor if the widget width is
         greater than the limit.
 
         .. note::
@@ -1082,7 +1076,7 @@ class Widget(object):
 
         .. warning::
 
-            Final widget size may not be exactly the same as the desired *(width,height)*
+            Final widget size may not be exactly the same as the desired *(width, height)*
             tuple due to rounding errors, expect +-2 px average.
 
         :param width: Width in px, ``None`` if max width is disabled
@@ -1117,7 +1111,7 @@ class Widget(object):
 
     def set_max_height(self, height, scale_width=False, smooth=True):
         """
-        Set widget max height, it applies an scalling factor if the widget height is
+        Set the widget max height, it applies an scalling factor if the widget height is
         greater than the limit.
 
         .. note::
@@ -1131,7 +1125,7 @@ class Widget(object):
 
         .. warning::
 
-            Final widget size may not be exactly the same as the desired *(width,height)*
+            Final widget size may not be exactly the same as the desired *(width, height)*
             tuple due to rounding errors, expect +-2 px average.
 
         :param height: Height in px, ``None`` if max height is disabled
@@ -1251,7 +1245,7 @@ class Widget(object):
 
         .. warning::
 
-            Final widget size may not be exactly the same as the desired *(width,height)*
+            Final widget size may not be exactly the same as the desired *(width, height)*
             tuple due to rounding errors, expect +-2 px average.
 
         :param width: New width of the widget in px
@@ -1270,7 +1264,7 @@ class Widget(object):
 
     def translate(self, x, y):
         """
-        Translate to *(+x,+y)* according to default position.
+        Translate to *(+x, +y)* according to the default position.
 
         .. note::
 
@@ -1324,7 +1318,7 @@ class Widget(object):
             Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
             widget rendering after calling this method.
 
-        :param align: Widget align, see locals
+        :param align: Widget align
         :type align: str
         :return: None
         """
@@ -1336,7 +1330,7 @@ class Widget(object):
         """
         Return the widget alignment.
 
-        :return: Widget align, see locals
+        :return: Widget align
         :rtype: str
         """
         return self._alignment
@@ -1381,7 +1375,7 @@ class Widget(object):
         Return time the widget has been selected in miliseconds.
         If the widget is not currently selected, return ``0``.
 
-        :return: Time in ms
+        :return: Time in miliseconds
         :rtype: float
         """
         if not self.selected:
@@ -1396,7 +1390,7 @@ class Widget(object):
 
             Use with caution.
 
-        :return: Widget surface
+        :return: Widget surface object
         :rtype: :py:class:`pygame.Surface`
         """
         return self._surface
@@ -1413,7 +1407,7 @@ class Widget(object):
         :type apply_selection: bool
         :param apply_selection: Apply selection
         :type apply_padding: bool
-        :return: Widget width
+        :return: Widget width (px)
         :rtype: float
         """
         assert isinstance(apply_padding, bool)
@@ -1436,7 +1430,7 @@ class Widget(object):
         :type apply_selection: bool
         :param apply_selection: Apply selection
         :type apply_padding: bool
-        :return: Widget height
+        :return: Widget height (px)
         :rtype: float
         """
         assert isinstance(apply_padding, bool)
@@ -1449,7 +1443,7 @@ class Widget(object):
 
     def get_size(self, apply_padding=True, apply_selection=False):
         """
-        Return the widget size (width/height).
+        Return the widget size.
 
         .. warning::
 
@@ -1459,7 +1453,7 @@ class Widget(object):
         :type apply_selection: bool
         :param apply_selection: Apply selection
         :type apply_padding: bool
-        :return: Widget *(width,height)*
+        :return: Widget *(width, height)*
         :rtype: tuple
         """
         return self.get_width(apply_padding=apply_padding, apply_selection=apply_selection), \
@@ -1532,7 +1526,7 @@ class Widget(object):
 
     def set_default_value(self, value):
         """
-        Set the widget value and set it as default.
+        Set the widget value, and then make it as default.
 
         .. note::
 
@@ -1561,8 +1555,7 @@ class Widget(object):
 
     def update(self, events):
         """
-        Update internal variable according to the given events list
-        and fire the callbacks.
+        Update according to the given events list and fire the callbacks.
 
         :param events: List of pygame events
         :type events: list[:py:class:`pygame.event.Event`]
@@ -1576,7 +1569,7 @@ class Widget(object):
         Adds a function to the widget to be executed each time the widget is drawn.
 
         The function that this method receives receives two objects: the widget itself and
-        the menu reference.
+        the Menu reference.
 
         .. code-block:: python
 
@@ -1632,7 +1625,7 @@ class Widget(object):
         Adds a function to the widget to be executed each time the widget is updated.
 
         The function that this method receives receives two objects: the widget itself and
-        the menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.Widget.add_draw_callback`
+        the Menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.Widget.add_draw_callback`
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
         anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_update_callback`.
@@ -1720,7 +1713,7 @@ class Widget(object):
 
     def show(self):
         """
-        Set widget visible.
+        Set the widget visible.
 
         :return: None
         """
@@ -1732,7 +1725,7 @@ class Widget(object):
 
     def hide(self):
         """
-        Hides widget.
+        Hides the widget.
 
         :return: None
         """
@@ -1744,27 +1737,27 @@ class Widget(object):
 
     def set_col_row_index(self, col, row, index):
         """
-        Set the (column,row,index) position. If column or row is ``-1`` then the widget
-        is not assigned to a certain column/row (for example, if it's hidden).
+        Set the *(column,row,index)* position. If the column or row is ``-1`` then the
+        widget is not assigned to a certain column/row (for example, if it's hidden).
 
         :param col: Column
         :type col: int
         :param row: Row
         :type row: int
-        :param index: Index in menu widget list
+        :param index: Index in Menu widget list
         :type index: int
         :return: None
         """
-        assert isinstance(col, int)
-        assert isinstance(row, int)
+        assert isinstance(col, int) and col >= -1
+        assert isinstance(row, int) and row >= -1
         assert isinstance(index, int) and index >= -1
         self._col_row_index = (col, row, index)
 
     def get_col_row_index(self):
         """
-        Get the widget *(column,row,index)* position.
+        Get the widget column/row position.
 
-        :return: Column, row, index tuple
+        :return: *(column, row, index)* tuple
         :rtype: tuple
         """
         return self._col_row_index
