@@ -41,11 +41,18 @@ class Label(Widget):
     :type title: str
     :param label_id: Label ID
     :type label_id: str
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
     """
 
-    def __init__(self, title, label_id=''):
+    def __init__(self,
+                 title,
+                 label_id='',
+                 onselect=None,
+                 ):
         super(Label, self).__init__(
             title=title,
+            onselect=onselect,
             widget_id=label_id
         )
 

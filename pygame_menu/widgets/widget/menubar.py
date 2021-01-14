@@ -118,6 +118,7 @@ class MenuBar(Widget):
         self._width = width
 
         self.set_title(title, offsetx, offsety)
+        self.is_selectable = False
 
     def _apply_font(self):
         pass

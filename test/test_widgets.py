@@ -51,6 +51,70 @@ class WidgetsTest(unittest.TestCase):
         test_reset_surface()
         self.menu = MenuUtils.generic_menu()
 
+    def test_onselect(self):
+        """
+        Test onselect widgets.
+        """
+        menu = MenuUtils.generic_menu()
+        test = [None]
+
+        def on_select(selected, widget, _):
+            if selected:
+                test[0] = widget
+
+        # Button
+        self.assertEqual(test[0], None)
+        btn = menu.add_button('nice', None, onselect=on_select)  # The first to be selected
+        self.assertEqual(test[0], btn)
+
+        btn2 = menu.add_button('nice', None, onselect=on_select)
+        self.assertEqual(test[0], btn)
+        btn2.is_selectable = False
+        btn2.set_selected()
+        self.assertEqual(test[0], btn)
+        btn2.is_selectable = True
+        btn2.set_selected()
+        self.assertEqual(test[0], btn2)
+
+        # Color
+        color = menu.add_color_input('nice', 'rgb', onselect=on_select)
+        color.set_selected()
+        self.assertEqual(test[0], color)
+
+        # Image
+        image = menu.add_image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select)
+        image.set_selected()
+        self.assertEqual(test[0], color)
+        image.is_selectable = True
+        image.set_selected()
+        self.assertEqual(test[0], image)
+
+        # Label
+        label = menu.add_label('label', onselect=on_select)
+        label.is_selectable = True
+        label.set_selected()
+        self.assertEqual(test[0], label)
+
+        # None, it cannot be selected
+        none = menu.add_none_widget()
+        none.set_selected()
+        self.assertEqual(test[0], label)
+
+        # Selector
+        selector = menu.add_selector('nice', ['nice', 'epic'], onselect=on_select)
+        selector.set_selected()
+        self.assertEqual(test[0], selector)
+
+        # Textinput
+        text = menu.add_text_input('nice', onselect=on_select)
+        text.set_selected()
+        self.assertEqual(test[0], text)
+
+        # Vmargin
+        vmargin = menu.add_vertical_margin(10)
+        vmargin.set_selected()
+        self.assertEqual(test[0], text)
+
     def test_nonascii(self):
         """
         Test non-ascii.

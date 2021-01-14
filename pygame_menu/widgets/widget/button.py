@@ -78,6 +78,23 @@ class Button(Widget):
     def _apply_font(self):
         pass
 
+    def set_selection_callback(self, callback):
+        """
+        Update the button selection callback, once button is selected, the callback
+        function is executed as follows:
+
+        .. code-block:: python
+
+            callback(selected, widget, menu)
+
+        :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+        :type callback: callback, None
+        :return: None
+        """
+        if callback is not None:
+            assert is_callable(callback), 'callback must be callable (function-type) or None'
+        self._on_select = callback
+
     def update_callback(self, callback, *args):
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
@@ -94,7 +111,7 @@ class Button(Widget):
         :type args: any
         :return: None
         """
-        assert is_callable(callback), 'only function are allowed'
+        assert is_callable(callback), 'only callable (function-type) are allowed'
 
         # If return is a Menu object, remove it from submenus list
         if self._menu is not None and self._on_return is not None and self.to_menu:

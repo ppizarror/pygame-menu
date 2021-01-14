@@ -118,6 +118,8 @@ class TextInput(Widget):
     :type onchange: callable, None
     :param onreturn: Callback when pressing return on the text input
     :type onreturn: callable, None
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
     :param password: Input string is displayed as a password
     :type password: bool
     :param password_char: Character used by password type
@@ -156,6 +158,7 @@ class TextInput(Widget):
                  maxwidth_dynamically_update=True,
                  onchange=None,
                  onreturn=None,
+                 onselect=None,
                  password=False,
                  password_char='*',
                  repeat_keys_initial_ms=450,
@@ -206,6 +209,7 @@ class TextInput(Widget):
             widget_id=textinput_id,
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
             args=args,
             kwargs=kwargs
         )

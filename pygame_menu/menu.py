@@ -457,7 +457,7 @@ class Menu(object):
         :return: None
         """
         assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
-            'onclose must be a MenuAction, a function or None'
+            'onclose must be a MenuAction, callable (function-type) or None'
         self._onclose = onclose
 
     def get_current(self):
@@ -506,6 +506,12 @@ class Menu(object):
 
             action(*args, **kwargs)
 
+        If ``onselect`` is defined, the callback is executed as follows:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
+
         kwargs (Optional):
             - ``accept_kwargs``         Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default *(bool)*
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
@@ -518,6 +524,7 @@ class Menu(object):
             - ``font_name``             Widget font *(str)*
             - ``font_size``             Font size of the widget *(int)*
             - ``margin``                *(left,bottom)* margin in px *(tuple, list)*
+            - ``onselect``              Function when selecting the widget *(callable, None*)
             - ``padding``               Widget padding according to CSS rules *(int, float, tuple, list)*. General shape: *(top,right,bottom,left)*
             - ``selection_color``       Color of the selected widget; only affects the font color *(tuple, list)*
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -566,6 +573,9 @@ class Menu(object):
         # Accept kwargs
         accept_kwargs = kwargs.pop('accept_kwargs', False)
         assert isinstance(accept_kwargs, bool)
+
+        # Onselect callback
+        onselect = kwargs.pop('onselect', None)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -620,6 +630,7 @@ class Menu(object):
         # Configure and add the button
         self._check_kwargs(kwargs)
         self._configure_widget(widget=widget, **attributes)
+        widget.set_selection_callback(onselect)
         self._append_widget(widget)
 
         return widget
@@ -634,6 +645,7 @@ class Menu(object):
                         input_underline='_',
                         onchange=None,
                         onreturn=None,
+                        onselect=None,
                         previsualization_width=3,
                         **kwargs
                         ):
@@ -648,6 +660,7 @@ class Menu(object):
 
             onchange(current_color, **kwargs)
             onreturn(current_color, **kwargs)
+            onselect(selected, widget, menu)
 
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
@@ -699,6 +712,8 @@ class Menu(object):
         :type onchange: callable, None
         :param onreturn: Function when pressing return on the color text input
         :type onreturn: callable, None
+        :param onselect: Function when selecting the widget
+        :type onselect: callable, None
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Optional keyword arguments
@@ -720,6 +735,7 @@ class Menu(object):
             input_underline=input_underline,
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
             prev_size=previsualization_width,
             title=title,
             **kwargs
@@ -735,6 +751,7 @@ class Menu(object):
                   image_path,
                   angle=0,
                   image_id='',
+                  onselect=None,
                   scale=(1, 1),
                   scale_smooth=False,
                   selectable=False,
@@ -742,6 +759,12 @@ class Menu(object):
                   ):
         """
         Add a simple image to the Menu.
+
+        If ``onselect`` is defined, the callback is executed as follows:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
 
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
@@ -768,6 +791,8 @@ class Menu(object):
         :type angle: int, float
         :param image_id: ID of the label
         :type image_id: str
+        :param onselect: Function when selecting the widget
+        :type onselect: callable, None
         :param scale: Scale of the image *(x,y)*
         :type scale: tuple, list
         :param scale_smooth: Scale is smoothed
@@ -793,6 +818,7 @@ class Menu(object):
             angle=angle,
             image_id=image_id,
             image_path=image_path,
+            onselect=onselect,
             scale=scale,
             scale_smooth=scale_smooth
         )
@@ -808,11 +834,18 @@ class Menu(object):
                   title,
                   label_id='',
                   max_char=0,
+                  onselect=None,
                   selectable=False,
                   **kwargs
                   ):
         """
         Add a simple text to the Menu.
+
+        If ``onselect`` is defined, the callback is executed as follows:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
 
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
@@ -847,6 +880,8 @@ class Menu(object):
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds; ``0``: don't split, ``-1``: split to menu width
         :type max_char: int
+        :param onselect: Function when selecting the widget
+        :type onselect: callable, None
         :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
         :param kwargs: Optional keyword arguments
@@ -874,7 +909,11 @@ class Menu(object):
         if len(title) <= max_char or max_char == 0:
 
             attributes = self._filter_widget_attributes(kwargs)
-            widget = _widgets.Label(title=title, label_id=label_id)
+            widget = _widgets.Label(
+                title=title,
+                label_id=label_id,
+                onselect=onselect
+            )
             widget.is_selectable = selectable
             self._check_kwargs(kwargs)
             self._configure_widget(widget=widget, **attributes)
@@ -890,6 +929,7 @@ class Menu(object):
                         title=line,
                         label_id=label_id + '+' + str(len(widget) + 1),
                         max_char=max_char,
+                        onselect=onselect,
                         selectable=selectable,
                         **kwargs
                     )
@@ -903,6 +943,7 @@ class Menu(object):
                      default=0,
                      onchange=None,
                      onreturn=None,
+                     onselect=None,
                      selector_id='',
                      **kwargs
                      ):
@@ -925,6 +966,7 @@ class Menu(object):
 
             onchange((selected_value, selected_index), a, b, c..., **kwargs)
             onreturn((selected_value, selected_index), a, b, c..., **kwargs)
+            onselect(selected, widget, menu)
 
         For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
 
@@ -970,6 +1012,8 @@ class Menu(object):
         :type onchange: callable, None
         :param onreturn: Function when pressing return button
         :type onreturn: callable, None
+        :param onselect: Function when selecting the widget
+        :type onselect: callable, None
         :param selector_id: ID of the selector
         :type selector_id: str
         :param kwargs: Optional keyword arguments
@@ -986,6 +1030,7 @@ class Menu(object):
             elements=items,
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
             selector_id=selector_id,
             title=title,
             **kwargs
@@ -1008,6 +1053,7 @@ class Menu(object):
                        maxwidth=0,
                        onchange=None,
                        onreturn=None,
+                       onselect=None,
                        password=False,
                        tab_size=4,
                        textinput_id='',
@@ -1026,6 +1072,7 @@ class Menu(object):
 
             onchange(current_text, **kwargs)
             onreturn(current_text, **kwargs)
+            onselect(selected, widget, menu)
 
         kwargs (Optional):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ *(str)*
@@ -1081,6 +1128,8 @@ class Menu(object):
         :type onchange: callable, None
         :param onreturn: Callback when pressing return on the text input
         :type onreturn: callable, None
+        :param onselect: Function when selecting the widget
+        :type onselect: callable, None
         :param password: Text input is a password
         :type password: bool
         :param tab_size: Size of tab key
@@ -1115,6 +1164,7 @@ class Menu(object):
             maxwidth=maxwidth,
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
             password=password,
             tab_size=tab_size,
             textinput_id=textinput_id,
@@ -1150,11 +1200,8 @@ class Menu(object):
         assert margin > 0, \
             'zero margin is not valid, prefer adding a NoneWidget menu.add_none_widget()'
 
-        # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes({'margin': (0, margin)})
-
         widget = _widgets.VMargin(widget_id=margin_id)
-
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
@@ -1186,6 +1233,8 @@ class Menu(object):
         widget = _widgets.NoneWidget(widget_id=widget_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+
+        return widget
 
     def add_generic_widget(self, widget, configure_defaults=False):
         """
@@ -2373,7 +2422,7 @@ class Menu(object):
         assert isinstance(surface, pygame.Surface)
         if bgfun:
             assert _utils.is_callable(bgfun), \
-                'background function must be a callable (function) object'
+                'background function must be callable (function-type) object'
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'

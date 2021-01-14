@@ -53,10 +53,12 @@ class Widget(object):
     :type title: str
     :param widget_id: Widget identifier
     :type widget_id: str
-    :param onchange: Callback when updating the status of the widget, executed in ``widget.change()``
+    :param onchange: Callback when updating the status of the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.change`
     :type onchange: callable, None
-    :param onreturn: Callback when applying on the widget (return), executed in ``widget.apply()``
+    :param onreturn: Callback when applying on the widget (return), executed in :py:meth:`pygame_menu.widgets.core.Widget.apply`
     :type onreturn: callable, None
+    :param onselect: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+    :type onselect: callable, None
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments
@@ -68,14 +70,17 @@ class Widget(object):
                  widget_id='',
                  onchange=None,
                  onreturn=None,
+                 onselect=None,
                  args=None,
                  kwargs=None
                  ):
         assert isinstance(widget_id, str), 'widget id must be a string'
         if onchange:
-            assert is_callable(onchange), 'onchange must be callable or None'
+            assert is_callable(onchange), 'onchange must be callable (function-type) or None'
         if onreturn:
-            assert is_callable(onreturn), 'onreturn must be callable or None'
+            assert is_callable(onreturn), 'onreturn must be callable (function-type) or None'
+        if onselect:
+            assert is_callable(onselect), 'onselect must be callable (function-type) or None'
 
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
@@ -117,6 +122,7 @@ class Widget(object):
         self._kwargs = kwargs or {}  # type: dict
         self._on_change = onchange  # type: callable
         self._on_return = onreturn  # type: callable
+        self._on_select = onselect  # type: callable
 
         # Surface of the widget
         self._surface = None  # type: (pygame.Surface, None)
@@ -846,7 +852,7 @@ class Widget(object):
         is used by :py:meth:`pygame_menu.Menu.update`
 
         .. note::
-        
+
             Generally, widget :py:meth:`pygame_menu.widgets.core.Widget._render` method set
             ``_menu_surface_needs_update`` as ``True`` after rendering has finished.
 
@@ -1337,7 +1343,14 @@ class Widget(object):
 
     def set_selected(self, selected=True):
         """
-        Mark the widget as selected.
+        Mark the widget as selected and execute the ``on_selected`` callback
+        function as follows:
+
+        .. code-block:: python
+
+            callback_func(selected, widget, menu)
+
+        If widget ``is_selectable`` is ``False`` this function is not executed.
 
         .. note::
 
@@ -1349,6 +1362,8 @@ class Widget(object):
         :return: None
         """
         assert isinstance(selected, bool)
+        if not self.is_selectable:
+            return
         self.selected = selected
         self.active = False
         if selected:
@@ -1358,6 +1373,8 @@ class Widget(object):
             self._blur()
             self._events = []  # Remove events
         self._force_render()
+        if self._on_select is not None:
+            self._on_select(selected, self, self.get_menu())
 
     def get_selected_time(self):
         """
@@ -1581,7 +1598,7 @@ class Widget(object):
         :return: Callback ID
         :rtype: str
         """
-        assert is_callable(draw_callback), 'draw callback must be a function type'
+        assert is_callable(draw_callback), 'draw callback must be callable (function-type)'
         callback_id = str(uuid4())
         self._draw_callbacks[callback_id] = draw_callback
         return callback_id
@@ -1630,7 +1647,7 @@ class Widget(object):
         :return: Callback ID
         :rtype: str
         """
-        assert is_callable(update_callback), 'update callback must be a function type'
+        assert is_callable(update_callback), 'update callback must be callable (function-type)'
         callback_id = str(uuid4())
         self._update_callbacks[callback_id] = update_callback
         return callback_id

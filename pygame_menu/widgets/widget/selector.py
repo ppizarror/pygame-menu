@@ -86,6 +86,8 @@ class Selector(Widget):
     :type onchange: callable, None
     :param onreturn: Callback when pressing return on the selector
     :type onreturn: callable, None
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
     :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
@@ -97,6 +99,7 @@ class Selector(Widget):
                  default=0,
                  onchange=None,
                  onreturn=None,
+                 onselect=None,
                  *args,
                  **kwargs
                  ):
@@ -112,10 +115,11 @@ class Selector(Widget):
         assert isinstance(default, int), 'default must be an integer'
 
         super(Selector, self).__init__(
-            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
-            widget_id=selector_id,
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
+            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
+            widget_id=selector_id,
             args=args,
             kwargs=kwargs
         )
