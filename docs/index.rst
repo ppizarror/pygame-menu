@@ -79,7 +79,6 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
    _source/add_sounds
    _source/themes
    _source/gallery
-   _source/migration_guide
 
 
 ==============
@@ -176,3 +175,11 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Migration Guides
+
+   _source/migration_guide_2_to_3
+   _source/migration_guide_3_to_4

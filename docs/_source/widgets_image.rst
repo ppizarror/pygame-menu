@@ -7,5 +7,7 @@ Image
 
 .. autoclass:: pygame_menu.widgets.Image
     :members:
+	:exclude-members:
     :show-inheritance:
-    :inherited-members:
+    :inherited-members: set_title, update
+	
