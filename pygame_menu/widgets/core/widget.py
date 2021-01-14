@@ -1008,7 +1008,7 @@ class Widget(object):
         """
         pass
 
-    def set_shadow(self, enabled=True, color=None, position=None, offset=None):
+    def set_shadow(self, enabled=True, color=None, position=None, offset=2):
         """
         Show text shadow.
 
@@ -1029,11 +1029,10 @@ class Widget(object):
         if position is not None:
             assert_position(position)
             self._shadow_position = position
-        if offset is not None:
-            assert isinstance(offset, (int, float))
-            if offset <= 0:
-                raise ValueError('shadow offset must be greater than zero')
-            self._shadow_offset = offset
+        assert isinstance(offset, (int, float))
+        if offset <= 0:
+            raise ValueError('shadow offset must be greater than zero')
+        self._shadow_offset = offset
 
         self._create_shadow_tuple()  # Create shadow tuple position
         self._last_render_hash = 0  # Force widget render

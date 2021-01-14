@@ -795,3 +795,11 @@ class WidgetsTest(unittest.TestCase):
         self.assertAlmostEqual(sb.get_page_step(), length, delta=2)  # Scaling delta
 
         sb.draw(surface)
+
+        # Test remove onreturn
+        sb = ScrollBar(length,
+                       world_range,
+                       '',
+                       orientation,
+                       onreturn=True
+                       )

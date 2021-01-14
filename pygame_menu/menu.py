@@ -439,7 +439,7 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the button
         :type title: str, any
@@ -557,7 +557,7 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the color input
         :type title: str, any
@@ -685,7 +685,7 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Text to be displayed
         :type title: str, any
@@ -781,7 +781,7 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the selector
         :type title: str, any
@@ -865,7 +865,7 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param title: Title of the text input
         :type title: str, any
@@ -1088,7 +1088,7 @@ class Menu(object):
         attributes['shadow_position'] = shadow_position
 
         shadow_offset = kwargs.pop('shadow_offset', self._theme.widget_shadow_offset)
-        assert isinstance(shadow_offset, (int, float, type(None)))
+        assert isinstance(shadow_offset, (int, float))
         attributes['shadow_offset'] = shadow_offset
 
         return attributes
@@ -1112,7 +1112,7 @@ class Menu(object):
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
             - ``shadow_position``       Text shadow position, see locals for position (str)
-            - ``shadow_offset``         Text shadow offset (int, float, None)
+            - ``shadow_offset``         Text shadow offset (int, float)
 
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
