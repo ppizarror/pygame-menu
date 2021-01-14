@@ -71,15 +71,16 @@ class LeftArrowSelection(ArrowSelection):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface, widget):
+        rect = widget.get_rect()
         # A
         #   \B      widget
         # C /
         #    <------>
         #     margin
-        a = (widget.get_rect().topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
-             widget.get_rect().midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
-        b = (widget.get_rect().midleft[0] - self._arrow_right_margin,
-             widget.get_rect().midleft[1] + self._arrow_vertical_offset)
-        c = (widget.get_rect().bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
-             widget.get_rect().midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+        a = (rect.topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
+             rect.midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+        b = (rect.midleft[0] - self._arrow_right_margin,
+             rect.midleft[1] + self._arrow_vertical_offset)
+        c = (rect.bottomleft[0] - self._arrow_size[0] - self._arrow_right_margin,
+             rect.midleft[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
         super(LeftArrowSelection, self)._draw_arrow(surface, widget, a, b, c)

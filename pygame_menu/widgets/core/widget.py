@@ -511,7 +511,7 @@ class Widget(object):
                 self._padding = (padding[0], padding[1], padding[2], padding[3])
         self._last_render_hash = 0  # Force widget render
 
-    def get_rect(self, inflate=None):
+    def get_rect(self, apply_padding=True, inflate=None):
         """
         Return the Rect object, this forces the widget rendering.
 
@@ -520,6 +520,8 @@ class Widget(object):
             This is the only method that returns the rect with the padding applied.
             If widget._rect is used, the padding has not been applied.
 
+        :param apply_padding: Apply widget padding
+        :type apply_padding: bool
         :param inflate: Inflate rect *(x,y)* in px
         :type inflate: None, tuple, list
         :return: Widget rect
@@ -530,7 +532,6 @@ class Widget(object):
         # Padding + inflate
         if inflate is None:
             inflate = (0, 0)
-        apply_padding = 1
 
         pad_top = self._padding[0] * apply_padding + inflate[1] / 2
         pad_right = self._padding[1] * apply_padding + inflate[0] / 2
@@ -836,6 +837,79 @@ class Widget(object):
         self._rect.x = posx + self._translate[0]
         self._rect.y = posy + self._translate[1]
         self._position_set = True
+
+    def get_position(self):
+        """
+        Return the widget position tuple *(x, y)*.
+
+        :return: Widget position
+        :rtype: tuple
+        """
+        return self._rect.x, self._rect.y
+
+    def get_width(self, apply_padding=True, apply_selection=False):
+        """
+        Return the widget width.
+
+        .. warning::
+
+            If the widget is not rendered, this method will return ``0``.
+
+        :param apply_padding: Apply padding
+        :type apply_selection: bool
+        :param apply_selection: Apply selection
+        :type apply_padding: bool
+        :return: Widget width (px)
+        :rtype: float
+        """
+        assert isinstance(apply_padding, bool)
+        assert isinstance(apply_selection, bool)
+        rect = self.get_rect(apply_padding=apply_padding)
+        width = rect.width
+        if apply_selection:
+            width += self._selection_effect.get_width()
+        return float(width)
+
+    def get_height(self, apply_padding=True, apply_selection=False):
+        """
+        Return the widget height.
+
+        .. warning::
+
+            If the widget is not rendered, this method will return ``0``.
+
+        :param apply_padding: Apply padding
+        :type apply_selection: bool
+        :param apply_selection: Apply selection
+        :type apply_padding: bool
+        :return: Widget height (px)
+        :rtype: float
+        """
+        assert isinstance(apply_padding, bool)
+        assert isinstance(apply_selection, bool)
+        rect = self.get_rect(apply_padding=apply_padding)
+        height = rect.height
+        if apply_selection:
+            height += self._selection_effect.get_height()
+        return float(height)
+
+    def get_size(self, apply_padding=True, apply_selection=False):
+        """
+        Return the widget size.
+
+        .. warning::
+
+            If the widget is not rendered this method might return ``(0,0)``.
+
+        :param apply_padding: Apply padding
+        :type apply_selection: bool
+        :param apply_selection: Apply selection
+        :type apply_padding: bool
+        :return: Widget *(width, height)*
+        :rtype: tuple
+        """
+        return self.get_width(apply_padding=apply_padding, apply_selection=apply_selection), \
+               self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
 
     def flip(self, x, y):
         """

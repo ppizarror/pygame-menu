@@ -90,6 +90,41 @@ class MenuTest(unittest.TestCase):
         """
         Test position.
         """
+        # Test centering
+        menu = MenuUtils.generic_menu()
+        btn = menu.add_button('button', None)
+        menu.center_content()
+        self.assertEqual(menu.get_height(), 400)
+        self.assertEqual(menu.get_height(inner=True), 345)
+        self.assertEqual(menu.get_menubar_widget().get_height(), 55)
+        self.assertEqual(btn.get_height(), 41)
+        self.assertEqual(btn.get_width(), 94)
+        self.assertEqual(btn.get_size()[0], 94)
+        self.assertEqual(btn.get_size()[1], 41)
+        self.assertEqual(menu.get_height(widget=True), 41)
+
+        vpos = (345 - 41) / 2  # available_height - widget_height
+        self.assertEqual(menu._widget_offset[1], vpos)
+        self.assertEqual(btn.get_position()[1], vpos)
+
+        # If there's too many widgets, the centering should be disabled
+        for i in range(20):
+            menu.add_button('button', None)
+        self.assertEqual(menu._widget_offset[1], 0)
+
+        theme = menu.get_theme()
+        self.assertEqual(41 * 21 + theme.widget_margin[1] * 20, menu.get_height(widget=True))
+
+        # Anyway, as the widget is 0, the first button position should be the height of its selection effect
+        btneff = btn.get_selection_effect().get_margin()[0]
+        self.assertEqual(btn.get_position()[1], btneff + 1)
+
+        # Test menu not centered
+        menu = MenuUtils.generic_menu(center_content=False)
+        btn = menu.add_button('button', None)
+        btneff = btn.get_selection_effect().get_margin()[0]
+        self.assertEqual(btn.get_position()[1], btneff + 1)
+
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=-1, position_y=0))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=0, position_y=-1))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=-1, position_y=-1))
@@ -97,6 +132,57 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(position_x=99, position_y=101))
         menu = MenuUtils.generic_menu(position_x=0, position_y=0)
         menu.set_relative_position(20, 40)
+
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.widget_font_size = 20
+
+        menu = pygame_menu.Menu(
+            column_max_width=[400, 400],
+            columns=2,
+            height=300,
+            rows=4,
+            theme=theme,
+            title='Welcome',
+            width=400
+        )
+
+        quit1 = menu.add_button('Quit', pygame_menu.events.EXIT)
+        name1 = menu.add_text_input('Name: ', default='John Doe', maxchar=10, padding=30)
+        sel1 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        sel2 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        play1 = menu.add_button('Play', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_LEFT)
+        hidden = menu.add_button('Hidden', None, font_size=100)
+        hidden.hide()
+        quit2 = menu.add_button('Quit', pygame_menu.events.EXIT)
+        label = menu.add_label('This label is really epic')
+        label.rotate(90)
+
+        menu.render()
+
+        x, y = quit1.get_position()
+        self.assertEqual(x, 180)
+        self.assertEqual(y, 6)
+        x, y = name1.get_position()
+        self.assertEqual(x, 125)
+        self.assertEqual(y, 74)
+        x, y = sel1.get_position()
+        self.assertEqual(x, 114)
+        self.assertEqual(y, 142)
+        x, y = sel2.get_position()
+        self.assertEqual(x, 114)
+        self.assertEqual(y, 180)
+        x, y = play1.get_position()
+        self.assertEqual(x, 409)
+        self.assertEqual(y, 6)
+        x, y = hidden.get_position()
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 0)
+        x, y = quit2.get_position()
+        self.assertEqual(x, 580)
+        self.assertEqual(y, 44)
+        x, y = label.get_position()
+        self.assertEqual(x, 586)
+        self.assertEqual(y, 82)
 
     def test_attributes(self):
         """

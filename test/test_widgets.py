@@ -659,6 +659,7 @@ class WidgetsTest(unittest.TestCase):
         # Remove button
         menu.remove_widget(btn)
         self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
+        menu.render()
 
     def test_attributes(self):
         """
