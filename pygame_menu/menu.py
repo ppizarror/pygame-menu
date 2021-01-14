@@ -2096,15 +2096,21 @@ class Menu(object):
         """
         self._top._enabled = not self._top._enabled
 
-    @staticmethod
-    def _exit():
+    def _exit(self):
         """
         Internal exit function.
 
         :return: None
         """
+        self.disable()
         pygame.quit()
-        sys.exit()
+        try:
+            sys.exit(0)
+        except SystemExit:
+            # noinspection PyUnresolvedReferences,PyProtectedMember
+            os._exit(1)
+        # This should be unrecheable
+        exit(0)
 
     def is_enabled(self):
         """
