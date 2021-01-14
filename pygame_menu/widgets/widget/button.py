@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 BUTTON
-Button class, manage elements and adds entries to menu.
+Button class, manage elements and adds entries to Menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ class Button(Widget):
             args=args,
             kwargs=kwargs
         )
-        self.to_menu = False  # True if the button opens a new menu
+        self.to_menu = False  # True if the button opens a new Menu
 
     def _apply_font(self):
         pass
@@ -103,7 +103,7 @@ class Button(Widget):
         .. note::
 
             If button points to a submenu, and the callback is changed to a function,
-            the submenu will be removed from the parent menu. Thus preserving the structure.
+            the submenu will be removed from the parent Menu. Thus preserving the structure.
 
         :param callback: Function
         :type callback: callable
@@ -143,7 +143,7 @@ class Button(Widget):
         self._surface = self._render_string(self._title, color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

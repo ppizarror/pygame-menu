@@ -66,9 +66,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type title: str
     :param colorinput_id: ID of the text input
     :type colorinput_id: str
-    :param color_type: Type of color input (rgb, hex)
+    :param color_type: Type of color input ``(rgb, hex)``
     :type color_type: str
-    :param hex_format: Hex format string mode (none, lower, upper)
+    :param hex_format: Hex format string mode ``(none, lower, upper)``
     :type hex_format: str
     :param input_separator: Divisor between RGB channels
     :type input_separator: str

@@ -74,7 +74,7 @@ class Selection(object):
         """
         Return the top, left, bottom and right margins of the selection.
 
-        :return: Tuple of *(top,left,bottom,right)* margins in px
+        :return: Tuple of *(top, left, bottom, right)* margins in px
         :rtype: tuple
         """
         return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
@@ -83,7 +83,7 @@ class Selection(object):
         """
         Return the x/y margins of the selection.
 
-        :return: Tuple of *(x,y)* margins
+        :return: Tuple of *(x, y)* margins
         :rtype: tuple
         """
         return self.margin_left + self.margin_right, self.margin_top + self.margin_bottom

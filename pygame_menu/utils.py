@@ -206,7 +206,7 @@ def to_string(s, strict=False):
 
     :param s: String
     :type s: any
-    :param strict: If True, deny any unicode string if python 2
+    :param strict: If ``True``, deny any unicode string if python 2
     :type strict: bool
     :return: String
     :rtype: str

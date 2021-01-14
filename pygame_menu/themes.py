@@ -55,7 +55,7 @@ class Theme(object):
     .. note::
 
         Themes only modify visual behaviour of the Menu. For other options
-        like rows/columns, enabling or disabling overflow, position or menu
+        like rows/columns, enabling or disabling overflow, position, or Menu
         width/height see Menu parameters.
 
     :param background_color: Menu background color
@@ -64,11 +64,11 @@ class Theme(object):
     :type cursor_color: tuple, list
     :param cursor_selection_color: Selection box color
     :type cursor_selection_color: tuple, list
-    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements. Also must be transparent
+    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements *(R, G, B, A)*
     :type focus_background_color: tuple, list
-    :param menubar_close_button: Draw a back-box button on header to close the menu, if user moves through nested submenus this buttons turns to a back-arrow
+    :param menubar_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scoll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. Default ``(0,0)``. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scoll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -86,7 +86,7 @@ class Theme(object):
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbars thickness
     :type scrollbar_thick: int, float
-    :param selection_color: Color of the selected widget, it affects font color and the selection effect (only the theme selection effect)
+    :param selection_color: Color of the selected widget, it affects font color and the selection effect
     :type selection_color: tuple, list
     :param surface_clear_color: Surface clear color before applying background function
     :type surface_clear_color: tuple, list
@@ -94,7 +94,7 @@ class Theme(object):
     :type title_background_color: tuple, list
     :param title_bar_style: Style of the title, use menubar widget styles
     :type title_bar_style: int
-    :param title_font: Optional title font, if ``None`` use the Menu default font
+    :param title_font: Optional title font, if ``None`` theme uses the Menu default font
     :type title_font: str, None
     :param title_font_antialias: Title font renders with antialiasing
     :type title_font_antialias: bool
@@ -102,7 +102,7 @@ class Theme(object):
     :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
     :type title_font_size: int
-    :param title_offset: Offset *(x-position,y-position)* of title (px). Default ``(0,0)``
+    :param title_offset: Offset *(x-position, y-position)* of title (px)
     :type title_offset: tuple, list
     :param title_shadow: Enable shadow on title
     :type title_shadow: bool
@@ -116,25 +116,25 @@ class Theme(object):
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget, it can be a color or a BaseImage object. Background fills the entire widget + the padding
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-    :param widget_background_inflate: Inflate background in *(x,y)* in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
+    :param widget_background_inflate: Inflate background in *(x, y)* in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
     :type widget_background_inflate: tuple, list
     :param widget_font: Widget font path or name
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
-    :param widget_font_background_color: Widget font background color. By default it is ``None``. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
+    :param widget_font_background_color: Widget font background color. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
     :type widget_font_background_color: tuple, list, None
-    :param widget_font_background_color_from_menu: Use menu background color as font background color; disabled by default
+    :param widget_font_background_color_from_menu: Use Menu background color as font background color; disabled by default
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
     :param widget_font_size: Font size
     :type widget_font_size: int
-    :param widget_margin: Horizontal and vertical margin of each element in Menu (px). Default ``(0,10)``
+    :param widget_margin: Horizontal and vertical margin of each element in Menu (px)
     :type widget_margin: tuple, list
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements. Padding modifies widget width/height
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. Default is ``(0,0)``. It cannot be negative values
+    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
@@ -247,7 +247,7 @@ class Theme(object):
     def validate(self):
         """
         Validate the values of the theme. If there's a invalid parameter throws an
-        AssertionError.
+        ``AssertionError``.
 
         This function also converts all lists to tuples. This is done because lists
         are mutable.
@@ -305,9 +305,9 @@ class Theme(object):
 
     def set_background_color_opacity(self, opacity):
         """
-        Modify menu background color with given opacity.
+        Modify the Menu background color with given opacity.
 
-        :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (transparent)
+        :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (opaque)
         :type opacity: float
         :return: None
         """
@@ -384,13 +384,13 @@ class Theme(object):
         """
         Return a value from a dictionary.
 
-        :param params: parameters dictionary
+        :param params: Parameters dictionary
         :type params: dict
-        :param key: key to look for
+        :param key: Key to look for
         :type key: str
-        :param allowed_types: list of allowed types
+        :param allowed_types: List of allowed types
         :type allowed_types: any
-        :param default: default value to return
+        :param default: Default value to return
         :type default: any
         :return: The value associated to the key
         :rtype: any

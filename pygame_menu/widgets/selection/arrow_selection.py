@@ -50,7 +50,7 @@ class ArrowSelection(Selection):
     :type margin_top: int, float
     :param margin_bottom: Bottom margin
     :type margin_bottom: int, float
-    :param arrow_size: Size of arrow on *(x,y)* axis *(width,height)*
+    :param arrow_size: Size of arrow on *(x, y)* axis *(width, height)*
     :type arrow_size: tuple, list
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int

@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SCROLLAREA
-ScrollArea class to manage scrolling in menu.
+ScrollArea class to manage scrolling in Menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -550,7 +550,7 @@ class ScrollArea(object):
 
     def set_menu(self, menu):
         """
-        Set the menu reference.
+        Set the Menu reference.
 
         :param menu: Menu object
         :type menu: :py:class:`pygame_menu.Menu`
@@ -562,7 +562,7 @@ class ScrollArea(object):
 
     def get_menu(self):
         """
-        Return the menu reference (if exists).
+        Return the Menu reference (if exists).
 
         :return: Menu reference
         :rtype: :py:class:`pygame_menu.Menu`, None

@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 WIDGETS
-Widgets elements that can be added to the menu.
+Widgets elements that can be added to the Menu.
 
 License:
 -------------------------------------------------------------------------------

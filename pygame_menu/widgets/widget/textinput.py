@@ -104,7 +104,7 @@ class TextInput(Widget):
     :type cursor_selection_color: tuple
     :param cursor_selection_enable: Enables selection of text
     :type cursor_selection_enable: bool
-    :param copy_paste_enable: Enables copy, paste and cut
+    :param copy_paste_enable: Enables copy, paste, and cut
     :type copy_paste_enable: bool
     :param history: Maximum number of editions stored
     :type history: int
@@ -259,7 +259,7 @@ class TextInput(Widget):
         self._cursor_ms_counter = 0.0  # type: float
         self._cursor_offset = -1.0  # type: float
         self._cursor_position = 0  # Inside text
-        self._cursor_render = True  # If true cursor must be rendered
+        self._cursor_render = True  # If True cursor must be rendered
         self._cursor_surface = None  # type: (pygame.Surface, None)
         self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
         self._cursor_switch_ms = 500.0  # type: float
@@ -441,7 +441,7 @@ class TextInput(Widget):
         # Update the size of the render
         self._rect.width, self._rect.height = self._surface.get_size()
 
-        # Force menu update
+        # Force Menu update
         self._menu_surface_needs_update = True
 
     def _render_selection_box(self, force=False):
@@ -604,7 +604,7 @@ class TextInput(Widget):
 
         # Cursor surface does not exist
         if self._cursor_surface is None:
-            if self._rect.height == 0:  # If menu has not been initialized this error can occur
+            if self._rect.height == 0:  # If Menu has not been initialized this error can occur
                 return
             self._cursor_surface = make_surface(self._font_size / 20 + 1, self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)

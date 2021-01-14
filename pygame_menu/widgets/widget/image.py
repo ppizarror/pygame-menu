@@ -50,7 +50,7 @@ class Image(Widget):
     :type angle: int, float
     :param onselect: Function when selecting the widget
     :type onselect: callable, None
-    :param scale: Scale of the image *(x,y)*
+    :param scale: Scale of the image *(x, y)*
     :type scale: tuple, list
     :param scale_smooth: Scale is smoothed
     :type scale_smooth: bool
@@ -138,7 +138,7 @@ class Image(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._render_hash_changed(self.visible):
             return True
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

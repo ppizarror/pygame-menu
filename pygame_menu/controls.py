@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 CONTROLS
-Default controls of menu object and key definition.
+Default controls of Menu object and key definition.
 
 License:
 -------------------------------------------------------------------------------
