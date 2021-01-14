@@ -8,7 +8,7 @@ Color input class, Widget created in top of TextInput that provides a textbox
 for entering and previewing colors in RGB and HEX format.
 
 NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider
-upgrading to the lastest version.
+upgrading to the latest version.
 
 License:
 -------------------------------------------------------------------------------
