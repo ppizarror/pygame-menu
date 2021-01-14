@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SELECTOR
-Selector class, manage elements and adds entries to menu.
+Selector class, manage elements and adds entries to Menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -86,6 +86,8 @@ class Selector(Widget):
     :type onchange: callable, None
     :param onreturn: Callback when pressing return on the selector
     :type onreturn: callable, None
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
     :param kwargs: Optional keyword arguments
     :type kwargs: dict
     """
@@ -97,6 +99,7 @@ class Selector(Widget):
                  default=0,
                  onchange=None,
                  onreturn=None,
+                 onselect=None,
                  *args,
                  **kwargs
                  ):
@@ -112,10 +115,11 @@ class Selector(Widget):
         assert isinstance(default, int), 'default must be an integer'
 
         super(Selector, self).__init__(
-            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
-            widget_id=selector_id,
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
+            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
+            widget_id=selector_id,
             args=args,
             kwargs=kwargs
         )
@@ -194,7 +198,7 @@ class Selector(Widget):
         self._surface = self._render_string(string, color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     def set_value(self, item):
         """

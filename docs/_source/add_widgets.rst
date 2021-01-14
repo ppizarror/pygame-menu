@@ -52,8 +52,8 @@ three values:
 .. automethod:: pygame_menu.Menu.add_button
 
 
-Add a choices list
-------------------
+Add a choices list (selector)
+-----------------------------
 
 A selector gives the possibility choose a value in a predefined list.
 An item of a selector is a tuple: the first element is the text

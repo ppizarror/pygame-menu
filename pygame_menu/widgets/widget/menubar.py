@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 MENUBAR
-MenuBar class to display menu title.
+MenuBar class to display the Menu title.
 
 License:
 -------------------------------------------------------------------------------
@@ -118,6 +118,7 @@ class MenuBar(Widget):
         self._width = width
 
         self.set_title(title, offsetx, offsety)
+        self.is_selectable = False
 
     def _apply_font(self):
         pass
@@ -153,8 +154,8 @@ class MenuBar(Widget):
         # Draw backbox if enabled
         if self.mouse_enabled and self._backbox:
 
-            # The following check belongs to the case if the menu displays a "x" button to close
-            # the menu, but onclose Menu method is None (Nothing is executed), then the button will
+            # The following check belongs to the case if the Menu displays a "x" button to close
+            # the Menu, but onclose Menu method is None (Nothing is executed), then the button will
             # not be displayed
             # noinspection PyProtectedMember
             if self._box_mode == _MODE_CLOSE and self.get_menu()._onclose is None:
@@ -306,7 +307,7 @@ class MenuBar(Widget):
             )
 
             if self._box_mode == _MODE_CLOSE:
-                # Make a cross for top menu
+                # Make a cross for top Menu
                 self._backbox_pos = (
                     (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
                     (self._backbox_rect.centerx, self._backbox_rect.centery),

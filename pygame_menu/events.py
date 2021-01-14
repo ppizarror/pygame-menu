@@ -66,7 +66,7 @@ def is_event(event):
 
 # Events
 BACK = MenuAction(0)  # Menu back
-CLOSE = MenuAction(1)  # Close menu
+CLOSE = MenuAction(1)  # Close Menu
 DISABLE_CLOSE = MenuAction(2)  # Menu disable closing
 EXIT = MenuAction(3)  # Menu exit program
 NONE = MenuAction(4)  # None action

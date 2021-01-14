@@ -9,3 +9,4 @@ NoneWidget
     :members:
     :show-inheritance:
     :inherited-members:
+	:exclude-members: 

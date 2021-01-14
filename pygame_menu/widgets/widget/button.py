@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 BUTTON
-Button class, manage elements and adds entries to menu.
+Button class, manage elements and adds entries to Menu.
 
 License:
 -------------------------------------------------------------------------------
@@ -73,10 +73,27 @@ class Button(Widget):
             args=args,
             kwargs=kwargs
         )
-        self.to_menu = False  # True if the button opens a new menu
+        self.to_menu = False  # True if the button opens a new Menu
 
     def _apply_font(self):
         pass
+
+    def set_selection_callback(self, callback):
+        """
+        Update the button selection callback, once button is selected, the callback
+        function is executed as follows:
+
+        .. code-block:: python
+
+            callback(selected, widget, menu)
+
+        :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+        :type callback: callback, None
+        :return: None
+        """
+        if callback is not None:
+            assert is_callable(callback), 'callback must be callable (function-type) or None'
+        self._on_select = callback
 
     def update_callback(self, callback, *args):
         """
@@ -86,7 +103,7 @@ class Button(Widget):
         .. note::
 
             If button points to a submenu, and the callback is changed to a function,
-            the submenu will be removed from the parent menu. Thus preserving the structure.
+            the submenu will be removed from the parent Menu. Thus preserving the structure.
 
         :param callback: Function
         :type callback: callable
@@ -94,7 +111,7 @@ class Button(Widget):
         :type args: any
         :return: None
         """
-        assert is_callable(callback), 'only function are allowed'
+        assert is_callable(callback), 'only callable (function-type) are allowed'
 
         # If return is a Menu object, remove it from submenus list
         if self._menu is not None and self._on_return is not None and self.to_menu:
@@ -126,7 +143,7 @@ class Button(Widget):
         self._surface = self._render_string(self._title, color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

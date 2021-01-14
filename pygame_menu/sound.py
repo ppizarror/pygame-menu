@@ -64,13 +64,13 @@ class Sound(object):
     """
     Sound engine class.
     
-    :param uniquechannel: Force the channel to be unique, this is set at the moment of creation of the object
+    :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
     :type uniquechannel: bool
     :param frequency: Frequency of sounds
     :type frequency: int
     :param size: Size of sample
     :type size: int
-    :param channels: Number of channels by default
+    :param channels: Number of channels
     :type channels: int
     :param buffer: Buffer size
     :type buffer: int
@@ -371,7 +371,7 @@ class Sound(object):
 
     def play_open_menu(self):
         """
-        Play open menu sound.
+        Play open Menu sound.
 
         :return: None
         """
@@ -379,7 +379,7 @@ class Sound(object):
 
     def play_close_menu(self):
         """
-        Play close menu sound.
+        Play close Menu sound.
 
         :return: None
         """
@@ -395,7 +395,7 @@ class Sound(object):
 
     def stop(self):
         """
-        Stop the current the channel.
+        Stop the the channel.
 
         :return: None
         """
@@ -409,7 +409,7 @@ class Sound(object):
 
     def pause(self):
         """
-        Pause the current channel.
+        Pause the channel.
 
         :return: None
         """
@@ -437,7 +437,7 @@ class Sound(object):
 
     def get_channel_info(self):
         """
-        Return the current channel information of the sound engine.
+        Return the channel information.
 
         :return: An info dict e.g.: ``{'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}``
         :rtype: dict

@@ -48,7 +48,9 @@ class Image(Widget):
     :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
     :type angle: int, float
-    :param scale: Scale of the image *(x,y)*
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
+    :param scale: Scale of the image *(x, y)*
     :type scale: tuple, list
     :param scale_smooth: Scale is smoothed
     :type scale_smooth: bool
@@ -58,6 +60,7 @@ class Image(Widget):
                  image_path,
                  image_id='',
                  angle=0,
+                 onselect=None,
                  scale=(1, 1),
                  scale_smooth=True
                  ):
@@ -66,7 +69,10 @@ class Image(Widget):
         assert isinstance(angle, (int, float))
         assert isinstance(scale, (tuple, list))
         assert isinstance(scale_smooth, bool)
-        super(Image, self).__init__(widget_id=image_id)
+        super(Image, self).__init__(
+            onselect=onselect,
+            widget_id=image_id
+        )
 
         if isinstance(image_path, BaseImage):
             self._image = image_path
@@ -132,7 +138,7 @@ class Image(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._render_hash_changed(self.visible):
             return True
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

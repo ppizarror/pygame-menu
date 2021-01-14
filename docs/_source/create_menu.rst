@@ -7,6 +7,7 @@ Creating menus
 
 Ready to go deeper into menu usage?
 
+
 Configuring the menu
 --------------------
 
@@ -15,6 +16,7 @@ the screen. It offers many parameters to let you adapt the behavior and the visu
 aspects of the menu.
 
 The less trivial ones are explained here.
+
 
 Widgets alignment
 ^^^^^^^^^^^^^^^^^
@@ -53,6 +55,7 @@ been added by calling the method :py:meth:`pygame_menu.Menu.center_content`:
 .. note:: If the menu size is insufficient to show all of the widgets, horizontal
           and/or vertical scrollbar(s) will appear automatically.
 
+
 Column and row
 ^^^^^^^^^^^^^^
 
@@ -63,6 +66,10 @@ a grid.
 The defined grid of ``columns`` x ``rows`` cells will be completed with
 the widgets (in order of definition) **column by column** starting at the
 **top-left** corner of the menu.
+
+Also the width of each column can be set using ``column_max_width`` and
+``column_min_width`` Menu parameters.
+
 
 On-close callback
 ^^^^^^^^^^^^^^^^^

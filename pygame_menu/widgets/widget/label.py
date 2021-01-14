@@ -41,11 +41,18 @@ class Label(Widget):
     :type title: str
     :param label_id: Label ID
     :type label_id: str
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
     """
 
-    def __init__(self, title, label_id=''):
+    def __init__(self,
+                 title,
+                 label_id='',
+                 onselect=None,
+                 ):
         super(Label, self).__init__(
             title=title,
+            onselect=onselect,
             widget_id=label_id
         )
 
@@ -67,7 +74,7 @@ class Label(Widget):
         self._surface = self._render_string(self._title, self._font_color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._menu_surface_needs_update = True  # Force menu update
+        self._menu_surface_needs_update = True  # Force Menu update
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):

@@ -142,7 +142,7 @@ class BaseImage(object):
         """
         Return the size in pixels of the image.
 
-        :return: Image size tuple *(width,height)*
+        :return: Image size tuple *(width, height)*
         :rtype: tuple
         """
         return self._surface.get_width(), self._surface.get_height()
@@ -213,7 +213,7 @@ class BaseImage(object):
 
             See :py:meth:`pygame_menu.BaseImage.to_bw` method as an example.
 
-        :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r,g,b,a)*
+        :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r, g, b, a)*
         :type image_function: callable
         :return: Self reference
         :rtype: :py:class:`pygame_menu.baseimage.BaseImage`

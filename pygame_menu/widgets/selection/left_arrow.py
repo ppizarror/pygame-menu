@@ -36,9 +36,9 @@ from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 class LeftArrowSelection(ArrowSelection):
     """
     Widget selection left arrow class.
-    Creates an arrow to the left of the selected menu item.
+    Creates an arrow to the left of the selected Menu item.
 
-    :param arrow_size: Size of arrow on *(x,y)* axis *(width,height)*
+    :param arrow_size: Size of arrow on *(x, y)* axis *(width, height)*
     :type arrow_size: tuple, list
     :param arrow_right_margin: Distance from the arrow to the widget
     :type arrow_right_margin: int, float

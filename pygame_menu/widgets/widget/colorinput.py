@@ -66,9 +66,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type title: str
     :param colorinput_id: ID of the text input
     :type colorinput_id: str
-    :param color_type: Type of color input (rgb, hex)
+    :param color_type: Type of color input ``(rgb, hex)``
     :type color_type: str
-    :param hex_format: Hex format string mode (none, lower, upper)
+    :param hex_format: Hex format string mode ``(none, lower, upper)``
     :type hex_format: str
     :param input_separator: Divisor between RGB channels
     :type input_separator: str
@@ -80,6 +80,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type onchange: callable, None
     :param onreturn: Function when pressing return on the color text input
     :type onreturn: callable, None
+    :param onselect: Function when selecting the widget
+    :type onselect: callable, None
     :param prev_size: Width of the previsualization box in terms of the height of the widget
     :type prev_size: int, float
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
@@ -102,6 +104,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  cursor_color=(0, 0, 0),
                  onchange=None,
                  onreturn=None,
+                 onselect=None,
                  prev_size=3,
                  repeat_keys_initial_ms=450,
                  repeat_keys_interval_ms=80,
@@ -157,6 +160,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             maxwidth=_maxwidth,  # Disabled
             onchange=onchange,
             onreturn=onreturn,
+            onselect=onselect,
             password=_password,
             repeat_keys_initial_ms=repeat_keys_initial_ms,
             repeat_keys_interval_ms=repeat_keys_interval_ms,
