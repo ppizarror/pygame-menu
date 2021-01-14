@@ -48,7 +48,7 @@ class Button(Widget):
         onreturn(*args, **kwargs)
 
     :param title: Button title
-    :type title: str
+    :type title: str, any
     :param button_id: Button ID
     :type button_id: str
     :param onreturn: Callback when pressing the button
@@ -56,7 +56,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

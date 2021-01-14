@@ -123,9 +123,7 @@ def main(test=False):
                      slider_pad=2,
                      page_ctrl_thick=thick_h,
                      onchange=h_changed)
-    sb_h.set_shadow(color=(0, 0, 0),
-                    position=_locals.POSITION_SOUTHEAST,
-                    offset=2)
+    sb_h.set_shadow(color=(0, 0, 0), position=_locals.POSITION_SOUTHEAST)
     sb_h.set_controls(False)
     sb_h.set_position(0, scr_size[1] - thick_h)
     sb_h.set_page_step(scr_size[0] - thick_v)

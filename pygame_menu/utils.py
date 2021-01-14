@@ -196,6 +196,7 @@ def is_callable(func):
     :return: Bool
     :rtype: bool
     """
+    # noinspection PyTypeChecker
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
 
 

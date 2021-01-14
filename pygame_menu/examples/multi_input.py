@@ -42,7 +42,7 @@ import pygame_menu
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
-FPS = 60.0
+FPS = 60
 WINDOW_SIZE = (640, 480)
 
 sound = None  # type: pygame_menu.sound.Sound

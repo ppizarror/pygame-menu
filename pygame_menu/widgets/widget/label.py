@@ -38,7 +38,7 @@ class Label(Widget):
     Label widget.
 
     :param title: Label title/text
-    :type title: str
+    :type title: str, any
     :param label_id: Label ID
     :type label_id: str
     :param onselect: Function when selecting the widget

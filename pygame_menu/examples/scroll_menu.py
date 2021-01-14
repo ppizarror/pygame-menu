@@ -36,7 +36,7 @@ import pygame_menu
 
 from functools import partial
 
-FPS = 30.0
+FPS = 30
 H_SIZE = 600  # Height of window size
 W_SIZE = 800  # Width of window size
 

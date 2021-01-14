@@ -276,7 +276,7 @@ def main(test=False):
             # Draw timer
             surface.fill(COLOR_BACKGROUND)
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
-            time_blit = timer_font.render(time_string, 1, (255, 255, 255))
+            time_blit = timer_font.render(time_string, True, (255, 255, 255))
             time_blit_size = time_blit.get_size()
             surface.blit(time_blit, (int(W_SIZE / 2 - time_blit_size[0] / 2),
                                      int(H_SIZE / 2 - time_blit_size[1] / 2)))

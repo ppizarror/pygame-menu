@@ -41,7 +41,7 @@ from pygame_menu import locals
 from pygame_menu.scrollarea import ScrollArea
 from pygame_menu.utils import make_surface
 
-FPS = 30.0
+FPS = 30
 W_SIZE = 800  # Width of window size
 H_SIZE = 600  # Height of window size
 COLOR_BACKGROUND = (128, 230, 198)

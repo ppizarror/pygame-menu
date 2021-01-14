@@ -62,7 +62,7 @@ class Widget(object):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

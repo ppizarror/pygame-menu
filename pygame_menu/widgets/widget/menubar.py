@@ -49,6 +49,7 @@ _MODE_CLOSE = 1020
 _MODE_BACK = 1021
 
 
+# noinspection PyMissingOrEmptyDocstring
 class MenuBar(Widget):
     """
     MenuBar widget.
@@ -76,7 +77,7 @@ class MenuBar(Widget):
     :param args: Optional arguments for callbacks
     :type args: any
     :param kwargs: Optional keyword arguments for callbacks
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

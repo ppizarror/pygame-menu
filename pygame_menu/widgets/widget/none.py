@@ -36,6 +36,7 @@ from pygame_menu.widgets.core import Widget
 import pygame
 
 
+# noinspection PyMissingOrEmptyDocstring
 class NoneWidget(Widget):
     """
     None widget. Usefull if used for filling column/row layout.

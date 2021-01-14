@@ -34,6 +34,7 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets.core import Widget
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Image(Widget):
     """
     Image widget.

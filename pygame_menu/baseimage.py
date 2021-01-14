@@ -59,6 +59,7 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', 
                         '.pbm', '.pgm', '.ppm', '.xpm']
 
 
+# noinspection PyMissingOrEmptyDocstring
 class BaseImage(object):
     """
     Object that loads an image, stores as a surface, transform it and

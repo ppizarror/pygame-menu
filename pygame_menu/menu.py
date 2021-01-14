@@ -97,7 +97,7 @@ class Menu(object):
     :param touchscreen_motion_selection: Select widgets using touchscreen motion
     :type touchscreen_motion_selection: bool
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,
@@ -453,7 +453,7 @@ class Menu(object):
         Set ``onclose`` callback.
 
         :param onclose: Onclose callback, it can be a function, an event or None
-        :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
+        :type onclose: :py:class:`pygame_menu.events.MenuAction`, function, None
         :return: None
         """
         assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
@@ -477,7 +477,7 @@ class Menu(object):
         Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
 
         :param kwargs: Kwargs dict
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: None
         """
         for invalid_keyword in kwargs.keys():
@@ -553,13 +553,13 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the button
-        :type title: str
+        :type title: str, any
         :param action: Action of the button, can be a Menu, an event or a function
         :type action: :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param args: Additional arguments used by a function
         :type args: any
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Button`
         """
@@ -695,7 +695,7 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the color input
-        :type title: str
+        :type title: str, any
         :param color_type: Type of the color input, can be ``"rgb"`` or ``"hex"``
         :type color_type: str
         :param color_id: ID of the color input
@@ -717,7 +717,7 @@ class Menu(object):
         :param previsualization_width: Previsualization width as a factor of the height
         :type previsualization_width: int, float
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
         """
@@ -800,7 +800,7 @@ class Menu(object):
         :param selectable: Image accepts user selection
         :type selectable: bool
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Image`
         """
@@ -875,7 +875,7 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param title: Text to be displayed
-        :type title: str
+        :type title: str, any
         :param label_id: ID of the label
         :type label_id: str
         :param max_char: Split the title in several labels if length exceeds; ``0``: don't split, ``-1``: split to Menu width
@@ -885,7 +885,7 @@ class Menu(object):
         :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
@@ -1003,7 +1003,7 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the selector
-        :type title: str
+        :type title: str, any
         :param items: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :type items: list
         :param default: Index of default value to display
@@ -1017,7 +1017,7 @@ class Menu(object):
         :param selector_id: ID of the selector
         :type selector_id: str
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
@@ -1107,7 +1107,7 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the text input
-        :type title: str
+        :type title: str, any
         :param default: Default value to display
         :type default: str, int, float
         :param copy_paste_enable: Enable text copy, paste and cut
@@ -1139,7 +1139,7 @@ class Menu(object):
         :param valid_chars: List of authorized chars, ``None`` if all chars are valid
         :type valid_chars: list
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
@@ -1287,7 +1287,7 @@ class Menu(object):
         The valid (key, value) are removed from the initial dictionary.
 
         :param kwargs: Optional keyword arguments (input attributes)
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: Dictionary of valid attributes
         :rtype: dict
         """
@@ -1379,7 +1379,7 @@ class Menu(object):
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param kwargs: Optional keywords arguments
-        :type kwargs: dict
+        :type kwargs: dict, any
         :return: None
         """
         assert isinstance(widget, _widgets.core.Widget)
@@ -2204,7 +2204,7 @@ class Menu(object):
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
 
-        selected_widget = None  # type: _widgets.core.Widget
+        selected_widget = None  # type: (_widgets.core.Widget, None)
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]
@@ -2426,6 +2426,7 @@ class Menu(object):
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
+        fps_limit = int(fps_limit)
 
         # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():

@@ -52,6 +52,7 @@ def check_selector_elements(elements):
             'first element of each item on list must be a string (the title of each item)'
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Selector(Widget):
     """
     Selector widget: several items with values and two functions that are executed
@@ -75,7 +76,7 @@ class Selector(Widget):
     For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
 
     :param title: Selector title
-    :type title: str
+    :type title: str, any
     :param elements: Elements of the selector
     :type elements: list
     :param selector_id: ID of the selector
@@ -89,7 +90,7 @@ class Selector(Widget):
     :param onselect: Function when selecting the widget
     :type onselect: callable, None
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict
+    :type kwargs: dict, any
     """
 
     def __init__(self,

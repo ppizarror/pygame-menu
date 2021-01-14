@@ -224,6 +224,7 @@ class ScrollArea(object):
                 if self.get_hidden_height():
                     sbar.draw(surface)  # Display scrollbar
 
+        # noinspection PyTypeChecker
         surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
 
     def get_hidden_width(self):
