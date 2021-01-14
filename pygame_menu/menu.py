@@ -100,8 +100,6 @@ class Menu(object):
     :type touchscreen_enabled: bool
     :param touchscreen_motion_selection: Select widgets using touchscreen motion
     :type touchscreen_motion_selection: bool
-    :param kwargs: Optional keyword arguments
-    :type kwargs: dict, any
     """
 
     def __init__(self,
@@ -125,8 +123,7 @@ class Menu(object):
                  screen_dimension=None,
                  theme=_themes.THEME_DEFAULT.copy(),
                  touchscreen_enabled=False,
-                 touchscreen_motion_selection=False,
-                 **kwargs
+                 touchscreen_motion_selection=False
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
@@ -299,6 +296,8 @@ class Menu(object):
         self._columns = columns
         self._force_fit_text = column_force_fit_text
         self._rows = rows
+        self._widget_max_position = (0, 0)
+        self._widget_min_position = (0, 0)
 
         # Init joystick
         self._joystick = joystick_enabled
@@ -324,6 +323,8 @@ class Menu(object):
         if touchscreen_enabled:
             version_major, _, _ = pygame.version.vernum
             assert version_major >= 2, 'touchscreen is only supported in pygame v2+'
+        if touchscreen_motion_selection:
+            assert touchscreen_enabled, 'touchscreen_motion_selection cannot be enabled if touchscreen is disabled'
         self._touchscreen = touchscreen_enabled
         self._touchscreen_motion_selection = touchscreen_motion_selection
 
@@ -377,11 +378,6 @@ class Menu(object):
         )
         self._scroll.set_menu(self)
         self._overflow = tuple(overflow)
-
-        # Upon this, no more kwargs should exist, raise exception if there's more
-        for invalid_keyword in kwargs.keys():
-            msg = 'menu constructor parameter {} does not exist'.format(invalid_keyword)
-            raise ValueError(msg)
 
     def set_onclose(self, onclose):
         """
@@ -1175,6 +1171,9 @@ class Menu(object):
         if self._center_content:
             self.center_content()
         self._widgets_surface = None  # If added on execution time forces the update of the surface
+        if self._center_content:
+            self.center_content()
+        self._render()
 
     def select_widget(self, widget):
         """
@@ -1244,6 +1243,7 @@ class Menu(object):
                 self._select(self._index - 1)
             else:
                 self._select(self._index)
+        self._update_widget_position()
         if update_surface:
             if self._center_content:
                 self.center_content()
@@ -1331,6 +1331,12 @@ class Menu(object):
         for widget in self._widgets:  # type: _widgets.core.Widget
             widget_rects[widget.get_id()] = widget.get_rect()
 
+        # Widget max/min position
+        max_x = -1e8
+        max_y = -1e8
+        min_x = 1e8
+        min_y = 1e8
+
         # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]  # type: _widgets.core.Widget
@@ -1370,25 +1376,27 @@ class Menu(object):
                 if rwidget.visible:
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
-            y_coord = max(1, self._widget_offset[1]) + ysum + widget.get_padding()[0]
+            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
+
+            # If the widget offset is zero, then add the selection effect to the height
+            # of the widget to avoid visual glitches
+            if self._widget_offset[1] == 0:
+                y_coord += selection.get_margin()[0] + 1  # add 1px of linewidth
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
 
-    def _get_widget_max_position(self):
-        """
-        Return the lower rightmost position of each widgets in Menu.
-
-        :return: Rightmost position
-        :rtype: tuple
-        """
-        max_x = -1e6
-        max_y = -1e6
-        for widget in self._widgets:  # type: _widgets.core.Widget
+            # Update max/min position
             x, y = widget.get_rect().bottomright
             max_x = max(max_x, x)
             max_y = max(max_y, y)
-        return max_x, max_y
+            x, y = widget.get_rect().topleft
+            min_x = min(min_x, x)
+            min_y = min(min_y, y)
+
+        # Save max/min position
+        self._widget_max_position = (max_x, max_y)
+        self._widget_min_position = (min_x, min_y)
 
     def _update_selection_if_hidden(self):
         """
@@ -1397,8 +1405,9 @@ class Menu(object):
         :return: None
         """
         if len(self._widgets) > 0:
-            selected_widget = self._widgets[self._index % len(self._widgets)]
+            selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
             if not selected_widget.visible:
+                selected_widget.set_selected(False)  # Unselect
                 self._update_after_remove_or_hidden(-1, update_surface=False)
 
     def _build_widget_surface(self):
@@ -1411,7 +1420,7 @@ class Menu(object):
         self._update_widget_position()
 
         menubar_height = self._menubar.get_rect().height
-        max_x, max_y = self._get_widget_max_position()
+        max_x, max_y = self._widget_max_position
 
         # Get scrollbars size
         sx = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
@@ -1578,13 +1587,58 @@ class Menu(object):
             self._widget_offset[1] = 0
             return
         self._build_widget_surface()  # For position
+        available = self.get_height(inner=True)
+        widget_height = self.get_height(widget=True)
+        self._widget_offset[1] = max(float(available - widget_height) / 2, 0)
+        self._widgets_surface = None  # Rebuild on the next draw
+
+    def get_height(self, inner=False, widget=False):
+        """
+        Get menu height.
+
+        :param inner: If ``True`` returns the available height (menu height minus scroll and menubar)
+        :type inner: bool
+        :param widget: If ``True`` returns the height of the drawn widgets
+        :type widget: bool
+        :return: Height in px
+        :rtype: int, float
+        """
+        if widget:
+            return self._widget_max_position[1] - self._widget_min_position[1]
+        if not inner:
+            return self._height
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
-        _, max_y = self._get_widget_max_position()
-        max_y -= self._widget_offset[1]  # Only use total height
-        available = self._height - self._menubar.get_rect().height - horizontal_scroll
-        new_pos = max((available - max_y) / (2.0 * self._height), 0)  # Percentage of height
-        self._widget_offset[1] = self._height * new_pos
-        self._current._widgets_surface = None  # Rebuild on the next draw
+        return self._height - self._menubar.get_height() - horizontal_scroll
+
+    def render(self):
+        """
+        Force **current** Menu rendering. Useful to force widget update.
+
+        .. note::
+
+            This method should not be called if the Menu is being drawn as
+            this method is called by :py:meth:`pygame_menu.Menu.draw`
+
+        .. warning::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            for example, ``menu.get_current().render(...)``
+
+        :return: None
+        """
+        self._current._widgets_surface = None
+        self._current._render()
+
+    def _render(self):
+        """
+        Menu rendering.
+
+        :return: None
+        """
+        if self._widgets_surface is None:
+            if self._center_content:
+                self.center_content()
+            self._build_widget_surface()
 
     def draw(self, surface, clear_surface=False):
         """
@@ -1604,12 +1658,8 @@ class Menu(object):
         if not self.is_enabled():
             raise RuntimeError('menu is not enabled, it cannot be drawn')
 
-        # The surface may has been erased because the number
-        # of widgets has changed and thus size shall be calculated.
-        if not self._current._widgets_surface:
-            if self._current._center_content:
-                self._current.center_content()
-            self._current._build_widget_surface()
+        # Render menu
+        self._current._render()
 
         # Clear surface
         if clear_surface:
@@ -2133,6 +2183,28 @@ class Menu(object):
         :rtype: str
         """
         return self._menubar.get_title()
+
+    def set_title(self, title, offset=None):
+        """
+        Set the title of the Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param title: New menu title
+        :type title: str, any
+        :param offset: If ``None`` uses theme offset, else it defines the title offset in *(x, y)*
+        :type offset: None, tuple, list
+        :return: None
+        """
+        if offset is None:
+            offset = self._theme.title_offset
+        else:
+            _utils.assert_vector2(offset)
+        self._menubar.set_title(title, offsetx=offset[0], offsety=offset[1])
 
     def full_reset(self):
         """

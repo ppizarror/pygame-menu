@@ -644,6 +644,23 @@ class WidgetsTest(unittest.TestCase):
         # Invalid recursive menu
         self.assertRaises(ValueError, lambda: menu.add_button('bt', menu))
 
+        # Test pygame events
+        btn = menu.add_button('epic', pygame_menu.events.PYGAME_QUIT)
+        self.assertEqual(btn._on_return, menu._exit)
+        btn = menu.add_button('epic', pygame_menu.events.PYGAME_WINDOWCLOSE)
+        self.assertEqual(btn._on_return, menu._exit)
+
+        # Test None
+        btn = menu.add_button('epic', pygame_menu.events.NONE)
+        self.assertEqual(btn._on_return, None)
+        btn = menu.add_button('epic', None)
+        self.assertEqual(btn._on_return, None)
+
+        # Remove button
+        menu.remove_widget(btn)
+        self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
+        menu.render()
+
     def test_attributes(self):
         """
         Test widget attributes.

@@ -130,6 +130,15 @@ class MenuBar(Widget):
     def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
         pass
 
+    def get_title_offset(self):
+        """
+        Return the title offset in *(x, y)*.
+
+        :return: Title offset
+        :rtype: tuple
+        """
+        return self._offsetx, self._offsety
+
     def set_backbox_border_width(self, width):
         """
         Set backbox border width in px.
@@ -345,6 +354,8 @@ class MenuBar(Widget):
         self._title = to_string(title)
         self._offsety = offsety
         self._offsetx = offsetx
+        if self._menu is not None:
+            self._render()
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
