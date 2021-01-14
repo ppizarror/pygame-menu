@@ -8,7 +8,7 @@
 <div align="left">
 <a href="https://ppizarror.com"><img alt="@ppizarror" src="https://img.shields.io/badge/author-Pablo%20Pizarro%20R.-lightgray.svg" /></a>
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
-<a href="https://www.python.org/downloads/"><img alt="Python 2.7+/3.4+" src="https://img.shields.io/badge/python-2.7+ / 3.4+-red.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python 2.7+/3.5+" src="https://img.shields.io/badge/python-2.7+ / 3.5+-red.svg" /></a>
 <a href="https://www.pygame.org/"><img alt="Pygame 1.9.4+" src="https://img.shields.io/badge/pygame-1.9.4+-orange.svg" /></a>
 <br />
 <a href="https://travis-ci.org/ppizarror/pygame-menu"><img src="https://travis-ci.org/ppizarror/pygame-menu.svg?branch=v2" /></a>
@@ -23,7 +23,7 @@ Python library that can create a simple menu for the pygame application. Support
 4. Input text
 5. Color input
 
-**NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider upgrading to the lastest version.**
+**NOTE: pygame-menu v2 will not provide new widgets or functionalities, consider upgrading to the latest version.**
 
 ## Table of Contents
 
