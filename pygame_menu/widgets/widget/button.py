@@ -98,7 +98,7 @@ class Button(Widget):
     def update_callback(self, callback, *args):
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
-        behaviour is only valid using py:meth:`pygame_menu.Menu.add_button` method.
+        behaviour is only valid using :py:meth:`pygame_menu.Menu.add_button` method.
 
         .. note::
 

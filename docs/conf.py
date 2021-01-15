@@ -65,7 +65,9 @@ release = pygame_menu.__version__
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.intersphinx',
-              'sphinx.ext.autosectionlabel']
+              'sphinx.ext.autosectionlabel',
+              # 'sphinx_autodoc_typehints'
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

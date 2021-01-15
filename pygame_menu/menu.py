@@ -3013,7 +3013,7 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: Pygame clock object
-        :rtype: py:class:`pygame.time.Clock`
+        :rtype: :py:class:`pygame.time.Clock`
         """
         return self._clock
 

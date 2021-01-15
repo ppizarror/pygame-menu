@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup, find_packages
+import sys
+
+sys.path.append('.')
 import pygame_menu
 
 # Load readme
@@ -82,12 +85,16 @@ setup(
     python_requires='>=2.7, <4',
     install_requires=requirements,
     extras_require={
-        'doc': ['sphinx', 'sphinx-rtd-theme'],
+        'doc': [
+            'sphinx',
+            'sphinx-rtd-theme',
+            # 'sphinx-autodoc-typehints >= 1.2.0'
+        ],
     },
     setup_requires=[
         'setuptools',
     ],
     options={
         'bdist_wheel': {'universal': True}
-    },
+    }
 )
