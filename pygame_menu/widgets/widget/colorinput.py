@@ -309,6 +309,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._last_b = b
             _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
             _posy = self._rect.y
+            print()
             self._previsualization_position = (_posx, _posy)
 
         # Draw the surface

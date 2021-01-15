@@ -79,7 +79,7 @@ class Menu(object):
     :type menu_position: tuple, list
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :type mouse_enabled: bool
-    :param mouse_motion_selection: Select widgets using mouse motion
+    :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
     :type mouse_motion_selection: bool
     :param mouse_visible: Set mouse visible on Menu
     :type mouse_visible: bool
@@ -95,7 +95,7 @@ class Menu(object):
     :type theme: :py:class:`pygame_menu.themes.Theme`
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :type touchscreen: bool
-    :param touchscreen_motion_selection: Select widgets using touchscreen motion
+    :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
     :type touchscreen_motion_selection: bool
     """
 
@@ -282,6 +282,7 @@ class Menu(object):
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._onclose = None  # Function or event called on Menu close
         self._sounds = Sound()  # type: Sound
+        self._stats = _MenuStats()
         self._submenus = []  # type: list
         self._theme = theme
         self._width = float(width)
@@ -321,10 +322,14 @@ class Menu(object):
         if abs(self._widget_offset[1]) < 1:
             self._widget_offset[1] *= self._height
 
+        # Cast to int offset
+        self._widget_offset[0] = int(self._widget_offset[0])
+        self._widget_offset[1] = int(self._widget_offset[1])
+
         # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
         if self._center_content and self._widget_offset[1] != 0:
             msg = 'menu (title "{0}") is vertically centered (center_content=True), but widget offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
-            msg = msg.format(title, round(self._widget_offset[1], 3))
+            msg = msg.format(title, self._widget_offset[1])
             warnings.warn(msg)
             self._center_content = False
 
@@ -633,6 +638,7 @@ class Menu(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_selection_callback(onselect)
         self._append_widget(widget)
+        self._stats.add_button += 1
 
         return widget
 
@@ -745,6 +751,7 @@ class Menu(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_default_value(default)
         self._append_widget(widget)
+        self._stats.add_color_input += 1
 
         return widget
 
@@ -828,6 +835,7 @@ class Menu(object):
         self._check_kwargs(kwargs)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+        self._stats.add_image += 1
 
         return widget
 
@@ -919,6 +927,7 @@ class Menu(object):
             self._check_kwargs(kwargs)
             self._configure_widget(widget=widget, **attributes)
             self._append_widget(widget)
+            self._stats.add_label += 1
 
         else:
 
@@ -1039,6 +1048,7 @@ class Menu(object):
 
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+        self._stats.add_selector += 1
 
         return widget
 
@@ -1177,6 +1187,7 @@ class Menu(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_default_value(default)
         self._append_widget(widget)
+        self._stats.add_text_input += 1
 
         return widget
 
@@ -1205,6 +1216,7 @@ class Menu(object):
         widget = _widgets.VMargin(widget_id=margin_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+        self._stats.add_vertical_margin += 1
 
         return widget
 
@@ -1231,9 +1243,11 @@ class Menu(object):
         :rtype: :py:class:`pygame_menu.widgets.NoneWidget`
         """
         attributes = self._filter_widget_attributes({})
+
         widget = _widgets.NoneWidget(widget_id=widget_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+        self._stats.add_none_widget += 1
 
         return widget
 
@@ -1279,8 +1293,8 @@ class Menu(object):
         self._check_id_duplicated(widget.get_id())
 
         widget.set_controls(self._joystick, self._mouse, self._touchscreen)
-
         self._append_widget(widget)
+        self._stats.add_generic_widget += 1
 
     def _filter_widget_attributes(self, kwargs):
         """
@@ -1440,9 +1454,8 @@ class Menu(object):
         if self._index < 0 and widget.is_selectable:
             widget.set_selected()
             self._index = len(self._widgets) - 1
+        self._stats.added_widgets += 1
         self._widgets_surface = None  # If added on execution time forces the update of the surface
-        if self._center_content:
-            self.center_content()
         self._render()
 
     def select_widget(self, widget):
@@ -1487,6 +1500,7 @@ class Menu(object):
         :return: None
         """
         assert isinstance(widget, _widgets.core.Widget)
+
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
         except ValueError:
@@ -1494,6 +1508,7 @@ class Menu(object):
                              'with menu.get_current().remove_widget(widget)')
         self._widgets.pop(index)
         self._update_after_remove_or_hidden(index)
+        self._stats.removed_widgets += 1
         widget.set_menu(None)  # Removes Menu reference from widget
 
     def _update_after_remove_or_hidden(self, index, update_surface=True):
@@ -1526,7 +1541,7 @@ class Menu(object):
                 self._select(self._index - 1)
             else:
                 self._select(self._index)
-        self._update_widget_position()
+        self._build_widget_surface()
         if update_surface:
             if self._center_content:
                 self.center_content()
@@ -1542,6 +1557,18 @@ class Menu(object):
             self.reset(1)
         else:
             self._close()
+
+    def _update_selection_if_hidden(self):
+        """
+        Updates Menu widget selection if a widget was hidden.
+
+        :return: None
+        """
+        if len(self._widgets) > 0:
+            selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
+            if not selected_widget.visible:
+                selected_widget.set_selected(False)  # Unselect
+                self._update_after_remove_or_hidden(-1, update_surface=False)
 
     def _update_widget_position(self):
         """
@@ -1734,13 +1761,14 @@ class Menu(object):
                 y_coord += selection_effect.get_margin()[0] + 1  # add 1px of linewidth
 
             # Update the position of the widget
-            widget.set_position(x_coord, y_coord)
+            widget.set_position(int(x_coord), int(y_coord))
 
             # Update max/min position
-            x, y = widget.get_rect().bottomright
+            widget_rect = widget.get_rect()
+            x, y = widget_rect.bottomright
             max_x = max(max_x, x)
             max_y = max(max_y, y)
-            x, y = widget.get_rect().topleft
+            x, y = widget_rect.topleft
             min_x = min(min_x, x)
             min_y = min(min_y, y)
 
@@ -1748,17 +1776,7 @@ class Menu(object):
         self._widget_max_position = (max_x, max_y)
         self._widget_min_position = (min_x, min_y)
 
-    def _update_selection_if_hidden(self):
-        """
-        Updates Menu widget selection if a widget was hidden.
-
-        :return: None
-        """
-        if len(self._widgets) > 0:
-            selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
-            if not selected_widget.visible:
-                selected_widget.set_selected(False)  # Unselect
-                self._update_after_remove_or_hidden(-1, update_surface=False)
+        self._stats.position_update += 1
 
     def _build_widget_surface(self):
         """
@@ -1812,6 +1830,7 @@ class Menu(object):
         self._widgets_surface = _utils.make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
         self._scroll.set_position(self._pos_x, self._pos_y + menubar_height)
+        self._stats.build_surface += 1
 
     def _check_id_duplicated(self, widget_id):
         """
@@ -1930,7 +1949,7 @@ class Menu(object):
 
     def center_content(self):
         """
-        Centers the content of the Menu vertically. This action rewrites theme ``widget_offset``.
+        Centers the content of the Menu vertically. This action rewrites ``widget_offset``.
 
         .. note::
 
@@ -1948,11 +1967,15 @@ class Menu(object):
         if len(self._widgets) == 0:  # If this happen, get_widget_max returns an immense value
             self._widget_offset[1] = 0
             return
-        self._build_widget_surface()  # For position
+        if self._widgets_surface is None:
+            self._build_widget_surface()  # For position (max/min)
         available = self.get_height(inner=True)
         widget_height = self.get_height(widget=True)
-        self._widget_offset[1] = max(float(available - widget_height) / 2, 0)
-        self._widgets_surface = None  # Rebuild on the next draw
+        new_offset = max(float(available - widget_height) / 2, 0)
+        if abs(new_offset - self._widget_offset[1]) > 1:
+            self._widget_offset[1] = new_offset
+            self._widgets_surface = None  # Rebuild on the next draw
+        self._stats.center_content += 1
 
     def get_height(self, inner=False, widget=False):
         """
@@ -1990,6 +2013,7 @@ class Menu(object):
         """
         self._current._widgets_surface = None
         self._current._render()
+        self._current._stats.render_public += 1
 
     def _render(self):
         """
@@ -2001,6 +2025,7 @@ class Menu(object):
             if self._center_content:
                 self.center_content()
             self._build_widget_surface()
+            self._stats.render_private += 1
 
     def draw(self, surface, clear_surface=False):
         """
@@ -2024,6 +2049,7 @@ class Menu(object):
             raise RuntimeError('menu is not enabled, it cannot be drawn')
 
         # Render menu
+        # print('draw', self._stats.draw)
         self._current._render()
 
         # Clear surface
@@ -2050,29 +2076,36 @@ class Menu(object):
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
 
-        # Focus on selected if the widget is active
+        # Draw focus on selected if the widget is active
         self._current._draw_focus_widget(surface, selected_widget)
+
+        self._current._stats.draw += 1
 
     def _draw_focus_widget(self, surface, widget):
         """
-        Draw the focus background from a given widget.
+        Draw the focus background from a given widget. Widget must be selectable,
+        active, selected. Not all widgets requests the active status, then focus may not
+        be drawn.
 
         :param surface: Pygame surface to draw the Menu
         :type surface: :py:class:`pygame.Surface`
         :param widget: Focused widget
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
-        :return: None
+        :return: Returns the focus region, None if the focus could not be possible
+        :rtype: dict, None
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (_widgets.core.Widget, type(None)))
 
-        if widget is None or not widget.active or not self._mouse_motion_selection:
+        if widget is None or not widget.active or not widget.is_selectable or not widget.selected or \
+                not (self._mouse_motion_selection or self._touchscreen_motion_selection):
             return
         window_width, window_height = self._window_size
 
         rect = widget.get_rect()  # type: pygame.Rect
-        if widget.selected and widget.get_selection_effect():
-            rect = widget.get_selection_effect().inflate(rect)
+
+        # Apply selection effect
+        rect = widget.get_selection_effect().inflate(rect)
         rect = self._scroll.to_real_position(rect, visible=True)
 
         if rect.width == 0 or rect.height == 0:
@@ -2086,32 +2119,32 @@ class Menu(object):
         x2 = int(x2)
         y2 = int(y2)
 
-        # Draw 4 areas:
-        # .------------------.
-        # |________1_________|
-        # |  2  |XXXXXX|  3  |
-        # |_____|XXXXXX|_____|
-        # |        4         |
-        # .------------------.
+        coords = {}
 
         if abs(y1 - y2) <= 4 or abs(x1 - x2) <= 4:
-            gfxdraw.filled_polygon(surface,
-                                   [(0, 0), (window_width, 0), (window_width, window_height), (0, window_height)],
-                                   self._theme.focus_background_color)
-            return
+            # If the area of the selected widget is too small, draw focus over the entire menu
+            # .------------------.
+            # |                  |
+            # |        1         |
+            # |                  |
+            # .------------------.
+            coords[1] = (0, 0), (window_width, 0), (window_width, window_height), (0, window_height)
+        else:
+            # Draw 4 areas:
+            # .------------------.
+            # |________1_________|
+            # |  2  |XXXXXX|  3  |
+            # |_____|XXXXXX|_____|
+            # |        4         |
+            # .------------------.
+            coords[1] = (0, 0), (window_width, 0), (window_width, y1 - 1), (0, y1 - 1)
+            coords[2] = (0, y1), (x1 - 1, y1), (x1 - 1, y2 - 1), (0, y2 - 1)
+            coords[3] = (x2, y1), (window_width, y1), (window_width, y2 - 1), (x2, y2 - 1)
+            coords[4] = (0, y2), (window_width, y2), (window_width, window_height), (0, window_height)
 
-        gfxdraw.filled_polygon(surface,
-                               [(0, 0), (window_width, 0), (window_width, y1 + 1), (0, y1 + 1)],
-                               self._theme.focus_background_color)  # 1
-        gfxdraw.filled_polygon(surface,
-                               [(0, y1 + 2), (x1 + 1, y1 + 2), (x1 + 1, y2 - 2), (0, y2 - 2)],
-                               self._theme.focus_background_color)  # 2
-        gfxdraw.filled_polygon(surface,
-                               [(x2 - 1, y1 + 2), (window_width, y1 + 2), (window_width, y2 - 2), (x2 - 1, y2 - 2)],
-                               self._theme.focus_background_color)  # 3
-        gfxdraw.filled_polygon(surface,
-                               [(0, y2 - 1), (window_width, y2 - 1), (window_width, window_height), (0, window_height)],
-                               self._theme.focus_background_color)  # 4
+        for area in coords:
+            gfxdraw.filled_polygon(surface, coords[area], self._theme.focus_background_color)
+        return coords
 
     def enable(self):
         """
@@ -2428,6 +2461,8 @@ class Menu(object):
         if not self.is_enabled():
             updated = True
 
+        self._current._stats.update += 1
+
         return updated
 
     def mainloop(self, surface, bgfun=None, disable_loop=False, fps_limit=30):
@@ -2475,6 +2510,7 @@ class Menu(object):
         self._current._background_function = bgfun
 
         while True:
+            self._current._stats.loop += 1
             self._current._clock.tick(fps_limit)
 
             self.draw(surface=surface, clear_surface=True)
@@ -2653,6 +2689,7 @@ class Menu(object):
         del self._widgets[:]
         del self._submenus[:]
         self._index = 0
+        self._stats.clear += 1
 
     def _open(self, menu):
         """
@@ -2707,6 +2744,7 @@ class Menu(object):
                 break
 
         self._current._select(self._top._current._index)
+        self._current._stats.reset += 1
 
     def _select(self, new_index, dwidget=0):
         """
@@ -2778,6 +2816,7 @@ class Menu(object):
 
         # Play widget selection sound
         self._sounds.play_widget_selection()
+        self._stats.select += 1
 
     def get_id(self):
         """
@@ -3131,3 +3170,46 @@ class Menu(object):
         if not self.has_attribute(key):
             raise IndexError('attribute "{0}" does not exists on menu'.format(key))
         del self._attributes[key]
+
+
+class _MenuStats(object):
+    """
+    Stores menu stats.
+    """
+
+    def __init__(self):
+        """
+        Constructor.
+        """
+
+        # Widget addition
+        self.add_button = 0
+        self.add_color_input = 0
+        self.add_generic_widget = 0
+        self.add_image = 0
+        self.add_label = 0
+        self.add_none_widget = 0
+        self.add_selector = 0
+        self.add_text_input = 0
+        self.add_vertical_margin = 0
+
+        # Widget update
+        self.added_widgets = 0
+        self.removed_widgets = 0
+
+        # Widget position
+        self.build_surface = 0
+        self.position_update = 0
+        self.center_content = 0
+
+        # Render
+        self.render_private = 0
+        self.render_public = 0
+
+        # Other
+        self.clear = 0
+        self.draw = 0
+        self.loop = 0
+        self.reset = 0
+        self.select = 0
+        self.update = 0
