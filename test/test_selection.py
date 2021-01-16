@@ -60,9 +60,26 @@ class WidgetSelectionTest(unittest.TestCase):
         Test highlight selection.
         """
         w = Button('epic')
-        w.set_selection_effect(HighlightSelection())
+        border_width = 1
+        margin_x = 18
+        margin_y = 10
+        w.set_selection_effect(HighlightSelection(
+            border_width=border_width,
+            margin_x=margin_x,
+            margin_y=margin_y
+        ))
         self.menu.add_generic_widget(w)
         self.menu.draw(surface)
+
+        sel = w.get_selection_effect()
+        self.assertEqual(sel.get_height(), margin_y + 2 * border_width)
+        self.assertEqual(sel.get_width(), margin_x + 2 * border_width)
+
+        # Test inflate
+        rect = w.get_rect()
+        inflate_rect = sel.inflate(rect)
+        self.assertEqual(-inflate_rect.x + rect.x, sel.get_width() / 2)
+        self.assertEqual(-inflate_rect.y + rect.y, sel.get_height() / 2)
 
     def test_none(self):
         """
@@ -72,3 +89,7 @@ class WidgetSelectionTest(unittest.TestCase):
         w.set_selection_effect(NoneSelection())
         self.menu.add_generic_widget(w)
         self.menu.draw(surface)
+
+        rect = w.get_rect()
+        new_rect = w.get_selection_effect().inflate(rect)
+        self.assertTrue(rect == new_rect)

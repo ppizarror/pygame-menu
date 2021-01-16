@@ -73,49 +73,49 @@ class WidgetsTest(unittest.TestCase):
         btn2 = menu.add_button('nice', None, onselect=on_select)
         self.assertEqual(test[0], btn)
         btn2.is_selectable = False
-        btn2.set_selected()
+        btn2.select()
         self.assertEqual(test[0], btn)
         btn2.is_selectable = True
-        btn2.set_selected()
+        btn2.select()
         self.assertEqual(test[0], btn2)
 
         # Color
         color = menu.add_color_input('nice', 'rgb', onselect=on_select)
-        color.set_selected()
+        color.select()
         self.assertEqual(test[0], color)
 
         # Image
         image = menu.add_image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select)
-        image.set_selected()
+        image.select()
         self.assertEqual(test[0], color)
         image.is_selectable = True
-        image.set_selected()
+        image.select()
         self.assertEqual(test[0], image)
 
         # Label
         label = menu.add_label('label', onselect=on_select)
         label.is_selectable = True
-        label.set_selected()
+        label.select()
         self.assertEqual(test[0], label)
 
         # None, it cannot be selected
         none = menu.add_none_widget()
-        none.set_selected()
+        none.select()
         self.assertEqual(test[0], label)
 
         # Selector
         selector = menu.add_selector('nice', ['nice', 'epic'], onselect=on_select)
-        selector.set_selected()
+        selector.select()
         self.assertEqual(test[0], selector)
 
         # Textinput
         text = menu.add_text_input('nice', onselect=on_select)
-        text.set_selected()
+        text.select()
         self.assertEqual(test[0], text)
 
         # Vmargin
         vmargin = menu.add_vertical_margin(10)
-        vmargin.set_selected()
+        vmargin.select()
         self.assertEqual(test[0], text)
 
     def test_nonascii(self):
@@ -1081,7 +1081,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid._max_height[0], None)
 
         # Selection
-        wid.set_selected()
+        wid.select()
         self.assertFalse(wid.selected)
         self.assertFalse(wid.is_selectable)
 
@@ -1101,7 +1101,6 @@ class WidgetsTest(unittest.TestCase):
         wid.set_sound(None)
         self.assertNotEqual(wid.sound, None)
 
-    # noinspection PyArgumentEqualDefault
     def test_scrollbar(self):
         """
         Test ScrollBar widget.
@@ -1126,9 +1125,7 @@ class WidgetsTest(unittest.TestCase):
                        page_ctrl_color=(235, 235, 230))
         self.assertEqual(sb.get_thickness(), 80)
 
-        sb.set_shadow(color=(245, 245, 245),
-                      position=_locals.POSITION_SOUTHEAST,
-                      offset=2)
+        sb.set_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)
 
         sb.set_position(x, y)
 
@@ -1148,6 +1145,7 @@ class WidgetsTest(unittest.TestCase):
         sb.draw(surface)
 
         # Test remove onreturn
+        # noinspection PyArgumentEqualDefault
         sb = ScrollBar(length,
                        world_range,
                        '',
@@ -1156,3 +1154,24 @@ class WidgetsTest(unittest.TestCase):
                        )
         self.assertEqual(sb._on_return, None)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
+
+        # Scrollbar ignores scalling
+        sb.scale(2, 2)
+        self.assertFalse(sb._scale[0])
+        sb.resize(2, 2)
+        self.assertFalse(sb._scale[0])
+        sb.set_max_width(10)
+        self.assertEqual(sb._max_width[0], None)
+        sb.set_max_height(10)
+        self.assertEqual(sb._max_height[0], None)
+        sb._apply_font()
+        sb.set_padding(10)
+        self.assertEqual(sb._padding[0], 0)
+        sb.rotate(10)
+        self.assertEqual(sb._angle, 0)
+        sb.flip(True, True)
+        self.assertFalse(sb._flip[0])
+        self.assertFalse(sb._flip[1])
+
+        # Set minimum
+        sb.set_minimum(0.5 * sb._values_range[1])

@@ -129,7 +129,7 @@ class NoneWidget(Widget):
     def set_alignment(self, align):
         pass
 
-    def set_selected(self, selected=True):
+    def select(self, select=True, update_menu=False):
         pass
 
     def set_shadow(self, enabled=True, color=None, position=None, offset=None):

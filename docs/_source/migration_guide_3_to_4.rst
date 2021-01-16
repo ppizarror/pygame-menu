@@ -9,3 +9,5 @@ Migration Guide - v3 to v4
 - Widget ``VMargin`` now inherits from ``NoneWidget``.
 - Widget ``shadow_offset`` now cannot be ``None``, only ``int`` or ``float`` allowed.
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
+- Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
+- Menu method ``get_width()`` changes to``get_width(inner=False, widget=False)``.

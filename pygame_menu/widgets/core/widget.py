@@ -167,11 +167,11 @@ class Widget(object):
         self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
         self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self.mouse_enabled = True
-        self.selected = False
+        self.selected = False  # Use select() to modify this status
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
         self.sound = Sound()  # type: Sound
         self.touchscreen_enabled = True
-        self.visible = True  # Use .show() or .hide() to modify this status
+        self.visible = True  # Use show() or hide() to modify this status
 
     def _force_render(self):
         """
@@ -782,7 +782,8 @@ class Widget(object):
 
     def _apply_transforms(self):
         """
-        Apply surface transforms.
+        Apply surface transforms: angle, flip and scalling.
+        Translation is applied on widget positioning.
 
         :return: None
         """
@@ -1036,8 +1037,8 @@ class Widget(object):
 
     def flip(self, x, y):
         """
-        This method can flip the widget either vertically, horizontally, or both.
-        Flipping a widget is non-destructive and does not change the dimensions.
+        Transformation: This method can flip the widget either vertically, horizontally,
+        or both. Flipping a widget is non-destructive and does not change the dimensions.
 
         .. note::
 
@@ -1057,8 +1058,8 @@ class Widget(object):
 
     def set_max_width(self, width, scale_height=False, smooth=True):
         """
-        Set the widget max width, it applies an scalling factor if the widget width is
-        greater than the limit.
+        Transformation: Set the widget max width, it applies an scalling factor
+        if the widget width is greater than the limit.
 
         .. note::
 
@@ -1111,8 +1112,8 @@ class Widget(object):
 
     def set_max_height(self, height, scale_width=False, smooth=True):
         """
-        Set the widget max height, it applies an scalling factor if the widget height is
-        greater than the limit.
+        Transformation: Set the widget max height, it applies an scalling factor
+        if the widget height is greater than the limit.
 
         .. note::
 
@@ -1173,7 +1174,7 @@ class Widget(object):
 
     def scale(self, width, height, smooth=True):
         """
-        Scale the widget to a desired width and height factor.
+        Transformation: Scale the widget to a desired width and height factor.
 
         .. note::
 
@@ -1225,7 +1226,7 @@ class Widget(object):
 
     def resize(self, width, height, smooth=True):
         """
-        Set the widget size to another size.
+        Transformation: Set the widget size to another size.
 
         .. note::
 
@@ -1264,7 +1265,7 @@ class Widget(object):
 
     def translate(self, x, y):
         """
-        Translate to *(+x, +y)* according to the default position.
+        Transformation: Translate to *(+x, +y)* according to the default position.
 
         .. note::
 
@@ -1288,7 +1289,7 @@ class Widget(object):
 
     def rotate(self, angle):
         """
-        Unfiltered counterclockwise rotation. The angle argument represents degrees
+        Transformation: Unfiltered counterclockwise rotation. The angle argument represents degrees
         and can be any floating point value. Negative angle amounts will rotate clockwise.
 
         .. note::
@@ -1335,7 +1336,7 @@ class Widget(object):
         """
         return self._alignment
 
-    def set_selected(self, selected=True):
+    def select(self, status=True, update_menu=False):
         """
         Mark the widget as selected and execute the ``on_selected`` callback
         function as follows:
@@ -1351,16 +1352,21 @@ class Widget(object):
             Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
             widget rendering after calling this method.
 
-        :param selected: Set item as selected
-        :type selected: bool
+        .. warning::
+
+            This method should only be used by the menu.
+
+        :param status: Selection status
+        :type status: bool
+        :param update_menu: If ``True`` this status is also applied on the menu that contains this widget
         :return: None
         """
-        assert isinstance(selected, bool)
+        assert isinstance(status, bool)
         if not self.is_selectable:
             return
-        self.selected = selected
+        self.selected = status
         self.active = False
-        if selected:
+        if self.selected:
             self._focus()
             self._selection_time = time.time()
         else:
@@ -1368,7 +1374,10 @@ class Widget(object):
             self._events = []  # Remove events
         self._force_render()
         if self._on_select is not None:
-            self._on_select(selected, self, self.get_menu())
+            self._on_select(self.selected, self, self.get_menu())
+        if update_menu:
+            assert self._menu is not None
+            self._menu.select_widget(self)
 
     def get_selected_time(self):
         """
@@ -1709,7 +1718,7 @@ class Widget(object):
         """
         assert isinstance(float_status, bool)
         self.floating = float_status
-        self._menu_surface_needs_update = True
+        self._menu_surface_needs_update = True  # Force Menu update
 
     def show(self):
         """

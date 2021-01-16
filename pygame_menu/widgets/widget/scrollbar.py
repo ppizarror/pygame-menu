@@ -135,6 +135,24 @@ class ScrollBar(Widget):
     def set_padding(self, padding):  # Don't accept padding
         pass
 
+    def scale(self, width, height, smooth=True):
+        pass
+
+    def resize(self, width, height, smooth=True):
+        pass
+
+    def set_max_width(self, width, scale_height=False, smooth=True):
+        pass
+
+    def set_max_height(self, height, scale_width=False, smooth=True):
+        pass
+
+    def rotate(self, angle):
+        pass
+
+    def flip(self, x, y):
+        pass
+
     def _apply_size_changes(self):
         """
         Apply scrollbar changes.

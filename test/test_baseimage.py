@@ -31,11 +31,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from test._utils import *
+import sys
 
 from pygame_menu.baseimage import *
 
 
 class BaseImageTest(unittest.TestCase):
+
+    def test_pathlib(self):
+        """
+        Test image load with pathlib.
+        """
+        if sys.version_info >= (3, 0):
+            # noinspection PyCompatibility
+            from pathlib import Path
+            pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+            image = pygame_menu.baseimage.BaseImage(pathimg)
+            image.draw(surface)
+            self.assertEqual(image.get_path(), str(pathimg))
 
     def test_modes(self):
         """
