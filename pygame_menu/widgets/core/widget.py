@@ -37,7 +37,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, \
-    to_string, is_callable
+    is_callable
 
 from uuid import uuid4
 import random
@@ -102,7 +102,7 @@ class Widget(object):
         self._position_set = False  # type: bool
         self._selected_rect = None  # type: (pygame.rect.Rect, None)
         self._selection_time = 0  # type: float
-        self._title = to_string(title)  # type: str
+        self._title = str(title)  # type: str
 
         # Widget transforms
         self._angle = 0  # Rotation angle (degrees)
@@ -318,7 +318,7 @@ class Widget(object):
         :type title: str, any
         :return: None
         """
-        self._title = to_string(title)
+        self._title = str(title)
         self._apply_font()
         self._force_render()
 

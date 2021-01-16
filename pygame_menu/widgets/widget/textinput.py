@@ -35,7 +35,7 @@ import math
 import pygame
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, to_string
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 
 try:
@@ -288,7 +288,7 @@ class TextInput(Widget):
         # List of valid chars
         if valid_chars is not None:
             for ch in range(len(valid_chars)):
-                _char = to_string(valid_chars[ch])
+                _char =str(valid_chars[ch])
                 valid_chars[ch] = _char
                 assert isinstance(_char, str), 'element "{0}" of valid_chars must be a string'.format(_char)
                 assert len(_char) == 1, 'element "{0}" of valid_chars must be character'.format(_char)
@@ -1003,7 +1003,7 @@ class TextInput(Widget):
             raise ValueError('value cannot be set in password type')
         assert isinstance(text, (str, int, float))
         if self._check_input_type(text):
-            default_text = to_string(text)
+            default_text = str(text)
 
             # Filter valid chars
             if self._valid_chars is not None:

@@ -35,7 +35,7 @@ import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 from pygame_menu.widgets.core import Widget
-from pygame_menu.utils import assert_color, to_string
+from pygame_menu.utils import assert_color
 
 MENUBAR_STYLE_ADAPTIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
@@ -365,7 +365,7 @@ class MenuBar(Widget):
         """
         assert isinstance(offsetx, (int, float))
         assert isinstance(offsety, (int, float))
-        self._title = to_string(title)
+        self._title = str(title)
         self._offsety = offsety
         self._offsetx = offsetx
         if self._menu is not None:

@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.controls as _controls
-from pygame_menu.utils import check_key_pressed_valid, to_string
+from pygame_menu.utils import check_key_pressed_valid
 from pygame_menu.widgets.core import Widget
 
 
@@ -119,7 +119,7 @@ class Selector(Widget):
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
-            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
+            title=title,
             widget_id=selector_id,
             args=args,
             kwargs=kwargs

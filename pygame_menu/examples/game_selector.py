@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -40,6 +39,7 @@ import pygame
 import pygame_menu
 
 from random import randrange
+from typing import Tuple, Any, Union
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -53,7 +53,7 @@ FPS = 60
 WINDOW_SIZE = (640, 480)
 
 # noinspection PyTypeChecker
-clock = None  # type: pygame.time.Clock
+clock: Union[None, 'pygame.time.Clock'] = None
 
 # noinspection PyTypeChecker
 main_menu = None  # type: pygame_menu.Menu
@@ -65,15 +65,12 @@ surface = None  # type: pygame.Surface
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def change_difficulty(value, difficulty):
+def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     """
     Change difficulty of the game.
 
     :param value: Tuple containing the data of the selected object
-    :type value: tuple
     :param difficulty: Optional parameter passed as argument to add_selector
-    :type difficulty: str
-    :return: None
     """
     selected, index = value
     print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, difficulty, index))

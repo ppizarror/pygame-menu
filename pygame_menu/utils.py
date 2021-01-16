@@ -198,25 +198,3 @@ def is_callable(func):
     """
     # noinspection PyTypeChecker
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
-
-
-def to_string(s, strict=False):
-    """
-    Check if string, if not convert. See issue #215.
-    This function is compatible for py 2/3.
-
-    :param s: String
-    :type s: any
-    :param strict: If ``True``, deny any unicode string if python 2
-    :type strict: bool
-    :return: String
-    :rtype: str
-    """
-    if isinstance(s, (str, bytes)):
-        return s
-    if sys.version_info < (3, 0) and str(type(s)) == "<type 'unicode'>":
-        if strict:
-            raise Exception("use a encoding for the unicode string, "
-                            "for example u'your_string'.encode('latin1')")
-        return s
-    return str(s)
