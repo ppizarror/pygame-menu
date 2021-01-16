@@ -1,2 +1,3 @@
 ignore:
+  - "pygame_menu/__pyinstaller/*py"
   - "test/*.py"

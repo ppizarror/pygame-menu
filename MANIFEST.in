@@ -1,5 +1,17 @@
+exclude *.bat
+exclude *.yml
+exclude .github/ISSUE_TEMPLATE/*
+exclude .gitignore
+exclude .replit
+exclude docs/*
+exclude docs/_source/*
+exclude docs/_static/*
+exclude pygame_menu/*/build/*
+exclude pygame_menu/*/dist/*
 exclude test/*.py
+
 include requirements.txt
+
 recursive-include pygame_menu/resources/fonts *.ttf
 recursive-include pygame_menu/resources/images *.jpg
 recursive-include pygame_menu/resources/images *.png
