@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -36,34 +35,30 @@ import pygame
 pygame.init()
 
 
-def save_font_image(font_name, text, filename, font_size=50, image_height=26):
+def save_font_image(font_name: str, text: str, filename: str,
+                    font_size: int = 50, image_height: int = 26) -> None:
     """
     Generate a font image and save as a png.
 
     :param font_name: Font name
-    :type font_name: str
     :param text: Text to render
-    :type text: str
     :param filename: File to save the font
-    :type filename: str
     :param font_size: Font size
-    :type font_size: int
     :param image_height: Image size in px
-    :type image_height: int
     :return: None
     """
     assert isinstance(font_size, int)
     assert isinstance(image_height, int)
     assert font_size > 0 and image_height > 0
     font = pygame_menu.font.get_font(font_name, font_size)
-    surf = font.render(text, True, (0, 0, 0))  # type: pygame.Surface
+    surf = font.render(text, True, (0, 0, 0))
     h, w = surf.get_height(), surf.get_width()
     new_width = int(w * (float(image_height) / h))
     surf2 = pygame.transform.smoothscale(surf, (new_width, image_height))
     pygame.image.save(surf2, filename)
 
 
-def generate_fonts_doc():
+def generate_fonts_doc() -> None:
     """
     Generate images for all fonts.
 
