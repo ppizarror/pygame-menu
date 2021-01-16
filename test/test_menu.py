@@ -773,3 +773,51 @@ class MenuTest(unittest.TestCase):
         btn.set_selected()
         menu.select_widget(btn)
         self.assertEqual(menu.get_selected_widget(), btn)
+
+    def test_focus(self):
+        """
+        Test menu focus effect.
+        """
+        menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
+        btn = menu.add_button('nice', None)
+
+        # Test focus
+        btn.active = True
+        focus = menu._draw_focus_widget(surface, btn)
+        self.assertEqual(len(focus), 4)
+        if pygame.version.vernum.major < 2:
+            self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 301), (0, 301)))
+            self.assertEqual(focus[2], ((0, 302), (261, 302), (261, 353), (0, 353)))
+            self.assertEqual(focus[3], ((337, 302), (600, 302), (600, 353), (337, 353)))
+            self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
+        else:
+            self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 302), (0, 302)))
+            self.assertEqual(focus[2], ((0, 303), (261, 303), (261, 353), (0, 353)))
+            self.assertEqual(focus[3], ((337, 303), (600, 303), (600, 353), (337, 353)))
+            self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
+
+        # Test cases where the focus must fail
+        btn.selected = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.selected = True
+
+        # Set active false
+        btn.active = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.active = True
+
+        btn.hide()
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.show()
+
+        btn.is_selectable = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.is_selectable = True
+
+        menu._mouse_motion_selection = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        menu._mouse_motion_selection = True
+
+        btn.active = True
+        btn.selected = True
+        self.assertNotEqual(None, menu._draw_focus_widget(surface, btn))
