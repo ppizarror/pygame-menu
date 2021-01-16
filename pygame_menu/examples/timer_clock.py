@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os
 import datetime
 from random import randrange
-from typing import Union, List, Tuple
+from typing import List, Tuple, Optional
 
 import pygame
 import pygame_menu
@@ -53,8 +53,8 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
-surface: Union['pygame.Surface', None] = None
-timer: Union[List[float], None] = None
+surface: Optional['pygame.Surface'] = None
+timer: Optional[List[float]] = None
 
 
 # -----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ class TestCallClassMethod(object):
         print('Update game with new settings')
 
 
-def change_color_bg(value: Tuple, c: Union[Tuple, None] = None, **kwargs) -> None:
+def change_color_bg(value: Tuple, c: Optional[Tuple] = None, **kwargs) -> None:
     """
     Change background color.
 
@@ -138,7 +138,7 @@ def main(test: bool = False) -> None:
     # Main timer and game clock
     clock = pygame.time.Clock()
     global timer
-    timer = [0.0]
+    timer = [0]
     dt = 1.0 / FPS
     timer_font = pygame_menu.font.get_font(pygame_menu.font.FONT_NEVIS, 100)
 

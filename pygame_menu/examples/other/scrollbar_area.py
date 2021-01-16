@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import sys
 import itertools
 import os
-from typing import Generator, Dict, Tuple
+from typing import Generator
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
@@ -110,7 +110,7 @@ def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
 
 
 # noinspection PyProtectedMember
-def iter_world(area: 'ScrollArea') -> Generator[Dict[str, Tuple[int, int]]]:
+def iter_world(area: 'ScrollArea') -> Generator:
     """
     Iterate through worlds.
 

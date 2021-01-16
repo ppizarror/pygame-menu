@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 from random import randrange
-from typing import Tuple, Any, Union
+from typing import Tuple, Any, Optional, List
 
 import pygame
 import pygame_menu
@@ -47,9 +47,9 @@ DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-clock: Union[None, 'pygame.time.Clock'] = None
-main_menu: Union['pygame_menu.Menu', None] = None
-surface: Union['pygame.Surface', None] = None
+clock: Optional['pygame.time.Clock'] = None
+main_menu: Optional['pygame_menu.Menu'] = None
+surface: Optional['pygame.Surface'] = None
 
 
 # -----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ def random_color() -> Tuple[int, int, int]:
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty: Tuple, font: 'pygame.font.Font', test: bool = False) -> None:
+def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False) -> None:
     """
     Main game function.
 
@@ -85,7 +85,7 @@ def play_function(difficulty: Tuple, font: 'pygame.font.Font', test: bool = Fals
     :param test: Test method, if ``True`` only one loop is allowed
     :return: None
     """
-    assert isinstance(difficulty, tuple)
+    assert isinstance(difficulty, list)
     difficulty = difficulty[0]
     assert isinstance(difficulty, str)
 

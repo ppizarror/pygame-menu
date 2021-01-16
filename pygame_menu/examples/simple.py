@@ -40,7 +40,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 surface = pygame.display.set_mode((600, 400))
 
 
-def set_difficulty(selected: Tuple, value: Any):
+def set_difficulty(selected: Tuple, value: Any) -> None:
     """
     Set the difficulty of the game.
 

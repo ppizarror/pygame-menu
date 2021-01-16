@@ -91,7 +91,7 @@ def v_changed(value: int) -> None:
     print('Vertical position changed:', value)
 
 
-def main(test: bool = False):
+def main(test: bool = False) -> None:
     """
     Main function.
 

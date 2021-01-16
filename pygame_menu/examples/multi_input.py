@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
-from typing import Union, Tuple
+from typing import Tuple, Optional
 
 import pygame
 import pygame_menu
@@ -41,9 +41,9 @@ import pygame_menu
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-sound: Union['pygame_menu.sound.Sound', None] = None
-surface: Union['pygame.Surface', None] = None
-main_menu: Union['pygame_menu.Menu', None] = None
+sound: Optional['pygame_menu.sound.Sound'] = None
+surface: Optional['pygame.Surface'] = None
+main_menu: Optional['pygame_menu.Menu'] = None
 
 
 # -----------------------------------------------------------------------------

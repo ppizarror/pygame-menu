@@ -40,7 +40,7 @@ FPS = 30
 WINDOW_SIZE = (800, 600)
 
 
-def on_button_click(value: str, text: Any = None):
+def on_button_click(value: str, text: Any = None) -> None:
     """
     Button event on menus.
 

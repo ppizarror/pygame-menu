@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from __future__ import print_function
 import sys
 import os
-from typing import Union
+from typing import Optional
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
@@ -46,9 +46,9 @@ import pygame_menu
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-sound: Union['pygame_menu.sound.Sound', None] = None
-surface: Union['pygame.Surface', None] = None
-main_menu: Union['pygame_menu.Menu', None] = None
+sound: Optional['pygame_menu.sound.Sound'] = None
+surface: Optional['pygame.Surface'] = None
+main_menu: Optional['pygame_menu.Menu'] = None
 
 # -----------------------------------------------------------------------------
 # Load image
