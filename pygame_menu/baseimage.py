@@ -46,14 +46,17 @@ except ImportError:
 import pygame
 from pygame_menu.utils import assert_vector2
 
-# Example images
-__fontdir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
+# Example image paths
+__images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
 
-IMAGE_EXAMPLE_CARBON_FIBER = __fontdir.format('carbon_fiber.png')
-IMAGE_EXAMPLE_GRAY_LINES = __fontdir.format('gray_lines.png')
-IMAGE_EXAMPLE_METAL = __fontdir.format('metal.png')
-IMAGE_EXAMPLE_PYGAME_MENU = __fontdir.format('pygame_menu.png')
-IMAGE_EXAMPLE_WALLPAPER = __fontdir.format('wallpaper.jpg')
+IMAGE_EXAMPLE_CARBON_FIBER = __images_path__.format('carbon_fiber.png')
+IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format('gray_lines.png')
+IMAGE_EXAMPLE_METAL = __images_path__.format('metal.png')
+IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format('pygame_menu.png')
+IMAGE_EXAMPLE_WALLPAPER = __images_path__.format('wallpaper.jpg')
+
+IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES, IMAGE_EXAMPLE_METAL,
+                  IMAGE_EXAMPLE_PYGAME_MENU, IMAGE_EXAMPLE_WALLPAPER)
 
 # Drawing modes
 IMAGE_MODE_CENTER = 100
