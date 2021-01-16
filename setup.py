@@ -35,6 +35,7 @@ from setuptools import setup, find_packages
 import sys
 
 sys.path.append('.')
+
 import pygame_menu
 
 # Load readme
@@ -81,7 +82,7 @@ setup(
     ],
     include_package_data=True,
     packages=find_packages(exclude=['test']),
-    python_requires='>=2.7, <4',
+    python_requires='>=3.6, <4',
     install_requires=requirements,
     extras_require={
         'doc': [
@@ -94,6 +95,9 @@ setup(
         'setuptools',
     ],
     options={
-        'bdist_wheel': {'universal': True}
-    }
+        'bdist_wheel': {'universal': False}
+    },
+    entry_points={
+        'pyinstaller40': ['hook-dirs = pygame_menu.__pyinstaller:get_hook_dirs']
+    },
 )
