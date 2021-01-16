@@ -32,10 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup, find_packages
-import sys
-
-sys.path.append('.')
-
 import pygame_menu
 
 # Load readme

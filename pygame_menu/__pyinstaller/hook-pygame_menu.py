@@ -2,7 +2,7 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-PYGAME HOOK
+PYGAME-MENU HOOK
 Used by Pyinstaller.
 
 License:
@@ -41,14 +41,15 @@ datas = []
 
 
 # A helper to append the relative path of a resource to hook variable - datas
-def _append_to_datas(file_path: str, target_folder: str, relative: bool = True,
-                     base_target_folder: str = 'pygame_menu') -> None:
+def _append_to_datas(file_path: str, target_folder: str, base_target_folder: str = 'pygame_menu',
+                     relative: bool = True) -> None:
     """
     Add path to datas.
 
     :param file_path: File path
     :param target_folder: Folder to paste the resources. If empty uses the containing folder of the file as ``base_target_folder+target_folder``
-    :param relative: If ``True`` append pygame_menu_folder
+    :param base_target_folder: Base folder of the resource
+    :param relative: If ``True`` append ``pygame_menu_folder``
     :return: None
     """
     global datas
