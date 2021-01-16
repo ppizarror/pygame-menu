@@ -44,7 +44,7 @@ _TEST_TIME_DRAW = False
 
 class MenuTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Test setup.
         """
@@ -53,7 +53,7 @@ class MenuTest(unittest.TestCase):
         self.menu.mainloop(surface, bgfun=dummy_function)
 
     @staticmethod
-    def test_time_draw():
+    def test_time_draw() -> None:
         """
         This test the time that takes to pygame_menu to draw several times.
         """
@@ -73,7 +73,7 @@ class MenuTest(unittest.TestCase):
 
         print(timeit.timeit(lambda: menu.draw(surface), number=100))
 
-    def test_size(self):
+    def test_size(self) -> None:
         """
         Test menu sizes.
         """
@@ -84,7 +84,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=inf_size, height=300))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=300, height=inf_size))
 
-    def test_position(self):
+    def test_position(self) -> None:
         """
         Test position.
         """
@@ -211,7 +211,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_height(widget=True), img.get_height() + btn.get_height() + margin)
         self.assertEqual(int((menu.get_height(inner=True) - menu.get_height(widget=True)) / 2), menu._widget_offset[1])
 
-    def test_attributes(self):
+    def test_attributes(self) -> None:
         """
         Test menu attributes.
         """
@@ -227,7 +227,7 @@ class MenuTest(unittest.TestCase):
         self.assertFalse(menu.has_attribute('epic'))
         self.assertEqual(menu.get_attribute('epic', 420), 420)
 
-    def test_close(self):
+    def test_close(self) -> None:
         """
         Test menu close.
         """
@@ -235,7 +235,7 @@ class MenuTest(unittest.TestCase):
         menu.set_attribute('epic', False)
         menu._back()
 
-        def test_close():
+        def test_close() -> None:
             menu.set_attribute('epic', True)
 
         menu.set_onclose(test_close)
@@ -245,7 +245,7 @@ class MenuTest(unittest.TestCase):
         menu._close()
         self.assertTrue(menu.get_attribute('epic'))
 
-    def test_enabled(self):
+    def test_enabled(self) -> None:
         """
         Test menu enable/disable feature.
         """
@@ -260,7 +260,7 @@ class MenuTest(unittest.TestCase):
         menu._close()
 
     # noinspection PyArgumentEqualDefault
-    def test_depth(self):
+    def test_depth(self) -> None:
         """
         Test depth of a menu.
         """
@@ -315,7 +315,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu.get_current().get_title(), 'mainmenu')
 
     # noinspection PyArgumentEqualDefault
-    def test_get_widget(self):
+    def test_get_widget(self) -> None:
         """
         Tests widget status.
         """
@@ -340,7 +340,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
         self.assertEqual(self.menu.get_widget('deep_selector', recursive=True), deep_selector)
 
-    def test_add_generic_widget(self):
+    def test_add_generic_widget(self) -> None:
         """
         Test generic widget.
         """
@@ -354,7 +354,7 @@ class MenuTest(unittest.TestCase):
         self.menu.add_generic_widget(btn)
 
     # noinspection PyArgumentEqualDefault
-    def test_get_selected_widget(self):
+    def test_get_selected_widget(self) -> None:
         """
         Tests get current widget.
         """
@@ -457,7 +457,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(None, self.menu.get_selected_widget())
         self.assertEqual(self.menu._index, 0)
 
-    def test_submenu(self):
+    def test_submenu(self) -> None:
         """
         Test submenus.
         """
@@ -480,7 +480,7 @@ class MenuTest(unittest.TestCase):
         menu.add_button('to2', menu2)
         self.assertRaises(ValueError, lambda: menu2.add_button('to1', menu))
 
-    def test_centering(self):
+    def test_centering(self) -> None:
         """
         Test centering menu.
         """
@@ -502,7 +502,7 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(theme=theme)
         self.assertTrue(menu._center_content)
 
-    def test_getters(self):
+    def test_getters(self) -> None:
         """
         Test other getters.
         """
@@ -517,7 +517,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(int(w), 600)
         self.assertEqual(int(h), 600)
 
-    def test_generic_events(self):
+    def test_generic_events(self) -> None:
         """
         Test key events.
         """
@@ -526,7 +526,7 @@ class MenuTest(unittest.TestCase):
         # Add a menu and a method that set a function
         event_val = [False]
 
-        def _some_event():
+        def _some_event() -> str:
             event_val[0] = True
             return 'the value'
 
@@ -577,7 +577,7 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(event_val[0])
         event_val[0] = False
 
-    def test_back_event(self):
+    def test_back_event(self) -> None:
         """
         Test back event.
         """
@@ -590,7 +590,7 @@ class MenuTest(unittest.TestCase):
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_BACK, keydown=True))  # go back
         self.assertEqual(self.menu._get_depth(), 0)
 
-    def test_mouse_empty_submenu(self):
+    def test_mouse_empty_submenu(self) -> None:
         """
         Test mouse event where the following submenu has less elements.
         """
@@ -611,7 +611,7 @@ class MenuTest(unittest.TestCase):
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
         self.menu.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
 
-    def test_input_data(self):
+    def test_input_data(self) -> None:
         """
         Test input data gathering.
         """
@@ -644,7 +644,8 @@ class MenuTest(unittest.TestCase):
         submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(recursive=True))
 
-    def test_columns_menu(self):
+    # noinspection PyTypeChecker
+    def test_columns_menu(self) -> None:
         """
         Test menu columns behaviour.
         """
@@ -1023,7 +1024,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu._column_widths[1], 150)
         self.assertEqual(menu._column_widths[2], 150)
 
-    def test_screen_dimension(self):
+    def test_screen_dimension(self) -> None:
         """
         Test screen dim.
         """
@@ -1037,7 +1038,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_window_size()[0], 888)
         self.assertEqual(menu.get_window_size()[1], 999)
 
-    def test_touchscreen(self):
+    def test_touchscreen(self) -> None:
         """
         Test menu touchscreen behaviour.
         """
@@ -1055,7 +1056,7 @@ class MenuTest(unittest.TestCase):
         # Add a menu and a method that set a function
         event_val = [False]
 
-        def _some_event():
+        def _some_event() -> str:
             event_val[0] = True
             return 'the value'
 
@@ -1071,10 +1072,10 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(event_val[0])
         event_val[0] = False
         self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
-        btn = menu.get_selected_widget()  # type: Button
+        btn = menu.get_selected_widget()
         self.assertTrue(btn.get_selected_time() >= 0)
 
-    def test_reset_value(self):
+    def test_reset_value(self) -> None:
         """
         Test menu reset value.
         """
@@ -1112,13 +1113,13 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(selector.get_index(), 1)
 
     # noinspection PyArgumentList
-    def test_invalid_args(self):
+    def test_invalid_args(self) -> None:
         """
         Test menu invalid args.
         """
         self.assertRaises(TypeError, lambda: pygame_menu.Menu(height=100, width=100, title='nice', fake_option=True))
 
-    def test_set_title(self):
+    def test_set_title(self) -> None:
         """
         Test menu title.
         """
@@ -1145,7 +1146,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
         self.assertEqual(menubar.get_title_offset()[1], theme.title_offset[1])
 
-    def test_empty(self):
+    def test_empty(self) -> None:
         """
         Test empty menu.
         """
@@ -1196,7 +1197,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(sa.get_world_size()[0], 0)
         sa._world = world
 
-    def test_focus(self):
+    def test_focus(self) -> None:
         """
         Test menu focus effect.
         """
@@ -1244,7 +1245,7 @@ class MenuTest(unittest.TestCase):
         btn.selected = True
         self.assertNotEqual(None, menu._draw_focus_widget(surface, btn))
 
-    def test_visible(self):
+    def test_visible(self) -> None:
         """
         Test visible.
         """

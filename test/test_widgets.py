@@ -30,8 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import sys
-
 from test._utils import *
 from pygame_menu import locals as _locals
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
@@ -44,21 +42,21 @@ from pygame import Surface
 
 class WidgetsTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Setup sound engine.
         """
         test_reset_surface()
         self.menu = MenuUtils.generic_menu()
 
-    def test_onselect(self):
+    def test_onselect(self) -> None:
         """
         Test onselect widgets.
         """
         menu = MenuUtils.generic_menu()
         test = [None]
 
-        def on_select(selected, widget, _):
+        def on_select(selected, widget, _) -> None:
             """
             Callback.
             """
@@ -118,25 +116,23 @@ class WidgetsTest(unittest.TestCase):
         vmargin.select()
         self.assertEqual(test[0], text)
 
-    def test_nonascii(self):
+    def test_nonascii(self) -> None:
         """
         Test non-ascii.
         """
         m = MenuUtils.generic_menu(title=u'Ménu')
         m.clear()
-        self.menu.add_button(0, pygame_menu.events.NONE)
+        self.menu.add_button('0', pygame_menu.events.NONE)
         self.menu.add_button('Test', pygame_menu.events.NONE)
         self.menu.add_button(u'Menú', pygame_menu.events.NONE)
         self.menu.add_color_input(u'Cólor', 'rgb')
         self.menu.add_text_input(u'Téxt')
         self.menu.add_label(u'Téxt')
-        if sys.version_info < (3, 0):
-            self.assertRaises(Exception, lambda: self.menu.add_selector(u'Sélect', [('a', 'a')]))  # Strict
         self.menu.add_selector(u'Sélect'.encode('latin1'), [('a', 'a')])
         self.menu.enable()
         self.menu.draw(surface)
 
-    def test_background(self):
+    def test_background(self) -> None:
         """
         Test widget background.
         """
@@ -150,7 +146,7 @@ class WidgetsTest(unittest.TestCase):
         w.set_background_color(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
         w.draw(surface)
 
-    def test_transform(self):
+    def test_transform(self) -> None:
         """
         Transform widgets.
         """
@@ -175,7 +171,7 @@ class WidgetsTest(unittest.TestCase):
         # Test all widgets
         widgs = [
             self.menu.add_button('e', None),
-            self.menu.add_selector('e', [('The first', 1),
+            self.menu.add_selector('e', [('1', 2),
                                          ('The second', 2),
                                          ('The final mode', 3)]),
             self.menu.add_color_input('color', 'rgb'),
@@ -200,7 +196,7 @@ class WidgetsTest(unittest.TestCase):
         w.set_max_width(100)
         self.assertFalse(w._scale[0])
 
-    def test_max_width_height(self):
+    def test_max_width_height(self) -> None:
         """
         Test widget max width/height.
         """
@@ -268,7 +264,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label.get_width(), 692)
         self.assertEqual(label.get_height(), 35)
 
-    def test_visibility(self):
+    def test_visibility(self) -> None:
         """
         Test widget visibility.
         """
@@ -287,7 +283,7 @@ class WidgetsTest(unittest.TestCase):
         self.menu.add_generic_widget(w)
         w.hide()
 
-    def test_font(self):
+    def test_font(self) -> None:
         """
         Test widget font.
         """
@@ -296,7 +292,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: w.update_font({}))
         w.update_font({'color': (255, 0, 0)})
 
-    def test_padding(self):
+    def test_padding(self) -> None:
         """
         Test widget padding.
         """
@@ -339,7 +335,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(p[3], 75)
 
     # noinspection PyTypeChecker
-    def test_menubar(self):
+    def test_menubar(self) -> None:
         """
         Test menubar widget.
         """
@@ -359,7 +355,8 @@ class WidgetsTest(unittest.TestCase):
         self.menu.draw(surface)
         self.menu.disable()
 
-    def test_selector(self):
+    # noinspection PyArgumentEqualDefault
+    def test_selector(self) -> None:
         """
         Test selector widget.
         """
@@ -401,13 +398,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
 
-    # noinspection PyArgumentEqualDefault
-    def test_colorinput(self):
+    # noinspection PyArgumentEqualDefault,PyTypeChecker
+    def test_colorinput(self) -> None:
         """
         Test ColorInput widget.
         """
 
-        def _assert_invalid_color(_widget):
+        def _assert_invalid_color(_widget) -> None:
             """
             Assert that the widget color is invalid.
             :param _widget: Widget object
@@ -417,7 +414,7 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(_g, -1)
             self.assertEqual(_b, -1)
 
-        def _assert_color(_widget, cr, cg, cb):
+        def _assert_color(_widget, cr, cg, cb) -> None:
             """
             Assert that the widget color is invalid.
             :param _widget: Widget object
@@ -592,7 +589,7 @@ class WidgetsTest(unittest.TestCase):
         widget.set_value('AABBcc')
         self.assertEqual(widget.get_value(as_string=True), '#AABBCC')
 
-    def test_label(self):
+    def test_label(self) -> None:
         """
         Test label widget.
         """
@@ -617,7 +614,7 @@ class WidgetsTest(unittest.TestCase):
         _w.draw(surface)
         self.assertFalse(_w.update([]))
 
-    def test_textinput(self):
+    def test_textinput(self) -> None:
         """
         Test TextInput widget.
         """
@@ -753,7 +750,7 @@ class WidgetsTest(unittest.TestCase):
         textinput._cursor_render = True
         textinput._render_cursor()
 
-    def test_button(self):
+    def test_button(self) -> None:
         """
         Test button widget.
         """
@@ -761,7 +758,7 @@ class WidgetsTest(unittest.TestCase):
         menu2 = MenuUtils.generic_menu()
 
         # Valid
-        def test():
+        def test() -> bool:
             """
             Callback.
             """
@@ -810,7 +807,7 @@ class WidgetsTest(unittest.TestCase):
         # Test callback
         test = [False]
 
-        def callback(t=False):
+        def callback(t=False) -> None:
             """
             Callback.
             """
@@ -821,7 +818,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(test[0])
         test[0] = False
 
-        def callback():
+        def callback() -> None:
             """
             Callback.
             """
@@ -832,7 +829,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(test[0])
 
         # Test with no kwargs
-        def callback(**kwargs):
+        def callback(**kwargs) -> None:
             """
             Callback.
             """
@@ -842,7 +839,7 @@ class WidgetsTest(unittest.TestCase):
         btn.apply()
 
         # Test with kwargs
-        def callback(**kwargs):
+        def callback(**kwargs) -> None:
             """
             Callback.
             """
@@ -873,7 +870,7 @@ class WidgetsTest(unittest.TestCase):
         menu.remove_widget(btn)
         self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
 
-    def test_attributes(self):
+    def test_attributes(self) -> None:
         """
         Test widget attributes.
         """
@@ -889,14 +886,14 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(widget.has_attribute('epic'))
         self.assertEqual(widget.get_attribute('epic', 420), 420)
 
-    def test_draw_callback(self):
+    def test_draw_callback(self) -> None:
         """
         Test drawing callback.
         """
         self.menu.clear()
         self.menu.enable()
 
-        def call(widget, _):
+        def call(widget, _) -> None:
             """
             Callback.
             """
@@ -911,12 +908,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(IndexError, lambda: btn.remove_draw_callback(callid))  # Already removed
         self.menu.disable()
 
-    def test_update_callback(self):
+    def test_update_callback(self) -> None:
         """
         Test update callback.
         """
 
-        def update(widget, _):
+        def update(widget, _) -> None:
             """
             Callback.
             """
@@ -936,7 +933,7 @@ class WidgetsTest(unittest.TestCase):
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertEqual(btn.get_attribute('attr', False), False)
 
-        def update2(widget, _):
+        def update2(widget, _) -> None:
             """
             Callback.
             """
@@ -952,7 +949,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(IndexError, lambda: btn.remove_attribute('epic'))
         self.assertFalse(btn.has_attribute('epic'))
 
-    def test_change_id(self):
+    def test_change_id(self) -> None:
         """
         Test widget id change.
         """
@@ -965,7 +962,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(menu.get_widget('margin'), v)
         self.assertRaises(IndexError, lambda: v.change_id('id2'))
 
-    def test_vmargin(self):
+    def test_vmargin(self) -> None:
         """
         Test vertical margin widget.
         """
@@ -980,7 +977,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_margin()[1], 999)
         w.draw(surface)
 
-    def test_none(self):
+    def test_none(self) -> None:
         """
         Test none widget.
         """
@@ -1086,7 +1083,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(wid.is_selectable)
 
         # noinspection PyUnusedLocal
-        def _draw(*args):
+        def _draw(*args) -> None:
             draw[0] = True
 
         drawid = wid.add_draw_callback(_draw)
@@ -1101,7 +1098,7 @@ class WidgetsTest(unittest.TestCase):
         wid.set_sound(None)
         self.assertNotEqual(wid.sound, None)
 
-    def test_scrollbar(self):
+    def test_scrollbar(self) -> None:
         """
         Test ScrollBar widget.
         """
@@ -1115,14 +1112,17 @@ class WidgetsTest(unittest.TestCase):
         orientation = _locals.ORIENTATION_VERTICAL
         x, y = screen_size[0] - thick, 0
 
-        sb = ScrollBar(length,
-                       world_range,
-                       '',
-                       orientation,
-                       slider_pad=2,
-                       slider_color=(210, 120, 200),
-                       page_ctrl_thick=thick,
-                       page_ctrl_color=(235, 235, 230))
+        # noinspection PyArgumentEqualDefault
+        sb = ScrollBar(
+            length,
+            world_range,
+            '',
+            orientation,
+            slider_pad=2,
+            slider_color=(210, 120, 200),
+            page_ctrl_thick=thick,
+            page_ctrl_color=(235, 235, 230)
+        )
         self.assertEqual(sb.get_thickness(), 80)
 
         sb.set_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)

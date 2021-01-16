@@ -31,26 +31,23 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from test._utils import *
-import sys
+from pathlib import Path
 
 from pygame_menu.baseimage import *
 
 
 class BaseImageTest(unittest.TestCase):
 
-    def test_pathlib(self):
+    def test_pathlib(self) -> None:
         """
         Test image load with pathlib.
         """
-        if sys.version_info >= (3, 0):
-            # noinspection PyCompatibility
-            from pathlib import Path
-            pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-            image = pygame_menu.baseimage.BaseImage(pathimg)
-            image.draw(surface)
-            self.assertEqual(image.get_path(), str(pathimg))
+        pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.baseimage.BaseImage(pathimg)
+        image.draw(surface)
+        self.assertEqual(image.get_path(), str(pathimg))
 
-    def test_modes(self):
+    def test_modes(self) -> None:
         """
         Test drawing modes.
         """
@@ -75,7 +72,7 @@ class BaseImageTest(unittest.TestCase):
         )
         self.assertEqual(image.get_drawing_mode(), IMAGE_MODE_CENTER)
 
-    def test_drawing_offset(self):
+    def test_drawing_offset(self) -> None:
         """
         Test drawing offset.
         """
@@ -87,7 +84,7 @@ class BaseImageTest(unittest.TestCase):
         self.assertEqual(image.get_drawing_offset()[0], 50)
         self.assertEqual(image.get_drawing_offset()[1], 150)
 
-    def test_image_path(self):
+    def test_image_path(self) -> None:
         """
         Test path.
         """
@@ -97,7 +94,7 @@ class BaseImageTest(unittest.TestCase):
         )
         self.assertEqual(image.get_path(), pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
-    def test_extension_validation(self):
+    def test_extension_validation(self) -> None:
         """
         Validate a image extension.
         """
@@ -106,7 +103,7 @@ class BaseImageTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('file_invalid.png'))
         pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
-    def test_image_properties(self):
+    def test_image_properties(self) -> None:
         """
         Test the getters of the image object.
         """
@@ -117,7 +114,7 @@ class BaseImageTest(unittest.TestCase):
         self.assertEqual(image.get_namefile(), 'gray_lines')
         self.assertEqual(image.get_extension(), '.png')
 
-    def test_operations(self):
+    def test_operations(self) -> None:
         """
         Test the file operations.
         """
@@ -139,7 +136,7 @@ class BaseImageTest(unittest.TestCase):
         image.restore()
         self.assertFalse(image.equals(image_original))
 
-    def test_copy(self):
+    def test_copy(self) -> None:
         """
         Test copy image.
         """
@@ -147,7 +144,7 @@ class BaseImageTest(unittest.TestCase):
         image_copied = image.copy()
         self.assertTrue(image.equals(image_copied))
 
-    def test_transform(self):
+    def test_transform(self) -> None:
         """
         Test the image transformation.
         """

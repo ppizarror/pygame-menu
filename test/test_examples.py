@@ -49,7 +49,7 @@ import pygame_menu.examples.other.scrollbar_area as scroll_area
 class ExamplesTest(unittest.TestCase):
 
     @staticmethod
-    def test_example_timer_clock():
+    def test_example_timer_clock() -> None:
         """
         Test timer clock example.
         """
@@ -59,7 +59,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_difficulty_selector():
+    def test_example_difficulty_selector() -> None:
         """
         Test multi-input example.
         """
@@ -71,7 +71,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_multi_input():
+    def test_example_multi_input() -> None:
         """
         Test multi-input example.
         """
@@ -79,7 +79,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_scroll_menu():
+    def test_example_scroll_menu() -> None:
         """
         Test scroll menu example.
         """
@@ -87,7 +87,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_simple():
+    def test_example_simple() -> None:
         """
         Test scroll area example.
         """
@@ -96,7 +96,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_other_area_menu():
+    def test_example_other_area_menu() -> None:
         """
         Test scroll area example.
         """
@@ -104,7 +104,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_other_scroll_bar():
+    def test_example_other_scroll_bar() -> None:
         """
         Test scroll bar example.
         """
@@ -112,7 +112,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_other_dynamic_button():
+    def test_example_other_dynamic_button() -> None:
         """
         Test dynamic button example.
         """
@@ -123,7 +123,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_other_dynamic_widget():
+    def test_example_other_dynamic_widget() -> None:
         """
         Test dynamic widget update example.
         """
@@ -134,7 +134,7 @@ class ExamplesTest(unittest.TestCase):
         test_reset_surface()
 
     @staticmethod
-    def test_example_other_background_image():
+    def test_example_other_background_image() -> None:
         """
         Test background image example.
         """

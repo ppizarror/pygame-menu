@@ -35,7 +35,7 @@ from test._utils import *
 
 class VersionTest(unittest.TestCase):
 
-    def test_version(self):
+    def test_version(self) -> None:
         """
         Test version.
         """

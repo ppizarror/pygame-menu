@@ -37,14 +37,14 @@ from pygame_menu.widgets.selection import *
 
 class WidgetSelectionTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Setup sound engine.
         """
         self.menu = MenuUtils.generic_menu()
         self.menu.enable()
 
-    def test_arrow(self):
+    def test_arrow(self) -> None:
         """
         Test arrow selection.
         """
@@ -55,7 +55,7 @@ class WidgetSelectionTest(unittest.TestCase):
         w.set_selection_effect(RightArrowSelection())
         self.menu.draw(surface)
 
-    def test_highlight(self):
+    def test_highlight(self) -> None:
         """
         Test highlight selection.
         """
@@ -81,7 +81,7 @@ class WidgetSelectionTest(unittest.TestCase):
         self.assertEqual(-inflate_rect.x + rect.x, sel.get_width() / 2)
         self.assertEqual(-inflate_rect.y + rect.y, sel.get_height() / 2)
 
-    def test_none(self):
+    def test_none(self) -> None:
         """
         Test highlight selection.
         """
