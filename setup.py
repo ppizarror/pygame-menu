@@ -68,7 +68,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -88,7 +87,7 @@ setup(
         'doc': [
             'sphinx',
             'sphinx-rtd-theme',
-            # 'sphinx-autodoc-typehints >= 1.2.0'
+            'sphinx-autodoc-typehints >= 1.2.0'
         ],
     },
     setup_requires=[

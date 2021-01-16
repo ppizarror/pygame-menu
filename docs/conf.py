@@ -66,7 +66,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.intersphinx',
               'sphinx.ext.autosectionlabel',
-              # 'sphinx_autodoc_typehints'
+              'sphinx_autodoc_typehints'
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -84,7 +84,7 @@ exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
 # -- Intersphinx configuration ------------------------------------------------
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.7', None),
+    'python': ('https://docs.python.org/3.9', None),
     'pygame': ('https://www.pygame.org/docs', None),
 }
 
