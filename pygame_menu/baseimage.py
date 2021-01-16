@@ -380,7 +380,8 @@ class BaseImage(object):
         scale of bitmap graphics.
 
         This really only has an effect on simple images with solid colors.
-        On photographic and antialiased images it will look like a regular unfiltered scale.
+        On photographic and antialiased images it will look like a regular
+        unfiltered scale.
 
         :return: Self reference
         :rtype: BaseImage
@@ -407,9 +408,8 @@ class BaseImage(object):
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
         if w == width and h == height:
-            return
-        self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
-        return self
+            return self
+        return self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
 
     def get_rect(self):
         """
@@ -449,7 +449,7 @@ class BaseImage(object):
         :type surface: :py:class:`pygame.Surface`
         :param area: Area to draw, if None, Image will be drawn on entire surface
         :type area: :py:class:`pygame.Rect`, None
-        :param position: Position to draw
+        :param position: Position to draw in *(x, y)*
         :type position: tuple
         :return: None
         """

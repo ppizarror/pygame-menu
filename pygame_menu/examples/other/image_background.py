@@ -33,13 +33,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
 from __future__ import print_function
 import sys
+import os
 
 sys.path.insert(0, '../../')
 
-import os
 import pygame
 import pygame_menu
 

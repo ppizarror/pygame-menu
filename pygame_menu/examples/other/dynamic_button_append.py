@@ -32,13 +32,15 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
+
 import sys
+import os
+from random import randrange
 
 sys.path.insert(0, '../../')
-import pygame_menu
-from random import randrange
+
 import pygame
-import os
+import pygame_menu
 
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'

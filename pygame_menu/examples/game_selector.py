@@ -33,16 +33,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
-
 import os
+from random import randrange
+
 import pygame
 import pygame_menu
-
-from random import randrange
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
