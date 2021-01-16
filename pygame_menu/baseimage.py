@@ -37,6 +37,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path as path
 import math
 
+try:
+    # noinspection PyCompatibility
+    from pathlib import Path as _Path
+except ImportError:
+    _Path = None
+
 import pygame
 from pygame_menu.utils import assert_vector2
 
@@ -67,8 +73,8 @@ class BaseImage(object):
     Object that loads an image, stores as a surface, transform it and
     let write the image to an surface.
 
-    :param image_path: Path of the image to be loaded
-    :type image_path: str
+    :param image_path: Path of the image to be loaded. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
+    :type image_path: str, :py:class:`pathlib.Path`
     :param drawing_mode: Drawing mode of the image
     :type drawing_mode: int
     :param drawing_offset: Offset of the image in drawing method
@@ -83,7 +89,12 @@ class BaseImage(object):
                  drawing_offset=(0, 0),
                  load_from_file=True
                  ):
-        assert isinstance(image_path, str)
+        if _Path is None:
+            assert isinstance(image_path, str)
+        else:
+            assert isinstance(image_path, (str, _Path))
+            if isinstance(image_path, _Path):
+                image_path = str(image_path)
         assert isinstance(load_from_file, bool)
 
         _, file_extension = path.splitext(image_path)
