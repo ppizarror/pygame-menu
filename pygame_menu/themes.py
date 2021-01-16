@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Theme']
+
 import pygame_menu.font
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets

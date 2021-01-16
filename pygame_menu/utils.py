@@ -29,6 +29,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    'assert_alignment',
+    'assert_color',
+    'assert_orientation',
+    'assert_position',
+    'assert_vector2',
+    'check_key_pressed_valid',
+    'is_callable',
+    'make_surface'
+
+]
+
 import types
 import functools
 
@@ -87,6 +100,21 @@ def assert_orientation(orientation: str) -> None:
         'invalid orientation value "{0}"'.format(orientation)
 
 
+def assert_position(position: str) -> None:
+    """
+    Assert that a certain position is valid.
+
+    :param position: Object position
+    :return: None
+    """
+    assert isinstance(position, str), 'position must be a string'
+    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
+                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
+                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
+                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
+        'invalid position value "{0}"'.format(position)
+
+
 def assert_vector2(num_vector: Vector2NumberType) -> None:
     """
     Assert that a 2-item vector is numeric.
@@ -102,21 +130,6 @@ def assert_vector2(num_vector: Vector2NumberType) -> None:
                      isinstance(num_vector[1], (int, float))
     assert vector_numeric, \
         'each item of "{0}" vector must be integer or float'.format(num_vector)
-
-
-def assert_position(position: str) -> None:
-    """
-    Assert that a certain position is valid.
-
-    :param position: Object position
-    :return: None
-    """
-    assert isinstance(position, str), 'position must be a string'
-    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
-                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
-                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
-        'invalid position value "{0}"'.format(position)
 
 
 def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
@@ -138,14 +151,16 @@ def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
     return not bad_event
 
 
-def dummy_function() -> None:
+def is_callable(func: Any) -> bool:
     """
-    Dummy function, this can be achieved with lambda but it's against
-    PEP-8.
+    Return ``True`` if ``func`` is callable.
 
-    :return: None
+    :param func: Function object
+    :return: ``True`` if function
     """
-    return
+    # noinspection PyTypeChecker
+    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType,
+                             types.MethodType, functools.partial))
 
 
 def make_surface(width: NumberType, height: NumberType,
@@ -173,14 +188,3 @@ def make_surface(width: NumberType, height: NumberType,
         assert_color(fill_color)
         surface.fill(fill_color)
     return surface
-
-
-def is_callable(func: Any) -> bool:
-    """
-    Return ``True`` if ``func`` is callable.
-
-    :param func: Function object
-    :return: ``True`` if function
-    """
-    # noinspection PyTypeChecker
-    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))

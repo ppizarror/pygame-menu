@@ -29,6 +29,36 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Sound types
+    'SOUND_TYPE_CLICK_MOUSE',
+    'SOUND_TYPE_CLOSE_MENU',
+    'SOUND_TYPE_ERROR',
+    'SOUND_TYPE_EVENT',
+    'SOUND_TYPE_EVENT_ERROR',
+    'SOUND_TYPE_KEY_ADDITION',
+    'SOUND_TYPE_KEY_DELETION',
+    'SOUND_TYPE_OPEN_MENU',
+    'SOUND_TYPE_WIDGET_SELECTION',
+
+    # Sound example paths
+    'SOUND_EXAMPLE_CLICK_MOUSE',
+    'SOUND_EXAMPLE_CLOSE_MENU',
+    'SOUND_EXAMPLE_ERROR',
+    'SOUND_EXAMPLE_EVENT',
+    'SOUND_EXAMPLE_EVENT_ERROR',
+    'SOUND_EXAMPLE_KEY_ADD',
+    'SOUND_EXAMPLE_KEY_DELETE',
+    'SOUND_EXAMPLE_OPEN_MENU',
+    'SOUND_EXAMPLE_WIDGET_SELECTION',
+    'SOUND_EXAMPLES',
+
+    # Class
+    'Sound'
+
+]
+
 import os.path as path
 import time
 import warnings
@@ -441,7 +471,3 @@ class Sound(object):
         data['sound'] = channel.get_sound()
         data['volume'] = channel.get_volume()
         return data
-
-
-# Workspace cleaning
-del AUDIO_ALLOW_CHANNELS_CHANGE, AUDIO_ALLOW_FREQUENCY_CHANGE

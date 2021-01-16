@@ -30,6 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 # File constants no. 0
 
+__all__ = ['Menu']
+
 from pathlib import Path
 from uuid import uuid4
 import os

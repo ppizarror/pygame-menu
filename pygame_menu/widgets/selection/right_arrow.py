@@ -76,9 +76,9 @@ class RightArrowSelection(ArrowSelection):
         #        margin
         rect = widget.get_rect()
         a = (rect.topright[0] + self._arrow_size[0] + self._arrow_left_margin,
-             rect.midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+             int(rect.midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset))
         b = (rect.midright[0] + self._arrow_left_margin,
              rect.midright[1] + self._arrow_vertical_offset)
         c = (rect.bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
-             rect.midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+             int(rect.midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset))
         super(RightArrowSelection, self)._draw_arrow(surface, widget, a, b, c)

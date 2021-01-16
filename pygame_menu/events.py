@@ -29,6 +29,26 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Class
+    'MenuAction',
+    'is_event',
+
+    # Menu events
+    'BACK',
+    'CLOSE',
+    'DISABLE_CLOSE',
+    'EXIT',
+    'NONE',
+    'RESET',
+
+    # Pygame events
+    'PYGAME_QUIT',
+    'PYGAME_WINDOWCLOSE'
+
+]
+
 import pygame.locals as __locals
 from typing import Any
 

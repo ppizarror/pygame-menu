@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Version', 'vernum', 'ver', 'rev']
+
 from typing import Tuple
 
 

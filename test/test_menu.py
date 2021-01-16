@@ -37,10 +37,19 @@ import pygame
 import pygame_menu
 from pygame_menu import events
 from pygame_menu.widgets import Label, Button
-from pygame_menu.utils import dummy_function
 
 # Configure the tests
 _TEST_TIME_DRAW = False
+
+
+def dummy_function() -> None:
+    """
+    Dummy function, this can be achieved with lambda but it's against
+    PEP-8.
+
+    :return: None
+    """
+    return
 
 
 class MenuTest(unittest.TestCase):

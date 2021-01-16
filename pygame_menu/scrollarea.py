@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['ScrollArea']
+
 import pygame
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.locals as _locals

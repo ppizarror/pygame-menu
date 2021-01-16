@@ -29,6 +29,28 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Fonts path included in resources
+    'FONT_8BIT',
+    'FONT_BEBAS',
+    'FONT_COMIC_NEUE',
+    'FONT_FRANCHISE',
+    'FONT_HELVETICA',
+    'FONT_MUNRO',
+    'FONT_NEVIS',
+    'FONT_OPEN_SANS',
+    'FONT_OPEN_SANS_BOLD',
+    'FONT_OPEN_SANS_ITALIC',
+    'FONT_OPEN_SANS_LIGHT',
+    'FONT_PT_SERIF',
+    'FONT_EXAMPLES',
+
+    # Font util
+    'get_font'
+
+]
+
 import os.path as path
 import pygame.font as _font
 from typing import Union, Optional

@@ -30,6 +30,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 # File constants no. 100
 
+__all__ = [
+
+    # Image paths
+    'IMAGE_EXAMPLE_CARBON_FIBER',
+    'IMAGE_EXAMPLE_GRAY_LINES',
+    'IMAGE_EXAMPLE_METAL',
+    'IMAGE_EXAMPLE_PYGAME_MENU',
+    'IMAGE_EXAMPLE_WALLPAPER',
+    'IMAGE_EXAMPLES',
+
+    # Drawing modes
+    'IMAGE_MODE_CENTER',
+    'IMAGE_MODE_FILL',
+    'IMAGE_MODE_REPEAT_X',
+    'IMAGE_MODE_REPEAT_XY',
+    'IMAGE_MODE_REPEAT_Y',
+    'IMAGE_MODE_SIMPLE',
+
+    # Base class
+    'BaseImage'
+
+]
+
 import os.path as path
 import math
 from pathlib import Path

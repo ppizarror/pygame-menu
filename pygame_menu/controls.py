@@ -29,6 +29,33 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Joypad
+    'JOY_AXIS_X',
+    'JOY_AXIS_Y',
+    'JOY_BUTTON_BACK',
+    'JOY_BUTTON_SELECT',
+    'JOY_CENTERED',
+    'JOY_DEADZONE',
+    'JOY_DELAY',
+    'JOY_DOWN',
+    'JOY_LEFT',
+    'JOY_REPEAT',
+    'JOY_RIGHT',
+    'JOY_UP',
+
+    # Keyboard events
+    'KEY_APPLY',
+    'KEY_BACK',
+    'KEY_CLOSE_MENU',
+    'KEY_LEFT',
+    'KEY_MOVE_DOWN',
+    'KEY_MOVE_UP',
+    'KEY_RIGHT'
+
+]
+
 import pygame.locals as __locals
 
 # Joypad
