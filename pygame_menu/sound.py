@@ -94,7 +94,8 @@ class Sound(object):
                  buffer=4096,
                  devicename='',
                  allowedchanges=AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
-                 force_init=False):
+                 force_init=False
+                 ):
         assert isinstance(uniquechannel, bool)
         assert isinstance(frequency, int)
         assert isinstance(size, int)
@@ -178,7 +179,7 @@ class Sound(object):
         """
         Return the channel of the sound engine.
 
-        :return: Channel
+        :return: Sound engine channel
         :rtype: :py:class:`pygame.mixer.Channel`
         """
         # noinspection PyArgumentList
@@ -291,7 +292,7 @@ class Sound(object):
         Play a sound.
 
         :param sound: Sound to be played
-        :type sound: :py:class:`pygame.mixer.Sound`, None
+        :type sound: dict, None
         :return: True if the sound was played
         :rtype: bool
         """

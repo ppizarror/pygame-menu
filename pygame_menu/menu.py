@@ -1715,7 +1715,8 @@ class Menu(object):
         :type surface: :py:class:`pygame.Surface`
         :param widget: Focused widget
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
-        :return: None
+        :return: Returns the focus region, ``None`` if the focus could not be possible
+        :rtype: dict, None
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (_widgets.core.Widget, type(None)))
@@ -2520,7 +2521,7 @@ class Menu(object):
         """
         Return the selected widget on the Menu.
 
-        :return: Widget object, None if no widget is selected
+        :return: Widget object, ``None`` if no widget is selected
         :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
         if not isinstance(self._index, int):
