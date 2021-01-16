@@ -30,7 +30,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
+from typing import List
 
 
-def get_hook_dirs():
+def get_hook_dirs() -> List[str]:
+    """
+    Return hook dirs to PyInstaller.
+
+    :return: Hook dir list
+    """
     return [os.path.dirname(__file__)]

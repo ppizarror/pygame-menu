@@ -34,8 +34,8 @@ import functools
 
 import pygame
 import pygame_menu.locals as _locals
-
-from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any
+from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
+    Optional
 
 
 def assert_alignment(align: str) -> None:
@@ -149,7 +149,7 @@ def dummy_function() -> None:
 
 
 def make_surface(width: NumberType, height: NumberType,
-                 alpha: bool = False, fill_color: Union[ColorType, None] = None) -> 'pygame.Surface':
+                 alpha: bool = False, fill_color: Optional[ColorType] = None) -> 'pygame.Surface':
     """
     Creates a pygame surface object.
 
@@ -158,7 +158,6 @@ def make_surface(width: NumberType, height: NumberType,
     :param alpha: Enable alpha channel on surface
     :param fill_color: Fill surface with a certain color
     :return: Pygame surface
-    :rtype: :py:class:`pygame.Surface`
     """
     assert isinstance(width, (int, float))
     assert isinstance(height, (int, float))

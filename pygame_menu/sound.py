@@ -37,7 +37,7 @@ from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
-from pygame_menu.custom_types import Union, NumberType, List, Dict, Any
+from pygame_menu.custom_types import NumberType, List, Dict, Any, Optional
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
@@ -83,23 +83,15 @@ class Sound(object):
     Sound engine class.
     
     :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
-    :type uniquechannel: bool
     :param frequency: Frequency of sounds
-    :type frequency: int
     :param size: Size of sample
-    :type size: int
     :param channels: Number of channels
-    :type channels: int
     :param buffer: Buffer size
-    :type buffer: int
     :param devicename: Device name
-    :type devicename: str
     :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
-    :type allowedchanges: bool
     :param force_init: Force mixer init with new parameters
-    :type force_init: bool
     """
-    _channel: Union['mixer.Channel', None]
+    _channel: Optional['mixer.Channel']
     _last_play: str
     _last_time: float
     _sound: Dict[str, Dict[str, Any]]
@@ -209,7 +201,7 @@ class Sound(object):
             self._channel = channel  # Store the available channel
         return self._channel
 
-    def set_sound(self, sound_type: str, sound_file: Union[str, None], volume: float = 0.5,
+    def set_sound(self, sound_type: str, sound_file: Optional[str], volume: float = 0.5,
                   loops: int = 0, maxtime: NumberType = 0, fade_ms: NumberType = 0) -> bool:
         """
         Link a sound file to a sound type.
@@ -282,7 +274,7 @@ class Sound(object):
         for sound in range(len(self._type_sounds)):
             self.set_sound(self._type_sounds[sound], SOUND_EXAMPLES[sound], volume=volume)
 
-    def _play_sound(self, sound: Union[Dict[str, Any], None]) -> bool:
+    def _play_sound(self, sound: Optional[Dict[str, Any]]) -> bool:
         """
         Play a sound.
 

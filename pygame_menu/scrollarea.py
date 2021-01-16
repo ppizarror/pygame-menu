@@ -36,7 +36,7 @@ from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar
 
 from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, \
-    TYPE_CHECKING, Tuple2NumberType
+    TYPE_CHECKING, Tuple2NumberType, Optional
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core.widget import Widget
@@ -54,7 +54,6 @@ class ScrollArea(object):
     :param area_width: Width of scrollable area (px)
     :param area_height: Height of scrollable area (px)
     :param area_color: Background color, it can be a color or an image
-    :type area_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param extend_x: Px to extend the surface in yxaxis (px) from left
     :param extend_y: Px to extend the surface in y axis (px) from top
     :param scrollbar_color: Scrollbars color
@@ -73,16 +72,16 @@ class ScrollArea(object):
     _scrollbars: List['ScrollBar']
     _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: NumberType
-    _bg_surface: Union['pygame.Surface', None]
+    _bg_surface: Optional['pygame.Surface']
     _extend_x: int
     _extend_y: int
     _view_rect: 'pygame.Rect'
-    _menu: Union['Menu', None]
+    _menu: Optional['Menu']
 
     def __init__(self,
                  area_width: int,
                  area_height: int,
-                 area_color: Union[ColorType, '_baseimage.BaseImage', None] = None,
+                 area_color: Optional[Union[ColorType, '_baseimage.BaseImage']] = None,
                  extend_x: int = 0,
                  extend_y: int = 0,
                  scrollbar_color: ColorType = (235, 235, 235),
@@ -94,7 +93,7 @@ class ScrollArea(object):
                  shadow_color: ColorType = (0, 0, 0),
                  shadow_offset: NumberType = 2,
                  shadow_position: str = _locals.POSITION_SOUTHEAST,
-                 world: Union['pygame.Surface', None] = None
+                 world: Optional['pygame.Surface'] = None
                  ) -> None:
         assert isinstance(area_width, int)
         assert isinstance(area_height, int)
@@ -272,7 +271,6 @@ class ScrollArea(object):
         Return the Rect object.
 
         :return: Pygame.Rect object
-        :rtype: :py:class:`pygame.Rect`
         """
         return self._rect.copy()
 
@@ -304,7 +302,6 @@ class ScrollArea(object):
         or may not be displayed.
 
         :return: View rect object
-        :rtype: :py:class:`pygame.Rect`
         """
         rect = pygame.Rect(self._rect)
 
@@ -441,7 +438,7 @@ class ScrollArea(object):
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
 
-    def set_position(self, posx: int, posy: int):
+    def set_position(self, posx: int, posy: int) -> None:
         """
         Set the position.
 
@@ -547,7 +544,7 @@ class ScrollArea(object):
         for sbar in self._scrollbars:
             sbar.set_menu(menu)
 
-    def get_menu(self) -> Union['Menu', None]:
+    def get_menu(self) -> Optional['Menu']:
         """
         Return the Menu reference (if exists).
 

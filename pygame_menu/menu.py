@@ -39,7 +39,6 @@ import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.controls as _controls
 import pygame_menu.events as _events
@@ -52,10 +51,7 @@ from pygame_menu.sound import Sound
 
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
     Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType
-
-MenuCallableType = Union['_events.MenuAction', Callable[[], Any], None]
-OnselectCallableType = Union[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any], None]
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional
 
 
 class Menu(object):
@@ -85,13 +81,13 @@ class Menu(object):
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
     """
     _attributes: Dict[str, Any]
-    _background_function: Union[Callable[['Menu'], Any], Callable[[], Any], None]
+    _background_function: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]
     _center_content: bool
     _clock: 'pygame.time.Clock'
     _column_max_width: VectorType
     _column_min_width: VectorType
     _column_pos_x: List[NumberType]
-    _column_widths: Union[List[NumberType], None]
+    _column_widths: Optional[List[NumberType]]
     _columns: int
     _current: 'Menu'
     _enabled: bool
@@ -111,10 +107,10 @@ class Menu(object):
     _mouse_motion_selection: bool
     _mouse_visible: bool
     _mouse_visible_default: bool
-    _onclose: MenuCallableType
+    _onclose: Optional[Union['_events.MenuAction', Callable[[], Any]]]
     _overflow: Tuple[bool, bool]
     _position: Tuple[int, int]
-    _prev: Union[List[Union['Menu', List['Menu']]], None]
+    _prev: Optional[List[Union['Menu', List['Menu']]]]
     _scroll: 'ScrollArea'
     _scrollarea_margin: List[int]
     _sounds: 'Sound'
@@ -130,7 +126,7 @@ class Menu(object):
     _widget_min_position: Tuple[int, int]
     _widget_offset: List[int]
     _widgets: List['_widgets.core.Widget']
-    _widgets_surface: Union['pygame.Surface', None]
+    _widgets_surface: Optional['pygame.Surface']
     _width: int
     _window_size: Tuple[int, int]
 
@@ -149,10 +145,10 @@ class Menu(object):
                  mouse_enabled: bool = True,
                  mouse_motion_selection: bool = False,
                  mouse_visible: bool = True,
-                 onclose: MenuCallableType = None,
+                 onclose: Optional[Union['_events.MenuAction', Callable[[], Any]]] = None,
                  overflow: Vector2BoolType = (True, True),
                  rows: MenuRowsType = None,
-                 screen_dimension: Union[Vector2IntType, None] = None,
+                 screen_dimension: Optional[Vector2IntType] = None,
                  theme: '_themes.Theme' = _themes.THEME_DEFAULT.copy(),
                  touchscreen: bool = False,
                  touchscreen_motion_selection: bool = False
@@ -489,7 +485,7 @@ class Menu(object):
         self._scroll.set_menu(self)
         self._overflow = tuple(overflow)
 
-    def set_onclose(self, onclose: MenuCallableType) -> None:
+    def set_onclose(self, onclose: Optional[Union['_events.MenuAction', Callable[[], Any]]]) -> None:
         """
         Set ``onclose`` callback.
 
@@ -524,7 +520,7 @@ class Menu(object):
 
     def add_button(self,
                    title: Any,
-                   action: Union['Menu', '_events.MenuAction', Callable, int, None],
+                   action: Optional[Union['Menu', '_events.MenuAction', Callable, int]],
                    *args,
                    **kwargs
                    ) -> '_widgets.Button':
@@ -685,9 +681,9 @@ class Menu(object):
                         hex_format: str = 'none',
                         input_separator: str = ',',
                         input_underline: str = '_',
-                        onchange: Union[Callable, None] = None,
-                        onreturn: Union[Callable, None] = None,
-                        onselect: OnselectCallableType = None,
+                        onchange: CallbackType = None,
+                        onreturn: CallbackType = None,
+                        onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
                         previsualization_width: int = 3,
                         **kwargs
                         ) -> '_widgets.ColorInput':
@@ -782,7 +778,7 @@ class Menu(object):
                   image_path: Union[str, 'Path', '_baseimage.BaseImage'],
                   angle: NumberType = 0,
                   image_id: str = '',
-                  onselect: OnselectCallableType = None,
+                  onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
                   scale: Vector2NumberType = (1, 1),
                   scale_smooth: bool = False,
                   selectable: bool = False,
@@ -858,7 +854,7 @@ class Menu(object):
                   title: Any,
                   label_id: str = '',
                   max_char: int = 0,
-                  onselect: OnselectCallableType = None,
+                  onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
                   selectable: bool = False,
                   **kwargs
                   ) -> Union['_widgets.Label', List['_widgets.Label']]:
@@ -960,9 +956,9 @@ class Menu(object):
                      title: Any,
                      items: Union[List[Tuple[str, Any]], List[str]],
                      default: int = 0,
-                     onchange: Union[Callable, None] = None,
-                     onreturn: Union[Callable, None] = None,
-                     onselect: OnselectCallableType = None,
+                     onchange: CallbackType = None,
+                     onreturn: CallbackType = None,
+                     onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
                      selector_id: str = '',
                      **kwargs
                      ) -> '_widgets.Selector':
@@ -1062,13 +1058,13 @@ class Menu(object):
                        input_underline_len: int = 0,
                        maxchar: int = 0,
                        maxwidth: int = 0,
-                       onchange: Union[Callable, None] = None,
-                       onreturn: Union[Callable, None] = None,
-                       onselect: OnselectCallableType = None,
+                       onchange: CallbackType = None,
+                       onreturn: CallbackType = None,
+                       onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
                        password: bool = False,
                        tab_size: int = 4,
                        textinput_id: str = '',
-                       valid_chars: Union[List[str], None] = None,
+                       valid_chars: Optional[List[str]] = None,
                        **kwargs
                        ) -> '_widgets.TextInput':
         """
@@ -2094,8 +2090,8 @@ class Menu(object):
 
         self._current._stats.draw += 1
 
-    def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Union['_widgets.core.Widget', None]
-                           ) -> Union[Dict[int, Tuple4Tuple2IntType], None]:
+    def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['_widgets.core.Widget']
+                           ) -> Optional[Dict[int, Tuple4Tuple2IntType]]:
         """
         Draw the focus background from a given widget. Widget must be selectable,
         active, selected. Not all widgets requests the active status, then focus may not
@@ -2283,7 +2279,7 @@ class Menu(object):
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
 
-        selected_widget: Union['_widgets.core.Widget', None] = None
+        selected_widget: Optional['_widgets.core.Widget'] = None
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]
@@ -2474,7 +2470,7 @@ class Menu(object):
 
     def mainloop(self,
                  surface: 'pygame.Surface',
-                 bgfun: Union[Callable[['Menu'], Any], Callable[[], Any], None] = None,
+                 bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
                  disable_loop: bool = False,
                  fps_limit: int = 30
                  ) -> None:
@@ -2591,11 +2587,10 @@ class Menu(object):
         Return the Menu rect.
 
         :return: Rect
-        :rtype: :py:class:`pygame.Rect`
         """
         return pygame.Rect(int(self._position[0]), int(self._position[1]), int(self._width), int(self._height))
 
-    def set_sound(self, sound: Union['Sound', None], recursive: bool = False) -> None:
+    def set_sound(self, sound: Optional['Sound'], recursive: bool = False) -> None:
         """
         Add a sound engine to the Menu. If ``recursive=True``, the sound is
         applied to all submenus.
@@ -2635,7 +2630,7 @@ class Menu(object):
         """
         return self._menubar.get_title()
 
-    def set_title(self, title: Any, offset: Union[Vector2NumberType, None] = None) -> None:
+    def set_title(self, title: Any, offset: Optional[Vector2NumberType] = None) -> None:
         """
         Set the title of the Menu.
 
@@ -2837,7 +2832,6 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: Window size in px
-        :rtype: tuple
         """
         return self._window_size
 
@@ -2895,7 +2889,7 @@ class Menu(object):
         """
         return self._scroll
 
-    def get_widget(self, widget_id: str, recursive: bool = False) -> Union['_widgets.core.Widget', None]:
+    def get_widget(self, widget_id: str, recursive: bool = False) -> Optional['_widgets.core.Widget']:
         """
         Return a widget by a given ID from the Menu.
 
@@ -3032,7 +3026,7 @@ class Menu(object):
         """
         return self._index
 
-    def get_selected_widget(self) -> Union['_widgets.core.Widget', None]:
+    def get_selected_widget(self) -> Optional['_widgets.core.Widget']:
         """
         Return the selected widget on the Menu.
 

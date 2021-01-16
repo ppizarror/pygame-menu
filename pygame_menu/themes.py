@@ -35,7 +35,7 @@ import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 
 from pygame_menu.custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
-    Tuple2NumberType, NumberType, PaddingType
+    Tuple2NumberType, NumberType, PaddingType, Optional
 
 import copy
 
@@ -177,11 +177,11 @@ class Theme(object):
     title_shadow_offset: NumberType
     title_shadow_position: str
     widget_alignment: str
-    widget_background_color: Union[ColorType, 'BaseImage', None]
+    widget_background_color: Optional[Union[ColorType, 'BaseImage']]
     widget_background_inflate: Tuple2NumberType
     widget_font: str
     widget_font_antialias: str
-    widget_font_background_color: Union[ColorType, None]
+    widget_font_background_color: Optional[ColorType]
     widget_font_background_color_from_menu: bool
     widget_font_color: ColorType
     widget_font_size: int
@@ -351,8 +351,8 @@ class Theme(object):
         return copy.deepcopy(self)
 
     @staticmethod
-    def _format_opacity(color: Union[VectorType, 'BaseImage', None]
-                        ) -> Union[ColorType, 'BaseImage', None]:
+    def _format_opacity(color: Optional[Union[VectorType, 'BaseImage']]
+                        ) -> Optional[Union[ColorType, 'BaseImage']]:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
         has not an alpha channel. Also updates the opacity to a number between

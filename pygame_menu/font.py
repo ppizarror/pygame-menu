@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os.path as path
 import pygame.font as _font
-from typing import Union
+from typing import Union, Optional
 
 # Available fonts path
 __fonts_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
@@ -67,7 +67,7 @@ def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
     """
     assert isinstance(size, int)
 
-    font: Union['_font.Font', None]
+    font: Optional['_font.Font']
     if isinstance(name, _font.Font):
         font = name
         return font

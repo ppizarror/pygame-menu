@@ -31,12 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # noinspection PyUnresolvedReferences
 from typing import Union, Dict, List, Tuple, Any, Callable, Sequence, Mapping, \
-    TYPE_CHECKING
+    TYPE_CHECKING, Optional
 
 # Common types
-ArgsType = Union[Sequence[Any], None]
+ArgsType = Optional[Sequence[Any]]
+CallbackType = Optional[Callable]
 ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
-KwargsType = Union[Mapping[Any, Any], None]
+KwargsType = Optional[Mapping[Any, Any]]
 NumberType = Union[int, float]
 
 # Vectors
@@ -52,14 +53,15 @@ VectorType = Union[VectorTupleType, VectorListType]
 VectorIntType = Union[Tuple[int, ...], List[int]]
 
 # Tuples
+TupleIntType = Tuple[int, ...]
 Tuple2NumberType = Tuple[NumberType, NumberType]
 Tuple2IntType = Tuple[int, int]
 Tuple4Tuple2IntType = Tuple[Tuple2IntType, Tuple2IntType, Tuple2IntType, Tuple2IntType]
 
 # Menu constructor types
-MenuColumnMaxWidthType = Union[int, float, VectorType, None]
+MenuColumnMaxWidthType = Optional[Union[int, float, VectorType]]
 MenuColumnMinWidthType = Union[int, float, VectorType]
-MenuRowsType = Union[int, VectorIntType, None]
+MenuRowsType = Optional[Union[int, VectorIntType]]
 
 # Other
 PaddingType = Union[NumberType, List[NumberType],
