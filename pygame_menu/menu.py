@@ -697,7 +697,7 @@ class Menu(object):
         :type selectable: bool
         :param kwargs: Optional keyword arguments
         :type kwargs: dict, any
-        :return: Widget object or List of widgets if the text overflows
+        :return: Widget object, or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
         assert isinstance(label_id, str)
@@ -895,8 +895,8 @@ class Menu(object):
         :type tab_size: int
         :param textinput_id: ID of the text input
         :type textinput_id: str
-        :param valid_chars: List of authorized chars, None if all chars are valid
-        :type valid_chars: list
+        :param valid_chars: List of authorized chars. ``None`` if all chars are valid
+        :type valid_chars: list, None
         :param kwargs: Optional keyword arguments
         :type kwargs: dict, any
         :return: Widget object
