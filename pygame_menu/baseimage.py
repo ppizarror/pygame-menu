@@ -37,7 +37,7 @@ from pathlib import Path
 import pygame
 from pygame_menu.utils import assert_vector2
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType
+    NumberType, Optional
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -70,13 +70,9 @@ class BaseImage(object):
     let write the image to an surface.
 
     :param image_path: Path of the image to be loaded. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
-    :type image_path: str, :py:class:`pathlib.Path`
     :param drawing_mode: Drawing mode of the image
-    :type drawing_mode: int
     :param drawing_offset: Offset of the image in drawing method
-    :type drawing_offset: tuple, list
     :param load_from_file: Loads the image from the given path
-    :type load_from_file: bool
     """
     _drawing_mode: int
     _drawing_offset: Tuple2IntType
@@ -118,7 +114,7 @@ class BaseImage(object):
 
         # Load the image and store as a surface
         if load_from_file:
-            self._surface = pygame.image.load(image_path)  # type: pygame.Surface
+            self._surface = pygame.image.load(image_path)
             self._original_surface = self._surface.copy()
 
     def get_path(self) -> str:
@@ -409,7 +405,7 @@ class BaseImage(object):
         self._surface = pygame.transform.rotate(self._surface, angle)
         return self
 
-    def draw(self, surface: 'pygame.Surface', area: Union['pygame.Rect', None] = None,
+    def draw(self, surface: 'pygame.Surface', area: Optional['pygame.Rect'] = None,
              position: Tuple2IntType = (0, 0)) -> None:
         """
         Draw the image in a given surface.
