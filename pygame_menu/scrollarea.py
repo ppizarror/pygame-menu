@@ -235,7 +235,8 @@ class ScrollArea(object):
         Return the total width out of the bounds of the the viewable area.
         Zero is returned if the world width is lower than the viewable area.
 
-        :return: None
+        :return: Hidden width (px)
+        :rtype: int, float
         """
         if not self._world:
             return 0
@@ -246,7 +247,8 @@ class ScrollArea(object):
         Return the total height out of the bounds of the the viewable area.
         Zero is returned if the world height is lower than the viewable area.
 
-        :return: None
+        :return: Hidden height (px)
+        :rtype: int, float
         """
         if not self._world:
             return 0
@@ -256,7 +258,8 @@ class ScrollArea(object):
         """
         Return the offset introduced by the scrollbars in the world.
 
-        :return: None
+        :return: ScrollArea offset *(x, y)*
+        :rtype: tuple
         """
         offsets = [0, 0]
         for sbar in self._scrollbars:  # type: ScrollBar
@@ -266,7 +269,7 @@ class ScrollArea(object):
             else:
                 if self.get_hidden_height():
                     offsets[1] = sbar.get_value()
-        return offsets
+        return tuple(offsets)
 
     def get_rect(self):
         """
@@ -287,9 +290,9 @@ class ScrollArea(object):
         :rtype: int
         """
         if orientation == _locals.ORIENTATION_HORIZONTAL:
-            return self._rect.height - self._view_rect.height
+            return int(self._rect.height - self._view_rect.height)
         elif orientation == _locals.ORIENTATION_VERTICAL:
-            return self._rect.width - self._view_rect.width
+            return int(self._rect.width - self._view_rect.width)
         return 0
 
     def get_view_rect(self):
@@ -300,7 +303,7 @@ class ScrollArea(object):
         The viewable area depends on the world size, because scroll bars may
         or may not be displayed.
 
-        :return: None
+        :return: View rect object
         """
         rect = pygame.Rect(self._rect)
 
@@ -411,7 +414,7 @@ class ScrollArea(object):
 
         :param rect: Rect in the world surface reference
         :type rect: :py:class:`pygame.Rect`
-        :param margin: Extra margin around the rect
+        :param margin: Extra margin around the rect (px)
         :type margin: int, float
         :return: None
         """
