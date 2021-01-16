@@ -42,8 +42,8 @@ class Image(Widget):
     """
     Image widget.
 
-    :param image_path: Path of the image or BaseImage object. If BaseImage object is provided drawing mode is not considered
-    :type image_path: str, BaseImage
+    :param image_path: Path of the image or BaseImage object. If BaseImage object is provided drawing mode is not considered. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
+    :type image_path: str, :py:class:`pathlib.Path`, BaseImage
     :param image_id: Image ID
     :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
@@ -61,7 +61,6 @@ class Image(Widget):
                  scale=(1, 1),
                  scale_smooth=True
                  ):
-        assert isinstance(image_path, (str, BaseImage))
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
         assert isinstance(scale, (tuple, list))
