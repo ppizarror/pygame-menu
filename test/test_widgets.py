@@ -137,7 +137,7 @@ class WidgetsTest(unittest.TestCase):
         """
         self.menu.clear()
         self.menu.enable()
-        w = self.menu.add_label('Text')  # type: Label
+        w = self.menu.add_label('Text')
         w.set_background_color((255, 255, 255), (10, 10))
         w.draw(surface)
         self.assertEqual(w._background_inflate[0], 10)
@@ -151,7 +151,7 @@ class WidgetsTest(unittest.TestCase):
         """
         self.menu.clear()
         self.menu.enable()
-        w = self.menu.add_label('Text')  # type: Label
+        w = self.menu.add_label('Text')
         w.rotate(45)
         w.translate(10, 10)
         w.scale(1, 1)
@@ -188,7 +188,7 @@ class WidgetsTest(unittest.TestCase):
         self.menu.draw(surface)
 
         # If widget max width is enabled, disable scalling
-        w = self.menu.add_label('Text')  # type: Label
+        w = self.menu.add_label('Text')
         self.assertFalse(w._scale[0])  # Scalling is disabled
         w.scale(1.5, 1)
         self.assertTrue(w._scale[0])  # Scalling is enabled
@@ -218,7 +218,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label.get_width(), 400)
         label.scale(0.5, 0.5)
         self.assertEqual(label.get_width(), 400)
-        self.assertEqual(label.get_padding()[0], 26.228571428571428)
+        self.assertEqual(label.get_padding()[0], 26)
         self.assertEqual(label.get_padding(transformed=False)[0], 54)
 
         # Set size
@@ -268,7 +268,7 @@ class WidgetsTest(unittest.TestCase):
         Test widget visibility.
         """
         self.menu.clear()
-        w = self.menu.add_label('Text')  # type: Label
+        w = self.menu.add_label('Text')
         lasthash = w._last_render_hash
         w.hide()
         self.assertFalse(w.visible)
@@ -278,7 +278,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(w.visible)
         self.assertNotEqual(w._last_render_hash, lasthash)
 
-        w = Button('title')  # type: Button
+        w = Button('title')
         self.menu.add_generic_widget(w)
         w.hide()
 
@@ -354,7 +354,7 @@ class WidgetsTest(unittest.TestCase):
         self.menu.draw(surface)
         self.menu.disable()
 
-    # noinspection PyArgumentEqualDefault
+    # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
         """
         Test selector widget.
@@ -602,9 +602,9 @@ class WidgetsTest(unittest.TestCase):
                                     max_char=33,
                                     margin=(3, 5),
                                     align=_locals.ALIGN_LEFT,
-                                    font_size=3)  # type: list
+                                    font_size=3)
         self.assertEqual(len(label), 15)
-        _w = label[0]  # type: Label
+        _w = label[0]
         self.assertFalse(_w.is_selectable)
         self.assertEqual(_w.get_margin()[0], 3)
         self.assertEqual(_w.get_margin()[1], 5)
@@ -795,7 +795,7 @@ class WidgetsTest(unittest.TestCase):
         for v in valid:
             self.assertTrue(menu.add_button('b1', v) is not None)
 
-        btn = menu.add_button('b1', menu2)  # type: Button
+        btn = menu.add_button('b1', menu2)
         for v in [menu, 1, bool, object, [1, 2, 3], (1, 2, 3)]:
             self.assertRaises(AssertionError, lambda: btn.update_callback(v))
         btn.update_callback(test)
@@ -1024,7 +1024,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid._font, None)
 
         # Test font rendering
-        surf = wid._render_string('nice', (1, 1, 1))  # type: Surface
+        surf = wid._render_string('nice', (1, 1, 1))
         self.assertEqual(surf.get_width(), 0)
         self.assertEqual(surf.get_height(), 0)
 
@@ -1133,6 +1133,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb.get_maximum(), world_range[1])
 
         sb.set_value(80)
+        print(sb.get_value())
         self.assertAlmostEqual(sb.get_value(), 80, delta=2)  # Scaling delta
 
         sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))

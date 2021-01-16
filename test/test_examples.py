@@ -116,7 +116,7 @@ class ExamplesTest(unittest.TestCase):
         Test dynamic button example.
         """
         dynamic_button.add_dynamic_button()
-        btn = dynamic_button.menu.get_selected_widget()  # type: Button
+        btn = dynamic_button.menu.get_selected_widget()
         btn.apply()
         dynamic_button.main(test=True)
         test_reset_surface()

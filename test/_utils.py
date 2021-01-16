@@ -253,7 +253,7 @@ class PygameUtils(object):
         :param rect: Pygame rect
         :return: Position as a tuple
         """
-        rect_obj = rect  # type: pygame.rect.Rect
+        rect_obj = rect
         x1, y1 = rect_obj.bottomleft
         x2, y2 = rect_obj.topright
 

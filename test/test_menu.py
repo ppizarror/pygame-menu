@@ -713,7 +713,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2, rows=[3]))
 
         # Create widget positioning
-        width = 600.0
+        width = 600
         menu = MenuUtils.generic_menu(columns=3, rows=2, width=width)
         btn1 = menu.add_button('btn', None)
         btn2 = menu.add_button('btn', None)
