@@ -51,7 +51,7 @@ from pygame_menu.scrollarea import ScrollArea
 from pygame_menu.sound import Sound
 
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
-    Union, Tuple, List, VectorIntType, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
+    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType
 
 MenuCallableType = Union['_events.MenuAction', Callable[[], Any], None]

@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -34,6 +33,9 @@ import pygame_menu.font
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
+
+from pygame_menu.custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
+    Tuple2NumberType, NumberType, PaddingType
 
 import copy
 
@@ -74,17 +76,17 @@ class Theme(object):
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
     :type scrollbar_shadow: bool
-    :param scrollbar_shadow_color: Color of the shadow
+    :param scrollbar_shadow_color: Color of the scrollbar shadow
     :type scrollbar_shadow_color: tuple, list
-    :param scrollbar_shadow_offset: Offset of shadow
+    :param scrollbar_shadow_offset: Offset of the scrollbar shadow
     :type scrollbar_shadow_offset: int, float
-    :param scrollbar_shadow_position: Position of shadow
+    :param scrollbar_shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
     :type scrollbar_shadow_position: str
     :param scrollbar_slider_color: Color of the sliders
     :type scrollbar_slider_color: tuple, list
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
     :type scrollbar_slider_pad: int, float
-    :param scrollbar_thick: Scrollbars thickness
+    :param scrollbar_thick: Scrollbar thickness
     :type scrollbar_thick: int, float
     :param selection_color: Color of the selected widget, it affects font color and the selection effect
     :type selection_color: tuple, list
@@ -98,7 +100,7 @@ class Theme(object):
     :type title_font: str, None
     :param title_font_antialias: Title font renders with antialiasing
     :type title_font_antialias: bool
-    :param title_font_color: Title font color, if None use the widget font color
+    :param title_font_color: Title font color. If ``None`` use the widget font color
     :type title_font_color: tuple, list, None
     :param title_font_size: Font size of the title
     :type title_font_size: int
@@ -110,7 +112,7 @@ class Theme(object):
     :type title_shadow_color: tuple, list
     :param title_shadow_offset: Offset of shadow on title
     :type title_shadow_offset: int, float
-    :param title_shadow_position: Position of the shadow on title
+    :param title_shadow_position: Position of the shadow on title. See :py:mod:`pygame_menu.locals`
     :type title_shadow_position: str
     :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
     :type widget_alignment: str
@@ -124,7 +126,7 @@ class Theme(object):
     :type widget_font_antialias: bool
     :param widget_font_background_color: Widget font background color. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
     :type widget_font_background_color: tuple, list, None
-    :param widget_font_background_color_from_menu: Use Menu background color as font background color; disabled by default
+    :param widget_font_background_color_from_menu: Use Menu background color as font background color. Disabled by default
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
@@ -132,26 +134,70 @@ class Theme(object):
     :type widget_font_size: int
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px)
     :type widget_margin: tuple, list
-    :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3 or 4 elements. Padding modifies widget width/height
+    :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3, or 4 elements. Padding modifies widget width/height
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: X,Y axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :param widget_offset: *(x, y)* axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
-    :param widget_shadow: Indicate if text shadow is enabled
+    :param widget_shadow: Indicate if the widget text shadow is enabled
     :type widget_shadow: bool
-    :param widget_shadow_color: Color of the shadow
+    :param widget_shadow_color: Color of the widget shadow
     :type widget_shadow_color: tuple, list
-    :param widget_shadow_offset: Offset of shadow
+    :param widget_shadow_offset: Offset of the widget shadow
     :type widget_shadow_offset: int, float
-    :param widget_shadow_position: Position of shadow
+    :param widget_shadow_position: Position of the widget shadow. See :py:mod:`pygame_menu.locals`
     :type widget_shadow_position: str
     """
+    background_color: Union[ColorType, 'BaseImage']
+    cursor_color: ColorType
+    cursor_selection_color: ColorType
+    focus_background_color: ColorType
+    menubar_close_button: bool
+    scrollarea_outer_margin: Tuple2NumberType
+    scrollbar_color: ColorType
+    scrollbar_shadow: bool
+    scrollbar_shadow_color: ColorType
+    scrollbar_shadow_offset: NumberType
+    scrollbar_shadow_position: str
+    scrollbar_slider_color: ColorType
+    scrollbar_slider_pad: NumberType
+    scrollbar_thick: NumberType
+    selection_color: ColorType
+    surface_clear_color: ColorType
+    title_background_color: ColorType
+    title_bar_style: int
+    title_font: str
+    title_font_antialias: bool
+    title_font_color: ColorType
+    title_font_size: int
+    title_offset: Tuple2NumberType
+    title_shadow: bool
+    title_shadow_color: ColorType
+    title_shadow_offset: NumberType
+    title_shadow_position: str
+    widget_alignment: str
+    widget_background_color: Union[ColorType, 'BaseImage', None]
+    widget_background_inflate: Tuple2NumberType
+    widget_font: str
+    widget_font_antialias: str
+    widget_font_background_color: Union[ColorType, None]
+    widget_font_background_color_from_menu: bool
+    widget_font_color: ColorType
+    widget_font_size: int
+    widget_margin: Tuple2NumberType
+    widget_offset: Tuple2NumberType
+    widget_padding: PaddingType
+    widget_selection_effect: 'pygame_menu.widgets.core.Selection'
+    widget_shadow: bool
+    widget_shadow_color: ColorType
+    widget_shadow_offset: NumberType
+    widget_shadow_position: str
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
 
         self.background_color = self._get(kwargs, 'background_color', 'color_image',
-                                          (220, 220, 220))  # type: tuple
+                                          (220, 220, 220))
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color',
                                       (0, 0, 0))  # type: tuple
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color',
@@ -204,14 +250,14 @@ class Theme(object):
                                              2)  # type: (int, float)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
                                                pygame_menu.locals.POSITION_NORTHWEST)  # type: str
-        self.widget_font = self._get(kwargs, 'widget_font', str,
-                                     pygame_menu.font.FONT_OPEN_SANS)  # type: str
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment',
                                           pygame_menu.locals.ALIGN_CENTER)  # type: str
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none',
                                                  )  # type: (tuple, type(None))
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2',
                                                    (0, 0))  # type: tuple
+        self.widget_font = self._get(kwargs, 'widget_font', str,
+                                     pygame_menu.font.FONT_OPEN_SANS)  # type: str
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool,
                                                True)  # type: bool
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none',
@@ -244,7 +290,7 @@ class Theme(object):
             msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
-    def validate(self):
+    def validate(self) -> None:
         """
         Validate the values of the theme. If there's a invalid parameter throws an
         ``AssertionError``.
@@ -303,12 +349,11 @@ class Theme(object):
         assert self.focus_background_color[3] != 0, \
             'focus background color cannot be fully transparent, suggested opacity between 1 and 255'
 
-    def set_background_color_opacity(self, opacity):
+    def set_background_color_opacity(self, opacity: float) -> None:
         """
         Modify the Menu background color with given opacity.
 
         :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (opaque)
-        :type opacity: float
         :return: None
         """
         assert isinstance(opacity, float)
@@ -317,15 +362,13 @@ class Theme(object):
                                  self.background_color[2], int(opacity * 255))  # type: tuple
 
     @staticmethod
-    def _vec_to_tuple(obj, check_length=0):
+    def _vec_to_tuple(obj: Union[Tuple, List], check_length: int = 0) -> Tuple:
         """
         Return a tuple from a list or tuple object.
 
         :param obj: Object
-        :type obj: tuple, list
         :param check_length: Check length if not zero
         :return: Tuple
-        :rtype: tuple
         """
         if isinstance(obj, tuple):
             v = obj
@@ -338,17 +381,17 @@ class Theme(object):
                 raise ValueError('object is not a {0}-length vector'.format(check_length))
         return v
 
-    def copy(self):
+    def copy(self) -> 'Theme':
         """
         Creates a deep copy of the object.
 
         :return: Copied theme
-        :rtype: Theme
         """
         return copy.deepcopy(self)
 
     @staticmethod
-    def _format_opacity(color):
+    def _format_opacity(color: Union[VectorType, 'BaseImage', None]
+                        ) -> Union[ColorType, 'BaseImage', None]:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
         has not an alpha channel. Also updates the opacity to a number between
@@ -357,10 +400,8 @@ class Theme(object):
         Color may be an Image, so if this is the case return the same object.
         If the color is a list, return a tuple.
 
-        :param color: Color tuple
-        :type color: tuple, list
+        :param color: Color object
         :return: Color in the same format
-        :rtype: tuple, None
         """
         if isinstance(color, BaseImage):
             return color
@@ -380,20 +421,15 @@ class Theme(object):
         return color
 
     @staticmethod
-    def _get(params, key, allowed_types=None, default=None):
+    def _get(params: Dict[str, Any], key: str, allowed_types: Any = None, default: Any = None) -> Any:
         """
         Return a value from a dictionary.
 
         :param params: Parameters dictionary
-        :type params: dict
         :param key: Key to look for
-        :type key: str
         :param allowed_types: List of allowed types
-        :type allowed_types: any
         :param default: Default value to return
-        :type default: any
         :return: The value associated to the key
-        :rtype: any
         """
         if key not in params:
             return default

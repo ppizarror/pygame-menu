@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,21 +29,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import sys
-
 import types
 import functools
 
 import pygame
 import pygame_menu.locals as _locals
 
+from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any
 
-def assert_alignment(align):
+
+def assert_alignment(align: str) -> None:
     """
-    Assert alignment local.
+    Assert that a certain alignment is valid.
 
     :param align: Align value
-    :type align: str
     :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
@@ -56,12 +54,11 @@ def assert_alignment(align):
         'incorrect alignment value "{0}"'.format(align)
 
 
-def assert_color(color):
+def assert_color(color: Union[ColorType, List[int]]) -> None:
     """
     Assert that a certain color is valid.
 
     :param color: Object color
-    :type color: tuple, list
     :return: None
     """
     assert isinstance(color, (tuple, list)), 'color must be a tuple or list'
@@ -78,12 +75,11 @@ def assert_color(color):
             '0 is transparent, 255 is opaque'.format(color)
 
 
-def assert_orientation(orientation):
+def assert_orientation(orientation: str) -> None:
     """
     Assert that a certain widget orientation is valid.
 
     :param orientation: Object orientation
-    :type orientation: str
     :return: None
     """
     assert isinstance(orientation, str), 'orientation must be a string'
@@ -91,12 +87,11 @@ def assert_orientation(orientation):
         'invalid orientation value "{0}"'.format(orientation)
 
 
-def assert_vector2(num_vector):
+def assert_vector2(num_vector: Vector2NumberType) -> None:
     """
     Assert that a 2-item vector is numeric.
 
     :param num_vector: Numeric 2-item vector
-    :type num_vector: tuple, list
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \
@@ -109,12 +104,11 @@ def assert_vector2(num_vector):
         'each item of "{0}" vector must be integer or float'.format(num_vector)
 
 
-def assert_position(position):
+def assert_position(position: str) -> None:
     """
-    Assert that a certain widget position is valid.
+    Assert that a certain position is valid.
 
     :param position: Object position
-    :type position: str
     :return: None
     """
     assert isinstance(position, str), 'position must be a string'
@@ -125,14 +119,12 @@ def assert_position(position):
         'invalid position value "{0}"'.format(position)
 
 
-def check_key_pressed_valid(event):
+def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
     """
     Checks if the pressed key is valid.
 
     :param event: Key press event
-    :type event: :py:class:`pygame.event.Event`
     :return: ``True`` if a key is pressed
-    :rtype: bool
     """
     # If the system detects that any key event has been pressed but
     # there's not any key pressed then this method raises a KEYUP
@@ -146,7 +138,7 @@ def check_key_pressed_valid(event):
     return not bad_event
 
 
-def dummy_function():
+def dummy_function() -> None:
     """
     Dummy function, this can be achieved with lambda but it's against
     PEP-8.
@@ -156,18 +148,15 @@ def dummy_function():
     return
 
 
-def make_surface(width, height, alpha=False, fill_color=None):
+def make_surface(width: NumberType, height: NumberType,
+                 alpha: bool = False, fill_color: Union[ColorType, None] = None) -> 'pygame.Surface':
     """
     Creates a pygame surface object.
 
     :param width: Surface width
-    :type width: int, float
     :param height: Surface height
-    :type height: int, float
     :param alpha: Enable alpha channel on surface
-    :type alpha: bool
     :param fill_color: Fill surface with a certain color
-    :type fill_color: tuple, None
     :return: Pygame surface
     :rtype: :py:class:`pygame.Surface`
     """
@@ -187,14 +176,12 @@ def make_surface(width, height, alpha=False, fill_color=None):
     return surface
 
 
-def is_callable(func):
+def is_callable(func: Any) -> bool:
     """
     Return ``True`` if ``func`` is callable.
 
     :param func: Function object
-    :type func: any
-    :return: Bool
-    :rtype: bool
+    :return: ``True`` if function
     """
     # noinspection PyTypeChecker
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
