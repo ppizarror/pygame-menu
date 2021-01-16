@@ -196,94 +196,55 @@ class Theme(object):
 
     def __init__(self, **kwargs) -> None:
 
-        self.background_color = self._get(kwargs, 'background_color', 'color_image',
-                                          (220, 220, 220))
-        self.cursor_color = self._get(kwargs, 'cursor_color', 'color',
-                                      (0, 0, 0))  # type: tuple
-        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color',
-                                                (30, 30, 30, 120))  # type: tuple
-        self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color',
-                                                (0, 0, 0, 180))  # type: tuple
-        self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool,
-                                              True)  # type: bool
-        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2',
-                                                 (0, 0))  # type: tuple
-        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color',
-                                         (220, 220, 220))  # type: tuple
-        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool,
-                                          False)  # type: bool
-        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color',
-                                                (0, 0, 0))  # type: bool
-        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float),
-                                                 2)  # type: (int, float)
+        self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
+        self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
+        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
+        self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
+        self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
+        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
+        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (220, 220, 220))
+        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
+        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
+        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float), 2)
         self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
-                                                   pygame_menu.locals.POSITION_NORTHWEST)  # type: str
-        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color',
-                                                (200, 200, 200))  # type: tuple
-        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float),
-                                              0)  # type: (int, float)
-        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float),
-                                         20)  # type: (int, float)
-        self.selection_color = self._get(kwargs, 'selection_color', 'color',
-                                         (255, 255, 255))  # type: tuple
-        self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color',
-                                             (0, 0, 0))  # type: tuple
-        self.title_background_color = self._get(kwargs, 'title_background_color', 'color',
-                                                (70, 70, 70))  # type: tuple
-        self.title_bar_style = self._get(kwargs, 'title_bar_style', int,
-                                         _widgets.MENUBAR_STYLE_ADAPTIVE)  # type: int
-        self.title_font = self._get(kwargs, 'title_font', str,
-                                    pygame_menu.font.FONT_OPEN_SANS)  # type: str
-        self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool,
-                                              True)  # type: bool
-        self.title_font_color = self._get(kwargs, 'title_font_color', 'color',
-                                          (220, 220, 220))  # type: tuple
-        self.title_font_size = self._get(kwargs, 'title_font_size', int,
-                                         40)  # type: int
-        self.title_offset = self._get(kwargs, 'title_offset', 'tuple2',
-                                      (5, -1))  # type: tuple
-        self.title_shadow = self._get(kwargs, 'title_shadow', bool,
-                                      False)  # type: bool
-        self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color',
-                                            (0, 0, 0))  # type: tuple
-        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float),
-                                             2)  # type: (int, float)
+                                                   pygame_menu.locals.POSITION_NORTHWEST)
+        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
+        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float), 0)
+        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float), 20)
+        self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
+        self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color', (0, 0, 0))
+        self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
+        self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
+        self.title_font = self._get(kwargs, 'title_font', str, pygame_menu.font.FONT_OPEN_SANS)
+        self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
+        self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
+        self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
+        self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
+        self.title_shadow = self._get(kwargs, 'title_shadow', bool, False)
+        self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color', (0, 0, 0))
+        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float), 2)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
-                                               pygame_menu.locals.POSITION_NORTHWEST)  # type: str
-        self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment',
-                                          pygame_menu.locals.ALIGN_CENTER)  # type: str
-        self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none',
-                                                 )  # type: (tuple, type(None))
-        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2',
-                                                   (0, 0))  # type: tuple
-        self.widget_font = self._get(kwargs, 'widget_font', str,
-                                     pygame_menu.font.FONT_OPEN_SANS)  # type: str
-        self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool,
-                                               True)  # type: bool
-        self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none',
-                                                      )  # type: tuple
+                                               pygame_menu.locals.POSITION_NORTHWEST)
+        self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', pygame_menu.locals.ALIGN_CENTER)
+        self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
+        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2', (0, 0))
+        self.widget_font = self._get(kwargs, 'widget_font', str, pygame_menu.font.FONT_OPEN_SANS)
+        self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
+        self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
-                                                                bool, False)  # type: bool
-        self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color',
-                                           (70, 70, 70))  # type: tuple
-        self.widget_font_size = self._get(kwargs, 'widget_font_size', int,
-                                          30)  # type: int
-        self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2',
-                                       (0, 10))  # type: tuple
-        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float),
-                                        0)  # type: (int, float, tuple)
-        self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2',
-                                       (0, 0))  # type: tuple
+                                                                bool, False)
+        self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
+        self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
+        self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 10))
+        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float), 0)
+        self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
-                                                 _widgets.HighlightSelection())  # type: _widgets.core.Selection
-        self.widget_shadow = self._get(kwargs, 'widget_shadow', bool,
-                                       False)  # type: bool
-        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color',
-                                             (0, 0, 0))  # type: tuple
-        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float),
-                                              2)  # type: (int, float)
+                                                 _widgets.HighlightSelection())
+        self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
+        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
+        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float), 2)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
-                                                pygame_menu.locals.POSITION_NORTHWEST)  # type: str
+                                                pygame_menu.locals.POSITION_NORTHWEST)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
@@ -310,31 +271,31 @@ class Theme(object):
         assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
 
         # Format colors, this converts all color lists to tuples automatically
-        self.background_color = self._format_opacity(self.background_color)  # type: tuple
-        self.cursor_color = self._format_opacity(self.cursor_color)  # type: tuple
-        self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)  # type: tuple
-        self.focus_background_color = self._format_opacity(self.focus_background_color)  # type: tuple
-        self.scrollbar_color = self._format_opacity(self.scrollbar_color)  # type: tuple
-        self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)  # type: tuple
-        self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)  # type: tuple
-        self.selection_color = self._format_opacity(self.selection_color)  # type: tuple
-        self.surface_clear_color = self._format_opacity(self.surface_clear_color)  # type: tuple
-        self.title_background_color = self._format_opacity(self.title_background_color)  # type: tuple
-        self.title_font_color = self._format_opacity(self.title_font_color)  # type: tuple
-        self.title_shadow_color = self._format_opacity(self.title_shadow_color)  # type: tuple
-        self.widget_background_color = self._format_opacity(self.widget_background_color)  # type: tuple
-        self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)  # type: tuple
-        self.widget_font_color = self._format_opacity(self.widget_font_color)  # type: tuple
+        self.background_color = self._format_opacity(self.background_color)
+        self.cursor_color = self._format_opacity(self.cursor_color)
+        self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)
+        self.focus_background_color = self._format_opacity(self.focus_background_color)
+        self.scrollbar_color = self._format_opacity(self.scrollbar_color)
+        self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
+        self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
+        self.selection_color = self._format_opacity(self.selection_color)
+        self.surface_clear_color = self._format_opacity(self.surface_clear_color)
+        self.title_background_color = self._format_opacity(self.title_background_color)
+        self.title_font_color = self._format_opacity(self.title_font_color)
+        self.title_shadow_color = self._format_opacity(self.title_shadow_color)
+        self.widget_background_color = self._format_opacity(self.widget_background_color)
+        self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)
+        self.widget_font_color = self._format_opacity(self.widget_font_color)
 
         # List to tuple
-        self.scrollarea_outer_margin = self._vec_to_tuple(self.scrollarea_outer_margin, 2)  # type: tuple
-        self.title_offset = self._vec_to_tuple(self.title_offset, 2)  # type: tuple
-        self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)  # type: tuple
-        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)  # type: tuple
+        self.scrollarea_outer_margin = self._vec_to_tuple(self.scrollarea_outer_margin, 2)
+        self.title_offset = self._vec_to_tuple(self.title_offset, 2)
+        self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)
+        self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)
         if isinstance(self.widget_padding, (tuple, list)):
-            self.widget_padding = self._vec_to_tuple(self.widget_padding)  # type: tuple
+            self.widget_padding = self._vec_to_tuple(self.widget_padding)
             assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
-        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)  # type: tuple
+        self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)
 
         # Check sizes
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
@@ -359,7 +320,7 @@ class Theme(object):
         assert isinstance(opacity, float)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
-                                 self.background_color[2], int(opacity * 255))  # type: tuple
+                                 self.background_color[2], int(opacity * 255))
 
     @staticmethod
     def _vec_to_tuple(obj: Union[Tuple, List], check_length: int = 0) -> Tuple:
