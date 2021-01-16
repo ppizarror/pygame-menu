@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -31,9 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame
-import pygame_menu.locals as _locals
+from pygame_menu.custom_types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
+import pygame_menu.locals as _locals
+from pygame_menu.custom_types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, \
+    CallbackType, Union
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -56,43 +58,47 @@ class ScrollBar(Widget):
         This widget only accepts translation transformation.
 
     :param length: Length of the page control
-    :type length: int
     :param values_range: Min and max values
-    :type values_range: tuple, list
     :param scrollbar_id: Bar identifier
-    :type scrollbar_id: str
     :param orientation: Bar orientation ``ORIENTATION_HORIZONTAL``/``ORIENTATION_VERTICAL``
-    :type orientation: str
     :param slider_pad: Space between slider and page control
-    :type slider_pad: int, float
     :param slider_color: Color of the slider
-    :type slider_color: tuple, list
     :param page_ctrl_thick: Page control thickness
-    :type page_ctrl_thick: int, float
     :param page_ctrl_color: Page control color
-    :type page_ctrl_color: tuple, list
     :param onchange: Callback when pressing and moving the scroll
-    :type onchange: callable, None
     """
+    _opp_orientation: int
+    _orientation: int
+    _page_ctrl_color: ColorType
+    _page_ctrl_length: NumberType
+    _page_ctrl_thick: int
+    _page_step: NumberType
+    _single_step: NumberType
+    _slider_color: ColorType
+    _slider_pad: int
+    _slider_position: int
+    _slider_rect: Optional['pygame.Rect']
+    _values_range: List[NumberType]
+    scrolling: bool
 
     def __init__(self,
-                 length,
-                 values_range,
-                 scrollbar_id='',
-                 orientation=_locals.ORIENTATION_HORIZONTAL,
-                 slider_pad=0,
-                 slider_color=(200, 200, 200),
-                 page_ctrl_thick=20,
-                 page_ctrl_color=(235, 235, 235),
-                 onchange=None,
+                 length: NumberType,
+                 values_range: VectorIntType,
+                 scrollbar_id: str = '',
+                 orientation: str = _locals.ORIENTATION_HORIZONTAL,
+                 slider_pad: NumberType = 0,
+                 slider_color: ColorType = (200, 200, 200),
+                 page_ctrl_thick: int = 20,
+                 page_ctrl_color: ColorType = (235, 235, 235),
+                 onchange: CallbackType = None,
                  *args,
                  **kwargs
-                 ):
+                 ) -> None:
         assert isinstance(length, (int, float))
         assert isinstance(values_range, (tuple, list))
         assert values_range[1] > values_range[0], 'minimum value first is expected'
         assert isinstance(slider_pad, (int, float))
-        assert isinstance(page_ctrl_thick, (int, float))
+        assert isinstance(page_ctrl_thick, int)
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
         assert_color(slider_color)
@@ -106,21 +112,21 @@ class ScrollBar(Widget):
         )
 
         self._values_range = list(values_range)
-        self.scrolling = False  # type: bool
-        self._orientation = 0  # type: int
-        self._opp_orientation = int(not self._orientation)  # type: int
+        self.scrolling = False
+        self._orientation = 0
+        self._opp_orientation = int(not self._orientation)
 
         self._page_ctrl_length = length
         self._page_ctrl_thick = page_ctrl_thick
         self._page_ctrl_color = page_ctrl_color
 
-        self._slider_rect = None  # type: (pygame.Rect, None)
+        self._slider_rect = None
         self._slider_pad = slider_pad
         self._slider_color = slider_color
-        self._slider_position = 0  # type: int
+        self._slider_position = 0
 
-        self._single_step = 20  # type: int
-        self._page_step = None  # type: (int, None)
+        self._single_step = 20
+        self._page_step = 0
 
         if values_range[1] - values_range[0] > length:
             self.set_page_step(length)
@@ -129,31 +135,33 @@ class ScrollBar(Widget):
         self.set_orientation(orientation)
         self.is_selectable = False
 
-    def _apply_font(self):
+    def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding):  # Don't accept padding
+    def set_padding(self, padding: PaddingType) -> None:
         pass
 
-    def scale(self, width, height, smooth=True):
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
 
-    def resize(self, width, height, smooth=True):
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
 
-    def set_max_width(self, width, scale_height=False, smooth=True):
+    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
+                      smooth: bool = True) -> None:
         pass
 
-    def set_max_height(self, height, scale_width=False, smooth=True):
+    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
+                       smooth: bool = True) -> None:
         pass
 
-    def rotate(self, angle):
+    def rotate(self, angle: NumberType) -> None:
         pass
 
-    def flip(self, x, y):
+    def flip(self, x: bool, y: bool) -> None:
         pass
 
-    def _apply_size_changes(self):
+    def _apply_size_changes(self) -> None:
         """
         Apply scrollbar changes.
 
@@ -171,60 +179,54 @@ class ScrollBar(Widget):
         setattr(self._slider_rect, pos[self._orientation], self._slider_position)
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
         self.apply_draw_callbacks()
 
-    def get_maximum(self):
+    def get_maximum(self) -> int:
         """
         Return the greatest acceptable value.
 
         :return: Greatest acceptable value
-        :rtype: int
         """
-        return self._values_range[1]
+        return int(self._values_range[1])
 
-    def get_minimum(self):
+    def get_minimum(self) -> int:
         """
         Return the smallest acceptable value.
 
         :return: Smallest acceptable value
-        :rtype: int
         """
-        return self._values_range[0]
+        return int(self._values_range[0])
 
-    def get_orientation(self):
+    def get_orientation(self) -> str:
         """
         Return the scrollbar orientation (pygame-menu locals).
 
         :return: Scrollbar orientation
-        :rtype: str
         """
         if self._orientation == 0:
             return _locals.ORIENTATION_HORIZONTAL
         else:
             return _locals.ORIENTATION_VERTICAL
 
-    def get_page_step(self):
+    def get_page_step(self) -> int:
         """
         Return amount that the value changes by when the user
         click on the page control surface.
 
         :return: Page step
-        :rtype: int
         """
-        return self._page_step * (self._values_range[1] - self._values_range[0]) / \
-               self._page_ctrl_length
+        pstep = self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
+        return int(pstep)
 
-    def get_value(self):
+    def get_value(self) -> int:
         """
         Return the value according to the slider position.
 
-        :return: Position in pixels
-        :rtype: int
+        :return: Position in pixels (px)
         """
         value = self._values_range[0] + self._slider_position * \
                 (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
@@ -232,9 +234,9 @@ class ScrollBar(Widget):
         # Correction due to value scaling
         value = max(self._values_range[0], value)
         value = min(self._values_range[1], value)
-        return value
+        return int(value)
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self._rect.size, self._slider_rect.x, self._slider_rect.y,
                                          self._slider_rect.width, self._slider_rect.height, self.visible):
             return True
@@ -255,19 +257,18 @@ class ScrollBar(Widget):
         else:
             pygame.draw.rect(self._surface, self._slider_color, self._slider_rect)
 
-    def _scroll(self, pixels):
+    def _scroll(self, pixels: NumberType) -> bool:
         """
         Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
 
         :param pixels: Number of pixels to scroll
-        :type pixels: int, float
-        :return: True is scroll position has changed
-        :rtype: bool
+        :return: ``True`` is scroll position has changed
         """
         assert isinstance(pixels, (int, float))
         if not pixels:
             return False
+        pixels = pixels
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
@@ -286,12 +287,11 @@ class ScrollBar(Widget):
         self._slider_position += move
         return True
 
-    def set_length(self, value):
+    def set_length(self, value: NumberType) -> None:
         """
         Set the length of the page control area.
 
         :param value: Length of the area
-        :type value: int, float
         :return: None
         """
         assert isinstance(value, (int, float))
@@ -300,45 +300,41 @@ class ScrollBar(Widget):
         self._slider_position = min(self._slider_position, self._page_ctrl_length - self._page_step)
         self._apply_size_changes()
 
-    def get_thickness(self):
+    def get_thickness(self) -> int:
         """
         Return the thickness of the bar.
 
-        :return: Thickness
-        :rtype: int
+        :return: Thickness (px)
         """
         return self._page_ctrl_thick
 
-    def set_maximum(self, value):
+    def set_maximum(self, value: NumberType) -> None:
         """
         Set the greatest acceptable value.
 
         :param value: Maximum value
-        :type value: int, float
         :return: None
         """
         assert isinstance(value, (int, float))
         assert value > self._values_range[0], 'maximum value shall greater than {}'.format(self._values_range[0])
         self._values_range[1] = value
 
-    def set_minimum(self, value):
+    def set_minimum(self, value: NumberType) -> None:
         """
         Set the smallest acceptable value.
 
         :param value: Minimum value
-        :type value: int, float
         :return: None
         """
         assert isinstance(value, (int, float))
         assert 0 <= value < self._values_range[1], 'minimum value shall lower than {}'.format(self._values_range[1])
         self._values_range[0] = value
 
-    def set_orientation(self, orientation):
+    def set_orientation(self, orientation: str) -> None:
         """
         Set the scroll bar orientation to vertical or horizontal.
 
         :param orientation: Widget orientation, could be ``ORIENTATION_HORIZONTAL``/``ORIENTATION_VERTICAL``
-        :type orientation: str
         :return: None
         """
         assert_orientation(orientation)
@@ -349,7 +345,7 @@ class ScrollBar(Widget):
         self._opp_orientation = int(not self._orientation)
         self._apply_size_changes()
 
-    def set_page_step(self, value):
+    def set_page_step(self, value: NumberType) -> None:
         """
         Set the amount that the value changes by when the user click on the
         page control surface.
@@ -360,35 +356,32 @@ class ScrollBar(Widget):
             represents the proportion of the document area shown in a scrolling view.
 
         :param value: Page step
-        :type value: int, float
         :return: None
         """
         assert isinstance(value, (int, float))
         assert 0 < value, 'page step shall be > 0'
 
         # Slider length shall represent the same ratio
-        self._page_step = round(1.0 * self._page_ctrl_length * value /
-                                (self._values_range[1] - self._values_range[0]))
+        self._page_step = self._page_ctrl_length * value / (self._values_range[1] - self._values_range[0])
 
         if self._single_step >= self._page_step:
             self._single_step = self._page_step // 2  # Arbitrary to be lower than page step
 
         self._apply_size_changes()
 
-    def set_value(self, value):
+    def set_value(self, value: NumberType) -> None:
         """
         Set the position of the scrollbar.
 
         :param value: Position
-        :type value: int, float
         :return: None
         """
         assert isinstance(value, (int, float))
         assert self._values_range[0] <= value <= self._values_range[1], \
             '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
-        pixels = 1.0 * (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step) / \
-                 (self._values_range[1] - self._values_range[0])
+        pixels = (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step)
+        pixels /= self._values_range[1] - self._values_range[0]
 
         # Correction due to value scaling
         pixels = max(0, pixels)
@@ -396,11 +389,10 @@ class ScrollBar(Widget):
 
         self._scroll(pixels - self._slider_position)
 
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         updated = False
 
-        for event in events:  # type: pygame.event.Event
+        for event in events:
 
             if event.type == pygame.KEYDOWN:
 

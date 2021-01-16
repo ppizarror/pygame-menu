@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -43,13 +42,10 @@ class VMargin(NoneWidget):
         This widget does not implement any transformation.
 
     :param widget_id: ID of the widget
-    :type widget_id: str
     """
 
-    def __init__(self, widget_id=''):
+    def __init__(self, widget_id: str = '') -> None:
         super(VMargin, self).__init__(widget_id=widget_id)
 
-    def set_margin(self, x, y):
-        assert isinstance(x, (int, float))
-        assert isinstance(y, (int, float))
+    def set_margin(self, x: int, y: int) -> None:
         self._margin = (x, y)

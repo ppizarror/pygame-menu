@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,8 +29,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pathlib import Path
+
+import pygame
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets.core import Widget
+from pygame_menu.custom_types import Union, List, NumberType, CallbackType, Tuple2NumberType, Tuple, Optional
+from pygame_menu.utils import assert_vector2
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -44,32 +48,28 @@ class Image(Widget):
         This class redefines all widget transformations.
 
     :param image_path: Path of the image or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
-    :type image_path: str, :py:class:`pygame_menu.baseimage.BaseImage`
     :param image_id: Image ID
-    :type image_id: str
     :param angle: Angle of the image in degrees (clockwise)
-    :type angle: int, float
     :param onselect: Function when selecting the widget
-    :type onselect: callable, None
     :param scale: Scale of the image *(x, y)*
-    :type scale: tuple, list
     :param scale_smooth: Scale is smoothed
-    :type scale_smooth: bool
     """
+    _image: 'BaseImage'
 
     def __init__(self,
-                 image_path,
-                 image_id='',
-                 angle=0,
-                 onselect=None,
-                 scale=(1, 1),
-                 scale_smooth=True
-                 ):
-        assert isinstance(image_path, (str, BaseImage))
+                 image_path: Union[str, BaseImage, Path],
+                 image_id: str = '',
+                 angle: NumberType = 0,
+                 onselect: CallbackType = None,
+                 scale: Tuple2NumberType = (1, 1),
+                 scale_smooth: bool = True
+                 ) -> None:
+        assert isinstance(image_path, (str, Path, BaseImage))
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
-        assert isinstance(scale, (tuple, list))
         assert isinstance(scale_smooth, bool)
+        assert_vector2(scale)
+
         super(Image, self).__init__(
             onselect=onselect,
             widget_id=image_id
@@ -82,57 +82,54 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-    def set_title(self, title):
+    def set_title(self, title: str) -> None:
         pass
 
-    def get_image(self):
+    def get_image(self) -> 'BaseImage':
         """
         Gets the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
         :return: Widget image
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         return self._image
 
-    def set_image(self, image):
+    def set_image(self, image: 'BaseImage') -> None:
         """
         Set the :py:class:`pygame_menu.baseimage.BaseImage` object from widget.
 
         :param image: Image object
-        :type image: :py:class:`pygame_menu.baseimage.BaseImage`
         :return: None
         """
         self._image = image
         self._surface = None
         self._render()
 
-    def _apply_font(self):
+    def _apply_font(self) -> None:
         pass
 
-    def rotate(self, angle):
+    def rotate(self, angle: NumberType) -> None:
         self._image.rotate(angle)
         self._surface = None
 
-    def flip(self, x, y):
+    def flip(self, x: bool, y: bool) -> None:
         if x or y:
             self._image.flip(x, y)
             self._surface = None
 
-    def scale(self, width, height, smooth=False):
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         self._image.scale(width, height, smooth)
         self._surface = None
 
-    def resize(self, width, height, smooth=False):
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         self._image.resize(width, height, smooth)
         self._surface = None
 
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
         surface.blit(self._surface, self._rect.topleft)
         self.apply_draw_callbacks()
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         if self._surface is not None:
             return True
         self._surface = self._image.get_surface()
@@ -141,6 +138,5 @@ class Image(Widget):
             return True
         self._menu_surface_needs_update = True  # Force Menu update
 
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

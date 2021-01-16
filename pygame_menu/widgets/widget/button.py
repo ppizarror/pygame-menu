@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,12 +29,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame
 from pygame_menu.utils import is_callable
 from pygame_menu.widgets.core import Widget
-import pygame
 import pygame_menu.controls as _controls
+from pygame_menu.custom_types import Any, CallbackType, Callable, TYPE_CHECKING, Union, List, Tuple, Optional
+
+if TYPE_CHECKING:
+    from pygame_menu.menu import Menu
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Button(Widget):
     """
     Button widget.
@@ -48,24 +52,20 @@ class Button(Widget):
         onreturn(*args, **kwargs)
 
     :param title: Button title
-    :type title: str, any
     :param button_id: Button ID
-    :type button_id: str
     :param onreturn: Callback when pressing the button
-    :type onreturn: callable, None
     :param args: Optional arguments for callbacks
-    :type args: any
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict, any
     """
+    to_menu: bool
 
     def __init__(self,
-                 title,
-                 button_id='',
-                 onreturn=None,
+                 title: Any,
+                 button_id: str = '',
+                 onreturn: CallbackType = None,
                  *args,
                  **kwargs
-                 ):
+                 ) -> None:
         super(Button, self).__init__(
             title=title,
             widget_id=button_id,
@@ -75,10 +75,10 @@ class Button(Widget):
         )
         self.to_menu = False  # True if the button opens a new Menu
 
-    def _apply_font(self):
+    def _apply_font(self) -> None:
         pass
 
-    def set_selection_callback(self, callback):
+    def set_selection_callback(self, callback: Optional[Callable[[bool, 'Widget', 'Menu'], Any]]) -> None:
         """
         Update the button selection callback, once button is selected, the callback
         function is executed as follows:
@@ -88,14 +88,13 @@ class Button(Widget):
             callback(selected, widget, menu)
 
         :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
-        :type callback: callback, None
         :return: None
         """
         if callback is not None:
             assert is_callable(callback), 'callback must be callable (function-type) or None'
         self._on_select = callback
 
-    def update_callback(self, callback, *args):
+    def update_callback(self, callback: Callable, *args) -> None:
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
         behaviour is only valid using :py:meth:`pygame_menu.Menu.add_button` method.
@@ -106,9 +105,7 @@ class Button(Widget):
             the submenu will be removed from the parent Menu. Thus preserving the structure.
 
         :param callback: Function
-        :type callback: callable
         :param args: Arguments used by the function once triggered
-        :type args: any
         :return: None
         """
         assert is_callable(callback), 'only callable (function-type) are allowed'
@@ -117,23 +114,22 @@ class Button(Widget):
         if self._menu is not None and self._on_return is not None and self.to_menu:
             assert len(self._args) == 1
             submenu = self._args[0]  # Menu
-            assert self._menu.in_submenu(submenu, recursive=False), \
+            assert self._menu.in_submenu(submenu), \
                 'pointed menu is not in submenu list of parent container'
             # noinspection PyProtectedMember
-            assert self._menu._remove_submenu(submenu, recursive=False), 'submenu could not be removed'
+            assert self._menu._remove_submenu(submenu), 'submenu could not be removed'
             self.to_menu = False
 
-        self._args = args or []  # type: list
+        self._args = args or []
         self._on_return = callback
 
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
         self.apply_draw_callbacks()
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self.selected, self._title, self.visible):
             return True
         if self.selected:
@@ -145,12 +141,11 @@ class Button(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force Menu update
 
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         updated = False
         rect = self.get_rect()  # Padding increases the extents of the button
 
-        for event in events:  # type: pygame.event.Event
+        for event in events:
 
             if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
                     self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \

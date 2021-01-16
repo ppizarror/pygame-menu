@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu

@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,7 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
+from pygame_menu.custom_types import Tuple2IntType, NumberType, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core import Widget
 
 
 class LeftArrowSelection(ArrowSelection):
@@ -39,21 +43,18 @@ class LeftArrowSelection(ArrowSelection):
     Creates an arrow to the left of the selected Menu item.
 
     :param arrow_size: Size of arrow on *(x, y)* axis *(width, height)*
-    :type arrow_size: tuple, list
     :param arrow_right_margin: Distance from the arrow to the widget
-    :type arrow_right_margin: int, float
     :param arrow_vertical_offset: Vertical offset of the arrow
-    :type arrow_vertical_offset: int
     :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
-    :type blink_ms: int
     """
+    _arrow_right_margin: int
 
     def __init__(self,
-                 arrow_size=(10, 15),
-                 arrow_right_margin=5,
-                 arrow_vertical_offset=0,
-                 blink_ms=0
-                 ):
+                 arrow_size: Tuple2IntType = (10, 15),
+                 arrow_right_margin: int = 5,
+                 arrow_vertical_offset: int = 0,
+                 blink_ms: NumberType = 0
+                 ) -> None:
         assert isinstance(arrow_right_margin, (int, float))
         assert arrow_right_margin >= 0, 'margin cannot be negative'
         super(LeftArrowSelection, self).__init__(
@@ -67,7 +68,7 @@ class LeftArrowSelection(ArrowSelection):
         self._arrow_right_margin = arrow_right_margin
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface, widget):
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         # A
         #   \B      widget
         # C /

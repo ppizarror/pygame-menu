@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,37 +29,36 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame
 from pygame_menu.widgets.core import Widget
+from pygame_menu.custom_types import Any, CallbackType, List, Union, Tuple, Optional
 
 
+# noinspection PyMissingOrEmptyDocstring
 class Label(Widget):
     """
     Label widget.
 
     :param title: Label title/text
-    :type title: str, any
     :param label_id: Label ID
-    :type label_id: str
     :param onselect: Function when selecting the widget
-    :type onselect: callable, None
     """
 
     def __init__(self,
-                 title,
-                 label_id='',
-                 onselect=None,
-                 ):
+                 title: Any,
+                 label_id: str = '',
+                 onselect: CallbackType = None,
+                 ) -> None:
         super(Label, self).__init__(
             title=title,
             onselect=onselect,
             widget_id=label_id
         )
 
-    def _apply_font(self):
+    def _apply_font(self) -> None:
         pass
 
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
         if self._title == '':  # The minimal width of any surface is 1px, so the background will be a line
             return
@@ -68,7 +66,7 @@ class Label(Widget):
         surface.blit(self._surface, self._rect.topleft)
         self.apply_draw_callbacks()
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self._title, self._font_color, self.visible):
             return True
         self._surface = self._render_string(self._title, self._font_color)
@@ -76,6 +74,5 @@ class Label(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force Menu update
 
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

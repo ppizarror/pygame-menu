@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -32,6 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 from pygame_menu.widgets.core.selection import Selection
+from pygame_menu.custom_types import NumberType, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core import Widget
 
 
 class HighlightSelection(Selection):
@@ -43,18 +46,16 @@ class HighlightSelection(Selection):
         Widget background color may not reach the entire selection area.
 
     :param border_width: Border width of the highlight box
-    :type border_width: int
     :param margin_x: X margin of selected highlight box
-    :type margin_x: int, float
     :param margin_y: X margin of selected highlight box
-    :type margin_y: int, float
     """
+    _border_width: int
 
     def __init__(self,
-                 border_width=1,
-                 margin_x=16,
-                 margin_y=8
-                 ):
+                 border_width: int = 1,
+                 margin_x: NumberType = 16,
+                 margin_y: NumberType = 8
+                 ) -> None:
         assert isinstance(border_width, int)
         assert margin_x >= 0 and margin_y >= 0
         assert border_width >= 0
@@ -69,8 +70,7 @@ class HighlightSelection(Selection):
         self._border_width = border_width
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface, widget):
-        # noinspection PyArgumentList
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         pygame.draw.rect(
             surface,
             self.color,

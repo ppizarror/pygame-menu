@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,7 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import pygame
 from pygame_menu.widgets.core import Selection
+from pygame_menu.custom_types import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core import Widget
 
 
 class NoneSelection(Selection):
@@ -38,11 +42,11 @@ class NoneSelection(Selection):
     No selection effect.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(NoneSelection, self).__init__(
             margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
         )
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface, widget):
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         return

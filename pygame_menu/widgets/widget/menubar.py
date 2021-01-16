@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -36,6 +35,11 @@ import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
+from pygame_menu.custom_types import Union, List, Tuple, CallbackType, Tuple2IntType, \
+    NumberType, ColorType, Any, Optional, PaddingType, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core.selection import Selection
 
 MENUBAR_STYLE_ADAPTIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
@@ -59,39 +63,40 @@ class MenuBar(Widget):
         This widget does not accept scale/resize transformation.
 
     :param title: Title of the menubar
-    :type title: str
     :param width: Width of the widget, generally width of the Menu
-    :type width: int, float
     :param background_color: Background color
-    :type background_color: tuple, list
     :param back_box: Draw a back-box button on header
-    :type back_box: bool
     :param mode: Mode of drawing the bar
-    :type mode: int
     :param offsetx: Offset x-position of title (px)
-    :type offsetx: int, float
     :param offsety: Offset y-position of title (px)
-    :type offsety: int, float
     :param onreturn: Callback when pressing the back-box button
-    :type onreturn: callable, None
     :param args: Optional arguments for callbacks
-    :type args: any
     :param kwargs: Optional keyword arguments for callbacks
-    :type kwargs: dict, any
     """
+    _backbox: bool
+    _backbox_border_width: int
+    _backbox_pos: Any
+    _backbox_rect: Optional['pygame.Rect']
+    _background_color: ColorType
+    _box_mode: int
+    _offsetx: NumberType
+    _offsety: NumberType
+    _polygon_pos: Any
+    _style: int
+    _width: int
 
     def __init__(self,
-                 title,
-                 width,
-                 background_color,
-                 back_box=False,
-                 mode=MENUBAR_STYLE_ADAPTIVE,
-                 offsetx=0.0,
-                 offsety=0.0,
-                 onreturn=None,
+                 title: Any,
+                 width: NumberType,
+                 background_color: ColorType,
+                 back_box: bool = False,
+                 mode: int = MENUBAR_STYLE_ADAPTIVE,
+                 offsetx: NumberType = 0,
+                 offsety: NumberType = 0,
+                 onreturn: CallbackType = None,
                  *args,
                  **kwargs
-                 ):
+                 ) -> None:
         assert isinstance(width, (int, float))
         assert isinstance(back_box, bool)
 
@@ -107,64 +112,61 @@ class MenuBar(Widget):
 
         self._backbox = back_box
         self._backbox_border_width = 1  # px
-        self._backbox_pos = None  # type: (tuple, None)
-        self._backbox_rect = None  # type: (pygame.rect.Rect, None)
+        self._backbox_pos = None
+        self._backbox_rect = None
         self._background_color = background_color
         self._box_mode = 0
-        self._offsetx = 0.0
-        self._offsety = 0.0
-        self._polygon_pos = None  # type: (tuple, None)
+        self._offsetx = 0
+        self._offsety = 0
+        self._polygon_pos = None
         self._style = mode
         self._title = ''
-        self._width = width
+        self._width = int(width)
 
         self.set_title(title, offsetx, offsety)
         self.is_selectable = False
 
-    def _apply_font(self):
+    def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding):  # Don't accept padding
+    def set_padding(self, padding: PaddingType) -> None:
         pass
 
-    def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
 
-    def resize(self, width, height, smooth=True):  # Widget don't support scalling
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
 
-    def set_max_height(self, height, scale_width=False, smooth=True):
+    def set_max_height(self, height: NumberType, scale_width: NumberType = False, smooth: bool = True) -> None:
         pass
 
-    def set_max_width(self, width, scale_height=False, smooth=True):
+    def set_max_width(self, width: NumberType, scale_height: NumberType = False, smooth: bool = True) -> None:
         pass
 
-    def set_selection_effect(self, selection):
+    def set_selection_effect(self, selection: 'Selection') -> None:
         pass
 
-    def get_title_offset(self):
+    def get_title_offset(self) -> Tuple2IntType:
         """
         Return the title offset in *(x, y)*.
 
         :return: Title offset
-        :rtype: tuple
         """
-        return self._offsetx, self._offsety
+        return int(self._offsetx), int(self._offsety)
 
-    def set_backbox_border_width(self, width):
+    def set_backbox_border_width(self, width: int) -> None:
         """
         Set backbox border width in px.
 
         :param width: Width in px
-        :type width: int
         :return: None
         """
         assert isinstance(width, int)
         assert width > 0
         self._backbox_border_width = width
 
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
 
         if len(self._polygon_pos) > 2:
@@ -190,7 +192,7 @@ class MenuBar(Widget):
 
         self.apply_draw_callbacks()
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
@@ -351,16 +353,13 @@ class MenuBar(Widget):
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
 
-    def set_title(self, title, offsetx=0, offsety=0):
+    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> None:
         """
         Set the menubar title.
 
         :param title: Menu title
-        :type title: str, any
         :param offsetx: Offset x-position of title (px)
-        :type offsetx: int, float
         :param offsety: Offset y-position of title (px)
-        :type offsety: int, float
         :return: None
         """
         assert isinstance(offsetx, (int, float))
@@ -371,11 +370,10 @@ class MenuBar(Widget):
         if self._menu is not None:
             self._render()
 
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         updated = False
 
-        for event in events:  # type: pygame.event.Event
+        for event in events:
 
             if self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
