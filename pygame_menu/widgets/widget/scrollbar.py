@@ -268,7 +268,6 @@ class ScrollBar(Widget):
         assert isinstance(pixels, (int, float))
         if not pixels:
             return False
-        pixels = pixels
 
         axis = self._orientation
         space_before = self._rect.topleft[axis] - \
