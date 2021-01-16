@@ -29,10 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pathlib import Path
 import unittest
 from test._utils import surface
 
-import pygame
 import pygame_menu
 from pygame_menu.baseimage import *
 
