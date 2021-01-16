@@ -32,15 +32,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os.path as path
 import math
-
-try:
-    # noinspection PyCompatibility
-    from pathlib import Path as _Path
-except ImportError:
-    _Path = None
+from pathlib import Path
 
 import pygame
 from pygame_menu.utils import assert_vector2
+from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
+    NumberType
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -81,19 +78,23 @@ class BaseImage(object):
     :param load_from_file: Loads the image from the given path
     :type load_from_file: bool
     """
+    _drawing_mode: int
+    _drawing_offset: Tuple2IntType
+    _extension: str
+    _filename: str
+    _filepath: str
+    _original_surface: 'pygame.Surface'
+    _surface: 'pygame.Surface'
 
     def __init__(self,
-                 image_path,
-                 drawing_mode=IMAGE_MODE_FILL,
-                 drawing_offset=(0, 0),
-                 load_from_file=True
-                 ):
-        if _Path is None:
-            assert isinstance(image_path, str)
-        else:
-            assert isinstance(image_path, (str, _Path))
-            if isinstance(image_path, _Path):
-                image_path = str(image_path)
+                 image_path: Union[str, Path],
+                 drawing_mode: int = IMAGE_MODE_FILL,
+                 drawing_offset: Vector2NumberType = (0, 0),
+                 load_from_file: bool = True
+                 ) -> None:
+        assert isinstance(image_path, (str, Path))
+        if isinstance(image_path, Path):
+            image_path = str(image_path)
         assert isinstance(load_from_file, bool)
 
         _, file_extension = path.splitext(image_path)
@@ -120,30 +121,27 @@ class BaseImage(object):
             self._surface = pygame.image.load(image_path)  # type: pygame.Surface
             self._original_surface = self._surface.copy()
 
-    def get_path(self):
+    def get_path(self) -> str:
         """
         Return the image path.
 
         :return: Image path
-        :rtype: str
         """
         return self._filepath
 
-    def get_drawing_mode(self):
+    def get_drawing_mode(self) -> int:
         """
         Return the image drawing mode.
 
         :return: Image drawing mode
-        :rtype: int
         """
         return self._drawing_mode
 
-    def set_drawing_mode(self, drawing_mode):
+    def set_drawing_mode(self, drawing_mode: int) -> None:
         """
         Set the image drawing mode.
 
         :param drawing_mode: Drawing mode
-        :type drawing_mode: int
         :return: None
         """
         assert isinstance(drawing_mode, int)
@@ -152,32 +150,29 @@ class BaseImage(object):
             'unknown image drawing mode'
         self._drawing_mode = drawing_mode
 
-    def get_drawing_offset(self):
+    def get_drawing_offset(self) -> Tuple2IntType:
         """
         Return the image drawing offset.
 
         :return: Image drawing offset
-        :rtype: tuple
         """
         return self._drawing_offset
 
-    def set_drawing_offset(self, drawing_offset):
+    def set_drawing_offset(self, drawing_offset: Vector2NumberType) -> None:
         """
         Set the image drawing offset.
 
         :param drawing_offset: Drawing offset tuple *(x, y)*
-        :type drawing_offset: tuple, list
         :return: None
         """
         assert_vector2(drawing_offset)
-        self._drawing_offset = (drawing_offset[0], drawing_offset[1])
+        self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
 
-    def copy(self):
+    def copy(self) -> 'BaseImage':
         """
         Return a copy of the image.
 
         :return: Image
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         image = BaseImage(
             image_path=self._filepath,
@@ -188,57 +183,51 @@ class BaseImage(object):
         image._original_surface = self._surface.copy()
         return image
 
-    def get_size(self):
+    def get_size(self) -> Tuple2IntType:
         """
         Return the size in pixels of the image.
 
         :return: Image size tuple *(width, height)*
-        :rtype: tuple
         """
-        return self._surface.get_width(), self._surface.get_height()
+        return int(self._surface.get_width()), int(self._surface.get_height())
 
-    def get_surface(self):
+    def get_surface(self) -> 'pygame.Surface':
         """
         Return the surface object of the image.
 
         :return: Image surface
-        :rtype: :py:class:`pygame.Surface`
         """
         return self._surface
 
-    def get_namefile(self):
+    def get_namefile(self) -> str:
         """
         Return the name of the image file.
 
         :return: Filename
-        :rtype: str
         """
         return self._filename
 
-    def get_extension(self):
+    def get_extension(self) -> str:
         """
         Return the extension of the image file.
 
         :return: File extension
-        :rtype: str
         """
         return self._extension
 
-    def equals(self, image):
+    def equals(self, image: 'BaseImage') -> bool:
         """
         Return ``True`` if the image is the same as the object.
 
         :param image: Image object
-        :type image: :py:class:`pygame_menu.baseimage.BaseImage`
         :return: ``True`` if the image is the same (note, the surface)
-        :rtype: bool
         """
         assert isinstance(image, BaseImage)
         im1 = pygame.image.tostring(self._surface, 'RGBA')
         im2 = pygame.image.tostring(image._surface, 'RGBA')
         return im1 == im2
 
-    def restore(self):
+    def restore(self) -> None:
         """
         Restore image to the original surface.
 
@@ -246,7 +235,7 @@ class BaseImage(object):
         """
         self._surface = self._original_surface.copy()
 
-    def checkpoint(self):
+    def checkpoint(self) -> None:
         """
         Updates the original surface to the current surface.
 
@@ -254,7 +243,8 @@ class BaseImage(object):
         """
         self._original_surface = self._surface.copy()
 
-    def apply_image_function(self, image_function):
+    def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple[int, int, int, int]]
+                             ) -> 'BaseImage':
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
         colors and must return the same values. The color pixel will be overriden by the function output.
@@ -264,9 +254,7 @@ class BaseImage(object):
             See :py:meth:`pygame_menu.BaseImage.to_bw` method as an example.
 
         :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r, g, b, a)*
-        :type image_function: callable
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         w, h = self._surface.get_size()
         for x in range(w):
@@ -281,24 +269,23 @@ class BaseImage(object):
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
-    def to_bw(self):
+    def to_bw(self) -> 'BaseImage':
         """
         Converts the image to black and white.
 
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
 
-        def bw(r, g, b, a):
+        def bw(r: int, g: int, b: int, a: int) -> Tuple[int, int, int, int]:
             """
             To black-white function.
             """
-            c = (r + g + b) / 3
+            c = int((r + g + b) / 3)
             return c, c, c, a
 
         return self.apply_image_function(image_function=bw)
 
-    def pick_channels(self, channels):
+    def pick_channels(self, channels: Union[str, Tuple[str, ...], List[str]]) -> 'BaseImage':
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"`` (green) and ``"b"`` (blue),
         ``channels param`` is a list/tuple of channels (non empty).
@@ -306,9 +293,7 @@ class BaseImage(object):
         For example, ``pick_channels(['r', 'g'])``: All channels not included on the list will be discarded.
 
         :param channels: Channels, list or tuple containing ``"r"``, ``"g"`` or ``"b"`` (all combinations are possible)
-        :type channels: tuple, list, str
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         if isinstance(channels, str):
             channels = [channels]
@@ -329,17 +314,14 @@ class BaseImage(object):
                 self._surface.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
-    def flip(self, x, y):
+    def flip(self, x: bool, y: bool) -> 'BaseImage':
         """
         This method can flip the image either vertically, horizontally, or both.
         Flipping a image is non-destructive and does not change the dimensions.
 
         :param x: Flip in x axis
-        :type x: bool
         :param y: Flip on y axis
-        :type y: bool
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
@@ -347,18 +329,14 @@ class BaseImage(object):
         self._surface = pygame.transform.flip(self._surface, x, y)
         return self
 
-    def scale(self, width, height, smooth=False):
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'BaseImage':
         """
         Scale the image to a desired width and height factor.
 
         :param width: Scale factor of the width
-        :type width: int, float
         :param height: Scale factor of the height
-        :type height: int, float
         :param smooth: Smooth scaling
-        :type smooth: bool
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -371,33 +349,29 @@ class BaseImage(object):
             self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
         return self
 
-    def scale2x(self):
+    def scale2x(self) -> 'BaseImage':
         """
         This will return a new image that is double the size of the original.
         It uses the AdvanceMAME Scale2X algorithm which does a "jaggy-less"
         scale of bitmap graphics.
 
         This really only has an effect on simple images with solid colors.
-        On photographic and antialiased images it will look like a regular unfiltered scale.
+        On photographic and antialiased images it will look like a regular
+        unfiltered scale.
 
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         self._surface = pygame.transform.scale2x(self._surface)
         return self
 
-    def resize(self, width, height, smooth=False):
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'BaseImage':
         """
         Set the image size to another size.
 
         :param width: New width of the image in px
-        :type width: int, float
         :param height: New height of the image in px
-        :type height: int, float
         :param smooth: Smooth scaling
-        :type smooth: bool
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -405,20 +379,18 @@ class BaseImage(object):
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
         if w == width and h == height:
-            return
-        self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
-        return self
+            return self
+        return self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
 
-    def get_rect(self):
+    def get_rect(self) -> 'pygame.Rect':
         """
         Return the rect of the image.
 
         :return: Pygame rect object
-        :rtype: :py:class:`pygame.Rect`
         """
         return self._surface.get_rect()
 
-    def rotate(self, angle):
+    def rotate(self, angle: NumberType) -> 'BaseImage':
         """
         Unfiltered counterclockwise rotation. The angle argument represents degrees
         and can be any floating point value. Negative angle amounts will rotate clockwise.
@@ -431,24 +403,20 @@ class BaseImage(object):
             pixel value.
 
         :param angle: Rotation angle (degrees ``0-360``)
-        :type angle: int, float
         :return: Self reference
-        :rtype: :py:class:`pygame_menu.baseimage.BaseImage`
         """
         assert isinstance(angle, (int, float))
         self._surface = pygame.transform.rotate(self._surface, angle)
         return self
 
-    def draw(self, surface, area=None, position=(0, 0)):
+    def draw(self, surface: 'pygame.Surface', area: Union['pygame.Rect', None] = None,
+             position: Tuple2IntType = (0, 0)) -> None:
         """
         Draw the image in a given surface.
 
         :param surface: Pygame surface object
-        :type surface: :py:class:`pygame.Surface`
         :param area: Area to draw; if ``None`` the image will be drawn on entire surface
-        :type area: :py:class:`pygame.Rect`, None
-        :param position: Position to draw
-        :type position: tuple
+        :param position: Position to draw in *(x, y)*
         :return: None
         """
         assert isinstance(surface, pygame.Surface)

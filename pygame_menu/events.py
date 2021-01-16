@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -31,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import pygame.locals as __locals
+from typing import Any
 
 
 class MenuAction(object):
@@ -38,27 +38,25 @@ class MenuAction(object):
     Pymenu events.
 
     :param action: Action identifier
-    :type action: int
     """
+    _action: int
 
-    def __init__(self, action):
+    def __init__(self, action: int) -> None:
         assert isinstance(action, int)
         self._action = action
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'MenuAction') -> bool:
         if isinstance(other, MenuAction):
             return self._action == other._action
         return False
 
 
-def is_event(event):
+def is_event(event: Any) -> bool:
     """
     Check if event is pygame_menu event type.
 
     :param event: Event
-    :type event: any
     :return: ``True`` if it's an event
-    :rtype: bool
     """
     return isinstance(event, MenuAction) or \
            str(type(event)) == "<class 'pygame_menu.events.MenuAction'>"

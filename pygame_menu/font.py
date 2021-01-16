@@ -66,8 +66,10 @@ def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
     :return: Font object
     """
     assert isinstance(size, int)
+
+    font: Union['_font.Font', None]
     if isinstance(name, _font.Font):
-        font = name  # type: (_font.Font, None)
+        font = name
         return font
     else:
 
@@ -122,7 +124,7 @@ def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
                                                         sys_message_2))
 
         # Try to load the font
-        font = None  # type: (_font.Font, None)
+        font = None
         if (name, size) in _cache:
             return _cache[(name, size)]
         try:

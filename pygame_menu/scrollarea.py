@@ -71,7 +71,7 @@ class ScrollArea(object):
     _rect: 'pygame.Rect'
     _world: 'pygame.Surface'
     _scrollbars: List['ScrollBar']
-    _scrollbar_positions: Tuple[str]
+    _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: NumberType
     _bg_surface: Union['pygame.Surface', None]
     _extend_x: int
@@ -89,7 +89,7 @@ class ScrollArea(object):
                  scrollbar_slider_color: ColorType = (200, 200, 200),
                  scrollbar_slider_pad: NumberType = 0,
                  scrollbar_thick: NumberType = 20,
-                 scrollbars: Tuple[str, str] = (_locals.POSITION_SOUTH, _locals.POSITION_EAST),
+                 scrollbars: Tuple[str, ...] = (_locals.POSITION_SOUTH, _locals.POSITION_EAST),
                  shadow: bool = False,
                  shadow_color: ColorType = (0, 0, 0),
                  shadow_offset: NumberType = 2,
