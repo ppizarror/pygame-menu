@@ -309,7 +309,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._last_b = b
             _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
             _posy = self._rect.y
-            print()
             self._previsualization_position = (_posx, _posy)
 
         # Draw the surface
@@ -328,6 +327,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # Maybe TextInput did not rendered, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
         self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
+
+        # Force previsualization rendering
+        if not r:
+            self._previsualization_surface = None
+
         return r
 
     def _format_hex(self):
