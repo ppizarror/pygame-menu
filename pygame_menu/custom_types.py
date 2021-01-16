@@ -30,7 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # noinspection PyUnresolvedReferences
-from typing import Union, Dict, List, Tuple, Any, Callable, Sequence, Mapping
+from typing import Union, Dict, List, Tuple, Any, Callable, Sequence, Mapping, \
+    TYPE_CHECKING
 
 # Common types
 ArgsType = Union[Sequence[Any], None]

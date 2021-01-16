@@ -1404,7 +1404,7 @@ class Widget(object):
         """
         return self._surface
 
-    def get_width(self, apply_padding=True, apply_selection=False):
+    def get_width(self, apply_padding=True, apply_selection=False) -> int:
         """
         Return the widget width.
 
@@ -1425,9 +1425,9 @@ class Widget(object):
         width = rect.width
         if apply_selection:
             width += self._selection_effect.get_width()
-        return float(width)
+        return int(width)
 
-    def get_height(self, apply_padding=True, apply_selection=False):
+    def get_height(self, apply_padding=True, apply_selection=False) -> int:
         """
         Return the widget height.
 
@@ -1448,7 +1448,7 @@ class Widget(object):
         height = rect.height
         if apply_selection:
             height += self._selection_effect.get_height()
-        return float(height)
+        return int(height)
 
     def get_size(self, apply_padding=True, apply_selection=False):
         """

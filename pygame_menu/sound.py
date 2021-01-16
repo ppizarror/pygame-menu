@@ -154,7 +154,7 @@ class Sound(object):
                 print('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Channel where a sound is played
-        self._channel = None  # type: (mixer.Channel, None)
+        self._channel = None
         self._uniquechannel = uniquechannel
 
         # Sound dict
@@ -395,7 +395,7 @@ class Sound(object):
 
         :return: None
         """
-        channel = self.get_channel()  # type: mixer.Channel
+        channel = self.get_channel()
         if channel is None:  # The sound can't be played because all channels are busy
             return
         try:
@@ -409,7 +409,7 @@ class Sound(object):
 
         :return: None
         """
-        channel = self.get_channel()  # type: mixer.Channel
+        channel = self.get_channel()
         if channel is None:  # The sound can't be played because all channels are busy
             return
         try:
@@ -423,7 +423,7 @@ class Sound(object):
 
         :return: None
         """
-        channel = self.get_channel()  # type: mixer.Channel
+        channel = self.get_channel()
         if channel is None:  # The sound can't be played because all channels are busy
             return
         try:
@@ -437,7 +437,7 @@ class Sound(object):
 
         :return: Information dict e.g.: ``{'busy': 0, 'endevent': 0, 'queue': None, 'sound': None, 'volume': 1.0}``
         """
-        channel = self.get_channel()  # type: mixer.Channel
+        channel = self.get_channel()
         data = {}
         if channel is None:  # The sound can't be played because all channels are busy
             return data

@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -113,8 +112,7 @@ class Menu(object):
     _mouse_visible_default: bool
     _onclose: MenuCallableType
     _overflow: Tuple[bool, bool]
-    _pos_x: int
-    _pos_y: int
+    _position: Tuple[int, int]
     _prev: Union[List[Union['Menu', List['Menu']]], None]
     _scroll: 'ScrollArea'
     _scrollarea_margin: List[int]
@@ -318,7 +316,7 @@ class Menu(object):
         self._background_function = None
         self._center_content = center_content
         self._clock = pygame.time.Clock()
-        self._height = height
+        self._height = int(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._onclose = None  # Function or event called on Menu close
@@ -326,7 +324,7 @@ class Menu(object):
         self._stats = _MenuStats()
         self._submenus = []
         self._theme = theme
-        self._width = width
+        self._width = int(width)
 
         # Set onclose
         self.set_onclose(onclose)
@@ -350,8 +348,7 @@ class Menu(object):
         self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
-        self._pos_x = 0
-        self._pos_y = 0
+        self._position = (0, 0)
         self.set_relative_position(menu_position[0], menu_position[1])
 
         # Menu widgets, it should not be accessed outside the object as strange issues can occur
@@ -470,15 +467,15 @@ class Menu(object):
 
         # Scrolling area
         self._widgets_surface = None
-        menubar_rect = self._menubar.get_rect()
-        if self._height - menubar_rect.height <= 0:
+        menubar_height = self._menubar.get_height()
+        if self._height - menubar_height <= 0:
             raise ValueError('menubar is higher than menu height. Try increasing the later value')
 
         self._scroll = ScrollArea(
             area_width=self._width,
             area_color=self._theme.background_color,
-            area_height=self._height - menubar_rect.height,
-            extend_y=menubar_rect.height,
+            area_height=self._height - menubar_height,
+            extend_y=menubar_height,
             scrollbar_color=self._theme.scrollbar_color,
             scrollbar_slider_color=self._theme.scrollbar_slider_color,
             scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
@@ -1679,7 +1676,7 @@ class Menu(object):
             self._column_widths = [total_col_width]
 
         # Update title position
-        self._menubar.set_position(self._pos_x, self._pos_y)
+        self._menubar.set_position(self._position[0], self._position[1])
 
         # Widget max/min position
         min_max_updated = False
@@ -1812,7 +1809,7 @@ class Menu(object):
 
         self._widgets_surface = _utils.make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
-        self._scroll.set_position(self._pos_x, self._pos_y + menubar_height)
+        self._scroll.set_position(self._position[0], self._position[1] + menubar_height)
         self._stats.build_surface += 1
 
     def _check_id_duplicated(self, widget_id: str) -> None:
@@ -1921,8 +1918,8 @@ class Menu(object):
         position_x = float(position_x) / 100
         position_y = float(position_y) / 100
         window_width, window_height = self._window_size
-        self._pos_x = int((window_width - self._width) * position_x)
-        self._pos_y = int((window_height - self._height) * position_y)
+        self._position = (int((window_width - self._width) * position_x),
+                          int((window_height - self._height) * position_y))
         self._widgets_surface = None  # This forces an update of the widgets
 
     def center_content(self) -> None:
@@ -2593,8 +2590,9 @@ class Menu(object):
         Return the Menu rect.
 
         :return: Rect
+        :rtype: :py:class:`pygame.Rect`
         """
-        return pygame.Rect(int(self._pos_x), int(self._pos_y), int(self._width), int(self._height))
+        return pygame.Rect(int(self._position[0]), int(self._position[1]), int(self._width), int(self._height))
 
     def set_sound(self, sound: Union['Sound', None], recursive: bool = False) -> None:
         """
