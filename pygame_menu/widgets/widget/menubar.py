@@ -130,6 +130,15 @@ class MenuBar(Widget):
     def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
         pass
 
+    def resize(self, width, height, smooth=True):  # Widget don't support scalling
+        pass
+
+    def set_max_height(self, height, scale_width=False, smooth=True):
+        pass
+
+    def set_max_width(self, width, scale_height=False, smooth=True):
+        pass
+
     def set_selection_effect(self, selection):
         pass
 
