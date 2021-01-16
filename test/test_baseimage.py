@@ -29,8 +29,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
+import unittest
+from test._utils import surface
 
+import pygame
+import pygame_menu
 from pygame_menu.baseimage import *
 
 

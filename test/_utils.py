@@ -38,12 +38,6 @@ from pygame_menu.custom_types import NumberType, Union, List, Tuple, \
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
 
-# noinspection PyUnresolvedReferences
-from pygame_menu.utils import dummy_function
-
-# noinspection PyUnresolvedReferences
-import unittest
-
 # Constants
 FPS = 60  # Frames per second of the menu
 H_SIZE = 600  # Window height

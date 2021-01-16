@@ -29,7 +29,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
+import unittest
+from test._utils import MenuUtils, surface
+
 from pygame_menu.widgets import Button
 from pygame_menu.widgets.selection import *
 

@@ -29,13 +29,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
-
-from pygame_menu import events
-from pygame_menu.widgets import Label, Button
+import timeit
+import unittest
+from test._utils import surface, test_reset_surface, MenuUtils, PygameUtils
 
 import pygame
-import timeit
+import pygame_menu
+from pygame_menu import events
+from pygame_menu.widgets import Label, Button
+from pygame_menu.utils import dummy_function
 
 # Configure the tests
 _TEST_TIME_DRAW = False
