@@ -29,17 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
-
 import os
-import pygame
-import pygame_menu
-
 from random import randrange
 from typing import Tuple, Any, Union
+
+import pygame
+import pygame_menu
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -52,14 +47,9 @@ DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-# noinspection PyTypeChecker
 clock: Union[None, 'pygame.time.Clock'] = None
-
-# noinspection PyTypeChecker
-main_menu = None  # type: pygame_menu.Menu
-
-# noinspection PyTypeChecker
-surface = None  # type: pygame.Surface
+main_menu: Union['pygame_menu.Menu', None] = None
+surface: Union['pygame.Surface', None] = None
 
 
 # -----------------------------------------------------------------------------
@@ -77,29 +67,25 @@ def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     DIFFICULTY[0] = difficulty
 
 
-def random_color():
+def random_color() -> Tuple[int, int, int]:
     """
     Return a random color.
 
     :return: Color tuple
-    :rtype: tuple
     """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty, font, test=False):
+def play_function(difficulty: Tuple, font: 'pygame.font.Font', test: bool = False) -> None:
     """
     Main game function.
 
     :param difficulty: Difficulty of the game
-    :type difficulty: tuple, list
     :param font: Pygame font
-    :type font: :py:class:`pygame.font.Font`
     :param test: Test method, if ``True`` only one loop is allowed
-    :type test: bool
     :return: None
     """
-    assert isinstance(difficulty, (tuple, list))
+    assert isinstance(difficulty, tuple)
     difficulty = difficulty[0]
     assert isinstance(difficulty, str)
 
@@ -156,7 +142,7 @@ def play_function(difficulty, font, test=False):
             break
 
 
-def main_background():
+def main_background() -> None:
     """
     Function used by menus, draw on background while menu is active.
 
@@ -166,12 +152,11 @@ def main_background():
     surface.fill((128, 0, 128))
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 

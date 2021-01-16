@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,16 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
-
-import datetime
 import os
-import pygame
+import datetime
 from random import randrange
+from typing import Union, List, Tuple
 
+import pygame
 import pygame_menu
 
 # -----------------------------------------------------------------------------
@@ -58,17 +53,14 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
-# noinspection PyTypeChecker
-surface = None  # type: pygame.Surface
-
-# noinspection PyTypeChecker
-timer = None  # type: list
+surface: Union['pygame.Surface', None] = None
+timer: Union[List[float], None] = None
 
 
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def mainmenu_background():
+def mainmenu_background() -> None:
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
@@ -78,7 +70,7 @@ def mainmenu_background():
     surface.fill((40, 0, 40))
 
 
-def reset_timer():
+def reset_timer() -> None:
     """
     Reset timer.
 
@@ -93,7 +85,7 @@ class TestCallClassMethod(object):
     """
 
     @staticmethod
-    def update_game_settings():
+    def update_game_settings() -> None:
         """
         Class method.
 
@@ -102,14 +94,12 @@ class TestCallClassMethod(object):
         print('Update game with new settings')
 
 
-def change_color_bg(value, c=None, **kwargs):
+def change_color_bg(value: Tuple, c: Union[Tuple, None] = None, **kwargs) -> None:
     """
     Change background color.
 
     :param value: Selected option (data, index)
-    :type value: tuple
     :param c: Color tuple
-    :type c: tuple
     :return: None
     """
     color, _ = value
@@ -122,12 +112,11 @@ def change_color_bg(value, c=None, **kwargs):
     COLOR_BACKGROUND[2] = c[2]
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 

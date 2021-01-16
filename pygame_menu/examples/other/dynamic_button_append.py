@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -31,14 +30,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import sys
+import os
+from random import randrange
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
 
-import pygame_menu
-from random import randrange
 import pygame
-import os
+import pygame_menu
 
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -52,7 +51,7 @@ menu = pygame_menu.Menu(
 )
 
 
-def add_dynamic_button():
+def add_dynamic_button() -> None:
     """
     Append a button to the menu on demand.
 
@@ -61,7 +60,7 @@ def add_dynamic_button():
     print('Adding a button dynamically')
     btn = menu.add_button(randrange(0, 10), None)
 
-    def _update_button():
+    def _update_button() -> None:
         count = btn.get_attribute('count', int(btn.get_title())) + 1
         btn.set_title(count)
         btn.set_attribute('count', count)
@@ -74,12 +73,11 @@ menu.add_button('Play', add_dynamic_button)
 menu.add_button('Quit', pygame_menu.events.EXIT)
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
     menu.mainloop(surface, disable_loop=test)

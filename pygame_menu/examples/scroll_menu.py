@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -31,16 +30,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
+from typing import Any
+from functools import partial
+
 import pygame
 import pygame_menu
-
-from functools import partial
 
 FPS = 30
 WINDOW_SIZE = (800, 600)
 
 
-def on_button_click(value=None, text=None):
+def on_button_click(value: str, text: Any = None):
     """
     Button event on menus.
 
@@ -54,23 +54,21 @@ def on_button_click(value=None, text=None):
         print('Hello from {} with {}'.format(text, value))
 
 
-def paint_background(surface):
+def paint_background(surface: 'pygame.Surface') -> None:
     """
     Paints a given surface with background color.
 
     :param surface: Pygame surface
-    :type surface: :py:class:`pygame.Surface`
     :return: None
     """
     surface.fill((128, 230, 198))
 
 
-def make_long_menu():
+def make_long_menu() -> 'pygame_menu.Menu':
     """
     Create a long scrolling menu.
 
     :return: Menu
-    :rtype: :py:class:`pygame_menu.Menu`
     """
     # Main menu, pauses execution of the application
     menu = pygame_menu.Menu(
@@ -140,12 +138,11 @@ def make_long_menu():
     return menu
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'

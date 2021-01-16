@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,12 +29,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
-
 import os
+from typing import Union, Tuple
+
 import pygame
 import pygame_menu
 
@@ -45,20 +41,15 @@ import pygame_menu
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-# noinspection PyTypeChecker
-sound = None  # type: pygame_menu.sound.Sound
-
-# noinspection PyTypeChecker
-surface = None  # type: pygame.Surface
-
-# noinspection PyTypeChecker
-main_menu = None  # type: pygame_menu.Menu
+sound: Union['pygame_menu.sound.Sound', None] = None
+surface: Union['pygame.Surface', None] = None
+main_menu: Union['pygame_menu.Menu', None] = None
 
 
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def main_background():
+def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
@@ -68,28 +59,25 @@ def main_background():
     surface.fill((40, 40, 40))
 
 
-def check_name_test(value):
+def check_name_test(value: str) -> None:
     """
     This function tests the text input widget.
 
     :param value: The widget value
-    :type value: str
     :return: None
     """
     print('User name: {0}'.format(value))
 
 
-# noinspection PyUnusedLocal
-def update_menu_sound(value, enabled):
+def update_menu_sound(value: Tuple, enabled: bool) -> None:
     """
     Update menu sound.
 
     :param value: Value of the selector (Label and index)
-    :type value: tuple
     :param enabled: Parameter of the selector, (True/False)
-    :type enabled: bool
     :return: None
     """
+    assert isinstance(value, tuple)
     if enabled:
         main_menu.set_sound(sound, recursive=True)
         print('Menu sounds were enabled')
@@ -98,12 +86,11 @@ def update_menu_sound(value, enabled):
         print('Menu sounds were disabled')
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 
@@ -200,7 +187,7 @@ def main(test=False):
         default=1
     )
 
-    def data_fun():
+    def data_fun() -> None:
         """
         Print data of the menu.
 
@@ -242,12 +229,11 @@ def main(test=False):
         input_separator='-'
     )
 
-    def print_color(color):
+    def print_color(color: Tuple) -> None:
         """
         Test onchange/onreturn.
 
         :param color: Color tuple
-        :type color: tuple
         :return: None
         """
         print('Returned color: ', color)

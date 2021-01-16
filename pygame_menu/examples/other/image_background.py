@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,14 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
 from __future__ import print_function
 import sys
+import os
+from typing import Union
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
 
-import os
 import pygame
 import pygame_menu
 
@@ -47,14 +46,9 @@ import pygame_menu
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-# noinspection PyTypeChecker
-sound = None  # type: pygame_menu.sound.Sound
-
-# noinspection PyTypeChecker
-surface = None  # type: pygame.Surface
-
-# noinspection PyTypeChecker
-main_menu = None  # type: pygame_menu.Menu
+sound: Union['pygame_menu.sound.Sound', None] = None
+surface: Union['pygame.Surface', None] = None
+main_menu: Union['pygame_menu.Menu', None] = None
 
 # -----------------------------------------------------------------------------
 # Load image
@@ -67,7 +61,7 @@ background_image = pygame_menu.baseimage.BaseImage(
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def main_background():
+def main_background() -> None:
     """
     Background color of the main menu, on this function user can plot
     images, play sounds, etc.
@@ -77,12 +71,11 @@ def main_background():
     background_image.draw(surface)
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 
