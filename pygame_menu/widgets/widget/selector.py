@@ -184,6 +184,7 @@ class Selector(Widget):
         """
         Set the current value of the widget, selecting the element that matches
         the text if item is a string, or the index of the position of item is an integer.
+        This method raises ``ValueError`` if no element found.
 
         For example, if selector is *[['a',0],['b',1],['a',2]]*:
 

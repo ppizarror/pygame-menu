@@ -97,27 +97,32 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_height(), 400)
         self.assertEqual(menu.get_height(inner=True), 345)
         self.assertEqual(menu.get_menubar_widget().get_height(), 55)
-        self.assertEqual(btn.get_height(), 41)
         self.assertEqual(btn.get_width(), 94)
         self.assertEqual(btn.get_size()[0], 94)
-        self.assertEqual(btn.get_size()[1], 41)
-        self.assertEqual(menu.get_height(widget=True), 41)
 
-        vpos = (345 - 41) / 2  # available_height - widget_height
+        h = 41
+        if pygame.version.vernum.major < 2:
+            h = 42
+
+        self.assertEqual(btn.get_height(), h)
+        self.assertEqual(btn.get_size()[1], h)
+        self.assertEqual(menu.get_height(widget=True), h)
+
+        vpos = int((345 - h) / 2)  # available_height - widget_height
         self.assertEqual(menu._widget_offset[1], vpos)
-        self.assertEqual(btn.get_position()[1], vpos)
+        self.assertEqual(btn.get_position()[1], vpos + 1)
 
         # If there's too many widgets, the centering should be disabled
         for i in range(20):
             menu.add_button('button', None)
         self.assertEqual(menu._widget_offset[1], 0)
 
-        theme = menu.get_theme()
-        self.assertEqual(41 * 21 + theme.widget_margin[1] * 20, menu.get_height(widget=True))
-
         # Anyway, as the widget is 0, the first button position should be the height of its selection effect
         btneff = btn.get_selection_effect().get_margin()[0]
         self.assertEqual(btn.get_position()[1], btneff + 1)
+
+        theme = menu.get_theme()
+        self.assertEqual(h * 21 + theme.widget_margin[1] * 20, menu.get_height(widget=True))
 
         # Test menu not centered
         menu = MenuUtils.generic_menu(center_content=False)
@@ -734,3 +739,85 @@ class MenuTest(unittest.TestCase):
 
         self.assertFalse(btn1.selected)
         self.assertFalse(btn2.selected)
+
+        menu = MenuUtils.generic_menu(title='menu')
+        btn = menu.add_button('button', None)
+        self.assertTrue(btn.selected)
+        btn.hide()
+
+        # As theres no more visible widgets, index must be -1
+        self.assertEqual(menu._index, -1)
+        self.assertFalse(btn.selected)
+        btn.show()
+
+        # Widget should be selected, and index must be 0
+        self.assertTrue(btn.selected)
+        self.assertEqual(menu._index, 0)
+
+        # Hide button, and set is as unselectable
+        btn.hide()
+        btn.is_selectable = False
+        self.assertEqual(menu._index, -1)
+        btn.show()
+
+        # Now, as widget is not selectable, button should not
+        # be selected and index still -1
+        self.assertFalse(btn.selected)
+        self.assertEqual(menu._index, -1)
+
+        # Set selectable again
+        btn.is_selectable = True
+        btn.set_selected()
+        self.assertEqual(menu._index, -1)  # Menu still don't considers widget as selected
+        self.assertEqual(menu.get_selected_widget(), None)
+        btn.set_selected()
+        menu.select_widget(btn)
+        self.assertEqual(menu.get_selected_widget(), btn)
+
+    def test_focus(self):
+        """
+        Test menu focus effect.
+        """
+        menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
+        btn = menu.add_button('nice', None)
+
+        # Test focus
+        btn.active = True
+        focus = menu._draw_focus_widget(surface, btn)
+        self.assertEqual(len(focus), 4)
+        if pygame.version.vernum.major < 2:
+            self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 301), (0, 301)))
+            self.assertEqual(focus[2], ((0, 302), (261, 302), (261, 353), (0, 353)))
+            self.assertEqual(focus[3], ((337, 302), (600, 302), (600, 353), (337, 353)))
+            self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
+        else:
+            self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 302), (0, 302)))
+            self.assertEqual(focus[2], ((0, 303), (261, 303), (261, 353), (0, 353)))
+            self.assertEqual(focus[3], ((337, 303), (600, 303), (600, 353), (337, 353)))
+            self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
+
+        # Test cases where the focus must fail
+        btn.selected = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.selected = True
+
+        # Set active false
+        btn.active = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.active = True
+
+        btn.hide()
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.show()
+
+        btn.is_selectable = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        btn.is_selectable = True
+
+        menu._mouse_motion_selection = False
+        self.assertEqual(None, menu._draw_focus_widget(surface, btn))
+        menu._mouse_motion_selection = True
+
+        btn.active = True
+        btn.selected = True
+        self.assertNotEqual(None, menu._draw_focus_widget(surface, btn))

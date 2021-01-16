@@ -240,7 +240,7 @@ class ScrollBar(Widget):
 
         :param pixels: Number of pixels to scroll
         :type pixels: int, float
-        :return: True is scroll position has changed
+        :return: ``True`` is scroll position has changed
         :rtype: bool
         """
         assert isinstance(pixels, (int, float))

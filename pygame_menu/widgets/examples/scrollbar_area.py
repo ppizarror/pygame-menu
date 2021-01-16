@@ -33,9 +33,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+import sys
 import itertools
 import os
-import sys
 
 sys.path.insert(0, '../../../')
 

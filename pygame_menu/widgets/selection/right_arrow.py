@@ -48,7 +48,7 @@ class RightArrowSelection(ArrowSelection):
     :param arrow_vertical_offset: Vertical offset of the arrow
     :type arrow_vertical_offset: int
     :param blink_ms: Milliseconds between each blink, if *0* blinking is disabled
-    :type blink_ms: int
+    :type blink_ms: int, float
     """
 
     def __init__(self,

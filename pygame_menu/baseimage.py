@@ -37,17 +37,26 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os.path as path
 import math
 
+try:
+    # noinspection PyCompatibility
+    from pathlib import Path as _Path
+except ImportError:
+    _Path = None
+
 import pygame
 from pygame_menu.utils import assert_vector2
 
-# Example images
-__fontdir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
+# Example image paths
+__images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
 
-IMAGE_EXAMPLE_CARBON_FIBER = __fontdir.format('carbon_fiber.png')
-IMAGE_EXAMPLE_GRAY_LINES = __fontdir.format('gray_lines.png')
-IMAGE_EXAMPLE_METAL = __fontdir.format('metal.png')
-IMAGE_EXAMPLE_PYGAME_MENU = __fontdir.format('pygame_menu.png')
-IMAGE_EXAMPLE_WALLPAPER = __fontdir.format('wallpaper.jpg')
+IMAGE_EXAMPLE_CARBON_FIBER = __images_path__.format('carbon_fiber.png')
+IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format('gray_lines.png')
+IMAGE_EXAMPLE_METAL = __images_path__.format('metal.png')
+IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format('pygame_menu.png')
+IMAGE_EXAMPLE_WALLPAPER = __images_path__.format('wallpaper.jpg')
+
+IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES, IMAGE_EXAMPLE_METAL,
+                  IMAGE_EXAMPLE_PYGAME_MENU, IMAGE_EXAMPLE_WALLPAPER)
 
 # Drawing modes
 IMAGE_MODE_CENTER = 100
@@ -67,8 +76,8 @@ class BaseImage(object):
     Object that loads an image, stores as a surface, transform it and
     let write the image to an surface.
 
-    :param image_path: Path of the image to be loaded
-    :type image_path: str
+    :param image_path: Path of the image to be loaded. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
+    :type image_path: str, :py:class:`pathlib.Path`
     :param drawing_mode: Drawing mode of the image
     :type drawing_mode: int
     :param drawing_offset: Offset of the image in drawing method
@@ -83,7 +92,12 @@ class BaseImage(object):
                  drawing_offset=(0, 0),
                  load_from_file=True
                  ):
-        assert isinstance(image_path, str)
+        if _Path is None:
+            assert isinstance(image_path, str)
+        else:
+            assert isinstance(image_path, (str, _Path))
+            if isinstance(image_path, _Path):
+                image_path = str(image_path)
         assert isinstance(load_from_file, bool)
 
         _, file_extension = path.splitext(image_path)
@@ -366,7 +380,8 @@ class BaseImage(object):
         scale of bitmap graphics.
 
         This really only has an effect on simple images with solid colors.
-        On photographic and antialiased images it will look like a regular unfiltered scale.
+        On photographic and antialiased images it will look like a regular
+        unfiltered scale.
 
         :return: Self reference
         :rtype: BaseImage
@@ -393,9 +408,8 @@ class BaseImage(object):
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
         if w == width and h == height:
-            return
-        self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
-        return self
+            return self
+        return self.scale(width=float(width) / w, height=float(height) / h, smooth=smooth)
 
     def get_rect(self):
         """
@@ -435,7 +449,7 @@ class BaseImage(object):
         :type surface: :py:class:`pygame.Surface`
         :param area: Area to draw, if None, Image will be drawn on entire surface
         :type area: :py:class:`pygame.Rect`, None
-        :param position: Position to draw
+        :param position: Position to draw in *(x, y)*
         :type position: tuple
         :return: None
         """

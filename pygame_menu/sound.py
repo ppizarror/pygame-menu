@@ -59,6 +59,23 @@ SOUND_TYPE_KEY_DELETION = '__pygame_menu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygame_menu_sound_open_menu__'
 SOUND_TYPE_WIDGET_SELECTION = '__pygame_menu_sound_widget_selection__'
 
+# Sound example paths
+__sounds_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
+
+SOUND_EXAMPLE_CLICK_MOUSE = __sounds_path__.format('click_mouse.ogg')
+SOUND_EXAMPLE_CLOSE_MENU = __sounds_path__.format('close_menu.ogg')
+SOUND_EXAMPLE_ERROR = __sounds_path__.format('error.ogg')
+SOUND_EXAMPLE_EVENT = __sounds_path__.format('event.ogg')
+SOUND_EXAMPLE_EVENT_ERROR = __sounds_path__.format('event_error.ogg')
+SOUND_EXAMPLE_KEY_ADD = __sounds_path__.format('key_add.ogg')
+SOUND_EXAMPLE_KEY_DELETE = __sounds_path__.format('key_delete.ogg')
+SOUND_EXAMPLE_OPEN_MENU = __sounds_path__.format('open_menu.ogg')
+SOUND_EXAMPLE_WIDGET_SELECTION = __sounds_path__.format('widget_selection.ogg')
+
+SOUND_EXAMPLES = (SOUND_EXAMPLE_CLICK_MOUSE, SOUND_EXAMPLE_CLOSE_MENU, SOUND_EXAMPLE_ERROR,
+                  SOUND_EXAMPLE_EVENT, SOUND_EXAMPLE_EVENT_ERROR, SOUND_EXAMPLE_KEY_ADD,
+                  SOUND_EXAMPLE_KEY_DELETE, SOUND_EXAMPLE_OPEN_MENU, SOUND_EXAMPLE_WIDGET_SELECTION)
+
 # Stores global reference that marks sounds as initialized
 SOUND_INITIALIZED = [False]
 
@@ -94,7 +111,8 @@ class Sound(object):
                  buffer=4096,
                  devicename='',
                  allowedchanges=AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
-                 force_init=False):
+                 force_init=False
+                 ):
         assert isinstance(uniquechannel, bool)
         assert isinstance(frequency, int)
         assert isinstance(size, int)
@@ -178,7 +196,7 @@ class Sound(object):
         """
         Return the channel of the sound engine.
 
-        :return: Channel
+        :return: Sound engine channel
         :rtype: :py:class:`pygame.mixer.Channel`
         """
         # noinspection PyArgumentList
@@ -268,30 +286,15 @@ class Sound(object):
         :return: None
         """
         assert isinstance(volume, float)
-        sound_dir = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
-
-        # Must be in the same order of self._type_sounds
-        examples = [
-            sound_dir.format('click_mouse.ogg'),
-            sound_dir.format('close_menu.ogg'),
-            sound_dir.format('error.ogg'),
-            sound_dir.format('event.ogg'),
-            sound_dir.format('event_error.ogg'),
-            sound_dir.format('key_add.ogg'),
-            sound_dir.format('key_delete.ogg'),
-            sound_dir.format('open_menu.ogg'),
-            sound_dir.format('widget_selection.ogg')
-        ]
-
         for sound in range(len(self._type_sounds)):
-            self.set_sound(self._type_sounds[sound], examples[sound], volume=volume)
+            self.set_sound(self._type_sounds[sound], SOUND_EXAMPLES[sound], volume=volume)
 
     def _play_sound(self, sound):
         """
         Play a sound.
 
         :param sound: Sound to be played
-        :type sound: :py:class:`pygame.mixer.Sound`, None
+        :type sound: dict, None
         :return: True if the sound was played
         :rtype: bool
         """

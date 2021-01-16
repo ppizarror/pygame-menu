@@ -292,6 +292,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # Maybe TextInput did not rendered, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
         self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
+
+        # Force previsualization rendering
+        if not r:
+            self._previsualization_surface = None
+
         return r
 
     # noinspection PyMissingOrEmptyDocstring

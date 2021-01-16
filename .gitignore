@@ -17,7 +17,6 @@ venv/
 *.egg-info
 build/
 dist/
-build.bat
 
 # Other
 run_gource.bat

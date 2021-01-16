@@ -33,13 +33,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
 from __future__ import print_function
 import sys
+import os
 
 sys.path.insert(0, '../../')
 
-import os
 import pygame
 import pygame_menu
 
@@ -49,8 +48,11 @@ import pygame_menu
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
+# noinspection PyTypeChecker
 sound = None  # type: pygame_menu.sound.Sound
+# noinspection PyTypeChecker
 surface = None  # type: pygame.Surface
+# noinspection PyTypeChecker
 main_menu = None  # type: pygame_menu.Menu
 
 # -----------------------------------------------------------------------------

@@ -44,7 +44,7 @@ import pygame_menu.locals as _locals
 
 def assert_alignment(align):
     """
-    Assert alignment local.
+    Assert that a certain alignment is valid.
 
     :param align: Align value
     :type align: str
@@ -83,7 +83,7 @@ def assert_color(color):
 
 def assert_orientation(orientation):
     """
-    Assert that a certain widget orientation is valid.
+    Assert that a certain orientation is valid.
 
     :param orientation: Object orientation
     :type orientation: str
@@ -114,7 +114,7 @@ def assert_vector2(num_vector):
 
 def assert_position(position):
     """
-    Assert that a certain widget position is valid.
+    Assert that a certain position is valid.
 
     :param position: Object position
     :type position: str
@@ -196,7 +196,7 @@ def is_callable(func):
 
     :param func: Function object
     :type func: any
-    :return: Bool
+    :return: ``True`` if function
     :rtype: bool
     """
     # noinspection PyTypeChecker

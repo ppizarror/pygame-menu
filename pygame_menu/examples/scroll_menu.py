@@ -34,10 +34,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
+from functools import partial
+
 import pygame
 import pygame_menu
-
-from functools import partial
 
 FPS = 30
 H_SIZE = 600  # Height of window size

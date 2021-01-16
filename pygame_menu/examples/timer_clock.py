@@ -33,16 +33,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
-
-import datetime
 import os
-import pygame
+import datetime
 from random import randrange
 
+import pygame
 import pygame_menu
 
 # -----------------------------------------------------------------------------
@@ -61,7 +56,9 @@ HELP = ['Press ESC to enable/disable Menu',
         'Press LEFT/RIGHT to move through Selectors']
 W_SIZE = 800  # Width of window size
 
+# noinspection PyTypeChecker
 surface = None  # type: pygame.Surface
+# noinspection PyTypeChecker
 timer = None  # type: list
 
 

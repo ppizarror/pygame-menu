@@ -33,16 +33,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
-
 import os
+from random import randrange
+
 import pygame
 import pygame_menu
-
-from random import randrange
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -55,8 +50,11 @@ DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
+# noinspection PyTypeChecker
 clock = None  # type: pygame.time.Clock
+# noinspection PyTypeChecker
 main_menu = None  # type: pygame_menu.Menu
+# noinspection PyTypeChecker
 surface = None  # type: pygame.Surface
 
 

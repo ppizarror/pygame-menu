@@ -105,7 +105,7 @@ class Widget(object):
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
         # use .get_rect() Widget method instead
-        self._rect = pygame.Rect(0, 0, 0, 0)  # type: (pygame.Rect,None)
+        self._rect = pygame.Rect(0, 0, 0, 0)  # type: pygame.Rect
 
         # Callbacks
         self._draw_callbacks = {}  # type: dict
@@ -239,8 +239,8 @@ class Widget(object):
 
         :param args: Variables to check the hash
         :type args: any
-        :return: Hash data
-        :rtype: int
+        :return: ``True`` if render has changed the widget
+        :rtype: bool
         """
         _hash = self._hash_variables(*args)
         if _hash != self._last_render_hash:
@@ -276,7 +276,7 @@ class Widget(object):
 
         :param color: Widget background color
         :type color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-        :param inflate: Inflate background in *(x,y)*. If None, the widget value is not updated
+        :param inflate: Inflate background in *(x,y)*. If ``None``, the widget value is not updated
         :type inflate: tuple, list, None
         :return: None
         """
@@ -712,18 +712,22 @@ class Widget(object):
         :return: None
         """
         assert isinstance(font, str)
-        assert isinstance(font_size, int)
-        assert isinstance(color, tuple)
-        assert isinstance(selected_color, tuple)
-        assert isinstance(background_color, (tuple, type(None)))
+        assert isinstance(font_size, (int, float))
         assert isinstance(antialias, bool)
+        assert_color(color)
+        assert_color(selected_color)
 
-        # If background is a color and it's transparent raise a warning
-        # Font background color must be opaque, otherwise the results are quite bad
-        if isinstance(background_color, (tuple, list)) and \
-                len(background_color) == 4 and background_color[3] != 255:
-            background_color = None
-            warnings.warn('font background color must be opaque, alpha channel must be 255')
+        if background_color is not None:
+            assert_color(background_color)
+
+            # If background is a color and it's transparent raise a warning
+            # Font background color must be opaque, otherwise the results are quite bad
+            if len(background_color) == 4 and background_color[3] != 255:
+                background_color = None
+                msg = 'font background color must be opaque, alpha channel must be 255'
+                warnings.warn(msg)
+
+        font_size = int(font_size)
 
         self._font = _fonts.get_font(font, font_size)
         self._font_antialias = antialias

@@ -260,6 +260,10 @@ class Menu(object):
         self._widgets = []  # type: list
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]  # type: list
 
+        # Cast to int offset
+        self._widget_offset[0] = int(self._widget_offset[0])
+        self._widget_offset[1] = int(self._widget_offset[1])
+
         if abs(self._widget_offset[0]) < 1:
             self._widget_offset[0] *= self._width
         if abs(self._widget_offset[1]) < 1:
@@ -623,8 +627,8 @@ class Menu(object):
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
 
-        :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided, angle and scale are ignored
-        :type image_path: str, :py:class:`pygame_menu.baseimage.BaseImage`
+        :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided, angle and scale are ignored. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
+        :type image_path: str, :py:class:`pathlib.Path`, :py:class:`pygame_menu.baseimage.BaseImage`
         :param angle: Angle of the image in degrees (clockwise)
         :type angle: int, float
         :param image_id: ID of the label
@@ -693,7 +697,7 @@ class Menu(object):
         :type selectable: bool
         :param kwargs: Optional keyword arguments
         :type kwargs: dict, any
-        :return: Widget object or List of widgets if the text overflows
+        :return: Widget object, or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
         assert isinstance(label_id, str)
@@ -891,8 +895,8 @@ class Menu(object):
         :type tab_size: int
         :param textinput_id: ID of the text input
         :type textinput_id: str
-        :param valid_chars: List of authorized chars, None if all chars are valid
-        :type valid_chars: list
+        :param valid_chars: List of authorized chars. ``None`` if all chars are valid
+        :type valid_chars: list, None
         :param kwargs: Optional keyword arguments
         :type kwargs: dict, any
         :return: Widget object
@@ -1171,8 +1175,6 @@ class Menu(object):
         if self._center_content:
             self.center_content()
         self._widgets_surface = None  # If added on execution time forces the update of the surface
-        if self._center_content:
-            self.center_content()
         self._render()
 
     def select_widget(self, widget):
@@ -1332,10 +1334,9 @@ class Menu(object):
             widget_rects[widget.get_id()] = widget.get_rect()
 
         # Widget max/min position
-        max_x = -1e8
-        max_y = -1e8
-        min_x = 1e8
-        min_y = 1e8
+        min_max_updated = False
+        max_x, max_y = -1e8, -1e8
+        min_x, min_y = 1e8, 1e8
 
         # Update appended widgets
         for index in range(len(self._widgets)):
@@ -1344,7 +1345,7 @@ class Menu(object):
             selection = widget.get_selection_effect()
 
             if not widget.visible:
-                widget.set_position(self._widget_offset[0], self._widget_offset[1])
+                widget.set_position(0, 0)
                 continue
 
             # Get column and row position
@@ -1370,33 +1371,44 @@ class Menu(object):
             x_coord += self._widget_offset[0]
 
             # Calculate Y position
-            ysum = 0  # Compute the total height from the current row position to the top of the column
+            ysum = 1  # Compute the total height from the current row position to the top of the column
             for r in range(row):
                 rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
                 if rwidget.visible:
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
-            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
+                    if r == 0 and self._widget_offset[1] == 0:  # No widget is before
+                        if rwidget.is_selectable:  # Add top margin
+                            ysum += rwidget.get_selection_effect().get_margin()[0]
 
             # If the widget offset is zero, then add the selection effect to the height
             # of the widget to avoid visual glitches
-            if self._widget_offset[1] == 0:
-                y_coord += selection.get_margin()[0] + 1  # add 1px of linewidth
+            if ysum == 1 and self._widget_offset[1] == 0:  # No widget is before
+                if widget.is_selectable:  # Add top margin
+                    ysum += widget.get_selection_effect().get_margin()[0]
+
+            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
 
             # Update the position of the widget
-            widget.set_position(x_coord, y_coord)
+            widget.set_position(int(x_coord), int(y_coord))
 
             # Update max/min position
-            x, y = widget.get_rect().bottomright
+            min_max_updated = True
+            widget_rect = widget.get_rect()
+            x, y = widget_rect.bottomright
             max_x = max(max_x, x)
             max_y = max(max_y, y)
-            x, y = widget.get_rect().topleft
+            x, y = widget_rect.topleft
             min_x = min(min_x, x)
             min_y = min(min_y, y)
 
-        # Save max/min position
-        self._widget_max_position = (max_x, max_y)
-        self._widget_min_position = (min_x, min_y)
+        # Update position
+        if min_max_updated:
+            self._widget_max_position = (max_x, max_y)
+            self._widget_min_position = (min_x, min_y)
+        else:
+            self._widget_max_position = (0, 0)
+            self._widget_min_position = (0, 0)
 
     def _update_selection_if_hidden(self):
         """
@@ -1405,10 +1417,13 @@ class Menu(object):
         :return: None
         """
         if len(self._widgets) > 0:
-            selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
-            if not selected_widget.visible:
-                selected_widget.set_selected(False)  # Unselect
-                self._update_after_remove_or_hidden(-1, update_surface=False)
+            if self._index != -1:
+                selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
+                if not selected_widget.visible:
+                    selected_widget.set_selected(False)  # Unselect
+                    self._update_after_remove_or_hidden(-1, update_surface=False)
+            else:
+                self._update_after_remove_or_hidden(0, update_surface=False)
 
     def _build_widget_surface(self):
         """
@@ -1586,11 +1601,14 @@ class Menu(object):
         if len(self._widgets) == 0:  # If this happen, get_widget_max returns an immense value
             self._widget_offset[1] = 0
             return
-        self._build_widget_surface()  # For position
+        if self._widgets_surface is None:
+            self._build_widget_surface()  # For position (max/min)
         available = self.get_height(inner=True)
         widget_height = self.get_height(widget=True)
-        self._widget_offset[1] = max(float(available - widget_height) / 2, 0)
-        self._widgets_surface = None  # Rebuild on the next draw
+        new_offset = int(max(float(available - widget_height) / 2, 0))
+        if abs(new_offset - self._widget_offset[1]) > 1:
+            self._widget_offset[1] = new_offset
+            self._widgets_surface = None  # Rebuild on the next draw
 
     def get_height(self, inner=False, widget=False):
         """
@@ -1697,19 +1715,25 @@ class Menu(object):
         :type surface: :py:class:`pygame.Surface`
         :param widget: Focused widget
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
-        :return: None
+        :return: Returns the focus region, ``None`` if the focus could not be possible
+        :rtype: dict, None
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (_widgets.core.Widget, type(None)))
 
-        if widget is None or not widget.active or not self._mouse_motion_selection:
+        if widget is None or not widget.active or not widget.is_selectable or not widget.selected or \
+                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.visible:
             return
         window_width, window_height = self._window_size
 
-        rect = widget.get_rect()
-        if widget.selected and widget.get_selection_effect():
-            rect = widget.get_selection_effect().inflate(rect)
-        rect = self._current._scroll.to_real_position(rect, visible=True)
+        rect = widget.get_rect()  # type: pygame.Rect
+
+        # Apply selection effect
+        rect = widget.get_selection_effect().inflate(rect)
+        rect = self._scroll.to_real_position(rect, visible=True)
+
+        if rect.width == 0 or rect.height == 0:
+            return
 
         x1, y1, x2, y2 = rect.topleft + rect.bottomright
 
@@ -1719,32 +1743,32 @@ class Menu(object):
         x2 = int(x2)
         y2 = int(y2)
 
-        # Draw 4 areas:
-        # .------------------.
-        # |________1_________|
-        # |  2  |XXXXXX|  3  |
-        # |_____|XXXXXX|_____|
-        # |        4         |
-        # .------------------.
+        coords = {}
 
         if abs(y1 - y2) <= 4 or abs(x1 - x2) <= 4:
-            gfxdraw.filled_polygon(surface,
-                                   [(0, 0), (window_width, 0), (window_width, window_height), (0, window_height)],
-                                   self._theme.focus_background_color)
-            return
+            # If the area of the selected widget is too small, draw focus over the entire menu
+            # .------------------.
+            # |                  |
+            # |        1         |
+            # |                  |
+            # .------------------.
+            coords[1] = (0, 0), (window_width, 0), (window_width, window_height), (0, window_height)
+        else:
+            # Draw 4 areas:
+            # .------------------.
+            # |________1_________|
+            # |  2  |XXXXXX|  3  |
+            # |_____|XXXXXX|_____|
+            # |        4         |
+            # .------------------.
+            coords[1] = (0, 0), (window_width, 0), (window_width, y1 - 1), (0, y1 - 1)
+            coords[2] = (0, y1), (x1 - 1, y1), (x1 - 1, y2 - 1), (0, y2 - 1)
+            coords[3] = (x2, y1), (window_width, y1), (window_width, y2 - 1), (x2, y2 - 1)
+            coords[4] = (0, y2), (window_width, y2), (window_width, window_height), (0, window_height)
 
-        gfxdraw.filled_polygon(surface,
-                               [(0, 0), (window_width, 0), (window_width, y1 + 1), (0, y1 + 1)],
-                               self._theme.focus_background_color)  # 1
-        gfxdraw.filled_polygon(surface,
-                               [(0, y1 + 2), (x1 + 1, y1 + 2), (x1 + 1, y2 - 2), (0, y2 - 2)],
-                               self._theme.focus_background_color)  # 2
-        gfxdraw.filled_polygon(surface,
-                               [(x2 - 1, y1 + 2), (window_width, y1 + 2), (window_width, y2 - 2), (x2 - 1, y2 - 2)],
-                               self._theme.focus_background_color)  # 3
-        gfxdraw.filled_polygon(surface,
-                               [(0, y2 - 1), (window_width, y2 - 1), (window_width, window_height), (0, window_height)],
-                               self._theme.focus_background_color)  # 4
+        for area in coords:
+            gfxdraw.filled_polygon(surface, coords[area], self._theme.focus_background_color)
+        return coords
 
     def enable(self):
         """
@@ -2497,7 +2521,7 @@ class Menu(object):
         """
         Return the selected widget on the Menu.
 
-        :return: Widget object, None if no widget is selected
+        :return: Widget object, ``None`` if no widget is selected
         :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
         if not isinstance(self._index, int):
