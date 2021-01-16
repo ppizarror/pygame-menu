@@ -1452,7 +1452,7 @@ class Menu(object):
         assert widget.get_menu() == self, 'widget cannot have a different instance of menu'
         self._widgets.append(widget)
         if self._index < 0 and widget.is_selectable:
-            widget.set_selected()
+            widget.select()
             self._index = len(self._widgets) - 1
         self._stats.added_widgets += 1
         self._widgets_surface = None  # If added on execution time forces the update of the surface
@@ -1541,10 +1541,8 @@ class Menu(object):
                 self._select(self._index - 1)
             else:
                 self._select(self._index)
-        self._build_widget_surface()
+        self._update_widget_position()
         if update_surface:
-            if self._center_content:
-                self.center_content()
             self._widgets_surface = None  # If added on execution time forces the update of the surface
 
     def _back(self):
@@ -1565,10 +1563,13 @@ class Menu(object):
         :return: None
         """
         if len(self._widgets) > 0:
-            selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
-            if not selected_widget.visible:
-                selected_widget.set_selected(False)  # Unselect
-                self._update_after_remove_or_hidden(-1, update_surface=False)
+            if self._index != -1:
+                selected_widget = self._widgets[self._index % len(self._widgets)]  # type: _widgets.core.Widget
+                if not selected_widget.visible:
+                    selected_widget.select(False)  # Unselect
+                    self._update_after_remove_or_hidden(-1, update_surface=False)
+            else:
+                self._update_after_remove_or_hidden(0, update_surface=False)
 
     def _update_widget_position(self):
         """
@@ -1708,10 +1709,9 @@ class Menu(object):
         self._menubar.set_position(self._pos_x, self._pos_y)
 
         # Widget max/min position
-        max_x = -1e8
-        max_y = -1e8
-        min_x = 1e8
-        min_y = 1e8
+        min_max_updated = False
+        max_x, max_y = -1e8, -1e8
+        min_x, min_y = 1e8, 1e8
 
         # Update appended widgets
         for index in range(len(self._widgets)):
@@ -1745,25 +1745,31 @@ class Menu(object):
             x_coord += max(0, self._widget_offset[0])
 
             # Calculate Y position
-            ysum = 0  # Compute the total height from the current row position to the top of the column
+            ysum = 1  # Compute the total height from the current row position to the top of the column
             for rwidget in self._widget_columns[col]:  # type: _widgets.core.Widget
                 _, r, _ = rwidget.get_col_row_index()
                 if r >= row:
                     break
                 if rwidget.visible and not rwidget.floating:
+                    if r == 0 and self._widget_offset[1] == 0:  # No widget is before
+                        if rwidget.is_selectable:
+                            ysum += rwidget.get_selection_effect().get_margin()[0]
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
-            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
 
             # If the widget offset is zero, then add the selection effect to the height
             # of the widget to avoid visual glitches
-            if self._widget_offset[1] == 0:
-                y_coord += selection_effect.get_margin()[0] + 1  # add 1px of linewidth
+            if ysum == 1 and self._widget_offset[1] == 0:  # No widget is before
+                if widget.is_selectable:  # Add top margin
+                    ysum += widget.get_selection_effect().get_margin()[0]
+
+            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
 
             # Update the position of the widget
             widget.set_position(int(x_coord), int(y_coord))
 
             # Update max/min position
+            min_max_updated = True
             widget_rect = widget.get_rect()
             x, y = widget_rect.bottomright
             max_x = max(max_x, x)
@@ -1772,9 +1778,13 @@ class Menu(object):
             min_x = min(min_x, x)
             min_y = min(min_y, y)
 
-        # Save max/min position
-        self._widget_max_position = (max_x, max_y)
-        self._widget_min_position = (min_x, min_y)
+        # Update position
+        if min_max_updated:
+            self._widget_max_position = (max_x, max_y)
+            self._widget_min_position = (min_x, min_y)
+        else:
+            self._widget_max_position = (0, 0)
+            self._widget_min_position = (0, 0)
 
         self._stats.position_update += 1
 
@@ -1971,19 +1981,49 @@ class Menu(object):
             self._build_widget_surface()  # For position (max/min)
         available = self.get_height(inner=True)
         widget_height = self.get_height(widget=True)
-        new_offset = max(float(available - widget_height) / 2, 0)
+        new_offset = int(max(float(available - widget_height) / 2, 0))
         if abs(new_offset - self._widget_offset[1]) > 1:
             self._widget_offset[1] = new_offset
             self._widgets_surface = None  # Rebuild on the next draw
         self._stats.center_content += 1
 
+    def get_width(self, inner=False, widget=False):
+        """
+        Get menu width.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param inner: If ``True`` returns the available woith (menu width minus scroll if visible)
+        :type inner: bool
+        :param widget: If ``True```returns the total width used by the widgets
+        :type widget: bool
+        :return: Width in px
+        :rtype: int, float
+        """
+        if widget:
+            return self._widget_max_position[0] - self._widget_min_position[0]
+        if not inner:
+            return self._width
+        vertical_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
+        return self._width - vertical_scroll
+
     def get_height(self, inner=False, widget=False):
         """
         Get menu height.
 
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
         :param inner: If ``True`` returns the available height (menu height minus scroll and menubar)
         :type inner: bool
-        :param widget: If ``True`` returns the height of the drawn widgets
+        :param widget: If ``True`` returns the total height used by the widgets
         :type widget: bool
         :return: Height in px
         :rtype: int, float
@@ -1994,6 +2034,25 @@ class Menu(object):
             return self._height
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         return self._height - self._menubar.get_height() - horizontal_scroll
+
+    def get_size(self, inner=False, widget=False):
+        """
+        Return the Menu size (px) as a tuple of *(width, height)*.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param inner: If ``True`` returns the available *(width, height)* (menu height minus scroll and menubar)
+        :type inner: bool
+        :param widget: If ``True`` returns the total *(width, height)* used by the widgets
+        :type widget: bool
+        :return: Height in px
+        :rtype: int, float
+        """
+        return self.get_width(inner=inner, widget=widget), self.get_height(inner=inner, widget=widget)
 
     def render(self):
         """
@@ -2049,7 +2108,6 @@ class Menu(object):
             raise RuntimeError('menu is not enabled, it cannot be drawn')
 
         # Render menu
-        # print('draw', self._stats.draw)
         self._current._render()
 
         # Clear surface
@@ -2098,7 +2156,7 @@ class Menu(object):
         assert isinstance(widget, (_widgets.core.Widget, type(None)))
 
         if widget is None or not widget.active or not widget.is_selectable or not widget.selected or \
-                not (self._mouse_motion_selection or self._touchscreen_motion_selection):
+                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.visible:
             return
         window_width, window_height = self._window_size
 
@@ -2778,7 +2836,7 @@ class Menu(object):
         # Get both widgets
         if curr_widget._index >= total_curr_widgets:  # The length of the Menu changed during execution time
             for i in range(total_curr_widgets):  # Unselect all posible candidates
-                curr_widget._widgets[i].set_selected(False)
+                curr_widget._widgets[i].select(False)
             curr_widget._index = 0
 
         old_widget = curr_widget._widgets[curr_widget._index]  # type: _widgets.core.Widget
@@ -2786,16 +2844,16 @@ class Menu(object):
 
         # If new widget is not selectable or visible
         if not new_widget.is_selectable or not new_widget.visible:
-            if curr_widget._index >= 0:  # There's at least 1 selectable option (if only text this would be false)
+            if curr_widget._index >= 0:  # There's at least 1 selectable option
                 curr_widget._select(new_index + dwidget, dwidget)
                 return
             else:  # No selectable options, quit
                 return
 
         # Selecting widgets forces rendering
-        old_widget.set_selected(False)
+        old_widget.select(False)
         curr_widget._index = new_index  # Update selected index
-        new_widget.set_selected()
+        new_widget.select()
 
         # Scroll to rect
         rect = new_widget.get_rect()
@@ -2848,21 +2906,6 @@ class Menu(object):
         """
         w, h = self._window_size
         return w, h
-
-    def get_size(self):
-        """
-        Return the Menu size (px) as a tuple of *(width, height)*.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
-
-        :return: Menu size in px
-        :rtype: tuple
-        """
-        return self._width, self._height
 
     def get_widgets(self):
         """
