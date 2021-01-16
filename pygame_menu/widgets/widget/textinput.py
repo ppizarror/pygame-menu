@@ -42,9 +42,11 @@ from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_colo
 from pygame_menu.widgets.core import Widget
 
 try:
+
     # noinspection PyProtectedMember
     from pyperclip import copy, paste, PyperclipException
-except ImportError:
+
+except (ImportError, ModuleNotFoundError):
 
     # noinspection PyUnusedLocal
     def copy(text):
@@ -1148,7 +1150,8 @@ class TextInput(Widget):
         """
         Copy text from clipboard.
 
-        :return: None
+        :return: ``True`` if copied
+        :rtype: bool
         """
         if self._block_copy_paste:  # Prevents multiple executions of event
             return False
@@ -1170,13 +1173,15 @@ class TextInput(Widget):
         """
         Cut operation.
 
-        :return: None
+        :return: ``True`` if cut
+        :rtype: bool
         """
         self._copy()  # This is a safe operation, all checks have been passed
 
         # If text is selected
         if self._selection_surface:
             self._remove_selection()
+            return True
         else:
             self._cursor_position = 0
             self._renderbox[0] = 0
@@ -1184,6 +1189,7 @@ class TextInput(Widget):
             self._renderbox[2] = 0
             self._update_input_string('')
             self._cursor_render = True  # Due to manually updating renderbox
+        return False
 
     def _get_char_size(self, char):
         """
@@ -1203,7 +1209,7 @@ class TextInput(Widget):
         """
         Paste text from clipboard.
 
-        :return: None
+        :return: ``True`` if pasted
         """
         if self._block_copy_paste:  # Prevents multiple executions of event
             return False
@@ -1290,7 +1296,8 @@ class TextInput(Widget):
         """
         Undo operation.
 
-        :return: None
+        :return: ``True`` if undo
+        :rtype: bool
         """
         if self._history_index == 0:  # There's no back history
             return False
@@ -1304,7 +1311,8 @@ class TextInput(Widget):
         """
         Redo operation.
 
-        :return: None
+        :return: ``True`` if redo
+        :rtype: bool
         """
         if self._history_index == len(self._history) - 1:  # There's no forward history
             return False
@@ -1478,7 +1486,7 @@ class TextInput(Widget):
                     if event.key == pygame.K_c:
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
-                            return
+                            return False
                         self.active = True
                         copy_status = self._copy()
                         if not copy_status:
@@ -1489,7 +1497,7 @@ class TextInput(Widget):
                     elif event.key == pygame.K_v:
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
-                            return
+                            return False
                         self.active = True
                         return self._paste()
 
@@ -1497,7 +1505,7 @@ class TextInput(Widget):
                     elif event.key == pygame.K_z:
                         if self._max_history == 0:
                             self.sound.play_event_error()
-                            return
+                            return False
                         self.active = True
                         self.sound.play_key_del()
                         return self._undo()
@@ -1506,7 +1514,7 @@ class TextInput(Widget):
                     elif event.key == pygame.K_y:
                         if self._max_history == 0:
                             self.sound.play_event_error()
-                            return
+                            return False
                         self.active = True
                         self.sound.play_key_add()
                         return self._redo()
@@ -1515,7 +1523,7 @@ class TextInput(Widget):
                     elif event.key == pygame.K_x:
                         if not self._copy_paste_enabled:
                             self.sound.play_event_error()
-                            return
+                            return False
                         self.active = True
                         self.sound.play_key_del()
                         return self._cut()
@@ -1591,7 +1599,7 @@ class TextInput(Widget):
                             self._selection_box[0] = min(self._selection_box[1], self._selection_box[0] + 1)
                     else:
                         if self._unselect_text():
-                            return
+                            return False
 
                     # Move cursor
                     self._move_cursor_right()
@@ -1618,7 +1626,7 @@ class TextInput(Widget):
                                 self._selection_box[1] = max(self._selection_box[0], self._selection_box[1] - 1)
                     else:
                         if self._unselect_text():
-                            return
+                            return False
 
                     # Move cursor
                     self._move_cursor_left()

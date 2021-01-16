@@ -712,18 +712,22 @@ class Widget(object):
         :return: None
         """
         assert isinstance(font, str)
-        assert isinstance(font_size, int)
-        assert isinstance(color, tuple)
-        assert isinstance(selected_color, tuple)
-        assert isinstance(background_color, (tuple, type(None)))
+        assert isinstance(font_size, (int, float))
         assert isinstance(antialias, bool)
+        assert_color(color)
+        assert_color(selected_color)
 
-        # If background is a color and it's transparent raise a warning
-        # Font background color must be opaque, otherwise the results are quite bad
-        if isinstance(background_color, (tuple, list)) and \
-                len(background_color) == 4 and background_color[3] != 255:
-            background_color = None
-            warnings.warn('font background color must be opaque, alpha channel must be 255')
+        if background_color is not None:
+            assert_color(background_color)
+
+            # If background is a color and it's transparent raise a warning
+            # Font background color must be opaque, otherwise the results are quite bad
+            if len(background_color) == 4 and background_color[3] != 255:
+                background_color = None
+                msg = 'font background color must be opaque, alpha channel must be 255'
+                warnings.warn(msg)
+
+        font_size = int(font_size)
 
         self._font = _fonts.get_font(font, font_size)
         self._font_antialias = antialias

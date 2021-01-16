@@ -105,7 +105,7 @@ class Selection(object):
         """
         Grow or shrink the rectangle size according to margins.
 
-        :param rect: rectangle
+        :param rect: Rect object
         :type rect: :py:class:`pygame.Rect`
         :return: Inflated rect
         :rtype: :py:class:`pygame.Rect`
