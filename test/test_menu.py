@@ -29,8 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import timeit
+__all__ = ['MenuTest']
+
 import unittest
+import timeit
 from test._utils import surface, test_reset_surface, MenuUtils, PygameUtils
 
 import pygame

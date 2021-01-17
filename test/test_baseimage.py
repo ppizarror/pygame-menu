@@ -29,12 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pathlib import Path
+__all__ = ['BaseImageTest']
+
 import unittest
 from test._utils import surface
 
 import pygame_menu
 from pygame_menu.baseimage import *
+from pathlib import Path
 
 
 class BaseImageTest(unittest.TestCase):

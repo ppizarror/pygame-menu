@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['ExamplesTest']
+
 import unittest
 from test._utils import test_reset_surface, MenuUtils
 
@@ -42,8 +44,6 @@ import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
 import pygame_menu.examples.other.scrollbar as scroll_bar
 import pygame_menu.examples.other.scrollbar_area as scroll_area
-
-from pygame_menu.examples.other.dynamic_button_append import add_dynamic_button
 
 
 class ExamplesTest(unittest.TestCase):

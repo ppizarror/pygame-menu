@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['SelectionTest']
+
 import unittest
 from test._utils import MenuUtils, surface
 
@@ -36,7 +38,7 @@ from pygame_menu.widgets import Button
 from pygame_menu.widgets.selection import *
 
 
-class WidgetSelectionTest(unittest.TestCase):
+class SelectionTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """

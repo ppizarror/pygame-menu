@@ -29,10 +29,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['FontTest']
+
 import unittest
 from test._utils import MenuUtils
 
 import pygame_menu
+
 
 class FontTest(unittest.TestCase):
 

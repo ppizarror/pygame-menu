@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['WidgetsTest']
+
 import unittest
 from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface
 
@@ -1135,7 +1137,6 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb.get_maximum(), world_range[1])
 
         sb.set_value(80)
-        print(sb.get_value())
         self.assertAlmostEqual(sb.get_value(), 80, delta=2)  # Scaling delta
 
         sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
