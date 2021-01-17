@@ -29,7 +29,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Theme']
+__all__ = [
+
+    # Main class
+    'Theme',
+
+    # Custom colors
+    'THEME_BLUE',
+    'THEME_DARK',
+    'THEME_DEFAULT',
+    'THEME_GREEN',
+    'THEME_ORANGE',
+    'THEME_SOLARIZED'
+
+]
 
 import pygame_menu.font as _font
 import pygame_menu.locals as _locals
@@ -44,7 +57,7 @@ from pygame_menu.custom_types import ColorType, Tuple, List, Union, VectorType, 
 import copy
 
 
-def check_menubar_style(style: int) -> bool:
+def _check_menubar_style(style: int) -> bool:
     """
     Check menubar style.
 
@@ -175,6 +188,7 @@ class Theme(object):
     :param widget_shadow_position: Position of the widget shadow. See :py:mod:`pygame_menu.locals`
     :type widget_shadow_position: str
     """
+    _disable_validation: bool
     background_color: Union[ColorType, 'BaseImage']
     cursor_color: ColorType
     cursor_selection_color: ColorType
@@ -283,7 +297,7 @@ class Theme(object):
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 10))
-        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float), 0)
+        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float, tuple, list), 0)
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
                                                  _widgets.HighlightSelection())
@@ -298,6 +312,9 @@ class Theme(object):
             msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
+        # Test purpuose only, if True disables any validation
+        self._disable_validation = False
+
     def validate(self) -> None:
         """
         Validate the values of the theme. If there's a invalid parameter throws an
@@ -308,6 +325,8 @@ class Theme(object):
 
         :return: None
         """
+        if self._disable_validation:
+            return
 
         # Boolean asserts
         assert isinstance(self.menubar_close_button, bool)
@@ -324,7 +343,7 @@ class Theme(object):
         _utils.assert_position(self.scrollbar_shadow_position)
         _utils.assert_position(self.title_shadow_position)
         _utils.assert_position(self.widget_shadow_position)
-        assert check_menubar_style(self.title_bar_style)
+        assert _check_menubar_style(self.title_bar_style)
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
 
         assert isinstance(self.cursor_switch_ms, (int, float))
@@ -338,6 +357,7 @@ class Theme(object):
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
         assert isinstance(self.widget_shadow_offset, (int, float))
+        assert isinstance(self.widget_padding, (int, float, tuple, list))
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
@@ -366,6 +386,10 @@ class Theme(object):
         if isinstance(self.widget_padding, (tuple, list)):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
             assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
+            for p in self.widget_padding:
+                assert p >= 0, 'all padding elements must be equal or greater than zero'
+        else:
+            assert self.widget_padding >= 0, 'padding cant be a negative number'
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)
 
         # Check sizes
@@ -396,6 +420,7 @@ class Theme(object):
         :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (opaque)
         :return: None
         """
+        _utils.assert_color(self.background_color)
         assert isinstance(opacity, float)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
