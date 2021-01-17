@@ -52,7 +52,7 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
 from pygame_menu.custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
-    Tuple2NumberType, NumberType, PaddingType, Optional
+    Tuple2NumberType, NumberType, PaddingType, Optional, Type
 
 import copy
 
@@ -272,7 +272,7 @@ class Theme(object):
 
         # ScrollArea
         self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
-        self.scrollarea_position = self._get(kwargs, 'scrollarea_position', 'str', _locals.POSITION_SOUTHEAST)
+        self.scrollarea_position = self._get(kwargs, 'scrollarea_position', str, _locals.POSITION_SOUTHEAST)
 
         # ScrollBar
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (220, 220, 220))
@@ -463,7 +463,9 @@ class Theme(object):
         0 and 255.
 
         Color may be an Image, so if this is the case return the same object.
-        If the color is a list, return a tuple.
+
+        - If the color is a list, return a tuple.
+        - If the color is ``None``, return ``None``.
 
         :param color: Color object
         :return: Color in the same format
@@ -477,18 +479,33 @@ class Theme(object):
             if len(color) == 4:
                 if isinstance(color, tuple):
                     return color
-                else:
-                    return color[0], color[1], color[2], color[3]
+                return tuple(color)
             elif len(color) == 3:
                 color = color[0], color[1], color[2], 255
         else:
             raise ValueError('invalid color type {0}, only tuple or list are valid'.format(color))
         return color
 
+    # noinspection PyTypeChecker
     @staticmethod
-    def _get(params: Dict[str, Any], key: str, allowed_types: Any = None, default: Any = None) -> Any:
+    def _get(params: Dict[str, Any], key: str,
+             allowed_types: Optional[Union[Type, str, List[Type], Tuple[Type, ...]]] = None,
+             default: Any = None) -> Any:
         """
         Return a value from a dictionary.
+
+        Custom types (str)
+            -   alignment           pygame-menu alignment (locals)
+            -   callable            Is callable type, same as ``'function'``
+            -   color               Check color
+            -   color_image         Color or :py:class:`pygame_menu.baseimage.BaseImage`
+            -   color_image_none    Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
+            -   color_none          Color or None
+            -   image               Value must be ``BaseImage``
+            -   none                None only
+            -   position            pygame-menu position (locals)}
+            -   type                Type-class (bool, str, etc...)
+            -   tuple2              Only valid numeric tuples ``(x,y)`` or ``[x,y]``
 
         :param params: Parameters dictionary
         :param key: Key to look for
@@ -496,43 +513,63 @@ class Theme(object):
         :param default: Default value to return
         :return: The value associated to the key
         """
-        if key not in params:
-            return default
-
-        value = params.pop(key)
-        if allowed_types:
+        value = params.pop(key, default)
+        if allowed_types is not None:
+            other_types = []  # Contain other types to check from
             if not isinstance(allowed_types, (tuple, list)):
                 allowed_types = (allowed_types,)
             for valtype in allowed_types:
-                if valtype == 'color':
+
+                if valtype == 'alignment':
+                    _utils.assert_alignment(value)
+
+                elif valtype == callable or valtype == 'function' or valtype == 'callable':
+                    assert _utils.is_callable(value), 'value must be callable type'
+
+                elif valtype == 'color':
                     _utils.assert_color(value)
-                elif valtype == 'color_none':
-                    if value is None:
-                        return value
-                    _utils.assert_color(value)
+
                 elif valtype == 'color_image':
                     if isinstance(value, BaseImage):
                         return value
                     _utils.assert_color(value)
+
                 elif valtype == 'color_image_none':
-                    if value is None:
-                        return value
-                    elif isinstance(value, BaseImage):
+                    if value is None or isinstance(value, BaseImage):
                         return value
                     _utils.assert_color(value)
+
+                elif valtype == 'color_none':
+                    if value is None:
+                        return value
+                    _utils.assert_color(value)
+
+                elif valtype == 'image':
+                    assert isinstance(value, BaseImage), 'value must be BaseImage type'
+
+                elif valtype == 'none':
+                    assert value is None
+
                 elif valtype == 'position':
                     _utils.assert_position(value)
-                elif valtype == 'alignment':
-                    _utils.assert_alignment(value)
+
+                elif valtype == 'type':
+                    assert isinstance(value, type), 'value is not type-class'
+
                 elif valtype == 'tuple2':
                     _utils.assert_vector2(value)
 
-            all_types = ('color', 'color_none', 'color_image', 'color_image_none',
-                         'position', 'alignment', 'tuple2')
-            others = tuple(t for t in allowed_types if t not in all_types)
-            if others:
+                else:  # Unknown type
+                    assert isinstance(valtype, type), \
+                        'allowed type "{0}" is not a type-class'.format(valtype)
+                    other_types.append(valtype)
+
+            # Check other types
+            if len(other_types) > 0:
+                others = tuple(other_types)
                 msg = 'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
                 assert isinstance(value, others), msg
+
         return value
 
 

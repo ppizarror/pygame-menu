@@ -70,20 +70,22 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
     :param color: Object color
     :return: None
     """
+    color_cls = color.__class__.__name__
     assert isinstance(color, (tuple, list)), \
-        'color must be a tuple or list, not "{0}"'.format(color.__class__.__name__)
+        'color must be a tuple or list, not type "{0}"'.format(color_cls)
     assert 4 >= len(color) >= 3, \
         'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
-            '"{0}" in element color {1} must be an integer'.format(color[i], color)
+            '"{0}" in element color {1} must be an integer, not type "{2}"'.format(color[i], color, color_cls)
         assert 0 <= color[i] <= 255, \
-            '"{0}" in element color {1} must be a number between 0 and 255'.format(color[i], color)
+            '"{0}" in element color {1} must be an integer between 0 and 255'.format(color[i], color)
     if len(color) == 4:
-        assert isinstance(color[3], int), 'alpha channel must be an integer between 0 and 255'
+        assert isinstance(color[3], int), \
+            'alpha channel must be an integer between 0 and 255, not type "{0}"'.format(color_cls)
         assert 0 <= color[3] <= 255, \
-            'opacity of color {0} must be an integer between 0 and 255, ' \
-            '0 is transparent, 255 is opaque'.format(color)
+            'opacity of color {0} must be an integer between 0 and 255; where ' \
+            '0 is fully-transparent and 255 is fully-opaque'.format(color)
 
 
 def assert_orientation(orientation: str) -> None:
@@ -113,11 +115,12 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
-def assert_vector2(num_vector: Vector2NumberType) -> None:
+def assert_vector2(num_vector: Vector2NumberType, length: int = 2) -> None:
     """
     Assert that a 2-item vector is numeric.
 
     :param num_vector: Numeric 2-item vector
+    :param length: Length of the required vector
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \

@@ -85,3 +85,100 @@ class ThemeTest(unittest.TestCase):
         theme.background_color = image
 
         self.assertRaises(AssertionError, lambda: theme.set_background_color_opacity(0.5))
+
+    def test_invalid_kwargs(self) -> None:
+        """
+        Test invalid theme kwargs.
+        """
+        self.assertRaises(ValueError, lambda: pygame_menu.themes.Theme(this_is_an_invalid_kwarg=True))
+
+    def test_to_tuple(self) -> None:
+        """
+        Test to_tuple theme method.
+        """
+        t = pygame_menu.themes.THEME_DEFAULT
+        self.assertEqual(t._vec_to_tuple((1, 2, 3)), (1, 2, 3))
+        self.assertEqual(t._vec_to_tuple([1, 2, 3]), (1, 2, 3))
+        self.assertRaises(ValueError, lambda: t._vec_to_tuple(1))
+        self.assertRaises(ValueError, lambda: t._vec_to_tuple((1, 2, 3), check_length=4))
+
+    def test_format_opacity(self) -> None:
+        """
+        Test format opacity color.
+        """
+        t = pygame_menu.themes.THEME_DEFAULT
+        self.assertEqual(t._format_opacity((1, 2, 3)), (1, 2, 3, 255))
+        self.assertEqual(t._format_opacity([1, 2, 3]), (1, 2, 3, 255))
+        self.assertEqual(t._format_opacity([1, 2, 3, 25]), (1, 2, 3, 25))
+        self.assertRaises(AssertionError, lambda: t._format_opacity([1, 2]))
+        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertEqual(img, t._format_opacity(img))
+        self.assertEqual(t._format_opacity(None), None)
+        self.assertRaises(ValueError, lambda: t._format_opacity('1,2,3'))
+        self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, -1)))
+        self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, 1.1)))
+
+    def test_get(self) -> None:
+        """
+        Test custom types get.
+        """
+        t = pygame_menu.themes.THEME_DEFAULT
+        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+
+        class Test(object):
+            """
+            Class to test.
+            """
+            pass
+
+        def dummy() -> None:
+            """
+            Callable.
+            """
+            pass
+
+        # Test correct
+        t._get({}, '', 'tuple2', (1, 1))
+        t._get({}, '', str, 'hi')
+        t._get({}, '', int, 4)
+        t._get({}, '', bool, True)
+        t._get({}, '', 'color', (1, 1, 1))
+        t._get({}, '', 'color', [11, 1, 0])
+        t._get({}, '', 'color', [11, 1, 0, 55])
+        t._get({}, '', 'color_none', (1, 1, 1))
+        t._get({}, '', 'color_none', [11, 1, 0])
+        t._get({}, '', 'color_none', [11, 1, 0, 55])
+        t._get({}, '', 'color_none', None)
+        t._get({}, '', Test, Test())
+        t._get({}, '', callable, dummy)
+        t._get({}, '', 'callable', dummy)
+        t._get({}, '', 'callable', dummy)
+        t._get({}, '', 'image', img)
+        t._get({}, '', 'tuple2', (1, -1))
+        t._get({}, '', 'tuple2', [1, -1])
+        t._get({}, '', 'color_image', (1, 1, 1))
+        t._get({}, '', 'color_image', [11, 1, 0])
+        t._get({}, '', 'color_image', [11, 1, 0, 55])
+        t._get({}, '', 'color_image', img)
+        t._get({}, '', 'alignment', pygame_menu.locals.ALIGN_LEFT)
+        t._get({}, '', 'position', pygame_menu.locals.POSITION_SOUTHWEST)
+        t._get({}, '', 'none', None)
+        t._get({}, '', 'type', bool)
+
+        # Test raises
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'type', 'bool'))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'none', 1))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'none', bool))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'image', bool))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'callable', bool))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'unknown', Test()))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', callable, Test()))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', None))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [11, 1, -1]))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [11, 1, -1]))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [11, 1]))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'color', [1, 1, 1, 256]))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', int, 4.4))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', bool, 4.4))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2.1', (1, 1)))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2', (1, 1, 1)))
