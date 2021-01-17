@@ -31,8 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ScrollAreaTest']
 
+import copy
 import unittest
 from test._utils import MenuUtils, PygameUtils
+import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
@@ -67,6 +69,14 @@ class ScrollAreaTest(unittest.TestCase):
 
         # Invalid
         self.assertRaises(ValueError, lambda: get_scrollbars_from_position(_locals.INPUT_TEXT))
+
+    def test_copy(self) -> None:
+        """
+        Test scrollarea copy.
+        """
+        sa = MenuUtils.generic_menu().get_scrollarea()
+        self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
+        self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.deepcopy(sa))
 
     def test_size(self) -> None:
         """

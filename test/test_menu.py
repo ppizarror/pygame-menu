@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['MenuTest']
 
+import copy
 import unittest
 import timeit
 from test._utils import surface, test_reset_surface, MenuUtils, PygameUtils
@@ -85,7 +86,15 @@ class MenuTest(unittest.TestCase):
 
         print(timeit.timeit(lambda: menu.draw(surface), number=100))
 
-    def test_size(self) -> None:
+    def test_copy(self) -> None:
+        """
+        Test menu copy.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(pygame_menu.menu._MenuCopyException, lambda: copy.copy(menu))
+        self.assertRaises(pygame_menu.menu._MenuCopyException, lambda: copy.deepcopy(menu))
+
+    def test_size_constructor(self) -> None:
         """
         Test menu sizes.
         """

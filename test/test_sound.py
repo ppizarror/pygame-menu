@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SoundTest']
 
+import copy
 import unittest
 from test._utils import MenuUtils
 
@@ -44,7 +45,19 @@ class SoundTest(unittest.TestCase):
         Setup sound engine.
         """
         self.sound = pygame_menu.sound.Sound(force_init=True)
-        self.sound._verbose = False
+
+    def test_copy(self) -> None:
+        """
+        Test sound copy.
+        """
+        self.sound.load_example_sounds()
+        sound = copy.copy(self.sound)
+        sound_deep = copy.deepcopy(self.sound)
+
+        # Check if sounds are different
+        t = pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE
+        self.assertNotEqual(self.sound._sound[t]['file'], sound._sound[t]['file'])
+        self.assertNotEqual(self.sound._sound[t]['file'], sound_deep._sound[t]['file'])
 
     def test_channel(self) -> None:
         """

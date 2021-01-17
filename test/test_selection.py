@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SelectionTest']
 
+import copy
 import unittest
 from test._utils import MenuUtils, surface
 
@@ -46,6 +47,16 @@ class SelectionTest(unittest.TestCase):
         """
         self.menu = MenuUtils.generic_menu()
         self.menu.enable()
+
+    def test_copy(self) -> None:
+        """
+        Test copy.
+        """
+        s = LeftArrowSelection()
+        s1 = copy.copy(s)
+        s2 = copy.deepcopy(s)
+        self.assertNotEqual(s, s1)
+        self.assertNotEqual(s, s2)
 
     def test_arrow(self) -> None:
         """

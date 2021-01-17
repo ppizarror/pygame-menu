@@ -43,6 +43,8 @@ class Selection(object):
     """
     Widget selection effect class.
 
+    .. note:: All selection classes must be copyable.
+
     :param margin_left: Left margin
     :param margin_right: Right margin
     :param margin_top: Top margin

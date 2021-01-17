@@ -74,7 +74,7 @@ class ThemeTest(unittest.TestCase):
         self.assertNotEqual(theme.background_color, themecopy.background_color)
         self.assertNotEqual(theme.background_color, pygame_menu.themes.THEME_DEFAULT.background_color)
 
-    def test_methods(self):
+    def test_methods(self) -> None:
         """
         Test theme method.
         """

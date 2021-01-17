@@ -60,6 +60,8 @@ class Menu(object):
     """
     Menu object.
 
+    .. note:: Menu cannot be copied or deepcopied.
+
     :param height: Height of the Menu (px)
     :param width: Width of the Menu (px)
     :param title: Title of the Menu
@@ -491,6 +493,23 @@ class Menu(object):
         )
         self._scroll.set_menu(self)
         self._overflow = tuple(overflow)
+
+    def __copy__(self) -> 'Menu':
+        """
+        Copy method.
+
+        :return: Raises copy exception
+        """
+        raise _MenuCopyException('Menu class cannot be copied')
+
+    def __deepcopy__(self, memodict: Dict) -> 'Menu':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: Raises copy exception
+        """
+        raise _MenuCopyException('Menu class cannot be deep-copied')
 
     def set_onclose(self, onclose: Optional[Union['_events.MenuAction', Callable[[], Any]]]) -> None:
         """
@@ -2543,7 +2562,7 @@ class Menu(object):
 
         # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
-            warnings.warn('menu is not enabled, mainloop can\'t continue')
+            warnings.warn('menu is not enabled; mainloop stoped')
             return
 
         self._current._background_function = bgfun
@@ -3194,3 +3213,10 @@ class _MenuStats(object):
         self.reset = 0
         self.select = 0
         self.update = 0
+
+
+class _MenuCopyException(Exception):
+    """
+    If user tries to copy a Menu.
+    """
+    pass

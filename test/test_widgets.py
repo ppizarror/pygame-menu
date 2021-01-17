@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['WidgetsTest']
 
+import copy
 import unittest
 from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface
 
@@ -51,6 +52,14 @@ class WidgetsTest(unittest.TestCase):
         """
         test_reset_surface()
         self.menu = MenuUtils.generic_menu()
+
+    def test_copy(self) -> None:
+        """
+        Test widget copy.
+        """
+        widget = pygame_menu.widgets.core.widget.Widget()
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.copy(widget))
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.deepcopy(widget))
 
     def test_onselect(self) -> None:
         """

@@ -57,6 +57,8 @@ class Widget(object):
     """
     Widget abstract class.
 
+    .. note:: Widget cannot be copied or deepcopied.
+
     :param title: Widget title
     :param widget_id: Widget identifier
     :param onchange: Callback when updating the status of the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.change`
@@ -236,6 +238,23 @@ class Widget(object):
         self.sound = Sound()
         self.touchscreen_enabled = True
         self.visible = True  # Use show() or hide() to modify this status
+
+    def __copy__(self) -> 'Menu':
+        """
+        Copy method.
+
+        :return: Raises copy exception
+        """
+        raise _WidgetCopyException('Widget class cannot be copied')
+
+    def __deepcopy__(self, memodict: Dict) -> 'Menu':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: Raises copy exception
+        """
+        raise _WidgetCopyException('Widget class cannot be deep-copied')
 
     def _force_render(self) -> None:
         """
@@ -626,7 +645,7 @@ class Widget(object):
         assert isinstance(padding, (int, float, tuple, list))
 
         if isinstance(padding, (int, float)):
-            assert padding >= 0, 'padding cant be a negative number'
+            assert padding >= 0, 'padding cannot be a negative number'
             self._padding = (padding, padding, padding, padding)
         else:
             assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
@@ -1784,6 +1803,13 @@ class _NullSelection(Selection):
 
     def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         return
+
+
+class _WidgetCopyException(Exception):
+    """
+    If user tries to copy a Widget.
+    """
+    pass
 
 
 class _NoWidgetValue(object):
