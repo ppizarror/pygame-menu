@@ -155,7 +155,7 @@ def main(test: bool = False) -> None:
         maxchar=10,
         textinput_id='last_name',
         input_underline='.'
-    ).readonly = True
+    )
     settings_menu.add_text_input(
         'Your age: ',
         default=25,
@@ -187,7 +187,7 @@ def main(test: bool = False) -> None:
          ('Hard', 'HARD')],
         selector_id='difficulty',
         default=1
-    ).readonly = True
+    )
 
     def data_fun() -> None:
         """
@@ -200,7 +200,7 @@ def main(test: bool = False) -> None:
         for k in data.keys():
             print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
 
-    settings_menu.add_button('Store data', data_fun).readonly = True  # Call function
+    settings_menu.add_button('Store data', data_fun)  # Call function
     settings_menu.add_button('Return to main menu', pygame_menu.events.BACK,
                              align=pygame_menu.locals.ALIGN_CENTER)
 

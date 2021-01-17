@@ -401,6 +401,11 @@ class WidgetsTest(unittest.TestCase):
         selector.set_value(1)
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(selector.get_value()[0][0], '4 - Easy')
+        selector.readonly = True
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_colorinput(self) -> None:
@@ -520,7 +525,7 @@ class WidgetsTest(unittest.TestCase):
         for i in range(5):
             widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
-        widget._previsualize_color(surface)
+        widget._draw_previsualize_color(surface)
         widget.get_rect()
 
         widget.clear()
@@ -572,7 +577,7 @@ class WidgetsTest(unittest.TestCase):
             widget.update(PygameUtils.key(pygame.K_f, keydown=True, char='f'))
         self.assertEqual(widget._input_string, '#ffffff')
         _assert_color(widget, 255, 255, 255)
-        widget._previsualize_color(surface=None)
+        widget._draw_previsualize_color(surface=None)
 
         # Test hex formats
         widget = self.menu.add_color_input('title', color_type='hex', hex_format='none')

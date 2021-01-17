@@ -230,7 +230,7 @@ class Theme(object):
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
         self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
-        self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (180, 180, 180))
+        self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
         self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color', (0, 0, 0))
 

@@ -693,7 +693,6 @@ class Menu(object):
                         onchange: CallbackType = None,
                         onreturn: CallbackType = None,
                         onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
-                        previsualization_width: int = 3,
                         **kwargs
                         ) -> '_widgets.ColorInput':
         """
@@ -719,6 +718,8 @@ class Menu(object):
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``previsualization_margin``   *(int)* - Previsualization left margin from text input in px. Default is ``0``
+            - ``previsualization_width``    *(int, float)* - Previsualization width as a factor of the height. Default is ``3``
             - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
             - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
             - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
@@ -753,7 +754,6 @@ class Menu(object):
         :param onchange: Callback executed when changing the values of the color text
         :param onreturn: Callback executed when pressing return on the color text input
         :param onselect: Callback executed when selecting the widget
-        :param previsualization_width: Previsualization width as a factor of the height
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.ColorInput`
@@ -773,7 +773,8 @@ class Menu(object):
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
-            prev_size=previsualization_width,
+            prev_margin=kwargs.pop('previsualization_margin', 0),
+            prev_width_factor=kwargs.pop('previsualization_width', 3),
             title=title,
             **kwargs
         )

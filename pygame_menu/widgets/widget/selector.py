@@ -193,7 +193,7 @@ class Selector(Widget):
         self._surface = self._render_string(string, self.get_font_color_status())
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._menu_surface_needs_update = True  # Force Menu update
+        self._force_menu_surface_update()
 
     def set_value(self, item: Union[str, int]) -> None:
         """

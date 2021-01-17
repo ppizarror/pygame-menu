@@ -90,7 +90,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :param onchange: Function when changing the values of the color text
     :param onreturn: Function when pressing return on the color text input
     :param onselect: Function when selecting the widget
-    :param prev_size: Width of the previsualization box in terms of the height of the widget
+    :param prev_margin: Horizontal margin between the previsualization and the input text (px)
+    :param prev_width_factor: Width of the previsualization box in terms of the height of the widget
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
     :param repeat_keys_interval_ms: Interval between key press repetition when held
     :param repeat_mouse_interval_ms: Interval between mouse events when held
@@ -101,9 +102,10 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     _hex_format: str
     _last_g: int
     _last_r: int
-    _prev_size: NumberType
+    _prev_margin: int
     _previsualization_position: Tuple2IntType
     _previsualization_surface: Optional['pygame.Surface']
+    _rect_width: int
     _separator: str
     _valid_chars: List[str]
 
@@ -118,27 +120,29 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  onchange: CallbackType = None,
                  onreturn: CallbackType = None,
                  onselect: CallbackType = None,
-                 prev_size: NumberType = 3,
+                 prev_margin: int = 0,
+                 prev_width_factor: NumberType = 3,
                  repeat_keys_initial_ms: NumberType = 450,
                  repeat_keys_interval_ms: NumberType = 80,
                  repeat_mouse_interval_ms: NumberType = 100,
                  *args,
                  **kwargs
                  ) -> None:
-        assert isinstance(colorinput_id, str)
         assert isinstance(color_type, str)
+        assert isinstance(colorinput_id, str)
+        assert isinstance(cursor_color, tuple)
         assert isinstance(hex_format, str)
         assert isinstance(input_separator, str)
         assert isinstance(input_underline, str)
-        assert isinstance(cursor_color, tuple)
+        assert isinstance(prev_margin, int)
+        assert isinstance(prev_width_factor, (int, float))
         assert isinstance(repeat_keys_initial_ms, (int, float))
         assert isinstance(repeat_keys_interval_ms, (int, float))
         assert isinstance(repeat_mouse_interval_ms, (int, float))
-        assert isinstance(prev_size, (int, float))
 
         assert len(input_separator) == 1, 'input_separator must be a single char'
         assert len(input_separator) != 0, 'input_separator cannot be empty'
-        assert prev_size > 0, 'previsualization width must be greater than zero'
+        assert prev_width_factor > 0, 'previsualization width factor must be greater than zero'
         assert input_separator not in ['0', '1', '2', '3', '4', '5', '6', '7', '8',
                                        '9'], 'input_separator cannot be a number'
         assert color_type in [TYPE_HEX, TYPE_RGB], \
@@ -191,12 +195,13 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._separator = input_separator
 
         # Previsualization surface, if -1 previsualization does not show
-        self._last_r = -1
-        self._last_g = -1
         self._last_b = -1
+        self._last_g = -1
+        self._last_r = -1
+        self._prev_margin = prev_margin
+        self._prev_width_factor = prev_width_factor
         self._previsualization_position = (0, 0)
         self._previsualization_surface = None
-        self._prev_size = prev_size
 
         # Disable parent callbacks
         self._apply_widget_update_callback = False
@@ -292,7 +297,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             return False
         return True
 
-    def _previsualize_color(self, surface: Optional['pygame.Surface']) -> None:
+    def _draw_previsualize_color(self, surface: Optional['pygame.Surface']) -> None:
         """
         Changes the color of the previsualization box.
 
@@ -306,7 +311,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # If previsualization surface is None or the color changed
         if self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
-            _width = self._prev_size * self._rect.height
+            _width = self._prev_width_factor * self._rect.height
             if _width == 0 or self._rect.height == 0:
                 self._previsualization_surface = None
                 return
@@ -315,9 +320,10 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._last_r = r
             self._last_g = g
             self._last_b = b
-            _posx = self._rect.x + self._rect.width - self._prev_size * self._rect.height + self._rect.height / 10
+            _posx = self._rect.x + self._rect.width - self._prev_width_factor * self._rect.height + self._rect.height / 10
             _posy = self._rect.y
             self._previsualization_position = (int(_posx), int(_posy))
+            self._force_render()
 
         # Draw the surface
         if surface is not None:
@@ -325,7 +331,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     def draw(self, surface: 'pygame.Surface') -> None:
         super(ColorInput, self).draw(surface)  # This calls _render()
-        self._previsualize_color(surface)
+        self._draw_previsualize_color(surface)
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
@@ -333,7 +339,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Maybe TextInput did not rendered, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._rect.width += self._prev_size * self._rect.height  # Adds the previsualization size to the box
+        self._rect.width += self._prev_width_factor * self._rect.height + self._prev_margin
 
         # Force previsualization rendering
         if not r:

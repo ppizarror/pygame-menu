@@ -245,6 +245,14 @@ class Widget(object):
         """
         self._last_render_hash = 0
 
+    def _force_menu_surface_update(self) -> None:
+        """
+        Forces menu surface update.
+
+        :return: None
+        """
+        self._menu_surface_needs_update = True
+
     def render(self) -> Optional[bool]:
         """
         Public rendering method.
@@ -1708,7 +1716,7 @@ class Widget(object):
         """
         assert isinstance(float_status, bool)
         self.floating = float_status
-        self._menu_surface_needs_update = True  # Force Menu update
+        self._force_menu_surface_update()
 
     def show(self) -> None:
         """

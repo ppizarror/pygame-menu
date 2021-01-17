@@ -478,7 +478,7 @@ class TextInput(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
         # Force Menu update
-        self._menu_surface_needs_update = True  # Force Menu update
+        self._force_menu_surface_update()
 
     def _render_selection_box(self, force: bool = False) -> None:
         """
