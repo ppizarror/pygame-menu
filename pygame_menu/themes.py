@@ -389,7 +389,7 @@ class Theme(object):
             for p in self.widget_padding:
                 assert p >= 0, 'all padding elements must be equal or greater than zero'
         else:
-            assert self.widget_padding >= 0, 'padding cant be a negative number'
+            assert self.widget_padding >= 0, 'padding cannot be a negative number'
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)
 
         # Check sizes

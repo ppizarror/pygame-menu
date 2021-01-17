@@ -221,7 +221,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             super(ColorInput, self).set_value('#')
         self.change()
 
-    def set_value(self, color: Union[str, ColorType]) -> None:
+    def set_value(self, color: Optional[Union[str, ColorType]]) -> None:
+        if color is None:
+            color = ''
         format_color = ''
         if self._color_type == TYPE_RGB:
             if color == '':

@@ -605,6 +605,26 @@ class WidgetsTest(unittest.TestCase):
         widget.set_value('AABBcc')
         self.assertEqual(widget.get_value(as_string=True), '#AABBCC')
 
+        # Test dynamic sizing
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='upper', dynamic_width=True)
+        self.assertEqual(widget.get_width(), 214)
+        widget.set_value('#ffffff')
+        self.assertEqual(widget.get_width(), 346)
+        widget.set_value(None)
+        self.assertEqual(widget.get_width(), 214)
+        self.assertEqual(widget.get_value(as_string=True), '#')
+        widget.set_value('#ffffff')
+        self.assertEqual(widget.get_width(), 346)
+        widget.update(
+            PygameUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
+        self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
+        self.assertEqual(widget.get_width(), 214)
+
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='upper', dynamic_width=False)
+        self.assertEqual(widget.get_width(), 346)
+        widget.set_value('#ffffff')
+        self.assertEqual(widget.get_width(), 346)
+
     def test_label(self) -> None:
         """
         Test label widget.
