@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
-
 from pygame_menu import __file__ as pygame_menu_main_file
 
 # Get pygame_menu's folder

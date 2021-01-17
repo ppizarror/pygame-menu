@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['test_reset_surface', 'surface', 'PygameUtils', 'MenuUtils']
+
 import pygame
 import pygame_menu
 import random

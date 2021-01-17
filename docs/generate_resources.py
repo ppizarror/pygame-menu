@@ -29,8 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import pygame_menu
+__all__ = ['save_font_image', 'generate_fonts_doc']
+
 import pygame
+import pygame_menu
 
 pygame.init()
 
