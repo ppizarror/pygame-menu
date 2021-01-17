@@ -97,12 +97,13 @@ class TextInput(Widget):
     :param input_underline: Character drawn under the input
     :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
     :param cursor_color: Color of cursor
-    :param cursor_selection_color: Selection box color
+    :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
+    :param cursor_selection_color: Color of the text selection if the cursor is enabled on certain widgets
     :param cursor_selection_enable: Enables selection of text
     :param copy_paste_enable: Enables copy, paste, and cut
     :param history: Maximum number of editions stored
     :param maxchar: Maximum length of input
-    :param maxwidth: Maximum size of the text to be displayed (overflow), if ``0`` this feature is disabled
+    :param maxwidth: Maximum size of the text to be displayed (overflow). If ``0`` this feature is disabled
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
     :param onchange: Callback when changing the text input
     :param onreturn: Callback when pressing return on the text input
@@ -185,14 +186,15 @@ class TextInput(Widget):
     def __init__(self,
                  title: Any = '',
                  textinput_id: str = '',
-                 input_type: str = _locals.INPUT_TEXT,
-                 input_underline: str = '',
-                 input_underline_len: int = 0,
                  copy_paste_enable: bool = True,
                  cursor_color: ColorType = (0, 0, 0),
                  cursor_selection_color: ColorType = (30, 30, 30, 100),
                  cursor_selection_enable: bool = True,
+                 cursor_switch_ms: NumberType = 500,
                  history: int = 50,
+                 input_type: str = _locals.INPUT_TEXT,
+                 input_underline: str = '',
+                 input_underline_len: int = 0,
                  maxchar: int = 0,
                  maxwidth: int = 0,
                  maxwidth_dynamically_update: bool = True,
@@ -211,15 +213,14 @@ class TextInput(Widget):
                  *args,
                  **kwargs
                  ) -> None:
-        assert isinstance(textinput_id, str)
+        assert isinstance(copy_paste_enable, bool)
+        assert isinstance(cursor_color, tuple)
+        assert isinstance(cursor_selection_enable, bool)
+        assert isinstance(cursor_switch_ms, (int, float))
+        assert isinstance(history, int)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
         assert isinstance(input_underline_len, int)
-        assert isinstance(cursor_color, tuple)
-        assert isinstance(copy_paste_enable, bool)
-        assert isinstance(cursor_selection_enable, bool)
-        assert isinstance(history, int)
-        assert isinstance(valid_chars, (type(None), list))
         assert isinstance(maxchar, int)
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
@@ -230,6 +231,8 @@ class TextInput(Widget):
         assert isinstance(repeat_touch_interval_ms, (int, float))
         assert isinstance(tab_size, int)
         assert isinstance(text_ellipsis, str)
+        assert isinstance(textinput_id, str)
+        assert isinstance(valid_chars, (type(None), list))
 
         assert history >= 0, 'history must be equal or greater than zero'
         assert maxchar >= 0, 'maxchar must be equal or greater than zero'
@@ -237,6 +240,7 @@ class TextInput(Widget):
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
         assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
+        assert cursor_switch_ms > 0, 'cursor switch in miliseconds must be greater than zero'
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
@@ -245,13 +249,13 @@ class TextInput(Widget):
             assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
         super(TextInput, self).__init__(
-            title=title,
-            widget_id=textinput_id,
+            args=args,
+            kwargs=kwargs,
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
-            args=args,
-            kwargs=kwargs
+            title=title,
+            widget_id=textinput_id
         )
 
         self._input_string = ''
@@ -302,7 +306,7 @@ class TextInput(Widget):
         self._cursor_render = True  # If True cursor must be rendered
         self._cursor_surface = None
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
-        self._cursor_switch_ms = 500
+        self._cursor_switch_ms = cursor_switch_ms
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # History of editions
@@ -1476,22 +1480,6 @@ class TextInput(Widget):
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self.mouse_enabled
 
-        # Get time clock
-        time_clock = self._clock.get_time()
-        self._keyrepeat_mouse_ms += time_clock
-        if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
-            self._keyrepeat_mouse_ms = 0
-            if mouse_left:
-                pos = pygame.mouse.get_pos()
-                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
-                                                 pos[1] - self._absolute_origin[1]))
-
-        # Update cursor
-        self._cursor_ms_counter += time_clock
-        if self._cursor_ms_counter >= self._cursor_switch_ms:
-            self._cursor_ms_counter %= self._cursor_switch_ms
-            self._cursor_visible = not self._cursor_visible
-
         if self.readonly:
             return False
 
@@ -1791,6 +1779,22 @@ class TextInput(Widget):
                     self._selection_active = True
                     self._selection_touch_first_position = -1
                     self.active = True
+
+        # Get time clock
+        time_clock = self._clock.get_time()
+        self._keyrepeat_mouse_ms += time_clock
+        if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
+            self._keyrepeat_mouse_ms = 0
+            if mouse_left:
+                pos = pygame.mouse.get_pos()
+                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
+                                                 pos[1] - self._absolute_origin[1]))
+
+        # Update cursor switch
+        self._cursor_ms_counter += time_clock
+        if self._cursor_ms_counter >= self._cursor_switch_ms:
+            self._cursor_ms_counter %= self._cursor_switch_ms
+            self._cursor_visible = not self._cursor_visible
 
         # Update key counters:
         for key in self._keyrepeat_counters:

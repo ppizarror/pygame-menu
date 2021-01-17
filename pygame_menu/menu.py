@@ -712,6 +712,7 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``dynamic_width``             *(int, float)* - If ``True`` the widget width changes if the previsualization color box is active or not
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
@@ -762,19 +763,24 @@ class Menu(object):
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+        dynamic_width = kwargs.pop('dynamic_width', True)
+        prev_margin = kwargs.pop('previsualization_margin', 0)
+        prev_width = kwargs.pop('previsualization_width', 3)
 
         widget = _widgets.ColorInput(
             color_type=color_type,
             colorinput_id=color_id,
             cursor_color=self._theme.cursor_color,
+            cursor_switch_ms=self._theme.cursor_switch_ms,
+            dynamic_width=dynamic_width,
             hex_format=hex_format,
             input_separator=input_separator,
             input_underline=input_underline,
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
-            prev_margin=kwargs.pop('previsualization_margin', 0),
-            prev_width_factor=kwargs.pop('previsualization_width', 3),
+            prev_margin=prev_margin,
+            prev_width_factor=prev_width,
             title=title,
             **kwargs
         )
@@ -936,9 +942,9 @@ class Menu(object):
 
             attributes = self._filter_widget_attributes(kwargs)
             widget = _widgets.Label(
-                title=title,
                 label_id=label_id,
-                onselect=onselect
+                onselect=onselect,
+                title=title
             )
             widget.is_selectable = selectable
             self._check_kwargs(kwargs)
@@ -1163,6 +1169,7 @@ class Menu(object):
             cursor_color=self._theme.cursor_color,
             cursor_selection_color=self._theme.cursor_selection_color,
             cursor_selection_enable=cursor_selection_enable,
+            cursor_switch_ms=self._theme.cursor_switch_ms,
             input_type=input_type,
             input_underline=input_underline,
             input_underline_len=input_underline_len,

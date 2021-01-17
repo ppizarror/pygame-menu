@@ -81,8 +81,10 @@ class Theme(object):
     :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
     :param cursor_color: Cursor color (used in some text-gathering widgets like ``TextInput``)
     :type cursor_color: tuple, list
-    :param cursor_selection_color: Selection box color
+    :param cursor_selection_color: Color of the text selection if the cursor is enabled on certain widgets
     :type cursor_selection_color: tuple, list
+    :param cursor_switch_ms: Interval of cursor switch between off and on status
+    :type cursor_switch_ms: int, float
     :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements *(R, G, B, A)*
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
@@ -176,6 +178,7 @@ class Theme(object):
     background_color: Union[ColorType, 'BaseImage']
     cursor_color: ColorType
     cursor_selection_color: ColorType
+    cursor_switch_ms: NumberType
     focus_background_color: ColorType
     menubar_close_button: bool
     readonly_color: ColorType
@@ -226,13 +229,16 @@ class Theme(object):
 
         # Menu general
         self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
-        self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
-        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
         self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
         self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
         self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color', (0, 0, 0))
+
+        # Cursor/Text gathering
+        self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
+        self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
+        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', (int, float), 500)
 
         # Menubar/Title
         self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
@@ -265,7 +271,7 @@ class Theme(object):
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float), 0)
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float), 20)
 
-        # Widget
+        # Generic widget themes
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', _locals.ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2', (0, 0))
@@ -314,22 +320,24 @@ class Theme(object):
         assert isinstance(self.widget_shadow, bool)
 
         # Value type checks
+        _utils.assert_alignment(self.widget_alignment)
+        _utils.assert_position(self.scrollbar_shadow_position)
+        _utils.assert_position(self.title_shadow_position)
+        _utils.assert_position(self.widget_shadow_position)
         assert check_menubar_style(self.title_bar_style)
+        assert get_scrollbars_from_position(self.scrollarea_position) is not None
+
+        assert isinstance(self.cursor_switch_ms, (int, float))
+        assert isinstance(self.scrollbar_shadow_offset, (int, float))
+        assert isinstance(self.scrollbar_slider_pad, (int, float))
+        assert isinstance(self.scrollbar_thick, (int, float))
         assert isinstance(self.title_font, str)
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_shadow_offset, (int, float))
-        _utils.assert_position(self.title_shadow_position)
-        assert get_scrollbars_from_position(self.scrollarea_position) is not None
-        assert isinstance(self.scrollbar_shadow_offset, (int, float))
-        _utils.assert_position(self.scrollbar_shadow_position)
-        assert isinstance(self.scrollbar_slider_pad, (int, float))
-        assert isinstance(self.scrollbar_thick, (int, float))
-        _utils.assert_alignment(self.widget_alignment)
         assert isinstance(self.widget_font, str)
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
         assert isinstance(self.widget_shadow_offset, (int, float))
-        _utils.assert_position(self.widget_shadow_position)
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
@@ -366,6 +374,7 @@ class Theme(object):
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
             'widget offset must be equal or greater than zero'
 
+        assert self.cursor_switch_ms > 0, 'cursor switch ms msut be greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
         assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater tham zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
@@ -513,7 +522,7 @@ THEME_DARK = Theme(
     selection_color=(255, 255, 255),
     title_background_color=(47, 48, 51),
     title_font_color=(215, 215, 215),
-    widget_font_color=(200, 200, 200),
+    widget_font_color=(200, 200, 200)
 )
 
 THEME_BLUE = Theme(
@@ -525,7 +534,7 @@ THEME_BLUE = Theme(
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),
     title_shadow=True,
-    widget_font_color=(61, 170, 220),
+    widget_font_color=(61, 170, 220)
 )
 
 THEME_GREEN = Theme(
@@ -535,7 +544,7 @@ THEME_GREEN = Theme(
     selection_color=(125, 121, 114),
     title_background_color=(125, 121, 114),
     title_font_color=(228, 230, 246),
-    widget_font_color=(255, 255, 255),
+    widget_font_color=(255, 255, 255)
 )
 
 THEME_ORANGE = Theme(
@@ -543,7 +552,7 @@ THEME_ORANGE = Theme(
     selection_color=(255, 255, 255),
     title_background_color=(170, 65, 50),
     widget_font_color=(0, 0, 0),
-    widget_font_size=30,
+    widget_font_size=30
 )
 
 THEME_SOLARIZED = Theme(
@@ -553,5 +562,5 @@ THEME_SOLARIZED = Theme(
     selection_color=(207, 62, 132),
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),
-    widget_font_color=(102, 122, 130),
+    widget_font_color=(102, 122, 130)
 )

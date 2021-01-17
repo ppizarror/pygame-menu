@@ -69,11 +69,11 @@ class Button(Widget):
                  **kwargs
                  ) -> None:
         super(Button, self).__init__(
-            title=title,
-            widget_id=button_id,
-            onreturn=onreturn,
             args=args,
-            kwargs=kwargs
+            kwargs=kwargs,
+            onreturn=onreturn,
+            title=title,
+            widget_id=button_id
         )
         self.to_menu = False  # True if the button opens a new Menu
 
