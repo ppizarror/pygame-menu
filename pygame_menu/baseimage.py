@@ -60,7 +60,7 @@ from pathlib import Path
 import pygame
 from pygame_menu.utils import assert_vector2
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional
+    NumberType, Optional, Dict
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -140,6 +140,39 @@ class BaseImage(object):
             self._surface = pygame.image.load(image_path)
             self._original_surface = self._surface.copy()
 
+    def __copy__(self) -> 'BaseImage':
+        """
+        Copy method.
+
+        :return: New instance of the object
+        """
+        return self.copy()
+
+    def __deepcopy__(self, memodict: Dict) -> 'BaseImage':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: New instance of the object
+        """
+        return self.copy()
+
+    def copy(self) -> 'BaseImage':
+        """
+        Return a copy of the image.
+
+        :return: Image
+        """
+        image = BaseImage(
+            image_path=self._filepath,
+            drawing_mode=self._drawing_mode,
+            drawing_offset=self._drawing_offset,
+            load_from_file=False
+        )
+        image._surface = self._surface.copy()
+        image._original_surface = self._surface.copy()
+        return image
+
     def get_path(self) -> str:
         """
         Return the image path.
@@ -186,21 +219,6 @@ class BaseImage(object):
         """
         assert_vector2(drawing_offset)
         self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
-
-    def copy(self) -> 'BaseImage':
-        """
-        Return a copy of the image.
-
-        :return: Image
-        """
-        image = BaseImage(
-            image_path=self._filepath,
-            drawing_mode=self._drawing_mode,
-            drawing_offset=self._drawing_offset
-        )
-        image._surface = self._surface.copy()
-        image._original_surface = self._surface.copy()
-        return image
 
     def get_size(self) -> Tuple2IntType:
         """
