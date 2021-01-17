@@ -30,6 +30,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Constants
+    'TYPE_HEX',
+    'TYPE_RGB',
+    'HEX_FORMAT_LOWER',
+    'HEX_FORMAT_NONE',
+    'HEX_FORMAT_UPPER',
+
+    # Main class
+    'ColorInput'
+
+]
+
 import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface

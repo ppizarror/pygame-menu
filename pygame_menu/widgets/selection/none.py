@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['NoneSelection']
+
 import pygame
 from pygame_menu.widgets.core import Selection
 from pygame_menu.custom_types import TYPE_CHECKING

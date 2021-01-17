@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['LeftArrowSelection']
+
 import pygame
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
 from pygame_menu.custom_types import Tuple2IntType, NumberType, TYPE_CHECKING

@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Button']
+
 import pygame
 from pygame_menu.utils import is_callable
 from pygame_menu.widgets.core import Widget

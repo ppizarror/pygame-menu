@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['ScrollBar']
+
 import pygame
 from pygame_menu.custom_types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color

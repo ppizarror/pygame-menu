@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['ArrowSelection']
+
 import pygame
 from pygame_menu.utils import assert_vector2
 from pygame_menu.widgets.core import Selection

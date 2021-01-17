@@ -30,6 +30,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 # File constants no. 1000
 
+__all__ = [
+
+    # Menubar styles
+    'MENUBAR_STYLE_ADAPTIVE',
+    'MENUBAR_STYLE_SIMPLE',
+    'MENUBAR_STYLE_TITLE_ONLY',
+    'MENUBAR_STYLE_TITLE_ONLY_DIAGONAL',
+    'MENUBAR_STYLE_NONE',
+    'MENUBAR_STYLE_UNDERLINE',
+    'MENUBAR_STYLE_UNDERLINE_TITLE',
+
+    # Main class
+    'MenuBar'
+
+]
+
 import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
@@ -41,6 +57,7 @@ from pygame_menu.custom_types import Union, List, Tuple, CallbackType, Tuple2Int
 if TYPE_CHECKING:
     from pygame_menu.widgets.core.selection import Selection
 
+# Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
 MENUBAR_STYLE_SIMPLE = 1001
 MENUBAR_STYLE_TITLE_ONLY = 1002
@@ -49,6 +66,7 @@ MENUBAR_STYLE_NONE = 1004
 MENUBAR_STYLE_UNDERLINE = 1005
 MENUBAR_STYLE_UNDERLINE_TITLE = 1006
 
+# Menubar operation modes
 _MODE_CLOSE = 1020
 _MODE_BACK = 1021
 

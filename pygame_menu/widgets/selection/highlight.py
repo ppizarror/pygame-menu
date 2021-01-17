@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['HighlightSelection']
+
 import pygame
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.custom_types import NumberType, TYPE_CHECKING

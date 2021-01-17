@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Selection']
+
 import pygame
 from pygame_menu.utils import assert_color
 from pygame_menu.custom_types import NumberType, ColorType, Tuple, TYPE_CHECKING

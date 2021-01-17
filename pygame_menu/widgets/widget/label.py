@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Label']
+
 import pygame
 from pygame_menu.widgets.core import Widget
 from pygame_menu.custom_types import Any, CallbackType, List, Union, Tuple, Optional
