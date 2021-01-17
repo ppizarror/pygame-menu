@@ -441,7 +441,8 @@ class TextInput(Widget):
 
         # Draw cursor
         if self.selected and self._cursor_surface and \
-                (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)):
+                (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)) and \
+                not self.readonly:
             x = self._rect.x + self._cursor_surface_pos[0]
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
@@ -454,13 +455,10 @@ class TextInput(Widget):
         string = self._title + self._get_input_string()  # Render string
 
         if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
-                                         self._selection_enabled, self.active, self.visible):
+                                         self._selection_enabled, self.active, self.visible, self.readonly):
             return True
 
-        if self.selected:
-            color = self._font_selected_color
-        else:
-            color = self._font_color
+        color = self.get_font_color_status()
         updated_surface = self._render_string_surface(string, color)
 
         # Apply underline if exists
@@ -669,7 +667,7 @@ class TextInput(Widget):
         cursor_y_pos = 0
 
         # Move x position
-        cursor_x_pos += 3
+        cursor_x_pos += 2
 
         # Store position
         self._cursor_surface_pos[0] = int(cursor_x_pos)
@@ -1473,6 +1471,30 @@ class TextInput(Widget):
         return False
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+        # Check mouse pressed
+        # noinspection PyArgumentList
+        mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
+        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self.mouse_enabled
+
+        # Get time clock
+        time_clock = self._clock.get_time()
+        self._keyrepeat_mouse_ms += time_clock
+        if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
+            self._keyrepeat_mouse_ms = 0
+            if mouse_left:
+                pos = pygame.mouse.get_pos()
+                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
+                                                 pos[1] - self._absolute_origin[1]))
+
+        # Update cursor
+        self._cursor_ms_counter += time_clock
+        if self._cursor_ms_counter >= self._cursor_switch_ms:
+            self._cursor_ms_counter %= self._cursor_switch_ms
+            self._cursor_visible = not self._cursor_visible
+
+        if self.readonly:
+            return False
+
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
 
@@ -1770,22 +1792,6 @@ class TextInput(Widget):
                     self._selection_touch_first_position = -1
                     self.active = True
 
-        # Get time clock
-        time_clock = self._clock.get_time()
-        self._keyrepeat_mouse_ms += time_clock
-
-        # Check mouse pressed
-        # noinspection PyArgumentList
-        mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
-        self._mouse_is_pressed = mouse_left or mouse_right or mouse_middle
-
-        if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
-            self._keyrepeat_mouse_ms = 0
-            if mouse_left:
-                pos = pygame.mouse.get_pos()
-                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
-                                                 pos[1] - self._absolute_origin[1]))
-
         # Update key counters:
         for key in self._keyrepeat_counters:
             self._keyrepeat_counters[key][0] += time_clock  # Update clock
@@ -1804,11 +1810,6 @@ class TextInput(Widget):
                     )
                 except pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
                     pass
-
-        self._cursor_ms_counter += time_clock
-        if self._cursor_ms_counter >= self._cursor_switch_ms:
-            self._cursor_ms_counter %= self._cursor_switch_ms
-            self._cursor_visible = not self._cursor_visible
 
         if updated and self._apply_widget_update_callback:
             self.apply_update_callbacks()

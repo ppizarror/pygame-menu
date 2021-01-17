@@ -170,6 +170,8 @@ class Selector(Widget):
 
         :return: None
         """
+        if self.readonly:
+            return
         self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
@@ -179,18 +181,16 @@ class Selector(Widget):
 
         :return: None
         """
+        if self.readonly:
+            return
         self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
     def _render(self) -> Optional[bool]:
         string = self._sformat.format(self._title, self.get_value()[0][0])
-        if not self._render_hash_changed(string, self.selected, self.visible, self._index):
+        if not self._render_hash_changed(string, self.selected, self.visible, self._index, self.readonly):
             return True
-        if self.selected:
-            color = self._font_selected_color
-        else:
-            color = self._font_color
-        self._surface = self._render_string(string, color)
+        self._surface = self._render_string(string, self.get_font_color_status())
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force Menu update
@@ -244,6 +244,8 @@ class Selector(Widget):
                 self._default_value = 0
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+        if self.readonly:
+            return False
         updated = False
         rect = self.get_rect()
 

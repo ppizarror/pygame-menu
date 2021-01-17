@@ -391,6 +391,8 @@ class ScrollBar(Widget):
         self._scroll(pixels - self._slider_position)
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+        if self.readonly:
+            return False
         updated = False
 
         for event in events:

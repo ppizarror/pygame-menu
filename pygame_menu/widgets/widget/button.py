@@ -133,18 +133,16 @@ class Button(Widget):
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self.selected, self._title, self.visible):
+        if not self._render_hash_changed(self.selected, self._title, self.visible, self.readonly):
             return True
-        if self.selected:
-            color = self._font_selected_color
-        else:
-            color = self._font_color
-        self._surface = self._render_string(self._title, color)
+        self._surface = self._render_string(self._title, self.get_font_color_status())
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force Menu update
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+        if self.readonly:
+            return False
         updated = False
         rect = self.get_rect()  # Padding increases the extents of the button
 

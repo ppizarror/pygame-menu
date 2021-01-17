@@ -455,6 +455,8 @@ class Menu(object):
             color=self._theme.title_font_color,
             font=self._theme.title_font,
             font_size=self._theme.title_font_size,
+            readonly_color=self._theme.readonly_color,
+            readonly_selected_color=self._theme.readonly_selected_color,
             selected_color=self._theme.title_font_color
         )
         self._menubar.set_shadow(
@@ -552,25 +554,27 @@ class Menu(object):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``accept_kwargs``         *(bool)* – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
-            - ``align``                 *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``back_count``            *(int)* - Number of menus to go back if action is :py:class:`pygame_menu.events.BACK` event, default is ``1``
-            - ``background_color``      *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
-            - ``background_inflate``    *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``button_id``             *(str)* - Widget ID
-            - ``font_background_color`` *(tuple, list, None)* - Widget font background color
-            - ``font_color``            *(tuple, list)* - Widget font color
-            - ``font_name``             *(str)* - Widget font
-            - ``font_size``             *(int)* - Font size of the widget
-            - ``margin``                *(tuple, list)* - *(left,bottom)* margin in px
-            - ``onselect``              *(callable, None)* - Callback executed when selecting the widget
-            - ``padding``               *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``       *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``      (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
-            - ``shadow``                *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``          *(tuple, list)* - Text shadow color
-            - ``shadow_position``       *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``         *(int, float)* - Text shadow offset
+            - ``accept_kwargs``             *(bool)* – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``back_count``                *(int)* - Number of menus to go back if action is :py:class:`pygame_menu.events.BACK` event, default is ``1``
+            - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``button_id``                 *(str)* - Widget ID
+            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
+            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``font_name``                 *(str)* - Widget font
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``onselect``                  *(callable, None)* - Callback executed when selecting the widget
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
+            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
+            - ``shadow_color``              *(tuple, list)* - Text shadow color
+            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
+            - ``shadow_offset``             *(int, float)* - Text shadow offset
 
         .. note::
 
@@ -706,21 +710,23 @@ class Menu(object):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                 *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``      *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
-            - ``background_inflate``    *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``font_background_color`` *(tuple, list, None)* - Widget font background color
-            - ``font_color``            *(tuple, list)* - Widget font color
-            - ``font_name``             *(str)* - Widget font
-            - ``font_size``             *(int)* - Font size of the widget
-            - ``margin``                *(tuple, list)* - *(left,bottom)* margin in px
-            - ``padding``               *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``       *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``      (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
-            - ``shadow``                *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``          *(tuple, list)* - Text shadow color
-            - ``shadow_position``       *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``         *(int, float)* - Text shadow offset
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
+            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``font_name``                 *(str)* - Widget font
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
+            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
+            - ``shadow_color``              *(tuple, list)* - Text shadow color
+            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
+            - ``shadow_offset``             *(int, float)* - Text shadow offset
 
         .. note::
 
@@ -799,13 +805,13 @@ class Menu(object):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                 *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``      *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
-            - ``background_inflate``    *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``margin``                *(tuple, list)* - *(left,bottom)* margin in px
-            - ``padding``               *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
-            - ``selection_color``       *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``      (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
 
         .. note::
 
@@ -873,21 +879,21 @@ class Menu(object):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                 *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``      *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
-            - ``background_inflate``    *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``font_background_color`` *(tuple, list, None)* - Widget font background color
-            - ``font_color``            *(tuple, list)* - Widget font color
-            - ``font_name``             *(str)* - Widget font
-            - ``font_size``             *(int)* - Font size of the widget
-            - ``margin``                *(tuple, list)* - *(left,bottom)* margin in px
-            - ``padding``               *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``       *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``      (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
-            - ``shadow``                *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``          *(tuple, list)* - Text shadow color
-            - ``shadow_position``       *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``         *(int, float)* - Text shadow offset
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
+            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``font_name``                 *(str)* - Widget font
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
+            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
+            - ``shadow_color``              *(tuple, list)* - Text shadow color
+            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
+            - ``shadow_offset``             *(int, float)* - Text shadow offset
 
         .. note::
 
@@ -991,21 +997,23 @@ class Menu(object):
         For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
 
         kwargs (Optional)
-            - ``align``                 *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``      *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
-            - ``background_inflate``    *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``font_background_color`` *(tuple, list, None)* - Widget font background color
-            - ``font_color``            *(tuple, list)* - Widget font color
-            - ``font_name``             *(str)* - Widget font
-            - ``font_size``             *(int)* - Font size of the widget
-            - ``margin``                *(tuple, list)* - *(left,bottom)* margin in px
-            - ``padding``               *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``       *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``      (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
-            - ``shadow``                *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``          *(tuple, list)* - Text shadow color
-            - ``shadow_position``       *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``         *(int, float)* - Text shadow offset
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
+            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``font_name``                 *(str)* - Widget font
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
+            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
+            - ``shadow_color``              *(tuple, list)* - Text shadow color
+            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
+            - ``shadow_offset``             *(int, float)* - Text shadow offset
 
         .. note::
 
@@ -1087,21 +1095,23 @@ class Menu(object):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                 *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``      *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
-            - ``background_inflate``    *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``font_background_color`` *(tuple, list, None)* - Widget font background color
-            - ``font_color``            *(tuple, list)* - Widget font color
-            - ``font_name``             *(str)* - Widget font
-            - ``font_size``             *(int)* - Font size of the widget
-            - ``margin``                *(tuple, list)* - *(left,bottom)* margin in px
-            - ``padding``               *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``       *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``      (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
-            - ``shadow``                *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``          *(tuple, list)* - Text shadow color
-            - ``shadow_position``       *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``         *(int, float)* - Text shadow offset
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
+            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``font_name``                 *(str)* - Widget font
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
+            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
+            - ``shadow_color``              *(tuple, list)* - Text shadow color
+            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
+            - ``shadow_offset``             *(int, float)* - Text shadow offset
 
         .. note::
 
@@ -1340,6 +1350,14 @@ class Menu(object):
         assert isinstance(padding, (int, float, tuple))
         attributes['padding'] = padding
 
+        readonly_color = kwargs.pop('readonly_color', self._theme.readonly_color)
+        _utils.assert_color(readonly_color)
+        attributes['readonly_color'] = readonly_color
+
+        readonly_selected_color = kwargs.pop('readonly_selected_color', self._theme.readonly_selected_color)
+        _utils.assert_color(readonly_selected_color)
+        attributes['readonly_selected_color'] = readonly_selected_color
+
         selection_color = kwargs.pop('selection_color', self._theme.selection_color)
         _utils.assert_color(selection_color)
         attributes['selection_color'] = selection_color
@@ -1382,18 +1400,20 @@ class Menu(object):
         self._check_id_duplicated(widget.get_id())
 
         widget.set_font(
+            antialias=kwargs['font_antialias'],
+            background_color=kwargs['font_background_color'],
+            color=kwargs['font_color'],
             font=kwargs['font_name'],
             font_size=kwargs['font_size'],
-            color=kwargs['font_color'],
-            selected_color=kwargs['selection_color'],
-            background_color=kwargs['font_background_color'],
-            antialias=kwargs['font_antialias']
+            readonly_color=kwargs['readonly_color'],
+            readonly_selected_color=kwargs['readonly_selected_color'],
+            selected_color=kwargs['selection_color']
         )
         widget.set_shadow(
-            enabled=kwargs['shadow'],
             color=kwargs['shadow_color'],
-            position=kwargs['shadow_position'],
-            offset=kwargs['shadow_offset']
+            enabled=kwargs['shadow'],
+            offset=kwargs['shadow_offset'],
+            position=kwargs['shadow_position']
         )
         widget.set_controls(
             joystick=self._joystick,
@@ -2278,6 +2298,15 @@ class Menu(object):
         """
         assert isinstance(events, list)
 
+        # Check if window closed
+        for event in events:
+            if event.type == _events.PYGAME_QUIT or (
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
+                    event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
+                    event.type == _events.PYGAME_WINDOWCLOSE:
+                self._current._exit()
+                return True
+
         # If any widget status changes, set the status as True
         updated = False
 
@@ -2306,14 +2335,7 @@ class Menu(object):
 
         # Check others
         else:
-
             for event in events:
-
-                if event.type == _events.PYGAME_QUIT or (
-                        event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
-                        event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)):
-                    self._current._exit()
-                    updated = True
 
                 if event.type == pygame.KEYDOWN:
 
@@ -2327,7 +2349,7 @@ class Menu(object):
                     elif event.key == _controls.KEY_MOVE_UP:
                         self._current._select(self._current._index + 1)
                         self._current._sounds.play_key_add()
-                    elif event.key == _controls.KEY_LEFT:
+                    elif event.key == _controls.KEY_LEFT and self._current._used_columns > 1:
                         self._current._move_selected_left_right(-1)
                         self._current._sounds.play_key_add()
                     elif event.key == _controls.KEY_RIGHT and self._current._used_columns > 1:
@@ -2507,7 +2529,7 @@ class Menu(object):
             assert _utils.is_callable(bgfun), \
                 'background function must be callable (function-type) object'
         assert isinstance(disable_loop, bool)
-        assert isinstance(fps_limit, (int, float))
+        assert isinstance(fps_limit, int)
         assert fps_limit >= 0, 'fps limit cannot be negative'
         fps_limit = int(fps_limit)
 

@@ -36,11 +36,25 @@ import pygame_menu.locals as _locals
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
+from pygame_menu.scrollarea import get_scrollbars_from_position
 
 from pygame_menu.custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
     Tuple2NumberType, NumberType, PaddingType, Optional
 
 import copy
+
+
+def check_menubar_style(style: int) -> bool:
+    """
+    Check menubar style.
+
+    :param style: Style
+    :return: ``True`` if correct
+    """
+    return style in (_widgets.MENUBAR_STYLE_ADAPTIVE, _widgets.MENUBAR_STYLE_SIMPLE,
+                     _widgets.MENUBAR_STYLE_TITLE_ONLY, _widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+                     _widgets.MENUBAR_STYLE_NONE, _widgets.MENUBAR_STYLE_UNDERLINE,
+                     _widgets.MENUBAR_STYLE_UNDERLINE_TITLE)
 
 
 class Theme(object):
@@ -65,7 +79,7 @@ class Theme(object):
 
     :param background_color: Menu background color
     :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
-    :param cursor_color: Color of cursor
+    :param cursor_color: Cursor color (used in some text-gathering widgets like ``TextInput``)
     :type cursor_color: tuple, list
     :param cursor_selection_color: Selection box color
     :type cursor_selection_color: tuple, list
@@ -73,6 +87,10 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
+    :param readonly_color: Color of the widget in readonly mode
+    :type readonly_color: tuple, list
+    :param readonly_selected_color: Color of the selected widget in readonly mode
+    :type readonly_selected_color: tuple, list
     :param scrollarea_outer_margin: Outer scoll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
     :param scrollarea_position: Position of scrollarea scrollbars. See :py:mod:`pygame_menu.locals`
@@ -91,9 +109,9 @@ class Theme(object):
     :type scrollbar_slider_color: tuple, list
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
     :type scrollbar_slider_pad: int, float
-    :param scrollbar_thick: Scrollbar thickness
+    :param scrollbar_thick: Scrollbar thickness in px
     :type scrollbar_thick: int, float
-    :param selection_color: Color of the selected widget, it affects font color and the selection effect
+    :param selection_color: Color of the selected widget; it affects font color and the selection effect
     :type selection_color: tuple, list
     :param surface_clear_color: Surface clear color before applying background function
     :type surface_clear_color: tuple, list
@@ -160,6 +178,8 @@ class Theme(object):
     cursor_selection_color: ColorType
     focus_background_color: ColorType
     menubar_close_button: bool
+    readonly_color: ColorType
+    readonly_selected_color: ColorType
     scrollarea_outer_margin: Tuple2NumberType
     scrollarea_position: str
     scrollbar_color: ColorType
@@ -209,6 +229,8 @@ class Theme(object):
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
+        self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
+        self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (180, 180, 180))
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
         self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color', (0, 0, 0))
 
@@ -281,19 +303,41 @@ class Theme(object):
         :return: None
         """
 
-        # Size asserts
-        assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
-        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater tham zero'
-        assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
-        assert self.title_font_size > 0, 'title font size must be greater than zero'
-        assert self.widget_font_size > 0, 'widget font size must be greater than zero'
-        assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
+        # Boolean asserts
+        assert isinstance(self.menubar_close_button, bool)
+        assert isinstance(self.title_bar_modify_scrollarea, bool)
+        assert isinstance(self.title_font_antialias, bool)
+        assert isinstance(self.title_shadow, bool)
+        assert isinstance(self.scrollbar_shadow, bool)
+        assert isinstance(self.widget_font_antialias, bool)
+        assert isinstance(self.widget_font_background_color_from_menu, bool)
+        assert isinstance(self.widget_shadow, bool)
+
+        # Value type checks
+        assert check_menubar_style(self.title_bar_style)
+        assert isinstance(self.title_font, str)
+        assert isinstance(self.title_font_size, int)
+        assert isinstance(self.title_shadow_offset, (int, float))
+        _utils.assert_position(self.title_shadow_position)
+        assert get_scrollbars_from_position(self.scrollarea_position) is not None
+        assert isinstance(self.scrollbar_shadow_offset, (int, float))
+        _utils.assert_position(self.scrollbar_shadow_position)
+        assert isinstance(self.scrollbar_slider_pad, (int, float))
+        assert isinstance(self.scrollbar_thick, (int, float))
+        _utils.assert_alignment(self.widget_alignment)
+        assert isinstance(self.widget_font, str)
+        assert isinstance(self.widget_font_size, int)
+        assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
+        assert isinstance(self.widget_shadow_offset, (int, float))
+        _utils.assert_position(self.widget_shadow_position)
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
         self.cursor_color = self._format_opacity(self.cursor_color)
         self.cursor_selection_color = self._format_opacity(self.cursor_selection_color)
         self.focus_background_color = self._format_opacity(self.focus_background_color)
+        self.readonly_color = self._format_opacity(self.readonly_color)
+        self.readonly_selected_color = self._format_opacity(self.readonly_selected_color)
         self.scrollbar_color = self._format_opacity(self.scrollbar_color)
         self.scrollbar_shadow_color = self._format_opacity(self.scrollbar_shadow_color)
         self.scrollbar_slider_color = self._format_opacity(self.scrollbar_slider_color)
@@ -321,6 +365,13 @@ class Theme(object):
             'scrollarea outer margin must be equal or greater than zero'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
             'widget offset must be equal or greater than zero'
+
+        assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
+        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater tham zero'
+        assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
+        assert self.title_font_size > 0, 'title font size must be greater than zero'
+        assert self.widget_font_size > 0, 'widget font size must be greater than zero'
+        assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
 
         # Configs
         self.widget_selection_effect.set_color(self.selection_color)

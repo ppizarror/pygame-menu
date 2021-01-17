@@ -109,6 +109,8 @@ class NoneWidget(Widget):
                  font_size: int,
                  color: ColorType,
                  selected_color: ColorType,
+                 readonly_color: ColorType,
+                 readonly_selected_color: ColorType,
                  background_color: Optional[ColorType],
                  antialias: bool = True
                  ) -> None:

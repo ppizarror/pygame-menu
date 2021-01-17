@@ -355,6 +355,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._input_string = self._input_string.upper()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+        if self.readonly:
+            return False
         input_str = self._input_string
         cursor_pos = self._cursor_position
         disable_remove_separator = True

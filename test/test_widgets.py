@@ -204,7 +204,8 @@ class WidgetsTest(unittest.TestCase):
         Test widget max width/height.
         """
         label = Label('my label is really long yeah, it should be scalled in the width')
-        label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0), (0, 0, 0))
+        label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
+                       (0, 0, 0), (0, 0, 0), (0, 0, 0))
         label.render()
 
         # The padding is zero, also the selection box and all transformations
@@ -746,6 +747,14 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput._get_selected_text(), '')
         self.assertEqual(textinput.get_value(), 't')
 
+        # Test readonly
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='k'))
+        self.assertEqual(textinput.get_value(), 'tk')
+        textinput.readonly = True
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='k'))
+        self.assertEqual(textinput.get_value(), 'tk')
+        textinput.readonly = False
+
         # Update mouse
         for i in range(50):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
@@ -872,6 +881,18 @@ class WidgetsTest(unittest.TestCase):
         # Remove button
         menu.remove_widget(btn)
         self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
+
+        # Test return fun
+        def fun() -> str:
+            """
+            This should return "nice".
+            """
+            return 'nice'
+
+        btn = menu.add_button('', fun)
+        self.assertEqual(btn.apply(), 'nice')
+        btn.readonly = True
+        self.assertEqual(btn.apply(), None)
 
     def test_attributes(self) -> None:
         """
@@ -1022,7 +1043,7 @@ class WidgetsTest(unittest.TestCase):
         wid.apply()
         wid.change()
 
-        wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1))
+        wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1), (0, 0, 0), (0, 0, 0))
         wid.update_font({'name': ''})
         wid._apply_font()
         self.assertEqual(wid._font, None)
