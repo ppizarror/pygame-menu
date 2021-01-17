@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['main']
+
 import os
 import sys
 
@@ -41,16 +42,13 @@ from pygame_menu.utils import make_surface
 from pygame_menu.widgets import ScrollBar
 
 
-def make_world(width, height):
+def make_world(width: int, height: int) -> 'pygame.Surface':
     """
     Create a test surface.
 
     :param width: Width in pixels
-    :type width: int
     :param height: Height in pixels
-    :type height: int
     :return: World surface
-    :rtype: :py:class:`pygame.Surface`
     """
     world = make_surface(width, height)
     world.fill((200, 200, 200))
@@ -81,28 +79,25 @@ def make_world(width, height):
     return world
 
 
-def h_changed(value):
+def h_changed(value: int) -> None:
     """
     :param value: Value data
-    :return: None
     """
     print('Horizontal position changed:', value)
 
 
-def v_changed(value):
+def v_changed(value: int) -> None:
     """
     :param value: Value data
-    :return: None
     """
     print('Vertical position changed:', value)
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'

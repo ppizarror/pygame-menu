@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -34,7 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pygame_menu.widgets.core
 
 # Selection
-from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection, NoneSelection, RightArrowSelection
+from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection, NoneSelection, \
+    RightArrowSelection
 
 # Widgets
 from pygame_menu.widgets.widget import Button, ColorInput, Image, Label, NoneWidget, ScrollBar, \

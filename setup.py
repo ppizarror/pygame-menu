@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -32,9 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Library imports
 from setuptools import setup, find_packages
-import sys
-
-sys.path.append('.')
 import pygame_menu
 
 # Load readme
@@ -68,8 +64,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -82,19 +76,22 @@ setup(
     ],
     include_package_data=True,
     packages=find_packages(exclude=['test']),
-    python_requires='>=2.7, <4',
+    python_requires='>=3.6, <4',
     install_requires=requirements,
     extras_require={
         'doc': [
             'sphinx',
             'sphinx-rtd-theme',
-            # 'sphinx-autodoc-typehints >= 1.2.0'
+            'sphinx-autodoc-typehints >= 1.2.0'
         ],
     },
     setup_requires=[
         'setuptools',
     ],
     options={
-        'bdist_wheel': {'universal': True}
-    }
+        'bdist_wheel': {'universal': False}
+    },
+    entry_points={
+        'pyinstaller40': ['hook-dirs = pygame_menu.__pyinstaller:get_hook_dirs']
+    },
 )

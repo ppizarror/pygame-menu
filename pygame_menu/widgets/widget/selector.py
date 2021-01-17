@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,18 +29,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Selector']
+
 import pygame
 import pygame_menu.controls as _controls
-from pygame_menu.utils import check_key_pressed_valid, to_string
+from pygame_menu.utils import check_key_pressed_valid
 from pygame_menu.widgets.core import Widget
+from pygame_menu.custom_types import Tuple, Union, List, Any, Optional, CallbackType
 
 
-def check_selector_elements(elements):
+def check_selector_elements(elements: Union[Tuple, List]) -> None:
     """
     Check the element list.
 
     :param elements: Element list
-    :type elements: list
     :return: None
     """
     assert len(elements) > 0, 'item list (elements) cannot be empty'
@@ -76,34 +77,30 @@ class Selector(Widget):
     For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
 
     :param title: Selector title
-    :type title: str, any
     :param elements: Elements of the selector
-    :type elements: list
     :param selector_id: ID of the selector
-    :type selector_id: str
     :param default: Index of default element to display
-    :type default: int
     :param onchange: Callback when changing the selector
-    :type onchange: callable, None
     :param onreturn: Callback when pressing return on the selector
-    :type onreturn: callable, None
     :param onselect: Function when selecting the widget
-    :type onselect: callable, None
     :param kwargs: Optional keyword arguments
-    :type kwargs: dict, any
     """
+    _elements: Union[List[Tuple[str, Any]], List[str]]
+    _index: int
+    _sformat: str
+    _title_size: int
 
     def __init__(self,
-                 title,
-                 elements,
-                 selector_id='',
-                 default=0,
-                 onchange=None,
-                 onreturn=None,
-                 onselect=None,
+                 title: Any,
+                 elements: Union[List[Tuple[str, Any]], List[str]],
+                 selector_id: str = '',
+                 default: int = 0,
+                 onchange: CallbackType = None,
+                 onreturn: CallbackType = None,
+                 onselect: CallbackType = None,
                  *args,
                  **kwargs
-                 ):
+                 ) -> None:
         assert isinstance(elements, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
@@ -119,16 +116,16 @@ class Selector(Widget):
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
-            title=to_string(title, strict=True),  # Cannot use unicode in py2 as selector use format
+            title=title,
             widget_id=selector_id,
             args=args,
             kwargs=kwargs
         )
 
         self._elements = elements
-        self._index = 0  # type: int
-        self._sformat = '{0}< {1} >'  # type: str
-        self._title_size = 0.0  # type: float
+        self._index = 0
+        self._sformat = '{0}< {1} >'
+        self._title_size = 0
 
         # Apply default item
         default %= len(self._elements)
@@ -136,41 +133,38 @@ class Selector(Widget):
             self.right()
         self.set_default_value(default)
 
-    def set_default_value(self, index):
+    def set_default_value(self, index: int) -> None:
         self._default_value = index
 
-    def reset_value(self):
+    def reset_value(self) -> None:
         self._index = self._default_value
 
-    def _apply_font(self):
-        self._title_size = self._font.size(self._title)[0]
+    def _apply_font(self) -> None:
+        self._title_size = int(self._font.size(self._title)[0])
 
-    # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
         self._fill_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
         self.apply_draw_callbacks()
 
-    def get_index(self):
+    def get_index(self) -> int:
         """
         Get selected index.
 
         :return: Selected index
-        :rtype: int
         """
         return self._index
 
-    def get_value(self):
+    def get_value(self) -> Tuple[Union[Tuple[str, Any], str], int]:
         """
         Return the current value of the selector at the selected index.
 
         :return: Value and index as a tuple, (value, index)
-        :rtype: tuple
         """
         return self._elements[self._index], self._index
 
-    def left(self):
+    def left(self) -> None:
         """
         Move selector to left.
 
@@ -179,7 +173,7 @@ class Selector(Widget):
         self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
-    def right(self):
+    def right(self) -> None:
         """
         Move selector to right.
 
@@ -188,7 +182,7 @@ class Selector(Widget):
         self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         string = self._sformat.format(self._title, self.get_value()[0][0])
         if not self._render_hash_changed(string, self.selected, self.visible, self._index):
             return True
@@ -201,10 +195,11 @@ class Selector(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         self._menu_surface_needs_update = True  # Force Menu update
 
-    def set_value(self, item):
+    def set_value(self, item: Union[str, int]) -> None:
         """
         Set the current value of the widget, selecting the element that matches
         the text if item is a string, or the index of the position of item is an integer.
+        This method raises ``ValueError`` if no element found.
 
         For example, if selector is ``[['a',0],['b',1],['a',2]]``:
 
@@ -212,7 +207,6 @@ class Selector(Widget):
         - *widget*.set_value(2) -> Widget selects the third element (index 2)
 
         :param item: Item to select, can be a string or an integer.
-        :type item: str, int
         :return: None
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
@@ -227,7 +221,7 @@ class Selector(Widget):
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
 
-    def update_elements(self, elements):
+    def update_elements(self, elements: Union[List[Tuple[str, Any]], List[str]]) -> None:
         """
         Update selector elements.
 
@@ -237,7 +231,6 @@ class Selector(Widget):
             the new index of the selector will be the first element of the list.
 
         :param elements: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
-        :type elements: list
         :return: None
         """
         check_selector_elements(elements)
@@ -250,12 +243,11 @@ class Selector(Widget):
                 self._index = 0
                 self._default_value = 0
 
-    # noinspection PyMissingOrEmptyDocstring
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         updated = False
         rect = self.get_rect()
 
-        for event in events:  # type: pygame.event.Event
+        for event in events:
 
             if event.type == pygame.KEYDOWN:  # Check key is valid
                 if not check_key_pressed_valid(event):

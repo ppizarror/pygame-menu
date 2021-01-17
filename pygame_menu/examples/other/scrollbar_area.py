@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,9 +29,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['main']
+
+import sys
 import itertools
 import os
-import sys
+from typing import Generator
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
@@ -70,19 +72,14 @@ WORLDS = {
 }
 
 
-# noinspection PyArgumentList
-def make_world(width, height, text=''):
+def make_world(width: int, height: int, text: str = '') -> 'pygame.Surface':
     """
     Create a test surface.
 
     :param width: Width in pixels
-    :type width: int
     :param height: Height in pixels
-    :type height: int
     :param text: Text to write
-    :type: str
     :return: World surface
-    :rtype: :py:class:`pygame.Surface`
     """
     world = make_surface(width, height)
     world.fill((210, 210, 210))
@@ -98,7 +95,7 @@ def make_world(width, height, text=''):
         if x % 100 == 0 and x != 0:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 20))
             pygame.draw.line(world, (180, 180, 180), (x, 80), (x, height))
-            tick = font.render(str(x), True, (255, 0, 0))  # type: pygame.Surface
+            tick = font.render(str(x), True, (255, 0, 0))
             world.blit(tick, (x - tick.get_width() / 2, 25))
         else:
             pygame.draw.line(world, (255, 0, 0), (x, 0), (x, 10))
@@ -115,12 +112,11 @@ def make_world(width, height, text=''):
 
 
 # noinspection PyProtectedMember
-def iter_world(area):
+def iter_world(area: 'ScrollArea') -> Generator:
     """
     Iterate through worlds.
 
     :param area: Scroll area
-    :type area: ScrollArea
     :return: None
     """
     for name in itertools.cycle(WORLDS):
@@ -136,12 +132,11 @@ def iter_world(area):
         yield params
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
     os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -152,14 +147,15 @@ def main(test=False):
     screen = pygame.display.set_mode((W_SIZE, H_SIZE))
     pygame.display.set_caption('Example - Scrolling Area')
 
-    area = ScrollArea(W_SIZE,
-                      H_SIZE,
-                      scrollbars=(locals.POSITION_SOUTH,
-                                  locals.POSITION_EAST,
-                                  locals.POSITION_WEST,
-                                  locals.POSITION_NORTH
-                                  )
-                      )
+    area = ScrollArea(
+        W_SIZE, H_SIZE,
+        scrollbars=(
+            locals.POSITION_SOUTH,
+            locals.POSITION_EAST,
+            locals.POSITION_WEST,
+            locals.POSITION_NORTH
+        )
+    )
 
     worlds = iter_world(area)
     next(worlds)

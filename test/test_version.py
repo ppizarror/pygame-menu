@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,12 +29,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
+__all__ = ['VersionTest']
+
+import unittest
+import pygame_menu
 
 
 class VersionTest(unittest.TestCase):
 
-    def test_version(self):
+    def test_version(self) -> None:
         """
         Test version.
         """

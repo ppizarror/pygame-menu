@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -31,6 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
+from typing import Tuple, Any
+
 import pygame
 import pygame_menu
 
@@ -39,17 +40,21 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 surface = pygame.display.set_mode((600, 400))
 
 
-def set_difficulty(selected, value):
+def set_difficulty(selected: Tuple, value: Any) -> None:
     """
     Set the difficulty of the game.
+
+    :return: None
     """
     print('Set difficulty to {} ({})'.format(selected[0], value))
 
 
-def start_the_game():
+def start_the_game() -> None:
     """
     Function that starts a game. This is raised by the menu button,
     here menu can be disabled, etc.
+
+    :return: None
     """
     print('Do the job here !')
 

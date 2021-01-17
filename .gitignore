@@ -15,6 +15,7 @@ venv/
 
 # Distribution files
 *.egg-info
+*.spec
 build/
 dist/
 

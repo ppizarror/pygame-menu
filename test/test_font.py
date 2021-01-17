@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,12 +29,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
+__all__ = ['FontTest']
+
+import unittest
+from test._utils import MenuUtils
+
+import pygame_menu
 
 
 class FontTest(unittest.TestCase):
 
-    def test_font_load(self):
+    def test_font_load(self) -> None:
         """
         Load a font from a file.
         """
@@ -45,7 +49,7 @@ class FontTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('', 0))
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('sys', 0))
 
-    def test_system_load(self):
+    def test_system_load(self) -> None:
         """
         Test fonts from system.
         """

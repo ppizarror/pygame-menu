@@ -185,6 +185,36 @@ System fonts can also be used. The available system fonts can be listed using th
     import pygame
     print(pygame.font.get_fonts())
 
+
+Positioning
+-----------
+
+Several possible positions are accepted by some configurations:
+
+=================================================  ========================
+Position                                           Description
+=================================================  ========================
+:py:data:`pygame_menu.locals.POSITION_EAST`        East position
+:py:data:`pygame_menu.locals.POSITION_NORTH`       North position
+:py:data:`pygame_menu.locals.POSITION_NORTHEAST`   North/East position
+:py:data:`pygame_menu.locals.POSITION_NORTHWEST`   North/West position
+:py:data:`pygame_menu.locals.POSITION_SOUTH`       South position
+:py:data:`pygame_menu.locals.POSITION_SOUTHEAST`   South/East position
+:py:data:`pygame_menu.locals.POSITION_SOUTHWEST`   South/West position
+:py:data:`pygame_menu.locals.POSITION_WEST`        West position
+=================================================  ========================
+
+Special positions used by Menu ``ScrollArea`` (all above are available):
+
+=====================================================================  ===========================
+Position                                                               Description
+=====================================================================  ===========================
+:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_HORIZONTAL`      Scroll in both X axis
+:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_VERTICAL`        Scroll in both Y axis
+:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_FULL`                 Scroll in both X and Y axis
+=====================================================================  ===========================
+
+
 Theme API
 ---------
 

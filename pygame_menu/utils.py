@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,38 +29,45 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import sys
+__all__ = [
+
+    'assert_alignment',
+    'assert_color',
+    'assert_orientation',
+    'assert_position',
+    'assert_vector2',
+    'check_key_pressed_valid',
+    'is_callable',
+    'make_surface'
+
+]
 
 import types
 import functools
 
 import pygame
 import pygame_menu.locals as _locals
+from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
+    Optional
 
 
-def assert_alignment(align):
+def assert_alignment(align: str) -> None:
     """
-    Assert alignment local.
+    Assert that a certain alignment is valid.
 
     :param align: Align value
-    :type align: str
     :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
-    assert align in [_locals.ALIGN_LEFT,
-                     _locals.ALIGN_CENTER,
-                     _locals.ALIGN_RIGHT,
-                     _locals.ALIGN_TOP,
-                     _locals.ALIGN_BOTTOM], \
+    assert align in (_locals.ALIGN_LEFT, _locals.ALIGN_CENTER, _locals.ALIGN_RIGHT), \
         'incorrect alignment value "{0}"'.format(align)
 
 
-def assert_color(color):
+def assert_color(color: Union[ColorType, List[int]]) -> None:
     """
     Assert that a certain color is valid.
 
     :param color: Object color
-    :type color: tuple, list
     :return: None
     """
     assert isinstance(color, (tuple, list)), 'color must be a tuple or list'
@@ -78,12 +84,11 @@ def assert_color(color):
             '0 is transparent, 255 is opaque'.format(color)
 
 
-def assert_orientation(orientation):
+def assert_orientation(orientation: str) -> None:
     """
     Assert that a certain widget orientation is valid.
 
     :param orientation: Object orientation
-    :type orientation: str
     :return: None
     """
     assert isinstance(orientation, str), 'orientation must be a string'
@@ -91,12 +96,26 @@ def assert_orientation(orientation):
         'invalid orientation value "{0}"'.format(orientation)
 
 
-def assert_vector2(num_vector):
+def assert_position(position: str) -> None:
+    """
+    Assert that a certain position is valid.
+
+    :param position: Object position
+    :return: None
+    """
+    assert isinstance(position, str), 'position must be a string'
+    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
+                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
+                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
+                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
+        'invalid position value "{0}"'.format(position)
+
+
+def assert_vector2(num_vector: Vector2NumberType) -> None:
     """
     Assert that a 2-item vector is numeric.
 
     :param num_vector: Numeric 2-item vector
-    :type num_vector: tuple, list
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \
@@ -109,30 +128,12 @@ def assert_vector2(num_vector):
         'each item of "{0}" vector must be integer or float'.format(num_vector)
 
 
-def assert_position(position):
-    """
-    Assert that a certain widget position is valid.
-
-    :param position: Object position
-    :type position: str
-    :return: None
-    """
-    assert isinstance(position, str), 'position must be a string'
-    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
-                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
-                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
-        'invalid position value "{0}"'.format(position)
-
-
-def check_key_pressed_valid(event):
+def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
     """
     Checks if the pressed key is valid.
 
     :param event: Key press event
-    :type event: :py:class:`pygame.event.Event`
     :return: ``True`` if a key is pressed
-    :rtype: bool
     """
     # If the system detects that any key event has been pressed but
     # there's not any key pressed then this method raises a KEYUP
@@ -146,30 +147,28 @@ def check_key_pressed_valid(event):
     return not bad_event
 
 
-def dummy_function():
+def is_callable(func: Any) -> bool:
     """
-    Dummy function, this can be achieved with lambda but it's against
-    PEP-8.
+    Return ``True`` if ``func`` is callable.
 
-    :return: None
+    :param func: Function object
+    :return: ``True`` if function
     """
-    return
+    # noinspection PyTypeChecker
+    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType,
+                             types.MethodType, functools.partial))
 
 
-def make_surface(width, height, alpha=False, fill_color=None):
+def make_surface(width: NumberType, height: NumberType,
+                 alpha: bool = False, fill_color: Optional[ColorType] = None) -> 'pygame.Surface':
     """
     Creates a pygame surface object.
 
     :param width: Surface width
-    :type width: int, float
     :param height: Surface height
-    :type height: int, float
     :param alpha: Enable alpha channel on surface
-    :type alpha: bool
     :param fill_color: Fill surface with a certain color
-    :type fill_color: tuple, None
     :return: Pygame surface
-    :rtype: :py:class:`pygame.Surface`
     """
     assert isinstance(width, (int, float))
     assert isinstance(height, (int, float))
@@ -185,38 +184,3 @@ def make_surface(width, height, alpha=False, fill_color=None):
         assert_color(fill_color)
         surface.fill(fill_color)
     return surface
-
-
-def is_callable(func):
-    """
-    Return ``True`` if ``func`` is callable.
-
-    :param func: Function object
-    :type func: any
-    :return: Bool
-    :rtype: bool
-    """
-    # noinspection PyTypeChecker
-    return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
-
-
-def to_string(s, strict=False):
-    """
-    Check if string, if not convert. See issue #215.
-    This function is compatible for py 2/3.
-
-    :param s: String
-    :type s: any
-    :param strict: If ``True``, deny any unicode string if python 2
-    :type strict: bool
-    :return: String
-    :rtype: str
-    """
-    if isinstance(s, (str, bytes)):
-        return s
-    if sys.version_info < (3, 0) and str(type(s)) == "<type 'unicode'>":
-        if strict:
-            raise Exception("use a encoding for the unicode string, "
-                            "for example u'your_string'.encode('latin1')")
-        return s
-    return str(s)

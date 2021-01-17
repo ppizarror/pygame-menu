@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,8 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['Selection']
+
 import pygame
 from pygame_menu.utils import assert_color
+from pygame_menu.custom_types import NumberType, ColorType, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core import Widget
 
 
 class Selection(object):
@@ -39,16 +44,22 @@ class Selection(object):
     Widget selection effect class.
 
     :param margin_left: Left margin
-    :type margin_left: int, float
     :param margin_right: Right margin
-    :type margin_right: int, float
     :param margin_top: Top margin
-    :type margin_top: int, float
     :param margin_bottom: Bottom margin
-    :type margin_bottom: int, float
     """
+    color: ColorType
+    margin_bottom: int
+    margin_left: int
+    margin_right: int
+    margin_top: int
 
-    def __init__(self, margin_left, margin_right, margin_top, margin_bottom):
+    def __init__(self, margin_left: NumberType, margin_right: NumberType,
+                 margin_top: NumberType, margin_bottom: NumberType) -> None:
+        assert isinstance(margin_left, (int, float))
+        assert isinstance(margin_right, (int, float))
+        assert isinstance(margin_top, (int, float))
+        assert isinstance(margin_bottom, (int, float))
         assert margin_left >= 0, 'left margin of widget selection cannot be negative'
         assert margin_right >= 0, 'right margin of widget selection cannot be negative'
         assert margin_top >= 0, 'top margin of widget selection cannot be negative'
@@ -59,63 +70,56 @@ class Selection(object):
         self.margin_right = margin_right
         self.margin_top = margin_top
 
-    def set_color(self, color):
+    def set_color(self, color: ColorType) -> None:
         """
         Set the selection effect color.
 
         :param color: Selection color
-        :type color: tuple, list
         :return: None
         """
         assert_color(color)
         self.color = color
 
-    def get_margin(self):
+    def get_margin(self) -> Tuple[int, int, int, int]:
         """
         Return the top, left, bottom and right margins of the selection.
 
         :return: Tuple of *(top, left, bottom, right)* margins in px
-        :rtype: tuple
         """
         return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
 
-    def get_xy_margin(self):
+    def get_xy_margin(self) -> Tuple[int, int]:
         """
         Return the x/y margins of the selection.
 
         :return: Tuple of *(x, y)* margins
-        :rtype: tuple
         """
         return self.margin_left + self.margin_right, self.margin_top + self.margin_bottom
 
-    def get_width(self):
+    def get_width(self) -> int:
         """
         Return the selection width (px) as sum of left and right margins.
 
         :return: Width in px
-        :rtype: int, float
         """
         _, l, _, r = self.get_margin()
         return l + r
 
-    def get_height(self):
+    def get_height(self) -> int:
         """
         Return the selection height (px) as sum of top and bottom margins.
 
         :return: Height in px
-        :rtype: int, float
         """
         t, _, b, _ = self.get_margin()
         return t + b
 
-    def inflate(self, rect):
+    def inflate(self, rect: 'pygame.Rect') -> 'pygame.Rect':
         """
         Grow or shrink the rectangle size according to margins.
 
-        :param rect: rectangle
-        :type rect: :py:class:`pygame.Rect`
+        :param rect: Rect object
         :return: Inflated rect
-        :rtype: :py:class:`pygame.Rect`
         """
         assert isinstance(rect, pygame.Rect)
         return pygame.Rect(int(rect.x - self.margin_left),
@@ -123,12 +127,11 @@ class Selection(object):
                            int(rect.width + self.margin_left + self.margin_right),
                            int(rect.height + self.margin_top + self.margin_bottom))
 
-    def draw(self, surface, widget):
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         """
         Draw the selection.
 
         :param surface: Surface to draw
-        :type surface: :py:class:`pygame.Surface`
         :param widget: Widget object
         :type widget: :py:class:`pygame_menu.widgets.core.Widget`
         :return: None

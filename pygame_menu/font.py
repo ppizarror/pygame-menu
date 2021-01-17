@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,43 +29,69 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Fonts path included in resources
+    'FONT_8BIT',
+    'FONT_BEBAS',
+    'FONT_COMIC_NEUE',
+    'FONT_FRANCHISE',
+    'FONT_HELVETICA',
+    'FONT_MUNRO',
+    'FONT_NEVIS',
+    'FONT_OPEN_SANS',
+    'FONT_OPEN_SANS_BOLD',
+    'FONT_OPEN_SANS_ITALIC',
+    'FONT_OPEN_SANS_LIGHT',
+    'FONT_PT_SERIF',
+    'FONT_EXAMPLES',
+
+    # Font util
+    'get_font'
+
+]
+
 import os.path as path
 import pygame.font as _font
+from typing import Union, Optional
 
-# Available fonts
-__fontdir__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
+# Available fonts path
+__fonts_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
 
-FONT_8BIT = __fontdir__.format('8bit.ttf')
-FONT_BEBAS = __fontdir__.format('bebas.ttf')
-FONT_COMIC_NEUE = __fontdir__.format('comic_neue.ttf')
-FONT_FRANCHISE = __fontdir__.format('franchise.ttf')
-FONT_HELVETICA = __fontdir__.format('helvetica.ttf')
-FONT_MUNRO = __fontdir__.format('munro.ttf')
-FONT_NEVIS = __fontdir__.format('nevis.ttf')
-FONT_OPEN_SANS = __fontdir__.format('opensans_regular.ttf')
-FONT_OPEN_SANS_BOLD = __fontdir__.format('opensans_bold.ttf')
-FONT_OPEN_SANS_ITALIC = __fontdir__.format('opensans_italic.ttf')
-FONT_OPEN_SANS_LIGHT = __fontdir__.format('opensans_light.ttf')
-FONT_PT_SERIF = __fontdir__.format('pt_serif.ttf')
+FONT_8BIT = __fonts_path__.format('8bit.ttf')
+FONT_BEBAS = __fonts_path__.format('bebas.ttf')
+FONT_COMIC_NEUE = __fonts_path__.format('comic_neue.ttf')
+FONT_FRANCHISE = __fonts_path__.format('franchise.ttf')
+FONT_HELVETICA = __fonts_path__.format('helvetica.ttf')
+FONT_MUNRO = __fonts_path__.format('munro.ttf')
+FONT_NEVIS = __fonts_path__.format('nevis.ttf')
+FONT_OPEN_SANS = __fonts_path__.format('opensans_regular.ttf')
+FONT_OPEN_SANS_BOLD = __fonts_path__.format('opensans_bold.ttf')
+FONT_OPEN_SANS_ITALIC = __fonts_path__.format('opensans_italic.ttf')
+FONT_OPEN_SANS_LIGHT = __fonts_path__.format('opensans_light.ttf')
+FONT_PT_SERIF = __fonts_path__.format('pt_serif.ttf')
+
+FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_FRANCHISE, FONT_HELVETICA,
+                 FONT_MUNRO, FONT_NEVIS, FONT_OPEN_SANS, FONT_OPEN_SANS_BOLD, FONT_OPEN_SANS_ITALIC,
+                 FONT_OPEN_SANS_LIGHT, FONT_PT_SERIF)
 
 # Stores font cache
 _cache = {}
 
 
-def get_font(name, size):
+def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
     """
     Return a :py:class:`pygame.font.Font` object from a name or file.
 
     :param name: Font name or path
-    :type name: str, :py:class:`pygame.font.Font`
-    :param size: Font size
-    :type size: int
+    :param size: Font size (px)
     :return: Font object
-    :rtype: :py:class:`pygame.font.Font`
     """
     assert isinstance(size, int)
+
+    font: Optional['_font.Font']
     if isinstance(name, _font.Font):
-        font = name  # type: (_font.Font, None)
+        font = name
         return font
     else:
 
@@ -121,7 +146,7 @@ def get_font(name, size):
                                                         sys_message_2))
 
         # Try to load the font
-        font = None  # type: (_font.Font, None)
+        font = None
         if (name, size) in _cache:
             return _cache[(name, size)]
         try:

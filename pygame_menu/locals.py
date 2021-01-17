@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -34,8 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ALIGN_CENTER = '__pygame_menu_align_center__'
 ALIGN_LEFT = '__pygame_menu_align_left__'
 ALIGN_RIGHT = '__pygame_menu_align_right__'
-ALIGN_TOP = '__pygame_menu_align_top__'
-ALIGN_BOTTOM = '__pygame_menu_align_bottom__'
 
 # Input data type
 INPUT_FLOAT = '__pygame_menu_input_float__'
@@ -43,14 +40,19 @@ INPUT_INT = '__pygame_menu_input_int__'
 INPUT_TEXT = '__pygame_menu_input_text__'
 
 # Position
-POSITION_NORTHWEST = '__pygame_menu_position_northwest__'
+POSITION_EAST = '__pygame_menu_position_east__'
 POSITION_NORTH = '__pygame_menu_position_north__'
 POSITION_NORTHEAST = '__pygame_menu_position_northeast__'
-POSITION_EAST = '__pygame_menu_position_east__'
-POSITION_SOUTHEAST = '__pygame_menu_position_southeast__'
+POSITION_NORTHWEST = '__pygame_menu_position_northwest__'
 POSITION_SOUTH = '__pygame_menu_position_south__'
+POSITION_SOUTHEAST = '__pygame_menu_position_southeast__'
 POSITION_SOUTHWEST = '__pygame_menu_position_southwest__'
 POSITION_WEST = '__pygame_menu_position_west__'
+
+# Menu scrollarea position
+SCROLLAREA_POSITION_BOTH_HORIZONTAL = '__pygame_menu_scrollarea_position_bh__'
+SCROLLAREA_POSITION_BOTH_VERTICAL = '__pygame_menu_scrollarea_position_bv__'
+SCROLLAREA_POSITION_FULL = '__pygame_menu_scrollarea_position_full__'
 
 # Orientation
 ORIENTATION_HORIZONTAL = '__pygame_menu_orientation_horizontal__'

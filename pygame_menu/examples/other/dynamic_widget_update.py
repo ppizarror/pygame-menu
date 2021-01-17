@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,13 +29,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['main']
+
 import sys
+import os
+import math
+from typing import Dict, Any
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
 
-import math
-import os
 import pygame
 import pygame_menu
 
@@ -45,12 +47,19 @@ class App(object):
     """
     The following object creates the whole app.
     """
+    image_widget: 'pygame_menu.widgets.Image'
+    item_description_widget: 'pygame_menu.widgets.Label'
+    menu: 'pygame_menu.Menu'
+    modes: Dict[int, Dict[str, Any]]
+    quit_button: 'pygame_menu.widgets.Button'
+    quit_button_fake: 'pygame_menu.widgets.Button'
+    selector_widget: 'pygame_menu.widgets.Selector'
+    surface: 'pygame.Surface'
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Constructor.
         """
-
         # Start pygame
         pygame.init()
         os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -107,14 +116,14 @@ class App(object):
                    ('The second', 2),
                    ('The final mode', 3)],
             onchange=self._on_selector_change
-        )  # type: pygame_menu.widgets.Selector
+        )
 
         self.image_widget = self.menu.add_image(
             image_path=self.modes[1]['image'],
             padding=(25, 0, 0, 0)  # top, right, bottom, left
-        )  # type: pygame_menu.widgets.Image
+        )
 
-        self.item_description_widget = self.menu.add_label(title='')  # type: pygame_menu.widgets.Label
+        self.item_description_widget = self.menu.add_label(title='')
 
         self.quit_button = self.menu.add_button('Quit', pygame_menu.events.EXIT)
 
@@ -125,14 +134,15 @@ class App(object):
         # get_value returns selected item tuple and index, so [0][1] means the second object from ('The first', 1) tuple
         self._update_from_selection(self.selector_widget.get_value()[0][1])
 
-    def animate_quit_button(self, widget, menu):
+    def animate_quit_button(self,
+                            widget: 'pygame_menu.widgets.core.Widget',
+                            menu: 'pygame_menu.Menu'
+                            ) -> None:
         """
         Animate widgets if the last option is selected.
 
         :param widget: Widget to be updated
-        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :param menu: Menu
-        :type menu: :py:class:`pygame_menu.Menu`
         :return: None
         """
         if self.current == 3:
@@ -147,7 +157,7 @@ class App(object):
             widget.rotate(5 * t)
 
     @staticmethod
-    def fake_quit():
+    def fake_quit() -> None:
         """
         Function executed by fake quit button.
 
@@ -155,12 +165,11 @@ class App(object):
         """
         print('I said that you cannot quit')
 
-    def _update_from_selection(self, index):
+    def _update_from_selection(self, index: int) -> None:
         """
         Change widgets depending on index.
 
         :param index: Index
-        :type index: int
         :return: None
         """
         self.current = index
@@ -178,35 +187,31 @@ class App(object):
             self.quit_button.show()
             self.quit_button_fake.hide()
 
-    def _on_selector_change(self, selected, value):
+    def _on_selector_change(self, selected: Any, value: int) -> None:
         """
         Function executed if selector changes.
 
         :param selected: Selector data containing text and index
-        :type selected: tuple
         :param value: Value from the selected option
-        :type value: int
         :return: None
         """
         print('Selected data:', selected)
         self._update_from_selection(value)
 
-    def mainloop(self, test):
+    def mainloop(self, test: bool) -> None:
         """
         App mainloop.
 
         :param test: Test status
-        :type test: bool
         """
         self.menu.mainloop(self.surface, disable_loop=test)
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
     app = App()

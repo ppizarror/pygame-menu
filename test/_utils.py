@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,15 +29,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['test_reset_surface', 'surface', 'PygameUtils', 'MenuUtils']
+
 import pygame
 import pygame_menu
 import random
 
-# noinspection PyUnresolvedReferences
-from pygame_menu.utils import dummy_function
+from pygame_menu.custom_types import NumberType, Union, List, Tuple, \
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType
 
-# noinspection PyUnresolvedReferences
-import unittest
+EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
 
 # Constants
 FPS = 60  # Frames per second of the menu
@@ -50,7 +50,7 @@ pygame.init()
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 
 
-def test_reset_surface():
+def test_reset_surface() -> None:
     """
     Reset test surface.
 
@@ -66,24 +66,20 @@ class PygameUtils(object):
     """
 
     @staticmethod
-    def joy_motion(x=0.0, y=0.0, inlist=True, testmode=True):
+    def joy_motion(x: NumberType = 0, y: NumberType = 0, inlist: bool = True, testmode: bool = True
+                   ) -> EventListType:
         """
         Create a pygame joy controller motion event.
 
         :param x: X axis movement
-        :type x: float
         :param y: Y axis movement
-        :type y: float
         :param inlist: Return event in a list
-        :type inlist: bool
         :param testmode: Key event is in test mode
-        :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         if x != 0 and y != 0:
-            return [PygameUtils.joy_motion(x=x, y=0, inlist=False, testmode=testmode),
-                    PygameUtils.joy_motion(x=0, y=y, inlist=False, testmode=testmode)]
+            return [PygameUtils.joy_motion(x=x, inlist=False, testmode=testmode),
+                    PygameUtils.joy_motion(y=y, inlist=False, testmode=testmode)]
         event_obj = None
         if x != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
@@ -104,12 +100,11 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def test_widget_key_press(widget):
+    def test_widget_key_press(widget: 'pygame_menu.widgets.core.Widget') -> None:
         """
         Test keypress widget.
 
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
         :return: None
         """
         widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
@@ -120,18 +115,14 @@ class PygameUtils(object):
         widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
 
     @staticmethod
-    def joy_key(key, inlist=True, testmode=True):
+    def joy_key(key: bool, inlist: bool = True, testmode: bool = True) -> EventListType:
         """
         Create a pygame joy controller key event.
 
         :param key: Key to press
-        :type key: bool
         :param inlist: Return event in a list
-        :type inlist: bool
         :param testmode: Key event is in test mode
-        :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         event_obj = pygame.event.Event(pygame.JOYHATMOTION,
                                        {
@@ -143,16 +134,13 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def keydown_mod_ctrl(key, inlist=True):
+    def keydown_mod_ctrl(key: int, inlist: bool = True) -> EventListType:
         """
         Create a mod ctrl keydown event (Ctrl+Key).
 
         :param key: Key to press
-        :type key: int
         :param inlist: Return event in a list
-        :type inlist: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         # noinspection PyArgumentList
         pygame.key.set_mods(pygame.KMOD_CTRL)
@@ -166,24 +154,19 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def key(key, char=' ', inlist=True, keydown=False, keyup=False, testmode=True):
+    def key(key: int, char: str = ' ', inlist: bool = True,
+            keydown: bool = False, keyup: bool = False, testmode: bool = True
+            ) -> EventListType:
         """
         Create a keyboard event.
 
         :param key: Key to press
-        :type key: int
         :param char: Char representing the key
-        :type char: str
         :param inlist: Return event in a list
-        :type inlist: bool
         :param keydown: Event is keydown
-        :type keydown: bool
         :param keyup: Event is keyup
-        :type keyup: bool
         :param testmode: Key event is in test mode
-        :type testmode: bool
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         if keyup and keydown:
             raise ValueError('keyup and keydown cannot be active at the same time')
@@ -206,20 +189,16 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def mouse_click(x, y, inlist=True, evtype=pygame.MOUSEBUTTONUP):
+    def mouse_click(x: NumberType, y: NumberType, inlist: bool = True, evtype: int = pygame.MOUSEBUTTONUP
+                    ) -> EventListType:
         """
         Generate a mouse click event.
 
-        :param x: X coordinate
-        :type x: int, float
-        :param y: Y coordinate
-        :type y: int, float
+        :param x: X coordinate (px)
+        :param y: Y coordinate (px)
         :param inlist: Return event in a list
-        :type inlist: bool
         :param evtype: event type
-        :type evtype: int
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         event_obj = pygame.event.Event(evtype,
                                        {
@@ -232,24 +211,18 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def touch_click(x, y, inlist=True, evtype=pygame.FINGERUP, normalize=True, menu=None):
+    def touch_click(x: NumberType, y: NumberType, inlist: bool = True, evtype: int = pygame.FINGERUP,
+                    normalize: bool = True, menu: Union['pygame_menu.Menu', None] = None) -> EventListType:
         """
         Generate a mouse click event.
 
         :param x: X coordinate
-        :type x: int, float
         :param y: Y coordinate
-        :type y: int, float
         :param inlist: Return event in a list
-        :type inlist: bool
         :param evtype: Event type, it can be FINGERUP, FINGERDOWN or FINGERMOTION
-        :type evtype: int
         :param normalize: Normalize event position
-        :type normalize: bool
         :param menu: Menu reference
-        :type menu: :py:class:`pygame_menu.Menu`
         :return: Event
-        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
         vmajor, _, _ = pygame.version.vernum
         assert vmajor >= 2, 'function only available in pygame v2+'
@@ -269,22 +242,31 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def get_middle_rect(rect):
+    def get_middle_rect(rect: 'pygame.Rect') -> Tuple[float, float]:
         """
         Get middle position from a rect.
 
         :param rect: Pygame rect
-        :type rect: :py:class:`pygame.rect.Rect`
-        :return: Position as a list
-        :rtype: list[float]
+        :return: Position as a tuple
         """
-        rect_obj = rect  # type: pygame.rect.Rect
+        rect_obj = rect
         x1, y1 = rect_obj.bottomleft
         x2, y2 = rect_obj.topright
 
         x = float(x1 + x2) / 2
         y = float(y1 + y2) / 2
-        return [x, y]
+        return x, y
+
+    @staticmethod
+    def middle_rect_mouse_click(rect: 'pygame.Rect') -> 'pygame.event.Event':
+        """
+        Return event clicking the middle of a given rect.
+
+        :param rect: Rect object
+        :return: Event
+        """
+        x, y = PygameUtils.get_middle_rect(rect)
+        return PygameUtils.mouse_click(x, y, inlist=False)
 
 
 class MenuUtils(object):
@@ -293,26 +275,22 @@ class MenuUtils(object):
     """
 
     @staticmethod
-    def get_font(name, size):
+    def get_font(name: str, size: int) -> 'pygame.font.Font':
         """
         Returns a font.
 
         :param name: Font name
-        :type name: str
         :param size: Font size
-        :type size: int
         :return: Font
-        :rtype: :py:class:`pygame.font.Font`
         """
         return pygame_menu.font.get_font(name, size)
 
     @staticmethod
-    def get_library_fonts():
+    def get_library_fonts() -> List[str]:
         """
         Return a test font from the library.
 
         :return: Font file
-        :rtype: list[str]
         """
         return [
             pygame_menu.font.FONT_8BIT,
@@ -327,94 +305,74 @@ class MenuUtils(object):
         ]
 
     @staticmethod
-    def random_font():
+    def random_font() -> str:
         """
         Return a random font from the library.
 
         :return: Font file
-        :rtype: str
         """
         fonts = MenuUtils.get_library_fonts()
         opt = random.randrange(0, len(fonts))
         return fonts[opt]
 
     @staticmethod
-    def load_font(font, size):
+    def load_font(font: str, size: int) -> 'pygame.font.Font':
         """
         Load font from file.
 
         :param font: Font name
-        :type font: str
         :param size: Font size
-        :type size: int
         :return: Font object
-        :rtype: :py:class:`pygame.font.Font`
         """
         return pygame_menu.font.get_font(font, size)
 
     @staticmethod
-    def random_system_font():
+    def random_system_font() -> str:
         """
         Return random system font.
 
         :return: System font name
-        :rtype: str
         """
         fonts = pygame.font.get_fonts()
         fonts.sort()
-        fonts.pop(0)  # Python 2 first item is empty
-        return fonts[random.randrange(0, len(fonts))]
+        fonts.pop(0)
+        return fonts[int(random.randrange(0, len(fonts)))]
 
     @staticmethod
     def generic_menu(
-            center_content=True,
-            columns=1,
-            column_max_width=None,
-            column_min_width=0,
-            height=400,
-            onclose=None,
-            position_x=50,
-            position_y=50,
-            rows=None,
-            theme=pygame_menu.themes.THEME_DEFAULT,
-            title='',
-            width=600,
+            center_content: bool = True,
+            columns: int = 1,
+            column_max_width: MenuColumnMaxWidthType = None,
+            column_min_width: MenuColumnMinWidthType = 0,
+            height: NumberType = 400,
+            onclose: Any = None,
+            position_x: NumberType = 50,
+            position_y: NumberType = 50,
+            rows: MenuRowsType = None,
+            theme: 'pygame_menu.themes.Theme' = pygame_menu.themes.THEME_DEFAULT,
+            title: str = '',
+            width: NumberType = 600,
             *args,
             **kwargs
-    ):
+    ) -> 'pygame_menu.Menu':
         """
         Generate a generic test menu.
 
         :param center_content: Center menu content
-        :type center_content: bool
         :param columns: Number of columns
-        :type columns: int
         :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0` is given uses the menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
-        :type column_max_width: int, float, tuple, list, None
         :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default it's ``0``. Negative values are not accepted
-        :type column_min_width: int, float, tuple, list
         :param height: Menu height (px)
-        :type height: int, float
         :param onclose: Event or function applied when closing the Menu
-        :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
         :param position_x: X position of the menu
-        :type position_x: int, float
         :param position_y: Y position of the menu
-        :type position_y: int, float
         :param rows: Number of rows
-        :type rows: int, None
         :param theme: Menu theme
-        :type theme: :py:class:`pygame_menu.themes.Theme`
         :param title: Menu title
-        :type title: str
         :param width: Menu width (px)
-        :type width: int, float
         :param args: Additional args
-        :type args: any
         :param kwargs: Optional keyword arguments
-        :type kwargs: dict, any
         :return: Menu
-        :rtype: :py:class:`pygame_menu.Menu`
         """
         return pygame_menu.Menu(
             center_content=center_content,
@@ -434,12 +392,11 @@ class MenuUtils(object):
         )
 
     @staticmethod
-    def get_large_surface():
+    def get_large_surface() -> 'pygame.Surface':
         """
         Create a large surface to test scrolls.
 
         :return: Surface
-        :rtype: :py:class:`pygame.Surface`
         """
         world = pygame.Surface((W_SIZE * 2, H_SIZE * 3))
         world.fill((200, 200, 200))

@@ -1,10 +1,9 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-VERTICAL MARGIN
-Vertical box margin.
+NONE WIDGET
+None widget definition.
 
 License:
 -------------------------------------------------------------------------------
@@ -30,10 +29,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.utils import make_surface
-from pygame_menu.widgets.core import Widget
+__all__ = ['NoneWidget']
 
 import pygame
+from pygame_menu.utils import make_surface
+from pygame_menu.widgets.core import Widget
+from pygame_menu.custom_types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
+    TYPE_CHECKING, Dict, Any, Tuple, CallbackType
+
+if TYPE_CHECKING:
+    from pygame_menu.baseimage import BaseImage
+    from pygame_menu.sound import Sound
+    from pygame_menu.widgets.core.selection import Selection
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -46,112 +53,122 @@ class NoneWidget(Widget):
         This widget does not implement any transformation.
 
     :param widget_id: ID of the widget
-    :type widget_id: str
     """
 
-    def __init__(self, widget_id=''):
+    def __init__(self, widget_id: str = '') -> None:
         super(NoneWidget, self).__init__(widget_id=widget_id)
         self.is_selectable = False
         self._surface = make_surface(0, 0, alpha=True)
 
-    def _apply_font(self):
+    def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding):  # Don't accept padding
+    def set_padding(self, padding: PaddingType) -> None:
         pass
 
-    def set_title(self, title):
+    def set_title(self, title: str) -> None:
         pass
 
-    def get_rect(self, inflate=None, apply_padding=True, use_transformed_padding=True):
+    def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
+                 use_transformed_padding: bool = True) -> 'pygame.Rect':
         return pygame.Rect(0, 0, 0, 0)
 
-    def set_background_color(self, color, inflate=(0, 0)):
+    def set_background_color(self, color: Optional[Union[ColorType, 'BaseImage']],
+                             inflate: Optional[Tuple2IntType] = (0, 0)) -> None:
         pass
 
-    def _fill_background_color(self, surface):
+    def _fill_background_color(self, surface: 'pygame.Surface') -> None:
         pass
 
-    def set_selection_effect(self, selection):
+    def set_selection_effect(self, selection: 'Selection') -> None:
         pass
 
-    def apply(self, *args):
+    def apply(self, *args) -> None:
         pass
 
-    def change(self, *args):
+    def change(self, *args) -> None:
         pass
 
-    def draw(self, surface):
+    def draw(self, surface: 'pygame.Surface') -> None:
         self.apply_draw_callbacks()
 
-    def _render(self):
+    def _render(self) -> Optional[bool]:
         pass
 
-    def draw_selection(self, surface):
+    def draw_selection(self, surface: pygame.Surface) -> None:
         pass
 
-    def set_margin(self, x, y):
+    def set_margin(self, x: int, y: int) -> None:
         pass
 
-    def _apply_transforms(self):
+    def _apply_transforms(self) -> None:
         pass
 
-    def set_font(self, font, font_size, color, selected_color, background_color, antialias=True):
+    def set_font(self,
+                 font: str,
+                 font_size: int,
+                 color: ColorType,
+                 selected_color: ColorType,
+                 background_color: Optional[ColorType],
+                 antialias: bool = True
+                 ) -> None:
         pass
 
-    def update_font(self, style):
+    def update_font(self, style: Dict[str, Any]) -> None:
         pass
 
-    def set_position(self, posx, posy):
+    def set_position(self, posx: int, posy: int) -> None:
         pass
 
-    def flip(self, x, y):
+    def flip(self, x: bool, y: bool) -> None:
         pass
 
-    def set_max_width(self, width, scale_height=False, smooth=True):
+    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
+                      smooth: bool = True) -> None:
         pass
 
-    def set_max_height(self, height, scale_width=False, smooth=True):
+    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
+                       smooth: bool = True) -> None:
         pass
 
-    def scale(self, width, height, smooth=True):
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
 
-    def resize(self, width, height, smooth=False):
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
 
-    def translate(self, x, y):
+    def translate(self, x: int, y: int) -> None:
         pass
 
-    def rotate(self, angle):
+    def rotate(self, angle: NumberType) -> None:
         pass
 
-    def set_alignment(self, align):
+    def set_alignment(self, align: str) -> None:
         pass
 
-    def select(self, select=True, update_menu=False):
+    def select(self, select: bool = True, update_menu: bool = False) -> None:
         pass
 
-    def set_shadow(self, enabled=True, color=None, position=None, offset=None):
+    def set_shadow(self, enabled: bool = True, color: bool = None, position=None, offset=None) -> None:
         pass
 
-    def set_sound(self, sound):
+    def set_sound(self, sound: 'Sound') -> None:
         pass
 
-    def set_controls(self, joystick=True, mouse=True, touchscreen=True):
+    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> None:
         pass
 
-    def set_value(self, value):
+    def set_value(self, value: Any) -> None:
         pass
 
-    def update(self, events):
+    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False
 
-    def add_update_callback(self, update_callback):
+    def add_update_callback(self, update_callback: CallbackType) -> None:
         pass
 
-    def remove_update_callback(self, callback_id):
+    def remove_update_callback(self, callback_id: str) -> None:
         pass
 
-    def apply_update_callbacks(self):
+    def apply_update_callbacks(self) -> None:
         pass

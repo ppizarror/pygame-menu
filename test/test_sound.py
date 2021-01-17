@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,19 +29,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from test._utils import *
+__all__ = ['SoundTest']
+
+import unittest
+from test._utils import MenuUtils
+
+import pygame_menu
 
 
 class SoundTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Setup sound engine.
         """
         self.sound = pygame_menu.sound.Sound(force_init=True)
         self.sound._verbose = False
 
-    def test_channel(self):
+    def test_channel(self) -> None:
         """
         Test channel.
         """
@@ -53,7 +57,7 @@ class SoundTest(unittest.TestCase):
         self.sound.unpause()
         self.sound.stop()
 
-    def test_load_sound(self):
+    def test_load_sound(self) -> None:
         """
         Test load sounds.
         """
@@ -65,7 +69,7 @@ class SoundTest(unittest.TestCase):
         self.assertEqual(self.sound.set_sound(pygame_menu.sound.SOUND_TYPE_ERROR, pygame_menu.font.FONT_PT_SERIF),
                          False)
 
-    def test_example_sounds(self):
+    def test_example_sounds(self) -> None:
         """
         Test example sounds.
         """
@@ -80,7 +84,7 @@ class SoundTest(unittest.TestCase):
         self.sound.play_key_del()
         self.sound.play_open_menu()
 
-    def test_sound_menu(self):
+    def test_sound_menu(self) -> None:
         """
         Test sounds in menu.
         """

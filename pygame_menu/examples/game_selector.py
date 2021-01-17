@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,16 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Import libraries
-import sys
-
-sys.path.insert(0, '../../')
+__all__ = ['main']
 
 import os
+from random import randrange
+from typing import Tuple, Any, Optional, List
+
 import pygame
 import pygame_menu
-
-from random import randrange
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -52,57 +49,45 @@ DIFFICULTY = ['EASY']
 FPS = 60
 WINDOW_SIZE = (640, 480)
 
-# noinspection PyTypeChecker
-clock = None  # type: pygame.time.Clock
-
-# noinspection PyTypeChecker
-main_menu = None  # type: pygame_menu.Menu
-
-# noinspection PyTypeChecker
-surface = None  # type: pygame.Surface
+clock: Optional['pygame.time.Clock'] = None
+main_menu: Optional['pygame_menu.Menu'] = None
+surface: Optional['pygame.Surface'] = None
 
 
 # -----------------------------------------------------------------------------
 # Methods
 # -----------------------------------------------------------------------------
-def change_difficulty(value, difficulty):
+def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     """
     Change difficulty of the game.
 
     :param value: Tuple containing the data of the selected object
-    :type value: tuple
     :param difficulty: Optional parameter passed as argument to add_selector
-    :type difficulty: str
-    :return: None
     """
     selected, index = value
     print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, difficulty, index))
     DIFFICULTY[0] = difficulty
 
 
-def random_color():
+def random_color() -> Tuple[int, int, int]:
     """
     Return a random color.
 
     :return: Color tuple
-    :rtype: tuple
     """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
-def play_function(difficulty, font, test=False):
+def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False) -> None:
     """
     Main game function.
 
     :param difficulty: Difficulty of the game
-    :type difficulty: tuple, list
     :param font: Pygame font
-    :type font: :py:class:`pygame.font.Font`
     :param test: Test method, if ``True`` only one loop is allowed
-    :type test: bool
     :return: None
     """
-    assert isinstance(difficulty, (tuple, list))
+    assert isinstance(difficulty, list)
     difficulty = difficulty[0]
     assert isinstance(difficulty, str)
 
@@ -117,7 +102,7 @@ def play_function(difficulty, font, test=False):
     elif difficulty == 'HARD':
         f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
-        raise Exception('Unknown difficulty {0}'.format(difficulty))
+        raise Exception('unknown difficulty {0}'.format(difficulty))
 
     # Draw random color and text
     bg_color = random_color()
@@ -159,7 +144,7 @@ def play_function(difficulty, font, test=False):
             break
 
 
-def main_background():
+def main_background() -> None:
     """
     Function used by menus, draw on background while menu is active.
 
@@ -169,12 +154,11 @@ def main_background():
     surface.fill((128, 0, 128))
 
 
-def main(test=False):
+def main(test: bool = False) -> None:
     """
     Main program.
 
     :param test: Indicate function is being tested
-    :type test: bool
     :return: None
     """
 

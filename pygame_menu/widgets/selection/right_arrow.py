@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 pygame-menu
 https://github.com/ppizarror/pygame-menu
@@ -30,7 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = ['RightArrowSelection']
+
+import pygame
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
+from pygame_menu.custom_types import Tuple2IntType, NumberType, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pygame_menu.widgets.core import Widget
 
 
 class RightArrowSelection(ArrowSelection):
@@ -39,21 +45,18 @@ class RightArrowSelection(ArrowSelection):
     Creates an arrow to the right of the selected Menu item.
 
     :param arrow_size: Size of arrow on *(x, y)* axis *(width, height)*
-    :type arrow_size: tuple, list
     :param arrow_left_margin: Distance from the arrow to the widget
-    :type arrow_left_margin: int, float
     :param arrow_vertical_offset: Vertical offset of the arrow
-    :type arrow_vertical_offset: int
     :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
-    :type blink_ms: int
     """
+    _arrow_left_margin: int
 
     def __init__(self,
-                 arrow_size=(10, 15),
-                 arrow_left_margin=3,
-                 arrow_vertical_offset=0,
-                 blink_ms=0
-                 ):
+                 arrow_size: Tuple2IntType = (10, 15),
+                 arrow_left_margin: int = 3,
+                 arrow_vertical_offset: int = 0,
+                 blink_ms: NumberType = 0
+                 ) -> None:
         assert isinstance(arrow_left_margin, (int, float))
         assert arrow_left_margin >= 0, 'margin cannot be negative'
         super(RightArrowSelection, self).__init__(
@@ -67,7 +70,7 @@ class RightArrowSelection(ArrowSelection):
         self._arrow_left_margin = arrow_left_margin
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface, widget):
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         #                 /A
         # widget        B
         #                \ C
@@ -75,9 +78,9 @@ class RightArrowSelection(ArrowSelection):
         #        margin
         rect = widget.get_rect()
         a = (rect.topright[0] + self._arrow_size[0] + self._arrow_left_margin,
-             rect.midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+             int(rect.midright[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset))
         b = (rect.midright[0] + self._arrow_left_margin,
              rect.midright[1] + self._arrow_vertical_offset)
         c = (rect.bottomright[0] + self._arrow_size[0] + self._arrow_left_margin,
-             rect.midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset)
+             int(rect.midright[1] + self._arrow_size[1] / 2 + self._arrow_vertical_offset))
         super(RightArrowSelection, self)._draw_arrow(surface, widget, a, b, c)
