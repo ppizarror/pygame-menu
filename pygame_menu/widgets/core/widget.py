@@ -373,7 +373,8 @@ class Widget(object):
 
         :param args: Extra arguments passed to the callback
         :param args: any
-        :return: None
+        :return: Callback return value
+        :rtype: any
         """
         if self._on_return:
             args = list(args) + list(self._args)
@@ -400,7 +401,8 @@ class Widget(object):
 
         :param args: Extra arguments passed to the callback
         :param args: any
-        :return: None
+        :return: Callback return value
+        :rtype: any
         """
         if self._on_change:
             args = list(args) + list(self._args)

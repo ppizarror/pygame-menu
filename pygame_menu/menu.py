@@ -1862,6 +1862,15 @@ class Menu(object):
         """
         assert isinstance(events, list)
 
+        # Check if window closed
+        for event in events:
+            if event.type == _events.PYGAME_QUIT or (
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
+                    event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
+                    event.type == _events.PYGAME_WINDOWCLOSE:
+                self._current._exit()
+                return True
+
         # If any widget status changes, set the status as True
         updated = False
 
@@ -1891,14 +1900,7 @@ class Menu(object):
 
         # Check others
         else:
-
             for event in events:  # type: pygame.event.Event
-
-                if event.type == _events.PYGAME_QUIT or (
-                        event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
-                        event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)):
-                    self._current._exit()
-                    updated = True
 
                 if event.type == pygame.KEYDOWN:
 
