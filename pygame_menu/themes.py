@@ -31,7 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Theme']
 
-import pygame_menu.font
+import pygame_menu.font as _font
+import pygame_menu.locals as _locals
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
@@ -74,6 +75,8 @@ class Theme(object):
     :type menubar_close_button: bool
     :param scrollarea_outer_margin: Outer scoll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
+    :param scrollarea_position: Position of scrollarea scrollbars. See :py:mod:`pygame_menu.locals`
+    :type scrollarea_position: str
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -96,6 +99,7 @@ class Theme(object):
     :type surface_clear_color: tuple, list
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
+    :param title_bar_modify_scrollarea: If ``True`` title bar modifies the scrollbars of the scrollarea depending on the style
     :param title_bar_style: Style of the title, use menubar widget styles
     :type title_bar_style: int
     :param title_font: Optional title font, if ``None`` theme uses the Menu default font
@@ -116,7 +120,7 @@ class Theme(object):
     :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title. See :py:mod:`pygame_menu.locals`
     :type title_shadow_position: str
-    :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+    :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_. See :py:mod:`pygame_menu.locals`
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget, it can be a color or a BaseImage object. Background fills the entire widget + the padding
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
@@ -157,6 +161,7 @@ class Theme(object):
     focus_background_color: ColorType
     menubar_close_button: bool
     scrollarea_outer_margin: Tuple2NumberType
+    scrollarea_position: str
     scrollbar_color: ColorType
     scrollbar_shadow: bool
     scrollbar_shadow_color: ColorType
@@ -168,6 +173,7 @@ class Theme(object):
     selection_color: ColorType
     surface_clear_color: ColorType
     title_background_color: ColorType
+    title_bar_modify_scrollarea: bool
     title_bar_style: int
     title_font: str
     title_font_antialias: bool
@@ -198,26 +204,20 @@ class Theme(object):
 
     def __init__(self, **kwargs) -> None:
 
+        # Menu general
         self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
-        self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
-        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
-        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (220, 220, 220))
-        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
-        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
-        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float), 2)
-        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
-                                                   pygame_menu.locals.POSITION_NORTHWEST)
-        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
-        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float), 0)
-        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float), 20)
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
         self.surface_clear_color = self._get(kwargs, 'surface_clear_color', 'color', (0, 0, 0))
+
+        # Menubar/Title
+        self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
         self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
+        self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
-        self.title_font = self._get(kwargs, 'title_font', str, pygame_menu.font.FONT_OPEN_SANS)
+        self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
         self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
@@ -226,11 +226,28 @@ class Theme(object):
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color', (0, 0, 0))
         self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float), 2)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
-                                               pygame_menu.locals.POSITION_NORTHWEST)
-        self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', pygame_menu.locals.ALIGN_CENTER)
+                                               _locals.POSITION_NORTHWEST)
+
+        # ScrollArea
+        self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
+        self.scrollarea_position = self._get(kwargs, 'scrollarea_position', 'str', _locals.POSITION_SOUTHEAST)
+
+        # ScrollBar
+        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (220, 220, 220))
+        self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
+        self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
+        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float), 2)
+        self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
+                                                   _locals.POSITION_NORTHWEST)
+        self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
+        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float), 0)
+        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float), 20)
+
+        # Widget
+        self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', _locals.ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2', (0, 0))
-        self.widget_font = self._get(kwargs, 'widget_font', str, pygame_menu.font.FONT_OPEN_SANS)
+        self.widget_font = self._get(kwargs, 'widget_font', str, _font.FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
@@ -246,7 +263,7 @@ class Theme(object):
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
         self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float), 2)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
-                                                pygame_menu.locals.POSITION_NORTHWEST)
+                                                _locals.POSITION_NORTHWEST)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
