@@ -98,6 +98,7 @@ for :py:mod:`pygame-menu`. The main addressed topics are:
    :caption: Advanced usage
 
    _source/advanced
+   _source/baseimage
 
 
 ===========
