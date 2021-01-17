@@ -223,7 +223,6 @@ def main(test=False):
     about_theme.widget_offset = (0, 0.14)
 
     about_menu = pygame_menu.Menu(
-        center_content=False,
         height=400,
         mouse_visible=False,
         onclose=pygame_menu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
