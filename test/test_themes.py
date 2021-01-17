@@ -131,11 +131,11 @@ class ThemeTest(unittest.TestCase):
             """
             pass
 
-        def dummy() -> None:
+        def dummy() -> bool:
             """
             Callable.
             """
-            pass
+            return True
 
         # Test correct
         t._get({}, '', 'tuple2', (1, 1))
@@ -156,6 +156,7 @@ class ThemeTest(unittest.TestCase):
         t._get({}, '', 'image', img)
         t._get({}, '', 'tuple2', (1, -1))
         t._get({}, '', 'tuple2', [1, -1])
+        t._get({}, '', 'tuple3', [1, -1, 1])
         t._get({}, '', 'color_image', (1, 1, 1))
         t._get({}, '', 'color_image', [11, 1, 0])
         t._get({}, '', 'color_image', [11, 1, 0, 55])
@@ -164,6 +165,11 @@ class ThemeTest(unittest.TestCase):
         t._get({}, '', 'position', pygame_menu.locals.POSITION_SOUTHWEST)
         t._get({}, '', 'none', None)
         t._get({}, '', 'type', bool)
+        t._get({}, '', 'color_image_none', [11, 1, 0, 55])
+        t._get({}, '', 'color_image_none', None)
+        t._get({}, '', 'color_image_none', img)
+
+        self.assertTrue(t._get({}, '', 'callable', dummy)())
 
         # Test raises
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'type', 'bool'))
@@ -182,3 +188,4 @@ class ThemeTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: t._get({}, '', bool, 4.4))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2.1', (1, 1)))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2', (1, 1, 1)))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple3', (1, 1, 1, 1)))

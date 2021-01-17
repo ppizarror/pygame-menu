@@ -50,14 +50,30 @@ class SoundTest(unittest.TestCase):
         """
         Test sound copy.
         """
-        self.sound.load_example_sounds()
-        sound = copy.copy(self.sound)
-        sound_deep = copy.deepcopy(self.sound)
+        sound_src = pygame_menu.sound.Sound()
+        sound_src.load_example_sounds()
+
+        sound = copy.copy(sound_src)
+        sound_deep = copy.deepcopy(sound_src)
 
         # Check if sounds are different
         t = pygame_menu.sound.SOUND_TYPE_CLICK_MOUSE
-        self.assertNotEqual(self.sound._sound[t]['file'], sound._sound[t]['file'])
-        self.assertNotEqual(self.sound._sound[t]['file'], sound_deep._sound[t]['file'])
+        self.assertNotEqual(sound_src._sound[t]['file'], sound._sound[t]['file'])
+        self.assertNotEqual(sound_src._sound[t]['file'], sound_deep._sound[t]['file'])
+
+    def test_none_channel(self) -> None:
+        """
+        Test none channel.
+        """
+        new_sound = pygame_menu.sound.Sound(uniquechannel=False)
+        new_sound.load_example_sounds()
+        new_sound.play_widget_selection()
+        new_sound._channel = None
+        new_sound.stop()
+        new_sound.pause()
+        new_sound.unpause()
+        new_sound.play_error()
+        self.assertEqual(len(new_sound.get_channel_info()), 5)
 
     def test_channel(self) -> None:
         """

@@ -281,13 +281,13 @@ class Menu(object):
                 assert column_max_width[i] >= column_min_width[i], msg
 
         # Element size and position asserts
-        _utils.assert_vector2(menu_position)
+        _utils.assert_vector(menu_position, 2)
         assert width > 0 and height > 0, \
             'menu width and height must be greater than zero'
 
         # Get window size if not given explicitly
         if screen_dimension is not None:
-            _utils.assert_vector2(screen_dimension)
+            _utils.assert_vector(screen_dimension, 2)
             assert screen_dimension[0] > 0, 'screen width must be higher than zero'
             assert screen_dimension[1] > 0, 'screen height must be higher than zero'
             self._window_size = screen_dimension
@@ -1339,7 +1339,7 @@ class Menu(object):
         attributes['background_color'] = background_color
 
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
-        _utils.assert_vector2(background_inflate)
+        _utils.assert_vector(background_inflate, 2)
         assert background_inflate[0] >= 0 and background_inflate[1] >= 0, \
             'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
@@ -2701,7 +2701,7 @@ class Menu(object):
         if offset is None:
             offset = self._theme.title_offset
         else:
-            _utils.assert_vector2(offset)
+            _utils.assert_vector(offset, 2)
         self._menubar.set_title(title, offsetx=offset[0], offsety=offset[1])
 
     def full_reset(self) -> None:

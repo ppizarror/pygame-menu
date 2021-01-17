@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ArrowSelection']
 
 import pygame
-from pygame_menu.utils import assert_vector2
+from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core import Selection
 from pygame_menu.custom_types import NumberType, Tuple2IntType, TYPE_CHECKING, Optional
 
@@ -71,7 +71,7 @@ class ArrowSelection(Selection):
             margin_top=margin_top,
             margin_bottom=margin_bottom
         )
-        assert_vector2(arrow_size)
+        assert_vector(arrow_size, 2)
         assert isinstance(arrow_vertical_offset, (int, float))
         assert isinstance(blink_ms, int)
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'

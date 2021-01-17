@@ -37,7 +37,7 @@ import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.sound import Sound
-from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, \
+from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING
@@ -428,7 +428,7 @@ class Widget(object):
                 assert_color(color)
         if inflate is None:
             inflate = self._background_inflate
-        assert_vector2(inflate)
+        assert_vector(inflate, 2)
         assert inflate[0] >= 0 and inflate[1] >= 0, \
             'widget background inflate must be equal or greater than zero in both axis'
 

@@ -506,6 +506,7 @@ class Theme(object):
             -   position            pygame-menu position (locals)}
             -   type                Type-class (bool, str, etc...)
             -   tuple2              Only valid numeric tuples ``(x,y)`` or ``[x,y]``
+            -   tuple3              Only valid numeric tuples ``(x,y,z)`` or ``[x,y,z]``
 
         :param params: Parameters dictionary
         :param key: Key to look for
@@ -557,7 +558,10 @@ class Theme(object):
                     assert isinstance(value, type), 'value is not type-class'
 
                 elif valtype == 'tuple2':
-                    _utils.assert_vector2(value)
+                    _utils.assert_vector(value, 2)
+
+                elif valtype == 'tuple3':
+                    _utils.assert_vector(value, 3)
 
                 else:  # Unknown type
                     assert isinstance(valtype, type), \

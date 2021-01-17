@@ -58,7 +58,7 @@ import math
 from pathlib import Path
 
 import pygame
-from pygame_menu.utils import assert_vector2
+from pygame_menu.utils import assert_vector
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
     NumberType, Optional, Dict
 
@@ -217,7 +217,7 @@ class BaseImage(object):
         :param drawing_offset: Drawing offset tuple *(x, y)*
         :return: None
         """
-        assert_vector2(drawing_offset)
+        assert_vector(drawing_offset, 2)
         self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
 
     def get_size(self) -> Tuple2IntType:
