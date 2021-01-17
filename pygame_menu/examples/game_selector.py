@@ -102,7 +102,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
     elif difficulty == 'HARD':
         f = font.render('Playing as a champion (hard)', True, (255, 255, 255))
     else:
-        raise Exception('Unknown difficulty {0}'.format(difficulty))
+        raise Exception('unknown difficulty {0}'.format(difficulty))
 
     # Draw random color and text
     bg_color = random_color()

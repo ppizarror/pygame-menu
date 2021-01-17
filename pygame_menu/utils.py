@@ -59,11 +59,7 @@ def assert_alignment(align: str) -> None:
     :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
-    assert align in [_locals.ALIGN_LEFT,
-                     _locals.ALIGN_CENTER,
-                     _locals.ALIGN_RIGHT,
-                     _locals.ALIGN_TOP,
-                     _locals.ALIGN_BOTTOM], \
+    assert align in (_locals.ALIGN_LEFT, _locals.ALIGN_CENTER, _locals.ALIGN_RIGHT), \
         'incorrect alignment value "{0}"'.format(align)
 
 

@@ -1171,44 +1171,6 @@ class MenuTest(unittest.TestCase):
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 
-        # Get the size of the scrollarea
-        sa = menu.get_scrollarea()
-
-        sa_height = menu.get_height() - menu.get_menubar_widget().get_height()
-        sa_width = menu.get_width()
-        self.assertEqual(sa.get_world_size()[0], sa_width)
-        self.assertEqual(sa.get_world_size()[1], sa_height)
-        rect = sa.get_view_rect()
-        self.assertEqual(rect.x, 0)
-        self.assertEqual(rect.y, 155)
-        self.assertEqual(rect.width, sa_width)
-        self.assertEqual(rect.height, sa_height)
-        self.assertEqual(sa.get_hidden_width(), 0)
-        self.assertEqual(sa.get_hidden_height(), 0)
-
-        rect = sa.to_world_position(btn.get_rect())
-        self.assertEqual(rect.x, 0)
-        self.assertEqual(rect.y, -155)
-        self.assertEqual(rect.width, btn.get_width())
-        self.assertEqual(rect.height, btn.get_height())
-
-        posrect = sa.to_world_position((10, 10))
-        self.assertEqual(posrect[0], 10)
-        self.assertEqual(posrect[1], -145)
-
-        self.assertFalse(sa.is_scrolling())
-        self.assertEqual(sa.get_menu(), menu)
-
-        sa._on_vertical_scroll(50)
-        sa._on_horizontal_scroll(50)
-
-        # Remove the world of surface
-        world = sa._world
-        sa._world = None
-        self.assertEqual(sa.get_world_size()[0], 0)
-        self.assertEqual(sa.get_world_size()[0], 0)
-        sa._world = world
-
     def test_focus(self) -> None:
         """
         Test menu focus effect.

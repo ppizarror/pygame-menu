@@ -48,7 +48,7 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
-from pygame_menu.scrollarea import ScrollArea
+from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
@@ -441,6 +441,7 @@ class Menu(object):
             back_box=theme.menubar_close_button,
             background_color=self._theme.title_background_color,
             mode=self._theme.title_bar_style,
+            modify_scrollarea=self._theme.title_bar_modify_scrollarea,
             offsetx=theme.title_offset[0],
             offsety=theme.title_offset[1],
             onreturn=self._back,
@@ -471,14 +472,16 @@ class Menu(object):
             raise ValueError('menubar is higher than menu height. Try increasing the later value')
 
         self._scroll = ScrollArea(
-            area_width=self._width,
             area_color=self._theme.background_color,
             area_height=self._height - menubar_height,
+            area_width=self._width,
             extend_y=menubar_height,
+            menubar=self._menubar,
             scrollbar_color=self._theme.scrollbar_color,
             scrollbar_slider_color=self._theme.scrollbar_slider_color,
             scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
             scrollbar_thick=self._theme.scrollbar_thick,
+            scrollbars=get_scrollbars_from_position(self._theme.scrollarea_position),
             shadow=self._theme.scrollbar_shadow,
             shadow_color=self._theme.scrollbar_shadow_color,
             shadow_offset=self._theme.scrollbar_shadow_offset,
