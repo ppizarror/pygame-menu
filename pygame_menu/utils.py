@@ -70,8 +70,10 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
     :param color: Object color
     :return: None
     """
-    assert isinstance(color, (tuple, list)), 'color must be a tuple or list'
-    assert 4 >= len(color) >= 3, 'color must be a tuple or list of 3 or 4 numbers'
+    assert isinstance(color, (tuple, list)), \
+        'color must be a tuple or list, not "{0}"'.format(color.__class__.__name__)
+    assert 4 >= len(color) >= 3, \
+        'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
             '"{0}" in element color {1} must be an integer'.format(color[i], color)
