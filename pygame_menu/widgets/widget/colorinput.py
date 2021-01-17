@@ -48,8 +48,7 @@ import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, \
-    CallbackType, Tuple2IntType
+from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType
 
 ColorType = Tuple[int, int, int]
 
@@ -80,9 +79,16 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         This widget implements the same transformations as :py:class:`pygame_menu.widgets.widget.TextInput`.
 
+    .. note::
+
+        This class cannot select text as :py:class:`pygame_menu.widgets.widget.TextInput` does. Also, copy
+        and paste is disabled.
+
     :param title: Color input title
     :param colorinput_id: ID of the text input
     :param color_type: Type of color input ``(rgb, hex)``
+    :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
+    :param dynamic_width: If ``True`` the widget width changes if the previsualization color box is active or not
     :param hex_format: Hex format string mode ``(none, lower, upper)``
     :param input_separator: Divisor between RGB channels
     :param input_underline: Character drawn under each number input
@@ -99,13 +105,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     """
     _auto_separator_pos: List[int]
     _color_type: str
+    _dynamic_width: bool
     _hex_format: str
     _last_g: int
     _last_r: int
     _prev_margin: int
-    _previsualization_position: Tuple2IntType
     _previsualization_surface: Optional['pygame.Surface']
-    _rect_width: int
     _separator: str
     _valid_chars: List[str]
 
@@ -113,10 +118,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  title: Any = '',
                  colorinput_id: str = '',
                  color_type: str = TYPE_RGB,
+                 cursor_color: ColorType = (0, 0, 0),
+                 cursor_ms_counter: NumberType = 500,
+                 dynamic_width: bool = True,
                  hex_format: str = HEX_FORMAT_NONE,
                  input_separator: str = ',',
                  input_underline: str = '_',
-                 cursor_color: ColorType = (0, 0, 0),
                  onchange: CallbackType = None,
                  onreturn: CallbackType = None,
                  onselect: CallbackType = None,
@@ -131,14 +138,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert isinstance(color_type, str)
         assert isinstance(colorinput_id, str)
         assert isinstance(cursor_color, tuple)
+        assert isinstance(dynamic_width, bool)
         assert isinstance(hex_format, str)
         assert isinstance(input_separator, str)
         assert isinstance(input_underline, str)
         assert isinstance(prev_margin, int)
         assert isinstance(prev_width_factor, (int, float))
-        assert isinstance(repeat_keys_initial_ms, (int, float))
-        assert isinstance(repeat_keys_interval_ms, (int, float))
-        assert isinstance(repeat_mouse_interval_ms, (int, float))
 
         assert len(input_separator) == 1, 'input_separator must be a single char'
         assert len(input_separator) != 0, 'input_separator cannot be empty'
@@ -165,14 +170,13 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         _password = False
 
         super(ColorInput, self).__init__(
-            title=title,
-            textinput_id=colorinput_id,
-            input_type=_input_type,
-            input_underline=input_underline,
-            cursor_color=cursor_color,
             copy_paste_enable=False,
+            cursor_color=cursor_color,
+            cursor_ms_counter=cursor_ms_counter,
             cursor_selection_enable=False,
             history=0,
+            input_type=_input_type,
+            input_underline=input_underline,
             maxchar=_maxchar,
             maxwidth=_maxwidth,
             onchange=onchange,
@@ -184,6 +188,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             repeat_mouse_interval_ms=repeat_mouse_interval_ms,
             tab_size=0,
             text_ellipsis='',
+            textinput_id=colorinput_id,
+            title=title,
             valid_chars=self._valid_chars,
             *args,
             **kwargs
@@ -191,6 +197,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Store inner variables
         self._auto_separator_pos = []  # This stores indexes of auto separator added
+        self._dynamic_width = dynamic_width
         self._hex_format = hex_format
         self._separator = input_separator
 
@@ -200,7 +207,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._last_r = -1
         self._prev_margin = prev_margin
         self._prev_width_factor = prev_width_factor
-        self._previsualization_position = (0, 0)
         self._previsualization_surface = None
 
         # Disable parent callbacks
@@ -297,55 +303,48 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             return False
         return True
 
-    def _draw_previsualize_color(self, surface: Optional['pygame.Surface']) -> None:
-        """
-        Changes the color of the previsualization box.
-
-        :param surface: Surface to draw
-        :return: None
-        """
-        r, g, b = self.get_value()
-        if not self.is_valid():  # Remove previsualization if invalid color
-            self._previsualization_surface = None
-            return
-
-        # If previsualization surface is None or the color changed
-        if self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
-            _width = self._prev_width_factor * self._rect.height
-            if _width == 0 or self._rect.height == 0:
-                self._previsualization_surface = None
-                return
-            self._previsualization_surface = make_surface(_width, self._rect.height)
-            self._previsualization_surface.fill((r, g, b))
-            self._last_r = r
-            self._last_g = g
-            self._last_b = b
-            _posx = self._rect.x + self._rect.width - self._prev_width_factor * self._rect.height + self._rect.height / 10
-            _posy = self._rect.y
-            self._previsualization_position = (int(_posx), int(_posy))
-            self._force_render()
-
-        # Draw the surface
-        if surface is not None:
-            surface.blit(self._previsualization_surface, self._previsualization_position)
-
     def draw(self, surface: 'pygame.Surface') -> None:
         super(ColorInput, self).draw(surface)  # This calls _render()
-        self._draw_previsualize_color(surface)
+
+        # Draw previsualization box
+        if self._previsualization_surface is not None:
+            posx = self._rect.x + self._rect.width - \
+                   self._prev_width_factor * self._rect.height + self._rect.height / 10
+            posy = self._rect.y
+            surface.blit(self._previsualization_surface, (int(posx), int(posy)))
+
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
-        r = super(ColorInput, self)._render()
+        render_text = super(ColorInput, self)._render()
 
         # Maybe TextInput did not rendered, so this has to be changed
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._rect.width += self._prev_width_factor * self._rect.height + self._prev_margin
+        if not self._dynamic_width or (self._dynamic_width and self._previsualization_surface is not None):
+            self._rect.width += self._prev_width_factor * self._rect.height + self._prev_margin
 
-        # Force previsualization rendering
-        if not r:
+        # Render the previsualization box
+        r, g, b = self.get_value()
+        if not self.is_valid():  # Remove previsualization if invalid color
             self._previsualization_surface = None
+            return render_text
 
-        return r
+        # If previsualization surface is None or the color changed
+        if self._last_r != r or self._last_b != b or self._last_g != g or self._previsualization_surface is None:
+            width = self._prev_width_factor * self._rect.height
+            if width == 0 or self._rect.height == 0:
+                self._previsualization_surface = None
+            else:
+                self._previsualization_surface = make_surface(width, self._rect.height)
+                self._previsualization_surface.fill((r, g, b))
+                self._last_r = r
+                self._last_g = g
+                self._last_b = b
+                if self._dynamic_width:
+                    self._rect.width += self._prev_width_factor * self._rect.height + \
+                                        self._prev_margin
+
+        return render_text
 
     def _format_hex(self) -> None:
         """
