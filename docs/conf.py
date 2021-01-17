@@ -126,3 +126,7 @@ latex_documents = [
 ]
 
 latex_show_pagerefs = True
+
+# -- Options for autodoc - typehints ---
+
+set_type_checking_flag = True

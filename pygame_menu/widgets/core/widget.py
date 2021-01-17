@@ -1564,6 +1564,7 @@ class Widget(object):
         anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_draw_callback`
 
         :param draw_callback: Function
+        :type draw_callback: callable, None
         :return: Callback ID
         """
         assert is_callable(draw_callback), 'draw callback must be callable (function-type)'
@@ -1610,6 +1611,7 @@ class Widget(object):
             in some widgets (for example, label or images).
 
         :param update_callback: Function
+        :type update_callback: callable, None
         :return: Callback ID
         """
         assert is_callable(update_callback), 'update callback must be callable (function-type)'

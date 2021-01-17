@@ -90,6 +90,7 @@ class Button(Widget):
             callback(selected, widget, menu)
 
         :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+        :type callback: callable, None
         :return: None
         """
         if callback is not None:
