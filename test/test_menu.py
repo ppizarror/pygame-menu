@@ -480,6 +480,27 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(theme=theme)
         self.assertTrue(menu._center_content)
 
+        # Text offset
+        theme = pygame_menu.themes.THEME_DARK.copy()
+        theme.title_font_size = 35
+        theme.widget_font_size = 25
+
+        menu = pygame_menu.Menu(
+            title='test',
+            height=300,
+            theme=theme,
+            width=400
+        )
+
+        menu.add_label('Text #1')
+        menu.add_vertical_margin(100)
+        menu.add_label('Text #2')
+        v = 36
+        if pygame.version.vernum.major < 2:
+            v = 35
+
+        self.assertEqual(menu._widget_offset[1], v)
+
     def test_getters(self):
         """
         Test other getters.

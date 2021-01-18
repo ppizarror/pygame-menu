@@ -1398,13 +1398,10 @@ class Menu(object):
 
             # Update max/min position
             min_max_updated = True
-            widget_rect = widget.get_rect()
-            x, y = widget_rect.bottomright
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
-            x, y = widget_rect.topleft
-            min_x = min(min_x, x)
-            min_y = min(min_y, y)
+            max_x = max(max_x, x_coord + rect.width)
+            max_y = max(max_y, y_coord + rect.height)
+            min_x = min(min_x, x_coord)
+            min_y = min(min_y, y_coord)
 
         # Update position
         if min_max_updated:
@@ -1459,7 +1456,7 @@ class Menu(object):
 
         # If vertical overflow
         elif max_y > self._height - menubar_height:
-            width, height = self._width - sy, max_y + sy * 0.25
+            width, height = self._width - sy, max_y + sy * 0.35
             if not self._mouse_visible:
                 self._mouse_visible = True
 
@@ -1477,6 +1474,10 @@ class Menu(object):
         # Adds scrollarea margin
         width += self._scrollarea_margin[0]
         height += self._scrollarea_margin[1]
+
+        # Cast to int
+        width = int(width)
+        height = int(height)
 
         self._widgets_surface = _utils.make_surface(width, height)
         self._scroll.set_world(self._widgets_surface)
@@ -1606,9 +1607,14 @@ class Menu(object):
             self._widget_offset[1] = 0
             return
         if self._widgets_surface is None:
-            self._build_widget_surface()  # For position (max/min)
+            self._update_widget_position()  # For position (max/min)
         available = self.get_height(inner=True)
         widget_height = self.get_height(widget=True)
+        if widget_height >= available:  # There's nothing to center
+            if self._widget_offset[1] != 0:
+                self._widgets_surface = None
+                self._widget_offset[1] = 0
+                return
         new_offset = int(max(float(available - widget_height) / 2, 0))
         if abs(new_offset - self._widget_offset[1]) > 1:
             self._widget_offset[1] = new_offset
@@ -1730,6 +1736,7 @@ class Menu(object):
             return
         window_width, window_height = self._window_size
 
+        self._render()  # Surface may be none, then update the positioning
         rect = widget.get_rect()  # type: pygame.Rect
 
         # Apply selection effect

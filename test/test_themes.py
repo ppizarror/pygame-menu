@@ -39,7 +39,7 @@ import pygame_menu
 
 class ThemeTest(unittest.TestCase):
 
-    def test_validation(self) -> None:
+    def test_validation(self):
         """
         Validate theme.
         """
@@ -61,7 +61,7 @@ class ThemeTest(unittest.TestCase):
         theme.widget_padding = 'Epic'
         self.assertEqual(theme.validate(), None)
 
-    def test_copy(self) -> None:
+    def test_copy(self):
         """
         Test theme copy.
         """
