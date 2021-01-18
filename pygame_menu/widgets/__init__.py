@@ -38,7 +38,7 @@ from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection
 
 # Widgets
 from pygame_menu.widgets.widget import Button, ColorInput, Image, Label, NoneWidget, ScrollBar, \
-    Selector, TextInput, VMargin
+    Selector, TextInput, ToggleSwitch, VMargin
 
 # Menubar and positions
 from pygame_menu.widgets.widget import MenuBar, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
