@@ -176,6 +176,26 @@ class BaseImage(object):
         assert_vector2(drawing_offset)
         self._drawing_offset = (drawing_offset[0], drawing_offset[1])
 
+    def __copy__(self):
+        """
+        Copy method.
+
+        :return: New instance of the object
+        :rtype: BaseImage
+        """
+        return self.copy()
+
+    def __deepcopy__(self, memodict):
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :type memodict: dict
+        :return: New instance of the object
+        :rtype: BaseImage
+        """
+        return self.copy()
+
     def copy(self):
         """
         Return a copy of the image.
@@ -186,7 +206,8 @@ class BaseImage(object):
         image = BaseImage(
             image_path=self._filepath,
             drawing_mode=self._drawing_mode,
-            drawing_offset=self._drawing_offset
+            drawing_offset=self._drawing_offset,
+            load_from_file=False
         )
         image._surface = self._surface.copy()
         image._original_surface = self._surface.copy()
