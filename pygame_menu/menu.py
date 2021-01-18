@@ -1377,15 +1377,19 @@ class Menu(object):
                 if rwidget.visible:
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
-                    if r == 0 and self._widget_offset[1] == 0:  # No widget is before
-                        if rwidget.is_selectable:  # Add top margin
-                            ysum += rwidget.get_selection_effect().get_margin()[0]
+
+                    # If no widget is before add the selection effect
+                    yselh = rwidget.get_selection_effect().get_margin()[0]
+                    if r == 0 and self._widget_offset[1] <= yselh:
+                        if rwidget.is_selectable:
+                            ysum += yselh - self._widget_offset[1]
 
             # If the widget offset is zero, then add the selection effect to the height
             # of the widget to avoid visual glitches
-            if ysum == 1 and self._widget_offset[1] == 0:  # No widget is before
+            yselh = widget.get_selection_effect().get_margin()[0]
+            if ysum == 1 and self._widget_offset[1] <= yselh:  # No widget is before
                 if widget.is_selectable:  # Add top margin
-                    ysum += widget.get_selection_effect().get_margin()[0]
+                    ysum += yselh - self._widget_offset[1]
 
             y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
 
