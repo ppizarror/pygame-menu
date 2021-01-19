@@ -36,7 +36,7 @@ three values:
 .. code-block:: python
 
     def func(name):
-        print("Hello world from", name)  # name will be 'foo'
+        print('Hello world from', name)  # name will be 'foo'
 
     menu = pygame_menu.Menu(...)
 
@@ -68,23 +68,27 @@ displayed, the others are the arguments passed to the callbacks
 
 .. code-block:: python
 
-    def change_background_color(value, surface, color):
-        name, index = value
-        print("Change color to", name)
-        if color == (-1, -1, -1):
-            # Generate a random color
+    def change_background_color(selected_value, color, **kwargs):
+        value_tuple, index = selected_value
+        print('Change widget color to', value_tuple[0])  # selected_value format ('Color', surface, color)
+        if color == (-1, -1, -1):  # Generate a random color
             color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
-        surface.fill(color)
+        widget: 'pygame_menu.widgets.Selector' = kwargs.get('widget')
+        widget.update_font({'selected_color': color})
+        widget.get_selection_effect().color = color
 
     menu = pygame_menu.Menu(...)
 
-    menu.add_selector('Current color',
-                      # list of (Text, parameters...)
-                      [('Default', surface, (128, 0, 128)),
-                       ('Black', surface, (0, 0, 0)),
-                       ('Blue', surface, (0, 0, 255)),
-                       ('Random', surface, (-1, -1, -1))],
-                      onchange=change_background_color)
+    selector = menu.add_selector(
+        title='Current color: ',
+        items=[('Default', (255, 255, 255)),
+               ('Black', (0, 0, 0)),
+               ('Blue', (0, 0, 255)),
+               ('Random', (-1, -1, -1))],
+        onreturn=change_background_color,  # user press "Return" button
+        onchange=change_background_color  # User changes value with left/right keys
+    )
+    selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
 
 .. automethod:: pygame_menu.Menu.add_selector
 
@@ -202,10 +206,33 @@ on entered characters can be set using ``input_type``, ``maxchar``,
     menu = pygame_menu.Menu(...)
 
     menu.add_text_input('First name: ', default='John', onreturn=check_name)
-    menu.add_text_input('Last name: ', default='Doe', maxchar=20)
+    menu.add_text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
     menu.add_text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
 
 .. automethod:: pygame_menu.Menu.add_text_input
+
+
+Add a toggle switch
+-------------------
+
+A fully customizable switch between two states (``On``, ``Off``). If
+you need more options, take a look at the ``ToggleSwitch`` widget class.
+
+**Example:**
+
+.. image:: ../_static/widget_toggleswitch.png
+    :scale: 48%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
+    menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+                           state_text=('Apagado', 'Encencido'))
+
+.. automethod:: pygame_menu.Menu.add_toggle_switch
 
 
 Add a vertical spacer
@@ -247,12 +274,10 @@ requires more CPU resources.
 
 .. code-block:: python
 
-    PATH = os.path.join(os.path.dirname(pygame_menu.__file__),
-                        'resources', 'images', 'pygame_menu.png')
-
     menu = pygame_menu.Menu(...)
 
-    menu.add_image(PATH, angle=10, scale=(0.15, 0.15))
-    menu.add_image(PATH, angle=-10, scale=(0.15, 0.15), scale_smooth=True)
+    image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
+    menu.add_image(image_path, angle=10, scale=(0.15, 0.15))
+    menu.add_image(image_path, angle=-10, scale=(0.15, 0.15))
 
 .. automethod:: pygame_menu.Menu.add_image
