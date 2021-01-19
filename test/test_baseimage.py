@@ -34,6 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from test._utils import *
+import copy
 import sys
 
 from pygame_menu.baseimage import *
@@ -149,6 +150,10 @@ class BaseImageTest(unittest.TestCase):
         image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image_copied = image.copy()
         self.assertTrue(image.equals(image_copied))
+        image_copy = copy.copy(image)
+        image_copy2 = copy.deepcopy(image)
+        self.assertTrue(image.equals(image_copy))
+        self.assertTrue(image.equals(image_copy2))
 
     def test_transform(self):
         """
