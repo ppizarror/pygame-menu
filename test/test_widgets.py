@@ -635,7 +635,7 @@ class WidgetsTest(unittest.TestCase):
         widget.set_value('#ffffff')
         width = 342
         if pygame.version.vernum.major < 2:
-            width = 348
+            width = 345
         self.assertEqual(widget.get_width(), width)
         widget.set_value(None)
         self.assertEqual(widget.get_width(), 200)
@@ -835,7 +835,10 @@ class WidgetsTest(unittest.TestCase):
             width=400
         )
         textinput = menu.add_text_input('title', input_underline='_')
-        self.assertEqual(menu._widget_offset[1], 107)
+        width = 107
+        if pygame.version.vernum.major < 2:
+            width = 106
+        self.assertEqual(menu._widget_offset[1], width)
         self.assertEqual(textinput.get_width(), 376)
         self.assertEqual(textinput._current_underline_string, '______________________________')
         menu.render()

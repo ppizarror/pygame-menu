@@ -119,14 +119,16 @@ def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
     Assert that a fixed length vector is numeric.
 
     :param num_vector: Numeric vector
-    :param length: Length of the required vector
+    :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \
         'vector "{0}" must be a list or tuple of {1} items'.format(num_vector, length)
-    assert len(num_vector) == length, \
-        'vector "{0}" must contain {0} numbers only'.format(num_vector, length)
-    for i in range(length):
+    if length != 0:
+        msg = 'vector "{0}" must contain {1} numbers only, ' \
+              'but {2} were given'.format(num_vector, length, len(num_vector))
+        assert len(num_vector) == length, msg
+    for i in range(len(num_vector)):
         assert isinstance(num_vector[i], (int, float)), \
             'item {0} of vector must be integer or float, not type "{1}"'.format(num_vector[i], type(num_vector[i]))
 
