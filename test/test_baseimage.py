@@ -205,3 +205,27 @@ class BaseImageTest(unittest.TestCase):
 
         # Image channels
         image.pick_channels(('r', 'g', 'b'))
+
+    def test_cache(self) -> None:
+        """
+        Tache draw test.
+        """
+        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertEqual(image._last_transform[2], None)
+
+        image.set_drawing_mode(pygame_menu.baseimage.IMAGE_MODE_FILL)
+
+        # Draw, this should force cache
+        image.draw(surface)
+        self.assertNotEqual(image._last_transform[2], None)
+        s = image._last_transform[2]
+        image.draw(surface)  # Draw again, then the image should be the same
+        self.assertEqual(image._last_transform[2], s)
+        self.assertEqual(image._last_transform[0], 600)
+
+        # Changes the area, then image should change
+        r = image.get_rect()
+        r.width = 300
+        image.draw(surface, r)
+        self.assertNotEqual(image._last_transform[2], s)
+        self.assertEqual(image._last_transform[0], 300)
