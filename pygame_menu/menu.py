@@ -432,7 +432,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(left,bottom)* margin in px (tuple, list)
+            - ``margin``                Widget *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -550,7 +550,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(left,bottom)* margin in px (tuple, list)
+            - ``margin``                Widget *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -622,7 +622,7 @@ class Menu(object):
             - ``align``                 Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_ (str)
             - ``background_color``      Color of the background (tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)
             - ``background_inflate``    Inflate background in *(x,y)* in px (tuple, list)
-            - ``margin``                *(left,bottom)* margin in px (tuple, list)
+            - ``margin``                Widget *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -680,7 +680,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(left,bottom)* margin in px (tuple, list)
+            - ``margin``                Widget *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``shadow``                Shadow is enabled or disabled (bool)
             - ``shadow_color``          Text shadow color (tuple, list)
@@ -691,7 +691,7 @@ class Menu(object):
         :type title: str, any
         :param label_id: ID of the label
         :type label_id: str
-        :param max_char: Split the title in several labels if length exceeds. *(0: don't split, -1: split to menu width)*
+        :param max_char: Split the title in several labels if the string length exceeds ``max_char``; *(0: don't split, -1: split to menu width)*
         :type max_char: int
         :param selectable: Label accepts user selection, if not selectable long paragraphs cannot be scrolled through keyboard
         :type selectable: bool
@@ -708,6 +708,25 @@ class Menu(object):
         title = _utils.to_string(title)
         if len(label_id) == 0:
             label_id = str(uuid4())
+
+        # If newline detected, split in two new lines
+        if '\n' in title:
+            title = title.split('\n')
+            widgets = []
+            for t in title:
+                wig = self.add_label(
+                    title=t,
+                    label_id=label_id + '+' + str(len(widgets) + 1),
+                    max_char=max_char,
+                    selectable=selectable,
+                    **kwargs
+                )
+                if isinstance(wig, list):
+                    for w in wig:
+                        widgets.append(w)
+                else:
+                    widgets.append(wig)
+            return widgets
 
         # Wrap text to menu width (imply additional calls to render functions)
         if max_char < 0:
@@ -774,7 +793,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(left,bottom)* margin in px (tuple, list)
+            - ``margin``                Widget *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: (top, right, bottom, left)
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
@@ -858,7 +877,7 @@ class Menu(object):
             - ``font_color``            Widget font color (tuple, list)
             - ``font_name``             Widget font (str)
             - ``font_size``             Font size of the widget (int)
-            - ``margin``                *(left,bottom)* margin in px (tuple, list)
+            - ``margin``                Widget *(left,bottom)* margin in px (tuple, list)
             - ``padding``               Widget padding according to CSS rules (int, float, list, tuple). General shape: *(top,right,bottom,left)*
             - ``selection_color``       Widget selection color (tuple, list)
             - ``selection_effect``      Widget selection effect (:py:class:`pygame_menu.widgets.core.Selection`)
