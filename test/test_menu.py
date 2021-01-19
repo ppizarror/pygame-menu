@@ -160,7 +160,7 @@ class MenuTest(unittest.TestCase):
         theme.widget_font_size = 20
 
         menu = pygame_menu.Menu(
-            column_min_width=400,
+            column_min_width=380,
             columns=2,
             height=300,
             rows=4,
@@ -183,33 +183,34 @@ class MenuTest(unittest.TestCase):
         label.rotate(90)
 
         menu.render()
+        # menu.mainloop(surface)
 
         x, y = quit1.get_position()
-        self.assertEqual(x, 180)
+        self.assertEqual(x, 170)
         self.assertEqual(y, 6)
         x, y = name1.get_position()
-        self.assertEqual(x, 125)
+        self.assertEqual(x, 115)
         self.assertEqual(y, 74)
         x, y = sel1.get_position()
-        self.assertEqual(x, 114)
+        self.assertEqual(x, 104)
         self.assertEqual(y, 142)
         x, y = sel2.get_position()
-        self.assertEqual(x, 114)
+        self.assertEqual(x, 104)
         self.assertEqual(y, 180)
         x, y = play1.get_position()
-        self.assertEqual(x, 409)
+        self.assertEqual(x, 389)
         self.assertEqual(y, 6)
         x, y = play2.get_position()
-        self.assertEqual(x, 737)
+        self.assertEqual(x, 697)
         self.assertEqual(y, 6)
         x, y = hidden.get_position()
         self.assertEqual(x, 0)
         self.assertEqual(y, 0)
         x, y = quit2.get_position()
-        self.assertEqual(x, 580)
+        self.assertEqual(x, 550)
         self.assertEqual(y, 44)
         x, y = label.get_position()
-        self.assertEqual(x, 586)
+        self.assertEqual(x, 556)
         self.assertEqual(y, 82)
 
         # Test no selectable position
@@ -510,18 +511,40 @@ class MenuTest(unittest.TestCase):
         theme.widget_offset = (0, 100)
         menu = MenuUtils.generic_menu(theme=theme)
         self.assertEqual(menu.get_theme(), theme)
-        self.assertFalse(menu._center_content)
+        self.assertFalse(menu._auto_centering)
 
         # Outer scrollarea margin disables centering
         theme = pygame_menu.themes.THEME_BLUE.copy()
         theme.scrollarea_outer_margin = (0, 100)
         menu = MenuUtils.generic_menu(theme=theme)
-        self.assertFalse(menu._center_content)
+        self.assertFalse(menu._auto_centering)
 
         # Normal
         theme = pygame_menu.themes.THEME_BLUE.copy()
         menu = MenuUtils.generic_menu(theme=theme)
-        self.assertTrue(menu._center_content)
+        self.assertTrue(menu._auto_centering)
+
+        # Text offset
+        theme = pygame_menu.themes.THEME_DARK.copy()
+        theme.title_font_size = 35
+        theme.widget_font_size = 25
+
+        menu = pygame_menu.Menu(
+            column_min_width=400,
+            height=300,
+            theme=theme,
+            title='Images in v4',
+            width=400
+        )
+
+        menu.add_label('Text #1')
+        menu.add_vertical_margin(100)
+        menu.add_label('Text #2')
+        v = 36
+        if pygame.version.vernum.major < 2:
+            v = 35
+
+        self.assertEqual(menu._widget_offset[1], v)
 
     def test_getters(self) -> None:
         """
@@ -681,7 +704,7 @@ class MenuTest(unittest.TestCase):
         column_menu = MenuUtils.generic_menu(columns=2, rows=4)
         for _ in range(8):
             column_menu.add_button('test', pygame_menu.events.BACK)
-        column_menu.mainloop(surface, bgfun=dummy_function)
+        column_menu.mainloop(surface, bgfun=dummy_function, disable_loop=True)
         column_menu._move_selected_left_right(-1)
         column_menu._move_selected_left_right(1)
         column_menu.disable()
@@ -1186,10 +1209,12 @@ class MenuTest(unittest.TestCase):
         """
         menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
         btn = menu.add_button('nice', None)
+        # menu.add_button('nice', None)
 
         # Test focus
         btn.active = True
         focus = menu._draw_focus_widget(surface, btn)
+        # menu.mainloop(surface)
         self.assertEqual(len(focus), 4)
         if pygame.version.vernum.major < 2:
             self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 301), (0, 301)))
