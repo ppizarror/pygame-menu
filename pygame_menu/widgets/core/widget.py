@@ -844,7 +844,7 @@ class Widget(object):
 
     def _apply_transforms(self) -> None:
         """
-        Apply surface transforms: angle, flip and scalling.
+        Apply surface transforms: angle, flip and scaling.
         Translation is applied on widget positioning.
 
         :return: None
@@ -855,7 +855,7 @@ class Widget(object):
         if self._flip[0] or self._flip[1]:
             self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
 
-        self._padding_transform = self._padding  # Reset pad scalling
+        self._padding_transform = self._padding  # Reset pad scaling
         width, height = self.get_size(apply_padding=False)  # No padding
         new_size, smooth = None, None
 
@@ -885,7 +885,7 @@ class Widget(object):
         else:
             raise RuntimeError('max_width and max_height cannot be non-None at the same time')
 
-        # Apply scalling
+        # Apply scaling
         if new_size is not None and smooth is not None and width > 0 and height > 0:
 
             # Apply surface transformation
@@ -1132,7 +1132,7 @@ class Widget(object):
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
                       smooth: bool = True) -> None:
         """
-        Transformation: Set the widget max width, it applies an scalling factor
+        Transformation: Set the widget max width, it applies an scaling factor
         if the widget width is greater than the limit.
 
         .. note::
@@ -1170,7 +1170,7 @@ class Widget(object):
             assert width >= 0, 'width must be equal or greater than zero'
             self._max_width = [width, scale_height, smooth]
             if self._scale[0]:
-                msg = 'widget already has a scalling factor applied. Scalling has been' \
+                msg = 'widget already has a scaling factor applied. Scaling has been' \
                       'disabled'
                 warnings.warn(msg)
                 return
@@ -1184,7 +1184,7 @@ class Widget(object):
     def set_max_height(self, height: NumberType, scale_width: NumberType = False,
                        smooth: bool = True) -> None:
         """
-        Transformation: Set the widget max height, it applies an scalling factor
+        Transformation: Set the widget max height, it applies an scaling factor
         if the widget height is greater than the limit.
 
         .. note::
@@ -1217,7 +1217,7 @@ class Widget(object):
             assert height > 0, 'height must be greater than zero'
             self._max_height = [height, scale_width, smooth]
             if self._scale[0]:
-                msg = 'widget already has a scalling factor applied. Scalling has been' \
+                msg = 'widget already has a scaling factor applied. Scaling has been' \
                       'disabled'
                 warnings.warn(msg)
                 return
@@ -1251,7 +1251,7 @@ class Widget(object):
 
         .. note::
 
-            Scalling considers widget padding.
+            Scaling considers widget padding.
 
         .. note::
 
@@ -1276,16 +1276,16 @@ class Widget(object):
         self._disable_scale()
         if self._max_width[0] is not None:
             msg = 'widget max width is not None. Set widget.set_max_width(None) ' \
-                  'for disabling such feature. This scalling will be ignored'
+                  'for disabling such feature. This scaling will be ignored'
             warnings.warn(msg)
             return
         if self._max_height[0] is not None:
             msg = 'widget max height is not None. Set widget.set_max_height(None) ' \
-                  'for disabling such feature. This scalling will be ignored'
+                  'for disabling such feature. This scaling will be ignored'
             warnings.warn(msg)
             return
         self._scale = [True, width, height, smooth]
-        if width == 1 and height == 1:  # Disables scalling
+        if width == 1 and height == 1:  # Disables scaling
             self._scale[0] = False
 
         self._force_render()
@@ -1302,7 +1302,7 @@ class Widget(object):
         .. note::
 
             The resize method uses the base widget size, without any transformation,
-            if a scalling factor is applied it unscales and then scales back to get
+            if a scaling factor is applied it unscales and then scales back to get
             the desired width/height.
 
         .. note::

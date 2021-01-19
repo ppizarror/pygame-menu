@@ -193,13 +193,13 @@ class WidgetsTest(unittest.TestCase):
         w.translate(10, 10)
         w.scale(1, 1)
         w.set_max_width(None)
-        self.assertFalse(w._scale[0])  # Scalling is disabled
+        self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.resize(40, 40)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.flip(False, False)
@@ -224,11 +224,11 @@ class WidgetsTest(unittest.TestCase):
             w.flip(True, True)
         self.menu.draw(surface)
 
-        # If widget max width is enabled, disable scalling
+        # If widget max width is enabled, disable scaling
         w = self.menu.add_label('Text')
-        self.assertFalse(w._scale[0])  # Scalling is disabled
+        self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         w.set_max_width(100)
         self.assertFalse(w._scale[0])
 
@@ -251,7 +251,7 @@ class WidgetsTest(unittest.TestCase):
         label.set_padding(54)
         self.assertEqual(label.get_width(), 800)
 
-        # Apply scalling
+        # Apply scaling
         label.scale(0.5, 0.5)
         self.assertEqual(label.get_width(), 400)
         label.scale(0.5, 0.5)
@@ -1302,7 +1302,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb._on_return, None)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
-        # Scrollbar ignores scalling
+        # Scrollbar ignores scaling
         sb.scale(2, 2)
         self.assertFalse(sb._scale[0])
         sb.resize(2, 2)
