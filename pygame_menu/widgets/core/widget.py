@@ -256,13 +256,14 @@ class Widget(object):
         """
         raise _WidgetCopyException('Widget class cannot be deep-copied')
 
-    def _force_render(self) -> None:
+    def _force_render(self) -> Optional[bool]:
         """
-        Forces widget render on next ``_render()`` call.
+        Forces widget render.
 
-        :return: None
+        :return: Render return value
         """
         self._last_render_hash = 0
+        return self._render()
 
     def _force_menu_surface_update(self) -> None:
         """
@@ -290,8 +291,7 @@ class Widget(object):
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         """
-        self._force_render()
-        return self._render()
+        return self._force_render()
 
     def _render(self) -> Optional[bool]:
         """
@@ -726,6 +726,19 @@ class Widget(object):
             self._menu._check_id_duplicated(widget_id)
         self._id = widget_id
 
+    def add_self_to_kwargs(self, key: str = 'widget') -> None:
+        """
+        Adds widget to kwargs, it helps to get the widget reference for callbacks.
+        It raises ``KeyError`` if key is duplicated.
+
+        :param key: Name of the parameter
+        :return: None
+        """
+        assert isinstance(key, str)
+        if key in self._kwargs.keys():
+            raise KeyError('duplicated key')
+        self._kwargs[key] = self
+
     def _font_render_string(self, text: str, color: ColorType = (0, 0, 0),
                             use_background_color: bool = True) -> 'pygame.Surface':
         """
@@ -876,7 +889,7 @@ class Widget(object):
         if new_size is not None and smooth is not None and width > 0 and height > 0:
 
             # Apply surface transformation
-            if smooth:
+            if smooth and self._surface.get_bitsize() >= 24:
                 self._surface = pygame.transform.smoothscale(self._surface, new_size)
             else:
                 self._surface = pygame.transform.scale(self._surface, new_size)
