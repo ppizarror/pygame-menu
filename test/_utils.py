@@ -289,6 +289,19 @@ class PygameUtils(object):
         y = float(y1 + y2) / 2
         return [x, y]
 
+    @staticmethod
+    def middle_rect_mouse_click(rect):
+        """
+        Return event clicking the middle of a given rect.
+
+        :param rect: Rect object
+        :type rect: :py:class:`pygame.rect.Rect`
+        :return: Event
+        :rtype: :py:class:`pygame.event.Event`
+        """
+        x, y = PygameUtils.get_middle_rect(rect)
+        return PygameUtils.mouse_click(x, y, inlist=False)
+
 
 class MenuUtils(object):
     """
