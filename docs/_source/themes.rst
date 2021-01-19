@@ -152,7 +152,7 @@ The selection color is defined in :py:attr:`Theme.widget_selection_color`.
 Fonts
 -----
 
-This library also has some fonts to use. To load a font, run this code:
+This library also has some fonts to use (TTF format). To load a font, run this code:
 
 .. code-block:: python
 
@@ -161,9 +161,9 @@ This library also has some fonts to use. To load a font, run this code:
     font = pygame_menu.font.FONT_NAME
     my_theme = Theme(widget_font=font, ...)
 
-==================================================  =============================================
+==================================================  ===============================================
 Available fonts                                     Preview
-==================================================  =============================================
+==================================================  ===============================================
 :py:class:`pygame_menu.font.FONT_8BIT`              .. image:: ../_static/font_8bit.png
 :py:class:`pygame_menu.font.FONT_BEBAS`             .. image:: ../_static/font_bebas.png
 :py:class:`pygame_menu.font.FONT_COMIC_NEUE`        .. image:: ../_static/font_comic_neue.png
@@ -176,7 +176,7 @@ Available fonts                                     Preview
 :py:class:`pygame_menu.font.FONT_OPEN_SANS_ITALIC`  .. image:: ../_static/font_open_sans_italic.png
 :py:class:`pygame_menu.font.FONT_OPEN_SANS_LIGHT`   .. image:: ../_static/font_open_sans_light.png
 :py:class:`pygame_menu.font.FONT_PT_SERIF`          .. image:: ../_static/font_pt_serif.png
-==================================================  =============================================
+==================================================  ===============================================
 
 System fonts can also be used. The available system fonts can be listed using the following command in a python shell:
 

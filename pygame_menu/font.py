@@ -69,7 +69,7 @@ FONT_OPEN_SANS = __fonts_path__.format('opensans_regular.ttf')
 FONT_OPEN_SANS_BOLD = __fonts_path__.format('opensans_bold.ttf')
 FONT_OPEN_SANS_ITALIC = __fonts_path__.format('opensans_italic.ttf')
 FONT_OPEN_SANS_LIGHT = __fonts_path__.format('opensans_light.ttf')
-FONT_PT_SERIF = __fonts_path__.format('pt_serif.ttf')
+FONT_PT_SERIF = __fonts_path__.format('ptserif_regular.ttf')
 
 FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_FRANCHISE, FONT_HELVETICA,
                  FONT_MUNRO, FONT_NEVIS, FONT_OPEN_SANS, FONT_OPEN_SANS_BOLD, FONT_OPEN_SANS_ITALIC,

@@ -35,6 +35,8 @@ import pygame
 import pygame_menu
 import random
 
+from pygame_menu.font import FONT_EXAMPLES
+
 from pygame_menu.custom_types import NumberType, Union, List, Tuple, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType
 
@@ -286,34 +288,14 @@ class MenuUtils(object):
         return pygame_menu.font.get_font(name, size)
 
     @staticmethod
-    def get_library_fonts() -> List[str]:
-        """
-        Return a test font from the library.
-
-        :return: Font file
-        """
-        return [
-            pygame_menu.font.FONT_8BIT,
-            pygame_menu.font.FONT_BEBAS,
-            pygame_menu.font.FONT_COMIC_NEUE,
-            pygame_menu.font.FONT_FRANCHISE,
-            pygame_menu.font.FONT_HELVETICA,
-            pygame_menu.font.FONT_MUNRO,
-            pygame_menu.font.FONT_NEVIS,
-            pygame_menu.font.FONT_OPEN_SANS,
-            pygame_menu.font.FONT_PT_SERIF
-        ]
-
-    @staticmethod
     def random_font() -> str:
         """
         Return a random font from the library.
 
         :return: Font file
         """
-        fonts = MenuUtils.get_library_fonts()
-        opt = random.randrange(0, len(fonts))
-        return fonts[opt]
+        opt = random.randrange(0, len(FONT_EXAMPLES))
+        return FONT_EXAMPLES[opt]
 
     @staticmethod
     def load_font(font: str, size: int) -> 'pygame.font.Font':
