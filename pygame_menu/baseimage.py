@@ -388,9 +388,11 @@ class BaseImage(object):
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
-        if not smooth:
+        if width == 1 and height == 1:
+            return self
+        if not smooth or self._surface.get_bitsize() < 24:
             self._surface = pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
-        else:
+        else:  # image bitsize less than 24 bits raises ValueError
             self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
         return self
 
