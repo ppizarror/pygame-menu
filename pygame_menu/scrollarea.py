@@ -280,15 +280,22 @@ class ScrollArea(object):
         """
         return self._rect.copy()
 
-    def get_scrollbar_thickness(self, orientation):
+    def get_scrollbar_thickness(self, orientation, real=False):
         """
         Return the scroll thickness of the area. If it's hidden return zero.
 
         :param orientation: Orientation of the scroll
         :type orientation: str
+        :param real: If ``True`` returns the real thickness depending if it is shown or not
+        :type real: bool
         :return: Thickness in px
         :rtype: int
         """
+        assert isinstance(real, bool)
+        if real:
+            for sbar in self._scrollbars:
+                if sbar.get_orientation() == orientation:
+                    return sbar.get_thickness()
         if orientation == _locals.ORIENTATION_HORIZONTAL:
             return int(self._rect.height - self._view_rect.height)
         elif orientation == _locals.ORIENTATION_VERTICAL:
