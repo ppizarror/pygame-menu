@@ -6,8 +6,6 @@ exclude .replit
 exclude docs/*
 exclude docs/_source/*
 exclude docs/_static/*
-exclude pygame_menu/*/build/*
-exclude pygame_menu/*/dist/*
 exclude test/*.py
 
 include requirements.txt
