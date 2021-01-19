@@ -97,8 +97,6 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_height(), 400)
         self.assertEqual(menu.get_height(inner=True), 345)
         self.assertEqual(menu.get_menubar_widget().get_height(), 55)
-        self.assertEqual(btn.get_width(), 94)
-        self.assertEqual(btn.get_size()[0], 94)
 
         h = 41
         if pygame.version.vernum.major < 2:
@@ -117,11 +115,12 @@ class MenuTest(unittest.TestCase):
             menu.add_button('button', None)
         self.assertEqual(menu._widget_offset[1], 0)
 
+        theme = menu.get_theme()
+
         # Anyway, as the widget is 0, the first button position should be the height of its selection effect
         btneff = btn.get_selection_effect().get_margin()[0]
         self.assertEqual(btn.get_position()[1], btneff + 1)
 
-        theme = menu.get_theme()
         self.assertEqual(h * 21 + theme.widget_margin[1] * 20, menu.get_height(widget=True))
 
         # Test menu not centered
@@ -142,7 +141,7 @@ class MenuTest(unittest.TestCase):
         theme.widget_font_size = 20
 
         menu = pygame_menu.Menu(
-            column_max_width=[400, 400],
+            column_max_width=[380, 380],
             columns=2,
             height=300,
             rows=4,
@@ -163,31 +162,52 @@ class MenuTest(unittest.TestCase):
         label.rotate(90)
 
         menu.render()
+        # menu.mainloop(surface)
 
         x, y = quit1.get_position()
-        self.assertEqual(x, 180)
+        self.assertEqual(x, 170)
         self.assertEqual(y, 6)
         x, y = name1.get_position()
-        self.assertEqual(x, 125)
+        self.assertEqual(x, 115)
         self.assertEqual(y, 74)
         x, y = sel1.get_position()
-        self.assertEqual(x, 114)
+        self.assertEqual(x, 104)
         self.assertEqual(y, 142)
         x, y = sel2.get_position()
-        self.assertEqual(x, 114)
+        self.assertEqual(x, 104)
         self.assertEqual(y, 180)
         x, y = play1.get_position()
-        self.assertEqual(x, 409)
+        self.assertEqual(x, 389)
         self.assertEqual(y, 6)
         x, y = hidden.get_position()
         self.assertEqual(x, 0)
         self.assertEqual(y, 0)
         x, y = quit2.get_position()
-        self.assertEqual(x, 580)
+        self.assertEqual(x, 550)
         self.assertEqual(y, 44)
         x, y = label.get_position()
-        self.assertEqual(x, 586)
+        self.assertEqual(x, 556)
         self.assertEqual(y, 82)
+
+        # Test no selectable position
+        menu = MenuUtils.generic_menu(center_content=False)
+        btn = menu.add_button('button', None)
+        btn.is_selectable = False
+        menu.render()
+        self.assertEqual(btn.get_position()[1], 1)
+
+        # Test no selectable + widget
+        menu = MenuUtils.generic_menu()
+        img = menu.add_image(
+            pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
+            scale=(0.25, 0.25),
+            align=pygame_menu.locals.ALIGN_CENTER
+        )
+        btn = menu.add_button('Nice', None)
+        margin = menu.get_theme().widget_margin[1]
+        menu.render()
+        self.assertEqual(menu.get_height(widget=True), img.get_height() + btn.get_height() + margin)
+        self.assertEqual(int((menu.get_height(inner=True) - menu.get_height(widget=True)) / 2), menu._widget_offset[1])
 
     def test_attributes(self):
         """

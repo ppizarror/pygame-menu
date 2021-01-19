@@ -95,14 +95,14 @@ class WidgetsTest(unittest.TestCase):
         w.translate(10, 10)
         w.scale(1, 1)
         w.set_max_width(150)
-        self.assertFalse(w._scale[0])  # Scalling is disabled
+        self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         self.assertFalse(w._scale[4])  # use_same_xy
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.resize(40, 40)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         self.assertTrue(w._scale[4])  # use_same_xy
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
@@ -594,6 +594,70 @@ class WidgetsTest(unittest.TestCase):
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+        # Test underline edge cases
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.title_font_size = 35
+        theme.widget_font_size = 25
+
+        menu = pygame_menu.Menu(
+            column_max_width=400,
+            height=300,
+            theme=theme,
+            title='Label',
+            onclose=pygame_menu.events.CLOSE,
+            width=400
+        )
+        textinput = menu.add_text_input('title', input_underline='_')
+        width = 107
+        if pygame.version.vernum.major < 2:
+            width = 106
+        self.assertEqual(menu._widget_offset[1], width)
+        self.assertEqual(textinput.get_width(), 376)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        self.assertEqual(textinput.get_width(), 376)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        textinput.set_title('nice')
+        self.assertEqual(textinput.get_width(), 379)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (379, 400))
+        textinput.set_value('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ')
+        self.assertEqual(textinput.get_width(), 712)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (712, 400))
+        textinput.set_padding(100)
+        self.assertEqual(textinput.get_width(), 912)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (912, 400))
+        textinput.set_padding(200)
+        self.assertEqual(textinput.get_width(), 1112)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (1112, 380))
+
+        # Test underline
+        textinput = menu.add_text_input('title: ')
+        textinput.set_value('this is a test value')
+        self.assertEqual(textinput.get_width(), 266)
+
+        menu.clear()
+        textinput = menu.add_text_input('title: ', input_underline='.-')
+        textinput.set_value('QQQQQQQQQQQQQQQ')
+        self.assertEqual(textinput.get_width(), 388)
+        self.assertEqual(textinput._current_underline_string, '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
+
+        textinput = menu.add_text_input('title: ', input_underline='_', input_underline_len=10)
+        self.assertEqual(textinput._current_underline_string, '_' * 10)
 
     def test_button(self):
         """

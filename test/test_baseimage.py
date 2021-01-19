@@ -178,8 +178,9 @@ class BaseImageTest(unittest.TestCase):
         image.restore()
         self.assertTrue(image.equals(image_original))
 
-        # As the example is not 24/32 bits smooth scale fails
-        self.assertRaises(ValueError, lambda: image.resize(100, 100, True))
+        # As the example is not 24/32 bits smooth scale fails, but baseimage should notice that
+        imagc = image.copy()
+        imagc.resize(100, 100, True)
 
         # Get rect
         rect = image.get_rect()
