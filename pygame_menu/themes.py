@@ -153,6 +153,8 @@ class Theme(object):
     :type title_shadow_offset: int, float
     :param title_shadow_position: Position of the shadow on title. See :py:mod:`pygame_menu.locals`
     :type title_shadow_position: str
+    :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
+    :type title_updates_pygame_display: bool
     :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_. See :py:mod:`pygame_menu.locals`
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget, it can be a color or a BaseImage object. Background fills the entire widget + the padding
@@ -221,6 +223,7 @@ class Theme(object):
     title_shadow_color: ColorType
     title_shadow_offset: NumberType
     title_shadow_position: str
+    title_updates_pygame_display: bool
     widget_alignment: str
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
     widget_background_inflate: Tuple2NumberType
@@ -269,6 +272,7 @@ class Theme(object):
         self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float), 2)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
                                                _locals.POSITION_NORTHWEST)
+        self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
 
         # ScrollArea
         self.scrollarea_outer_margin = self._get(kwargs, 'scrollarea_outer_margin', 'tuple2', (0, 0))
@@ -353,11 +357,12 @@ class Theme(object):
         assert isinstance(self.title_font, str)
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_shadow_offset, (int, float))
+        assert isinstance(self.title_updates_pygame_display, bool)
         assert isinstance(self.widget_font, str)
         assert isinstance(self.widget_font_size, int)
+        assert isinstance(self.widget_padding, (int, float, tuple, list))
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
         assert isinstance(self.widget_shadow_offset, (int, float))
-        assert isinstance(self.widget_padding, (int, float, tuple, list))
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
