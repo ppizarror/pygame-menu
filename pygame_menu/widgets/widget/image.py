@@ -37,7 +37,7 @@ import pygame
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets.core import Widget
 from pygame_menu.custom_types import Union, List, NumberType, CallbackType, Tuple2NumberType, Tuple, Optional
-from pygame_menu.utils import assert_vector2
+from pygame_menu.utils import assert_vector
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -70,7 +70,7 @@ class Image(Widget):
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
         assert isinstance(scale_smooth, bool)
-        assert_vector2(scale)
+        assert_vector(scale, 2)
 
         super(Image, self).__init__(
             onselect=onselect,
@@ -138,7 +138,7 @@ class Image(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._render_hash_changed(self.visible):
             return True
-        self._menu_surface_needs_update = True  # Force Menu update
+        self._force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

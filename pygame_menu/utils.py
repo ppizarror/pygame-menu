@@ -35,7 +35,7 @@ __all__ = [
     'assert_color',
     'assert_orientation',
     'assert_position',
-    'assert_vector2',
+    'assert_vector',
     'check_key_pressed_valid',
     'is_callable',
     'make_surface'
@@ -70,18 +70,21 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
     :param color: Object color
     :return: None
     """
-    assert isinstance(color, (tuple, list)), 'color must be a tuple or list'
-    assert 4 >= len(color) >= 3, 'color must be a tuple or list of 3 or 4 numbers'
+    assert isinstance(color, (tuple, list)), \
+        'color must be a tuple or list, not type "{0}"'.format(type(color))
+    assert 4 >= len(color) >= 3, \
+        'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
-            '"{0}" in element color {1} must be an integer'.format(color[i], color)
+            '"{0}" in element color {1} must be an integer, not type "{2}"'.format(color[i], color, type(color))
         assert 0 <= color[i] <= 255, \
-            '"{0}" in element color {1} must be a number between 0 and 255'.format(color[i], color)
+            '"{0}" in element color {1} must be an integer between 0 and 255'.format(color[i], color)
     if len(color) == 4:
-        assert isinstance(color[3], int), 'alpha channel must be an integer between 0 and 255'
+        assert isinstance(color[3], int), \
+            'alpha channel must be an integer between 0 and 255, not type "{0}"'.format(type(color))
         assert 0 <= color[3] <= 255, \
-            'opacity of color {0} must be an integer between 0 and 255, ' \
-            '0 is transparent, 255 is opaque'.format(color)
+            'opacity of color {0} must be an integer between 0 and 255; where ' \
+            '0 is fully-transparent and 255 is fully-opaque'.format(color)
 
 
 def assert_orientation(orientation: str) -> None:
@@ -111,21 +114,23 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
-def assert_vector2(num_vector: Vector2NumberType) -> None:
+def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
     """
-    Assert that a 2-item vector is numeric.
+    Assert that a fixed length vector is numeric.
 
-    :param num_vector: Numeric 2-item vector
+    :param num_vector: Numeric vector
+    :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
     assert isinstance(num_vector, (tuple, list)), \
-        'vector "{0}" must be a list or tuple of 2 items'.format(num_vector)
-    assert len(num_vector) == 2, \
-        'vector "{0}" must contain 2 items only'.format(num_vector)
-    vector_numeric = isinstance(num_vector[0], (int, float)) and \
-                     isinstance(num_vector[1], (int, float))
-    assert vector_numeric, \
-        'each item of "{0}" vector must be integer or float'.format(num_vector)
+        'vector "{0}" must be a list or tuple of {1} items'.format(num_vector, length)
+    if length != 0:
+        msg = 'vector "{0}" must contain {1} numbers only, ' \
+              'but {2} were given'.format(num_vector, length, len(num_vector))
+        assert len(num_vector) == length, msg
+    for i in range(len(num_vector)):
+        assert isinstance(num_vector[i], (int, float)), \
+            'item {0} of vector must be integer or float, not type "{1}"'.format(num_vector[i], type(num_vector[i]))
 
 
 def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:

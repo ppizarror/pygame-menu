@@ -60,6 +60,12 @@ Locals: Local constants
 import pygame_menu.locals
 
 """
+ScrollArea: Scrollarea class
+"""
+# noinspection PyUnresolvedReferences
+import pygame_menu.scrollarea
+
+"""
 Sound: Sound class
 """
 # noinspection PyUnresolvedReferences

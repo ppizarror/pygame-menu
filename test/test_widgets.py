@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['WidgetsTest']
 
+import copy
 import unittest
 from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface
 
@@ -51,6 +52,38 @@ class WidgetsTest(unittest.TestCase):
         """
         test_reset_surface()
         self.menu = MenuUtils.generic_menu()
+
+    def test_kwargs(self) -> None:
+        """
+        Test kwargs addition.
+        """
+
+        def function_kwargs(*args, **kwargs) -> None:
+            """
+            Button callback.
+            """
+            self.assertEqual(len(args), 0)
+            kwargsk = list(kwargs.keys())
+            self.assertEqual(kwargsk[0], 'test')
+            self.assertEqual(kwargsk[1], 'widget')
+
+        self.assertRaises(ValueError, lambda: self.menu.add_button('btn', function_kwargs, test=True))
+        btn = self.menu.add_button('btn', function_kwargs, test=True, accept_kwargs=True, padding=10)
+        self.assertEqual(len(btn._kwargs), 1)
+        self.assertRaises(KeyError, lambda: btn.add_self_to_kwargs('test'))
+        self.assertEqual(len(btn._kwargs), 1)
+        btn.add_self_to_kwargs()
+        self.assertEqual(len(btn._kwargs), 2)
+        self.assertEqual(btn._kwargs['widget'], btn)
+        btn.apply()
+
+    def test_copy(self) -> None:
+        """
+        Test widget copy.
+        """
+        widget = pygame_menu.widgets.core.widget.Widget()
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.copy(widget))
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.deepcopy(widget))
 
     def test_onselect(self) -> None:
         """
@@ -160,13 +193,13 @@ class WidgetsTest(unittest.TestCase):
         w.translate(10, 10)
         w.scale(1, 1)
         w.set_max_width(None)
-        self.assertFalse(w._scale[0])  # Scalling is disabled
+        self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.resize(40, 40)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.flip(False, False)
@@ -191,11 +224,11 @@ class WidgetsTest(unittest.TestCase):
             w.flip(True, True)
         self.menu.draw(surface)
 
-        # If widget max width is enabled, disable scalling
+        # If widget max width is enabled, disable scaling
         w = self.menu.add_label('Text')
-        self.assertFalse(w._scale[0])  # Scalling is disabled
+        self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         w.set_max_width(100)
         self.assertFalse(w._scale[0])
 
@@ -204,7 +237,8 @@ class WidgetsTest(unittest.TestCase):
         Test widget max width/height.
         """
         label = Label('my label is really long yeah, it should be scalled in the width')
-        label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0), (0, 0, 0))
+        label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
+                       (0, 0, 0), (0, 0, 0), (0, 0, 0))
         label.render()
 
         # The padding is zero, also the selection box and all transformations
@@ -217,7 +251,7 @@ class WidgetsTest(unittest.TestCase):
         label.set_padding(54)
         self.assertEqual(label.get_width(), 800)
 
-        # Apply scalling
+        # Apply scaling
         label.scale(0.5, 0.5)
         self.assertEqual(label.get_width(), 400)
         label.scale(0.5, 0.5)
@@ -400,6 +434,11 @@ class WidgetsTest(unittest.TestCase):
         selector.set_value(1)
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(selector.get_value()[0][0], '4 - Easy')
+        selector.readonly = True
+        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_colorinput(self) -> None:
@@ -407,28 +446,28 @@ class WidgetsTest(unittest.TestCase):
         Test ColorInput widget.
         """
 
-        def _assert_invalid_color(_widget) -> None:
+        def _assert_invalid_color(widg) -> None:
             """
             Assert that the widget color is invalid.
-            :param _widget: Widget object
+            :param widg: Widget object
             """
-            _r, _g, _b = _widget.get_value()
-            self.assertEqual(_r, -1)
-            self.assertEqual(_g, -1)
-            self.assertEqual(_b, -1)
+            r, g, b = widg.get_value()
+            self.assertEqual(r, -1)
+            self.assertEqual(g, -1)
+            self.assertEqual(b, -1)
 
-        def _assert_color(_widget, cr, cg, cb) -> None:
+        def _assert_color(widg, cr, cg, cb) -> None:
             """
             Assert that the widget color is invalid.
-            :param _widget: Widget object
+            :param widg: Widget object
             :param cr: Red channel, number between 0 and 255
             :param cg: Green channel, number between 0 and 255
             :param cb: Blue channel, number between 0 and 255
             """
-            _r, _g, _b = _widget.get_value()
-            self.assertEqual(_r, cr)
-            self.assertEqual(_g, cg)
-            self.assertEqual(_b, cb)
+            r, g, b = widg.get_value()
+            self.assertEqual(r, cr)
+            self.assertEqual(g, cg)
+            self.assertEqual(b, cb)
 
         self.menu.clear()
 
@@ -519,7 +558,6 @@ class WidgetsTest(unittest.TestCase):
         for i in range(5):
             widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
-        widget._previsualize_color(surface)
         widget.get_rect()
 
         widget.clear()
@@ -571,7 +609,6 @@ class WidgetsTest(unittest.TestCase):
             widget.update(PygameUtils.key(pygame.K_f, keydown=True, char='f'))
         self.assertEqual(widget._input_string, '#ffffff')
         _assert_color(widget, 255, 255, 255)
-        widget._previsualize_color(surface=None)
 
         # Test hex formats
         widget = self.menu.add_color_input('title', color_type='hex', hex_format='none')
@@ -592,6 +629,29 @@ class WidgetsTest(unittest.TestCase):
         widget.set_value('AABBcc')
         self.assertEqual(widget.get_value(as_string=True), '#AABBCC')
 
+        # Test dynamic sizing
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='upper', dynamic_width=True)
+        self.assertEqual(widget.get_width(), 200)
+        widget.set_value('#ffffff')
+        width = 342
+        if pygame.version.vernum.major < 2:
+            width = 345
+        self.assertEqual(widget.get_width(), width)
+        widget.set_value(None)
+        self.assertEqual(widget.get_width(), 200)
+        self.assertEqual(widget.get_value(as_string=True), '#')
+        widget.set_value('#ffffff')
+        self.assertEqual(widget.get_width(), width)
+        widget.update(
+            PygameUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
+        self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
+        self.assertEqual(widget.get_width(), 200)
+
+        widget = self.menu.add_color_input('title', color_type='hex', hex_format='upper', dynamic_width=False)
+        self.assertEqual(widget.get_width(), width)
+        widget.set_value('#ffffff')
+        self.assertEqual(widget.get_width(), width)
+
     def test_label(self) -> None:
         """
         Test label widget.
@@ -608,14 +668,43 @@ class WidgetsTest(unittest.TestCase):
                                     align=_locals.ALIGN_LEFT,
                                     font_size=3)
         self.assertEqual(len(label), 15)
-        _w = label[0]
-        self.assertFalse(_w.is_selectable)
-        self.assertEqual(_w.get_margin()[0], 3)
-        self.assertEqual(_w.get_margin()[1], 5)
-        self.assertEqual(_w.get_alignment(), _locals.ALIGN_LEFT)
-        self.assertEqual(_w.get_font_info()['size'], 3)
-        _w.draw(surface)
-        self.assertFalse(_w.update([]))
+        w = label[0]
+        self.assertFalse(w.is_selectable)
+        self.assertEqual(w.get_margin()[0], 3)
+        self.assertEqual(w.get_margin()[1], 5)
+        self.assertEqual(w.get_alignment(), _locals.ALIGN_LEFT)
+        self.assertEqual(w.get_font_info()['size'], 3)
+        w.draw(surface)
+        self.assertFalse(w.update([]))
+        labeltext = ['Lorem ipsum dolor sit amet,', 'consectetur adipiscing elit, sed',
+                     'do eiusmod tempor incididunt ut', 'labore et dolore magna aliqua. Ut',
+                     'enim ad minim veniam, quis', 'nostrud exercitation ullamco',
+                     'laboris nisi ut aliquip ex ea', 'commodo consequat. Duis aute',
+                     'irure dolor in reprehenderit in', 'voluptate velit esse cillum',
+                     'dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat',
+                     'non proident, sunt in culpa qui', 'officia deserunt mollit anim id',
+                     'est laborum.']
+        for i in range(len(label)):
+            self.assertEqual(label[i].get_title(), labeltext[i])
+
+        # Split label
+        label = self.menu.add_label('This label should split.\nIn two lines')
+        self.assertEqual(label[0].get_title(), 'This label should split.')
+        self.assertEqual(label[1].get_title(), 'In two lines')
+
+        # Split label, but also with maxchar enabled
+        label = self.menu.add_label(
+            'This label should split, this line is really long so it should split.\nThe second line', max_char=40)
+        self.assertEqual(label[0].get_title(), 'This label should split, this line is')
+        self.assertEqual(label[1].get_title(), 'really long so it should split.')
+        self.assertEqual(label[2].get_title(), 'The second line')
+
+        # Split label with -1 maxchar
+        label = self.menu.add_label(
+            'This label should split, this line is really long so it should split.\nThe second line', max_char=-1)
+        self.assertEqual(label[0].get_title(), 'This label should split, this line is really')
+        self.assertEqual(label[1].get_title(), 'long so it should split.')
+        self.assertEqual(label[2].get_title(), 'The second line')
 
     def test_textinput(self) -> None:
         """
@@ -746,12 +835,84 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput._get_selected_text(), '')
         self.assertEqual(textinput.get_value(), 't')
 
+        # Test readonly
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='k'))
+        self.assertEqual(textinput.get_value(), 'tk')
+        textinput.readonly = True
+        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='k'))
+        self.assertEqual(textinput.get_value(), 'tk')
+        textinput.readonly = False
+
         # Update mouse
         for i in range(50):
             textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+        # Test underline edge cases
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.title_font_size = 35
+        theme.widget_font_size = 25
+
+        menu = pygame_menu.Menu(
+            column_min_width=400,
+            height=300,
+            theme=theme,
+            title='Label',
+            onclose=pygame_menu.events.CLOSE,
+            width=400
+        )
+        textinput = menu.add_text_input('title', input_underline='_')
+        width = 107
+        if pygame.version.vernum.major < 2:
+            width = 106
+        self.assertEqual(menu._widget_offset[1], width)
+        self.assertEqual(textinput.get_width(), 376)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        self.assertEqual(textinput.get_width(), 376)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        textinput.set_title('nice')
+        self.assertEqual(textinput.get_width(), 379)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (379, 400))
+        textinput.set_value('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ')
+        self.assertEqual(textinput.get_width(), 712)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (712, 400))
+        textinput.set_padding(100)
+        self.assertEqual(textinput.get_width(), 912)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (912, 400))
+        textinput.set_padding(200)
+        self.assertEqual(textinput.get_width(), 1112)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (1112, 380))
+
+        # Test underline
+        textinput = menu.add_text_input('title: ')
+        textinput.set_value('this is a test value')
+        self.assertEqual(textinput.get_width(), 266)
+
+        menu.clear()
+        textinput = menu.add_text_input('title: ', input_underline='.-')
+        textinput.set_value('QQQQQQQQQQQQQQQ')
+        self.assertEqual(textinput.get_width(), 388)
+        self.assertEqual(textinput._current_underline_string, '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
+
+        textinput = menu.add_text_input('title: ', input_underline='_', input_underline_len=10)
+        self.assertEqual(textinput._current_underline_string, '_' * 10)
 
     def test_button(self) -> None:
         """
@@ -872,6 +1033,18 @@ class WidgetsTest(unittest.TestCase):
         # Remove button
         menu.remove_widget(btn)
         self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
+
+        # Test return fun
+        def fun() -> str:
+            """
+            This should return "nice".
+            """
+            return 'nice'
+
+        btn = menu.add_button('', fun)
+        self.assertEqual(btn.apply(), 'nice')
+        btn.readonly = True
+        self.assertEqual(btn.apply(), None)
 
     def test_attributes(self) -> None:
         """
@@ -1022,7 +1195,7 @@ class WidgetsTest(unittest.TestCase):
         wid.apply()
         wid.change()
 
-        wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1))
+        wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1), (0, 0, 0), (0, 0, 0))
         wid.update_font({'name': ''})
         wid._apply_font()
         self.assertEqual(wid._font, None)
@@ -1158,7 +1331,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb._on_return, None)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
-        # Scrollbar ignores scalling
+        # Scrollbar ignores scaling
         sb.scale(2, 2)
         self.assertFalse(sb._scale[0])
         sb.resize(2, 2)
@@ -1178,3 +1351,94 @@ class WidgetsTest(unittest.TestCase):
 
         # Set minimum
         sb.set_minimum(0.5 * sb._values_range[1])
+
+    def test_toggleswitch(self) -> None:
+        """
+        Test toggleswitch widget.
+        """
+        menu = MenuUtils.generic_menu()
+
+        value = [None]
+
+        def onchange(val) -> None:
+            """
+            Function executed by toggle.
+            """
+            value[0] = val
+
+        switch = menu.add_toggle_switch('toggle', False, onchange=onchange, infinite=False)
+        self.assertEqual(switch.get_value(), False)
+        self.assertEqual(value[0], None)
+        switch.apply()
+        self.assertFalse(value[0])
+
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))  # not infinite
+        self.assertFalse(value[0])  # as this is false, dont change
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertTrue(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertFalse(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertFalse(value[0])
+
+        switch = menu.add_toggle_switch('toggle', False, onchange=onchange, infinite=True)
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertTrue(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertFalse(value[0])
+
+        # As there's only 2 states, return should change too
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        self.assertTrue(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        self.assertFalse(value[0])
+
+        # Test readonly
+        switch.readonly = True
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        self.assertFalse(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        self.assertFalse(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        self.assertFalse(value[0])
+
+        switch.readonly = False
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertTrue(value[0])
+        switch.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertFalse(value[0])
+
+        switch.draw(surface)
+
+        # Test transforms
+        switch.set_position(1, 1)
+        pos = switch.get_position()
+        self.assertEqual(pos[0], 1)
+        self.assertEqual(pos[1], 1)
+
+        switch.translate(1, 1)
+        self.assertEqual(switch._translate[0], 1)
+        self.assertEqual(switch._translate[1], 1)
+
+        switch.rotate(10)
+        self.assertEqual(switch._angle, 0)
+
+        switch.scale(100, 100)
+        self.assertEqual(switch._scale[0], False)
+        self.assertEqual(switch._scale[1], 1)
+        self.assertEqual(switch._scale[2], 1)
+
+        switch.resize(100, 100)
+        self.assertEqual(switch._scale[0], False)
+        self.assertEqual(switch._scale[1], 1)
+        self.assertEqual(switch._scale[2], 1)
+
+        switch.flip(True, True)
+        self.assertFalse(switch._flip[0])
+        self.assertFalse(switch._flip[1])
+
+        switch.set_max_width(100)
+        self.assertEqual(switch._max_width[0], None)
+
+        switch.set_max_height(100)
+        self.assertEqual(switch._max_height[0], None)

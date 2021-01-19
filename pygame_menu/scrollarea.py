@@ -37,7 +37,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
-from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, \
+from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
     TYPE_CHECKING, Tuple2NumberType, Optional
 
 if TYPE_CHECKING:
@@ -80,6 +80,8 @@ class ScrollArea(object):
     A scroll area is used to display the contents of a child surface (``world``).
     If the surface exceeds the size of the drawing surface, the view provide
     scroll bars so that the entire area of the child surface can be viewed.
+
+    .. note:: ScrollArea cannot be copied or deepcopied.
 
     :param area_width: Width of scrollable area (px)
     :param area_height: Height of scrollable area (px)
@@ -203,6 +205,23 @@ class ScrollArea(object):
 
         # Menu reference
         self._menu = None
+
+    def __copy__(self) -> 'ScrollArea':
+        """
+        Copy method.
+
+        :return: Raises copy exception
+        """
+        raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
+
+    def __deepcopy__(self, memodict: Dict) -> 'ScrollArea':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: Raises copy exception
+        """
+        raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
 
     def _apply_size_changes(self) -> None:
         """
@@ -612,3 +631,10 @@ class ScrollArea(object):
             return bool(self.to_real_position(widget_rect).collidepoint(*finger_pos))
         else:
             return bool(self.to_real_position(widget_rect).collidepoint(*event.pos))
+
+
+class _ScrollAreaCopyException(Exception):
+    """
+    If user tries to copy a ScrollArea.
+    """
+    pass

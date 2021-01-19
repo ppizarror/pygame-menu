@@ -67,7 +67,7 @@ from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
-from pygame_menu.custom_types import NumberType, List, Dict, Any, Optional
+from pygame_menu.custom_types import NumberType, Dict, Any, Optional, Union
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
@@ -86,6 +86,10 @@ SOUND_TYPE_KEY_ADDITION = '__pygame_menu_sound_key_addition__'
 SOUND_TYPE_KEY_DELETION = '__pygame_menu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygame_menu_sound_open_menu__'
 SOUND_TYPE_WIDGET_SELECTION = '__pygame_menu_sound_widget_selection__'
+
+SOUND_TYPES = (SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_CLOSE_MENU, SOUND_TYPE_ERROR, SOUND_TYPE_EVENT,
+               SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION, SOUND_TYPE_KEY_DELETION,
+               SOUND_TYPE_OPEN_MENU, SOUND_TYPE_WIDGET_SELECTION)
 
 # Sound example paths
 __sounds_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
@@ -124,10 +128,9 @@ class Sound(object):
     _channel: Optional['mixer.Channel']
     _last_play: str
     _last_time: float
+    _mixer_configs: Dict[str, Union[bool, int, str]]
     _sound: Dict[str, Dict[str, Any]]
-    _type_sounds: List[str]
     _uniquechannel: bool
-    _verbose: bool
 
     # noinspection PyShadowingBuiltins
     def __init__(self,
@@ -192,29 +195,68 @@ class Sound(object):
             except pygame_error as e:
                 print('sound engine could not be initialized, pygame error: ' + str(e))
 
+        # Store mixer configs
+        self._mixer_configs = {
+            'allowedchanges': allowedchanges,
+            'buffer': buffer,
+            'channels': channels,
+            'devicename': devicename,
+            'frequency': frequency,
+            'size': size
+        }
+
         # Channel where a sound is played
         self._channel = None
         self._uniquechannel = uniquechannel
 
         # Sound dict
-        self._type_sounds = [
-            SOUND_TYPE_CLICK_MOUSE,
-            SOUND_TYPE_CLOSE_MENU,
-            SOUND_TYPE_ERROR,
-            SOUND_TYPE_EVENT,
-            SOUND_TYPE_EVENT_ERROR,
-            SOUND_TYPE_KEY_ADDITION,
-            SOUND_TYPE_KEY_DELETION,
-            SOUND_TYPE_OPEN_MENU,
-            SOUND_TYPE_WIDGET_SELECTION
-        ]
         self._sound = {}
-        for sound in self._type_sounds:
+        for sound in SOUND_TYPES:
             self._sound[sound] = {}
 
         # Last played song
         self._last_play = ''
         self._last_time = 0
+
+    def copy(self) -> 'Sound':
+        """
+        Return a copy of the object.
+
+        :return: Sound copied
+        """
+        new_sound = Sound(uniquechannel=self._uniquechannel)
+        new_sound._channel = self._channel
+        for key in self._mixer_configs:
+            new_sound._mixer_configs[key] = self._mixer_configs[key]
+        for sound_type in self._sound.keys():
+            s = self._sound[sound_type]
+            if len(s) != 0:
+                new_sound.set_sound(
+                    sound_type=sound_type,
+                    sound_file=s['path'],
+                    volume=s['volume'],
+                    loops=s['loops'],
+                    maxtime=s['maxtime'],
+                    fade_ms=s['fade_ms']
+                )
+        return new_sound
+
+    def __copy__(self) -> 'Sound':
+        """
+        Copy method.
+
+        :return: Return new sound
+        """
+        return self.copy()
+
+    def __deepcopy__(self, memodict: Dict) -> 'Sound':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: Return new sound
+        """
+        return self.copy()
 
     def get_channel(self) -> 'mixer.Channel':
         """
@@ -237,7 +279,7 @@ class Sound(object):
         Link a sound file to a sound type.
 
         :param sound_type: Sound type
-        :param sound_file: Sound file
+        :param sound_file: Sound file. If none disable the given sound type
         :param volume: Volume of the sound, from ``0.0`` to ``1.0``
         :param loops: Loops of the sound
         :param maxtime: Max playing time of the sound
@@ -256,7 +298,7 @@ class Sound(object):
         assert 1 >= volume >= 0, 'volume must be between 0 and 1'
 
         # Check sound type is correct
-        if sound_type not in self._type_sounds:
+        if sound_type not in SOUND_TYPES:
             raise ValueError('sound type not valid, check the manual')
 
         # If file is none disable the sound
@@ -273,7 +315,8 @@ class Sound(object):
             # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
-            warnings.warn('the sound format is not valid, the sound has been disabled')
+            msg = 'the sound file "{0}" could not be loaded, it has been disabled'.format(sound_file)
+            warnings.warn(msg)
             self._sound[sound_type] = {}
             return False
 
@@ -282,14 +325,14 @@ class Sound(object):
 
         # Store the sound
         self._sound[sound_type] = {
+            'fade_ms': fade_ms,
             'file': sound_data,
-            'path': sound_file,
-            'type': sound_type,
             'length': sound_data.get_length(),
-            'volume': volume,
             'loops': loops,
             'maxtime': maxtime,
-            'fade_ms': fade_ms
+            'path': sound_file,
+            'type': sound_type,
+            'volume': volume
         }
         return True
 
@@ -301,8 +344,8 @@ class Sound(object):
         :return: None
         """
         assert isinstance(volume, float)
-        for sound in range(len(self._type_sounds)):
-            self.set_sound(self._type_sounds[sound], SOUND_EXAMPLES[sound], volume=volume)
+        for sound in range(len(SOUND_TYPES)):
+            self.set_sound(SOUND_TYPES[sound], SOUND_EXAMPLES[sound], volume=volume)
 
     def _play_sound(self, sound: Optional[Dict[str, Any]]) -> bool:
         """

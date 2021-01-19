@@ -189,6 +189,11 @@ def main(test: bool = False) -> None:
         default=1
     )
 
+    # Create switch
+    settings_menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
+    settings_menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+                                    state_text=('Apagado', 'Encencido'))
+
     def data_fun() -> None:
         """
         Print data of the menu.

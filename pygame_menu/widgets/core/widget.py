@@ -37,7 +37,7 @@ import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.sound import Sound
-from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, \
+from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING
@@ -56,6 +56,8 @@ PaddingTrueType = Tuple[int, int, int, int]
 class Widget(object):
     """
     Widget abstract class.
+
+    .. note:: Widget cannot be copied or deepcopied.
 
     :param title: Widget title
     :param widget_id: Widget identifier
@@ -81,6 +83,8 @@ class Widget(object):
     _font_background_color: Optional[ColorType]
     _font_color: ColorType
     _font_name: str
+    _font_readonly_color: ColorType
+    _font_readonly_selected_color: ColorType
     _font_selected_color: ColorType
     _font_size: int
     _id: str
@@ -117,6 +121,7 @@ class Widget(object):
     joystick_enabled: bool
     lock_position: bool
     mouse_enabled: bool
+    readonly: bool
     selected: bool
     selection_expand_background: bool
     sound: 'Sound'
@@ -169,7 +174,11 @@ class Widget(object):
         self._translate = (0, 0)
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
-        # use .get_rect() widget method instead
+        # use .get_rect() widget method instead. Widget subclass should ONLY modify width/height,
+        # in rendering and READ position (rect.x, rect.y) in drawing. Position during rendering
+        # is not the same as it will have in menu (menu rendering changes widget position). Some
+        # widgets like MenuBar are the exception, as its position never changes during menu execution
+        # (unless user triggers a change), then widgets like these may access without problems.
         self._rect = pygame.Rect(0, 0, 0, 0)
 
         # Callbacks
@@ -198,6 +207,8 @@ class Widget(object):
         self._font_background_color = None
         self._font_color = (0, 0, 0)
         self._font_name = ''
+        self._font_readonly_color = (0, 0, 0)
+        self._font_readonly_selected_color = (255, 255, 255)
         self._font_selected_color = (255, 255, 255)
         self._font_size = 0
 
@@ -220,24 +231,51 @@ class Widget(object):
 
         # Public attributes
         self.active = False  # Widget requests focus
+        self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.joystick_enabled = True
         self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
-        self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
-        self.mouse_enabled = True
+        self.mouse_enabled = True  # Accept mouse interaction
+        self.readonly = False  # If True, widget ignores all input
         self.selected = False  # Use select() to modify this status
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
         self.sound = Sound()
         self.touchscreen_enabled = True
         self.visible = True  # Use show() or hide() to modify this status
 
-    def _force_render(self) -> None:
+    def __copy__(self) -> 'Menu':
         """
-        Forces widget render on next ``_render()`` call.
+        Copy method.
+
+        :return: Raises copy exception
+        """
+        raise _WidgetCopyException('Widget class cannot be copied')
+
+    def __deepcopy__(self, memodict: Dict) -> 'Menu':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: Raises copy exception
+        """
+        raise _WidgetCopyException('Widget class cannot be deep-copied')
+
+    def _force_render(self) -> Optional[bool]:
+        """
+        Forces widget render.
+
+        :return: Render return value
+        """
+        self._last_render_hash = 0
+        return self._render()
+
+    def _force_menu_surface_update(self) -> None:
+        """
+        Forces menu surface update.
 
         :return: None
         """
-        self._last_render_hash = 0
+        self._menu_surface_needs_update = True
 
     def render(self) -> Optional[bool]:
         """
@@ -257,8 +295,7 @@ class Widget(object):
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         """
-        self._force_render()
-        return self._render()
+        return self._force_render()
 
     def _render(self) -> Optional[bool]:
         """
@@ -395,7 +432,7 @@ class Widget(object):
                 assert_color(color)
         if inflate is None:
             inflate = self._background_inflate
-        assert_vector2(inflate)
+        assert_vector(inflate, 2)
         assert inflate[0] >= 0 and inflate[1] >= 0, \
             'widget background inflate must be equal or greater than zero in both axis'
 
@@ -477,7 +514,7 @@ class Widget(object):
         self._selection_effect = selection
         self._force_render()
 
-    def apply(self, *args) -> None:
+    def apply(self, *args) -> Any:
         """
         Run ``on_return`` callback when return event. A callback function
         receives the following arguments:
@@ -497,8 +534,10 @@ class Widget(object):
             Not all widgets have an ``on_return`` method.
 
         :param args: Extra arguments passed to the callback
-        :return: None
+        :return: Callback return value
         """
+        if self.readonly:
+            return
         if self._on_return:
             args = list(args) + list(self._args)
             try:
@@ -507,7 +546,7 @@ class Widget(object):
                 pass
             return self._on_return(*args, **self._kwargs)
 
-    def change(self, *args) -> None:
+    def change(self, *args) -> Any:
         """
         Run ``on_change`` callback after change event is triggered. A callback function
         receives the following arguments:
@@ -527,8 +566,10 @@ class Widget(object):
             Not all widgets have an ``on_change`` method.
 
         :param args: Extra arguments passed to the callback
-        :return: None
+        :return: Callback return value
         """
+        if self.readonly:
+            return
         if self._on_change:
             args = list(args) + list(self._args)
             try:
@@ -608,7 +649,7 @@ class Widget(object):
         assert isinstance(padding, (int, float, tuple, list))
 
         if isinstance(padding, (int, float)):
-            assert padding >= 0, 'padding cant be a negative number'
+            assert padding >= 0, 'padding cannot be a negative number'
             self._padding = (padding, padding, padding, padding)
         else:
             assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
@@ -688,6 +729,19 @@ class Widget(object):
             # noinspection PyProtectedMember
             self._menu._check_id_duplicated(widget_id)
         self._id = widget_id
+
+    def add_self_to_kwargs(self, key: str = 'widget') -> None:
+        """
+        Adds widget to kwargs, it helps to get the widget reference for callbacks.
+        It raises ``KeyError`` if key is duplicated.
+
+        :param key: Name of the parameter
+        :return: None
+        """
+        assert isinstance(key, str)
+        if key in self._kwargs.keys():
+            raise KeyError('duplicated key')
+        self._kwargs[key] = self
 
     def _font_render_string(self, text: str, color: ColorType = (0, 0, 0),
                             use_background_color: bool = True) -> 'pygame.Surface':
@@ -794,7 +848,7 @@ class Widget(object):
 
     def _apply_transforms(self) -> None:
         """
-        Apply surface transforms: angle, flip and scalling.
+        Apply surface transforms: angle, flip and scaling.
         Translation is applied on widget positioning.
 
         :return: None
@@ -805,7 +859,7 @@ class Widget(object):
         if self._flip[0] or self._flip[1]:
             self._surface = pygame.transform.flip(self._surface, self._flip[0], self._flip[1])
 
-        self._padding_transform = self._padding  # Reset pad scalling
+        self._padding_transform = self._padding  # Reset pad scaling
         width, height = self.get_size(apply_padding=False)  # No padding
         new_size, smooth = None, None
 
@@ -835,11 +889,11 @@ class Widget(object):
         else:
             raise RuntimeError('max_width and max_height cannot be non-None at the same time')
 
-        # Apply scalling
+        # Apply scaling
         if new_size is not None and smooth is not None and width > 0 and height > 0:
 
             # Apply surface transformation
-            if smooth:
+            if smooth and self._surface.get_bitsize() >= 24:
                 self._surface = pygame.transform.smoothscale(self._surface, new_size)
             else:
                 self._surface = pygame.transform.scale(self._surface, new_size)
@@ -872,11 +926,27 @@ class Widget(object):
             return True
         return False
 
+    def get_font_color_status(self) -> ColorType:
+        """
+        Return the widget font color based on the widget status.
+
+        :return: Color by widget status
+        """
+        if self.readonly:
+            if self.selected:
+                return self._font_readonly_selected_color
+            return self._font_readonly_color
+        if self.selected:
+            return self._font_selected_color
+        return self._font_color
+
     def set_font(self,
                  font: str,
                  font_size: int,
                  color: ColorType,
                  selected_color: ColorType,
+                 readonly_color: ColorType,
+                 readonly_selected_color: ColorType,
                  background_color: Optional[ColorType],
                  antialias: bool = True
                  ) -> None:
@@ -885,17 +955,21 @@ class Widget(object):
 
         :param font: Font name (see :py:class:`pygame.font.match_font` for precise format)
         :param font_size: Size of font in pixels
-        :param color: Text color
-        :param selected_color: Text color when widget is selected
+        :param color: Normal font color
+        :param selected_color: Font color if widget is selected
+        :param readonly_color: Font color if widget is in readonly mode
+        :param readonly_selected_color: Font color if widget is selected and in readonly mode
         :param background_color: Font background color. If ``None`` no background color is used
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :return: None
         """
         assert isinstance(font, str)
-        assert isinstance(font_size, (int, float))
+        assert isinstance(font_size, int)
         assert isinstance(antialias, bool)
         assert_color(color)
         assert_color(selected_color)
+        assert_color(readonly_color)
+        assert_color(readonly_selected_color)
 
         if background_color is not None:
             assert_color(background_color)
@@ -914,6 +988,8 @@ class Widget(object):
         self._font_background_color = background_color
         self._font_color = color
         self._font_name = font
+        self._font_readonly_color = readonly_color
+        self._font_readonly_selected_color = readonly_selected_color
         self._font_selected_color = selected_color
         self._font_size = font_size
 
@@ -925,12 +1001,14 @@ class Widget(object):
         Updates the widget font. This method receives a style dict (non empty).
 
         Optional style keys
-            - ``antialias``             *(bool)* - Font antialias
-            - ``background_color``      *(tuple)* - Background color
-            - ``color``                 *(tuple)* - Font color
-            - ``name``                  *(str)* - Name of the font
-            - ``selected_color``        *(tuple)* - Selected color
-            - ``size``                  *(int)* - Size of the font
+            - ``antialias``                 *(bool)* - Font antialias
+            - ``background_color``          *(tuple)* - Background color
+            - ``color``                     *(tuple)* - Font color
+            - ``name``                      *(str)* - Name of the font
+            - ``readonly_color``            *(tuple)* - Readonly color
+            - ``readonly_selected_color``   *(tuple)* - Readonly selected color
+            - ``selected_color``            *(tuple)* - Selected color
+            - ``size``                      *(int)* - Size of the font
 
         .. note::
 
@@ -947,25 +1025,19 @@ class Widget(object):
             if k not in style.keys():
                 style[k] = current_font[k]
         self.set_font(
+            antialias=style['antialias'],
+            background_color=style['background_color'],
+            color=style['color'],
             font=style['name'],
             font_size=style['size'],
-            color=style['color'],
-            selected_color=style['selected_color'],
-            background_color=style['background_color'],
-            antialias=style['antialias']
+            readonly_color=style['readonly_color'],
+            readonly_selected_color=style['readonly_selected_color'],
+            selected_color=style['selected_color']
         )
 
     def get_font_info(self) -> Dict[str, Any]:
         """
         Return a dict with the information of the widget font.
-
-        Dict values
-            - ``antialias``             *(bool)* - Font antialias
-            - ``background_color``      *(tuple)* - Background color
-            - ``color``                 *(tuple)* - Font color
-            - ``name``                  *(str)* - Name of the font
-            - ``selected_color``        *(tuple)* - Selected color
-            - ``size``                  *(int)* - Size of the font
 
         :return: Font information dict
         """
@@ -974,6 +1046,8 @@ class Widget(object):
             'background_color': self._font_background_color,
             'color': self._font_color,
             'name': self._font_name,
+            'readonly_color': self._font_readonly_color,
+            'readonly_selected_color': self._font_readonly_selected_color,
             'selected_color': self._font_selected_color,
             'size': self._font_size
         }
@@ -1062,7 +1136,7 @@ class Widget(object):
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
                       smooth: bool = True) -> None:
         """
-        Transformation: Set the widget max width, it applies an scalling factor
+        Transformation: Set the widget max width, it applies an scaling factor
         if the widget width is greater than the limit.
 
         .. note::
@@ -1100,7 +1174,7 @@ class Widget(object):
             assert width >= 0, 'width must be equal or greater than zero'
             self._max_width = [width, scale_height, smooth]
             if self._scale[0]:
-                msg = 'widget already has a scalling factor applied. Scalling has been' \
+                msg = 'widget already has a scaling factor applied. Scaling has been' \
                       'disabled'
                 warnings.warn(msg)
                 return
@@ -1114,7 +1188,7 @@ class Widget(object):
     def set_max_height(self, height: NumberType, scale_width: NumberType = False,
                        smooth: bool = True) -> None:
         """
-        Transformation: Set the widget max height, it applies an scalling factor
+        Transformation: Set the widget max height, it applies an scaling factor
         if the widget height is greater than the limit.
 
         .. note::
@@ -1147,7 +1221,7 @@ class Widget(object):
             assert height > 0, 'height must be greater than zero'
             self._max_height = [height, scale_width, smooth]
             if self._scale[0]:
-                msg = 'widget already has a scalling factor applied. Scalling has been' \
+                msg = 'widget already has a scaling factor applied. Scaling has been' \
                       'disabled'
                 warnings.warn(msg)
                 return
@@ -1181,7 +1255,7 @@ class Widget(object):
 
         .. note::
 
-            Scalling considers widget padding.
+            Scaling considers widget padding.
 
         .. note::
 
@@ -1206,16 +1280,16 @@ class Widget(object):
         self._disable_scale()
         if self._max_width[0] is not None:
             msg = 'widget max width is not None. Set widget.set_max_width(None) ' \
-                  'for disabling such feature. This scalling will be ignored'
+                  'for disabling such feature. This scaling will be ignored'
             warnings.warn(msg)
             return
         if self._max_height[0] is not None:
             msg = 'widget max height is not None. Set widget.set_max_height(None) ' \
-                  'for disabling such feature. This scalling will be ignored'
+                  'for disabling such feature. This scaling will be ignored'
             warnings.warn(msg)
             return
         self._scale = [True, width, height, smooth]
-        if width == 1 and height == 1:  # Disables scalling
+        if width == 1 and height == 1:  # Disables scaling
             self._scale[0] = False
 
         self._force_render()
@@ -1232,7 +1306,7 @@ class Widget(object):
         .. note::
 
             The resize method uses the base widget size, without any transformation,
-            if a scalling factor is applied it unscales and then scales back to get
+            if a scaling factor is applied it unscales and then scales back to get
             the desired width/height.
 
         .. note::
@@ -1637,7 +1711,7 @@ class Widget(object):
 
         :return: None
         """
-        if len(self._update_callbacks) == 0:
+        if len(self._update_callbacks) == 0 or self.readonly:
             return
         for callback in self._update_callbacks.values():
             callback(self, self._menu)
@@ -1678,7 +1752,7 @@ class Widget(object):
         """
         assert isinstance(float_status, bool)
         self.floating = float_status
-        self._menu_surface_needs_update = True  # Force Menu update
+        self._force_menu_surface_update()
 
     def show(self) -> None:
         """
@@ -1746,6 +1820,13 @@ class _NullSelection(Selection):
 
     def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
         return
+
+
+class _WidgetCopyException(Exception):
+    """
+    If user tries to copy a Widget.
+    """
+    pass
 
 
 class _NoWidgetValue(object):

@@ -58,9 +58,9 @@ import math
 from pathlib import Path
 
 import pygame
-from pygame_menu.utils import assert_vector2
+from pygame_menu.utils import assert_vector
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional
+    NumberType, Optional, Dict
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -102,8 +102,10 @@ class BaseImage(object):
     _extension: str
     _filename: str
     _filepath: str
+    _last_transform: Tuple[int, int, Optional['pygame.Surface']]
     _original_surface: 'pygame.Surface'
     _surface: 'pygame.Surface'
+    smooth_scaling: bool
 
     def __init__(self,
                  image_path: Union[str, Path],
@@ -139,6 +141,44 @@ class BaseImage(object):
         if load_from_file:
             self._surface = pygame.image.load(image_path)
             self._original_surface = self._surface.copy()
+
+        # Other internals
+        self._last_transform = (0, 0, None)  # Improves drawing
+        self.smooth_scaling = True  # Uses smooth scaling by default in draw() method
+
+    def __copy__(self) -> 'BaseImage':
+        """
+        Copy method.
+
+        :return: New instance of the object
+        """
+        return self.copy()
+
+    def __deepcopy__(self, memodict: Dict) -> 'BaseImage':
+        """
+        Deepcopy method.
+
+        :param memodict: Memo dict
+        :return: New instance of the object
+        """
+        return self.copy()
+
+    def copy(self) -> 'BaseImage':
+        """
+        Return a copy of the image.
+
+        :return: Image
+        """
+        image = BaseImage(
+            image_path=self._filepath,
+            drawing_mode=self._drawing_mode,
+            drawing_offset=self._drawing_offset,
+            load_from_file=False
+        )
+        image._surface = self._surface.copy()
+        image._original_surface = self._surface.copy()
+        image.smooth_scaling = self.smooth_scaling
+        return image
 
     def get_path(self) -> str:
         """
@@ -184,23 +224,8 @@ class BaseImage(object):
         :param drawing_offset: Drawing offset tuple *(x, y)*
         :return: None
         """
-        assert_vector2(drawing_offset)
+        assert_vector(drawing_offset, 2)
         self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
-
-    def copy(self) -> 'BaseImage':
-        """
-        Return a copy of the image.
-
-        :return: Image
-        """
-        image = BaseImage(
-            image_path=self._filepath,
-            drawing_mode=self._drawing_mode,
-            drawing_offset=self._drawing_offset
-        )
-        image._surface = self._surface.copy()
-        image._original_surface = self._surface.copy()
-        return image
 
     def get_size(self) -> Tuple2IntType:
         """
@@ -362,9 +387,11 @@ class BaseImage(object):
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
-        if not smooth:
+        if width == 1 and height == 1:
+            return self
+        if not smooth or self._surface.get_bitsize() < 24:
             self._surface = pygame.transform.scale(self._surface, (int(w * width), int(h * height)))
-        else:
+        else:  # image bitsize less than 24 bits raises ValueError
             self._surface = pygame.transform.smoothscale(self._surface, (int(w * width), int(h * height)))
         return self
 
@@ -447,8 +474,19 @@ class BaseImage(object):
 
         if self._drawing_mode == IMAGE_MODE_FILL:
 
+            # Check if exists the transformed surface
+            if area.width == self._last_transform[0] and area.height == self._last_transform[1] and \
+                    self._last_transform[2] is not None:
+                surf = self._last_transform[2]
+            else:  # Transform scale
+                if self.smooth_scaling and self._surface.get_bitsize() > 8:
+                    surf = pygame.transform.smoothscale(self._surface, (area.width, area.height))
+                else:
+                    surf = pygame.transform.scale(self._surface, (area.width, area.height))
+                self._last_transform = (area.width, area.height, surf)
+
             surface.blit(
-                pygame.transform.scale(self._surface, (area.width, area.height)),
+                surf,
                 (
                     self._drawing_offset[0] + position[0],
                     self._drawing_offset[1] + position[1]

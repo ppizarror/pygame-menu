@@ -148,6 +148,7 @@ class to display large custom surfaces.
    _source/widgets_scrollbar
    _source/widgets_selector
    _source/widgets_textinput
+   _source/widgets_toggleswitch
    _source/widgets_vmargin
 
 
