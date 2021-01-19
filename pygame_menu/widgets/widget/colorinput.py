@@ -223,9 +223,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Compute the size of the underline
         if self._input_underline != '':
-
-            # Max expected width
-            max_width = 0
+            max_width = 0  # Max expected width
             if self._color_type == TYPE_RGB:
                 max_width = self._font_render_string('255{0}255{0}255'.format(self._separator)).get_width()
             else:

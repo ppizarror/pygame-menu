@@ -132,7 +132,7 @@ class App(object):
 
         # Update the widgets based on selected value from selector
         # get_value returns selected item tuple and index, so [0][1] means the second object from ('The first', 1) tuple
-        self._update_from_selection(self.selector_widget.get_value()[0][1])
+        self._update_from_selection(int(self.selector_widget.get_value()[0][1]))
 
     def animate_quit_button(self,
                             widget: 'pygame_menu.widgets.core.Widget',
