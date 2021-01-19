@@ -124,6 +124,10 @@ class BaseImage(object):
             self._surface = pygame.image.load(image_path)  # type: pygame.Surface
             self._original_surface = self._surface.copy()
 
+        # Other internals
+        self._last_transform = (0, 0, None)  # Improves drawing
+        self.smooth_scaling = True  # Uses smooth scaling by default in draw() method
+
     def get_path(self):
         """
         Return the image path.
@@ -211,6 +215,7 @@ class BaseImage(object):
         )
         image._surface = self._surface.copy()
         image._original_surface = self._surface.copy()
+        image.smooth_scaling = self.smooth_scaling
         return image
 
     def get_size(self):
@@ -485,8 +490,19 @@ class BaseImage(object):
 
         if self._drawing_mode == IMAGE_MODE_FILL:
 
+            # Check if exists the transformed surface
+            if area.width == self._last_transform[0] and area.height == self._last_transform[1] and \
+                    self._last_transform[2] is not None:
+                surf = self._last_transform[2]
+            else:  # Transform scale
+                if self.smooth_scaling and self._surface.get_bitsize() > 8:
+                    surf = pygame.transform.smoothscale(self._surface, (area.width, area.height))
+                else:
+                    surf = pygame.transform.scale(self._surface, (area.width, area.height))
+                self._last_transform = (area.width, area.height, surf)
+
             surface.blit(
-                pygame.transform.scale(self._surface, (area.width, area.height)),
+                surf,
                 (
                     self._drawing_offset[0] + position[0],
                     self._drawing_offset[1] + position[1]
