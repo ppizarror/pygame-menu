@@ -95,6 +95,7 @@ import pygame_menu.widgets
 """
 Menu: Menu class
 """
+# noinspection PyUnresolvedReferences
 from pygame_menu.menu import Menu
 
 """
