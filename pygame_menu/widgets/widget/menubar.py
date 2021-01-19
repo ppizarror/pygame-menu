@@ -127,7 +127,7 @@ class MenuBar(Widget):
     def set_padding(self, padding):  # Don't accept padding
         pass
 
-    def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
+    def scale(self, width, height, smooth=True):  # Widget don't support scaling (yet)
         pass
 
     def get_title_offset(self):

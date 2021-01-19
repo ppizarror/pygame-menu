@@ -668,7 +668,7 @@ class Widget(object):
         if self._scale[0] and (self._scale[1] != 1 or self._scale[2] != 1):
             w = self._scale[1]
             if w != 1:
-                warnings.warn('widget _max_width is not None, scalling factor in x-axes should be equal to 1')
+                warnings.warn('widget _max_width is not None, scaling factor in x-axes should be equal to 1')
             h = self._scale[2]
             width = self._surface.get_width()
             height = self._surface.get_height()
@@ -952,7 +952,7 @@ class Widget(object):
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         self._scale = [True, width, height, smooth, False]
-        if width == 1 and height == 1:  # Disables scalling
+        if width == 1 and height == 1:  # Disables scaling
             self._scale[0] = False
         self._last_render_hash = 0  # Force widget render
 

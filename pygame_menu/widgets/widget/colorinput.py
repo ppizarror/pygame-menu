@@ -57,7 +57,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :type color_type: str
     :param input_separator: Divisor between RGB channels
     :type input_separator: str
-    :param input_underline: Character drawn under each number input
+    :param input_underline: Character string drawn under the input
     :type input_underline: str
     :param cursor_color: Color of cursor
     :type cursor_color: tuple
