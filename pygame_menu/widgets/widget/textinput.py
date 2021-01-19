@@ -88,7 +88,7 @@ class TextInput(Widget):
     :type textinput_id: str
     :param input_type: Type of data
     :type input_type: str
-    :param input_underline: Character drawn under the input
+    :param input_underline: Character string drawn under the input
     :type input_underline: str
     :param input_underline_len: Total of characters to be drawn under the input. If 0 this number is computed automatically to fit the font
     :type input_underline_len: int
@@ -287,6 +287,7 @@ class TextInput(Widget):
         # Other
         self._apply_widget_update_callbacks = True  # If False, apply_widget_update will not be called
         self._copy_paste_enabled = copy_paste_enable
+        self._current_underline_string = ''  # Testing
         self._input_type = input_type
         self._input_underline = input_underline
         self._input_underline_len = input_underline_len
@@ -311,7 +312,7 @@ class TextInput(Widget):
         self._title_size = self._font.size(self._title)[0]
 
         # Generate the underline surface
-        self._input_underline_size = self._font.size(self._input_underline * 3)[0] / 3
+        self._input_underline_size = float(self._font.size(self._input_underline * 3)[0]) / 3
 
         # Size of maxwidth if not zero
         max_char = 'O'
@@ -365,7 +366,7 @@ class TextInput(Widget):
     def rotate(self, angle):  # Widget don't support rotation (yet)
         pass
 
-    def scale(self, width, height, smooth=True):  # Widget don't support scalling (yet)
+    def scale(self, width, height, smooth=True):  # Widget don't support scaling (yet)
         pass
 
     def flip(self, x, y):  # Actually flip on x axis is disabled
@@ -400,7 +401,8 @@ class TextInput(Widget):
         string = self._title + self._get_input_string()  # Render string
 
         if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
-                                         self._selection_enabled, self.active, self.visible):
+                                         self._selection_enabled, self.active, self.visible,
+                                         self._menu.get_width(inner=True)):
             return True
 
         if self.selected:
@@ -529,46 +531,64 @@ class TextInput(Widget):
         # Render input underline
         if string != self._last_rendered_string or updated:
             menu = self.get_menu()
+            current_rect = self._surface.get_rect()
 
-            # Calculate total available space
-            current_rect = self._surface.get_rect()  # type: pygame.Rect
-            menu_rect = menu.get_rect()
-            posx2 = menu_rect.x + menu_rect.width
-            space_between_title = posx2 - self._title_size - self._rect.x
-            char = math.ceil(space_between_title * 1.0 / self._input_underline_size)  # floor does not work
-
-            # If char limit
-            max_width_current = 0
-            if self._maxchar != 0 or self._maxwidth != 0:
-                max_chars = max(self._maxchar, self._maxwidth_base)
-                basechar = 'O'
-                multif = 2  # Factor of ellipsis
-                if self._password:
-                    basechar = self._password_char
-                    multif = 2
-                max_size = self._font_render_string(basechar * max_chars)
-                max_size = max_size.get_size()[0]
-                maxchar_char = math.ceil((max_size + multif * self._ellipsis_size) / self._input_underline_size)
-                char = min(char, maxchar_char)
-                max_width_current = current_rect.width
-
-            if self._input_underline_len != 0:
+            # Compute initial char guess
+            if self._input_underline_len != 0:  # User defined the amount of underline chars to use
                 char = self._input_underline_len
 
-            underline_string = self._input_underline * int(char)
+            else:  # Compute available width and propose the maximum chars needed (fill all width)
+
+                # Calculate total available space
+                #  |---------------------------------------------------|
+                #  |MENU                                               |
+                #  |                <---- space-between-title --->     |
+                #  |   .===TITLE====|=THE INPUT OF USER===========.    |
+                #  | self._rect.x   title                       posx2  |
+                #  |                                                   |
+                #  |---------------------------------------------------|
+                posx2 = max(menu.get_width(inner=True) - self._input_underline_size * 1.5 -
+                            self._padding[1] - self._padding[3],
+                            current_rect.width)
+                delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
+                char = math.ceil(float(delta_ch) / self._input_underline_size)
+                for i in range(15):  # Find the best guess for
+                    fw = self._font_render_string(self._input_underline * int(char), color).get_width()
+                    char += 1
+                    if fw >= delta_ch:
+                        break
+
+            # If char limit
+            if self._maxchar != 0 or self._maxwidth_base != 0:
+                max_chars = max(self._maxchar, self._maxwidth_base)
+                basechar = 'O'
+                if self._password:
+                    basechar = self._password_char
+                max_size = self._font_render_string(basechar * max_chars)
+                max_size = max_size.get_size()[0]
+                maxchar_char = math.ceil(float(max_size + self._ellipsis_size) / self._input_underline_size)
+                char = min(char, maxchar_char)
+
+            underline_string = self._input_underline * max(int(char), 0)
 
             # Render char
+            self._current_underline_string = underline_string
             underline = self._font_render_string(underline_string, color, use_background_color=False)
 
             # Create a new surface
-            new_width = max(self._title_size + underline.get_size()[0],
-                            max_width_current,
-                            self._last_rendered_surface_underline_width)
-            new_surface = make_surface(new_width + 1, current_rect.height + 3, alpha=True)
+            new_width = max(self._title_size + underline.get_size()[0], current_rect.width)
+            new_surface = make_surface(new_width, current_rect.height + 3, alpha=True)
+
+            # Compute underline vmargin by its height
+            uvm = 5  # underline vertical margin
+            if underline.get_height() <= 15:
+                uvm = 4
+            if underline.get_height() <= 7:
+                uvm = 3
 
             # Blit current surface
             new_surface.blit(self._surface, (0, 0))
-            new_surface.blit(underline, (self._title_size - 1, 6))  # Position (x, y)
+            new_surface.blit(underline, (self._title_size, uvm))  # Position (x, y)
             self._last_rendered_surface_with_underline = new_surface
             self._last_rendered_surface_underline_width = new_width
         else:
