@@ -85,14 +85,14 @@ class Selector(Widget):
     :param onselect: Function when selecting the widget
     :param kwargs: Optional keyword arguments
     """
-    _elements: Union[List[Tuple[str, Any]], List[str]]
+    _elements: Union[List[Tuple[Any, ...]], List[str]]
     _index: int
     _sformat: str
     _title_size: int
 
     def __init__(self,
                  title: Any,
-                 elements: Union[List[Tuple[str, Any]], List[str]],
+                 elements: Union[List[Tuple[Any, ...]], List[str]],
                  selector_id: str = '',
                  default: int = 0,
                  onchange: CallbackType = None,
@@ -130,7 +130,7 @@ class Selector(Widget):
         # Apply default item
         default %= len(self._elements)
         for k in range(0, default):
-            self.right()
+            self._right()
         self.set_default_value(default)
 
     def set_default_value(self, index: int) -> None:
@@ -148,6 +148,15 @@ class Selector(Widget):
         surface.blit(self._surface, self._rect.topleft)
         self.apply_draw_callbacks()
 
+    def _render(self) -> Optional[bool]:
+        string = self._sformat.format(self._title, self.get_value()[0][0])
+        if not self._render_hash_changed(string, self.selected, self.visible, self._index, self.readonly):
+            return True
+        self._surface = self._render_string(string, self.get_font_color_status())
+        self._apply_transforms()
+        self._rect.width, self._rect.height = self._surface.get_size()
+        self._force_menu_surface_update()
+
     def get_index(self) -> int:
         """
         Get selected index.
@@ -156,7 +165,7 @@ class Selector(Widget):
         """
         return self._index
 
-    def get_value(self) -> Tuple[Union[Tuple[str, Any], str], int]:
+    def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
         """
         Return the current value of the selector at the selected index.
 
@@ -164,7 +173,7 @@ class Selector(Widget):
         """
         return self._elements[self._index], self._index
 
-    def left(self) -> None:
+    def _left(self) -> None:
         """
         Move selector to left.
 
@@ -175,7 +184,7 @@ class Selector(Widget):
         self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
 
-    def right(self) -> None:
+    def _right(self) -> None:
         """
         Move selector to right.
 
@@ -185,15 +194,6 @@ class Selector(Widget):
             return
         self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
-
-    def _render(self) -> Optional[bool]:
-        string = self._sformat.format(self._title, self.get_value()[0][0])
-        if not self._render_hash_changed(string, self.selected, self.visible, self._index, self.readonly):
-            return True
-        self._surface = self._render_string(string, self.get_font_color_status())
-        self._apply_transforms()
-        self._rect.width, self._rect.height = self._surface.get_size()
-        self._force_menu_surface_update()
 
     def set_value(self, item: Union[str, int]) -> None:
         """
@@ -221,7 +221,7 @@ class Selector(Widget):
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
 
-    def update_elements(self, elements: Union[List[Tuple[str, Any]], List[str]]) -> None:
+    def update_elements(self, elements: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
         Update selector elements.
 
@@ -247,7 +247,6 @@ class Selector(Widget):
         if self.readonly:
             return False
         updated = False
-        rect = self.get_rect()
 
         for event in events:
 
@@ -261,58 +260,55 @@ class Selector(Widget):
             joy_axismotion = self.joystick_enabled and event.type == pygame.JOYAXISMOTION
             joy_button_down = self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
+            # Left button
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
                 self.sound.play_key_add()
-                self.left()
+                self._left()
                 updated = True
 
+            # Right button
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
                 self.sound.play_key_add()
-                self.right()
+                self._right()
                 updated = True
 
+            # Press enter
             elif keydown and event.key == _controls.KEY_APPLY or \
                     joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
                 self.sound.play_open_menu()
                 self.apply(*self._elements[self._index][1:])
                 updated = True
 
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
-                if rect.collidepoint(*event.pos):
+            # Click on selector
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP or \
+                    self.touchscreen_enabled and event.type == pygame.FINGERUP:
+
+                # Get event position based on input type
+                if self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                    window_size = self.get_menu().get_window_size()
+                    event_pos = (event.x * window_size[0], event.y * window_size[1])
+                else:
+                    event_pos = event.pos
+
+                # If collides
+                rect = self.get_rect()
+                if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
-                    dist = mousex - (topleft + self._title_size)  # Distance from label
-                    if dist > 0:  # User clicked the options, not label
+                    dist = mousex - (topleft + self._title_size)  # Distance from title
+                    if dist > 0:  # User clicked the options, not title
                         # Position in percentage, if <0.5 user clicked left
                         pos = dist / float(topright - topleft - self._title_size)
                         if pos <= 0.5:
-                            self.left()
+                            self._left()
                         else:
-                            self.right()
-                        updated = True
-
-            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
-                window_size = self.get_menu().get_window_size()
-                finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if rect.collidepoint(*finger_pos):
-                    # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = finger_pos
-                    topleft, _ = rect.topleft
-                    topright, _ = rect.topright
-                    dist = mousex - (topleft + self._title_size)  # Distance from label
-                    if dist > 0:  # User clicked the options, not label
-                        # Position in percentage, if <0.5 user clicked left
-                        pos = dist / float(topright - topleft - self._title_size)
-                        if pos <= 0.5:
-                            self.left()
-                        else:
-                            self.right()
+                            self._right()
                         updated = True
 
         if updated:
