@@ -95,14 +95,14 @@ class WidgetsTest(unittest.TestCase):
         w.translate(10, 10)
         w.scale(1, 1)
         w.set_max_width(150)
-        self.assertFalse(w._scale[0])  # Scalling is disabled
+        self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         self.assertFalse(w._scale[4])  # use_same_xy
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
         w.resize(40, 40)
-        self.assertTrue(w._scale[0])  # Scalling is enabled
+        self.assertTrue(w._scale[0])  # Scaling is enabled
         self.assertTrue(w._scale[4])  # use_same_xy
         w.scale(1, 1)
         self.assertFalse(w._scale[0])
@@ -448,16 +448,45 @@ class WidgetsTest(unittest.TestCase):
                                     max_char=33,
                                     margin=(3, 5),
                                     align=_locals.ALIGN_LEFT,
-                                    font_size=3)  # type: list
+                                    font_size=3)
         self.assertEqual(len(label), 15)
-        _w = label[0]  # type: Label
-        self.assertFalse(_w.is_selectable)
-        self.assertEqual(_w.get_margin()[0], 3)
-        self.assertEqual(_w.get_margin()[1], 5)
-        self.assertEqual(_w.get_alignment(), _locals.ALIGN_LEFT)
-        self.assertEqual(_w.get_font_info()['size'], 3)
-        _w.draw(surface)
-        self.assertFalse(_w.update([]))
+        w = label[0]
+        self.assertFalse(w.is_selectable)
+        self.assertEqual(w.get_margin()[0], 3)
+        self.assertEqual(w.get_margin()[1], 5)
+        self.assertEqual(w.get_alignment(), _locals.ALIGN_LEFT)
+        self.assertEqual(w.get_font_info()['size'], 3)
+        w.draw(surface)
+        self.assertFalse(w.update([]))
+        labeltext = ['Lorem ipsum dolor sit amet,', 'consectetur adipiscing elit, sed',
+                     'do eiusmod tempor incididunt ut', 'labore et dolore magna aliqua. Ut',
+                     'enim ad minim veniam, quis', 'nostrud exercitation ullamco',
+                     'laboris nisi ut aliquip ex ea', 'commodo consequat. Duis aute',
+                     'irure dolor in reprehenderit in', 'voluptate velit esse cillum',
+                     'dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat',
+                     'non proident, sunt in culpa qui', 'officia deserunt mollit anim id',
+                     'est laborum.']
+        for i in range(len(label)):
+            self.assertEqual(label[i].get_title(), labeltext[i])
+
+        # Split label
+        label = self.menu.add_label('This label should split.\nIn two lines')
+        self.assertEqual(label[0].get_title(), 'This label should split.')
+        self.assertEqual(label[1].get_title(), 'In two lines')
+
+        # Split label, but also with maxchar enabled
+        label = self.menu.add_label(
+            'This label should split, this line is really long so it should split.\nThe second line', max_char=40)
+        self.assertEqual(label[0].get_title(), 'This label should split, this line is')
+        self.assertEqual(label[1].get_title(), 'really long so it should split.')
+        self.assertEqual(label[2].get_title(), 'The second line')
+
+        # Split label with -1 maxchar
+        label = self.menu.add_label(
+            'This label should split, this line is really long so it should split.\nThe second line', max_char=-1)
+        self.assertEqual(label[0].get_title(), 'This label should split, this line is really')
+        self.assertEqual(label[1].get_title(), 'long so it should split.')
+        self.assertEqual(label[2].get_title(), 'The second line')
 
     def test_textinput(self):
         """
@@ -594,6 +623,70 @@ class WidgetsTest(unittest.TestCase):
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
+
+        # Test underline edge cases
+        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme.title_font_size = 35
+        theme.widget_font_size = 25
+
+        menu = pygame_menu.Menu(
+            column_max_width=400,
+            height=300,
+            theme=theme,
+            title='Label',
+            onclose=pygame_menu.events.CLOSE,
+            width=400
+        )
+        textinput = menu.add_text_input('title', input_underline='_')
+        width = 107
+        if pygame.version.vernum.major < 2:
+            width = 106
+        self.assertEqual(menu._widget_offset[1], width)
+        self.assertEqual(textinput.get_width(), 376)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        self.assertEqual(textinput.get_width(), 376)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (376, 400))
+        textinput.set_title('nice')
+        self.assertEqual(textinput.get_width(), 379)
+        self.assertEqual(textinput._current_underline_string, '______________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (379, 400))
+        textinput.set_value('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ')
+        self.assertEqual(textinput.get_width(), 712)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (712, 400))
+        textinput.set_padding(100)
+        self.assertEqual(textinput.get_width(), 912)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (912, 400))
+        textinput.set_padding(200)
+        self.assertEqual(textinput.get_width(), 1112)
+        self.assertEqual(textinput._current_underline_string,
+                         '____________________________________________________________')
+        menu.render()
+        self.assertEqual((menu.get_width(widget=True), menu.get_width(inner=True)), (1112, 380))
+
+        # Test underline
+        textinput = menu.add_text_input('title: ')
+        textinput.set_value('this is a test value')
+        self.assertEqual(textinput.get_width(), 266)
+
+        menu.clear()
+        textinput = menu.add_text_input('title: ', input_underline='.-')
+        textinput.set_value('QQQQQQQQQQQQQQQ')
+        self.assertEqual(textinput.get_width(), 388)
+        self.assertEqual(textinput._current_underline_string, '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
+
+        textinput = menu.add_text_input('title: ', input_underline='_', input_underline_len=10)
+        self.assertEqual(textinput._current_underline_string, '_' * 10)
 
     def test_button(self):
         """

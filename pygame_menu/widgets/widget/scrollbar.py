@@ -264,6 +264,15 @@ class ScrollBar(Widget):
         self._slider_position += move
         return True
 
+    def get_thickness(self):
+        """
+        Return the thickness of the bar.
+
+        :return: Thickness (px)
+        :rtype: int
+        """
+        return int(self._page_ctrl_thick)
+
     def set_length(self, value):
         """
         Set the length of the page control area.

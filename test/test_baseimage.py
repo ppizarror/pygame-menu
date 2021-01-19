@@ -34,6 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from test._utils import *
+import copy
 import sys
 
 from pygame_menu.baseimage import *
@@ -149,6 +150,10 @@ class BaseImageTest(unittest.TestCase):
         image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image_copied = image.copy()
         self.assertTrue(image.equals(image_copied))
+        image_copy = copy.copy(image)
+        image_copy2 = copy.deepcopy(image)
+        self.assertTrue(image.equals(image_copy))
+        self.assertTrue(image.equals(image_copy2))
 
     def test_transform(self):
         """
@@ -178,8 +183,9 @@ class BaseImageTest(unittest.TestCase):
         image.restore()
         self.assertTrue(image.equals(image_original))
 
-        # As the example is not 24/32 bits smooth scale fails
-        self.assertRaises(ValueError, lambda: image.resize(100, 100, True))
+        # As the example is not 24/32 bits smooth scale fails, but baseimage should notice that
+        imagc = image.copy()
+        imagc.resize(100, 100, True)
 
         # Get rect
         rect = image.get_rect()
@@ -207,3 +213,27 @@ class BaseImageTest(unittest.TestCase):
 
         # Image channels
         image.pick_channels(('r', 'g', 'b'))
+
+    def test_cache(self):
+        """
+        Tache draw test.
+        """
+        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertEqual(image._last_transform[2], None)
+
+        image.set_drawing_mode(pygame_menu.baseimage.IMAGE_MODE_FILL)
+
+        # Draw, this should force cache
+        image.draw(surface)
+        self.assertNotEqual(image._last_transform[2], None)
+        s = image._last_transform[2]
+        image.draw(surface)  # Draw again, then the image should be the same
+        self.assertEqual(image._last_transform[2], s)
+        self.assertEqual(image._last_transform[0], 600)
+
+        # Changes the area, then image should change
+        r = image.get_rect()
+        r.width = 300
+        image.draw(surface, r)
+        self.assertNotEqual(image._last_transform[2], s)
+        self.assertEqual(image._last_transform[0], 300)

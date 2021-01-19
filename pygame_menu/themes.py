@@ -227,7 +227,7 @@ class Theme(object):
                                           30)  # type: int
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2',
                                        (0, 10))  # type: tuple
-        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float),
+        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float, tuple, list),
                                         0)  # type: (int,float,tuple)
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2',
                                        (0, 0))  # type: tuple
@@ -247,6 +247,9 @@ class Theme(object):
             msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
+        # Test purpuose only, if True disables any validation
+        self._disable_validation = False
+
     def validate(self):
         """
         Validate the values of the theme. If there's a invalid parameter throws an
@@ -257,6 +260,8 @@ class Theme(object):
 
         :return: None
         """
+        if self._disable_validation:
+            return
 
         # Size asserts
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
@@ -288,9 +293,14 @@ class Theme(object):
         self.title_offset = self._vec_to_tuple(self.title_offset, 2)  # type: tuple
         self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)  # type: tuple
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)  # type: tuple
-        if isinstance(self.widget_padding, (list, tuple)):
-            self.widget_padding = self._vec_to_tuple(self.widget_padding)  # type: tuple
+        if isinstance(self.widget_padding, (tuple, list)):
+            self.widget_padding = self._vec_to_tuple(self.widget_padding) # type: tuple
             assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
+            for p in self.widget_padding:
+                assert p >= 0, 'all padding elements must be equal or greater than zero'
+        else:
+            assert isinstance(self.widget_padding, (int, float))
+            assert self.widget_padding >= 0, 'padding cant be a negative number'
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2)  # type: tuple
 
         # Check sizes
@@ -314,6 +324,7 @@ class Theme(object):
         :type opacity: int
         :return: None
         """
+        _utils.assert_color(self.background_color)
         assert isinstance(opacity, float)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
