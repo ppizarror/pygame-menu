@@ -1,11 +1,14 @@
+
 ==========================
 Migration Guide - v3 to v4
 ==========================
 
 - ``pygame_menu v4`` do not supports python 2.7 to 3.5.
 - Added ``__all__`` to module, then some usage cases importing with * may fail.
-- Menu Column/Row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``.
+- Menu ``add_image`` method parameter ``scale_smooth`` is now ``True`` by default.
+- Menu Column/Row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``. Expect some minor changes to the global layout. Now is much more consistent.
 - Menu method ``get_width()`` changes to``get_width(inner=False, widget=False)``.
+- Moved ``previsualization_width`` colorinput method to ``kwargs``.
 - Removed ``column_force_fit_text`` from ``Menu`` constructor.
 - Removed ``dummy_function`` from ``pygame_menu.utils``.
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
@@ -13,4 +16,3 @@ Migration Guide - v3 to v4
 - Renamed widget ``expand_background_inflate_to_selection_effect`` to ``background_inflate_to_selection_effect``.
 - Widget ``shadow_offset`` now cannot be ``None``, only ``int`` or ``float`` allowed.
 - Widget ``VMargin`` now inherits from ``NoneWidget``.
-- Moved ``previsualization_width`` colorinput method to ``kwargs``.
