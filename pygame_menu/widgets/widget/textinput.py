@@ -93,15 +93,16 @@ class TextInput(Widget):
 
     :param title: Text input title
     :param textinput_id: ID of the text input
-    :param input_type: Type of data
-    :param input_underline: Character drawn under the input
-    :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
+    :param copy_paste_enable: Enables copy, paste, and cut
     :param cursor_color: Color of cursor
-    :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
     :param cursor_selection_color: Color of the text selection if the cursor is enabled on certain widgets
     :param cursor_selection_enable: Enables selection of text
-    :param copy_paste_enable: Enables copy, paste, and cut
+    :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
     :param history: Maximum number of editions stored
+    :param input_type: Type of data
+    :param input_underline: Character string drawn under the input
+    :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
+    :param input_underline_vmargin: Vertical margin of underline (px)
     :param maxchar: Maximum length of input
     :param maxwidth: Maximum size of the text to be displayed (overflow). If ``0`` this feature is disabled
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size
@@ -120,11 +121,12 @@ class TextInput(Widget):
     :param kwargs: Optional keyword arguments
     """
     _absolute_origin: Tuple2IntType
-    _apply_widget_draw_callback: bool
-    _apply_widget_update_callback: bool
+    _apply_widget_draw_callback: bool  # Used in ColorInput
+    _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
     _clock: 'pygame.time.Clock'
     _copy_paste_enabled: bool
+    _current_underline_string: str  # Testing
     _cursor_color: ColorType
     _cursor_ms_counter: NumberType
     _cursor_offset: NumberType
@@ -146,6 +148,7 @@ class TextInput(Widget):
     _input_underline: str
     _input_underline_len: int
     _input_underline_size: NumberType
+    _input_underline_vmargin: int
     _key_is_pressed: bool
     _keychar_size: Dict[str, NumberType]
     _keyrepeat_counters: Dict[int, List[int]]
@@ -156,11 +159,7 @@ class TextInput(Widget):
     _keyrepeat_touch_interval_ms: NumberType
     _last_char: str
     _last_key: int
-    _last_rendered_string: str
-    _last_rendered_surface: Optional['pygame.Surface']
-    _last_rendered_surface_underline_width: int
     _last_selection_render: List[int]
-    _max_histoy: List[str]
     _maxchar: int
     _maxwidth: int
     _maxwidth_base: int
@@ -174,11 +173,9 @@ class TextInput(Widget):
     _selection_box: List[int]
     _selection_color: ColorType
     _selection_enabled: bool
-    _selection_mouse_first_position: int
+    _selection_mouse_first_position: int  # Touch emulates a mouse, so this is used by both touch and mouse
     _selection_position: List[int]
-    _selection_render: bool
     _selection_surface: Optional['pygame.Surface']
-    _selection_touch_first_position: int
     _tab_size: int
     _title_size: NumberType
     _valid_chars: Optional[List[str]]
@@ -195,6 +192,7 @@ class TextInput(Widget):
                  input_type: str = _locals.INPUT_TEXT,
                  input_underline: str = '',
                  input_underline_len: int = 0,
+                 input_underline_vmargin: int = 0,
                  maxchar: int = 0,
                  maxwidth: int = 0,
                  maxwidth_dynamically_update: bool = True,
@@ -221,6 +219,7 @@ class TextInput(Widget):
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
         assert isinstance(input_underline_len, int)
+        assert isinstance(input_underline_vmargin, int)
         assert isinstance(maxchar, int)
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
@@ -272,7 +271,7 @@ class TextInput(Widget):
             pygame.K_RCTRL,
             pygame.K_RETURN,
             pygame.K_RSHIFT,
-            pygame.K_TAB,
+            pygame.K_TAB
         )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
@@ -324,9 +323,7 @@ class TextInput(Widget):
         self._selection_enabled = cursor_selection_enable
         self._selection_mouse_first_position = -1
         self._selection_position = [0, 0]  # x,y (float)
-        self._selection_render = False
         self._selection_surface = None
-        self._selection_touch_first_position = -1
 
         # List of valid chars
         if valid_chars is not None:
@@ -344,15 +341,14 @@ class TextInput(Widget):
 
         # Other
         self._copy_paste_enabled = copy_paste_enable
+        self._current_underline_string = ''
         self._input_type = input_type
         self._input_underline = input_underline
         self._input_underline_len = input_underline_len
         self._input_underline_size = 0
+        self._input_underline_vmargin = input_underline_vmargin
         self._keychar_size = {'': 0}
         self._last_char = ''
-        self._last_rendered_string = '__pygame_menu__last_render_string__'
-        self._last_rendered_surface = None
-        self._last_rendered_surface_underline_width = 0
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
         self._maxwidth_base = maxwidth
@@ -459,14 +455,12 @@ class TextInput(Widget):
         string = self._title + self._get_input_string()  # Render string
 
         if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
-                                         self._selection_enabled, self.active, self.visible, self.readonly):
+                                         self._selection_enabled, self.active, self.visible, self.readonly,
+                                         self._menu.get_width(inner=True)):
             return True
 
-        color = self.get_font_color_status()
-        updated_surface = self._render_string_surface(string, color)
-
         # Apply underline if exists
-        self._surface = self._render_underline(string, color, updated_surface)
+        self._surface = self._render_string_underline(string, self.get_font_color_status())
         self._apply_transforms()
 
         # Render the cursor
@@ -546,82 +540,82 @@ class TextInput(Widget):
             if self._cursor_surface:
                 self._cursor_surface.fill(self._cursor_color)
 
-    def _render_string_surface(self, string: str, color: ColorType) -> bool:
+    def _render_string_underline(self, string: str, color: ColorType) -> 'pygame.Surface':
         """
-        Renders string surface.
+        Render underline string surface.
 
         :param string: String to render
         :param color: Color of the string to render
-        :return: ``True`` if surface is updated
+        :return: New surface
         """
-        new_surface = self._render_string(string, color)
-        updated_surface = self._last_rendered_surface != new_surface
-        if updated_surface:
-            self._surface = new_surface
-            self._last_rendered_surface = self._surface
-        return updated_surface
+        # Create surface with no underline (just text)
+        surface = self._render_string(string, color)
 
-    def _render_underline(self, string: str, color: ColorType, updated: bool) -> 'pygame.Surface':
-        """
-        Render underline surface.
-
-        :param string: String to render
-        :param color: Color of the string to render
-        :param updated: Render string has been updated or not
-        :return: New rendered surface
-        """
         # If underline is not enabled
         if self._input_underline_size == 0:
-            return self._surface
+            return surface
 
-        # Render input underline
-        if string != self._last_rendered_string or updated:
-            menu = self.get_menu()
+        menu = self.get_menu()
+        current_rect = surface.get_rect()
+
+        # Compute initial char guess
+        if self._input_underline_len != 0:  # User defined the amount of underline chars to use
+            char = self._input_underline_len
+
+        else:  # Compute available width and propose the maximum chars needed (fill all width)
 
             # Calculate total available space
-            current_rect = self._surface.get_rect()
-            menu_rect = menu.get_rect()
-            posx2 = menu_rect.x + menu_rect.width
-            space_between_title = posx2 - self._title_size - self._rect.x
-            char = math.ceil(space_between_title * 1.0 / self._input_underline_size)  # floor does not work
+            #  |---------------------------------------------------|
+            #  |MENU                                               |
+            #  |                <---- space-between-title --->     |
+            #  |   .===TITLE====|=THE INPUT OF USER===========.    |
+            #  | self._rect.x   title                       posx2  |
+            #  |                                                   |
+            #  |---------------------------------------------------|
+            posx2 = max(menu.get_width(inner=True) - self._input_underline_size * 1.5 -
+                        self._padding[1] - self._padding[3],
+                        current_rect.width)
+            delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
+            char = math.ceil(delta_ch / self._input_underline_size)
+            for i in range(10):  # Find the best guess for
+                fw = self._font_render_string(self._input_underline * int(char), color).get_width()
+                char += 1
+                if fw >= delta_ch:
+                    break
 
-            # If char limit
-            max_width_current = 0
-            if self._maxchar != 0 or self._maxwidth != 0:
-                max_chars = max(self._maxchar, self._maxwidth_base)
-                basechar = 'O'
-                multif = 2  # Factor of ellipsis
-                if self._password:
-                    basechar = self._password_char
-                    multif = 2
-                max_size = self._font_render_string(basechar * max_chars)
-                max_size = max_size.get_size()[0]
-                maxchar_char = math.ceil((max_size + multif * self._ellipsis_size) / self._input_underline_size)
-                char = min(char, maxchar_char)
-                max_width_current = current_rect.width
+        # If char limit
+        if self._maxchar != 0 or self._maxwidth_base != 0:
+            max_chars = max(self._maxchar, self._maxwidth_base)
+            basechar = 'O'
+            if self._password:
+                basechar = self._password_char
+            max_size = self._font_render_string(basechar * max_chars)
+            max_size = max_size.get_size()[0]
+            maxchar_char = math.ceil((max_size + self._ellipsis_size) / self._input_underline_size)
+            char = min(char, maxchar_char)
 
-            if self._input_underline_len != 0:
-                char = self._input_underline_len
+        underline_string = self._input_underline * max(int(char), 0)
 
-            underline_string = self._input_underline * int(char)
+        # Render char
+        self._current_underline_string = underline_string
+        underline = self._font_render_string(underline_string, color, use_background_color=False)
 
-            # Render char
-            underline = self._font_render_string(underline_string, color, use_background_color=False)
+        # Create a new surface
+        new_width = max(self._title_size + underline.get_size()[0], current_rect.width)
+        new_surface = make_surface(new_width, current_rect.height + 3 + self._input_underline_vmargin, alpha=True)
 
-            # Create a new surface
-            new_width = max(self._title_size + underline.get_size()[0],
-                            max_width_current,
-                            self._last_rendered_surface_underline_width)
-            new_surface = make_surface(new_width + 1, current_rect.height + 3, alpha=True)
+        # Compute underline vmargin by its height
+        uvm = 5  # underline vertical margin
+        if underline.get_height() <= 15:
+            uvm = 4
+        if underline.get_height() <= 7:
+            uvm = 3
 
-            # Blit current surface
-            new_surface.blit(self._surface, (0, 0))
-            new_surface.blit(underline, (self._title_size - 1, 6))  # Position (x, y)
-            self._last_rendered_surface_with_underline = new_surface
-            self._last_rendered_surface_underline_width = new_width
-        else:
-            new_surface = self._last_rendered_surface_with_underline  # Reuse the rendered surface
+        # Blit current surface
+        new_surface.blit(surface, (0, 0))
+        new_surface.blit(underline, (self._title_size, uvm + self._input_underline_vmargin))  # Position (x, y)
 
+        # Return new surface
         return new_surface
 
     def _render_cursor(self) -> None:
@@ -1777,7 +1771,6 @@ class TextInput(Widget):
                         self._unselect_text()
                     self._cursor_ms_counter = 0
                     self._selection_active = True
-                    self._selection_touch_first_position = -1
                     self.active = True
 
         # Get time clock

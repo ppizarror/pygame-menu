@@ -50,6 +50,8 @@ from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
 from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType
 
+import math
+
 ColorType = Tuple[int, int, int]
 
 # Input modes
@@ -92,6 +94,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :param hex_format: Hex format string mode ``(none, lower, upper)``
     :param input_separator: Divisor between RGB channels
     :param input_underline: Character drawn under each number input
+    :param input_underline_vmargin: Vertical margin of underline (px)
     :param cursor_color: Color of cursor
     :param onchange: Function when changing the values of the color text
     :param onreturn: Function when pressing return on the color text input
@@ -124,10 +127,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  hex_format: str = HEX_FORMAT_NONE,
                  input_separator: str = ',',
                  input_underline: str = '_',
+                 input_underline_vmargin: int = 0,
                  onchange: CallbackType = None,
                  onreturn: CallbackType = None,
                  onselect: CallbackType = None,
-                 prev_margin: int = 0,
+                 prev_margin: int = 10,
                  prev_width_factor: NumberType = 3,
                  repeat_keys_initial_ms: NumberType = 450,
                  repeat_keys_interval_ms: NumberType = 80,
@@ -177,6 +181,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             history=0,
             input_type=_input_type,
             input_underline=input_underline,
+            input_underline_vmargin=input_underline_vmargin,
             maxchar=_maxchar,
             maxwidth=_maxwidth,
             onchange=onchange,
@@ -212,6 +217,29 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # Disable parent callbacks
         self._apply_widget_update_callback = False
         self._apply_widget_draw_callback = False
+
+    def _apply_font(self) -> None:
+        super(ColorInput, self)._apply_font()
+
+        # Compute the size of the underline
+        if self._input_underline != '':
+
+            # Max expected width
+            max_width = 0
+            if self._color_type == TYPE_RGB:
+                max_width = self._font_render_string('255{0}255{0}255'.format(self._separator)).get_width()
+            else:
+                for i in ('a', 'b', 'c', 'd', 'e', 'f'):
+                    max_width = max(max_width, self._font_render_string('#{0}'.format(i * 6)).get_width())
+
+            char = math.ceil(max_width / self._input_underline_size)
+            for i in range(10):  # Find the best guess for
+                fw = self._font_render_string(self._input_underline * int(char)).get_width()
+                char += 1
+                if fw >= max_width:
+                    break
+
+            self._input_underline_len = char
 
     def clear(self) -> None:
         super(ColorInput, self).clear()
