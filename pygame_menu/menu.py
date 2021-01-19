@@ -586,7 +586,7 @@ class Menu(object):
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``onselect``                  *(callable, None)* - Callback executed when selecting the widget
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
             - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
@@ -744,7 +744,7 @@ class Menu(object):
             - ``font_name``                 *(str)* - Widget font
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
             - ``previsualization_margin``   *(int)* - Previsualization left margin from text input in px. Default is ``0``
             - ``previsualization_width``    *(int, float)* - Previsualization width as a factor of the height. Default is ``3``
@@ -845,7 +845,7 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
@@ -923,7 +923,7 @@ class Menu(object):
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
             - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          (:py:class:`pygame_menu.widgets.core.Selection`) - Widget selection effect
@@ -944,7 +944,7 @@ class Menu(object):
 
         :param title: Text to be displayed
         :param label_id: ID of the label
-        :param max_char: Split the title in several labels if length exceeds; ``0``: don't split, ``-1``: split to Menu width
+        :param max_char: Split the title in several labels if the string length exceeds ``max_char``; ``0``: don't split, ``-1``: split to Menu width
         :param onselect: Callback executed when selecting the widget
         :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
         :param kwargs: Optional keyword arguments
@@ -960,6 +960,26 @@ class Menu(object):
         if len(label_id) == 0:
             label_id = str(uuid4())
 
+        # If newline detected, split in two new lines
+        if '\n' in title:
+            title = title.split('\n')
+            widgets = []
+            for t in title:
+                wig = self.add_label(
+                    title=t,
+                    label_id=label_id + '+' + str(len(widgets) + 1),
+                    max_char=max_char,
+                    onselect=onselect,
+                    selectable=selectable,
+                    **kwargs
+                )
+                if isinstance(wig, list):
+                    for w in wig:
+                        widgets.append(w)
+                else:
+                    widgets.append(wig)
+            return widgets
+
         # Wrap text to Menu width (imply additional calls to render functions)
         if max_char < 0:
             dummy_attrs = self._filter_widget_attributes(kwargs.copy())
@@ -969,7 +989,6 @@ class Menu(object):
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
-
             attributes = self._filter_widget_attributes(kwargs)
             widget = _widgets.Label(
                 label_id=label_id,
@@ -983,7 +1002,6 @@ class Menu(object):
             self._stats.add_label += 1
 
         else:
-
             self._check_id_duplicated(label_id)  # Before adding + LEN
             widget = []
             for line in textwrap.wrap(title, max_char):
@@ -1041,7 +1059,7 @@ class Menu(object):
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
             - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
             - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
@@ -1125,7 +1143,7 @@ class Menu(object):
             - ``font_name``                 *(str)* - Widget font
             - ``font_size``                 *(int)* - Font size of the widget
             - ``infinite``                  *(bool)* - The state can rotate. ``False`` by default
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
             - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
             - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
@@ -1247,7 +1265,7 @@ class Menu(object):
             - ``font_name``                 *(str)* - Widget font
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
-            - ``margin``                    *(tuple, list)* - *(left,bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
             - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
             - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected

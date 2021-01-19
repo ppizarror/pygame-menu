@@ -34,6 +34,7 @@ __all__ = ['BaseImageTest']
 import unittest
 from test._utils import surface
 
+import copy
 import pygame_menu
 from pygame_menu.baseimage import *
 from pathlib import Path
@@ -146,6 +147,10 @@ class BaseImageTest(unittest.TestCase):
         image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image_copied = image.copy()
         self.assertTrue(image.equals(image_copied))
+        image_copy = copy.copy(image)
+        image_copy2 = copy.deepcopy(image)
+        self.assertTrue(image.equals(image_copy))
+        self.assertTrue(image.equals(image_copy2))
 
     def test_transform(self) -> None:
         """

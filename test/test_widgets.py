@@ -446,28 +446,28 @@ class WidgetsTest(unittest.TestCase):
         Test ColorInput widget.
         """
 
-        def _assert_invalid_color(_widget) -> None:
+        def _assert_invalid_color(widg) -> None:
             """
             Assert that the widget color is invalid.
-            :param _widget: Widget object
+            :param widg: Widget object
             """
-            _r, _g, _b = _widget.get_value()
-            self.assertEqual(_r, -1)
-            self.assertEqual(_g, -1)
-            self.assertEqual(_b, -1)
+            r, g, b = widg.get_value()
+            self.assertEqual(r, -1)
+            self.assertEqual(g, -1)
+            self.assertEqual(b, -1)
 
-        def _assert_color(_widget, cr, cg, cb) -> None:
+        def _assert_color(widg, cr, cg, cb) -> None:
             """
             Assert that the widget color is invalid.
-            :param _widget: Widget object
+            :param widg: Widget object
             :param cr: Red channel, number between 0 and 255
             :param cg: Green channel, number between 0 and 255
             :param cb: Blue channel, number between 0 and 255
             """
-            _r, _g, _b = _widget.get_value()
-            self.assertEqual(_r, cr)
-            self.assertEqual(_g, cg)
-            self.assertEqual(_b, cb)
+            r, g, b = widg.get_value()
+            self.assertEqual(r, cr)
+            self.assertEqual(g, cg)
+            self.assertEqual(b, cb)
 
         self.menu.clear()
 
@@ -668,14 +668,43 @@ class WidgetsTest(unittest.TestCase):
                                     align=_locals.ALIGN_LEFT,
                                     font_size=3)
         self.assertEqual(len(label), 15)
-        _w = label[0]
-        self.assertFalse(_w.is_selectable)
-        self.assertEqual(_w.get_margin()[0], 3)
-        self.assertEqual(_w.get_margin()[1], 5)
-        self.assertEqual(_w.get_alignment(), _locals.ALIGN_LEFT)
-        self.assertEqual(_w.get_font_info()['size'], 3)
-        _w.draw(surface)
-        self.assertFalse(_w.update([]))
+        w = label[0]
+        self.assertFalse(w.is_selectable)
+        self.assertEqual(w.get_margin()[0], 3)
+        self.assertEqual(w.get_margin()[1], 5)
+        self.assertEqual(w.get_alignment(), _locals.ALIGN_LEFT)
+        self.assertEqual(w.get_font_info()['size'], 3)
+        w.draw(surface)
+        self.assertFalse(w.update([]))
+        labeltext = ['Lorem ipsum dolor sit amet,', 'consectetur adipiscing elit, sed',
+                     'do eiusmod tempor incididunt ut', 'labore et dolore magna aliqua. Ut',
+                     'enim ad minim veniam, quis', 'nostrud exercitation ullamco',
+                     'laboris nisi ut aliquip ex ea', 'commodo consequat. Duis aute',
+                     'irure dolor in reprehenderit in', 'voluptate velit esse cillum',
+                     'dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat',
+                     'non proident, sunt in culpa qui', 'officia deserunt mollit anim id',
+                     'est laborum.']
+        for i in range(len(label)):
+            self.assertEqual(label[i].get_title(), labeltext[i])
+
+        # Split label
+        label = self.menu.add_label('This label should split.\nIn two lines')
+        self.assertEqual(label[0].get_title(), 'This label should split.')
+        self.assertEqual(label[1].get_title(), 'In two lines')
+
+        # Split label, but also with maxchar enabled
+        label = self.menu.add_label(
+            'This label should split, this line is really long so it should split.\nThe second line', max_char=40)
+        self.assertEqual(label[0].get_title(), 'This label should split, this line is')
+        self.assertEqual(label[1].get_title(), 'really long so it should split.')
+        self.assertEqual(label[2].get_title(), 'The second line')
+
+        # Split label with -1 maxchar
+        label = self.menu.add_label(
+            'This label should split, this line is really long so it should split.\nThe second line', max_char=-1)
+        self.assertEqual(label[0].get_title(), 'This label should split, this line is really')
+        self.assertEqual(label[1].get_title(), 'long so it should split.')
+        self.assertEqual(label[2].get_title(), 'The second line')
 
     def test_textinput(self) -> None:
         """
