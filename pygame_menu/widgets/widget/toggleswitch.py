@@ -425,7 +425,6 @@ class ToggleSwitch(Widget):
                             if dx < best:
                                 target_index = i
                                 best = dx
-                            # print('to', i, 'dx', dx)
                         if target_index != self._state:
                             self.sound.play_key_add()
                             self._state = target_index

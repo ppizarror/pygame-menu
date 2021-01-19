@@ -975,10 +975,11 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        if self._rect.collidepoint(*pos):
+        rect = self.get_rect()
+        if rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
             mousex, _ = pos
-            topleft, _ = self._rect.topleft
+            topleft, _ = rect.topleft
             self._update_cursor_mouse(mousex - topleft)
             return True  # Prevents double click
 
@@ -993,10 +994,11 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        if self._rect.collidepoint(*pos):
+        rect = self.get_rect()
+        if rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
             touchx, _ = pos
-            topleft, _ = self._rect.topleft
+            topleft, _ = rect.topleft
             self._update_cursor_mouse(touchx - topleft)
             return True  # Prevents double click
 

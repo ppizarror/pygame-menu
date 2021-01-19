@@ -174,7 +174,11 @@ class Widget(object):
         self._translate = (0, 0)
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
-        # use .get_rect() widget method instead
+        # use .get_rect() widget method instead. Widget subclass should ONLY modify width/height,
+        # in rendering and READ position (rect.x, rect.y) in drawing. Position during rendering
+        # is not the same as it will have in menu (menu rendering changes widget position). Some
+        # widgets like MenuBar are the exception, as its position never changes during menu execution
+        # (unless user triggers a change), then widgets like these may access without problems.
         self._rect = pygame.Rect(0, 0, 0, 0)
 
         # Callbacks
