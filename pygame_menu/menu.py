@@ -714,7 +714,7 @@ class Menu(object):
             dummy_attrs = self._filter_widget_attributes(kwargs.copy())
             dummy = _widgets.Label(title=title)
             self._configure_widget(dummy, **dummy_attrs)
-            max_char = int(1.0 * self._width * len(title) / dummy.get_rect().width)
+            max_char = int(1.0 * self.get_width(inner=True) * len(title) / dummy.get_rect().width)
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
@@ -1055,7 +1055,7 @@ class Menu(object):
 
         font_size = kwargs.pop('font_size', self._theme.widget_font_size)
         assert isinstance(font_size, int)
-        assert font_size > 0, 'font_size must be greater than zero'
+        assert font_size > 0, 'font size must be greater than zero'
         attributes['font_size'] = font_size
 
         margin = kwargs.pop('margin', self._theme.widget_margin)
@@ -1398,10 +1398,10 @@ class Menu(object):
 
             # Update max/min position
             min_max_updated = True
-            max_x = max(max_x, x_coord + rect.width)
-            max_y = max(max_y, y_coord + rect.height)
-            min_x = min(min_x, x_coord)
-            min_y = min(min_y, y_coord)
+            max_x = max(max_x, x_coord + rect.width - widget.get_padding()[1])  # minus right padding
+            max_y = max(max_y, y_coord + rect.height - widget.get_padding()[2])  # minus bottom padding
+            min_x = min(min_x, x_coord - widget.get_padding()[3])
+            min_y = min(min_y, y_coord - widget.get_padding()[0])
 
         # Update position
         if min_max_updated:
@@ -1439,8 +1439,8 @@ class Menu(object):
         max_x, max_y = self._widget_max_position
 
         # Get scrollbars size
-        sx = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
-        sy = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
+        sx = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL, real=True)
+        sy = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL, real=True)
 
         # Remove the thick of the scrollbar to avoid displaying an horizontal one
         # If overflow in both axis
@@ -1619,6 +1619,30 @@ class Menu(object):
         if abs(new_offset - self._widget_offset[1]) > 1:
             self._widget_offset[1] = new_offset
             self._widgets_surface = None  # Rebuild on the next draw
+
+    def get_width(self, inner=False, widget=False):
+        """
+        Get menu width.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param inner: If ``True`` returns the available width (menu width minus scroll if visible)
+        :type inner: bool
+        :param widget: If ``True`` returns the total width used by the widgets
+        :type widget: bool
+        :return: Width in px
+        :rtype: int, float
+        """
+        if widget:
+            return self._widget_max_position[0] - self._widget_min_position[0]
+        if not inner:
+            return self._width
+        vertical_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
+        return int(self._width - vertical_scroll)
 
     def get_height(self, inner=False, widget=False):
         """
