@@ -73,6 +73,9 @@ class Widget(object):
     _attributes: Dict[str, Any]
     _background_color: Optional[Union[ColorType, '_baseimage.BaseImage']]
     _background_inflate: Tuple2IntType
+    _border_color: ColorType
+    _border_inflate: Tuple2IntType
+    _border_width: int
     _col_row_index: Tuple[int, int, int]
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
@@ -103,7 +106,6 @@ class Widget(object):
     _position_set: bool
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
-    _selected_rect: Optional['pygame.Rect']
     _selection_effect: 'Selection'
     _selection_time: NumberType
     _shadow: bool
@@ -163,7 +165,6 @@ class Widget(object):
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
         self._position_set = False
-        self._selected_rect = None
         self._selection_time = 0
         self._title = str(title)
 
@@ -218,6 +219,11 @@ class Widget(object):
         self._shadow_offset = 2.0
         self._shadow_position = _locals.POSITION_NORTHWEST
         self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
+
+        # Border
+        self._border_color = (0, 0, 0)
+        self._border_inflate = (0, 0)
+        self._border_width = 0
 
         # Rendering, this variable may be used by render() method
         # If the hash of the variables change respect to the last render hash
@@ -456,7 +462,7 @@ class Widget(object):
         """
         self._background_inflate = self._selection_effect.get_xy_margin()
 
-    def _fill_background_color(self, surface: 'pygame.Surface') -> None:
+    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
         """
         Fill a surface with the widget background color.
 
@@ -478,6 +484,23 @@ class Widget(object):
             )
         else:
             surface.fill(self._background_color, rect)
+
+    def _draw_border(self, surface: 'pygame.Surface') -> None:
+        """
+        Draw widget border in the surface.
+
+        :param surface: Surface to draw the border
+        :return: None
+        """
+        if self._border_width == 0:
+            return
+        rect = self.get_rect(inflate=self._border_inflate)
+        pygame.draw.rect(
+            surface,
+            self._border_color,
+            rect,
+            self._border_width
+        )
 
     def get_selection_effect(self) -> 'Selection':
         """
@@ -1800,6 +1823,22 @@ class Widget(object):
         :return: *(column, row, index)* tuple
         """
         return self._col_row_index
+
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
+        """
+        Set widget border.
+
+        :param width: Border width (px)
+        :param color: Border color
+        :param inflate: Inflate in *(x, y)* axis in px
+        :return: None
+        """
+        assert isinstance(width, int) and width >= 0
+        assert_color(color)
+        assert isinstance(inflate, tuple) and inflate[0] >= 0 and inflate[1] >= 0
+        self._border_width = width
+        self._border_color = color
+        self._border_inflate = inflate
 
 
 # noinspection PyMissingOrEmptyDocstring

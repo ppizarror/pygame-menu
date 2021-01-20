@@ -1173,7 +1173,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(l, 0)
 
         wid.set_background_color((1, 1, 1))
-        wid._fill_background_color(surface)
+        wid._draw_background_color(surface)
         self.assertEqual(wid._background_color, None)
 
         nosel = NoneSelection()
@@ -1273,6 +1273,24 @@ class WidgetsTest(unittest.TestCase):
         # noinspection PyTypeChecker
         wid.set_sound(None)
         self.assertNotEqual(wid.sound, None)
+
+        wid.set_border(1, (0, 0, 0), (0, 0))
+        self.assertEqual(wid._border_width, 0)
+
+    def test_border(self) -> None:
+        """
+        Test widget border.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=-1))
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=1.5))
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=1, border_color=None))
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=1,
+                                                                  border_color=(0, 0, 0), border_inflate=(-1, - 1)))
+        btn = menu.add_button('', None, border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
+        self.assertEqual(btn._border_width, 1)
+        self.assertEqual(btn._border_color, (0, 0, 0))
+        self.assertEqual(btn._border_inflate, (1, 1))
 
     def test_scrollbar(self) -> None:
         """

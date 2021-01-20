@@ -1453,6 +1453,8 @@ class MenuTest(unittest.TestCase):
         """
         Test events gather.
         """
+        if pygame.vernum.major < 2:
+            return
         menu_top = MenuUtils.generic_menu()
         menu = MenuUtils.generic_menu(columns=4, rows=2, touchscreen=True,
                                       touchscreen_motion_selection=True, column_min_width=[400, 300, 400, 300],

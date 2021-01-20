@@ -77,7 +77,7 @@ class NoneWidget(Widget):
                              inflate: Optional[Tuple2IntType] = (0, 0)) -> None:
         pass
 
-    def _fill_background_color(self, surface: 'pygame.Surface') -> None:
+    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
         pass
 
     def set_selection_effect(self, selection: 'Selection') -> None:
@@ -173,4 +173,7 @@ class NoneWidget(Widget):
         pass
 
     def apply_update_callbacks(self) -> None:
+        pass
+
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
         pass

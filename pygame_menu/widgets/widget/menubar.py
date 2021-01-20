@@ -170,6 +170,9 @@ class MenuBar(Widget):
     def set_selection_effect(self, selection: 'Selection') -> None:
         pass
 
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
+        pass
+
     def get_title_offset(self) -> Tuple2IntType:
         """
         Return the title offset in *(x, y)*.

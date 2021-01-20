@@ -243,7 +243,7 @@ class TextInput(Widget):
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
-        if pygame.vernum.major == 2:
+        if pygame.vernum.major >= 2:
             assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
             assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
@@ -428,9 +428,9 @@ class TextInput(Widget):
         self._clock.tick()
 
         # Draw background color
-        self._fill_background_color(surface)
+        self._draw_background_color(surface)
 
-        if pygame.vernum.major == 2:
+        if pygame.vernum.major >= 2:
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
                 surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
@@ -447,6 +447,8 @@ class TextInput(Widget):
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
             surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
+
+        self._draw_border(surface)
 
         if self._apply_widget_draw_callback:
             self.apply_draw_callbacks()

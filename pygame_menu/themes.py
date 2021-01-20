@@ -161,6 +161,12 @@ class Theme(object):
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param widget_background_inflate: Inflate background in *(x, y)* in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
     :type widget_background_inflate: tuple, list
+    :param widget_border_color: Widget border color
+    :type widget_border_color: tuple, list
+    :param widget_border_inflate: Widget inflate size in *(x, y)* in px. These values cannot be negative
+    :type widget_border_inflate: tuple, list
+    :param widget_border_width: Widget border width (px). If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
+    :type widget_border_width: int
     :param widget_font: Widget font path or name
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
@@ -227,6 +233,9 @@ class Theme(object):
     widget_alignment: str
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
     widget_background_inflate: Tuple2NumberType
+    widget_border_color: ColorType
+    widget_border_inflate: Tuple2NumberType
+    widget_border_width: int
     widget_font: str
     widget_font_antialias: str
     widget_font_background_color: Optional[ColorType]
@@ -290,9 +299,16 @@ class Theme(object):
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float), 20)
 
         # Generic widget themes
+        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
+                                                 _widgets.HighlightSelection())
+        widget_selection_margin = self.widget_selection_effect.get_xy_margin()
+
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', _locals.ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2', (0, 0))
+        self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
+        self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2', widget_selection_margin)
+        self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
         self.widget_font = self._get(kwargs, 'widget_font', str, _font.FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
@@ -303,8 +319,6 @@ class Theme(object):
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 10))
         self.widget_padding = self._get(kwargs, 'widget_padding', (int, float, tuple, list), 0)
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
-        self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
-                                                 _widgets.HighlightSelection())
         self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
         self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float), 2)
@@ -358,6 +372,7 @@ class Theme(object):
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_shadow_offset, (int, float))
         assert isinstance(self.title_updates_pygame_display, bool)
+        assert isinstance(self.widget_border_width, int)
         assert isinstance(self.widget_font, str)
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, (int, float, tuple, list))
@@ -377,6 +392,7 @@ class Theme(object):
         self.selection_color = self._format_opacity(self.selection_color)
         self.surface_clear_color = self._format_opacity(self.surface_clear_color)
         self.title_background_color = self._format_opacity(self.title_background_color)
+        self.widget_border_color = self._format_opacity(self.widget_border_color)
         self.title_font_color = self._format_opacity(self.title_font_color)
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
@@ -387,6 +403,7 @@ class Theme(object):
         self.scrollarea_outer_margin = self._vec_to_tuple(self.scrollarea_outer_margin, 2)
         self.title_offset = self._vec_to_tuple(self.title_offset, 2)
         self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)
+        self.widget_border_inflate = self._vec_to_tuple(self.widget_border_inflate, 2)
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)
         if isinstance(self.widget_padding, (tuple, list)):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
@@ -399,9 +416,11 @@ class Theme(object):
 
         # Check sizes
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
-            'scrollarea outer margin must be equal or greater than zero'
+            'scrollarea outer margin must be equal or greater than zero in both axis'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
             'widget offset must be equal or greater than zero'
+        assert self.widget_border_inflate[0] >= 0 and self.widget_border_inflate[1] >= 0, \
+            'widget border inflate must be equal or gretaer than zero in both axis'
 
         assert self.cursor_switch_ms > 0, 'cursor switch ms msut be greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'

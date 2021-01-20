@@ -613,6 +613,9 @@ class Menu(object):
             - ``back_count``                *(int)* - Number of menus to go back if action is :py:class:`pygame_menu.events.BACK` event, default is ``1``
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``button_id``                 *(str)* - Widget ID
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
@@ -763,6 +766,9 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``dynamic_width``             *(int, float)* - If ``True`` the widget width changes if the previsualization color box is active or not
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
@@ -870,6 +876,9 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
@@ -944,6 +953,9 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
@@ -1080,6 +1092,9 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
@@ -1163,6 +1178,9 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
@@ -1287,6 +1305,9 @@ class Menu(object):
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
             - ``font_name``                 *(str)* - Widget font
@@ -1510,6 +1531,20 @@ class Menu(object):
             'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
 
+        border_color = kwargs.pop('border_color', self._theme.widget_border_color)
+        _utils.assert_color(border_color)
+        attributes['border_color'] = border_color
+
+        border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
+        _utils.assert_vector(border_inflate, 2)
+        assert isinstance(border_inflate[0], int) and border_inflate[0] >= 0
+        assert isinstance(border_inflate[1], int) and border_inflate[1] >= 0
+        attributes['border_inflate'] = border_inflate
+
+        border_width = kwargs.pop('border_width', self._theme.widget_border_width)
+        assert isinstance(border_width, int) and border_width >= 0
+        attributes['border_width'] = border_width
+
         attributes['font_antialias'] = self._theme.widget_font_antialias
 
         font_background_color = kwargs.pop('font_background_color', self._theme.widget_font_background_color)
@@ -1594,6 +1629,23 @@ class Menu(object):
         widget.set_menu(self)
         self._check_id_duplicated(widget.get_id())
 
+        widget.set_alignment(
+            align=kwargs['align']
+        )
+        widget.set_background_color(
+            color=kwargs['background_color'],
+            inflate=kwargs['background_inflate']
+        )
+        widget.set_border(
+            width=kwargs['border_width'],
+            color=kwargs['border_color'],
+            inflate=kwargs['border_inflate']
+        )
+        widget.set_controls(
+            joystick=self._joystick,
+            mouse=self._mouse,
+            touchscreen=self._touchscreen
+        )
         widget.set_font(
             antialias=kwargs['font_antialias'],
             background_color=kwargs['font_background_color'],
@@ -1603,20 +1655,6 @@ class Menu(object):
             readonly_color=kwargs['readonly_color'],
             readonly_selected_color=kwargs['readonly_selected_color'],
             selected_color=kwargs['selection_color']
-        )
-        widget.set_shadow(
-            color=kwargs['shadow_color'],
-            enabled=kwargs['shadow'],
-            offset=kwargs['shadow_offset'],
-            position=kwargs['shadow_position']
-        )
-        widget.set_controls(
-            joystick=self._joystick,
-            mouse=self._mouse,
-            touchscreen=self._touchscreen
-        )
-        widget.set_alignment(
-            align=kwargs['align']
         )
         widget.set_margin(
             x=kwargs['margin'][0],
@@ -1628,9 +1666,11 @@ class Menu(object):
         widget.set_selection_effect(
             selection=kwargs['selection_effect']
         )
-        widget.set_background_color(
-            color=kwargs['background_color'],
-            inflate=kwargs['background_inflate']
+        widget.set_shadow(
+            color=kwargs['shadow_color'],
+            enabled=kwargs['shadow'],
+            offset=kwargs['shadow_offset'],
+            position=kwargs['shadow_position']
         )
 
     def _append_widget(self, widget: '_widgets.core.Widget') -> None:

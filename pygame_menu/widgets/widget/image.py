@@ -129,6 +129,7 @@ class Image(Widget):
     def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
         surface.blit(self._surface, self._rect.topleft)
+        self._draw_border(surface)
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:

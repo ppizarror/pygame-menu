@@ -266,7 +266,7 @@ class ToggleSwitch(Widget):
 
     def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
-        self._fill_background_color(surface)
+        self._draw_background_color(surface)
 
         # Draw title
         surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1]))
@@ -299,6 +299,8 @@ class ToggleSwitch(Widget):
         sliderx = switchx + self._slider_pos[0] + self._switch_border_width
         slidery = switchy + self._slider_pos[1] + self._switch_border_width
         surface.blit(self._slider, (sliderx, slidery))
+
+        self._draw_border(surface)
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:

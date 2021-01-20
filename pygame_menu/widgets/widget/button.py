@@ -128,8 +128,9 @@ class Button(Widget):
 
     def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
-        self._fill_background_color(surface)
+        self._draw_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self._draw_border(surface)
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
