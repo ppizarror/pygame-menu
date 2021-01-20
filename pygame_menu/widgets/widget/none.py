@@ -80,6 +80,9 @@ class NoneWidget(Widget):
     def _draw_background_color(self, surface: 'pygame.Surface') -> None:
         pass
 
+    def _draw_border(self, surface: 'pygame.Surface') -> None:
+        pass
+
     def set_selection_effect(self, selection: 'Selection') -> None:
         pass
 

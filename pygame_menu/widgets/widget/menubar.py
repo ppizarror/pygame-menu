@@ -217,6 +217,12 @@ class MenuBar(Widget):
         assert width > 0
         self._backbox_border_width = width
 
+    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
+        pass
+
+    def _draw_border(self, surface: 'pygame.Surface') -> None:
+        pass
+
     def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
