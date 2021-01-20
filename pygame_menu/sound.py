@@ -62,6 +62,7 @@ __all__ = [
 import os.path as path
 import time
 import warnings
+from pathlib import Path
 
 from pygame import error as pygame_error
 from pygame import mixer
@@ -273,13 +274,13 @@ class Sound(object):
             self._channel = channel  # Store the available channel
         return self._channel
 
-    def set_sound(self, sound_type: str, sound_file: Optional[str], volume: float = 0.5,
+    def set_sound(self, sound_type: str, sound_file: Optional[Union[str, 'Path']], volume: float = 0.5,
                   loops: int = 0, maxtime: NumberType = 0, fade_ms: NumberType = 0) -> bool:
         """
         Link a sound file to a sound type.
 
         :param sound_type: Sound type
-        :param sound_file: Sound file. If none disable the given sound type
+        :param sound_file: Sound file. If ``None`` disable the given sound type
         :param volume: Volume of the sound, from ``0.0`` to ``1.0``
         :param loops: Loops of the sound
         :param maxtime: Max playing time of the sound
@@ -287,7 +288,7 @@ class Sound(object):
         :return: The status of the sound load, ``True`` if the sound was loaded
         """
         assert isinstance(sound_type, str)
-        assert isinstance(sound_file, (str, type(None)))
+        assert isinstance(sound_file, (str, type(None), Path))
         assert isinstance(volume, float)
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))
@@ -307,6 +308,7 @@ class Sound(object):
             return False
 
         # Check the file exists
+        sound_file = str(sound_file)
         if not path.isfile(sound_file):
             raise IOError('sound file "{0}" does not exist'.format(sound_file))
 
