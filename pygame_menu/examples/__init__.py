@@ -81,7 +81,7 @@ def create_example_window(
                 icon = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU).get_surface()
                 pygame.display.set_icon(icon)
                 _PYGAME_ICON[0] = icon
-        except:
+        except BaseException:
             pass
 
     return surface
