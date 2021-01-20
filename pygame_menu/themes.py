@@ -100,8 +100,6 @@ class Theme(object):
     :type cursor_switch_ms: int, float
     :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements *(R, G, B, A)*
     :type focus_background_color: tuple, list
-    :param menubar_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
-    :type menubar_close_button: bool
     :param readonly_color: Color of the widget in readonly mode
     :type readonly_color: tuple, list
     :param readonly_selected_color: Color of the selected widget in readonly mode
@@ -133,8 +131,10 @@ class Theme(object):
     :param title_background_color: Title background color
     :type title_background_color: tuple, list
     :param title_bar_modify_scrollarea: If ``True`` title bar modifies the scrollbars of the scrollarea depending on the style
-    :param title_bar_style: Style of the title, use menubar widget styles
+    :param title_bar_style: Style of the title, use :py:class:`pygame_menu.widgets.MenuBar` widget styles
     :type title_bar_style: int
+    :param title_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
+    :type title_close_button: bool
     :param title_font: Optional title font, if ``None`` theme uses the Menu default font
     :type title_font: str, None
     :param title_font_antialias: Title font renders with antialiasing
@@ -202,7 +202,6 @@ class Theme(object):
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
     focus_background_color: ColorType
-    menubar_close_button: bool
     readonly_color: ColorType
     readonly_selected_color: ColorType
     scrollarea_outer_margin: Tuple2NumberType
@@ -220,6 +219,7 @@ class Theme(object):
     title_background_color: ColorType
     title_bar_modify_scrollarea: bool
     title_bar_style: int
+    title_close_button: bool
     title_font: str
     title_font_antialias: bool
     title_font_color: ColorType
@@ -267,10 +267,10 @@ class Theme(object):
         self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', (int, float), 500)
 
         # Menubar/Title
-        self.menubar_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
         self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
+        self.title_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
@@ -347,7 +347,7 @@ class Theme(object):
             return
 
         # Boolean asserts
-        assert isinstance(self.menubar_close_button, bool)
+        assert isinstance(self.title_close_button, bool)
         assert isinstance(self.title_bar_modify_scrollarea, bool)
         assert isinstance(self.title_font_antialias, bool)
         assert isinstance(self.title_shadow, bool)

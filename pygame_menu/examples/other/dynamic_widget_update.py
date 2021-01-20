@@ -75,7 +75,9 @@ class App(object):
         pygame.display.set_icon(default_image.get_surface())
 
         # Set theme
-        theme = pygame_menu.themes.THEME_DEFAULT
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme.title_font_color = (35, 35, 35)
+        theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE
 
         # This dict stores the values of the widgets to be changed dynamically
         self.modes = {
@@ -151,13 +153,13 @@ class App(object):
         """
         if self.current == 3:
             t = widget.get_attribute('t', default=math.pi)
-            t += menu.get_clock().get_time() * 0.001
+            t += menu.get_clock().get_time() * 0.0075
             widget.set_attribute('t', t)
             widget.set_padding(10 * (1 + math.sin(t)))  # Oscillating padding
-            new_color = (int(125 * (1 + math.sin(t))), 0, 0)
-            widget.set_background_color(new_color, None)
-            widget.update_font({'background_color': new_color})
-            widget.translate(10 * math.cos(t), 10 * math.sin(t))
+            widget.set_background_color((int(125 * (1 + math.sin(t))), 0, 0), None)
+            c = int(127 * (1 + math.cos(t)))
+            widget.update_font({'color': (c, c, c)})  # Widget font now is in grayscale
+            # widget.translate(10 * math.cos(t), 10 * math.sin(t))
             widget.rotate(5 * t)
 
     @staticmethod

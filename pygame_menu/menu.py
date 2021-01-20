@@ -454,7 +454,7 @@ class Menu(object):
 
         # Create menubar (title)
         self._menubar = _widgets.MenuBar(
-            back_box=theme.menubar_close_button,
+            back_box=theme.title_close_button,
             background_color=self._theme.title_background_color,
             mode=self._theme.title_bar_style,
             modify_scrollarea=self._theme.title_bar_modify_scrollarea,
