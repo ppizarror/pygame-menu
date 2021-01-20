@@ -15,6 +15,7 @@ Migration Guide - v3 to v4
 - Removed ``events.DISABLE_CLOSE``, use ``None`` or ``events.NONE`` instead.
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
 - Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
+- Renamed Theme ``menubar_close_button`` to ``title_close_button``.
 - Renamed widget ``expand_background_inflate_to_selection_effect`` to ``background_inflate_to_selection_effect``.
 - Widget ``shadow_offset`` now cannot be ``None``, only ``int`` or ``float`` allowed.
 - Widget ``VMargin`` now inherits from ``NoneWidget``.
