@@ -92,8 +92,6 @@ class Widget(object):
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
-        self._position_set = False
-        self._selected_rect = None  # type: (pygame.rect.Rect,None)
         self._selection_time = 0  # type: float
         self._title = to_string(title)
 
@@ -540,8 +538,8 @@ class Widget(object):
         pad_bottom = self._padding[2] * apply_padding + inflate[1] / 2
         pad_left = self._padding[3] * apply_padding + inflate[0] / 2
 
-        return pygame.Rect(int(self._rect.x - pad_left),
-                           int(self._rect.y - pad_top),
+        return pygame.Rect(int(self._rect.x - pad_left + self._translate[0]),
+                           int(self._rect.y - pad_top + self._translate[1]),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
 
@@ -838,11 +836,10 @@ class Widget(object):
         :type posy: int, float
         :return: None
         """
-        if self._position_set and self.lock_position:
+        if self.lock_position:
             return
-        self._rect.x = posx + self._translate[0]
-        self._rect.y = posy + self._translate[1]
-        self._position_set = True
+        self._rect.x = int(posx)
+        self._rect.y = int(posy)
 
     def get_position(self):
         """
@@ -851,7 +848,7 @@ class Widget(object):
         :return: Widget position
         :rtype: tuple
         """
-        return self._rect.x, self._rect.y
+        return self._rect.x + self._translate[0], self._rect.y + self._translate[1]
 
     def get_width(self, apply_padding=True, apply_selection=False):
         """
@@ -1051,7 +1048,7 @@ class Widget(object):
 
     def get_selected_time(self):
         """
-        Return time the widget has been selected in miliseconds.
+        Return time the widget has been selected in milliseconds.
         If the widget is not currently selected, return 0.
 
         :return: Time in ms

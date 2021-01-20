@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 TEST SCROLLAREA
-Test scrollarea.
+Test scroll area.
 
 NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
 upgrading to the latest version.
@@ -52,7 +52,7 @@ class ScrollAreaTest(unittest.TestCase):
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 
-        # Get the size of the scrollarea
+        # Get the size of the scroll area
         sa = menu.get_scrollarea()
 
         sa_height = menu.get_height() - menu.get_menubar_widget().get_height()

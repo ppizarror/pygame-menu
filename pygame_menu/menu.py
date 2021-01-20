@@ -70,9 +70,9 @@ class Menu(object):
     :type column_force_fit_text: bool
     :param column_max_width: List/Tuple representing the max width of each column in px, None equals no limit
     :type column_max_width: tuple, None
-    :param columns: Number of columns, by default it's 1
+    :param columns: Number of columns
     :type columns: int
-    :param enabled: Menu is enabled by default or not
+    :param enabled: Menu is enabled by default or not. If ``False`` Menu cannot be drawn
     :type enabled: bool
     :param joystick_enabled: Enable/disable joystick on the Menu
     :type joystick_enabled: bool
@@ -88,7 +88,7 @@ class Menu(object):
     :type mouse_visible: bool
     :param onclose: Event or function applied when closing the Menu
     :type onclose: :py:class:`pygame_menu.events.MenuAction`, callable, None
-    :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scrollarea is the same as the menu container. Style: (overflow_x, overflow_y)
+    :param overflow: Enables overflow in x/y axes. If False then scrollbars will not work and the maximum width/height of the scroll area is the same as the menu container. Style: (overflow_x, overflow_y)
     :type overflow: tuple, list
     :param rows: Number of rows of each column, None if there's only 1 column
     :type rows: int, None
@@ -277,17 +277,17 @@ class Menu(object):
             warnings.warn(msg)
             self._center_content = False
 
-        # Scrollarea outer margin
+        # Scroll area outer margin
         self._scrollarea_margin = [theme.scrollarea_outer_margin[0], theme.scrollarea_outer_margin[1]]
         if abs(self._scrollarea_margin[0]) < 1:
             self._scrollarea_margin[0] *= self._width
         if abs(self._scrollarea_margin[1]) < 1:
             self._scrollarea_margin[1] *= self._height
 
-        # If centering is enabled, but scrollarea margin in the vertical is different than zero a warning is raised
+        # If centering is enabled, but scroll area margin in the vertical is different than zero a warning is raised
         if self._center_content and self._scrollarea_margin[1] != 0:
             msg = 'menu (title "{0}") is vertically centered (center_content=True), ' \
-                  'but scrollarea outer margin (from theme) is different than zero ({1}px). ' \
+                  'but scroll area outer margin (from theme) is different than zero ({1}px). ' \
                   'Auto-centering has been disabled'
             msg = msg.format(title, round(self._scrollarea_margin[1], 3))
             warnings.warn(msg)
@@ -1004,7 +1004,7 @@ class Menu(object):
 
         # Raise warning if adding button with menu
         if isinstance(widget, _widgets.Button) and widget.to_menu:
-            _msg = 'Prefer adding nested submenus using add_button method istead, unintended behaviours may occur'
+            _msg = 'Prefer adding nested submenus using add_button method instead, unintended behaviours may occur'
             warnings.warn(_msg)
 
         # Configure widget
@@ -1603,7 +1603,6 @@ class Menu(object):
         assert isinstance(position_y, (int, float))
         assert 0 <= position_x <= 100
         assert 0 <= position_y <= 100
-
         position_x = float(position_x) / 100
         position_y = float(position_y) / 100
         window_width, window_height = self._window_size
@@ -1734,7 +1733,7 @@ class Menu(object):
 
         # Clear surface
         if clear_surface:
-            surface.fill(self._theme.surface_clear_color)
+            surface.fill(self._current._theme.surface_clear_color)
 
         # Call background function (set from mainloop)
         if self._top._background_function is not None:
@@ -1758,7 +1757,7 @@ class Menu(object):
         self._current._menubar.draw(surface)
 
         # Focus on selected if the widget is active
-        self._draw_focus_widget(surface, selected_widget)
+        self._current._draw_focus_widget(surface, selected_widget)
 
     def _draw_focus_widget(self, surface, widget):
         """
@@ -1807,6 +1806,7 @@ class Menu(object):
             # |                  |
             # .------------------.
             coords[1] = (0, 0), (window_width, 0), (window_width, window_height), (0, window_height)
+
         else:
             # Draw 4 areas:
             # .------------------.
@@ -1853,7 +1853,7 @@ class Menu(object):
         except SystemExit:
             # noinspection PyUnresolvedReferences,PyProtectedMember
             os._exit(1)
-        # This should be unrecheable
+        # This should be unreachable
         exit(0)
 
     def is_enabled(self):
@@ -1987,10 +1987,10 @@ class Menu(object):
                         self._current._select(self._current._index - 1)
                     elif event.value == _controls.JOY_DOWN:
                         self._current._select(self._current._index + 1)
-                    elif event.value == _controls.JOY_LEFT and self._columns > 1:
-                        self._current._select(self._current._index - 1)
-                    elif event.value == _controls.JOY_RIGHT and self._columns > 1:
-                        self._current._select(self._current._index + 1)
+                    elif event.value == _controls.JOY_LEFT and self._current._columns > 1:
+                        self._current._left()
+                    elif event.value == _controls.JOY_RIGHT and self._current._columns > 1:
+                        self._current._right()
 
                 elif self._current._joystick and event.type == pygame.JOYAXISMOTION:
                     prev = self._current._joy_event
@@ -1999,9 +1999,11 @@ class Menu(object):
                         self._current._joy_event |= self._current._joy_event_up
                     if event.axis == _controls.JOY_AXIS_Y and event.value > _controls.JOY_DEADZONE:
                         self._current._joy_event |= self._current._joy_event_down
-                    if event.axis == _controls.JOY_AXIS_X and event.value < -_controls.JOY_DEADZONE and self._columns > 1:
+                    if event.axis == _controls.JOY_AXIS_X and event.value < -_controls.JOY_DEADZONE and \
+                            self._current._columns > 1:
                         self._current._joy_event |= self._current._joy_event_left
-                    if event.axis == _controls.JOY_AXIS_X and event.value > _controls.JOY_DEADZONE and self._columns > 1:
+                    if event.axis == _controls.JOY_AXIS_X and event.value > _controls.JOY_DEADZONE and \
+                            self._current._columns > 1:
                         self._current._joy_event |= self._current._joy_event_right
                     if self._current._joy_event:
                         self._current._handle_joy_event()
@@ -2091,7 +2093,8 @@ class Menu(object):
                     if self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(pygame.MOUSEBUTTONUP, **event.dict)
                         new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
-                        finger_pos = (event.x * self._window_size[0], event.y * self._window_size[1])
+                        finger_pos = (event.x * self._current._window_size[0],
+                                      event.y * self._current._window_size[1])
                         new_event.pos = self._current._scroll.to_world_position(finger_pos)
                         selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
                         updated = True  # It is updated
@@ -2385,7 +2388,7 @@ class Menu(object):
 
         # Get both widgets
         if current._index >= total_current:  # The length of the menu changed during execution time
-            for i in range(total_current):  # Unselect all posible candidates
+            for i in range(total_current):  # Unselect all possible candidates
                 current._widgets[i].set_selected(False)
             current._index = 0
 
@@ -2466,7 +2469,7 @@ class Menu(object):
 
     def get_scrollarea(self):
         """
-        Return menu scrollarea.
+        Return menu scroll area.
 
         .. warning:: Use with caution.
 

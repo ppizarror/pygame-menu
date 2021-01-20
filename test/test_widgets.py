@@ -129,6 +129,14 @@ class WidgetsTest(unittest.TestCase):
             w.flip(True, True)
         self.menu.draw(surface)
 
+        # Translate
+        w = self.menu.add_label('text')
+        x, y = w.get_position()
+        w.translate(10, 10)
+        xt, yt = w.get_position()
+        self.assertEqual(xt - x, 10)
+        self.assertEqual(yt - y, 10)
+
     def test_visibility(self):
         """
         Test widget visibility.
