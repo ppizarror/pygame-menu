@@ -36,6 +36,7 @@ from typing import Tuple, Optional
 
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -104,14 +105,9 @@ def main(test: bool = False) -> None:
     global surface
 
     # -------------------------------------------------------------------------
-    # Init pygame
+    # Create window
     # -------------------------------------------------------------------------
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-    # Create pygame screen and objects
-    surface = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Multi Input')
+    surface = create_example_window('Example - Multi Input', WINDOW_SIZE)
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
@@ -136,7 +132,6 @@ def main(test: bool = False) -> None:
 
     settings_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.85,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=settings_menu_theme,
         title='Settings',
         width=WINDOW_SIZE[0] * 0.9
@@ -206,6 +201,7 @@ def main(test: bool = False) -> None:
             print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
 
     settings_menu.add_button('Store data', data_fun)  # Call function
+    settings_menu.add_button('Restore original values', settings_menu.reset_value)
     settings_menu.add_button('Return to main menu', pygame_menu.events.BACK,
                              align=pygame_menu.locals.ALIGN_CENTER)
 
@@ -214,7 +210,6 @@ def main(test: bool = False) -> None:
     # -------------------------------------------------------------------------
     more_settings_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.85,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=settings_menu_theme,
         title='More Settings',
         width=WINDOW_SIZE[0] * 0.9
@@ -272,7 +267,6 @@ def main(test: bool = False) -> None:
     button_column_menu = pygame_menu.Menu(
         columns=2,
         height=WINDOW_SIZE[1] * 0.45,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         rows=3,
         theme=button_column_menu_theme,
         title='Textures+Columns',

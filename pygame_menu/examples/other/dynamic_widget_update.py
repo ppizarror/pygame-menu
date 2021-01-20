@@ -70,6 +70,10 @@ class App(object):
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
         ).scale(0.2, 0.2)
 
+        # Set display title
+        pygame.display.set_caption('Example - Dynamic Widget Update')
+        pygame.display.set_icon(default_image.get_surface())
+
         # Set theme
         theme = pygame_menu.themes.THEME_DEFAULT
 

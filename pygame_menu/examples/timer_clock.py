@@ -31,13 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import os
 import datetime
 from random import randrange
 from typing import List, Tuple, Optional
 
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -123,10 +123,8 @@ def main(test: bool = False) -> None:
     """
 
     # -------------------------------------------------------------------------
-    # Init pygame
+    # Init
     # -------------------------------------------------------------------------
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
 
     # Write help message on console
     for m in HELP:
@@ -134,8 +132,7 @@ def main(test: bool = False) -> None:
 
     # Create window
     global surface
-    surface = pygame.display.set_mode((W_SIZE, H_SIZE))
-    pygame.display.set_caption('Example - Timer Clock')
+    surface = create_example_window('Example - Timer Clock', (W_SIZE, H_SIZE))
 
     # Main timer and game clock
     clock = pygame.time.Clock()
@@ -197,7 +194,6 @@ def main(test: bool = False) -> None:
 
     help_menu = pygame_menu.Menu(
         height=600,  # Fullscreen
-        onclose=pygame_menu.events.DISABLE_CLOSE,  # Pressing ESC button does nothing
         theme=help_theme,
         title='Help',
         width=800
@@ -220,7 +216,6 @@ def main(test: bool = False) -> None:
         center_content=False,
         height=400,
         mouse_visible=False,
-        onclose=pygame_menu.events.DISABLE_CLOSE,  # Disable menu close (ESC button)
         theme=about_theme,
         title='About',
         width=600
@@ -255,18 +250,10 @@ def main(test: bool = False) -> None:
         clock.tick(FPS)
         timer[0] += dt
 
-        # Application events
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    main_menu.toggle()
-
         # Title is evaluated at current level as the title of the base pointer object (main_menu)
         # can change if user opens submenus
-        if main_menu.get_current().get_title() != 'Main Menu' or not main_menu.is_enabled():
+        current_menu = main_menu.get_current()
+        if current_menu.get_title() != 'Main Menu' or not main_menu.is_enabled():
             # Draw timer
             surface.fill(COLOR_BACKGROUND)
             time_string = str(datetime.timedelta(seconds=int(timer[0])))
@@ -278,10 +265,18 @@ def main(test: bool = False) -> None:
             # Background color if the menu is enabled and timer is hidden
             surface.fill((40, 0, 40))
 
+        # Application events
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE and current_menu.get_title() == 'Main Menu':
+                    main_menu.toggle()
+
         if main_menu.is_enabled():
             main_menu.draw(surface)
-
-        main_menu.update(events)
+            main_menu.update(events)
 
         # Flip surface
         pygame.display.flip()

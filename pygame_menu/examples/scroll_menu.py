@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import os
 from typing import Any
 from functools import partial
 
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 FPS = 30
 WINDOW_SIZE = (800, 600)
@@ -147,15 +147,9 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     :return: None
     """
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pygame.init()
+    screen = create_example_window('Example - Scrolling Menu', WINDOW_SIZE)
+
     clock = pygame.time.Clock()
-
-    # Create window
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Scrolling Menu')
-
-    # Create menu
     menu = make_long_menu()
 
     # -------------------------------------------------------------------------

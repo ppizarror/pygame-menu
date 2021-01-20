@@ -33,7 +33,6 @@ __all__ = ['main']
 
 import sys
 import itertools
-import os
 from typing import Generator
 
 sys.path.insert(0, '../../')
@@ -41,6 +40,7 @@ sys.path.insert(0, '../../../')
 
 import pygame
 from pygame_menu import locals
+from pygame_menu.examples import create_example_window
 from pygame_menu.scrollarea import ScrollArea
 from pygame_menu.utils import make_surface
 
@@ -139,13 +139,8 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     :return: None
     """
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pygame.init()
+    screen = create_example_window('Example - Scrolling Area', (W_SIZE, H_SIZE))
     clock = pygame.time.Clock()
-
-    # Create window
-    screen = pygame.display.set_mode((W_SIZE, H_SIZE))
-    pygame.display.set_caption('Example - Scrolling Area')
 
     area = ScrollArea(
         W_SIZE, H_SIZE,

@@ -29,15 +29,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-import os
+import pygame_menu
+from pygame_menu.examples import create_example_window
 from typing import Tuple, Any
 
-import pygame
-import pygame_menu
-
-pygame.init()
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-surface = pygame.display.set_mode((600, 400))
+surface = create_example_window('Example - Simple', (600, 400))
 
 
 def set_difficulty(selected: Tuple, value: Any) -> None:

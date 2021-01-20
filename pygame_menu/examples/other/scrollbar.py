@@ -31,13 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import os
 import sys
 
 sys.path.insert(0, '../../../')
 
 import pygame
 import pygame_menu.locals as _locals
+from pygame_menu.examples import create_example_window
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets import ScrollBar
 
@@ -100,15 +100,11 @@ def main(test: bool = False) -> None:
     :param test: Indicate function is being tested
     :return: None
     """
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pygame.init()
-
     scr_size = (400, 600)
-    screen = pygame.display.set_mode(scr_size)
+    screen = create_example_window('Example - Scrollbar', scr_size)
     world = make_world(int(scr_size[0] * 4), scr_size[1] * 3)
     screen.fill((120, 90, 130))
 
-    pygame.display.set_caption('ScrollBar')
     thick_h = 20
     thick_v = 40
 
@@ -170,6 +166,7 @@ def main(test: bool = False) -> None:
         trunc_world_orig = (sb_h.get_value(), sb_v.get_value())
         trunc_world = (scr_size[0] - thick_v, scr_size[1] - thick_h)
 
+        # noinspection PyTypeChecker
         screen.blit(world, (0, 0), (trunc_world_orig, trunc_world))
         pygame.display.update()
 
