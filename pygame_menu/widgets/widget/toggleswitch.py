@@ -70,7 +70,7 @@ class ToggleSwitch(Widget):
     :param state_text: Text of each state of the switch
     :param state_text_font: Font of the state text. If ``None`` uses the widget font
     :param state_text_font_color: Color of the font of each state text
-    :param state_text_font_size: Font size of the state text
+    :param state_text_font_size: Font size of the state text. If ``None`` uses the widget font size
     :param state_text_position: Position of the state text respect to the switch rect
     :param state_values: Value of each state of the switch
     :param state_width: Width of each state. For example if there's 2 states, ``state_width`` only can have 1 value
@@ -148,7 +148,7 @@ class ToggleSwitch(Widget):
         assert isinstance(state_values, tuple)
         assert isinstance(infinite, bool)
         self._total_states = len(state_values)
-        assert 2 <= self._total_states, 'the mininum number of states is 2'
+        assert 2 <= self._total_states, 'the minimum number of states is 2'
         assert 0 <= default_state < self._total_states, 'invalid default state value'
         assert isinstance(state_text_font, (str, type(None)))
         assert isinstance(state_text_font_size, (int, type(None)))
@@ -181,6 +181,7 @@ class ToggleSwitch(Widget):
         assert_vector(state_width, self._total_states - 1)
         for i in range(len(state_width)):
             assert isinstance(state_width[i], int), 'each state width must be an integer'
+            assert state_width[i] > 0, 'each state width must be greater than zero'
             self._switch_width += state_width[i]
 
         # Store properties
@@ -221,6 +222,7 @@ class ToggleSwitch(Widget):
     def set_value(self, value: int) -> None:
         assert isinstance(value, int), 'value can only be an integer'
         assert 0 <= value < self._total_states, 'state value exceeds the total states'
+        self._state = value
 
     def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
@@ -259,12 +261,12 @@ class ToggleSwitch(Widget):
 
         # Render the state texts
         for t in range(self._total_states):
-            frender = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
-            self._switch_font_rendered.append(frender)
+            f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
+            self._switch_font_rendered.append(f_render)
 
     def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
-        self._fill_background_color(surface)
+        self._draw_background_color(surface)
 
         # Draw title
         surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1]))
@@ -297,6 +299,8 @@ class ToggleSwitch(Widget):
         sliderx = switchx + self._slider_pos[0] + self._switch_border_width
         slidery = switchy + self._slider_pos[1] + self._switch_border_width
         surface.blit(self._slider, (sliderx, slidery))
+
+        self._draw_border(surface)
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
@@ -370,8 +374,8 @@ class ToggleSwitch(Widget):
 
             # Events
             keydown = event.type == pygame.KEYDOWN
-            joy_hatmotion = self.joystick_enabled and event.type == pygame.JOYHATMOTION
-            joy_axismotion = self.joystick_enabled and event.type == pygame.JOYAXISMOTION
+            joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
+            joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
 
             # Left button
             if keydown and event.key == _controls.KEY_LEFT or \
@@ -398,11 +402,11 @@ class ToggleSwitch(Widget):
                 self.active = not self.active
 
             # Click on switch
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP or \
-                    self.touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP or \
+                    self._touchscreen_enabled and event.type == pygame.FINGERUP:
 
                 # Get event position based on input type
-                if self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                if self._touchscreen_enabled and event.type == pygame.FINGERUP:
                     window_size = self.get_menu().get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:

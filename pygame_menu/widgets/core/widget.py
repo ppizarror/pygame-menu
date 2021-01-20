@@ -73,6 +73,9 @@ class Widget(object):
     _attributes: Dict[str, Any]
     _background_color: Optional[Union[ColorType, '_baseimage.BaseImage']]
     _background_inflate: Tuple2IntType
+    _border_color: ColorType
+    _border_inflate: Tuple2IntType
+    _border_width: int
     _col_row_index: Tuple[int, int, int]
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
@@ -88,6 +91,7 @@ class Widget(object):
     _font_selected_color: ColorType
     _font_size: int
     _id: str
+    _joystick_enabled: bool
     _kwargs: Dict[Any, Any]
     _last_render_hash: int
     _margin: Tuple2IntType
@@ -95,15 +99,14 @@ class Widget(object):
     _max_width: List[Optional[bool]]
     _menu: Optional['Menu']
     _menu_surface_needs_update: bool
+    _mouse_enabled: bool
     _on_change: CallbackType
     _on_return: CallbackType
     _on_select: CallbackType
     _padding: PaddingTrueType
     _padding_transform: PaddingTrueType
-    _position_set: bool
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
-    _selected_rect: Optional['pygame.Rect']
     _selection_effect: 'Selection'
     _selection_time: NumberType
     _shadow: bool
@@ -113,19 +116,17 @@ class Widget(object):
     _shadow_tuple: Tuple2IntType
     _surface: Optional['pygame.Surface']
     _title: str
+    _touchscreen_enabled: bool
     _translate: Tuple[int, int]
     _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     active: bool
     floating: bool
     is_selectable: bool
-    joystick_enabled: bool
     lock_position: bool
-    mouse_enabled: bool
     readonly: bool
     selected: bool
     selection_expand_background: bool
     sound: 'Sound'
-    touchscreen_enabled: bool
     visible: bool
 
     def __init__(self,
@@ -162,8 +163,6 @@ class Widget(object):
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
-        self._position_set = False
-        self._selected_rect = None
         self._selection_time = 0
         self._title = str(title)
 
@@ -219,6 +218,11 @@ class Widget(object):
         self._shadow_position = _locals.POSITION_NORTHWEST
         self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
 
+        # Border
+        self._border_color = (0, 0, 0)
+        self._border_inflate = (0, 0)
+        self._border_width = 0
+
         # Rendering, this variable may be used by render() method
         # If the hash of the variables change respect to the last render hash
         # (hash computed using self._hash_variables() method)
@@ -233,14 +237,14 @@ class Widget(object):
         self.active = False  # Widget requests focus
         self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self.is_selectable = True  # Some widgets cannot be selected like labels
-        self.joystick_enabled = True
-        self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
-        self.mouse_enabled = True  # Accept mouse interaction
+        self._joystick_enabled = True
+        self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
+        self._mouse_enabled = True  # Accept mouse interaction
         self.readonly = False  # If True, widget ignores all input
         self.selected = False  # Use select() to modify this status
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
         self.sound = Sound()
-        self.touchscreen_enabled = True
+        self._touchscreen_enabled = True
         self.visible = True  # Use show() or hide() to modify this status
 
     def __copy__(self) -> 'Menu':
@@ -367,7 +371,7 @@ class Widget(object):
         :return: Hash data
         """
         h = hash(args)
-        if h == 0:  # Menu considers 0 as unrendered status
+        if h == 0:  # Menu considers 0 as un-rendered status
             h = random.randrange(-100000, 100000)
         return h
 
@@ -445,7 +449,7 @@ class Widget(object):
         Expand background inflate to match the selection effect
         (the widget don't require to be selected).
 
-        This is a permanent change; for dynamic purpuoses, depending if the widget
+        This is a permanent change; for dynamic purposes, depending if the widget
         is selected or not, setting ``widget.selection_expand_background`` to ``True`` may help.
 
         .. note::
@@ -456,7 +460,7 @@ class Widget(object):
         """
         self._background_inflate = self._selection_effect.get_xy_margin()
 
-    def _fill_background_color(self, surface: 'pygame.Surface') -> None:
+    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
         """
         Fill a surface with the widget background color.
 
@@ -478,6 +482,23 @@ class Widget(object):
             )
         else:
             surface.fill(self._background_color, rect)
+
+    def _draw_border(self, surface: 'pygame.Surface') -> None:
+        """
+        Draw widget border in the surface.
+
+        :param surface: Surface to draw the border
+        :return: None
+        """
+        if self._border_width == 0:
+            return
+        rect = self.get_rect(inflate=self._border_inflate)
+        pygame.draw.rect(
+            surface,
+            self._border_color,
+            rect,
+            self._border_width
+        )
 
     def get_selection_effect(self) -> 'Selection':
         """
@@ -502,7 +523,7 @@ class Widget(object):
 
         .. note::
 
-            If ``selection=None`` the selection effect will be stablished
+            If ``selection=None`` the selection effect will be established
             to ``_NullSelection`` class.
 
         :param selection: Selection effect class
@@ -690,8 +711,8 @@ class Widget(object):
         pad_bottom = padding[2] * apply_padding + inflate[1] / 2
         pad_left = padding[3] * apply_padding + inflate[0] / 2
 
-        return pygame.Rect(int(self._rect.x - pad_left),
-                           int(self._rect.y - pad_top),
+        return pygame.Rect(int(self._rect.x - pad_left + self._translate[0]),
+                           int(self._rect.y - pad_top + self._translate[1]),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
 
@@ -1100,11 +1121,10 @@ class Widget(object):
         """
         assert isinstance(posx, (int, float))
         assert isinstance(posy, (int, float))
-        if self._position_set and self.lock_position:
+        if self.lock_position:
             return
-        self._rect.x = int(posx) + self._translate[0]
-        self._rect.y = int(posy) + self._translate[1]
-        self._position_set = True
+        self._rect.x = int(posx)
+        self._rect.y = int(posy)
 
     def get_position(self) -> Tuple2IntType:
         """
@@ -1112,7 +1132,7 @@ class Widget(object):
 
         :return: Widget position
         """
-        return self._rect.x, self._rect.y
+        return self._rect.x + self._translate[0], self._rect.y + self._translate[1]
 
     def flip(self, x: bool, y: bool) -> None:
         """
@@ -1142,7 +1162,7 @@ class Widget(object):
         .. note::
 
             If ``width=0`` the widget will use the max column width of the Menu (using
-            the column the widget belogs to).
+            the column the widget belongs to).
 
         .. note::
 
@@ -1442,10 +1462,10 @@ class Widget(object):
 
     def get_selected_time(self) -> NumberType:
         """
-        Return time the widget has been selected in miliseconds.
+        Return time the widget has been selected in milliseconds.
         If the widget is not currently selected, return ``0``.
 
-        :return: Time in miliseconds
+        :return: Time in milliseconds
         """
         if not self.selected:
             return 0
@@ -1555,9 +1575,9 @@ class Widget(object):
         assert isinstance(joystick, bool)
         assert isinstance(mouse, bool)
         assert isinstance(touchscreen, bool)
-        self.joystick_enabled = joystick
-        self.mouse_enabled = mouse
-        self.touchscreen_enabled = touchscreen
+        self._joystick_enabled = joystick
+        self._mouse_enabled = mouse
+        self._touchscreen_enabled = touchscreen
 
     def set_value(self, value: Any) -> None:
         """
@@ -1585,7 +1605,7 @@ class Widget(object):
         .. note::
 
             This method is intended to be used along :py:meth:`pygame_menu.widgets.core.Widget.reset_value`
-            method that sets the widget value back to the default setted with this method.
+            method that sets the widget value back to the default set with this method.
 
         .. note::
 
@@ -1800,6 +1820,22 @@ class Widget(object):
         :return: *(column, row, index)* tuple
         """
         return self._col_row_index
+
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
+        """
+        Set widget border.
+
+        :param width: Border width (px)
+        :param color: Border color
+        :param inflate: Inflate in *(x, y)* axis in px
+        :return: None
+        """
+        assert isinstance(width, int) and width >= 0
+        assert_color(color)
+        assert isinstance(inflate, tuple) and inflate[0] >= 0 and inflate[1] >= 0
+        self._border_width = width
+        self._border_color = color
+        self._border_inflate = inflate
 
 
 # noinspection PyMissingOrEmptyDocstring

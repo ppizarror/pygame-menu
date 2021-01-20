@@ -74,23 +74,28 @@ Also the width of each column can be set using ``column_max_width`` and
 On-close callback
 ^^^^^^^^^^^^^^^^^
 
-A callback can be defined using the ``onclose`` parameter, it will be
-called when the menu (end sub-menus) is closing. This parameter can take
-one of these two types of values:
+A callback can be defined using the ``onclose`` parameter; it will be
+called when the menu (end sub-menu) is closing. Closing the menu is the same
+as *disabling* it, but with callback firing.
 
- - a python callable object (a function, a method, a class, ...)
-   that will be called without any arguments.
- - a specific event of :py:mod:`pygame_menu`. The possible events are
+``onclose`` parameter can take one of these three types of values:
+
+ - ``None``, the menu don't disables if :py:meth:`pygame_menu.Menu.close`
+   is called
+ - A python callable object (a function, a method) that will be called
+   without any arguments, or with the ``Menu`` instance.
+ - A specific event of :py:mod:`pygame_menu`. The possible events are
    the following:
 
-   ===========================================  ========================================
+   ===========================================  =============================================================
    Event                                        Description
-   ===========================================  ========================================
-   :py:data:`pygame_menu.events.BACK`           Go back to the previously opened menu
-   :py:data:`pygame_menu.events.DISABLE_CLOSE`  The menu can not be closed
+   ===========================================  =============================================================
+   :py:data:`pygame_menu.events.BACK`           Go back to the previously opened menu and disable the current
+   :py:data:`pygame_menu.events.CLOSE`          Only disables the current menu
+   :py:data:`pygame_menu.events.NONE`           The same as ``onclose=None``
    :py:data:`pygame_menu.events.EXIT`           Exit the program (not only the menu)
-   :py:data:`pygame_menu.events.RESET`          Go back to the first opened menu
-   ===========================================  ========================================
+   :py:data:`pygame_menu.events.RESET`          Go back to the first opened menu and disable the current
+   ===========================================  =============================================================
 
 
 Display a menu
@@ -98,7 +103,7 @@ Display a menu
 
 The :ref:`First steps` chapter shows the way to display the menu, this
 method lets `pygame-menu` managing the event loop by calling the
-:py:meth:`pygame_menu.Menu.mainloop` :
+:py:meth:`pygame_menu.Menu.mainloop`:
 
 .. code-block:: python
     :emphasize-lines: 6

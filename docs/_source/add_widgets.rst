@@ -30,7 +30,7 @@ three values:
 **Example:**
 
 .. image:: ../_static/widget_button.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -63,7 +63,7 @@ displayed, the others are the arguments passed to the callbacks
 **Example:**
 
 .. image:: ../_static/widget_selector.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -104,7 +104,7 @@ is a comma (``,``).
 **Example:**
 
 .. image:: ../_static/widget_colorinput.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -155,7 +155,7 @@ can be wrapped in order to fit the menu size.
 **Example:**
 
 .. image:: ../_static/widget_label.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -195,7 +195,7 @@ on entered characters can be set using ``input_type``, ``maxchar``,
 **Example:**
 
 .. image:: ../_static/widget_textinput.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -221,7 +221,7 @@ you need more options, take a look at the ``ToggleSwitch`` widget class.
 **Example:**
 
 .. image:: ../_static/widget_toggleswitch.png
-    :scale: 48%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -230,7 +230,7 @@ you need more options, take a look at the ``ToggleSwitch`` widget class.
 
     menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
     menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
-                           state_text=('Apagado', 'Encencido'))
+                           state_text=('Apagado', 'Encencido'), state_text_font_size=18)
 
 .. automethod:: pygame_menu.Menu.add_toggle_switch
 
@@ -244,7 +244,7 @@ visual rendering of the menu.
 **Example:**
 
 .. image:: ../_static/widget_vmargin.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python
@@ -269,7 +269,7 @@ requires more CPU resources.
 **Example:**
 
 .. image:: ../_static/widget_image.png
-    :scale: 30%
+    :scale: 70%
     :align: center
 
 .. code-block:: python

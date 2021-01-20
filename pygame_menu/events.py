@@ -38,7 +38,6 @@ __all__ = [
     # Menu events
     'BACK',
     'CLOSE',
-    'DISABLE_CLOSE',
     'EXIT',
     'NONE',
     'RESET',
@@ -85,14 +84,12 @@ def is_event(event: Any) -> bool:
 # Events
 BACK = MenuAction(0)  # Menu back
 CLOSE = MenuAction(1)  # Close Menu
-DISABLE_CLOSE = MenuAction(2)  # Menu disable closing
 EXIT = MenuAction(3)  # Menu exit program
-NONE = MenuAction(4)  # None action
+NONE = MenuAction(4)  # None action. It's the same as 'None'
 RESET = MenuAction(5)  # Menu reset
 
 # Pygame events
 PYGAME_QUIT = __locals.QUIT
-
 PYGAME_WINDOWCLOSE = -1
 if hasattr(__locals, 'WINDOWCLOSE'):
     PYGAME_WINDOWCLOSE = __locals.WINDOWCLOSE

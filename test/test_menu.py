@@ -63,7 +63,9 @@ class MenuTest(unittest.TestCase):
         """
         test_reset_surface()
         self.menu = MenuUtils.generic_menu(title='mainmenu')
-        self.menu.mainloop(surface, bgfun=dummy_function)
+        self.menu.disable()
+        self.assertRaises(RuntimeError, lambda: self.menu.mainloop(surface, bgfun=dummy_function, disable_loop=True))
+        self.menu.enable()
 
     @staticmethod
     def test_time_draw() -> None:
@@ -254,24 +256,131 @@ class MenuTest(unittest.TestCase):
         Test menu close.
         """
         menu = MenuUtils.generic_menu()
+        menu.disable()
+        menu.set_title('1')
         menu.set_attribute('epic', False)
         menu._back()
 
-        def test_close() -> None:
+        def close() -> None:
+            """
+            Close callback.
+            """
             menu.set_attribute('epic', True)
 
-        menu.set_onclose(test_close)
+        menu.set_onclose(close)
         self.assertTrue(not menu.is_enabled())
         menu.enable()
         self.assertFalse(menu.get_attribute('epic'))
         menu._close()
         self.assertTrue(menu.get_attribute('epic'))
 
+        test = [False, False]
+
+        def closefun() -> None:
+            """
+            Close callback.
+            """
+            test[0] = True
+
+        menu2 = MenuUtils.generic_menu(onclose=closefun)
+        menu2.set_title(2)
+        menu2.enable()
+
+        self.assertTrue(menu2.close())
+        self.assertTrue(test[0])
+
+        # This method takes menu as input
+        def closefun_menu(m: 'pygame_menu.Menu') -> None:
+            """
+            Test object is menu.
+            """
+            test[1] = True
+            self.assertEqual(m, menu2)
+
+        menu2.set_onclose(closefun_menu)
+        menu2.enable()
+        menu2.close()
+        self.assertTrue(test[1])
+
+        # Change onclose
+        menu2.set_onclose(None)
+        menu2.enable()
+        self.assertFalse(menu2.close())  # None status don't changes enabled
+        self.assertTrue(menu2.is_enabled())
+        menu2.set_onclose(pygame_menu.events.NONE)
+        self.assertFalse(menu2.close())  # NONE event don't changes enabled
+        self.assertTrue(menu2.is_enabled())
+
+        # Add button with submenu, and open it
+        self.assertEqual(menu2.get_current().get_title(), '2')
+        menu2.add_button('to1', menu).apply()
+        self.assertEqual(menu2.get_current().get_title(), '1')
+        self.assertEqual(menu2.get_current(), menu)
+
+        # Set onclose 1 as reset, if close then menu should be disabled
+        # and back to '2'
+        menu.set_onclose(pygame_menu.events.RESET)
+        menu.close()
+
+        # Open again 1
+        self.assertFalse(menu2.is_enabled())
+        menu2.enable()
+        menu2.get_selected_widget().apply()
+        self.assertEqual(menu2.get_current().get_title(), '1')
+
+        # Set new close callback, it receives the menu and fires reset,
+        # the output should be the same, except it don't closes
+
+        def new_close(m: 'pygame_menu.Menu') -> None:
+            """
+            Reset the current menu.
+            """
+            self.assertEqual(m, menu)
+            m.reset(1)
+
+        # Also, set first menu onreset to test this behaviour
+        reset = [False]
+
+        def onreset(m: 'pygame_menu.Menu') -> None:
+            """
+            Called in reset.
+            """
+            self.assertEqual(m, menu)
+            reset[0] = True
+
+        menu.set_onclose(new_close)
+        menu.set_onreset(onreset)
+        self.assertFalse(reset[0])
+        menu.close()
+        self.assertTrue(reset[0])
+        self.assertEqual(menu2.get_current().get_title(), '2')
+        self.assertFalse(menu2.is_enabled())
+
+        # Test back event
+        menu2.enable()
+        menu2.get_selected_widget().apply()
+        menu.set_onclose(pygame_menu.events.BACK)
+        menu.set_onreset(None)
+        self.assertEqual(menu2.get_current(), menu)
+        menu2.close()
+        self.assertEqual(menu2.get_current(), menu2)
+
+        # Test close event, this should NOT change the pointer
+        menu2.enable()
+        menu2.get_selected_widget().apply()
+        menu.set_onclose(pygame_menu.events.CLOSE)
+        menu.set_onreset(None)
+        self.assertEqual(menu2.get_current(), menu)
+        menu.close()
+        self.assertEqual(menu2.get_current(), menu)
+        menu.reset(1)
+        self.assertEqual(menu2.get_current(), menu2)
+
     def test_enabled(self) -> None:
         """
         Test menu enable/disable feature.
         """
-        menu = MenuUtils.generic_menu(onclose=events.NONE)
+        menu = MenuUtils.generic_menu(onclose=events.NONE, enabled=False)
         self.assertTrue(not menu.is_enabled())
         menu.enable()
         self.assertTrue(menu.is_enabled())
@@ -701,10 +810,10 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(columns=2))  # none rows
 
         # Assert append more widgets than number of rows*columns
-        column_menu = MenuUtils.generic_menu(columns=2, rows=4)
+        column_menu = MenuUtils.generic_menu(columns=2, rows=4, enabled=False)
         for _ in range(8):
             column_menu.add_button('test', pygame_menu.events.BACK)
-        column_menu.mainloop(surface, bgfun=dummy_function, disable_loop=True)
+        self.assertRaises(RuntimeError, lambda: column_menu.mainloop(surface, bgfun=dummy_function, disable_loop=True))
         column_menu._move_selected_left_right(-1)
         column_menu._move_selected_left_right(1)
         column_menu.disable()
@@ -1017,7 +1126,7 @@ class MenuTest(unittest.TestCase):
         # btn2 |      | btn5
 
         # Change menu max column width, this should
-        # fullfill third column to its maximum possible less than 300
+        # fulfill third column to its maximum possible less than 300
         # col2 should keep its current width
         menu._column_max_width = [300, None, 300]
         menu.render()
@@ -1094,8 +1203,8 @@ class MenuTest(unittest.TestCase):
 
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen=False,
                                                                          touchscreen_motion_selection=True))
-        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True)
-        menu.mainloop(surface, bgfun=dummy_function)
+        menu = MenuUtils.generic_menu(title='mainmenu', touchscreen=True, enabled=False)
+        self.assertRaises(RuntimeError, lambda: menu.mainloop(surface, bgfun=dummy_function))
 
         # Add a menu and a method that set a function
         event_val = [False]
@@ -1109,6 +1218,7 @@ class MenuTest(unittest.TestCase):
 
         # Check touch
         click_pos = PygameUtils.get_middle_rect(button.get_rect())
+        menu.enable()
         menu.update(PygameUtils.touch_click(click_pos[0], click_pos[1], normalize=False))  # Event must be normalized
         self.assertFalse(event_val[0])
 
@@ -1337,3 +1447,73 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), None)
         btn.select(update_menu=True)
         self.assertEqual(menu.get_selected_widget(), btn)
+
+    # noinspection PyArgumentEqualDefault
+    def test_events(self) -> None:
+        """
+        Test events gather.
+        """
+        if pygame.vernum.major < 2:
+            return
+        menu_top = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(columns=4, rows=2, touchscreen=True,
+                                      touchscreen_motion_selection=True, column_min_width=[400, 300, 400, 300],
+                                      joystick_enabled=True)  # submenu
+        menu_top.add_button('menu', menu).apply()
+        widg = []
+        for i in range(8):
+            b = menu.add_button('test' + str(i), pygame_menu.events.BACK)
+            widg.append(b)
+        # btn0 | btn2 | btn4 | btn6
+        # btn1 | btn3 | btn5 | btn7
+
+        self.assertEqual(menu_top.get_current(), menu)
+
+        # Arrow keys
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[6])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[7])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+
+        # Joy key
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+        self.assertEqual(menu.get_selected_widget(), widg[6])
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_DOWN))
+        self.assertEqual(menu.get_selected_widget(), widg[7])
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_UP))
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+
+        # Joy hat
+        menu_top.update(PygameUtils.joy_motion(-10, 0))
+        self.assertEqual(menu_top.get_current()._joy_event, pygame_menu.menu.JOY_EVENT_LEFT)
+        self.assertEqual(menu.get_selected_widget(), widg[6])
+        menu_top.update(PygameUtils.joy_motion(0, 10))
+        self.assertEqual(menu_top.get_current()._joy_event, pygame_menu.menu.JOY_EVENT_DOWN)
+        self.assertEqual(menu.get_selected_widget(), widg[7])
+        menu_top.update(PygameUtils.joy_motion(10, 0))
+        self.assertEqual(menu_top.get_current()._joy_event, pygame_menu.menu.JOY_EVENT_RIGHT)
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(PygameUtils.joy_motion(0, -10))
+        self.assertEqual(menu_top.get_current()._joy_event, pygame_menu.menu.JOY_EVENT_UP)
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+
+        # Menu should keep a recursive state of joy
+        self.assertNotEqual(menu.get_current()._joy_event, 0)
+        menu_top.update(PygameUtils.center_joy())  # center !!
+        self.assertEqual(menu.get_current()._joy_event, 0)
+
+        # Click widget
+        menu_top.enable()
+        menu_top.update([PygameUtils.middle_rect_click(widg[1].get_rect(), menu, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update([PygameUtils.middle_rect_click(widg[0].get_rect(), menu, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update([PygameUtils.middle_rect_click(widg[1].get_rect(), menu, evtype=pygame.FINGERDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[0])

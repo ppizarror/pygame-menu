@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import os
 from random import randrange
 from typing import Tuple, Any, Optional, List
 
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -112,7 +112,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
     # You also can set another menu, like a 'pause menu', or just use the same
     # main_menu as the menu that will check all your input.
     main_menu.disable()
-    main_menu.reset(1)
+    main_menu.full_reset()
 
     while True:
 
@@ -128,11 +128,12 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 285
+                    # Quit this function, then skip to loop of main-menu on line 266
                     return
 
         # Pass events to main_menu
-        main_menu.update(events)
+        if main_menu.is_enabled():
+            main_menu.update(events)
 
         # Continue playing
         surface.fill(bg_color)
@@ -170,14 +171,9 @@ def main(test: bool = False) -> None:
     global surface
 
     # -------------------------------------------------------------------------
-    # Init pygame
+    # Create window
     # -------------------------------------------------------------------------
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-    # Create pygame screen and objects
-    surface = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Game Selector')
+    surface = create_example_window('Example - Game Selector', WINDOW_SIZE)
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
@@ -185,7 +181,6 @@ def main(test: bool = False) -> None:
     # -------------------------------------------------------------------------
     play_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.7,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         title='Play Menu',
         width=WINDOW_SIZE[0] * 0.75
     )
@@ -223,7 +218,6 @@ def main(test: bool = False) -> None:
 
     about_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=about_theme,
         title='About',
         width=WINDOW_SIZE[0] * 0.6
@@ -238,11 +232,9 @@ def main(test: bool = False) -> None:
     # Create menus: Main
     # -------------------------------------------------------------------------
     main_theme = pygame_menu.themes.THEME_DEFAULT.copy()
-    main_theme.menubar_close_button = False  # Disable close button
 
     main_menu = pygame_menu.Menu(
         height=WINDOW_SIZE[1] * 0.6,
-        onclose=pygame_menu.events.DISABLE_CLOSE,
         theme=main_theme,
         title='Main Menu',
         width=WINDOW_SIZE[0] * 0.6
@@ -270,7 +262,8 @@ def main(test: bool = False) -> None:
                 exit()
 
         # Main menu
-        main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
+        if main_menu.is_enabled():
+            main_menu.mainloop(surface, main_background, disable_loop=test, fps_limit=FPS)
 
         # Flip surface
         pygame.display.flip()

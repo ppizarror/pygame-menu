@@ -239,11 +239,11 @@ class TextInput(Widget):
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
         assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
-        assert cursor_switch_ms > 0, 'cursor switch in miliseconds must be greater than zero'
+        assert cursor_switch_ms > 0, 'cursor switch in milliseconds must be greater than zero'
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
-        if pygame.vernum.major == 2:
+        if pygame.vernum.major >= 2:
             assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
             assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
@@ -428,9 +428,9 @@ class TextInput(Widget):
         self._clock.tick()
 
         # Draw background color
-        self._fill_background_color(surface)
+        self._draw_background_color(surface)
 
-        if pygame.vernum.major == 2:
+        if pygame.vernum.major >= 2:
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
                 surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
@@ -447,6 +447,8 @@ class TextInput(Widget):
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
             surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
+
+        self._draw_border(surface)
 
         if self._apply_widget_draw_callback:
             self.apply_draw_callbacks()
@@ -1474,7 +1476,7 @@ class TextInput(Widget):
         # Check mouse pressed
         # noinspection PyArgumentList
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
-        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self.mouse_enabled
+        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self._mouse_enabled
 
         if self.readonly:
             return False
@@ -1738,7 +1740,7 @@ class TextInput(Widget):
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
@@ -1746,7 +1748,7 @@ class TextInput(Widget):
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
 
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
@@ -1756,7 +1758,7 @@ class TextInput(Widget):
                     self._selection_mouse_first_position = -1
                     self.active = True
 
-            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._rect.collidepoint(*finger_pos) and \
@@ -1766,7 +1768,7 @@ class TextInput(Widget):
                     self._check_touch_collide_input(finger_pos)
                     self._cursor_ms_counter = 0
 
-            elif self.touchscreen_enabled and event.type == pygame.FINGERDOWN:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERDOWN:
                 if self.get_selected_time() > self._keyrepeat_touch_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:

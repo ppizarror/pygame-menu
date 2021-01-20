@@ -11,6 +11,7 @@ exclude test/*.py
 include requirements.txt
 
 recursive-include pygame_menu/resources/fonts *.ttf
+recursive-include pygame_menu/resources/fonts *.txt
 recursive-include pygame_menu/resources/images *.jpg
 recursive-include pygame_menu/resources/images *.png
 recursive-include pygame_menu/resources/sounds *.ogg

@@ -32,6 +32,7 @@ Them can also be imported as follows:
 
 Example sources can also be found in the `Github repo <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples>`_.
 
+
 Simple example
 --------------
 
@@ -41,6 +42,7 @@ Simple example
     :width: 590
 
 Source: `examples/simple.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/simple.py>`_
+
 
 Game selector example
 ---------------------
@@ -52,6 +54,7 @@ Game selector example
 
 Source: `examples/game_selector.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/game_selector.py>`_
 
+
 Multiple input example
 ----------------------
 
@@ -62,6 +65,7 @@ Multiple input example
 
 Source: `examples/multi_input.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/multi_input.py>`_
 
+
 Scroll menu example
 -------------------
 
@@ -70,12 +74,8 @@ Scroll menu example
     :alt: Since v3, menu supports scrolls
     :width: 590
 
-.. image:: ../_static/example_columns.gif
-    :align: center
-    :alt: Since v3, menu supports columns and scrolls
-    :width: 590
-
 Source: `examples/scroll_menu.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/scroll_menu.py>`_
+
 
 Timer clock example
 -------------------
@@ -87,6 +87,7 @@ Timer clock example
 
 Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/timer_clock.py>`_
 
+
 Other - Dynamic button append
 -----------------------------
 
@@ -97,6 +98,7 @@ Other - Dynamic button append
 
 Source: `examples/other/dynamic_button_append.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/dynamic_button_append.py>`_
 
+
 Other - Dynamic widget update (OOP style)
 -----------------------------------------
 
@@ -106,6 +108,7 @@ Other - Dynamic widget update (OOP style)
     :width: 590
 
 Source: `examples/other/dynamic_widget_update.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/dynamic_widget_update.py>`_
+
 
 Other - Image background
 ------------------------

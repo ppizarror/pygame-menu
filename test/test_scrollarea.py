@@ -43,7 +43,7 @@ class ScrollAreaTest(unittest.TestCase):
 
     def test_scrollarea_position(self) -> None:
         """
-        Test scrollarea position.
+        Test scroll area position.
         """
         self.assertEqual(len(get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_FULL)), 4)
         for i in (_locals.POSITION_EAST, _locals.POSITION_EAST, _locals.POSITION_WEST, _locals.POSITION_NORTH):
@@ -72,7 +72,7 @@ class ScrollAreaTest(unittest.TestCase):
 
     def test_copy(self) -> None:
         """
-        Test scrollarea copy.
+        Test scroll area copy.
         """
         sa = MenuUtils.generic_menu().get_scrollarea()
         self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
@@ -135,5 +135,5 @@ class ScrollAreaTest(unittest.TestCase):
 
         # Create virtual rect from button
         rect_virtual = sa.to_real_position(btn.get_rect())
-        event_click_widget = PygameUtils.middle_rect_mouse_click(rect_virtual)
+        event_click_widget = PygameUtils.middle_rect_click(rect_virtual)
         self.assertTrue(sa.collide(btn, event_click_widget))

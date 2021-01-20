@@ -54,6 +54,7 @@ from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
 from pygame_menu.custom_types import Union, List, Tuple, CallbackType, Tuple2IntType, \
     NumberType, ColorType, Any, Optional, PaddingType, TYPE_CHECKING
+import warnings
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core.selection import Selection
@@ -170,6 +171,33 @@ class MenuBar(Widget):
     def set_selection_effect(self, selection: 'Selection') -> None:
         pass
 
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
+        pass
+
+    def _check_title_color(self, background_menu: bool) -> None:
+        """
+        Performs title color and prints a warning if the color is similar to the background.
+
+        :return: None
+        """
+        if background_menu:
+            cback = self.get_menu().get_theme().background_color
+        else:
+            cback = self._background_color
+        if not isinstance(cback, (tuple, list)):  # If is color
+            return
+        tol = 5
+        cdif1 = abs(cback[0] - self._font_color[0])
+        cdif2 = abs(cback[1] - self._font_color[1])
+        cdif3 = abs(cback[2] - self._font_color[2])
+        if cdif1 < tol and cdif2 < tol and cdif3 < tol:
+            msg = 'title font color {0} is {3} to the {1} background color {2}, consider ' \
+                  'editing your Theme'.format(self._font_color,
+                                              'menu' if background_menu else 'title',
+                                              cback,
+                                              'equal' if cdif1 == cdif2 == cdif3 == 0 else 'similar')
+            warnings.warn(msg)
+
     def get_title_offset(self) -> Tuple2IntType:
         """
         Return the title offset in *(x, y)*.
@@ -196,7 +224,7 @@ class MenuBar(Widget):
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
         # Draw backbox if enabled
-        if self.mouse_enabled and self._backbox:
+        if self._mouse_enabled and self._backbox:
 
             # The following check belongs to the case if the Menu displays a "x" button to close
             # the Menu, but onclose Menu method is None (Nothing is executed), then the button will
@@ -249,6 +277,7 @@ class MenuBar(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         self._apply_transforms()  # Rotation does not affect rect size
 
+        dy = 0
         if self._style == MENUBAR_STYLE_ADAPTIVE:
             """
             A-------------------B                  D-E: 25 dx
@@ -266,6 +295,7 @@ class MenuBar(Widget):
             f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
             cross_size = self._rect.height * 0.6
+            self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_SIMPLE:
             """
@@ -280,6 +310,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height
+            self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_TITLE_ONLY:
             """
@@ -295,6 +326,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
+            self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
             """
@@ -310,6 +342,7 @@ class MenuBar(Widget):
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
             cross_size = self._rect.height * 0.6
+            self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_NONE:
             """
@@ -321,39 +354,43 @@ class MenuBar(Widget):
             b = self._rect.x + self._width - 1, self._rect.y
             self._polygon_pos = a, b
             cross_size = self._rect.height * 0.6
+            self._check_title_color(background_menu=True)
 
         elif self._style == MENUBAR_STYLE_UNDERLINE:
             """
              ****             x
-            A-------------------B      *0,20 height
+            A-------------------B      *0,09 height
             D-------------------C
             """
 
-            dy = 3
-            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + dy
-            b = self._rect.x + self._width - 1, self._rect.y + 0.9 * self._rect.height + dy
+            dy = 4
+            a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
+            b = self._rect.x + self._width - 1, self._rect.y + 0.91 * self._rect.height + dy
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
+            self._check_title_color(background_menu=True)
 
         elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
             """
              ****               x
-            A----B                     *0,20 height
+            A----B                     *0,09 height
             D----C
             """
 
             dy = 3
-            a = self._rect.x, self._rect.y + 0.9 * self._rect.height + dy
-            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.9 * self._rect.height + dy
+            a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
+            b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.91 * self._rect.height + dy
             c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
             cross_size = 0.6 * self._rect.height
+            self._check_title_color(background_menu=True)
 
         else:
             raise ValueError('invalid menubar mode {0}'.format(self._style))
+        self._rect.height += dy
 
         # Create the back box
         if self._backbox:
@@ -414,19 +451,19 @@ class MenuBar(Widget):
 
         for event in events:
 
-            if self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self.sound.play_click_mouse()
                     self.apply()
                     updated = True
 
-            elif self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
+            elif self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
                 if event.button == _controls.JOY_BUTTON_BACK:
                     self.sound.play_key_del()
                     self.apply()
                     updated = True
 
-            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):

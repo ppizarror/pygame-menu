@@ -51,10 +51,10 @@ class Selection(object):
     :param margin_bottom: Bottom margin
     """
     color: ColorType
-    margin_bottom: int
-    margin_left: int
-    margin_right: int
-    margin_top: int
+    margin_bottom: NumberType
+    margin_left: NumberType
+    margin_right: NumberType
+    margin_top: NumberType
 
     def __init__(self, margin_left: NumberType, margin_right: NumberType,
                  margin_top: NumberType, margin_bottom: NumberType) -> None:
@@ -88,7 +88,7 @@ class Selection(object):
 
         :return: Tuple of *(top, left, bottom, right)* margins in px
         """
-        return self.margin_top, self.margin_left, self.margin_bottom, self.margin_right
+        return int(self.margin_top), int(self.margin_left), int(self.margin_bottom), int(self.margin_right)
 
     def get_xy_margin(self) -> Tuple[int, int]:
         """
@@ -96,7 +96,7 @@ class Selection(object):
 
         :return: Tuple of *(x, y)* margins
         """
-        return self.margin_left + self.margin_right, self.margin_top + self.margin_bottom
+        return int(self.margin_left + self.margin_right), int(self.margin_top + self.margin_bottom)
 
     def get_width(self) -> int:
         """

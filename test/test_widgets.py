@@ -232,6 +232,14 @@ class WidgetsTest(unittest.TestCase):
         w.set_max_width(100)
         self.assertFalse(w._scale[0])
 
+        # Translate
+        w = self.menu.add_label('text')
+        x, y = w.get_position()
+        w.translate(10, 10)
+        xt, yt = w.get_position()
+        self.assertEqual(xt - x, 10)
+        self.assertEqual(yt - y, 10)
+
     def test_max_width_height(self) -> None:
         """
         Test widget max width/height.
@@ -1173,7 +1181,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(l, 0)
 
         wid.set_background_color((1, 1, 1))
-        wid._fill_background_color(surface)
+        wid._draw_background_color(surface)
         self.assertEqual(wid._background_color, None)
 
         nosel = NoneSelection()
@@ -1274,6 +1282,24 @@ class WidgetsTest(unittest.TestCase):
         wid.set_sound(None)
         self.assertNotEqual(wid.sound, None)
 
+        wid.set_border(1, (0, 0, 0), (0, 0))
+        self.assertEqual(wid._border_width, 0)
+
+    def test_border(self) -> None:
+        """
+        Test widget border.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=-1))
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=1.5))
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=1, border_color=None))
+        self.assertRaises(AssertionError, lambda: menu.add_button('', None, border_width=1,
+                                                                  border_color=(0, 0, 0), border_inflate=(-1, - 1)))
+        btn = menu.add_button('', None, border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
+        self.assertEqual(btn._border_width, 1)
+        self.assertEqual(btn._border_color, (0, 0, 0))
+        self.assertEqual(btn._border_inflate, (1, 1))
+
     def test_scrollbar(self) -> None:
         """
         Test ScrollBar widget.
@@ -1352,6 +1378,7 @@ class WidgetsTest(unittest.TestCase):
         # Set minimum
         sb.set_minimum(0.5 * sb._values_range[1])
 
+    # noinspection PyTypeChecker
     def test_toggleswitch(self) -> None:
         """
         Test toggleswitch widget.
@@ -1442,3 +1469,7 @@ class WidgetsTest(unittest.TestCase):
 
         switch.set_max_height(100)
         self.assertEqual(switch._max_height[0], None)
+
+        # Assert switch values
+        self.assertRaises(ValueError, lambda: menu.add_toggle_switch('toggle', 'false',
+                                                                     onchange=onchange, infinite=False))

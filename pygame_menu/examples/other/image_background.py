@@ -29,12 +29,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from __future__ import print_function
-
 __all__ = ['main']
 
 import sys
-import os
 from typing import Optional
 
 sys.path.insert(0, '../../')
@@ -42,6 +39,7 @@ sys.path.insert(0, '../../../')
 
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -90,14 +88,9 @@ def main(test: bool = False) -> None:
     global surface
 
     # -------------------------------------------------------------------------
-    # Init pygame
+    # Create window
     # -------------------------------------------------------------------------
-    pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-    # Create pygame screen and objects
-    surface = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Image Background')
+    surface = create_example_window('Example - Image Background', WINDOW_SIZE)
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------

@@ -32,19 +32,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['main']
 
 import sys
-import os
 from random import randrange
 
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../../../')
 
-import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
-pygame.init()
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-surface = pygame.display.set_mode((600, 400))
-
+surface = create_example_window('Example - Dynamic Button Append', (600, 400))
 menu = pygame_menu.Menu(
     height=300,
     theme=pygame_menu.themes.THEME_BLUE,

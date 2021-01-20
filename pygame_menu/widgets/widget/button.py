@@ -128,8 +128,9 @@ class Button(Widget):
 
     def draw(self, surface: 'pygame.Surface') -> None:
         self._render()
-        self._fill_background_color(surface)
+        self._draw_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
+        self._draw_border(surface)
         self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
@@ -149,19 +150,19 @@ class Button(Widget):
         for event in events:
 
             if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
-                    self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
+                    self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
                     event.button == _controls.JOY_BUTTON_SELECT:
                 self.sound.play_open_menu()
                 self.apply()
                 updated = True
 
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 self.sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()
                     updated = True
 
-            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 self.sound.play_click_mouse()
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])

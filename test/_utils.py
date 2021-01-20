@@ -35,7 +35,9 @@ import pygame
 import pygame_menu
 import random
 
-from pygame_menu.custom_types import NumberType, Union, List, Tuple, \
+from pygame_menu.font import FONT_EXAMPLES
+
+from pygame_menu.custom_types import NumberType, Union, List, Tuple, Optional, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
@@ -100,6 +102,20 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
+    def center_joy() -> List['pygame.event.Event']:
+        """
+        Centers the joy.
+
+        :return: Center joy event
+        """
+        return [pygame.event.Event(pygame.JOYAXISMOTION,
+                                   {
+                                       'value': 0,
+                                       'axis': pygame_menu.controls.JOY_AXIS_Y,
+                                       'test': True
+                                   })]
+
+    @staticmethod
     def test_widget_key_press(widget: 'pygame_menu.widgets.core.Widget') -> None:
         """
         Test keypress widget.
@@ -115,7 +131,7 @@ class PygameUtils(object):
         widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
 
     @staticmethod
-    def joy_key(key: bool, inlist: bool = True, testmode: bool = True) -> EventListType:
+    def joy_key(key: Tuple[int, int], inlist: bool = True, testmode: bool = True) -> EventListType:
         """
         Create a pygame joy controller key event.
 
@@ -197,7 +213,7 @@ class PygameUtils(object):
         :param x: X coordinate (px)
         :param y: Y coordinate (px)
         :param inlist: Return event in a list
-        :param evtype: event type
+        :param evtype: event type, it can be MOUSEBUTTONUP or MOUSEBUTTONDOWN
         :return: Event
         """
         event_obj = pygame.event.Event(evtype,
@@ -258,15 +274,32 @@ class PygameUtils(object):
         return x, y
 
     @staticmethod
-    def middle_rect_mouse_click(rect: 'pygame.Rect') -> 'pygame.event.Event':
+    def middle_rect_click(rect: 'pygame.Rect', menu: Optional['pygame_menu.Menu'] = None,
+                          evtype: int = pygame.MOUSEBUTTONUP) -> 'pygame.event.Event':
         """
         Return event clicking the middle of a given rect.
 
         :param rect: Rect object
+        :param menu: Menu object
+        :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, FINGERUP, FINGERDOWN
         :return: Event
         """
         x, y = PygameUtils.get_middle_rect(rect)
-        return PygameUtils.mouse_click(x, y, inlist=False)
+        if menu is not None:
+            sar = menu.get_scrollarea().get_rect()
+        else:
+            sar = pygame.Rect(0, 0, 0, 0)
+        if evtype == pygame.FINGERDOWN or evtype == pygame.FINGERUP:
+            assert menu is not None, 'menu cannot be none if FINGER'
+            display = menu.get_window_size()
+            return pygame.event.Event(evtype,
+                                      {
+                                          'x': (x + sar.x) / display[0],
+                                          'y': (y + sar.y) / display[1],
+                                          'test': True,
+                                          'button': 3
+                                      })
+        return PygameUtils.mouse_click(x + sar.x, y + sar.y, inlist=False, evtype=evtype)
 
 
 class MenuUtils(object):
@@ -286,34 +319,14 @@ class MenuUtils(object):
         return pygame_menu.font.get_font(name, size)
 
     @staticmethod
-    def get_library_fonts() -> List[str]:
-        """
-        Return a test font from the library.
-
-        :return: Font file
-        """
-        return [
-            pygame_menu.font.FONT_8BIT,
-            pygame_menu.font.FONT_BEBAS,
-            pygame_menu.font.FONT_COMIC_NEUE,
-            pygame_menu.font.FONT_FRANCHISE,
-            pygame_menu.font.FONT_HELVETICA,
-            pygame_menu.font.FONT_MUNRO,
-            pygame_menu.font.FONT_NEVIS,
-            pygame_menu.font.FONT_OPEN_SANS,
-            pygame_menu.font.FONT_PT_SERIF
-        ]
-
-    @staticmethod
     def random_font() -> str:
         """
         Return a random font from the library.
 
         :return: Font file
         """
-        fonts = MenuUtils.get_library_fonts()
-        opt = random.randrange(0, len(fonts))
-        return fonts[opt]
+        opt = random.randrange(0, len(FONT_EXAMPLES))
+        return FONT_EXAMPLES[opt]
 
     @staticmethod
     def load_font(font: str, size: int) -> 'pygame.font.Font':
@@ -344,9 +357,10 @@ class MenuUtils(object):
             columns: int = 1,
             column_max_width: MenuColumnMaxWidthType = None,
             column_min_width: MenuColumnMinWidthType = 0,
-            enabled: bool = False,
+            enabled: bool = True,
             height: NumberType = 400,
             onclose: Any = None,
+            onreset: Any = None,
             position_x: NumberType = 50,
             position_y: NumberType = 50,
             rows: MenuRowsType = None,
@@ -366,6 +380,7 @@ class MenuUtils(object):
         :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn
         :param height: Menu height (px)
         :param onclose: Event or function applied when closing the Menu
+        :param onreset: Function executed when resetting the Menu
         :param position_x: X position of the menu
         :param position_y: Y position of the menu
         :param rows: Number of rows
@@ -385,6 +400,7 @@ class MenuUtils(object):
             height=height,
             menu_position=(position_x, position_y),
             onclose=onclose,
+            onreset=onreset,
             rows=rows,
             theme=theme,
             title=title,

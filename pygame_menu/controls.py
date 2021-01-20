@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
-    # Joypad
+    # Joy pad
     'JOY_AXIS_X',
     'JOY_AXIS_Y',
     'JOY_BUTTON_BACK',
@@ -58,7 +58,7 @@ __all__ = [
 
 import pygame.locals as __locals
 
-# Joypad
+# Joy pad
 JOY_AXIS_X = 0
 JOY_AXIS_Y = 1
 JOY_BUTTON_BACK = 1
@@ -78,5 +78,5 @@ KEY_BACK = __locals.K_BACKSPACE
 KEY_CLOSE_MENU = __locals.K_ESCAPE
 KEY_LEFT = __locals.K_LEFT
 KEY_MOVE_DOWN = __locals.K_UP
-KEY_MOVE_UP = __locals.K_DOWN
+KEY_MOVE_UP = __locals.K_DOWN  # Consider keys are "inverted"
 KEY_RIGHT = __locals.K_RIGHT

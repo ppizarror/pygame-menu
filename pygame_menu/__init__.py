@@ -60,7 +60,7 @@ Locals: Local constants
 import pygame_menu.locals
 
 """
-ScrollArea: Scrollarea class
+ScrollArea: Scroll area class
 """
 # noinspection PyUnresolvedReferences
 import pygame_menu.scrollarea
