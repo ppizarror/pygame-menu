@@ -1806,7 +1806,7 @@ class Menu(object):
             # |                  |
             # .------------------.
             coords[1] = (0, 0), (window_width, 0), (window_width, window_height), (0, window_height)
-            
+
         else:
             # Draw 4 areas:
             # .------------------.
