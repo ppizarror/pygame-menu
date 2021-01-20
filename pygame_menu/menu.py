@@ -49,6 +49,7 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
+from pygame_menu.decorator import Decorator
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 
@@ -111,6 +112,7 @@ class Menu(object):
     _column_widths: Optional[List[NumberType]]
     _columns: int
     _current: 'Menu'
+    _decorator: 'Decorator'
     _enabled: bool
     _height: int
     _id: str
@@ -334,6 +336,7 @@ class Menu(object):
         self._background_function = None
         self._auto_centering = center_content
         self._clock = pygame.time.Clock()
+        self._decorator = Decorator(self)
         self._height = int(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
@@ -619,7 +622,7 @@ class Menu(object):
             - ``button_id``                 *(str)* - Widget ID
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``onselect``                  *(callable, None)* - Callback executed when selecting the widget
@@ -772,7 +775,7 @@ class Menu(object):
             - ``dynamic_width``             *(int, float)* - If ``True`` the widget width changes if the previsualization color box is active or not
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
@@ -958,7 +961,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
@@ -1097,7 +1100,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
@@ -1183,7 +1186,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``infinite``                  *(bool)* - The state can rotate. ``False`` by default
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
@@ -1310,7 +1313,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
@@ -1561,8 +1564,8 @@ class Menu(object):
         attributes['font_color'] = font_color
 
         font_name = kwargs.pop('font_name', self._theme.widget_font)
-        assert isinstance(font_name, str)
-        attributes['font_name'] = font_name
+        assert isinstance(font_name, (str, Path))
+        attributes['font_name'] = str(font_name)
 
         font_size = kwargs.pop('font_size', self._theme.widget_font_size)
         assert isinstance(font_size, int)
@@ -2389,6 +2392,9 @@ class Menu(object):
             except TypeError:
                 self._top._background_function()
 
+        # Draw the prev decorator
+        self._current._decorator.draw_prev(surface)
+
         # Fill the scrolling surface
         self._current._widgets_surface.fill((255, 255, 255, 0))
 
@@ -2407,6 +2413,7 @@ class Menu(object):
 
         # Draw focus on selected if the widget is active
         self._current._draw_focus_widget(surface, selected_widget)
+        self._current._decorator.draw_post(surface)
 
         self._current._stats.draw += 1
 
@@ -2814,6 +2821,14 @@ class Menu(object):
 
         return updated
 
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the Menu decorator API.
+
+        :return: Decorator API
+        """
+        return self._decorator
+
     def mainloop(self,
                  surface: 'pygame.Surface',
                  bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
@@ -3020,9 +3035,9 @@ class Menu(object):
         if depth > 0:
             self.reset(depth)
 
-    def clear(self) -> None:
+    def clear(self, reset: bool = True) -> None:
         """
-        Full reset and clears all widgets.
+        Clears all widgets.
 
         .. note::
 
@@ -3030,13 +3045,16 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
+        :param reset: If ``True`` the menu full-resets
         :return: None
         """
-        self.full_reset()
+        if reset:
+            self.full_reset()
         del self._widgets[:]
         del self._submenus[:]
-        self._index = 0
+        self._index = -1
         self._stats.clear += 1
+        self._render()
 
     def _open(self, menu: 'Menu') -> None:
         """
