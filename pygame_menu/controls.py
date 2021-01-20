@@ -78,5 +78,5 @@ KEY_BACK = __locals.K_BACKSPACE
 KEY_CLOSE_MENU = __locals.K_ESCAPE
 KEY_LEFT = __locals.K_LEFT
 KEY_MOVE_DOWN = __locals.K_UP
-KEY_MOVE_UP = __locals.K_DOWN
+KEY_MOVE_UP = __locals.K_DOWN  # Consider keys are "inverted"
 KEY_RIGHT = __locals.K_RIGHT
