@@ -232,6 +232,14 @@ class WidgetsTest(unittest.TestCase):
         w.set_max_width(100)
         self.assertFalse(w._scale[0])
 
+        # Translate
+        w = self.menu.add_label('text')
+        x, y = w.get_position()
+        w.translate(10, 10)
+        xt, yt = w.get_position()
+        self.assertEqual(xt - x, 10)
+        self.assertEqual(yt - y, 10)
+
     def test_max_width_height(self) -> None:
         """
         Test widget max width/height.

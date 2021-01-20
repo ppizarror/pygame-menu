@@ -257,9 +257,9 @@ class Selector(Widget):
 
             # Events
             keydown = event.type == pygame.KEYDOWN
-            joy_hatmotion = self.joystick_enabled and event.type == pygame.JOYHATMOTION
-            joy_axismotion = self.joystick_enabled and event.type == pygame.JOYAXISMOTION
-            joy_button_down = self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN
+            joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
+            joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
+            joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
             if keydown and event.key == _controls.KEY_LEFT or \
@@ -285,11 +285,11 @@ class Selector(Widget):
                 updated = True
 
             # Click on selector
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP or \
-                    self.touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP or \
+                    self._touchscreen_enabled and event.type == pygame.FINGERUP:
 
                 # Get event position based on input type
-                if self.touchscreen_enabled and event.type == pygame.FINGERUP:
+                if self._touchscreen_enabled and event.type == pygame.FINGERUP:
                     window_size = self.get_menu().get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:

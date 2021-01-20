@@ -91,6 +91,7 @@ class Widget(object):
     _font_selected_color: ColorType
     _font_size: int
     _id: str
+    _joystick_enabled: bool
     _kwargs: Dict[Any, Any]
     _last_render_hash: int
     _margin: Tuple2IntType
@@ -98,12 +99,12 @@ class Widget(object):
     _max_width: List[Optional[bool]]
     _menu: Optional['Menu']
     _menu_surface_needs_update: bool
+    _mouse_enabled: bool
     _on_change: CallbackType
     _on_return: CallbackType
     _on_select: CallbackType
     _padding: PaddingTrueType
     _padding_transform: PaddingTrueType
-    _position_set: bool
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
     _selection_effect: 'Selection'
@@ -115,19 +116,17 @@ class Widget(object):
     _shadow_tuple: Tuple2IntType
     _surface: Optional['pygame.Surface']
     _title: str
+    _touchscreen_enabled: bool
     _translate: Tuple[int, int]
     _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     active: bool
     floating: bool
     is_selectable: bool
-    joystick_enabled: bool
     lock_position: bool
-    mouse_enabled: bool
     readonly: bool
     selected: bool
     selection_expand_background: bool
     sound: 'Sound'
-    touchscreen_enabled: bool
     visible: bool
 
     def __init__(self,
@@ -164,7 +163,6 @@ class Widget(object):
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
-        self._position_set = False
         self._selection_time = 0
         self._title = str(title)
 
@@ -239,14 +237,14 @@ class Widget(object):
         self.active = False  # Widget requests focus
         self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self.is_selectable = True  # Some widgets cannot be selected like labels
-        self.joystick_enabled = True
-        self.lock_position = False  # If True, locks position after first call to .set_position(x,y) method
-        self.mouse_enabled = True  # Accept mouse interaction
+        self._joystick_enabled = True
+        self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
+        self._mouse_enabled = True  # Accept mouse interaction
         self.readonly = False  # If True, widget ignores all input
         self.selected = False  # Use select() to modify this status
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
         self.sound = Sound()
-        self.touchscreen_enabled = True
+        self._touchscreen_enabled = True
         self.visible = True  # Use show() or hide() to modify this status
 
     def __copy__(self) -> 'Menu':
@@ -713,8 +711,8 @@ class Widget(object):
         pad_bottom = padding[2] * apply_padding + inflate[1] / 2
         pad_left = padding[3] * apply_padding + inflate[0] / 2
 
-        return pygame.Rect(int(self._rect.x - pad_left),
-                           int(self._rect.y - pad_top),
+        return pygame.Rect(int(self._rect.x - pad_left + self._translate[0]),
+                           int(self._rect.y - pad_top + self._translate[1]),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
 
@@ -1123,11 +1121,10 @@ class Widget(object):
         """
         assert isinstance(posx, (int, float))
         assert isinstance(posy, (int, float))
-        if self._position_set and self.lock_position:
+        if self.lock_position:
             return
-        self._rect.x = int(posx) + self._translate[0]
-        self._rect.y = int(posy) + self._translate[1]
-        self._position_set = True
+        self._rect.x = int(posx)
+        self._rect.y = int(posy)
 
     def get_position(self) -> Tuple2IntType:
         """
@@ -1135,7 +1132,7 @@ class Widget(object):
 
         :return: Widget position
         """
-        return self._rect.x, self._rect.y
+        return self._rect.x + self._translate[0], self._rect.y + self._translate[1]
 
     def flip(self, x: bool, y: bool) -> None:
         """
@@ -1578,9 +1575,9 @@ class Widget(object):
         assert isinstance(joystick, bool)
         assert isinstance(mouse, bool)
         assert isinstance(touchscreen, bool)
-        self.joystick_enabled = joystick
-        self.mouse_enabled = mouse
-        self.touchscreen_enabled = touchscreen
+        self._joystick_enabled = joystick
+        self._mouse_enabled = mouse
+        self._touchscreen_enabled = touchscreen
 
     def set_value(self, value: Any) -> None:
         """

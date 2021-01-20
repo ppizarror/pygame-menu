@@ -199,7 +199,7 @@ class MenuBar(Widget):
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
         # Draw backbox if enabled
-        if self.mouse_enabled and self._backbox:
+        if self._mouse_enabled and self._backbox:
 
             # The following check belongs to the case if the Menu displays a "x" button to close
             # the Menu, but onclose Menu method is None (Nothing is executed), then the button will
@@ -417,19 +417,19 @@ class MenuBar(Widget):
 
         for event in events:
 
-            if self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self.sound.play_click_mouse()
                     self.apply()
                     updated = True
 
-            elif self.joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
+            elif self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
                 if event.button == _controls.JOY_BUTTON_BACK:
                     self.sound.play_key_del()
                     self.apply()
                     updated = True
 
-            elif self.touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):
