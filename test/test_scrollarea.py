@@ -135,5 +135,5 @@ class ScrollAreaTest(unittest.TestCase):
 
         # Create virtual rect from button
         rect_virtual = sa.to_real_position(btn.get_rect())
-        event_click_widget = PygameUtils.middle_rect_mouse_click(rect_virtual)
+        event_click_widget = PygameUtils.middle_rect_click(rect_virtual)
         self.assertTrue(sa.collide(btn, event_click_widget))

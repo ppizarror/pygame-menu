@@ -1352,6 +1352,7 @@ class WidgetsTest(unittest.TestCase):
         # Set minimum
         sb.set_minimum(0.5 * sb._values_range[1])
 
+    # noinspection PyTypeChecker
     def test_toggleswitch(self) -> None:
         """
         Test toggleswitch widget.
@@ -1442,3 +1443,7 @@ class WidgetsTest(unittest.TestCase):
 
         switch.set_max_height(100)
         self.assertEqual(switch._max_height[0], None)
+
+        # Assert switch values
+        self.assertRaises(ValueError, lambda: menu.add_toggle_switch('toggle', 'false',
+                                                                     onchange=onchange, infinite=False))
