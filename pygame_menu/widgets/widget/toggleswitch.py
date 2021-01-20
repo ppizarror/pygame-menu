@@ -70,7 +70,7 @@ class ToggleSwitch(Widget):
     :param state_text: Text of each state of the switch
     :param state_text_font: Font of the state text. If ``None`` uses the widget font
     :param state_text_font_color: Color of the font of each state text
-    :param state_text_font_size: Font size of the state text
+    :param state_text_font_size: Font size of the state text. If ``None`` uses the widget font size
     :param state_text_position: Position of the state text respect to the switch rect
     :param state_values: Value of each state of the switch
     :param state_width: Width of each state. For example if there's 2 states, ``state_width`` only can have 1 value
@@ -181,6 +181,7 @@ class ToggleSwitch(Widget):
         assert_vector(state_width, self._total_states - 1)
         for i in range(len(state_width)):
             assert isinstance(state_width[i], int), 'each state width must be an integer'
+            assert state_width[i] > 0, 'each state width must be greater than zero'
             self._switch_width += state_width[i]
 
         # Store properties
@@ -221,6 +222,7 @@ class ToggleSwitch(Widget):
     def set_value(self, value: int) -> None:
         assert isinstance(value, int), 'value can only be an integer'
         assert 0 <= value < self._total_states, 'state value exceeds the total states'
+        self._state = value
 
     def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
         pass
