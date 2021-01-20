@@ -291,7 +291,7 @@ class BaseImage(object):
                              ) -> 'BaseImage':
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
-        colors and must return the same values. The color pixel will be overriden by the function output.
+        colors and must return the same values. The color pixel will be overridden by the function output.
 
         .. note::
 

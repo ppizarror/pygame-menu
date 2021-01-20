@@ -148,7 +148,7 @@ class ToggleSwitch(Widget):
         assert isinstance(state_values, tuple)
         assert isinstance(infinite, bool)
         self._total_states = len(state_values)
-        assert 2 <= self._total_states, 'the mininum number of states is 2'
+        assert 2 <= self._total_states, 'the minimum number of states is 2'
         assert 0 <= default_state < self._total_states, 'invalid default state value'
         assert isinstance(state_text_font, (str, type(None)))
         assert isinstance(state_text_font_size, (int, type(None)))
@@ -261,8 +261,8 @@ class ToggleSwitch(Widget):
 
         # Render the state texts
         for t in range(self._total_states):
-            frender = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
-            self._switch_font_rendered.append(frender)
+            f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
+            self._switch_font_rendered.append(f_render)
 
     def draw(self, surface: 'pygame.Surface') -> None:
         self._render()

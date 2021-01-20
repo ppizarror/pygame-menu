@@ -49,7 +49,7 @@ POSITION_SOUTHEAST = '__pygame_menu_position_southeast__'
 POSITION_SOUTHWEST = '__pygame_menu_position_southwest__'
 POSITION_WEST = '__pygame_menu_position_west__'
 
-# Menu scrollarea position
+# Menu scroll area position
 SCROLLAREA_POSITION_BOTH_HORIZONTAL = '__pygame_menu_scrollarea_position_bh__'
 SCROLLAREA_POSITION_BOTH_VERTICAL = '__pygame_menu_scrollarea_position_bv__'
 SCROLLAREA_POSITION_FULL = '__pygame_menu_scrollarea_position_full__'

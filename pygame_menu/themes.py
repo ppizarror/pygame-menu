@@ -104,9 +104,9 @@ class Theme(object):
     :type readonly_color: tuple, list
     :param readonly_selected_color: Color of the selected widget in readonly mode
     :type readonly_selected_color: tuple, list
-    :param scrollarea_outer_margin: Outer scoll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :param scrollarea_outer_margin: Outer scroll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
-    :param scrollarea_position: Position of scrollarea scrollbars. See :py:mod:`pygame_menu.locals`
+    :param scrollarea_position: Position of scroll area scrollbars. See :py:mod:`pygame_menu.locals`
     :type scrollarea_position: str
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -330,7 +330,7 @@ class Theme(object):
             msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
-        # Test purpuose only, if True disables any validation
+        # Test purpose only, if True disables any validation
         self._disable_validation = False
 
     def validate(self) -> None:
@@ -416,15 +416,15 @@ class Theme(object):
 
         # Check sizes
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
-            'scrollarea outer margin must be equal or greater than zero in both axis'
+            'scroll area outer margin must be equal or greater than zero in both axis'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
             'widget offset must be equal or greater than zero'
         assert self.widget_border_inflate[0] >= 0 and self.widget_border_inflate[1] >= 0, \
-            'widget border inflate must be equal or gretaer than zero in both axis'
+            'widget border inflate must be equal or greater than zero in both axis'
 
-        assert self.cursor_switch_ms > 0, 'cursor switch ms msut be greater than zero'
+        assert self.cursor_switch_ms > 0, 'cursor switch ms must be greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
-        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater tham zero'
+        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'

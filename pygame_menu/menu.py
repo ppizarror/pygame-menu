@@ -93,7 +93,7 @@ class Menu(object):
     :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
     :param mouse_visible: Set mouse visible on Menu
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
-    :param onreset: Function executed when reseting the Menu. The function must be non-argument or single argument (Menu instance)
+    :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
     :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
@@ -390,7 +390,7 @@ class Menu(object):
             warnings.warn(msg)
             self._auto_centering = False
 
-        # Scrollarea outer margin
+        # Scroll area outer margin
         self._scrollarea_margin = [theme.scrollarea_outer_margin[0], theme.scrollarea_outer_margin[1]]
         if abs(self._scrollarea_margin[0]) < 1:
             self._scrollarea_margin[0] *= self._width
@@ -400,9 +400,9 @@ class Menu(object):
         self._scrollarea_margin[0] = int(self._scrollarea_margin[0])
         self._scrollarea_margin[1] = int(self._scrollarea_margin[1])
 
-        # If centering is enabled, but scrollarea margin in the vertical is different than zero a warning is raised
+        # If centering is enabled, but scroll area margin in the vertical is different than zero a warning is raised
         if self._auto_centering and self._scrollarea_margin[1] != 0:
-            msg = 'menu (title "{0}") is vertically centered (center_content=True), but scrollarea outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
+            msg = 'menu (title "{0}") is vertically centered (center_content=True), but scroll area outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
             msg = msg.format(title, round(self._scrollarea_margin[1], 3))
             warnings.warn(msg)
             self._auto_centering = False
@@ -1264,7 +1264,7 @@ class Menu(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_default_value(default)
         self._append_widget(widget)
-        self._stats.add_togle_switch += 1
+        self._stats.add_toggle_switch += 1
 
         return widget
 
@@ -1435,7 +1435,7 @@ class Menu(object):
 
         .. note::
 
-            This widget is usefull to fill column/rows layout without
+            This widget is useful to fill column/rows layout without
             compromising any visuals. Also it can be used to store information
             or even to add a ``draw_callback`` function to it for being called
             on each Menu draw.
@@ -1842,7 +1842,7 @@ class Menu(object):
                 max_rows += self._rows[col]
                 if i_index < max_rows:
                     break
-                row -= self._rows[col]  # Substract the number of rows of such column
+                row -= self._rows[col]  # Subtract the number of rows of such column
 
             widget.set_col_row_index(col, row, index)
             self._widget_columns[col].append(widget)
@@ -2065,7 +2065,7 @@ class Menu(object):
         if not self._overflow[1]:
             height = self._height - menubar_height
 
-        # Adds scrollarea margin
+        # Adds scroll area margin
         width += self._scrollarea_margin[0]
         height += self._scrollarea_margin[1]
 
@@ -2153,7 +2153,7 @@ class Menu(object):
         :return: None
         """
         if not self.is_enabled():
-            self._runtime_errors.throw(self._runtime_errors.close, 'menu already closed')
+            self._current._runtime_errors.throw(self._current._runtime_errors.close, 'menu already closed')
         return self._current._close()
 
     def _get_depth(self) -> int:
@@ -2215,7 +2215,6 @@ class Menu(object):
         assert isinstance(position_y, (int, float))
         assert 0 <= position_x <= 100
         assert 0 <= position_y <= 100
-
         position_x = float(position_x) / 100
         position_y = float(position_y) / 100
         window_width, window_height = self._window_size
@@ -2369,7 +2368,7 @@ class Menu(object):
         assert isinstance(clear_surface, bool)
 
         if not self.is_enabled():
-            return self._runtime_errors.throw(self._runtime_errors.draw, 'menu is not enabled')
+            return self._current._runtime_errors.throw(self._runtime_errors.draw, 'menu is not enabled')
 
         # Render menu
         self._current._render()
@@ -2381,7 +2380,7 @@ class Menu(object):
 
         # Clear surface
         if clear_surface:
-            surface.fill(self._theme.surface_clear_color)
+            surface.fill(self._current._theme.surface_clear_color)
 
         # Call background function (set from mainloop)
         if self._top._background_function is not None:
@@ -2463,8 +2462,8 @@ class Menu(object):
             # Draw 4 areas:
             # .------------------.
             # |________1_________|
-            # |  2  |XXXXXX|  3  |
-            # |_____|XXXXXX|_____|
+            # |  2  |******|  3  |
+            # |_____|******|_____|
             # |        4         |
             # .------------------.
             coords[1] = (0, 0), (window_width, 0), (window_width, y1 - 1), (0, y1 - 1)
@@ -2505,7 +2504,7 @@ class Menu(object):
         except SystemExit:
             # noinspection PyUnresolvedReferences,PyProtectedMember
             os._exit(1)
-        # This should be unrecheable
+        # This should be unreachable
         exit(0)
 
     def is_enabled(self) -> bool:
@@ -2597,7 +2596,7 @@ class Menu(object):
 
         # If menu is not enabled
         if not self.is_enabled():
-            self._runtime_errors.throw(self._runtime_errors.update, 'menu is not enabled')
+            self._current._runtime_errors.throw(self._current._runtime_errors.update, 'menu is not enabled')
             return False
 
         # Check if window closed
@@ -2791,7 +2790,8 @@ class Menu(object):
                     if self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(pygame.MOUSEBUTTONUP, **event.dict)
                         new_event.dict['origin'] = self._current._scroll.to_real_position((0, 0))
-                        finger_pos = (event.x * self._window_size[0], event.y * self._window_size[1])
+                        finger_pos = (event.x * self._current._window_size[0],
+                                      event.y * self._current._window_size[1])
                         new_event.pos = self._current._scroll.to_world_position(finger_pos)
                         selected_widget.update((new_event,))  # This widget can change the current Menu to a submenu
                         updated = True  # It is updated
@@ -2862,7 +2862,7 @@ class Menu(object):
 
         # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
-            return self._runtime_errors.throw(self._runtime_errors.mainloop, 'menu is not enabled')
+            return self._current._runtime_errors.throw(self._current._runtime_errors.mainloop, 'menu is not enabled')
 
         # Store background function
         self._current._background_function = bgfun
@@ -3127,7 +3127,7 @@ class Menu(object):
 
         # Get both widgets
         if curr_widget._index >= total_curr_widgets:  # The length of the Menu changed during execution time
-            for i in range(total_curr_widgets):  # Unselect all posible candidates
+            for i in range(total_curr_widgets):  # Unselect all possible candidates
                 curr_widget._widgets[i].select(False)
             curr_widget._index = 0
 
@@ -3235,7 +3235,7 @@ class Menu(object):
 
     def get_scrollarea(self) -> 'ScrollArea':
         """
-        Return the Menu scrollarea.
+        Return the Menu scroll area.
 
         .. note::
 
@@ -3247,7 +3247,7 @@ class Menu(object):
 
             Use with caution.
 
-        :return: Scrollarea object
+        :return: ScrollArea object
         """
         return self._scroll
 
@@ -3495,7 +3495,7 @@ class _MenuStats(object):
         self.add_none_widget = 0
         self.add_selector = 0
         self.add_text_input = 0
-        self.add_togle_switch = 0
+        self.add_toggle_switch = 0
         self.add_vertical_margin = 0
 
         # Widget update

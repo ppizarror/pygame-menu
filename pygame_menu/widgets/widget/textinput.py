@@ -239,7 +239,7 @@ class TextInput(Widget):
         assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
         assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
-        assert cursor_switch_ms > 0, 'cursor switch in miliseconds must be greater than zero'
+        assert cursor_switch_ms > 0, 'cursor switch in milliseconds must be greater than zero'
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)

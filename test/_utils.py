@@ -380,7 +380,7 @@ class MenuUtils(object):
         :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn
         :param height: Menu height (px)
         :param onclose: Event or function applied when closing the Menu
-        :param onreset: Function executed when reseting the Menu
+        :param onreset: Function executed when resetting the Menu
         :param position_x: X position of the menu
         :param position_y: Y position of the menu
         :param rows: Number of rows

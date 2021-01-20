@@ -371,7 +371,7 @@ class Widget(object):
         :return: Hash data
         """
         h = hash(args)
-        if h == 0:  # Menu considers 0 as unrendered status
+        if h == 0:  # Menu considers 0 as un-rendered status
             h = random.randrange(-100000, 100000)
         return h
 
@@ -449,7 +449,7 @@ class Widget(object):
         Expand background inflate to match the selection effect
         (the widget don't require to be selected).
 
-        This is a permanent change; for dynamic purpuoses, depending if the widget
+        This is a permanent change; for dynamic purposes, depending if the widget
         is selected or not, setting ``widget.selection_expand_background`` to ``True`` may help.
 
         .. note::
@@ -523,7 +523,7 @@ class Widget(object):
 
         .. note::
 
-            If ``selection=None`` the selection effect will be stablished
+            If ``selection=None`` the selection effect will be established
             to ``_NullSelection`` class.
 
         :param selection: Selection effect class
@@ -1162,7 +1162,7 @@ class Widget(object):
         .. note::
 
             If ``width=0`` the widget will use the max column width of the Menu (using
-            the column the widget belogs to).
+            the column the widget belongs to).
 
         .. note::
 
@@ -1462,10 +1462,10 @@ class Widget(object):
 
     def get_selected_time(self) -> NumberType:
         """
-        Return time the widget has been selected in miliseconds.
+        Return time the widget has been selected in milliseconds.
         If the widget is not currently selected, return ``0``.
 
-        :return: Time in miliseconds
+        :return: Time in milliseconds
         """
         if not self.selected:
             return 0
@@ -1605,7 +1605,7 @@ class Widget(object):
         .. note::
 
             This method is intended to be used along :py:meth:`pygame_menu.widgets.core.Widget.reset_value`
-            method that sets the widget value back to the default setted with this method.
+            method that sets the widget value back to the default set with this method.
 
         .. note::
 

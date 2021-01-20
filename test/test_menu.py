@@ -1126,7 +1126,7 @@ class MenuTest(unittest.TestCase):
         # btn2 |      | btn5
 
         # Change menu max column width, this should
-        # fullfill third column to its maximum possible less than 300
+        # fulfill third column to its maximum possible less than 300
         # col2 should keep its current width
         menu._column_max_width = [300, None, 300]
         menu.render()

@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 # noinspection PyMissingOrEmptyDocstring
 class NoneWidget(Widget):
     """
-    None widget. Usefull if used for filling column/row layout.
+    None widget. Useful if used for filling column/row layout.
 
     .. note::
 

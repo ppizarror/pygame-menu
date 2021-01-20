@@ -206,7 +206,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._hex_format = hex_format
         self._separator = input_separator
 
-        # Previsualization surface, if -1 previsualization does not show
+        # Previsualization surface, if -1 does not show
         self._last_b = -1
         self._last_g = -1
         self._last_r = -1
