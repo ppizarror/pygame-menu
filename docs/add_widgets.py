@@ -47,7 +47,7 @@ icon = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAM
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'BUTTON'
+EXAMPLE = 'TOGGLESWITCH'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -107,7 +107,7 @@ elif EXAMPLE == 'TOGGLESWITCH':
     menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Switches')
     menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
     menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
-                           state_text=('Apagado', 'Encencido'))
+                           state_text=('Apagado', 'Encencido'), state_text_font_size=18)
 elif EXAMPLE == 'TEXTINPUT':
     menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Text Entry')
     menu.add_text_input('First name: ', default='John')
