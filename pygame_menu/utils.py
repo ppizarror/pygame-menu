@@ -33,6 +33,7 @@ __all__ = [
 
     'assert_alignment',
     'assert_color',
+    'assert_list_vector',
     'assert_orientation',
     'assert_position',
     'assert_vector',
@@ -48,7 +49,7 @@ import functools
 import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional
+    Optional, Tuple
 
 
 def assert_alignment(align: str) -> None:
@@ -112,6 +113,20 @@ def assert_position(position: str) -> None:
                         _locals.POSITION_EAST, _locals.POSITION_NORTH,
                         _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
         'invalid position value "{0}"'.format(position)
+
+
+def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
+                       length: int) -> None:
+    """
+    Assert that a list fixed length vector is numeric.
+
+    :param list_vector: Numeric list vector
+    :param length: Length of the required vector. If ``0`` don't check the length
+    :return: None
+    """
+    assert isinstance(list_vector, (list, tuple))
+    for v in list_vector:
+        assert_vector(v, length=length)
 
 
 def assert_vector(num_vector: Vector2NumberType, length: int) -> None:

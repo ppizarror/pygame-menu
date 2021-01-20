@@ -34,6 +34,7 @@ __all__ = ['ScrollArea', 'get_scrollbars_from_position']
 import pygame
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.locals as _locals
+from pygame_menu.decorator import Decorator
 from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
@@ -101,6 +102,7 @@ class ScrollArea(object):
     :param world: Surface to draw and scroll
     """
     _bg_surface: Optional['pygame.Surface']
+    _decorator: 'Decorator'
     _extend_x: int
     _extend_y: int
     _menu: Optional['Menu']
@@ -146,12 +148,13 @@ class ScrollArea(object):
         assert area_width > 0 and area_height > 0, \
             'area size must be greater than zero'
 
+        self._bg_surface = None
+        self._decorator = Decorator(self)
         self._rect = pygame.Rect(0, 0, int(area_width), int(area_height))
-        self._world = world
-        self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
-        self._bg_surface = None
+        self._scrollbars = []
+        self._world = world
 
         self._extend_x = extend_x
         self._extend_y = extend_y
@@ -266,7 +269,7 @@ class ScrollArea(object):
 
     def draw(self, surface: 'pygame.Surface') -> None:
         """
-        Called by end user to draw state to the surface.
+        Draw the scrollarea.
 
         :param surface: Surface to render the area
         :return: None
@@ -274,6 +277,7 @@ class ScrollArea(object):
         if not self._world:
             return
 
+        self._decorator.draw_prev(surface)
         if self._bg_surface:
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
@@ -288,6 +292,7 @@ class ScrollArea(object):
 
         # noinspection PyTypeChecker
         surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
+        self._decorator.draw_post(surface)
 
     def get_hidden_width(self) -> int:
         """
@@ -631,6 +636,14 @@ class ScrollArea(object):
             return bool(self.to_real_position(widget_rect).collidepoint(*finger_pos))
         else:
             return bool(self.to_real_position(widget_rect).collidepoint(*event.pos))
+
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the ScrollArea decorator API.
+
+        :return: Decorator API
+        """
+        return self._decorator
 
 
 class _ScrollAreaCopyException(Exception):

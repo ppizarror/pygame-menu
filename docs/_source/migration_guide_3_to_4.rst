@@ -19,4 +19,6 @@ Migration Guide - v3 to v4
 - Renamed widget ``expand_background_inflate_to_selection_effect`` to ``background_inflate_to_selection_effect``.
 - Widget ``shadow_offset`` now cannot be ``None``, only ``int`` or ``float`` allowed.
 - Widget ``VMargin`` now inherits from ``NoneWidget``.
+- Menu ``clear`` method now receivees ``reset`` argument.
 - Widget properties ``joystick_enabled``, ``mouse_enabled`` and ``touchscreen_enabled`` are now private.
+- Widgets now must define only ``_draw``, ``draw()`` is reserved to Widget core class only.

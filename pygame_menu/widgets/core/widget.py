@@ -36,12 +36,14 @@ import pygame_menu.baseimage as _baseimage
 import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
+from pygame_menu.decorator import Decorator
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING
 
+from pathlib import Path
 from uuid import uuid4
 import random
 import time
@@ -77,6 +79,7 @@ class Widget(object):
     _border_inflate: Tuple2IntType
     _border_width: int
     _col_row_index: Tuple[int, int, int]
+    _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     _events: List['pygame.event.Event']
@@ -155,6 +158,7 @@ class Widget(object):
         self._background_color = None
         self._background_inflate = (0, 0)
         self._col_row_index = (-1, -1, -1)
+        self._decorator = Decorator(self)
         self._default_value = _NoWidgetValue()
         self._events = []
         self._id = str(widget_id)
@@ -606,6 +610,22 @@ class Widget(object):
         :param surface: Surface to draw
         :return: None
         """
+        self._render()
+        self._draw_background_color(surface)
+        self._decorator.draw_prev(surface)
+        self._draw(surface)
+        self._draw_border(surface)
+        self._decorator.draw_post(surface)
+        self.apply_draw_callbacks()
+
+    def _draw(self, surface: 'pygame.Surface') -> None:
+        """
+        Draw the widget on a given surface.
+        This method must be overriden by all classes.
+
+        :param surface: Surface to draw
+        :return: None
+        """
         raise NotImplementedError('override is mandatory')
 
     def draw_selection(self, surface: 'pygame.Surface') -> None:
@@ -962,7 +982,7 @@ class Widget(object):
         return self._font_color
 
     def set_font(self,
-                 font: str,
+                 font: Union[str, 'Path'],
                  font_size: int,
                  color: ColorType,
                  selected_color: ColorType,
@@ -984,7 +1004,7 @@ class Widget(object):
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :return: None
         """
-        assert isinstance(font, str)
+        assert isinstance(font, (str, Path))
         assert isinstance(font_size, int)
         assert isinstance(antialias, bool)
         assert_color(color)
@@ -1008,7 +1028,7 @@ class Widget(object):
         self._font_antialias = antialias
         self._font_background_color = background_color
         self._font_color = color
-        self._font_name = font
+        self._font_name = str(font)
         self._font_readonly_color = readonly_color
         self._font_readonly_selected_color = readonly_selected_color
         self._font_selected_color = selected_color
@@ -1836,6 +1856,14 @@ class Widget(object):
         self._border_width = width
         self._border_color = color
         self._border_inflate = inflate
+
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the Widget decorator API.
+
+        :return: Decorator API
+        """
+        return self._decorator
 
 
 # noinspection PyMissingOrEmptyDocstring

@@ -192,3 +192,40 @@ Finally, this new selection effect can be set by following one of these two inst
         )
 
         menu = pygame_menu.Menu(..., theme=MY_THEME)
+
+
+=========================
+Decorate the Menu/Widgets
+=========================
+
+All menu objects can be decorated with polygons (lines, circles, rectangles, paths),
+images, and text. The decorations can be drawn before the source object (``prev``)
+or after the object (``post``) depending of the object type.
+
+To add a decoration, you must access the decorator class from the object (Menu, ScrollArea, any
+Widget) using ``get_decorator()`` method. And use the ``Decorator`` class API to
+add decorations to your object.
+
+:: note::
+
+    Decorations don't change the height/width of the object. These are visual/only. If
+    applied on a widget, use padding to *enlarge* the widget rect if you need such feature.
+
+:: note::
+
+    For all decoration, the *(0, 0)* coordinate belongs to the center of the object.
+
+.. code-block:: python
+
+    decorator = my_widget.get_decorator()
+    decorator.add_polygon([(1, 1), (1, 10), (10, 1)], color=(255, 0, 0))
+
+    # If the widget needs a bigger margin
+    my_widget.set_padding((25, 25, 10, 10))
+
+
+WidgetDecorator API
+-------------------
+
+.. autoclass:: pygame_menu.decorator.Decorator
+    :members:

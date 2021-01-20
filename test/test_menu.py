@@ -1448,6 +1448,14 @@ class MenuTest(unittest.TestCase):
         btn.select(update_menu=True)
         self.assertEqual(menu.get_selected_widget(), btn)
 
+    def test_decorator(self) -> None:
+        """
+        Test menu decorator.
+        """
+        menu = MenuUtils.generic_menu()
+        dec = menu.get_decorator()
+        self.assertEqual(menu, dec._obj)
+
     # noinspection PyArgumentEqualDefault
     def test_events(self) -> None:
         """

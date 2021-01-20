@@ -126,11 +126,8 @@ class Image(Widget):
         self._image.resize(width, height, smooth)
         self._surface = None
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
+    def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         if self._surface is not None:
