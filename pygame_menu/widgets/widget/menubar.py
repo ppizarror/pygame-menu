@@ -217,9 +217,7 @@ class MenuBar(Widget):
         assert width > 0
         self._backbox_border_width = width
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
-
+    def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
@@ -240,8 +238,6 @@ class MenuBar(Widget):
         surface.blit(self._surface,
                      (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
-
-        self.apply_draw_callbacks()
 
     def get_scrollbar_style_change(self, position: str) -> Tuple[int, Tuple[int, int]]:
         """

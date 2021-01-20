@@ -216,7 +216,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Disable parent callbacks
         self._apply_widget_update_callback = False
-        self._apply_widget_draw_callback = False
 
     def _apply_font(self) -> None:
         super(ColorInput, self)._apply_font()
@@ -331,8 +330,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             return False
         return True
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        super(ColorInput, self).draw(surface)  # This calls _render()
+    def _draw(self, surface: 'pygame.Surface') -> None:
+        super(ColorInput, self)._draw(surface)  # This calls _render()
 
         # Draw previsualization box
         if self._previsualization_surface is not None:
@@ -340,8 +339,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                    self._prev_width_factor * self._rect.height + self._rect.height / 10
             posy = self._rect.y
             surface.blit(self._previsualization_surface, (int(posx), int(posy)))
-
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         render_text = super(ColorInput, self)._render()

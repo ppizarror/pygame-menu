@@ -181,12 +181,8 @@ class ScrollBar(Widget):
         setattr(self._slider_rect, pos[self._orientation], self._slider_position)
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
-        self._draw_background_color(surface)
+    def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def get_maximum(self) -> int:
         """

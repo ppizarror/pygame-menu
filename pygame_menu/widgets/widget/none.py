@@ -89,8 +89,8 @@ class NoneWidget(Widget):
     def change(self, *args) -> None:
         pass
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self.apply_draw_callbacks()
+    def _draw(self, surface: 'pygame.Surface') -> None:
+        pass
 
     def _render(self) -> Optional[bool]:
         pass

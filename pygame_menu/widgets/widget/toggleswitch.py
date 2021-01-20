@@ -264,10 +264,7 @@ class ToggleSwitch(Widget):
             f_render = self._state_font.render(self._state_text[t], True, self._state_text_font_color[t])
             self._switch_font_rendered.append(f_render)
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
-        self._draw_background_color(surface)
-
+    def _draw(self, surface: 'pygame.Surface') -> None:
         # Draw title
         surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1]))
 
@@ -299,9 +296,6 @@ class ToggleSwitch(Widget):
         sliderx = switchx + self._slider_pos[0] + self._switch_border_width
         slidery = switchy + self._slider_pos[1] + self._switch_border_width
         surface.blit(self._slider, (sliderx, slidery))
-
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self.selected, self._title, self.visible, self.readonly,

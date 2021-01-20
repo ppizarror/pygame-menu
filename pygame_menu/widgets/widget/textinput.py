@@ -121,7 +121,6 @@ class TextInput(Widget):
     :param kwargs: Optional keyword arguments
     """
     _absolute_origin: Tuple2IntType
-    _apply_widget_draw_callback: bool  # Used in ColorInput
     _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
     _clock: 'pygame.time.Clock'
@@ -336,7 +335,6 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Callbacks
-        self._apply_widget_draw_callback = True
         self._apply_widget_update_callback = True
 
         # Other
@@ -423,13 +421,10 @@ class TextInput(Widget):
     def flip(self, x: bool, y: bool) -> None:  # Actually flip on x axis is disabled
         super(TextInput, self).flip(False, y)
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
+    def _draw(self, surface: 'pygame.Surface') -> None:
         self._clock.tick()
 
-        # Draw background color
-        self._draw_background_color(surface)
-
+        # Draw selection surface
         if pygame.vernum.major >= 2:
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
@@ -447,11 +442,6 @@ class TextInput(Widget):
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
             surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
-
-        self._draw_border(surface)
-
-        if self._apply_widget_draw_callback:
-            self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
@@ -1496,7 +1486,7 @@ class TextInput(Widget):
                 self._key_is_pressed = True
                 self._last_key = event.key
 
-                # If none exist, create counter for that key:
+                # If None exist, create counter for that key:
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys and \
                         'unicode' in event.dict:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
