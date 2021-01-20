@@ -216,7 +216,7 @@ class BaseImageTest(unittest.TestCase):
 
     def test_cache(self):
         """
-        Tache draw test.
+        Cache draw test.
         """
         image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertEqual(image._last_transform[2], None)

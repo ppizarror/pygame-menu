@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame.locals as __locals
 
-# Joypad
+# Joy pad
 JOY_AXIS_X = 0
 JOY_AXIS_Y = 1
 JOY_BUTTON_BACK = 1

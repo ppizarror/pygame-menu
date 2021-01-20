@@ -71,7 +71,7 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu, if user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scoll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scroll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -247,7 +247,7 @@ class Theme(object):
             msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
             raise ValueError(msg)
 
-        # Test purpuose only, if True disables any validation
+        # Test purpose only, if True disables any validation
         self._disable_validation = False
 
     def validate(self):
@@ -265,7 +265,7 @@ class Theme(object):
 
         # Size asserts
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
-        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater tham zero'
+        assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
@@ -294,7 +294,7 @@ class Theme(object):
         self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)  # type: tuple
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)  # type: tuple
         if isinstance(self.widget_padding, (tuple, list)):
-            self.widget_padding = self._vec_to_tuple(self.widget_padding) # type: tuple
+            self.widget_padding = self._vec_to_tuple(self.widget_padding)  # type: tuple
             assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
             for p in self.widget_padding:
                 assert p >= 0, 'all padding elements must be equal or greater than zero'
@@ -305,7 +305,7 @@ class Theme(object):
 
         # Check sizes
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
-            'scrollarea outer margin must be equal or greater than zero'
+            'scroll area outer margin must be equal or greater than zero'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
             'widget offset must be equal or greater than zero'
 

@@ -37,4 +37,10 @@ import os
 
 
 def get_hook_dirs():
+    """
+    Return hook dirs to PyInstaller.
+
+    :return: Hook dir list
+    :rtype: list[str]
+    """
     return [os.path.dirname(__file__)]
