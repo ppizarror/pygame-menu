@@ -272,7 +272,12 @@ class BaseImageTest(unittest.TestCase):
         image.to_bw()
 
         # Image channels
+        # noinspection PyTypeChecker
         image.pick_channels(('r', 'g', 'b'))
+
+        self.assertEqual(image.get_at((10, 10)), (56, 56, 56, 255))
+        image.set_at((10, 10), (0, 0, 0))
+        # self.assertEqual(image.get_at((10, 10)), (0, 0, 0, 255))
 
     def test_cache(self) -> None:
         """

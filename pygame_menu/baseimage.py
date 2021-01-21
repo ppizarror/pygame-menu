@@ -62,7 +62,7 @@ from pathlib import Path
 import pygame
 from pygame_menu.utils import assert_vector
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict, Literal, Tuple4IntType
+    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -89,7 +89,7 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', 
                         '.pbm', '.pgm', '.ppm', '.xpm', 'BytesIO', 'base64']
 
 # Custom types
-PygameSurfaceModeType = Literal['RGB', 'RGBX', 'RGBA', 'ARGB', 'RGBA_PREMULT', 'ARGB_PREMULT']
+ColorChannelType = Literal['r', 'g', 'b']
 
 
 class BaseImage(object):
@@ -274,6 +274,27 @@ class BaseImage(object):
         """
         return self.get_width(), self.get_height()
 
+    def get_at(self, pos: Tuple2NumberType) -> Tuple4IntType:
+        """
+        Get the color from a certain position in image *(x, y)*.
+
+        :param pos: Position in *(x, y)*
+        :return: Color
+        """
+        assert_vector(pos, 2)
+        return self._surface.get_at(pos)
+
+    def set_at(self, pos: Tuple2NumberType, color: Union['pygame.Color', str, List[int], ColorType]) -> None:
+        """
+        Set the color of the *(x, y)* pixel.
+
+        :param pos: Position in *(x, y)*
+        :param color: Color
+        :return: None
+        """
+        assert_vector(pos, 2)
+        self._surface.set_at(pos, color)
+
     def get_bitsize(self) -> int:
         """
         Return the image bitzise.
@@ -356,8 +377,7 @@ class BaseImage(object):
                 g = int(max(0, min(g, 255)))
                 b = int(max(0, min(b, 255)))
                 a = int(max(0, min(a, 255)))
-                # noinspection PyArgumentList
-                self._surface.set_at((x, y), pygame.Color(r, g, b, a))
+                self.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
     def to_bw(self) -> 'BaseImage':
@@ -376,7 +396,11 @@ class BaseImage(object):
 
         return self.apply_image_function(image_function=bw)
 
-    def pick_channels(self, channels: Union[str, Tuple[str, ...], List[str]]) -> 'BaseImage':
+    def pick_channels(self, channels: Union[ColorChannelType,
+                                            Tuple[ColorChannelType, ColorChannelType],
+                                            Tuple[ColorChannelType, ColorChannelType, ColorChannelType],
+                                            List[ColorChannelType]]
+                      ) -> 'BaseImage':
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"`` (green) and ``"b"`` (blue),
         ``channels param`` is a list/tuple of channels (non empty).
