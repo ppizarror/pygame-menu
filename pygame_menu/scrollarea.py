@@ -39,7 +39,7 @@ from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
-    TYPE_CHECKING, Tuple2NumberType, Optional
+    TYPE_CHECKING, Tuple2NumberType, Optional, Tuple2IntType
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core.widget import Widget
@@ -323,7 +323,7 @@ class ScrollArea(object):
             return 0
         return int(max(0, self._world.get_height() - self._view_rect.height))
 
-    def get_offsets(self) -> Tuple[int, int]:
+    def get_offsets(self) -> Tuple2IntType:
         """
         Return the offset introduced by the scrollbars in the world.
 
@@ -438,7 +438,7 @@ class ScrollArea(object):
 
         return rect
 
-    def get_world_size(self) -> Tuple[int, int]:
+    def get_world_size(self) -> Tuple2IntType:
         """
         Return the world size.
 
@@ -534,7 +534,7 @@ class ScrollArea(object):
         self._apply_size_changes()
 
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
-                         ) -> Union['pygame.Rect', Tuple[int, int]]:
+                         ) -> Union['pygame.Rect', Tuple2IntType]:
         """
         Return the real position/Rect according to the scroll area origin
         of a position/Rect in the world surface reference.
@@ -559,7 +559,7 @@ class ScrollArea(object):
         return int(x_coord), int(y_coord)
 
     def to_world_position(self, real: Union['pygame.Rect', Tuple2NumberType]
-                          ) -> Union['pygame.Rect', Tuple[int, int]]:
+                          ) -> Union['pygame.Rect', Tuple2IntType]:
         """
         Return the position/Rect in the world surface reference
         of a real position/Rect according to the scroll area origin.

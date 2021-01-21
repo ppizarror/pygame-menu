@@ -253,7 +253,7 @@ class MenuBar(Widget):
                      (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
 
-    def get_scrollbar_style_change(self, position: str) -> Tuple[int, Tuple[int, int]]:
+    def get_scrollbar_style_change(self, position: str) -> Tuple[int, Tuple2IntType]:
         """
         Return scrollbar change (width, position) depending on the style of the menubar.
 

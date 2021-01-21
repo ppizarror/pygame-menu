@@ -62,7 +62,7 @@ from pathlib import Path
 import pygame
 from pygame_menu.utils import assert_vector
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict, Literal
+    NumberType, Optional, Dict, Literal, Tuple4IntType
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -334,7 +334,7 @@ class BaseImage(object):
         """
         self._original_surface = self._surface.copy()
 
-    def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple[int, int, int, int]]
+    def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple4IntType]
                              ) -> 'BaseImage':
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
@@ -367,7 +367,7 @@ class BaseImage(object):
         :return: Self reference
         """
 
-        def bw(r: int, g: int, b: int, a: int) -> Tuple[int, int, int, int]:
+        def bw(r: int, g: int, b: int, a: int) -> Tuple4IntType:
             """
             To black-white function.
             """

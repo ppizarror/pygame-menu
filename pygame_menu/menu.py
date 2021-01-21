@@ -57,8 +57,8 @@ from pygame_menu.sound import Sound
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
-    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional
+    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Tuple2IntType, \
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional, Tuple2BoolType
 
 # Joy events
 JOY_EVENT_LEFT = 1
@@ -133,8 +133,8 @@ class Menu(object):
     _mouse_visible_default: bool
     _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
     _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
-    _overflow: Tuple[bool, bool]
-    _position: Tuple[int, int]
+    _overflow: Tuple2BoolType
+    _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scroll: 'ScrollArea'
@@ -148,8 +148,8 @@ class Menu(object):
     _touchscreen_motion_selection: bool
     _used_columns: int
     _widget_columns: Dict[int, List['_widgets.core.Widget']]
-    _widget_max_position: Tuple[int, int]
-    _widget_min_position: Tuple[int, int]
+    _widget_max_position: Tuple2IntType
+    _widget_min_position: Tuple2IntType
     _widget_offset: List[int]
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
@@ -158,7 +158,7 @@ class Menu(object):
     _widgets_surface_last: Tuple[int, int, Optional['pygame.Surface']]
     _widgets_surface_need_update: bool
     _width: int
-    _window_size: Tuple[int, int]
+    _window_size: Tuple2IntType
 
     def __init__(self,
                  height: NumberType,
@@ -3267,7 +3267,7 @@ class Menu(object):
         """
         return self._id
 
-    def get_window_size(self) -> Tuple[int, int]:
+    def get_window_size(self) -> Tuple2IntType:
         """
         Return the window size (px) as a tuple of *(width, height)*.
 

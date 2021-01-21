@@ -57,10 +57,12 @@ VectorType = Union[VectorTupleType, VectorListType]
 VectorIntType = Union[Tuple[int, ...], List[int]]
 
 # Tuples
-TupleIntType = Tuple[int, ...]
-Tuple2NumberType = Tuple[NumberType, NumberType]
+Tuple2BoolType = Tuple[bool, bool]
 Tuple2IntType = Tuple[int, int]
+Tuple2NumberType = Tuple[NumberType, NumberType]
+Tuple4IntType = Tuple[int, int, int, int]
 Tuple4Tuple2IntType = Tuple[Tuple2IntType, Tuple2IntType, Tuple2IntType, Tuple2IntType]
+TupleIntType = Tuple[int, ...]
 
 # Menu constructor types
 MenuColumnMaxWidthType = Optional[Union[int, float, VectorType]]

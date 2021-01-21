@@ -41,7 +41,7 @@ from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
-    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING
+    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType
 
 from pathlib import Path
 from uuid import uuid4
@@ -51,8 +51,6 @@ import warnings
 
 if TYPE_CHECKING:
     from pygame_menu.menu import Menu
-
-PaddingTrueType = Tuple[int, int, int, int]
 
 
 class Widget(object):
@@ -85,7 +83,7 @@ class Widget(object):
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     _events: List['pygame.event.Event']
-    _flip: Tuple[bool, bool]
+    _flip: Tuple2BoolType
     _font: Optional['pygame.font.Font']
     _font_antialias: bool
     _font_background_color: Optional[ColorType]
@@ -107,8 +105,8 @@ class Widget(object):
     _on_change: CallbackType
     _on_return: CallbackType
     _on_select: CallbackType
-    _padding: PaddingTrueType
-    _padding_transform: PaddingTrueType
+    _padding: Tuple4IntType
+    _padding_transform: Tuple4IntType
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
     _selection_effect: 'Selection'
@@ -121,7 +119,7 @@ class Widget(object):
     _surface: Optional['pygame.Surface']
     _title: str
     _touchscreen_enabled: bool
-    _translate: Tuple[int, int]
+    _translate: Tuple2IntType
     _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     active: bool
     floating: bool
@@ -283,7 +281,7 @@ class Widget(object):
 
     def force_menu_surface_update(self) -> None:
         """
-        Forces menu surface update.
+        Forces menu surface update. This calls all render, including all widgets decorations.
 
         ..note ::
 
@@ -301,7 +299,7 @@ class Widget(object):
 
     def force_menu_surface_cache_update(self) -> None:
         """
-        Forces menu surface cache to update.
+        Forces menu surface cache to update. This also updates widget decoration.
 
         .. note::
 
@@ -315,6 +313,7 @@ class Widget(object):
             # Menu _widget_surface_cache_need_update property is only accessed on
             # draw method. This does not set _menu._widgets_surface to None
             self._menu._widget_surface_cache_need_update = True
+            self._decorator.force_cache_update()
 
     def render(self) -> Optional[bool]:
         """
@@ -696,7 +695,7 @@ class Widget(object):
         self._margin = (x, y)
         self._force_render()
 
-    def get_padding(self, transformed: bool = True) -> PaddingTrueType:
+    def get_padding(self, transformed: bool = True) -> Tuple:
         """
         Return the widget padding.
 
