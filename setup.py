@@ -51,7 +51,7 @@ requirements_docs.extend([
 
 # Setup library
 setup(
-    name='pygame-menu',
+    name=pygame_menu.__module_name__,
     version=pygame_menu.__version__,
     author=pygame_menu.__author__,
     author_email=pygame_menu.__email__,

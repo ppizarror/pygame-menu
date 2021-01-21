@@ -48,10 +48,10 @@ import pygame_menu
 
 # -- Project information ------------------------------------------------------
 
-project = 'pygame-menu'
+project = pygame_menu.__module_name__
 # noinspection PyShadowingBuiltins
-copyright = '2017-2021, Pablo Pizarro R. @ppizarror'
-author = 'Pablo Pizarro R.'
+copyright = pygame_menu.__copyright__
+author = pygame_menu.__author__
 
 # The full version, including alpha/beta/rc tags
 release = pygame_menu.__version__
