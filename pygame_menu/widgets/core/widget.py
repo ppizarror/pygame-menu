@@ -59,7 +59,9 @@ class Widget(object):
     """
     Widget abstract class.
 
-    .. note:: Widget cannot be copied or deepcopied.
+    .. note::
+
+        Widget cannot be copied or deepcopied.
 
     :param title: Widget title
     :param widget_id: Widget identifier
@@ -877,6 +879,10 @@ class Widget(object):
         """
         Set text shadow.
 
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
+
         :param enabled: Shadow is enabled or not
         :param color: Shadow color
         :param position: Shadow position
@@ -1438,6 +1444,10 @@ class Widget(object):
 
             Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
             widget rendering after calling this method.
+
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``align`` values.
 
         :param align: Widget align
         :return: None

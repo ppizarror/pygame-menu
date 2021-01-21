@@ -82,13 +82,20 @@ class ScrollArea(object):
     If the surface exceeds the size of the drawing surface, the view provide
     scroll bars so that the entire area of the child surface can be viewed.
 
-    .. note:: ScrollArea cannot be copied or deepcopied.
+    .. note::
+
+        See :py:mod:`pygame_menu.locals` for valid ``scrollbars`` and
+        ``shadow_position`` values.
+
+    .. note::
+
+        ScrollArea cannot be copied or deepcopied.
 
     :param area_width: Width of scrollable area (px)
     :param area_height: Height of scrollable area (px)
     :param area_color: Background color, it can be a color or an image
     :param menubar: Menubar for style compatibility
-    :param extend_x: Px to extend the surface in yxaxis (px) from left
+    :param extend_x: Px to extend the surface in x axis (px) from left
     :param extend_y: Px to extend the surface in y axis (px) from top
     :param scrollbar_color: Scrollbars color
     :param scrollbar_slider_color: Color of the sliders
