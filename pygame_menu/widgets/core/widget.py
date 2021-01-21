@@ -36,12 +36,14 @@ import pygame_menu.baseimage as _baseimage
 import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
+from pygame_menu.decorator import Decorator
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
-    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING
+    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType
 
+from pathlib import Path
 from uuid import uuid4
 import random
 import time
@@ -50,14 +52,14 @@ import warnings
 if TYPE_CHECKING:
     from pygame_menu.menu import Menu
 
-PaddingTrueType = Tuple[int, int, int, int]
-
 
 class Widget(object):
     """
     Widget abstract class.
 
-    .. note:: Widget cannot be copied or deepcopied.
+    .. note::
+
+        Widget cannot be copied or deepcopied.
 
     :param title: Widget title
     :param widget_id: Widget identifier
@@ -77,10 +79,11 @@ class Widget(object):
     _border_inflate: Tuple2IntType
     _border_width: int
     _col_row_index: Tuple[int, int, int]
+    _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     _events: List['pygame.event.Event']
-    _flip: Tuple[bool, bool]
+    _flip: Tuple2BoolType
     _font: Optional['pygame.font.Font']
     _font_antialias: bool
     _font_background_color: Optional[ColorType]
@@ -98,13 +101,12 @@ class Widget(object):
     _max_height: List[Optional[bool]]
     _max_width: List[Optional[bool]]
     _menu: Optional['Menu']
-    _menu_surface_needs_update: bool
     _mouse_enabled: bool
     _on_change: CallbackType
     _on_return: CallbackType
     _on_select: CallbackType
-    _padding: PaddingTrueType
-    _padding_transform: PaddingTrueType
+    _padding: Tuple4IntType
+    _padding_transform: Tuple4IntType
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
     _selection_effect: 'Selection'
@@ -117,7 +119,7 @@ class Widget(object):
     _surface: Optional['pygame.Surface']
     _title: str
     _touchscreen_enabled: bool
-    _translate: Tuple[int, int]
+    _translate: Tuple2IntType
     _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     active: bool
     floating: bool
@@ -155,6 +157,7 @@ class Widget(object):
         self._background_color = None
         self._background_inflate = (0, 0)
         self._col_row_index = (-1, -1, -1)
+        self._decorator = Decorator(self)
         self._default_value = _NoWidgetValue()
         self._events = []
         self._id = str(widget_id)
@@ -195,10 +198,6 @@ class Widget(object):
 
         # Menu reference
         self._menu = None
-
-        # If this is True then the widget forces the Menu to update because the
-        # widget render has changed
-        self._menu_surface_needs_update = False
 
         # Modified in set_font() method
         self._font = None
@@ -268,18 +267,53 @@ class Widget(object):
         """
         Forces widget render.
 
+        .. note::
+
+            If this method is used it's not necesary to call Widget methods
+            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update` and
+            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_cache_update`.
+            As `render` should force Menu render, updating both surface and cache.
+
         :return: Render return value
         """
         self._last_render_hash = 0
         return self._render()
 
-    def _force_menu_surface_update(self) -> None:
+    def force_menu_surface_update(self) -> None:
         """
-        Forces menu surface update.
+        Forces menu surface update. This calls all render, including all widgets decorations.
+
+        ..note ::
+
+            This method is expensive, as menu surface update forces re-rendering of
+            all widgets (because them can change in size, position, etc...).
 
         :return: None
         """
-        self._menu_surface_needs_update = True
+        if self._menu is not None:
+            # Don't set _menu._widgets_surface to None because if so
+            # in the drawing process it may destroy the surface and raising
+            # an Error. The usage of _widgets_surface_need_update is only on
+            # Menu _render()
+            self._menu._widgets_surface_need_update = True
+
+    def force_menu_surface_cache_update(self) -> None:
+        """
+        Forces menu surface cache to update. This also updates widget decoration.
+
+        .. note::
+
+            This method only updates the surface cache, without forcing re-rendering
+            of all Menu widget as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            does.
+
+        :return: None
+        """
+        if self._menu is not None:
+            # Menu _widget_surface_cache_need_update property is only accessed on
+            # draw method. This does not set _menu._widgets_surface to None
+            self._menu._widget_surface_cache_need_update = True
+            self._decorator.force_cache_update()
 
     def render(self) -> Optional[bool]:
         """
@@ -312,6 +346,11 @@ class Widget(object):
 
             Before rendering, check out if the widget font/title/values are
             set. If not, it is probable that a zero-size surface is set.
+
+        .. note::
+
+            Render methods should call :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update`
+            to force Menu to update the drawing surface.
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         """
@@ -606,6 +645,22 @@ class Widget(object):
         :param surface: Surface to draw
         :return: None
         """
+        self._render()
+        self._draw_background_color(surface)
+        self._decorator.draw_prev(surface)
+        self._draw(surface)
+        self._draw_border(surface)
+        self._decorator.draw_post(surface)
+        self.apply_draw_callbacks()
+
+    def _draw(self, surface: 'pygame.Surface') -> None:
+        """
+        Draw the widget on a given surface.
+        This method must be overriden by all classes.
+
+        :param surface: Surface to draw
+        :return: None
+        """
         raise NotImplementedError('override is mandatory')
 
     def draw_selection(self, surface: 'pygame.Surface') -> None:
@@ -640,7 +695,7 @@ class Widget(object):
         self._margin = (x, y)
         self._force_render()
 
-    def get_padding(self, transformed: bool = True) -> PaddingTrueType:
+    def get_padding(self, transformed: bool = True) -> Tuple:
         """
         Return the widget padding.
 
@@ -823,6 +878,10 @@ class Widget(object):
         """
         Set text shadow.
 
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
+
         :param enabled: Shadow is enabled or not
         :param color: Shadow color
         :param position: Shadow position
@@ -929,24 +988,6 @@ class Widget(object):
                                        int(self._padding[2] * pad_height),
                                        int(self._padding[3] * pad_width))
 
-    def surface_needs_update(self) -> bool:
-        """
-        Checks if the widget width/height has changed because events. If so, return ``True`` and
-        set the status of the widget (menu widget position needs update) as ``False``. This method
-        is used by :py:meth:`pygame_menu.Menu.update`
-
-        .. note::
-
-            Generally, widget :py:meth:`pygame_menu.widgets.core.Widget._render` method set
-            ``_menu_surface_needs_update`` as ``True`` after rendering has finished.
-
-        :return: ``True`` if the widget position has changed by events after the rendering.
-        """
-        if self._menu_surface_needs_update:
-            self._menu_surface_needs_update = False
-            return True
-        return False
-
     def get_font_color_status(self) -> ColorType:
         """
         Return the widget font color based on the widget status.
@@ -962,7 +1003,7 @@ class Widget(object):
         return self._font_color
 
     def set_font(self,
-                 font: str,
+                 font: Union[str, 'Path'],
                  font_size: int,
                  color: ColorType,
                  selected_color: ColorType,
@@ -984,7 +1025,7 @@ class Widget(object):
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :return: None
         """
-        assert isinstance(font, str)
+        assert isinstance(font, (str, Path))
         assert isinstance(font_size, int)
         assert isinstance(antialias, bool)
         assert_color(color)
@@ -1008,7 +1049,7 @@ class Widget(object):
         self._font_antialias = antialias
         self._font_background_color = background_color
         self._font_color = color
-        self._font_name = font
+        self._font_name = str(font)
         self._font_readonly_color = readonly_color
         self._font_readonly_selected_color = readonly_selected_color
         self._font_selected_color = selected_color
@@ -1403,6 +1444,10 @@ class Widget(object):
             Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
             widget rendering after calling this method.
 
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``align`` values.
+
         :param align: Widget align
         :return: None
         """
@@ -1629,6 +1674,8 @@ class Widget(object):
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         """
         Update according to the given events list and fire the callbacks.
+        This method must return ``True`` if it updated (the internal variables
+        changed during user input).
 
         :param events: List/Tuple of pygame events
         :return: ``True`` if updated
@@ -1772,7 +1819,7 @@ class Widget(object):
         """
         assert isinstance(float_status, bool)
         self.floating = float_status
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def show(self) -> None:
         """
@@ -1836,6 +1883,14 @@ class Widget(object):
         self._border_width = width
         self._border_color = color
         self._border_inflate = inflate
+
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the Widget decorator API.
+
+        :return: Decorator API
+        """
+        return self._decorator
 
 
 # noinspection PyMissingOrEmptyDocstring

@@ -53,6 +53,7 @@ __all__ = [
 
 import os.path as path
 import pygame.font as _font
+from pathlib import Path
 from typing import Union, Optional
 
 # Available fonts path
@@ -79,7 +80,7 @@ FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_FRANCHISE, FONT_HE
 _cache = {}
 
 
-def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
+def get_font(name: Union[str, '_font.Font', 'Path'], size: int) -> '_font.Font':
     """
     Return a :py:class:`pygame.font.Font` object from a name or file.
 
@@ -87,6 +88,7 @@ def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
     :param size: Font size (px)
     :return: Font object
     """
+    assert isinstance(name, (str, _font.Font, Path))
     assert isinstance(size, int)
 
     font: Optional['_font.Font']
@@ -94,6 +96,7 @@ def get_font(name: Union[str, '_font.Font'], size: int) -> '_font.Font':
         font = name
         return font
     else:
+        name = str(name)
 
         if name == '':
             raise ValueError('font name cannot be empty')

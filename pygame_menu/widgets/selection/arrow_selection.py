@@ -100,7 +100,7 @@ class ArrowSelection(Selection):
         :param c: Arrow coord C
         :return: None
         """
-        SELECTOR_CLOCK.tick()
+        SELECTOR_CLOCK.tick(60)  # As blink is in ms
         self._blink_time += SELECTOR_CLOCK.get_time()
 
         # Switch the blinking if the time exceeded or the widget has changed

@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Menu']
 
+from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
 import os
@@ -49,12 +50,15 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
+from pygame_menu.decorator import Decorator
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 
+from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
-    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional
+    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Tuple2IntType, \
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional, Tuple2BoolType
 
 # Joy events
 JOY_EVENT_LEFT = 1
@@ -67,8 +71,6 @@ class Menu(object):
     """
     Menu object.
 
-    .. note:: Menu cannot be copied or deepcopied.
-
     If menu is closed or reset, the callbacks ``onclose`` and ``onreset`` are fired
     (if them are callable-type). They can only receive 1 argument maximum, if so,
     the Menu instance is provided
@@ -77,6 +79,10 @@ class Menu(object):
 
         onclose() <or> onclose(Menu)
         onreset() <or> onreset(Menu)
+
+    .. note::
+
+        Menu cannot be copied or deepcopied.
 
     :param height: Height of the Menu (px)
     :param width: Width of the Menu (px)
@@ -111,6 +117,7 @@ class Menu(object):
     _column_widths: Optional[List[NumberType]]
     _columns: int
     _current: 'Menu'
+    _decorator: 'Decorator'
     _enabled: bool
     _height: int
     _id: str
@@ -126,8 +133,8 @@ class Menu(object):
     _mouse_visible_default: bool
     _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
     _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
-    _overflow: Tuple[bool, bool]
-    _position: Tuple[int, int]
+    _overflow: Tuple2BoolType
+    _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scroll: 'ScrollArea'
@@ -141,14 +148,17 @@ class Menu(object):
     _touchscreen_motion_selection: bool
     _used_columns: int
     _widget_columns: Dict[int, List['_widgets.core.Widget']]
-    _widget_max_position: Tuple[int, int]
-    _widget_min_position: Tuple[int, int]
+    _widget_max_position: Tuple2IntType
+    _widget_min_position: Tuple2IntType
     _widget_offset: List[int]
+    _widget_surface_cache_enabled: bool
+    _widget_surface_cache_need_update: bool
     _widgets: List['_widgets.core.Widget']
     _widgets_surface: Optional['pygame.Surface']
     _widgets_surface_last: Tuple[int, int, Optional['pygame.Surface']]
+    _widgets_surface_need_update: bool
     _width: int
-    _window_size: Tuple[int, int]
+    _window_size: Tuple2IntType
 
     def __init__(self,
                  height: NumberType,
@@ -334,6 +344,7 @@ class Menu(object):
         self._background_function = None
         self._auto_centering = center_content
         self._clock = pygame.time.Clock()
+        self._decorator = Decorator(self)
         self._height = int(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
@@ -483,13 +494,19 @@ class Menu(object):
         )
         self._menubar.set_controls(self._joystick, self._mouse, self._touchscreen)
 
-        # Scrolling area
+        # Widget surface
         self._widgets_surface = None
+        self._widgets_surface_need_update = False
         self._widgets_surface_last = (0, 0, None)
+
+        # Precache widgets surface draw
+        self._widget_surface_cache_enabled = True
+        self._widget_surface_cache_need_update = True
+
+        # Scrolling area
         menubar_height = self._menubar.get_height()
         if self._height - menubar_height <= 0:
             raise ValueError('menubar is higher than menu height. Try increasing the later value')
-
         self._scroll = ScrollArea(
             area_color=self._theme.background_color,
             area_height=self._height - menubar_height,
@@ -535,6 +552,12 @@ class Menu(object):
         """
         Set ``onclose`` callback.
 
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
         :param onclose: Onclose callback, it can be a function, an event, or None
         :return: None
         """
@@ -549,6 +572,12 @@ class Menu(object):
                     ) -> None:
         """
         Set ``onreset`` callback.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param onreset: Onreset callback, it can be a function or None
         :return: None
@@ -619,7 +648,7 @@ class Menu(object):
             - ``button_id``                 *(str)* - Widget ID
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``onselect``                  *(callable, None)* - Callback executed when selecting the widget
@@ -738,10 +767,10 @@ class Menu(object):
 
     def add_color_input(self,
                         title: Union[str, Any],
-                        color_type: str,
+                        color_type: ColorInputColorType,
                         color_id: str = '',
                         default: Any = '',
-                        hex_format: str = 'none',
+                        hex_format: ColorInputHexFormatType = 'none',
                         input_separator: str = ',',
                         input_underline: str = '_',
                         onchange: CallbackType = None,
@@ -772,7 +801,7 @@ class Menu(object):
             - ``dynamic_width``             *(int, float)* - If ``True`` the widget width changes if the previsualization color box is active or not
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
@@ -804,10 +833,10 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the color input
-        :param color_type: Type of the color input, can be ``"rgb"`` or ``"hex"``
+        :param color_type: Type of the color input
         :param color_id: ID of the color input
         :param default: Default value to display, if RGB type it must be a tuple ``(r,g,b)``, if HEX must be a string ``"#XXXXXX"``
-        :param hex_format: Hex format string mode (none, lower, upper)
+        :param hex_format: Hex format string mode
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :param input_underline: Underline character
         :param onchange: Callback executed when changing the values of the color text
@@ -854,7 +883,7 @@ class Menu(object):
         return widget
 
     def add_image(self,
-                  image_path: Union[str, 'Path', '_baseimage.BaseImage'],
+                  image_path: Union[str, 'Path', '_baseimage.BaseImage', 'BytesIO'],
                   angle: NumberType = 0,
                   image_id: str = '',
                   onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
@@ -958,7 +987,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
@@ -1097,7 +1126,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
@@ -1183,7 +1212,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``infinite``                  *(bool)* - The state can rotate. ``False`` by default
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
@@ -1212,6 +1241,21 @@ class Menu(object):
             This method only handles two states. If you need more states (for example 3, or 4),
             prefer using :py:class:`pygame_menu.widgets.ToggleSwitch` and add it as a generic
             widget.
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
 
         :param title: Title of the toggle switch
         :param default: Default state index of the switch; it can be ``0 (False)`` or ``1 (True)``
@@ -1273,7 +1317,7 @@ class Menu(object):
                        default: Union[str, int, float] = '',
                        copy_paste_enable: bool = True,
                        cursor_selection_enable: bool = True,
-                       input_type: str = _locals.INPUT_TEXT,
+                       input_type: TextInputModeType = _locals.INPUT_TEXT,
                        input_underline: str = '',
                        input_underline_len: int = 0,
                        maxchar: int = 0,
@@ -1310,7 +1354,7 @@ class Menu(object):
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color
-            - ``font_name``                 *(str)* - Widget font
+            - ``font_name``                 *(str, Path)* - Widget font path
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
@@ -1561,8 +1605,8 @@ class Menu(object):
         attributes['font_color'] = font_color
 
         font_name = kwargs.pop('font_name', self._theme.widget_font)
-        assert isinstance(font_name, str)
-        attributes['font_name'] = font_name
+        assert isinstance(font_name, (str, Path))
+        attributes['font_name'] = str(font_name)
 
         font_size = kwargs.pop('font_size', self._theme.widget_font_size)
         assert isinstance(font_size, int)
@@ -2272,13 +2316,13 @@ class Menu(object):
         :return: Width in px
         """
         if widget:
-            return self._widget_max_position[0] - self._widget_min_position[0]
+            return int(self._widget_max_position[0] - self._widget_min_position[0])
         if not inner:
-            return self._width
+            return int(self._width)
         vertical_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
         return int(self._width - vertical_scroll)
 
-    def get_height(self, inner: bool = False, widget: bool = False) -> NumberType:
+    def get_height(self, inner: bool = False, widget: bool = False) -> int:
         """
         Get menu height.
 
@@ -2293,9 +2337,9 @@ class Menu(object):
         :return: Height in px
         """
         if widget:
-            return self._widget_max_position[1] - self._widget_min_position[1]
+            return int(self._widget_max_position[1] - self._widget_min_position[1])
         if not inner:
-            return self._height
+            return int(self._height)
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         return int(self._height - self._menubar.get_height() - horizontal_scroll)
 
@@ -2335,21 +2379,28 @@ class Menu(object):
         self._current._render()
         self._current._stats.render_public += 1
 
-    def _render(self) -> None:
+    def _render(self) -> bool:
         """
         Menu rendering.
 
-        :return: None
+        :return: ``True`` if the surface has changed (if it was None)
         """
         t0 = time.time()
+        changed = False
+
+        if self._widgets_surface_need_update:
+            self._widgets_surface = None
 
         if self._widgets_surface is None:
             if self._auto_centering:
                 self.center_content()
             self._build_widget_surface()
             self._stats.render_private += 1
+            self._widgets_surface_need_update = False
+            changed = True
 
         self._stats.total_rendering_time += time.time() - t0
+        return changed
 
     def draw(self, surface: 'pygame.Surface', clear_surface: bool = False) -> None:
         """
@@ -2368,10 +2419,10 @@ class Menu(object):
         assert isinstance(clear_surface, bool)
 
         if not self.is_enabled():
-            return self._current._runtime_errors.throw(self._runtime_errors.draw, 'menu is not enabled')
+            return self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
 
         # Render menu
-        self._current._render()
+        render = self._current._render()  # If True, the surface widget has changed, thus cache should change if enabled
 
         # Updates title
         if self._current._theme.title_updates_pygame_display and \
@@ -2389,25 +2440,33 @@ class Menu(object):
             except TypeError:
                 self._top._background_function()
 
-        # Fill the scrolling surface
-        self._current._widgets_surface.fill((255, 255, 255, 0))
+        # Draw the prev decorator
+        self._current._decorator.draw_prev(surface)
 
-        # Draw widgets
-        selected_widget = None
-        for widget in self._current._widgets:
-            if not widget.visible:
-                continue
-            widget.draw(self._current._widgets_surface)
-            if widget.selected:
-                widget.draw_selection(self._current._widgets_surface)
-                selected_widget = widget
+        # Draw widgets, update cache if enabled
+        if not self._current._widget_surface_cache_enabled or \
+                (render or self._current._widget_surface_cache_need_update):
+
+            # Fill the scrolling surface (clear previous state)
+            self._current._widgets_surface.fill((255, 255, 255, 0))
+
+            # Iterate through widgets and draw them
+            for widget in self._current._widgets:
+                if not widget.visible:
+                    continue
+                widget.draw(self._current._widgets_surface)
+                if widget.selected:
+                    widget.draw_selection(self._current._widgets_surface)
+
+            self._current._stats.draw_update_cached += 1
+            self._current._widget_surface_cache_need_update = False
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
 
         # Draw focus on selected if the widget is active
-        self._current._draw_focus_widget(surface, selected_widget)
-
+        self._current._draw_focus_widget(surface, self._current.get_selected_widget())
+        self._current._decorator.draw_post(surface)
         self._current._stats.draw += 1
 
     def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['_widgets.core.Widget']
@@ -2479,6 +2538,12 @@ class Menu(object):
         """
         Enables Menu (can check events and draw).
 
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
         :return: None
         """
         self._top._enabled = True
@@ -2486,6 +2551,12 @@ class Menu(object):
     def toggle(self) -> None:
         """
         Switch between enable/disable Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: None
         """
@@ -2510,6 +2581,12 @@ class Menu(object):
     def is_enabled(self) -> bool:
         """
         Return ``True`` if the Menu is enabled.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: Menu enabled status
         """
@@ -2592,12 +2669,14 @@ class Menu(object):
         :param events: Pygame events as a list
         :return: ``True`` if mainloop must be stopped
         """
+        # Check events
         assert isinstance(events, list)
 
         # If menu is not enabled
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.update, 'menu is not enabled')
             return False
+        self._current._stats.update += 1
 
         # Check if window closed
         for event in events:
@@ -2797,20 +2876,13 @@ class Menu(object):
                         updated = True  # It is updated
                         break
 
-        # Check if the Menu widgets size changed, if True, updates the surface
-        # forcing the rendering of all widgets
-        menu_surface_needs_update = False
-        if len(self._current._widgets) > 0:
-            for widget in self._current._widgets:
-                menu_surface_needs_update = menu_surface_needs_update or widget.surface_needs_update()
-        if menu_surface_needs_update:
-            self._current._widgets_surface = None
+        # If cache is enabled, always force a rendering (user may have have changed any status)
+        if self._current._widget_surface_cache_enabled and updated:
+            self._current._widget_surface_cache_need_update = True
 
         # A widget has closed the Menu
         if not self.is_enabled():
             updated = True
-
-        self._current._stats.update += 1
 
         return updated
 
@@ -2864,25 +2936,28 @@ class Menu(object):
         if not self.is_enabled():
             return self._current._runtime_errors.throw(self._current._runtime_errors.mainloop, 'menu is not enabled')
 
-        # Store background function
+        # Store background function and force render
         self._current._background_function = bgfun
+        self._current._widgets_surface = None
 
         while True:
             self._current._stats.loop += 1
             self._current._clock.tick(fps_limit)
 
+            # Draw the menu
             self.draw(surface=surface, clear_surface=True)
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
             self.update(pygame.event.get())
 
+            # Flip contents to screen
+            pygame.display.flip()
+
+            # Menu closed or disabled
             if not self.is_enabled() or disable_loop:
                 self._current._background_function = None
                 return
-
-            # Flip contents to screen
-            pygame.display.flip()
 
     def get_input_data(self, recursive: bool = False) -> Dict[str, Any]:
         """
@@ -2939,6 +3014,12 @@ class Menu(object):
     def get_rect(self) -> 'pygame.Rect':
         """
         Return the Menu rect.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: Rect
         """
@@ -3020,9 +3101,9 @@ class Menu(object):
         if depth > 0:
             self.reset(depth)
 
-    def clear(self) -> None:
+    def clear(self, reset: bool = True) -> None:
         """
-        Full reset and clears all widgets.
+        Clears all widgets.
 
         .. note::
 
@@ -3030,13 +3111,16 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
+        :param reset: If ``True`` the menu full-resets
         :return: None
         """
-        self.full_reset()
+        if reset:
+            self.full_reset()
         del self._widgets[:]
         del self._submenus[:]
-        self._index = 0
+        self._index = -1
         self._stats.clear += 1
+        self._render()
 
     def _open(self, menu: 'Menu') -> None:
         """
@@ -3183,7 +3267,7 @@ class Menu(object):
         """
         return self._id
 
-    def get_window_size(self) -> Tuple[int, int]:
+    def get_window_size(self) -> Tuple2IntType:
         """
         Return the window size (px) as a tuple of *(width, height)*.
 
@@ -3479,6 +3563,20 @@ class Menu(object):
             raise IndexError('attribute "{0}" does not exists on menu'.format(key))
         del self._attributes[key]
 
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the Menu decorator API.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :return: Decorator API
+        """
+        return self._decorator
+
 
 class _MenuStats(object):
     """
@@ -3517,6 +3615,7 @@ class _MenuStats(object):
         # Other
         self.clear = 0
         self.draw = 0
+        self.draw_update_cached = 0
         self.loop = 0
         self.reset = 0
         self.select = 0

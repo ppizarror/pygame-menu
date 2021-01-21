@@ -38,34 +38,47 @@ basic widget should contain this code:
             """
             ...
 
-        def draw(self, surface):
+        def _draw(self, surface):
             """
-            Draw the widget shape.
+            Draw the widget on a given surface.
+            This method must be overriden by all classes.
             """
-            # Required, render first, then draw
-            self._render()
-
-            # Draw the background of the Widget (optional)
-            self._fill_background_color(surface)
-
             # Draw the self._surface pygame object on the given surface
             surface.blit(self._surface, self._rect.topleft)
 
         def _render(self):
             """
             Render the widget surface.
-            This method shall update the attribute _surface with a pygame.Surface
+
+            This method shall update the attribute ``_surface`` with a :py:class:`pygame.Surface`
             representing the outer borders of the widget.
+
+            .. note::
+
+                Before rendering, check out if the widget font/title/values are
+                set. If not, it is probable that a zero-size surface is set.
+
+            .. note::
+
+                Render methods should call :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update`
+                to force Menu to update the drawing surface.
             """
+            ...
+
             # Generate widget surface
             self._surface = pygame.surface....
+
             # Update the width and height of the Widget
             self._rect.width, self._rect.height = self._surface.get_size() + SomeConstants
 
+            # Force menu to update its surface on next Menu.render() call
+            self.force_menu_surface_update()
+
         def update(self, events):
             """
-            Update internal variable according to the given events list
-            and fire the callbacks.
+            Update according to the given events list and fire the callbacks.
+            This method must return ``True`` if it updated (the internal variables
+            changed during user input).
             """
             ...
             return False
@@ -79,7 +92,7 @@ basic widget should contain this code:
 
 To add the widget to the :py:class:`pygame_menu.Menu` class, a public method
 :py:meth:`pygame_menu.Menu.add_mywidget` with the following structure has to be
-added:
+added. Or :py:meth:`pygame_menu.Menu.add_generic_widget` can be used.
 
 .. code-block:: python
 
@@ -110,6 +123,18 @@ added:
           are not named as the default kwargs used by the Menu Widget system.
 
           The function must return the created `widget` object.
+
+.. note:: The widget ``_render`` method should allways call
+          :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update` method, this
+          ensures that Menu updates the surface and the positioning.
+
+.. note:: From ``v4`` menu introduced a cache state for the draw surface. This cache
+          is updated if any widget update its status (``update()`` returned True) or
+          the surface was rendered. Anyway, execution-time elements that changes over
+          time (outside ``_render``) should force cache rendering (for example the blinking
+          cursor of text). If your widget has any property like this, the method
+          :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_cache_update`
+          must be called within your Widget.
 
 
 =========================
@@ -192,3 +217,43 @@ Finally, this new selection effect can be set by following one of these two inst
         )
 
         menu = pygame_menu.Menu(..., theme=MY_THEME)
+
+
+=========================
+Decorate a Menu / Widgets
+=========================
+
+All menu objects can be decorated with polygons (lines, circles, rectangles, paths),
+images, text, or callable functions. The decorations can be drawn before the source
+object (``prev``) or after the object (``post``) depending of the object type.
+
+To add a decoration, you must access the decorator class from the object (Menu,
+ScrollArea, any Widget) using ``get_decorator()`` method. And use the ``Decorator``
+class API to add decorations to your object.
+
+:: note::
+
+    Decorations don't change the width/height of the object. These are visual/only. If
+    applied on a widget, use padding to *enlarge* the widget rect if you need such feature.
+
+:: note::
+
+    For all decoration, the *(0, 0)* coordinate belongs to the center of the object.
+
+.. code-block:: python
+
+    decorator = my_widget.get_decorator()
+    decorator.add_polygon([(1, 1), (1, 10), (10, 1)], color=(255, 0, 0))
+
+    # If the widget needs a bigger margin
+    my_widget.set_padding((25, 25, 10, 10))
+
+    decorator = menu.get_decorator()
+    decorator.add_line((10, 10), (100, 100), color=(45, 180, 34), width=10)
+
+
+Decorator API
+-------------
+
+.. autoclass:: pygame_menu.decorator.Decorator
+    :members:

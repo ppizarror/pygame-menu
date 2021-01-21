@@ -51,13 +51,13 @@ class ScrollBar(Widget):
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one page.
 
-    .. warning::
-
-        Arrows are not yet implemented.
-
     .. note::
 
         This widget only accepts translation transformation.
+
+    .. warning::
+
+        Arrows are not yet implemented.
 
     :param length: Length of the page control
     :param values_range: Min and max values
@@ -181,12 +181,8 @@ class ScrollBar(Widget):
         setattr(self._slider_rect, pos[self._orientation], self._slider_position)
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
-        self._draw_background_color(surface)
+    def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def get_maximum(self) -> int:
         """
@@ -336,7 +332,11 @@ class ScrollBar(Widget):
         """
         Set the scroll bar orientation to vertical or horizontal.
 
-        :param orientation: Widget orientation, could be ``ORIENTATION_HORIZONTAL``/``ORIENTATION_VERTICAL``
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``orientation`` values.
+
+        :param orientation: Widget orientation
         :return: None
         """
         assert_orientation(orientation)

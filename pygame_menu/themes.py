@@ -264,7 +264,7 @@ class Theme(object):
         # Cursor/Text gathering
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
-        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', (int, float), 500)
+        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', (int, float), 1000)
 
         # Menubar/Title
         self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))

@@ -142,12 +142,8 @@ class Selector(Widget):
     def _apply_font(self) -> None:
         self._title_size = int(self._font.size(self._title)[0])
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
-        self._draw_background_color(surface)
+    def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         string = self._sformat.format(self._title, self.get_value()[0][0])
@@ -156,7 +152,7 @@ class Selector(Widget):
         self._surface = self._render_string(string, self.get_font_color_status())
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def get_index(self) -> int:
         """

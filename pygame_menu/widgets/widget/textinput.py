@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['TextInput']
+__all__ = ['TextInput', 'TextInputModeType']
 
 import math
 
@@ -39,7 +39,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 from pygame_menu.custom_types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType, Literal
 
 try:
 
@@ -72,6 +72,9 @@ except (ImportError, ModuleNotFoundError):
         Pyperclip exception thrown by pyperclip.
         """
         pass
+
+# Custom types
+TextInputModeType = Literal[_locals.INPUT_TEXT, _locals.INPUT_INT, _locals.INPUT_FLOAT]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -121,7 +124,6 @@ class TextInput(Widget):
     :param kwargs: Optional keyword arguments
     """
     _absolute_origin: Tuple2IntType
-    _apply_widget_draw_callback: bool  # Used in ColorInput
     _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
     _clock: 'pygame.time.Clock'
@@ -189,7 +191,7 @@ class TextInput(Widget):
                  cursor_selection_enable: bool = True,
                  cursor_switch_ms: NumberType = 500,
                  history: int = 50,
-                 input_type: str = _locals.INPUT_TEXT,
+                 input_type: TextInputModeType = _locals.INPUT_TEXT,
                  input_underline: str = '',
                  input_underline_len: int = 0,
                  input_underline_vmargin: int = 0,
@@ -201,10 +203,10 @@ class TextInput(Widget):
                  onselect: CallbackType = None,
                  password: bool = False,
                  password_char: str = '*',
-                 repeat_keys_initial_ms: NumberType = 450,
-                 repeat_keys_interval_ms: NumberType = 80,
-                 repeat_mouse_interval_ms: NumberType = 100,
-                 repeat_touch_interval_ms: NumberType = 100,
+                 repeat_keys_initial_ms: NumberType = 400,
+                 repeat_keys_interval_ms: NumberType = 100,
+                 repeat_mouse_interval_ms: NumberType = 400,
+                 repeat_touch_interval_ms: NumberType = 400,
                  tab_size: int = 4,
                  text_ellipsis: str = '...',
                  valid_chars: Optional[List[str]] = None,
@@ -336,7 +338,6 @@ class TextInput(Widget):
         self._valid_chars = valid_chars
 
         # Callbacks
-        self._apply_widget_draw_callback = True
         self._apply_widget_update_callback = True
 
         # Other
@@ -423,13 +424,9 @@ class TextInput(Widget):
     def flip(self, x: bool, y: bool) -> None:  # Actually flip on x axis is disabled
         super(TextInput, self).flip(False, y)
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
-        self._clock.tick()
+    def _draw(self, surface: 'pygame.Surface') -> None:
 
-        # Draw background color
-        self._draw_background_color(surface)
-
+        # Draw selection surface
         if pygame.vernum.major >= 2:
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
@@ -447,11 +444,6 @@ class TextInput(Widget):
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
             surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
-
-        self._draw_border(surface)
-
-        if self._apply_widget_draw_callback:
-            self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
@@ -478,7 +470,7 @@ class TextInput(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
 
         # Force Menu update
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def _render_selection_box(self, force: bool = False) -> None:
         """
@@ -906,29 +898,20 @@ class TextInput(Widget):
         string = self._get_input_string()
         if string == '':  # If string is empty cursor is not updated
             return
-
-        # Calculate size of each character
-        string_size = []
-        string_total_size = 0
-        for i in range(len(string)):
-            cs = self._font.size(string[i])[0]  # Char size
-            string_size.append(cs)
-            string_total_size += cs
+        self.force_menu_surface_cache_update()
 
         # Find the accumulated char size that gives the position of cursor
-        size_sum = 0
-        cursor_pos = len(string)
+        cursor_pos = 0
         for i in range(len(string)):
-            size_sum += string_size[i] / 2
-            if self._title_size + size_sum >= mousex:
-                cursor_pos = i
+            if self._font.size(self._title + string[0:i])[0] < mousex:
+                cursor_pos += 1
+            else:
                 break
-            size_sum += string_size[i] / 2
 
         # If text have ellipsis
         if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
             if self._ellipsis_left():
-                cursor_pos -= 3
+                cursor_pos -= len(self._ellipsis)
 
             # Check if user clicked on ellipsis
             if cursor_pos < 0 or cursor_pos > self._maxwidth:
@@ -1128,6 +1111,7 @@ class TextInput(Widget):
         if self._cursor_surface is not None:
             self._cursor_surface.fill(self._cursor_color)
         self._selection_active = False
+        self.force_menu_surface_cache_update()
         return removed
 
     def _get_selected_text(self) -> str:
@@ -1473,6 +1457,8 @@ class TextInput(Widget):
         return False
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+        self._clock.tick(60)
+
         # Check mouse pressed
         # noinspection PyArgumentList
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
@@ -1480,6 +1466,16 @@ class TextInput(Widget):
 
         if self.readonly:
             return False
+
+        # Get time clock
+        time_clock = self._clock.get_time()
+
+        # Update cursor switch
+        self._cursor_ms_counter += time_clock
+        if self._cursor_ms_counter >= self._cursor_switch_ms:
+            self._cursor_ms_counter %= self._cursor_switch_ms
+            self._cursor_visible = not self._cursor_visible
+            self.force_menu_surface_cache_update()
 
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
@@ -1496,7 +1492,7 @@ class TextInput(Widget):
                 self._key_is_pressed = True
                 self._last_key = event.key
 
-                # If none exist, create counter for that key:
+                # If None exist, create counter for that key:
                 if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys and \
                         'unicode' in event.dict:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
@@ -1777,21 +1773,14 @@ class TextInput(Widget):
                     self._selection_active = True
                     self.active = True
 
-        # Get time clock
-        time_clock = self._clock.get_time()
+        # Update mouse
         self._keyrepeat_mouse_ms += time_clock
         if self._keyrepeat_mouse_ms > self._keyrepeat_mouse_interval_ms:
-            self._keyrepeat_mouse_ms = 0
+            # self._keyrepeat_mouse_ms = 0
             if mouse_left:
                 pos = pygame.mouse.get_pos()
                 self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
                                                  pos[1] - self._absolute_origin[1]))
-
-        # Update cursor switch
-        self._cursor_ms_counter += time_clock
-        if self._cursor_ms_counter >= self._cursor_switch_ms:
-            self._cursor_ms_counter %= self._cursor_switch_ms
-            self._cursor_visible = not self._cursor_visible
 
         # Update key counters:
         for key in self._keyrepeat_counters:
@@ -1799,7 +1788,8 @@ class TextInput(Widget):
 
             # Generate new key events if enough time has passed:
             if self._keyrepeat_counters[key][0] >= self._keyrepeat_initial_interval_ms:
-                self._keyrepeat_counters[key][0] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
+                self._keyrepeat_counters[key][
+                    0] = self._keyrepeat_initial_interval_ms - self._keyrepeat_interval_ms
 
                 event_key, event_unicode = key, self._keyrepeat_counters[key][1]
                 try:

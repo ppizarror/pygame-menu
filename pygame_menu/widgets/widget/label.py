@@ -60,14 +60,10 @@ class Label(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
+    def _draw(self, surface: 'pygame.Surface') -> None:
         if self._title == '':  # The minimal width of any surface is 1px, so the background will be a line
             return
-        self._draw_background_color(surface)
         surface.blit(self._surface, self._rect.topleft)
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self._title, self._font_color, self.visible):
@@ -75,7 +71,7 @@ class Label(Widget):
         self._surface = self._render_string(self._title, self._font_color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

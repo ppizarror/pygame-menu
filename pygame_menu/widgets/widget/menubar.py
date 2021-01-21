@@ -41,6 +41,9 @@ __all__ = [
     'MENUBAR_STYLE_UNDERLINE',
     'MENUBAR_STYLE_UNDERLINE_TITLE',
 
+    # Custom types
+    'MenuBarStyleModeType',
+
     # Main class
     'MenuBar'
 
@@ -52,7 +55,7 @@ import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
-from pygame_menu.custom_types import Union, List, Tuple, CallbackType, Tuple2IntType, \
+from pygame_menu.custom_types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, \
     NumberType, ColorType, Any, Optional, PaddingType, TYPE_CHECKING
 import warnings
 
@@ -71,6 +74,11 @@ MENUBAR_STYLE_UNDERLINE_TITLE = 1006
 # Menubar operation modes
 _MODE_CLOSE = 1020
 _MODE_BACK = 1021
+
+# Custom types
+MenuBarStyleModeType = Literal[MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY,
+                               MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE,
+                               MENUBAR_STYLE_UNDERLINE_TITLE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -112,7 +120,7 @@ class MenuBar(Widget):
                  width: NumberType,
                  background_color: ColorType,
                  back_box: bool = False,
-                 mode: int = MENUBAR_STYLE_ADAPTIVE,
+                 mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
                  modify_scrollarea: bool = True,
                  offsetx: NumberType = 0,
                  offsety: NumberType = 0,
@@ -217,9 +225,13 @@ class MenuBar(Widget):
         assert width > 0
         self._backbox_border_width = width
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
+    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
+        pass
 
+    def _draw_border(self, surface: 'pygame.Surface') -> None:
+        pass
+
+    def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
@@ -241,9 +253,7 @@ class MenuBar(Widget):
                      (self._rect.topleft[0] + self._offsetx,
                       self._rect.topleft[1] + self._offsety))
 
-        self.apply_draw_callbacks()
-
-    def get_scrollbar_style_change(self, position: str) -> Tuple[int, Tuple[int, int]]:
+    def get_scrollbar_style_change(self, position: str) -> Tuple[int, Tuple2IntType]:
         """
         Return scrollbar change (width, position) depending on the style of the menubar.
 

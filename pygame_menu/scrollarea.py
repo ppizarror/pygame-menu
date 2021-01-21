@@ -34,11 +34,12 @@ __all__ = ['ScrollArea', 'get_scrollbars_from_position']
 import pygame
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.locals as _locals
+from pygame_menu.decorator import Decorator
 from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
-    TYPE_CHECKING, Tuple2NumberType, Optional
+    TYPE_CHECKING, Tuple2NumberType, Optional, Tuple2IntType
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core.widget import Widget
@@ -81,13 +82,20 @@ class ScrollArea(object):
     If the surface exceeds the size of the drawing surface, the view provide
     scroll bars so that the entire area of the child surface can be viewed.
 
-    .. note:: ScrollArea cannot be copied or deepcopied.
+    .. note::
+
+        See :py:mod:`pygame_menu.locals` for valid ``scrollbars`` and
+        ``shadow_position`` values.
+
+    .. note::
+
+        ScrollArea cannot be copied or deepcopied.
 
     :param area_width: Width of scrollable area (px)
     :param area_height: Height of scrollable area (px)
     :param area_color: Background color, it can be a color or an image
     :param menubar: Menubar for style compatibility
-    :param extend_x: Px to extend the surface in yxaxis (px) from left
+    :param extend_x: Px to extend the surface in x axis (px) from left
     :param extend_y: Px to extend the surface in y axis (px) from top
     :param scrollbar_color: Scrollbars color
     :param scrollbar_slider_color: Color of the sliders
@@ -101,6 +109,7 @@ class ScrollArea(object):
     :param world: Surface to draw and scroll
     """
     _bg_surface: Optional['pygame.Surface']
+    _decorator: 'Decorator'
     _extend_x: int
     _extend_y: int
     _menu: Optional['Menu']
@@ -146,12 +155,13 @@ class ScrollArea(object):
         assert area_width > 0 and area_height > 0, \
             'area size must be greater than zero'
 
+        self._bg_surface = None
+        self._decorator = Decorator(self)
         self._rect = pygame.Rect(0, 0, int(area_width), int(area_height))
-        self._world = world
-        self._scrollbars = []
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
-        self._bg_surface = None
+        self._scrollbars = []
+        self._world = world
 
         self._extend_x = extend_x
         self._extend_y = extend_y
@@ -266,7 +276,7 @@ class ScrollArea(object):
 
     def draw(self, surface: 'pygame.Surface') -> None:
         """
-        Called by end user to draw state to the surface.
+        Draw the scrollarea.
 
         :param surface: Surface to render the area
         :return: None
@@ -274,6 +284,7 @@ class ScrollArea(object):
         if not self._world:
             return
 
+        self._decorator.draw_prev(surface)
         if self._bg_surface:
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
@@ -288,6 +299,7 @@ class ScrollArea(object):
 
         # noinspection PyTypeChecker
         surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
+        self._decorator.draw_post(surface)
 
     def get_hidden_width(self) -> int:
         """
@@ -311,7 +323,7 @@ class ScrollArea(object):
             return 0
         return int(max(0, self._world.get_height() - self._view_rect.height))
 
-    def get_offsets(self) -> Tuple[int, int]:
+    def get_offsets(self) -> Tuple2IntType:
         """
         Return the offset introduced by the scrollbars in the world.
 
@@ -426,7 +438,7 @@ class ScrollArea(object):
 
         return rect
 
-    def get_world_size(self) -> Tuple[int, int]:
+    def get_world_size(self) -> Tuple2IntType:
         """
         Return the world size.
 
@@ -522,7 +534,7 @@ class ScrollArea(object):
         self._apply_size_changes()
 
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
-                         ) -> Union['pygame.Rect', Tuple[int, int]]:
+                         ) -> Union['pygame.Rect', Tuple2IntType]:
         """
         Return the real position/Rect according to the scroll area origin
         of a position/Rect in the world surface reference.
@@ -547,7 +559,7 @@ class ScrollArea(object):
         return int(x_coord), int(y_coord)
 
     def to_world_position(self, real: Union['pygame.Rect', Tuple2NumberType]
-                          ) -> Union['pygame.Rect', Tuple[int, int]]:
+                          ) -> Union['pygame.Rect', Tuple2IntType]:
         """
         Return the position/Rect in the world surface reference
         of a real position/Rect according to the scroll area origin.
@@ -631,6 +643,14 @@ class ScrollArea(object):
             return bool(self.to_real_position(widget_rect).collidepoint(*finger_pos))
         else:
             return bool(self.to_real_position(widget_rect).collidepoint(*event.pos))
+
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the ScrollArea decorator API.
+
+        :return: Decorator API
+        """
+        return self._decorator
 
 
 class _ScrollAreaCopyException(Exception):

@@ -33,7 +33,7 @@ __all__ = ['Selection']
 
 import pygame
 from pygame_menu.utils import assert_color
-from pygame_menu.custom_types import NumberType, ColorType, Tuple, TYPE_CHECKING
+from pygame_menu.custom_types import NumberType, ColorType, TYPE_CHECKING, Tuple2IntType, Tuple4IntType
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core import Widget
@@ -43,7 +43,9 @@ class Selection(object):
     """
     Widget selection effect class.
 
-    .. note:: All selection classes must be copyable.
+    .. note::
+
+        All selection classes must be copyable.
 
     :param margin_left: Left margin
     :param margin_right: Right margin
@@ -82,7 +84,7 @@ class Selection(object):
         assert_color(color)
         self.color = color
 
-    def get_margin(self) -> Tuple[int, int, int, int]:
+    def get_margin(self) -> Tuple4IntType:
         """
         Return the top, left, bottom and right margins of the selection.
 
@@ -90,7 +92,7 @@ class Selection(object):
         """
         return int(self.margin_top), int(self.margin_left), int(self.margin_bottom), int(self.margin_right)
 
-    def get_xy_margin(self) -> Tuple[int, int]:
+    def get_xy_margin(self) -> Tuple2IntType:
         """
         Return the x/y margins of the selection.
 

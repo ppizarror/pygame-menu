@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Image']
 
+from io import BytesIO
 from pathlib import Path
 
 import pygame
@@ -49,7 +50,7 @@ class Image(Widget):
 
         This class redefines all widget transformations.
 
-    :param image_path: Path of the image or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
+    :param image_path: Path of the image, BytesIO object, or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
     :param image_id: Image ID
     :param angle: Angle of the image in degrees (clockwise)
     :param onselect: Function when selecting the widget
@@ -59,14 +60,14 @@ class Image(Widget):
     _image: 'BaseImage'
 
     def __init__(self,
-                 image_path: Union[str, BaseImage, Path],
+                 image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
                  image_id: str = '',
                  angle: NumberType = 0,
                  onselect: CallbackType = None,
                  scale: Tuple2NumberType = (1, 1),
                  scale_smooth: bool = True
                  ) -> None:
-        assert isinstance(image_path, (str, Path, BaseImage))
+        assert isinstance(image_path, (str, Path, BaseImage, BytesIO))
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
         assert isinstance(scale_smooth, bool)
@@ -126,11 +127,8 @@ class Image(Widget):
         self._image.resize(width, height, smooth)
         self._surface = None
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        self._render()
+    def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
-        self._draw_border(surface)
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         if self._surface is not None:
@@ -139,7 +137,7 @@ class Image(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._render_hash_changed(self.visible):
             return True
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

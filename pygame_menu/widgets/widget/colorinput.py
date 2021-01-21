@@ -33,11 +33,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = [
 
     # Constants
-    'TYPE_HEX',
-    'TYPE_RGB',
-    'HEX_FORMAT_LOWER',
-    'HEX_FORMAT_NONE',
-    'HEX_FORMAT_UPPER',
+    'COLORINPUT_TYPE_HEX',
+    'COLORINPUT_TYPE_RGB',
+    'COLORINPUT_HEX_FORMAT_LOWER',
+    'COLORINPUT_HEX_FORMAT_NONE',
+    'COLORINPUT_HEX_FORMAT_UPPER',
+
+    # Type
+    'ColorInputColorType',
+    'ColorInputHexFormatType',
 
     # Main class
     'ColorInput'
@@ -48,20 +52,25 @@ import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType
+from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
+    Literal
 
 import math
 
 ColorType = Tuple[int, int, int]
 
 # Input modes
-TYPE_HEX = 'hex'
-TYPE_RGB = 'rgb'
+COLORINPUT_TYPE_HEX = 'hex'
+COLORINPUT_TYPE_RGB = 'rgb'
 
 # Apply format to hex color string
-HEX_FORMAT_LOWER = 'lower'
-HEX_FORMAT_NONE = 'none'
-HEX_FORMAT_UPPER = 'upper'
+COLORINPUT_HEX_FORMAT_LOWER = 'lower'
+COLORINPUT_HEX_FORMAT_NONE = 'none'
+COLORINPUT_HEX_FORMAT_UPPER = 'upper'
+
+# Custom typing
+ColorInputColorType = Literal[COLORINPUT_TYPE_RGB, COLORINPUT_TYPE_HEX]
+ColorInputHexFormatType = Literal[COLORINPUT_HEX_FORMAT_LOWER, COLORINPUT_HEX_FORMAT_UPPER, COLORINPUT_HEX_FORMAT_NONE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -88,10 +97,10 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     :param title: Color input title
     :param colorinput_id: ID of the text input
-    :param color_type: Type of color input ``(rgb, hex)``
+    :param color_type: Type of color input
     :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
     :param dynamic_width: If ``True`` the widget width changes if the previsualization color box is active or not
-    :param hex_format: Hex format string mode ``(none, lower, upper)``
+    :param hex_format: Hex format string mode
     :param input_separator: Divisor between RGB channels
     :param input_underline: Character drawn under each number input
     :param input_underline_vmargin: Vertical margin of underline (px)
@@ -120,11 +129,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     def __init__(self,
                  title: Any = '',
                  colorinput_id: str = '',
-                 color_type: str = TYPE_RGB,
+                 color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
                  cursor_color: ColorType = (0, 0, 0),
                  cursor_ms_counter: NumberType = 500,
                  dynamic_width: bool = True,
-                 hex_format: str = HEX_FORMAT_NONE,
+                 hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
                  input_separator: str = ',',
                  input_underline: str = '_',
                  input_underline_vmargin: int = 0,
@@ -154,17 +163,17 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert prev_width_factor > 0, 'previsualization width factor must be greater than zero'
         assert input_separator not in ['0', '1', '2', '3', '4', '5', '6', '7', '8',
                                        '9'], 'input_separator cannot be a number'
-        assert color_type in [TYPE_HEX, TYPE_RGB], \
-            'color type must be "{0}" or "{1}"'.format(TYPE_HEX, TYPE_RGB)
-        assert hex_format in [HEX_FORMAT_NONE, HEX_FORMAT_LOWER, HEX_FORMAT_UPPER], \
+        assert color_type in [COLORINPUT_TYPE_HEX, COLORINPUT_TYPE_RGB], \
+            'color type must be "{0}" or "{1}"'.format(COLORINPUT_TYPE_HEX, COLORINPUT_TYPE_RGB)
+        assert hex_format in [COLORINPUT_HEX_FORMAT_NONE, COLORINPUT_HEX_FORMAT_LOWER, COLORINPUT_HEX_FORMAT_UPPER], \
             'invalid hex format mode, it must be "none", "lower" or "upper"'
 
         _maxchar = 0
         self._color_type = color_type.lower()
-        if self._color_type == TYPE_RGB:
+        if self._color_type == COLORINPUT_TYPE_RGB:
             _maxchar = 11  # RRR,GGG,BBB
             self._valid_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', input_separator]
-        elif self._color_type == TYPE_HEX:
+        elif self._color_type == COLORINPUT_TYPE_HEX:
             _maxchar = 7  # #XXYYZZ
             self._valid_chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', '0', '1', '2', '3', '#',
                                  '4', '5', '6', '7', '8', '9']
@@ -216,7 +225,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Disable parent callbacks
         self._apply_widget_update_callback = False
-        self._apply_widget_draw_callback = False
 
     def _apply_font(self) -> None:
         super(ColorInput, self)._apply_font()
@@ -224,7 +232,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # Compute the size of the underline
         if self._input_underline != '':
             max_width = 0  # Max expected width
-            if self._color_type == TYPE_RGB:
+            if self._color_type == COLORINPUT_TYPE_RGB:
                 max_width = self._font_render_string('255{0}255{0}255'.format(self._separator)).get_width()
             else:
                 for i in ('a', 'b', 'c', 'd', 'e', 'f'):
@@ -243,7 +251,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         super(ColorInput, self).clear()
         self._previsualization_surface = None
         self._auto_separator_pos = []
-        if self._color_type == TYPE_HEX:
+        if self._color_type == COLORINPUT_TYPE_HEX:
             super(ColorInput, self).set_value('#')
         self.change()
 
@@ -251,7 +259,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         if color is None:
             color = ''
         format_color = ''
-        if self._color_type == TYPE_RGB:
+        if self._color_type == COLORINPUT_TYPE_RGB:
             if color == '':
                 super(ColorInput, self).set_value('')
                 return
@@ -266,7 +274,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             assert 0 <= b <= 255, 'green color must be between 0 and 255'
             format_color = '{0}{3}{1}{3}{2}'.format(r, g, b, self._separator)
             self._auto_separator_pos = [0, 1]
-        elif self._color_type == TYPE_HEX:
+        elif self._color_type == COLORINPUT_TYPE_HEX:
             text = str(color).strip()
             if text == '':
                 format_color = '#'
@@ -307,13 +315,13 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert isinstance(as_string, bool)
         if as_string:
             return self._input_string
-        if self._color_type == TYPE_RGB:
+        if self._color_type == COLORINPUT_TYPE_RGB:
             color = self._input_string.split(self._separator)
             if len(color) == 3 and color[0] != '' and color[1] != '' and color[2] != '':
                 r, g, b = int(color[0]), int(color[1]), int(color[2])
                 if 0 <= r <= 255 and 0 <= g <= 255 and 0 <= g <= 255:
                     return r, g, b
-        elif self._color_type == TYPE_HEX:
+        elif self._color_type == COLORINPUT_TYPE_HEX:
             if len(self._input_string) == 7:
                 color = self._input_string[1:]
                 color = tuple(int(color[i:i + 2], 16) for i in (0, 2, 4))
@@ -331,8 +339,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             return False
         return True
 
-    def draw(self, surface: 'pygame.Surface') -> None:
-        super(ColorInput, self).draw(surface)  # This calls _render()
+    def _draw(self, surface: 'pygame.Surface') -> None:
+        super(ColorInput, self)._draw(surface)  # This calls _render()
 
         # Draw previsualization box
         if self._previsualization_surface is not None:
@@ -340,8 +348,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                    self._prev_width_factor * self._rect.height + self._rect.height / 10
             posy = self._rect.y
             surface.blit(self._previsualization_surface, (int(posx), int(posy)))
-
-        self.apply_draw_callbacks()
 
     def _render(self) -> Optional[bool]:
         render_text = super(ColorInput, self)._render()
@@ -380,11 +386,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         :return: None
         """
-        if self._color_type != TYPE_HEX or self._hex_format == HEX_FORMAT_NONE:
+        if self._color_type != COLORINPUT_TYPE_HEX or self._hex_format == COLORINPUT_HEX_FORMAT_NONE:
             return
-        elif self._hex_format == HEX_FORMAT_LOWER:
+        elif self._hex_format == COLORINPUT_HEX_FORMAT_LOWER:
             self._input_string = self._input_string.lower()
-        elif self._hex_format == HEX_FORMAT_UPPER:
+        elif self._hex_format == COLORINPUT_HEX_FORMAT_UPPER:
             self._input_string = self._input_string.upper()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
@@ -395,7 +401,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         disable_remove_separator = True
 
         key = ''  # Pressed key
-        if self._color_type == TYPE_RGB:
+        if self._color_type == COLORINPUT_TYPE_RGB:
             for event in events:
                 if event.type == pygame.KEYDOWN:
 
@@ -470,7 +476,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                                 if len(num) > 3:  # Number like 0XXX
                                     return False
 
-        elif self._color_type == TYPE_HEX:
+        elif self._color_type == COLORINPUT_TYPE_HEX:
             self._format_hex()
 
             for event in events:
@@ -502,7 +508,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         updated = super(ColorInput, self).update(events)
 
         # After
-        if self._color_type == TYPE_RGB:
+        if self._color_type == COLORINPUT_TYPE_RGB:
 
             total_separator = 0
             for ch in input_str:

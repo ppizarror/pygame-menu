@@ -53,14 +53,16 @@ __all__ = [
 
 ]
 
+import base64
 import os.path as path
 import math
+from io import BytesIO
 from pathlib import Path
 
 import pygame
 from pygame_menu.utils import assert_vector
 from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict
+    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -84,7 +86,10 @@ IMAGE_MODE_SIMPLE = 105  # Just draw the image without any effect
 
 # Other constants
 _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
-                        '.pbm', '.pgm', '.ppm', '.xpm']
+                        '.pbm', '.pgm', '.ppm', '.xpm', 'BytesIO', 'base64']
+
+# Custom types
+ColorChannelType = Literal['r', 'g', 'b']
 
 
 class BaseImage(object):
@@ -96,39 +101,52 @@ class BaseImage(object):
     :param drawing_mode: Drawing mode of the image
     :param drawing_offset: Offset of the image in drawing method
     :param load_from_file: Loads the image from the given path
+    :param frombase64: If ``True`` consider ``image_path`` as base64 string
     """
     _drawing_mode: int
     _drawing_offset: Tuple2IntType
     _extension: str
     _filename: str
-    _filepath: str
+    _filepath: Union[str, 'BytesIO']
+    _frombase64: bool
     _last_transform: Tuple[int, int, Optional['pygame.Surface']]
     _original_surface: 'pygame.Surface'
     _surface: 'pygame.Surface'
     smooth_scaling: bool
 
     def __init__(self,
-                 image_path: Union[str, Path],
+                 image_path: Union[str, 'Path', 'BytesIO'],
                  drawing_mode: int = IMAGE_MODE_FILL,
                  drawing_offset: Vector2NumberType = (0, 0),
-                 load_from_file: bool = True
+                 load_from_file: bool = True,
+                 frombase64: bool = False
                  ) -> None:
-        assert isinstance(image_path, (str, Path))
-        if isinstance(image_path, Path):
-            image_path = str(image_path)
+        assert isinstance(image_path, (str, Path, BytesIO)), 'path must be string, Path, or BytesIO object type'
         assert isinstance(load_from_file, bool)
+        assert isinstance(frombase64, bool)
 
-        _, file_extension = path.splitext(image_path)
-        file_extension = file_extension.lower()
+        if isinstance(image_path, (str, Path)):
+            image_path = str(image_path)
+            if not frombase64:
+                _, file_extension = path.splitext(image_path)
+                file_extension = file_extension.lower()
+                assert path.isfile(image_path), 'file {0} does not exist or could not be found, please ' \
+                                                'check if the path of the image is valid'.format(image_path)
+            else:
+                file_extension = 'base64'
+        else:
+            file_extension = 'BytesIO'
 
         assert file_extension in _VALID_IMAGE_FORMATS, \
             'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
-        assert path.isfile(image_path), 'file {0} does not exist or could not be found, please ' \
-                                        'check if the path of the image is valid'.format(image_path)
 
         self._filepath = image_path
-        self._filename = path.splitext(path.basename(image_path))[0]
+        if isinstance(self._filepath, str) and not frombase64:
+            self._filename = path.splitext(path.basename(image_path))[0]
+        else:
+            self._filename = ''
         self._extension = file_extension
+        self._frombase64 = frombase64
 
         # Drawing mode
         self._drawing_mode = 0
@@ -136,6 +154,10 @@ class BaseImage(object):
 
         self.set_drawing_mode(drawing_mode)
         self.set_drawing_offset(drawing_offset)
+
+        # Convert from bas64 to bytesio
+        if frombase64:
+            image_path = BytesIO(base64.b64decode(image_path))
 
         # Load the image and store as a surface
         if load_from_file:
@@ -173,14 +195,15 @@ class BaseImage(object):
             image_path=self._filepath,
             drawing_mode=self._drawing_mode,
             drawing_offset=self._drawing_offset,
-            load_from_file=False
+            load_from_file=False,
+            frombase64=self._frombase64
         )
         image._surface = self._surface.copy()
         image._original_surface = self._surface.copy()
         image.smooth_scaling = self.smooth_scaling
         return image
 
-    def get_path(self) -> str:
+    def get_path(self) -> Union[str, 'BytesIO']:
         """
         Return the image path.
 
@@ -227,13 +250,58 @@ class BaseImage(object):
         assert_vector(drawing_offset, 2)
         self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
 
+    def get_width(self) -> int:
+        """
+        Return image width in px.
+
+        :return: Image width
+        """
+        return int(self._surface.get_width())
+
+    def get_height(self) -> int:
+        """
+        Return image height in px.
+
+        :return: Image height
+        """
+        return int(self._surface.get_height())
+
     def get_size(self) -> Tuple2IntType:
         """
         Return the size in pixels of the image.
 
         :return: Image size tuple *(width, height)*
         """
-        return int(self._surface.get_width()), int(self._surface.get_height())
+        return self.get_width(), self.get_height()
+
+    def get_at(self, pos: Tuple2NumberType) -> Tuple4IntType:
+        """
+        Get the color from a certain position in image *(x, y)*.
+
+        :param pos: Position in *(x, y)*
+        :return: Color
+        """
+        assert_vector(pos, 2)
+        return self._surface.get_at(pos)
+
+    def set_at(self, pos: Tuple2NumberType, color: Union['pygame.Color', str, List[int], ColorType]) -> None:
+        """
+        Set the color of the *(x, y)* pixel.
+
+        :param pos: Position in *(x, y)*
+        :param color: Color
+        :return: None
+        """
+        assert_vector(pos, 2)
+        self._surface.set_at(pos, color)
+
+    def get_bitsize(self) -> int:
+        """
+        Return the image bitzise.
+
+        :return: Image bitsize
+        """
+        return self._surface.get_bitsize()
 
     def get_surface(self) -> 'pygame.Surface':
         """
@@ -287,7 +355,7 @@ class BaseImage(object):
         """
         self._original_surface = self._surface.copy()
 
-    def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple[int, int, int, int]]
+    def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple4IntType]
                              ) -> 'BaseImage':
         """
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
@@ -309,8 +377,7 @@ class BaseImage(object):
                 g = int(max(0, min(g, 255)))
                 b = int(max(0, min(b, 255)))
                 a = int(max(0, min(a, 255)))
-                # noinspection PyArgumentList
-                self._surface.set_at((x, y), pygame.Color(r, g, b, a))
+                self.set_at((x, y), pygame.Color(r, g, b, a))
         return self
 
     def to_bw(self) -> 'BaseImage':
@@ -320,7 +387,7 @@ class BaseImage(object):
         :return: Self reference
         """
 
-        def bw(r: int, g: int, b: int, a: int) -> Tuple[int, int, int, int]:
+        def bw(r: int, g: int, b: int, a: int) -> Tuple4IntType:
             """
             To black-white function.
             """
@@ -329,7 +396,11 @@ class BaseImage(object):
 
         return self.apply_image_function(image_function=bw)
 
-    def pick_channels(self, channels: Union[str, Tuple[str, ...], List[str]]) -> 'BaseImage':
+    def pick_channels(self, channels: Union[ColorChannelType,
+                                            Tuple[ColorChannelType, ColorChannelType],
+                                            Tuple[ColorChannelType, ColorChannelType, ColorChannelType],
+                                            List[ColorChannelType]]
+                      ) -> 'BaseImage':
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"`` (green) and ``"b"`` (blue),
         ``channels param`` is a list/tuple of channels (non empty).

@@ -34,6 +34,9 @@ from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optiona
 # noinspection PyUnresolvedReferences
 from typing import Dict, Type, TYPE_CHECKING  # lgtm [py/unused-import]
 
+# noinspection PyUnresolvedReferences
+from typing_extensions import Literal  # lgtm [py/unused-import]
+
 # Common types
 ArgsType = Optional[Sequence[Any]]
 CallbackType = Optional[Callable]
@@ -54,10 +57,12 @@ VectorType = Union[VectorTupleType, VectorListType]
 VectorIntType = Union[Tuple[int, ...], List[int]]
 
 # Tuples
-TupleIntType = Tuple[int, ...]
-Tuple2NumberType = Tuple[NumberType, NumberType]
+Tuple2BoolType = Tuple[bool, bool]
 Tuple2IntType = Tuple[int, int]
+Tuple2NumberType = Tuple[NumberType, NumberType]
+Tuple4IntType = Tuple[int, int, int, int]
 Tuple4Tuple2IntType = Tuple[Tuple2IntType, Tuple2IntType, Tuple2IntType, Tuple2IntType]
+TupleIntType = Tuple[int, ...]
 
 # Menu constructor types
 MenuColumnMaxWidthType = Optional[Union[int, float, VectorType]]

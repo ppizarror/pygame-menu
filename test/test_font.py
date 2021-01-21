@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['FontTest']
 
+from pathlib import Path
 import unittest
 from test._utils import MenuUtils
 
@@ -48,6 +49,15 @@ class FontTest(unittest.TestCase):
         self.assertEqual(font, pygame_menu.font.get_font(font, 5))
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('', 0))
         self.assertRaises(ValueError, lambda: MenuUtils.get_font('sys', 0))
+
+    def test_pathlib(self) -> None:
+        """
+        Test font load with pathlib.
+        """
+        pathfont = Path(pygame_menu.font.FONT_8BIT)
+        self.assertRaises(ValueError, lambda: pygame_menu.font.get_font(pathfont, 0))
+        font = pygame_menu.font.get_font(pathfont, 10)
+        assert font is not None
 
     def test_system_load(self) -> None:
         """
