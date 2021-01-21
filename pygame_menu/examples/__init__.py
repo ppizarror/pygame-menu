@@ -43,7 +43,8 @@ def create_example_window(
         window_size: Tuple[int, int],
         pygame_menu_icon: bool = True,
         init_pygame: bool = True,
-        center_window: bool = True
+        center_window: bool = True,
+        **kwargs
 ) -> 'pygame.Surface':
     """
     Set pygame window.
@@ -53,6 +54,7 @@ def create_example_window(
     :param pygame_menu_icon: Use pygame menu icon
     :param init_pygame: Init pygame
     :param center_window: Center the window
+    :param kwargs: Optional keyword arguments received by display set mode
     :return: Pygame surface from created display
     """
     assert len(title) > 0, 'title cannot be empty'
@@ -69,7 +71,10 @@ def create_example_window(
         os.environ['SDL_VIDEO_CENTERED'] = '1'
 
     # Create pygame screen and objects
-    surface = pygame.display.set_mode(window_size)
+    try:
+        surface = pygame.display.set_mode(window_size, **kwargs)
+    except TypeError:
+        surface = pygame.display.set_mode(window_size)
     pygame.display.set_caption(title)
 
     if pygame_menu_icon:
