@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Image']
 
+from io import BytesIO
 from pathlib import Path
 
 import pygame
@@ -49,7 +50,7 @@ class Image(Widget):
 
         This class redefines all widget transformations.
 
-    :param image_path: Path of the image or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
+    :param image_path: Path of the image, BytesIO object, or :py:class:`pygame_menu.baseimage.BaseImage` object. If :py:class:`pygame_menu.baseimage.BaseImage` object is provided drawing mode is not considered
     :param image_id: Image ID
     :param angle: Angle of the image in degrees (clockwise)
     :param onselect: Function when selecting the widget
@@ -59,14 +60,14 @@ class Image(Widget):
     _image: 'BaseImage'
 
     def __init__(self,
-                 image_path: Union[str, BaseImage, Path],
+                 image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
                  image_id: str = '',
                  angle: NumberType = 0,
                  onselect: CallbackType = None,
                  scale: Tuple2NumberType = (1, 1),
                  scale_smooth: bool = True
                  ) -> None:
-        assert isinstance(image_path, (str, Path, BaseImage))
+        assert isinstance(image_path, (str, Path, BaseImage, BytesIO))
         assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
         assert isinstance(scale_smooth, bool)

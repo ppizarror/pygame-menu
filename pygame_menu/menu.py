@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Menu']
 
+from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
 import os
@@ -56,7 +57,7 @@ from pygame_menu.sound import Sound
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
-    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Literal, \
+    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional
 
 # Joy events
@@ -882,7 +883,7 @@ class Menu(object):
         return widget
 
     def add_image(self,
-                  image_path: Union[str, 'Path', '_baseimage.BaseImage'],
+                  image_path: Union[str, 'Path', '_baseimage.BaseImage', 'BytesIO'],
                   angle: NumberType = 0,
                   image_id: str = '',
                   onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
