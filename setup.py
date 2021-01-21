@@ -82,7 +82,7 @@ setup(
         'doc': [
             'sphinx',
             'sphinx-rtd-theme',
-            'sphinx-autodoc-typehints >= 1.2.0'
+            'sphinx-autodoc-typehints>=1.2.0'
         ],
     },
     setup_requires=[
