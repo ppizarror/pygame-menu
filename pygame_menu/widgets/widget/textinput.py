@@ -894,28 +894,18 @@ class TextInput(Widget):
         if string == '':  # If string is empty cursor is not updated
             return
 
-        # Calculate size of each character
-        string_size = []
-        string_total_size = 0
-        for i in range(len(string)):
-            cs = self._font.size(string[i])[0]  # Char size
-            string_size.append(cs)
-            string_total_size += cs
-
         # Find the accumulated char size that gives the position of cursor
-        size_sum = 0
-        cursor_pos = len(string)
+        cursor_pos = 0
         for i in range(len(string)):
-            size_sum += string_size[i] / 2
-            if self._title_size + size_sum >= mousex:
-                cursor_pos = i
+            if self._font.size(self._title + string[0:i])[0] < mousex:
+                cursor_pos += 1
+            else:
                 break
-            size_sum += string_size[i] / 2
 
         # If text have ellipsis
         if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
             if self._ellipsis_left():
-                cursor_pos -= 3
+                cursor_pos -= len(self._ellipsis)
 
             # Check if user clicked on ellipsis
             if cursor_pos < 0 or cursor_pos > self._maxwidth:
