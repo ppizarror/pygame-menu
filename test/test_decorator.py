@@ -112,17 +112,38 @@ class DecoratorTest(unittest.TestCase):
         menu.draw(surface)
         self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))  # +1
 
-        # If widget changes padding, the center does not change if pad is equal, so the coord cache must be he same
+        # As some problems ocurr here, test the position of the widget before padding
+        w, h, (x, y) = btn.get_width(), btn.get_height(), btn.get_position()
+        self.assertEqual(menu.get_width(widget=True), w)
+        self.assertEqual(menu.get_height(widget=True), h)
+        wo = (menu.get_height(inner=True) - h) / 2
+        self.assertEqual(menu._widget_offset[1], int(wo))
+        self.assertEqual(btn.get_rect().center, (int(x + w / 2), int(y + h / 2)))
+
+        # If widget changes padding, the center does not change if pad is equal, so the coord cache must be the same
+        # menu.mainloop(surface)
         btn.set_padding(100)
         menu.draw(surface)
+
+        # Test sizing
+        self.assertEqual(menu.get_width(widget=True), w + 200)
+        self.assertEqual(menu.get_height(widget=True), h + 200)
+        wo = (menu.get_height(inner=True) - (h + 200)) / 2
+        self.assertEqual(menu._widget_offset[1], int(wo))
+        self.assertEqual(btn.get_rect().x, x - 100)
+        self.assertEqual(btn.get_rect().y, y - 100)
+        self.assertEqual(btn.get_rect().center, (int(x + w / 2), int(y + h / 2)))
+
         self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
 
         # Padding left is 0, then widget center changes
         btn.set_padding((100, 100, 100, 0))
         menu.draw(surface)
-        self.assertEqual(deco._coord_cache[imgdec], (350, 173, ((350, 173),)))
+        self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
         btn.set_padding((100, 0, 100, 0))
-        self.assertEqual(deco._coord_cache[imgdec], (350, 173, ((350, 173),)))
+        menu.draw(surface)
+        # menu.mainloop(surface)
+        self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
 
         # Text
         self.assertRaises(ValueError, lambda: deco.add_text(100, 200, 'nice', pygame_menu.font.FONT_8BIT, 0, color))
