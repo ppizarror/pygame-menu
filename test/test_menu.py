@@ -137,7 +137,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_menubar_widget().get_height(), 55)
 
         h = 41
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             h = 42
 
         self.assertEqual(btn.get_height(), h)
@@ -667,7 +667,7 @@ class MenuTest(unittest.TestCase):
         menu.add_vertical_margin(100)
         menu.add_label('Text #2')
         v = 36
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             v = 35
 
         self.assertEqual(menu._widget_offset[1], v)
@@ -1234,17 +1234,19 @@ class MenuTest(unittest.TestCase):
         button = menu.add_button('button', _some_event)
 
         # Check touch
-        click_pos = PygameUtils.get_middle_rect(button.get_rect())
-        menu.enable()
-        menu.update(PygameUtils.touch_click(click_pos[0], click_pos[1], normalize=False))  # Event must be normalized
-        self.assertFalse(event_val[0])
+        if hasattr(pygame, 'FINGERUP'):
+            click_pos = PygameUtils.get_middle_rect(button.get_rect())
+            menu.enable()
+            menu.update(
+                PygameUtils.touch_click(click_pos[0], click_pos[1], normalize=False))  # Event must be normalized
+            self.assertFalse(event_val[0])
 
-        menu.update(PygameUtils.touch_click(click_pos[0], click_pos[1], menu=menu))
-        self.assertTrue(event_val[0])
-        event_val[0] = False
-        self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
-        btn = menu.get_selected_widget()
-        self.assertTrue(btn.get_selected_time() >= 0)
+            menu.update(PygameUtils.touch_click(click_pos[0], click_pos[1], menu=menu))
+            self.assertTrue(event_val[0])
+            event_val[0] = False
+            self.assertEqual(menu.get_selected_widget().get_id(), button.get_id())
+            btn = menu.get_selected_widget()
+            self.assertTrue(btn.get_selected_time() >= 0)
 
     def test_reset_value(self) -> None:
         """
@@ -1343,7 +1345,7 @@ class MenuTest(unittest.TestCase):
         focus = menu._draw_focus_widget(surface, btn)
         # menu.mainloop(surface)
         self.assertEqual(len(focus), 4)
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 301), (0, 301)))
             self.assertEqual(focus[2], ((0, 302), (261, 302), (261, 353), (0, 353)))
             self.assertEqual(focus[3], ((337, 302), (600, 302), (600, 353), (337, 353)))
@@ -1478,7 +1480,7 @@ class MenuTest(unittest.TestCase):
         """
         Test events gather.
         """
-        if pygame.vernum.major < 2:
+        if pygame.vernum[0] < 2:
             return
         menu_top = MenuUtils.generic_menu()
         menu = MenuUtils.generic_menu(columns=4, rows=2, touchscreen=True,

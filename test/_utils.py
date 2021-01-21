@@ -51,6 +51,15 @@ W_SIZE = 600  # Window width
 pygame.init()
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 
+# Events compatibility with lower pygame versions
+FINGERDOWN = -1
+if hasattr(pygame, 'FINGERDOWN'):
+    FINGERDOWN = pygame.FINGERDOWN
+
+FINGERUP = -1
+if hasattr(pygame, 'FINGERUP'):
+    FINGERUP = pygame.FINGERUP
+
 
 def test_reset_surface() -> None:
     """
@@ -227,7 +236,7 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def touch_click(x: NumberType, y: NumberType, inlist: bool = True, evtype: int = pygame.FINGERUP,
+    def touch_click(x: NumberType, y: NumberType, inlist: bool = True, evtype: int = FINGERUP,
                     normalize: bool = True, menu: Union['pygame_menu.Menu', None] = None) -> EventListType:
         """
         Generate a mouse click event.
@@ -289,7 +298,7 @@ class PygameUtils(object):
             sar = menu.get_scrollarea().get_rect()
         else:
             sar = pygame.Rect(0, 0, 0, 0)
-        if evtype == pygame.FINGERDOWN or evtype == pygame.FINGERUP:
+        if evtype == FINGERDOWN or evtype == FINGERUP:
             assert menu is not None, 'menu cannot be none if FINGER'
             display = menu.get_window_size()
             return pygame.event.Event(evtype,

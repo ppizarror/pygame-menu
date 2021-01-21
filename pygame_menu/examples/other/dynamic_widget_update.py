@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['main']
 
 import sys
-import os
 import math
 from typing import Dict, Any
 
@@ -41,6 +40,7 @@ sys.path.insert(0, '../../../')
 
 import pygame
 import pygame_menu
+from pygame_menu.examples import create_example_window
 
 
 class App(object):
@@ -60,19 +60,13 @@ class App(object):
         """
         Constructor.
         """
-        # Start pygame
-        pygame.init()
-        os.environ['SDL_VIDEO_CENTERED'] = '1'
-        self.surface = pygame.display.set_mode((640, 480), flags=pygame.NOFRAME)
+        self.surface = create_example_window('Example - Dynamic Widget Update', (640, 480),
+                                             flags=pygame.NOFRAME)
 
         # Load image
         default_image = pygame_menu.baseimage.BaseImage(
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
         ).scale(0.2, 0.2)
-
-        # Set display title
-        pygame.display.set_caption('Example - Dynamic Widget Update')
-        pygame.display.set_icon(default_image.get_surface())
 
         # Set theme
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
