@@ -2152,23 +2152,27 @@ class Menu(object):
         if not self.is_enabled():
             return
 
-        self._background_function = bgfun
+        # Store background function and force render
+        self._current._background_function = bgfun
+        self._current._widgets_surface = None
 
         while True:
             self._current._clock.tick(fps_limit)
 
+            # Draw the menu
             self.draw(surface=surface, clear_surface=True)
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
             self.update(pygame.event.get())
 
-            if not self.is_enabled() or disable_loop:
-                self._background_function = None
-                return
-
             # Flip contents to screen
             pygame.display.flip()
+
+            # Menu closed or disabled
+            if not self.is_enabled() or disable_loop:
+                self._current._background_function = None
+                return
 
     def get_input_data(self, recursive=False):
         """
@@ -2299,13 +2303,16 @@ class Menu(object):
         if depth > 0:
             self.reset(depth)
 
-    def clear(self):
+    def clear(self, reset=True):
         """
         Full reset and clears all widgets.
 
+        :param reset: If ``True`` the menu full-resets
+        :type reset: bool
         :return: None
         """
-        self.full_reset()
+        if reset:
+            self.full_reset()
         del self._widgets[:]
         del self._submenus[:]
         self._index = 0
