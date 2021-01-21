@@ -34,6 +34,9 @@ __all__ = ['BaseImageTest']
 import unittest
 from test._utils import surface
 
+import io
+import base64
+
 import copy
 import pygame_menu
 from pygame_menu.baseimage import *
@@ -50,6 +53,64 @@ class BaseImageTest(unittest.TestCase):
         image = pygame_menu.baseimage.BaseImage(pathimg)
         image.draw(surface)
         self.assertEqual(image.get_path(), str(pathimg))
+
+    def test_from_bytesio(self) -> None:
+        """
+        Test image load from base64.
+        """
+        photo = 'R0lGODlhRgBGAPZUAAAAAAAAMwAAzAArAAArMwArzAAr/wBVmQBVzABV/zMAADMAMzMrADMrMzMrmTMrzDMr/zNVADNVMzNVZjNVmTN' \
+                'VzDNV/zOAADOAMzOAZjOA/zOqM2YAM2YrAGYrM2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmW' \
+                'aqzJkrAJkrM5lVAJlVM5lVZplVmZmAAJmAM5mAZpmAmZmAzJmqZpmqmZmqzJmq/5nVmZnVzMxVAMxVM8xVZsyAAMyAM8yAZsyqZsyqm' \
+                'cyqzMyq/8zVmczVzMzV/8z/zMz////VzP/V////zP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' \
+                'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' \
+                'AAAAAAAAAAAAAACH5BAUAAFQALAAAAABGAEYAAAf/gFOCg4SFhoeIiYZMOScoKI45SUxJk4qXmJmJSSghKCI4OSInOT1JTT05TJqsrY' \
+                'hMPCETnpCQIjyVSbiuvK1NjJ2jIiE5KI0ouJQ8PVC9zohPusWOndU4o5+4SaWrz96CULAhnsU4n9Tlnqc9SElP389NPKK1J8KkKOa0y' \
+                'JU9u/CumDByhI+GsWq0zOUgZ6oSDx5RAGriYcyTvVrHruUTkQ/SsUlJTEnMxClEpI7HikGq4fFRDXsn+jFpNjIRk1SOsJGz1wgURkfm' \
+                'UOrg0Y2VwElFX1WClRFlx6cKN1bsaBJFklYCmSB5mCypIIFcH467uLCjTxQGbXXEx/GRKk1O/2CZwGCChYm5JnIQHST3LgsMszgGTRm' \
+                'pcDm3J0idQOJVEZMTd+ni3XD3gokTqx5PvivrxM6pPY+9fGTwotUmRlvgtUvZbt2/JnDtkOx6Q4hhEzyOmsa7JTpcUlo9QWLigl3XsG' \
+                'HX3bEDMga7z03I6gSzNzHSj6713MsKCg/VdylHr+uXrnnk4U3Muk2QXtCgJ1hCmjHjSMTUEUxQJk/+eXTod/XnmgkSoLCeR4V9EpQxM' \
+                '8ggwwxIvKMJE8WRt99+A7Y2V3LhwcYeR6HxBBQkITT4YDs0XSIFD7DRVl5d4w0II392zXLgMVRVRIMHHjjoIITBXdKEX5ERSJcEdyG5' \
+                '4f9mx9HVpCchZLDbU3oJlEMHMfQoAxE2FNGYIVC0uFp5rh3JAoDKHZekBMNYxBExlkzBxAw89kgEETIwdgmF/ZHpVwZzgUDXCei12KI' \
+                'EnlXTSClByolDnVviicMS9yHCA1376RcghwNicB5eSa42gQizJMqEhIMkAUKPJsogxBFIQOHEIY8ViuhDzkUQ3X4SSABCr0ZuSh6iEk' \
+                'yAJBKHJDFDBzJ40CAROBwBRJyE8LDaeTtMwgMO4C1plwQYCIokpjOy4CuSEUiwA2qFzAkCDDzeWQQOPOzAAyFMNPciBotJ2IQTUcByg' \
+                'nk08lcwwf6Z0OggUOCQpQcfBDEDCEUW9dj/BQRj9iU4SziHV8LJIWzXCTg0x267PPQIAwgy2CDDXyzs8JW1xvG3Mb7fjUskedAJOqlA' \
+                'TjSRoiFR8LBsvEQE+9UOGG7Yw8JTBHyTQOFY+zGMLQrKQjL4JrIECB8gHSgGX73oWgsQ8RWLBA00EEJXPAy8qcf8ItGDZ/d+ZZNqLD9' \
+                'I8XNlO7kkXd0wEULbIACgeNuYyYkEueDOhURcITAQgARXybkxFC1gLEMMIFBsl+Y7Q1dCbF9JAEADJ0yggOKrZ14rXpa1sEoSqq9eeC' \
+                'JOQGbCDBxAfCbZsIjHoXhLTJFEA6s/lLviIXTD1V0n7BWFZ4oTgKyciXBuHAgdePC3/wlTxF26i5jxwDwAC6wPwACrzzoFFE9AAQQTj' \
+                'aq/OgMNuAPFyYZ4gr5MAIIY0CIE3lFTjJyEgR20wH2wawDbGtANAAoiIupjAJQccrPy4YAyiRoG+VrgnNrw7DkkXIDiJBCAxY2DggGD' \
+                '2hScsI0BBIAUIMCVDBmWr7kkxjOEcgIOYrQzYUlgAA2gQe4k8EKuMCFghCia61bHtglcpoNO6IGaqEO2IrWGXGqaS6/ctwAkDmCISGr' \
+                'B9lL3OtgxgC4yU0QUliC4xJiECZ0zmGpM+JxvMWAAZRzAHxtAF10l5gdMEBoTJqC4ARCAARIwDg8sWIhoaOoyb5LCCSQAHeWMJ/9A/e' \
+                'kVkpAEIFCi7SEgaMAAfPWtxiUiCisyIUzwWIL/8Cw9nvLWmWAkqCVl6i4kVCAIbJeIaPhjSZdJjCYlMzgWEAqURwqUzkB1yw2EEQO9c' \
+                'iAPhlYIVECAAsLijBRacDoN9QlmZSIQXpQkOONFBja9wgAPlqAVVHUzBQ8ogBU7aQIUPCE9WCsdMq8Jqk+GK0DRjI1WaLAxJlTAAAmo' \
+                'gOBGxjnJZGpXyNyAp5qkJvEgCQQzwEFIZ0CDGdwApDjAwRBukDlDNOGhCTCAFVcwIyFaBjnP3BldKJYeuYEqdCAIAQ2GSlKSErWk9MF' \
+                'fshAQUwQgQEAmqOi1Ogko2NAAB1f/DSoBt1qiktIApCCdWElFaoSRljQJlSKEEmBqAAREzjUCLKKaSjlWs2J1CDS4wVe7OtarFvWr9A' \
+                'EBDr4kBSD0AKKIrQAFMFACtEVhBzNyJ23ocgO8FoGogf1rWcv61dDdBaih8wBDD9GEFFQgpglIbVutKDMnmO+WJyRPibBKnxLZdqS07' \
+                'aySOBM6oe4grYN4aQEQi9oCUMAF20vCbNIEskuWiKQi9WtJgcokQ1lzB0yQXyGcoAMLEBe1BqhAD/jyAyJtwHcDCiMot+otInEKL9xZ' \
+                'hAUKgFoEQDSmFngaXwDaH9Xsxz9/MY+nPvVFnZInjoaQgg8egNoGQxQCPrAY/3hgRiRbFuyW12wSf+jCA3t+xQdsBW8C7JuAFLS0tJH' \
+                'DJXIYGDKo2tJF4nHlIJ7QhBGEeMT3fbAOgPCVHlQgBLUEVRiHXGH0aKqj5OGBdvkyAhITN8dNVQJfdACBCVjxoIMiF6D4palP8jNAv5' \
+                'TAE7vpY+Iy9b70hWgFKmjaBBRAohsmWEGpmbC6DOwvdMMABVLQg5MloQIh/i5iC5BfQlRguDGtwEzVi9BGA8qHnuolqGgqAftaYM1SK' \
+                'K2b6wtlNFfgxIdWLQIOoKS5HmeujU71eltnAAO82QcheeiTU0tf1Yb3BVGsgACIS+gCHMDKOtPQeDTEXLxM4AAIqHWrE/tw6bY2WLXg' \
+                'RYAFqDWFlwpa1CN+8wEcgAAKdLvbB6AABcId7nFz+wCHJrGD171pKMfUACnwShTm22kRfzfN9M23fYfrZBH729nuRuyZE/CA8XZT1s+' \
+                '+9rvX/V12uzvN9m6wst1sgWR5t60QhXi/ax3xWWdcxBB3MIn7jdgH5JebU+jBxd+N2GUPt+VpbjnLF+7yZbe65iyX+c1H0APgCkLlBr' \
+                'AAs5ktbWYHXdpBN7oFin5aoTcdARAYutCnHtEERJ3qQo960xPA81MdwgcqsEDYVaABEpD97CnQgArITgK1l33sYy+72+NudrGfXe1in' \
+                'zveVVABFSQBYIgIBAA7'
+        output = io.BytesIO(base64.b64decode(photo))
+        image = pygame_menu.baseimage.BaseImage(output)
+        self.assertEqual(image.get_width(), 70)
+        self.assertEqual(image.get_height(), 70)
+        self.assertEqual(image.get_bitsize(), 8)
+        self.assertEqual(image.get_size(), (70, 70))
+        self.assertEqual(image.get_path(), output)
+        self.assertEqual(image.get_extension(), 'BytesIO')
+
+        # Assemble new from base64 bs
+        image2 = pygame_menu.baseimage.BaseImage(photo, frombase64=True)
+        self.assertTrue(image.equals(image2))
+        self.assertEqual(image2.get_extension(), 'base64')
+
+        # Clone base64
+        image3 = image2.copy()
+        self.assertTrue(image2.equals(image3))
 
     def test_modes(self) -> None:
         """
