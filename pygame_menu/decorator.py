@@ -132,6 +132,11 @@ class Decorator(object):
         else:
             assert self._post_enabled, 'post decorators are not enabled'
             self._decor_post.append((decortype, decor_id, data))
+
+        # Force surface cache update
+        if hasattr(self._obj, 'force_menu_surface_cache_update'):
+            self._obj.force_menu_surface_cache_update()
+
         return decor_id
 
     def _add_none(self, prev: bool = True) -> str:
