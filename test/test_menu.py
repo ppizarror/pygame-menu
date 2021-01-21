@@ -78,15 +78,31 @@ class MenuTest(unittest.TestCase):
         menu.enable()
 
         # Add several widgets
+        add_decorator = True
         for i in range(30):
-            menu.add_button(title='epic', action=events.BACK)
+            btn = menu.add_button(title='epic', action=events.BACK)
+            btndeco = btn.get_decorator()
+            if add_decorator:
+                for j in range(100):
+                    btndeco.add_pixel(j * 10, j * 20, (10, 10, 150))
             menu.add_vertical_margin(margin=10)
             menu.add_label(title='epic test')
             menu.add_color_input(title='color', color_type='rgb', default=(234, 33, 2))
             menu.add_selector(title='epic selector', items=[('1', '3'), ('2', '4')])
             menu.add_text_input(title='text', default='the default text')
 
-        print(timeit.timeit(lambda: menu.draw(surface), number=100))
+        def draw_and_update() -> None:
+            """
+            Draw and updates the menu.
+            """
+            menu.draw(surface)
+            menu.update(pygame.event.get())
+
+        # (no decorator) no updates, 0.921
+        # (no decorator) updates, 0.860
+        # (no decorator) check len updates, 0.855
+        # (no decorator) with surface cache, 0.10737799999999886
+        print(timeit.timeit(lambda: draw_and_update(), number=100))
 
     def test_copy(self) -> None:
         """

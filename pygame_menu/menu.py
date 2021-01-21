@@ -146,9 +146,12 @@ class Menu(object):
     _widget_max_position: Tuple[int, int]
     _widget_min_position: Tuple[int, int]
     _widget_offset: List[int]
+    _widget_surface_cache_enabled: bool
+    _widget_surface_cache_need_update: bool
     _widgets: List['_widgets.core.Widget']
     _widgets_surface: Optional['pygame.Surface']
     _widgets_surface_last: Tuple[int, int, Optional['pygame.Surface']]
+    _widgets_surface_need_update: bool
     _width: int
     _window_size: Tuple[int, int]
 
@@ -486,13 +489,19 @@ class Menu(object):
         )
         self._menubar.set_controls(self._joystick, self._mouse, self._touchscreen)
 
-        # Scrolling area
+        # Widget surface
         self._widgets_surface = None
+        self._widgets_surface_need_update = False
         self._widgets_surface_last = (0, 0, None)
+
+        # Precache widgets surface draw
+        self._widget_surface_cache_enabled = True
+        self._widget_surface_cache_need_update = True
+
+        # Scrolling area
         menubar_height = self._menubar.get_height()
         if self._height - menubar_height <= 0:
             raise ValueError('menubar is higher than menu height. Try increasing the later value')
-
         self._scroll = ScrollArea(
             area_color=self._theme.background_color,
             area_height=self._height - menubar_height,
@@ -538,6 +547,12 @@ class Menu(object):
         """
         Set ``onclose`` callback.
 
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
         :param onclose: Onclose callback, it can be a function, an event, or None
         :return: None
         """
@@ -552,6 +567,12 @@ class Menu(object):
                     ) -> None:
         """
         Set ``onreset`` callback.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param onreset: Onreset callback, it can be a function or None
         :return: None
@@ -1215,6 +1236,21 @@ class Menu(object):
             This method only handles two states. If you need more states (for example 3, or 4),
             prefer using :py:class:`pygame_menu.widgets.ToggleSwitch` and add it as a generic
             widget.
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
 
         :param title: Title of the toggle switch
         :param default: Default state index of the switch; it can be ``0 (False)`` or ``1 (True)``
@@ -2275,13 +2311,13 @@ class Menu(object):
         :return: Width in px
         """
         if widget:
-            return self._widget_max_position[0] - self._widget_min_position[0]
+            return int(self._widget_max_position[0] - self._widget_min_position[0])
         if not inner:
-            return self._width
+            return int(self._width)
         vertical_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL)
         return int(self._width - vertical_scroll)
 
-    def get_height(self, inner: bool = False, widget: bool = False) -> NumberType:
+    def get_height(self, inner: bool = False, widget: bool = False) -> int:
         """
         Get menu height.
 
@@ -2296,9 +2332,9 @@ class Menu(object):
         :return: Height in px
         """
         if widget:
-            return self._widget_max_position[1] - self._widget_min_position[1]
+            return int(self._widget_max_position[1] - self._widget_min_position[1])
         if not inner:
-            return self._height
+            return int(self._height)
         horizontal_scroll = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
         return int(self._height - self._menubar.get_height() - horizontal_scroll)
 
@@ -2338,21 +2374,28 @@ class Menu(object):
         self._current._render()
         self._current._stats.render_public += 1
 
-    def _render(self) -> None:
+    def _render(self) -> bool:
         """
         Menu rendering.
 
-        :return: None
+        :return: ``True`` if the surface has changed (if it was None)
         """
         t0 = time.time()
+        changed = False
+
+        if self._widgets_surface_need_update:
+            self._widgets_surface = None
 
         if self._widgets_surface is None:
             if self._auto_centering:
                 self.center_content()
             self._build_widget_surface()
             self._stats.render_private += 1
+            self._widgets_surface_need_update = False
+            changed = True
 
         self._stats.total_rendering_time += time.time() - t0
+        return changed
 
     def draw(self, surface: 'pygame.Surface', clear_surface: bool = False) -> None:
         """
@@ -2371,10 +2414,10 @@ class Menu(object):
         assert isinstance(clear_surface, bool)
 
         if not self.is_enabled():
-            return self._current._runtime_errors.throw(self._runtime_errors.draw, 'menu is not enabled')
+            return self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
 
         # Render menu
-        self._current._render()
+        render = self._current._render()  # If True, the surface widget has changed, thus cache should change if enabled
 
         # Updates title
         if self._current._theme.title_updates_pygame_display and \
@@ -2395,26 +2438,30 @@ class Menu(object):
         # Draw the prev decorator
         self._current._decorator.draw_prev(surface)
 
-        # Fill the scrolling surface
-        self._current._widgets_surface.fill((255, 255, 255, 0))
+        # Draw widgets, update cache if enabled
+        if not self._current._widget_surface_cache_enabled or \
+                (render or self._current._widget_surface_cache_need_update):
 
-        # Draw widgets
-        selected_widget = None
-        for widget in self._current._widgets:
-            if not widget.visible:
-                continue
-            widget.draw(self._current._widgets_surface)
-            if widget.selected:
-                widget.draw_selection(self._current._widgets_surface)
-                selected_widget = widget
+            # Fill the scrolling surface (clear previous state)
+            self._current._widgets_surface.fill((255, 255, 255, 0))
+
+            # Iterate through widgets and draw them
+            for widget in self._current._widgets:
+                if not widget.visible:
+                    continue
+                widget.draw(self._current._widgets_surface)
+                if widget.selected:
+                    widget.draw_selection(self._current._widgets_surface)
+
+            self._current._stats.draw_update_cached += 1
+            self._current._widget_surface_cache_need_update = False
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
 
         # Draw focus on selected if the widget is active
-        self._current._draw_focus_widget(surface, selected_widget)
+        self._current._draw_focus_widget(surface, self._current.get_selected_widget())
         self._current._decorator.draw_post(surface)
-
         self._current._stats.draw += 1
 
     def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['_widgets.core.Widget']
@@ -2486,6 +2533,12 @@ class Menu(object):
         """
         Enables Menu (can check events and draw).
 
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
         :return: None
         """
         self._top._enabled = True
@@ -2493,6 +2546,12 @@ class Menu(object):
     def toggle(self) -> None:
         """
         Switch between enable/disable Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: None
         """
@@ -2517,6 +2576,12 @@ class Menu(object):
     def is_enabled(self) -> bool:
         """
         Return ``True`` if the Menu is enabled.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: Menu enabled status
         """
@@ -2599,12 +2664,14 @@ class Menu(object):
         :param events: Pygame events as a list
         :return: ``True`` if mainloop must be stopped
         """
+        # Check events
         assert isinstance(events, list)
 
         # If menu is not enabled
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.update, 'menu is not enabled')
             return False
+        self._current._stats.update += 1
 
         # Check if window closed
         for event in events:
@@ -2804,30 +2871,15 @@ class Menu(object):
                         updated = True  # It is updated
                         break
 
-        # Check if the Menu widgets size changed, if True, updates the surface
-        # forcing the rendering of all widgets
-        menu_surface_needs_update = False
-        if len(self._current._widgets) > 0:
-            for widget in self._current._widgets:
-                menu_surface_needs_update = menu_surface_needs_update or widget.surface_needs_update()
-        if menu_surface_needs_update:
-            self._current._widgets_surface = None
+        # If cache is enabled, always force a rendering (user may have have changed any status)
+        if self._current._widget_surface_cache_enabled and updated:
+            self._current._widget_surface_cache_need_update = True
 
         # A widget has closed the Menu
         if not self.is_enabled():
             updated = True
 
-        self._current._stats.update += 1
-
         return updated
-
-    def get_decorator(self) -> 'Decorator':
-        """
-        Return the Menu decorator API.
-
-        :return: Decorator API
-        """
-        return self._decorator
 
     def mainloop(self,
                  surface: 'pygame.Surface',
@@ -2879,25 +2931,28 @@ class Menu(object):
         if not self.is_enabled():
             return self._current._runtime_errors.throw(self._current._runtime_errors.mainloop, 'menu is not enabled')
 
-        # Store background function
+        # Store background function and force render
         self._current._background_function = bgfun
+        self._current._widgets_surface = None
 
         while True:
             self._current._stats.loop += 1
             self._current._clock.tick(fps_limit)
 
+            # Draw the menu
             self.draw(surface=surface, clear_surface=True)
 
             # If loop, gather events by Menu and draw the background function, if this method
             # returns true then the mainloop will break
             self.update(pygame.event.get())
 
+            # Flip contents to screen
+            pygame.display.flip()
+
+            # Menu closed or disabled
             if not self.is_enabled() or disable_loop:
                 self._current._background_function = None
                 return
-
-            # Flip contents to screen
-            pygame.display.flip()
 
     def get_input_data(self, recursive: bool = False) -> Dict[str, Any]:
         """
@@ -2954,6 +3009,12 @@ class Menu(object):
     def get_rect(self) -> 'pygame.Rect':
         """
         Return the Menu rect.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :return: Rect
         """
@@ -3497,6 +3558,20 @@ class Menu(object):
             raise IndexError('attribute "{0}" does not exists on menu'.format(key))
         del self._attributes[key]
 
+    def get_decorator(self) -> 'Decorator':
+        """
+        Return the Menu decorator API.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :return: Decorator API
+        """
+        return self._decorator
+
 
 class _MenuStats(object):
     """
@@ -3535,6 +3610,7 @@ class _MenuStats(object):
         # Other
         self.clear = 0
         self.draw = 0
+        self.draw_update_cached = 0
         self.loop = 0
         self.reset = 0
         self.select = 0
