@@ -321,7 +321,7 @@ class ToggleSwitch(Widget):
         self._rect.width += self._switch_margin[0] + self._switch_width
 
         # Finals
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def _left(self) -> None:
         """

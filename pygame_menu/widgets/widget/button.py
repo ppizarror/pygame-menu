@@ -135,7 +135,7 @@ class Button(Widget):
         self._surface = self._render_string(self._title, self.get_font_color_status())
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         if self.readonly:

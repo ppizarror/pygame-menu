@@ -71,7 +71,7 @@ class Label(Widget):
         self._surface = self._render_string(self._title, self._font_color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

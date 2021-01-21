@@ -136,7 +136,7 @@ class Image(Widget):
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._render_hash_changed(self.visible):
             return True
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         return False

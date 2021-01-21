@@ -101,7 +101,6 @@ class Widget(object):
     _max_height: List[Optional[bool]]
     _max_width: List[Optional[bool]]
     _menu: Optional['Menu']
-    _menu_surface_needs_update: bool
     _mouse_enabled: bool
     _on_change: CallbackType
     _on_return: CallbackType
@@ -200,10 +199,6 @@ class Widget(object):
         # Menu reference
         self._menu = None
 
-        # If this is True then the widget forces the Menu to update because the
-        # widget render has changed
-        self._menu_surface_needs_update = False
-
         # Modified in set_font() method
         self._font = None
         self._font_antialias = True
@@ -272,18 +267,52 @@ class Widget(object):
         """
         Forces widget render.
 
+        .. note::
+
+            If this method is used it's not necesary to call Widget methods
+            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update` and
+            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_cache_update`.
+            As `render` should force Menu render, updating both surface and cache.
+
         :return: Render return value
         """
         self._last_render_hash = 0
         return self._render()
 
-    def _force_menu_surface_update(self) -> None:
+    def force_menu_surface_update(self) -> None:
         """
         Forces menu surface update.
 
+        ..note ::
+
+            This method is expensive, as menu surface update forces re-rendering of
+            all widgets (because them can change in size, position, etc...).
+
         :return: None
         """
-        self._menu_surface_needs_update = True
+        if self._menu is not None:
+            # Don't set _menu._widgets_surface to None because if so
+            # in the drawing process it may destroy the surface and raising
+            # an Error. The usage of _widgets_surface_need_update is only on
+            # Menu _render()
+            self._menu._widgets_surface_need_update = True
+
+    def force_menu_surface_cache_update(self) -> None:
+        """
+        Forces menu surface cache to update.
+
+        .. note::
+
+            This method only updates the surface cache, without forcing re-rendering
+            of all Menu widget as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            does.
+
+        :return: None
+        """
+        if self._menu is not None:
+            # Menu _widget_surface_cache_need_update property is only accessed on
+            # draw method. This does not set _menu._widgets_surface to None
+            self._menu._widget_surface_cache_need_update = True
 
     def render(self) -> Optional[bool]:
         """
@@ -316,6 +345,11 @@ class Widget(object):
 
             Before rendering, check out if the widget font/title/values are
             set. If not, it is probable that a zero-size surface is set.
+
+        .. note::
+
+            Render methods should call :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update`
+            to force Menu to update the drawing surface.
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         """
@@ -948,24 +982,6 @@ class Widget(object):
                                        int(self._padding[1] * pad_width),
                                        int(self._padding[2] * pad_height),
                                        int(self._padding[3] * pad_width))
-
-    def surface_needs_update(self) -> bool:
-        """
-        Checks if the widget width/height has changed because events. If so, return ``True`` and
-        set the status of the widget (menu widget position needs update) as ``False``. This method
-        is used by :py:meth:`pygame_menu.Menu.update`
-
-        .. note::
-
-            Generally, widget :py:meth:`pygame_menu.widgets.core.Widget._render` method set
-            ``_menu_surface_needs_update`` as ``True`` after rendering has finished.
-
-        :return: ``True`` if the widget position has changed by events after the rendering.
-        """
-        if self._menu_surface_needs_update:
-            self._menu_surface_needs_update = False
-            return True
-        return False
 
     def get_font_color_status(self) -> ColorType:
         """
@@ -1649,6 +1665,8 @@ class Widget(object):
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         """
         Update according to the given events list and fire the callbacks.
+        This method must return ``True`` if it updated (the internal variables
+        changed during user input).
 
         :param events: List/Tuple of pygame events
         :return: ``True`` if updated
@@ -1792,7 +1810,7 @@ class Widget(object):
         """
         assert isinstance(float_status, bool)
         self.floating = float_status
-        self._force_menu_surface_update()
+        self.force_menu_surface_update()
 
     def show(self) -> None:
         """
