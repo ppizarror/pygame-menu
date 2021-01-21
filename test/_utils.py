@@ -52,6 +52,15 @@ W_SIZE = 600  # Window width
 pygame.init()
 surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 
+# Events compatibility with lower pygame versions
+FINGERDOWN = -1
+if hasattr(pygame, 'FINGERDOWN'):
+    FINGERDOWN = pygame.FINGERDOWN
+
+FINGERUP = -1
+if hasattr(pygame, 'FINGERUP'):
+    FINGERUP = pygame.FINGERUP
+
 
 def test_reset_surface():
     """
@@ -235,7 +244,7 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def touch_click(x, y, inlist=True, evtype=pygame.FINGERUP, normalize=True, menu=None):
+    def touch_click(x, y, inlist=True, evtype=FINGERUP, normalize=True, menu=None):
         """
         Generate a mouse click event.
 

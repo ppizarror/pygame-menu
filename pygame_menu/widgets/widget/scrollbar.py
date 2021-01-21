@@ -50,9 +50,13 @@ class ScrollBar(Widget):
         c. The page control is the area over which the slider is dragged (the scroll bar's
            background). Clicking here moves the scroll bar towards the click by one "page".
 
-    .. warning:: Arrows are not yet implemented.
+    .. note::
 
-    .. note:: This widget only accepts translation transformation.
+        This widget only accepts translation transformation.
+
+    .. warning::
+
+        Arrows are not yet implemented.
 
     :param length: Length of the page control
     :type length: int

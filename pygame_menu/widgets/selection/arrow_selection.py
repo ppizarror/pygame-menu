@@ -101,7 +101,7 @@ class ArrowSelection(Selection):
         :type c: tuple
         :return: None
         """
-        SELECTOR_CLOCK.tick()
+        SELECTOR_CLOCK.tick(60)
         self._blink_time += SELECTOR_CLOCK.get_time()
 
         # Switch the blinking if the time exceeded or the widget has changed

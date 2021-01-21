@@ -57,7 +57,9 @@ class MenuBar(Widget):
     """
     MenuBar widget.
 
-    .. note:: This widget does not accept scale/resize transformation.
+    .. note::
+
+        This widget does not accept scale/resize transformation.
 
     :param title: Title of the menubar
     :type title: str

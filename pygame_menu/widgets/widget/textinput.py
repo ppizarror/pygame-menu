@@ -80,7 +80,9 @@ class TextInput(Widget):
     """
     Text input widget.
 
-    .. note:: This widget only accepts vertical flip and translation transformations.
+    .. note::
+
+        This widget only accepts vertical flip and translation transformations.
 
     :param title: Text input title
     :type title: str
@@ -191,7 +193,7 @@ class TextInput(Widget):
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
-        if pygame.vernum.major == 2:
+        if pygame.vernum[0] == 2:
             assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
             assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
@@ -252,7 +254,7 @@ class TextInput(Widget):
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None  # type: (pygame.Surface,None)
         self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
-        self._cursor_switch_ms = 500.0  # type: float
+        self._cursor_switch_ms = 1000.0  # type: float
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # History of editions
@@ -375,12 +377,11 @@ class TextInput(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
-        self._clock.tick()
 
         # Draw background color
         self._fill_background_color(surface)
 
-        if pygame.vernum.major == 2:
+        if pygame.vernum[0] == 2:
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
                 surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
@@ -895,28 +896,18 @@ class TextInput(Widget):
         if string == '':  # If string is empty cursor is not updated
             return
 
-        # Calculate size of each character
-        string_size = []
-        string_total_size = 0
-        for i in range(len(string)):
-            cs = self._font.size(string[i])[0]  # Char size
-            string_size.append(cs)
-            string_total_size += cs
-
         # Find the accumulated char size that gives the position of cursor
-        size_sum = 0
-        cursor_pos = len(string)
+        cursor_pos = 0
         for i in range(len(string)):
-            size_sum += string_size[i] / 2
-            if self._title_size + size_sum >= mousex:
-                cursor_pos = i
+            if self._font.size(self._title + string[0:i])[0] < mousex:
+                cursor_pos += 1
+            else:
                 break
-            size_sum += string_size[i] / 2
 
         # If text have ellipsis
         if self._maxwidth != 0 and len(self._input_string) > self._maxwidth:
             if self._ellipsis_left():
-                cursor_pos -= 3
+                cursor_pos -= len(self._ellipsis)
 
             # Check if user clicked on ellipsis
             if cursor_pos < 0 or cursor_pos > self._maxwidth:
@@ -1476,6 +1467,8 @@ class TextInput(Widget):
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
+        self._clock.tick(60)
+
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
 

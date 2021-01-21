@@ -289,7 +289,9 @@ class BaseImage(object):
         Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
         colors and must return the same values. The color pixel will be overriden by the function output.
 
-        .. note:: See ``BaseImage.to_bw()`` method as an example.
+        .. note::
+
+            See ``BaseImage.to_bw()`` method as an example.
 
         :param image_function: Color function, takes colors as ``image_function=myfunc(r, g, b, a)``. Returns the same tuple *(r,g,b,a)*
         :type image_function: callable

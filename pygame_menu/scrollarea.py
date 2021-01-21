@@ -54,7 +54,7 @@ class ScrollArea(object):
     :type area_height: int, float
     :param area_color: Background color, it can be a color or an image
     :type area_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-    :param extend_x: Px to extend the surface in yxaxis (px) from left
+    :param extend_x: Px to extend the surface in x axis (px) from left
     :type extend_x: int, float
     :param extend_y: Px to extend the surface in y axis (px) from top
     :type extend_y: int, float
