@@ -39,6 +39,7 @@ import pygame_menu.font as _fonts
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
+import warnings
 from math import pi
 from pathlib import Path
 from uuid import uuid4
@@ -53,23 +54,24 @@ if TYPE_CHECKING:
     from pygame_menu.widgets.core.widget import Widget
 
 # Decoration constants
-DECORATION_ARC = 2020
-DECORATION_BASEIMAGE = 2004
-DECORATION_BEZIER = 2015
-DECORATION_CALLABLE = 2007
-DECORATION_CIRCLE = 2002
-DECORATION_ELLIPSE = 2006
-DECORATION_LINE = 2008
-DECORATION_NONE = 2001
-DECORATION_PIE = 2012
-DECORATION_PIXEL = 2009
-DECORATION_POLYGON = 2000
-DECORATION_RECT = 2017
-DECORATION_SURFACE = 2003
-DECORATION_TEXT = 2005
-DECORATION_TEXTURE_POLYGON = 2010
+DECORATION_ARC = 2000
+DECORATION_BASEIMAGE = 2001
+DECORATION_BEZIER = 2002
+DECORATION_CALLABLE = 2003
+DECORATION_CIRCLE = 2004
+DECORATION_ELLIPSE = 2005
+DECORATION_LINE = 2006
+DECORATION_NONE = 2007
+DECORATION_PIE = 2008
+DECORATION_PIXEL = 209
+DECORATION_POLYGON = 2010
+DECORATION_RECT = 2011
+DECORATION_SURFACE = 2012
+DECORATION_TEXT = 2013
+DECORATION_TEXTURE_POLYGON = 2014
 
-PI2 = 2 * pi
+DECOR_TYPE_PREV = 'prev'
+DECOR_TYPE_POST = 'post'
 
 
 class Decorator(object):
@@ -78,11 +80,14 @@ class Decorator(object):
     """
     _coord_cache: Dict[
         str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
-    _decor_post: List[Tuple[int, str, Any]]  # type, id, data
-    _decor_prev: List[Tuple[int, str, Any]]  # type, id, data
+    _cache_last_status: Dict[str, Tuple[int, int, int, int, int, int]]
+    _cache_needs_update: Dict[str, bool]
+    _cache_surface: Dict[str, Optional['pygame.Surface']]
+    _decor: Dict[str, List[Tuple[int, str, Any]]]  # type, id, data
+    _obj: Union['Widget', 'ScrollArea', 'Menu']
     _post_enabled: bool
     _prev_enabled: bool
-    _obj: Union['Widget', 'ScrollArea', 'Menu']
+    cache: bool
 
     def __init__(self, obj: Union['Widget', 'ScrollArea', 'Menu']) -> None:
         """
@@ -92,12 +97,30 @@ class Decorator(object):
         :type obj: :py:class:`pygame_menu.widgets.core.Widget`, :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.scrollarea.ScrollArea`
         """
         self._coord_cache = {}
-        self._decor_post = []
-        self._decor_prev = []
+        self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
         self._obj = obj
 
         self._prev_enabled = True
         self._post_enabled = True
+
+        # If True, enables surface cache. This is intended to be used if there's many
+        # decorations in the object (for example, 400). This is an expensive method anyway
+        # because surface is called many times. See the following rendering times to guess
+        # how much does a decoration takes time to render 1000 times (object: button)
+        # 100 decoration, no cache:     0.214
+        # 100 decoration, with cache:   0.646
+        # 300 decoration, no cache:     0.581
+        # 300 decoration, with cache:   0.606
+        # 1000 decoration, no cache:    2.228
+        # 1000 decoration, with cache:  0.615
+        # 10000 decoration, no cache:   20.430
+        # 10000 decoration, with cache: 0.599
+        self.cache = False
+
+        # Previous (surf.width, surf.height, rect.x, rect.y, rect.centerx, rect.centery
+        self._cache_last_status = {DECOR_TYPE_PREV: (0, 0, 0, 0, 0, 0), DECOR_TYPE_POST: (0, 0, 0, 0, 0, 0)}
+        self._cache_needs_update = {DECOR_TYPE_PREV: False, DECOR_TYPE_POST: False}
+        self._cache_surface = {DECOR_TYPE_PREV: None, DECOR_TYPE_POST: None}
 
     def __copy__(self) -> 'Decorator':
         """
@@ -126,16 +149,24 @@ class Decorator(object):
         :return: ID of the decoration
         """
         decor_id = str(uuid4())
+
         if prev:
             assert self._prev_enabled, 'prev decorators are not enabled'
-            self._decor_prev.append((decortype, decor_id, data))
+            self._decor[DECOR_TYPE_PREV].append((decortype, decor_id, data))
         else:
             assert self._post_enabled, 'post decorators are not enabled'
-            self._decor_post.append((decortype, decor_id, data))
+            self._decor[DECOR_TYPE_POST].append((decortype, decor_id, data))
 
         # Force surface cache update
         if hasattr(self._obj, 'force_menu_surface_cache_update'):
             self._obj.force_menu_surface_cache_update()
+
+        # Forces cache update
+        self._cache_needs_update[DECOR_TYPE_PREV if prev else DECOR_TYPE_POST] = True
+
+        # Check sizes
+        if self._total_decor() >= 300 and not self.cache:
+            warnings.warn('cache is recommended if the total number of decorations exceeds 300')
 
         return decor_id
 
@@ -147,6 +178,27 @@ class Decorator(object):
         :return: ID of the decoration
         """
         return self._add_decor(DECORATION_NONE, prev, None)
+
+    def _total_decor(self) -> int:
+        """
+        Return total number of decorations.
+
+        :return: None
+        """
+        return len(self._decor[DECOR_TYPE_PREV]) + len(self._decor[DECOR_TYPE_POST])
+
+    def force_cache_update(self, prev: Optional[bool] = None) -> None:
+        """
+        Forces cache update.
+
+        :param prev: Update the previous or post surface cache. If ``None`` forces both caches to update
+        :return: None
+        """
+        if prev is None:
+            self.force_cache_update(True)
+            self.force_cache_update(False)
+            return
+        self._cache_needs_update[DECOR_TYPE_PREV if prev else DECOR_TYPE_POST] = True
 
     def add_polygon(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]], color: ColorType,
                     filled: bool, width: int = 0, prev: bool = True, gfx: bool = True) -> str:
@@ -291,7 +343,13 @@ class Decorator(object):
     def add_baseimage(self, x: NumberType, y: NumberType, image: '_baseimage.BaseImage',
                       prev: bool = True, centered: bool = False) -> str:
         """
-        Adds a BaseImage object.
+        Adds a :py:class:`pygame_menu.baseimage.BaseImage` object.
+
+        .. note::
+
+            If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
+            set ``decorator.cache=False`` or force cache manually by calling
+            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -393,6 +451,12 @@ class Decorator(object):
         """
         Add a callable method. The function receives the surface and the object.
 
+        .. note::
+
+            If your callable function changes over time set ``decorator.cache=False``
+            or force cache manually by calling Decorator method
+            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`.
+
         :param fun: Function
         :param prev: If ``True`` draw previous the object, else draws post
         :return: ID of the decoration
@@ -405,6 +469,12 @@ class Decorator(object):
                              tx: int = 0, ty: int = 0, prev: bool = True) -> str:
         """
         Add a textured polygon.
+
+        .. note::
+
+            If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
+            set ``decorator.cache=False`` or force cache manually by calling
+            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`.
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
@@ -480,14 +550,12 @@ class Decorator(object):
         assert isinstance(decorid, str)
         if decorid in self._coord_cache.keys():
             del self._coord_cache[decorid]
-        for d in self._decor_prev:
-            if d[1] == decorid:
-                self._decor_prev.remove(d)
-                return
-        for d in self._decor_post:
-            if d[1] == decorid:
-                self._decor_prev.remove(d)
-                return
+        for p in (DECOR_TYPE_PREV, DECOR_TYPE_POST):
+            for d in self._decor[p]:
+                if d[1] == decorid:
+                    self._decor[p].remove(d)
+                    self._cache_needs_update[p] = True
+                    return
         raise IndexError('decoration ID "{0}" was not found'.format(decorid))
 
     def remove_all(self, prev: Optional[bool] = None) -> None:
@@ -498,13 +566,45 @@ class Decorator(object):
         :return: None
         """
         if prev is None:
-            self._decor_prev = []
-            self._decor_post = []
+            self.remove_all(True)
+            self.remove_all(False)
             return
-        if prev:
-            self._decor_prev = []
-        else:
-            self._decor_post = []
+        p = DECOR_TYPE_PREV if prev else DECOR_TYPE_POST
+        self._cache_needs_update[p] = False
+        del self._decor[p]
+        self._decor[p] = []
+
+    def _draw_assemble_cache(self, prev: str, deco: List[Tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
+        """
+        Draw cache, assemble if needed.
+
+        :param prev: Mode
+        :param deco: Decoration lists
+        :param surface: Source surface to draw from
+        :return: None
+        """
+        if len(deco) == 0:
+            return
+
+        w, h = surface.get_size()
+        rect = self._obj.get_rect()
+
+        # If needs update, or the surface size changed, or the rect position changed
+        prev_surf_changed = self._cache_last_status[prev][0] != w or self._cache_last_status[prev][1] != h
+        prev_rect_changed = self._cache_last_status[prev][2] != rect.x or \
+                            self._cache_last_status[prev][3] != rect.y or \
+                            self._cache_last_status[prev][4] != rect.width or \
+                            self._cache_last_status[prev][5] != rect.height
+
+        if self._cache_needs_update[prev] or prev_surf_changed or prev_rect_changed or \
+                self._cache_surface[prev] is None:
+            self._cache_last_status[prev] = (w, h, rect.x, rect.y, rect.width, rect.height)
+            del self._cache_surface[prev]
+            self._cache_surface[prev] = make_surface(surface.get_width(), surface.get_height())
+            self._draw(deco, self._cache_surface[prev])
+            self._cache_needs_update[prev] = False
+
+        surface.blit(self._cache_surface[prev], (0, 0))
 
     def draw_prev(self, surface: 'pygame.Surface') -> None:
         """
@@ -513,7 +613,10 @@ class Decorator(object):
         :param surface: Pygame surface
         :return: None
         """
-        self._draw(self._decor_prev, surface)
+        if not self.cache:
+            self._draw(self._decor[DECOR_TYPE_PREV], surface)
+        else:
+            self._draw_assemble_cache(DECOR_TYPE_PREV, self._decor[DECOR_TYPE_PREV], surface)
 
     def draw_post(self, surface: 'pygame.Surface') -> None:
         """
@@ -522,7 +625,10 @@ class Decorator(object):
         :param surface: Pygame surface
         :return: None
         """
-        self._draw(self._decor_post, surface)
+        if not self.cache:
+            self._draw(self._decor[DECOR_TYPE_POST], surface)
+        else:
+            self._draw_assemble_cache(DECOR_TYPE_POST, self._decor[DECOR_TYPE_POST], surface)
 
     def _draw(self, deco: List[Tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
         """
@@ -600,7 +706,7 @@ class Decorator(object):
                 if gfx:
                     gfxdraw.arc(surface, x, y, r, ia, fa, color)
                 else:
-                    pydraw.arc(surface, color, rectarc, ia / PI2, fa / PI2, width)
+                    pydraw.arc(surface, color, rectarc, ia / (2 * pi), fa / (2 * pi), width)
 
             elif dtype == DECORATION_PIE:
                 points, r, ia, fa, color = data
@@ -652,8 +758,12 @@ class Decorator(object):
         cx, cy = rect.centerx, rect.centery  # Center position
 
         # Position of the rect has not changed and exists
-        if decoid in self._coord_cache.keys() and \
-                self._coord_cache[decoid][0] == cx and self._coord_cache[decoid][1] == cy:
+        decoid_exists = False
+        try:
+            decoid_exists = self._coord_cache[decoid] is not None
+        except KeyError:
+            pass
+        if decoid_exists and self._coord_cache[decoid][0] == cx and self._coord_cache[decoid][1] == cy:
             return self._coord_cache[decoid][2]
 
         # Update the position

@@ -32,13 +32,105 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['DecoratorTest']
 
 import copy
+import timeit
 import unittest
 import pygame
 import pygame_menu
 from test._utils import MenuUtils, surface
 
+# Configure the tests
+TEST_TIME_DRAW = False
+
 
 class DecoratorTest(unittest.TestCase):
+
+    @staticmethod
+    def test_time_draw() -> None:
+        """
+        This test the time that takes to draw the decorator surface with several decorations.
+        """
+        if not TEST_TIME_DRAW:
+            return
+        widg = pygame_menu.widgets.NoneWidget()
+        deco = widg.get_decorator()
+        deco.cache = True
+        for i in range(10000):
+            deco.add_pixel(1, 2, (0, 0, 0))
+
+        # (100) no cache, 0.214
+        # (100) with cache, 0.646
+        # (250) no cache, 0.467
+        # (250) with cache, 0.594
+        # (300) no cache, 0.581
+        # (300) with cache, 0.606
+        # (400) no cache, 0.82
+        # (400) with cache, 0.638
+        # (500) no cache, 1.087
+        # (500) with cache, 0.601
+        # (750) no cache, 1.484
+        # (750) with cache, 0.664
+        # (1.000) no cache, 2.228
+        # (1.000) with cache, 0.615
+        # (10.000) no cache, 20.430
+        # (10.000) with cache, 0.599
+        print('Total decorations', deco._total_decor(), 'Cache', deco.cache)
+        total_tests = 10
+        t = 0  # total time
+        for i in range(total_tests):
+            ti = timeit.timeit(lambda: widg.draw(surface), number=1000)
+            print('Test', i, 'time:', ti)
+            t += ti
+        print('Average time:', round(t / total_tests, 3))
+
+    def test_cache(self) -> None:
+        """
+        Test cache.
+        """
+        widg = pygame_menu.widgets.NoneWidget()
+        deco = widg.get_decorator()
+        deco.cache = True
+
+        # Prev
+        self.assertEqual(deco._cache_surface['prev'], None)
+        self.assertEqual(deco._cache_surface['post'], None)
+        deco.add_circle(1, 1, 1, (0, 0, 0), True)
+        self.assertEqual(deco._cache_surface['prev'], None)
+        self.assertEqual(deco._cache_surface['post'], None)
+        deco.draw_prev(surface)
+        self.assertNotEqual(deco._cache_surface['prev'], None)
+        self.assertEqual(deco._cache_surface['post'], None)
+        p = deco._cache_surface['prev']
+        deco.add_circle(1, 1, 1, (0, 0, 0), True)
+        deco.draw_prev(surface)
+        self.assertNotEqual(deco._cache_surface['prev'], p)
+        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertFalse(deco._cache_needs_update['prev'])
+        self.assertFalse(deco._cache_needs_update['post'])
+        deco.add_circle(1, 1, 1, (0, 0, 0), True)
+        self.assertTrue(deco._cache_needs_update['prev'])
+        self.assertFalse(deco._cache_needs_update['post'])
+        deco.draw_prev(surface)
+        self.assertFalse(deco._cache_needs_update['prev'])
+        self.assertFalse(deco._cache_needs_update['post'])
+        self.assertEqual(deco._total_decor(), 3)
+        deco.remove_all()
+        self.assertEqual(deco._total_decor(), 0)
+        self.assertFalse(deco._cache_needs_update['prev'])
+        self.assertFalse(deco._cache_needs_update['post'])
+        deco.draw_prev(surface)
+        self.assertFalse(deco._cache_needs_update['prev'])
+        self.assertFalse(deco._cache_needs_update['post'])
+
+        # Post
+        deco.add_circle(1, 1, 1, (0, 0, 0), False, prev=False)
+        self.assertTrue(deco._cache_needs_update['post'])
+        self.assertEqual(deco._cache_surface['post'], None)
+        deco.draw_post(surface)
+        self.assertEqual(deco._total_decor(), 1)
+        self.assertFalse(deco._cache_needs_update['post'])
+        self.assertNotEqual(deco._cache_surface['post'], None)
+        deco.remove_all()
+        self.assertEqual(deco._total_decor(), 0)
 
     def test_copy(self) -> None:
         """
@@ -57,14 +149,22 @@ class DecoratorTest(unittest.TestCase):
         deco = widg.get_decorator()
 
         d = deco._add_none()
-        self.assertEqual(len(deco._decor_prev), 1)
-        self.assertEqual(len(deco._decor_post), 0)
+        self.assertEqual(len(deco._decor['prev']), 1)
+        self.assertEqual(len(deco._decor['post']), 0)
+        self.assertEqual(deco._total_decor(), 1)
         assert isinstance(d, str)
 
         self.assertRaises(IndexError, lambda: deco.remove('none'))
         deco.remove(d)
-        self.assertEqual(len(deco._decor_prev), 0)
-        self.assertEqual(len(deco._decor_post), 0)
+        self.assertEqual(len(deco._decor['prev']), 0)
+        self.assertEqual(len(deco._decor['post']), 0)
+
+        p = deco.add_pixel(1, 1, (1, 1, 1))
+        self.assertEqual(len(deco._coord_cache.keys()), 0)
+        deco.draw_prev(surface)
+        self.assertEqual(len(deco._coord_cache.keys()), 1)
+        deco.remove(p)
+        self.assertEqual(len(deco._coord_cache.keys()), 0)
 
     def test_general(self) -> None:
         """

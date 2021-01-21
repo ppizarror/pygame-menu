@@ -38,6 +38,7 @@ import io
 import base64
 
 import copy
+import pygame
 import pygame_menu
 from pygame_menu.baseimage import *
 from pathlib import Path
@@ -110,7 +111,8 @@ class BaseImageTest(unittest.TestCase):
 
         # Clone base64
         image3 = image2.copy()
-        self.assertTrue(image2.equals(image3))
+        if pygame.version.vernum.major >= 2:
+            self.assertTrue(image2.equals(image3))
 
     def test_modes(self) -> None:
         """

@@ -42,7 +42,7 @@ from pygame_menu import events
 from pygame_menu.widgets import Label, Button
 
 # Configure the tests
-_TEST_TIME_DRAW = False
+TEST_TIME_DRAW = False
 
 
 def dummy_function() -> None:
@@ -70,9 +70,9 @@ class MenuTest(unittest.TestCase):
     @staticmethod
     def test_time_draw() -> None:
         """
-        This test the time that takes to pygame_menu to draw several times.
+        This test the time that takes to menu to draw several times.
         """
-        if not _TEST_TIME_DRAW:
+        if not TEST_TIME_DRAW:
             return
         menu = MenuUtils.generic_menu(title='EPIC')
         menu.enable()
@@ -83,7 +83,7 @@ class MenuTest(unittest.TestCase):
             btn = menu.add_button(title='epic', action=events.BACK)
             btndeco = btn.get_decorator()
             if add_decorator:
-                for j in range(100):
+                for j in range(10):
                     btndeco.add_pixel(j * 10, j * 20, (10, 10, 150))
             menu.add_vertical_margin(margin=10)
             menu.add_label(title='epic test')
@@ -102,6 +102,7 @@ class MenuTest(unittest.TestCase):
         # (no decorator) updates, 0.860
         # (no decorator) check len updates, 0.855
         # (no decorator) with surface cache, 0.10737799999999886
+        # (decorator) with surface cache, 0.1033874000000008
         print(timeit.timeit(lambda: draw_and_update(), number=100))
 
     def test_copy(self) -> None:
