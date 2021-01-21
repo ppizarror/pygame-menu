@@ -5,8 +5,9 @@ Migration Guide - v3 to v4
 
 - ``pygame_menu v4`` no longer python 2.7 to 3.5.
 - Added ``__all__`` to module, then some usage cases importing with * may fail.
+- All locals inner value have changed. If you used the value as-is you'll get an error.
 - Menu ``add_image`` method parameter ``scale_smooth`` is now ``True`` by default.
-- Menu ``clear`` method now receivees ``reset`` argument.
+- Menu ``clear`` method now receives ``reset`` argument.
 - Menu ``mainloop``, ``update`` and ``draw`` now raises ``RuntimeError`` if it's disabled. This behaviour can be changed though Menu private property ``_runtime_errors``.
 - Menu Column/Row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``. Expect some minor changes to the global layout. Now is much more consistent.
 - Menu method ``get_width()`` changes to``get_width(inner=False, widget=False)``.
@@ -14,7 +15,8 @@ Migration Guide - v3 to v4
 - Removed ``column_force_fit_text`` from ``Menu`` constructor.
 - Removed ``dummy_function`` from ``pygame_menu.utils``.
 - Removed ``events.DISABLE_CLOSE``, use ``None`` or ``events.NONE`` instead.
-- Removed Widget ``surface_needs_update()`` method. Now use private method ``force_menu_surface_update`` if needed.
+- Removed ``Widget`` method ``surface_needs_update()``. Now use private method ``force_menu_surface_update`` if needed.
+- Renamed ``ColorInput`` constants ``TYPE_HEX``, ``TYPE_RGB``, ``HEX_FORMAT_LOWER``, ``HEX_FORMAT_NONE``, and ``HEX_FORMAT_UPPER``, to ``COLORINPUT_*``.
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
 - Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
 - Renamed Theme ``menubar_close_button`` to ``title_close_button``.
