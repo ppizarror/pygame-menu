@@ -29,70 +29,73 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-"""
-BaseImage: Provides basic image loading an manipulation with pygame
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.baseimage
+__all__ = ['Menu']
 
-"""
-Controls: Default controls of menu object and key definition
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.controls
+# Check if pygame exists, if not maybe the module is being used by setup.py
+__pygame_version__ = None
+try:
+    from pygame import version as __pygame_version__
 
-"""
-Events: Menu events definition and locals
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.events
+    __pygame_version__ = __pygame_version__.vernum
+except (ModuleNotFoundError, ImportError):
+    pass
 
-"""
-Fonts: Menu fonts
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.font
+# Import modules that require pygame
+if __pygame_version__ is not None:
+    """
+    BaseImage: Provides basic image loading an manipulation with pygame
+    """
+    import pygame_menu.baseimage
 
-"""
-Locals: Local constants
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.locals
+    """
+    Controls: Default controls of menu object and key definition
+    """
+    import pygame_menu.controls
 
-"""
-ScrollArea: Scroll area class
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.scrollarea
+    """
+    Events: Menu events definition and locals
+    """
+    import pygame_menu.events
 
-"""
-Sound: Sound class
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.sound
+    """
+    Fonts: Menu fonts
+    """
+    import pygame_menu.font
 
-"""
-Themes: Menu themes class
-"""
-# noinspection PyUnresolvedReferences
-import pygame_menu.themes
+    """
+    Locals: Local constants
+    """
+    import pygame_menu.locals
+
+    """
+    Menu: Menu class
+    """
+    from pygame_menu.menu import Menu
+
+    """
+    ScrollArea: Scroll area class to manage scrolling in Menu
+    """
+    import pygame_menu.scrollarea
+
+    """
+    Sound: Sound class
+    """
+    import pygame_menu.sound
+
+    """
+    Themes: Menu themes
+    """
+    import pygame_menu.themes
+
+    """
+    Widgets: Menu widgets
+    """
+    import pygame_menu.widgets
 
 """
 Version: Library version
 """
-# noinspection PyUnresolvedReferences
 import pygame_menu.version
-
-"""
-Widgets: Menu widgets
-"""
-import pygame_menu.widgets
-
-"""
-Menu: Menu class
-"""
-# noinspection PyUnresolvedReferences
-from pygame_menu.menu import Menu
 
 """
 Metadata: Information about the project

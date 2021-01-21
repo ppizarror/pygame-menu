@@ -46,7 +46,7 @@ try:
     # noinspection PyProtectedMember
     from pyperclip import copy, paste, PyperclipException
 
-except (ImportError, ModuleNotFoundError):
+except (ModuleNotFoundError, ImportError):
 
     # noinspection PyUnusedLocal
     def copy(text) -> None:

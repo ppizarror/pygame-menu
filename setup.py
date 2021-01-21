@@ -29,7 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Library imports
 from setuptools import setup, find_packages
 import pygame_menu
 
