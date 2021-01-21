@@ -252,7 +252,7 @@ class TextInput(Widget):
         self._cursor_render = True  # If true cursor must be rendered
         self._cursor_surface = None  # type: (pygame.Surface,None)
         self._cursor_surface_pos = [0.0, 0.0]  # Position (x,y) of surface
-        self._cursor_switch_ms = 500.0  # type: float
+        self._cursor_switch_ms = 1000.0  # type: float
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
         # History of editions
@@ -375,7 +375,6 @@ class TextInput(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface):
         self._render()
-        self._clock.tick()
 
         # Draw background color
         self._fill_background_color(surface)
@@ -1476,6 +1475,8 @@ class TextInput(Widget):
 
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
+        self._clock.tick(60)
+
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
 
