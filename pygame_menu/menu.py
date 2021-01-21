@@ -53,8 +53,10 @@ from pygame_menu.decorator import Decorator
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 
+from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
-    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, \
+    Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Literal, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional
 
 # Joy events
@@ -68,8 +70,6 @@ class Menu(object):
     """
     Menu object.
 
-    .. note:: Menu cannot be copied or deepcopied.
-
     If menu is closed or reset, the callbacks ``onclose`` and ``onreset`` are fired
     (if them are callable-type). They can only receive 1 argument maximum, if so,
     the Menu instance is provided
@@ -78,6 +78,10 @@ class Menu(object):
 
         onclose() <or> onclose(Menu)
         onreset() <or> onreset(Menu)
+
+    .. note::
+
+        Menu cannot be copied or deepcopied.
 
     :param height: Height of the Menu (px)
     :param width: Width of the Menu (px)
@@ -762,10 +766,10 @@ class Menu(object):
 
     def add_color_input(self,
                         title: Union[str, Any],
-                        color_type: str,
+                        color_type: ColorInputColorType,
                         color_id: str = '',
                         default: Any = '',
-                        hex_format: str = 'none',
+                        hex_format: ColorInputHexFormatType = 'none',
                         input_separator: str = ',',
                         input_underline: str = '_',
                         onchange: CallbackType = None,
@@ -828,10 +832,10 @@ class Menu(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the color input
-        :param color_type: Type of the color input, can be ``"rgb"`` or ``"hex"``
+        :param color_type: Type of the color input
         :param color_id: ID of the color input
         :param default: Default value to display, if RGB type it must be a tuple ``(r,g,b)``, if HEX must be a string ``"#XXXXXX"``
-        :param hex_format: Hex format string mode (none, lower, upper)
+        :param hex_format: Hex format string mode
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :param input_underline: Underline character
         :param onchange: Callback executed when changing the values of the color text
@@ -1312,7 +1316,7 @@ class Menu(object):
                        default: Union[str, int, float] = '',
                        copy_paste_enable: bool = True,
                        cursor_selection_enable: bool = True,
-                       input_type: str = _locals.INPUT_TEXT,
+                       input_type: TextInputModeType = _locals.INPUT_TEXT,
                        input_underline: str = '',
                        input_underline_len: int = 0,
                        maxchar: int = 0,

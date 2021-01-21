@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['TextInput']
+__all__ = ['TextInput', 'TextInputModeType']
 
 import math
 
@@ -39,7 +39,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 from pygame_menu.custom_types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType, Literal
 
 try:
 
@@ -72,6 +72,9 @@ except (ImportError, ModuleNotFoundError):
         Pyperclip exception thrown by pyperclip.
         """
         pass
+
+# Custom types
+TextInputModeType = Literal[_locals.INPUT_TEXT, _locals.INPUT_INT, _locals.INPUT_FLOAT]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -188,7 +191,7 @@ class TextInput(Widget):
                  cursor_selection_enable: bool = True,
                  cursor_switch_ms: NumberType = 500,
                  history: int = 50,
-                 input_type: str = _locals.INPUT_TEXT,
+                 input_type: TextInputModeType = _locals.INPUT_TEXT,
                  input_underline: str = '',
                  input_underline_len: int = 0,
                  input_underline_vmargin: int = 0,
