@@ -245,7 +245,7 @@ class TextInput(Widget):
 
         assert_color(cursor_color)
         assert_color(cursor_selection_color)
-        if pygame.vernum.major >= 2:
+        if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
             assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
 
@@ -427,7 +427,7 @@ class TextInput(Widget):
     def _draw(self, surface: 'pygame.Surface') -> None:
 
         # Draw selection surface
-        if pygame.vernum.major >= 2:
+        if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
                 surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
