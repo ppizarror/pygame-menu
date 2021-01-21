@@ -1338,7 +1338,9 @@ class Menu(object):
         """
         Update the position dict for each widget.
 
-        .. note:: Selection effect does not affect widget positioning.
+        .. note::
+
+            Selection effect does not affect widget positioning.
 
         :return: None
         """
@@ -1714,7 +1716,9 @@ class Menu(object):
         """
         Draw the current Menu into the given surface.
 
-        .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
+        .. note::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param surface: Pygame surface to draw the Menu
         :type surface: :py:class:`pygame.Surface`
@@ -1907,7 +1911,9 @@ class Menu(object):
         Update the status of the Menu using external events.
         The update event is applied only on the current Menu.
 
-        .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
+        .. note::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param events: Pygame events as a list
         :type events: list[:py:class:`pygame.event.Event`]
@@ -2129,7 +2135,9 @@ class Menu(object):
 
             menu.mainloop(surface)
 
-        .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
+        .. note::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param surface: Pygame surface to draw the Menu
         :type surface: :py:class:`pygame.Surface`
@@ -2340,7 +2348,9 @@ class Menu(object):
         Go back in Menu history a certain number of times from the current Menu.
         This method operates through the current menu pointer.
 
-        .. note:: This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
+        .. note::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current()`
 
         :param total: How many menus to go back
         :type total: int
@@ -2456,7 +2466,9 @@ class Menu(object):
         """
         Return widgets as a tuple.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Widgets tuple
         :rtype: tuple
@@ -2467,7 +2479,9 @@ class Menu(object):
         """
         Return menubar widget.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: MenuBar widget
         :rtype: :py:class:`pygame_menu.widgets.MenuBar`
@@ -2478,7 +2492,9 @@ class Menu(object):
         """
         Return menu scroll area.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: MenuBar widget
         :rtype: :py:class:`pygame_menu.scrollarea.ScrollArea`
@@ -2558,7 +2574,9 @@ class Menu(object):
         """
         Returns the menu theme.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Menu theme
         :rtype: :py:class:`pygame_menu.themes.Theme`

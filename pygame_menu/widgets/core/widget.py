@@ -301,7 +301,9 @@ class Widget(object):
         This is a permanent change; for dynamic purpuoses, depending if the widget
         is selected or not, setting ``widget.selection_expand_background`` to ``True`` may help.
 
-        .. note:: This method may have unexpected results with certain selection effects.
+        .. note::
+
+            This method may have unexpected results with certain selection effects.
 
         :return: None
         """
@@ -335,7 +337,9 @@ class Widget(object):
         """
         Return the selection effect.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Selection effect
         :rtype: :py:class:`pygame_menu.widgets.core.Selection`
@@ -486,7 +490,9 @@ class Widget(object):
         - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
         - If 4-item tuple is provided: padding will be (top, right, bottom, left)
 
-        .. note:: See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
+        .. note::
+
+            See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
 
         :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
         :type padding: int, float, tuple, list
@@ -751,7 +757,9 @@ class Widget(object):
         - ``selected_color``        Selected color (tuple)
         - ``size``                  Size of the font (int)
 
-        .. note:: If a key is not defined it will be rewritten using current font style from ``Widget.get_font_info()`` method.
+        .. note::
+
+            If a key is not defined it will be rewritten using current font style from ``Widget.get_font_info()`` method.
 
         :param style: Font style dict
         :type style: dict
@@ -811,7 +819,9 @@ class Widget(object):
         """
         Return the menu reference (if exists).
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Menu reference
         :rtype: :py:class:`pygame_menu.Menu`, None
@@ -934,7 +944,9 @@ class Widget(object):
         """
         Scale the widget to a desired width and height factor.
 
-        .. note:: Not all widgets are affected by scale.
+        .. note::
+
+            Not all widgets are affected by scale.
 
         :param width: Scale factor of the width
         :type width: int, float
@@ -977,7 +989,9 @@ class Widget(object):
         """
         Translate to *(+x,+y)* according to default position.
 
-        .. note:: To revert changes, only set to *(0,0)*.
+        .. note::
+
+            To revert changes, only set to *(0,0)*.
 
         :param x: +X in px
         :type x: int, float
@@ -1062,7 +1076,9 @@ class Widget(object):
         """
         Return widget surface.
 
-        .. warning:: Use with caution.
+        .. warning::
+
+            Use with caution.
 
         :return: Widget surface
         :rtype: :py:class:`pygame.Surface`
@@ -1265,7 +1281,9 @@ class Widget(object):
         After creating a new callback, this functions returns the ID of the call. It can be removed
         anytime using ``widget.remove_update_callback(id)``.
 
-        .. note:: Not all widgets are updated, so the provided function may never be executed.
+        .. note::
+
+            Not all widgets are updated, so the provided function may never be executed.
 
         :param update_callback: Function
         :type update_callback: callable

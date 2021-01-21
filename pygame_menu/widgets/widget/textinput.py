@@ -80,7 +80,9 @@ class TextInput(Widget):
     """
     Text input widget.
 
-    .. note:: This widget only accepts vertical flip and translation transformations.
+    .. note::
+
+        This widget only accepts vertical flip and translation transformations.
 
     :param title: Text input title
     :type title: str
