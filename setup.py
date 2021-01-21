@@ -79,7 +79,7 @@ setup(
     python_requires='>=3.6, <4',
     install_requires=requirements,
     extras_require={
-        'doc': [
+        'docs': [
             'sphinx',
             'sphinx-rtd-theme',
             'sphinx-autodoc-typehints>=1.2.0'
