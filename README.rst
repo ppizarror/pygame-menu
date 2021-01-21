@@ -80,6 +80,6 @@ To build the documentation from a Git repository:
 
     $> clone https://github.com/ppizarror/pygame-menu
     $> cd pygame-menu
-    $> pip install -e .[doc]
+    $> pip install -e .[docs]
     $> cd docs
     $> make html

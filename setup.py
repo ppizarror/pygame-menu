@@ -44,9 +44,15 @@ with open('requirements.txt') as f:
     for line in f:
         requirements.append(line.strip())
 
+requirements_docs = requirements.copy()
+requirements_docs.extend([
+    'sphinx',
+    'sphinx-rtd-theme'
+])
+
 # Setup library
 setup(
-    name='pygame-menu',
+    name=pygame_menu.__module_name__,
     version=pygame_menu.__version__,
     author=pygame_menu.__author__,
     author_email=pygame_menu.__email__,
@@ -56,7 +62,7 @@ setup(
     project_urls={
         'Bug Tracker': pygame_menu.__url_bug_tracker__,
         'Documentation': pygame_menu.__url_documentation__,
-        'Source Code': pygame_menu.__url_source_code__,
+        'Source Code': pygame_menu.__url_source_code__
     },
     license=pygame_menu.__license__,
     platforms=['any'],
@@ -75,22 +81,22 @@ setup(
         'Topic :: Games/Entertainment',
         'Topic :: Multimedia',
         'Topic :: Software Development :: Libraries :: pygame',
-        'Topic :: Text Processing',
+        'Topic :: Text Processing'
     ],
     include_package_data=True,
     packages=find_packages(exclude=['test']),
     python_requires='>=2.7, <4',
     install_requires=requirements,
     extras_require={
-        'doc': ['sphinx', 'sphinx-rtd-theme'],
+        'docs': requirements_docs
     },
     setup_requires=[
-        'setuptools',
+        'setuptools'
     ],
     options={
         'bdist_wheel': {'universal': True}
     },
     entry_points={
         'pyinstaller40': ['hook-dirs = pygame_menu.__pyinstaller:get_hook_dirs']
-    },
+    }
 )
