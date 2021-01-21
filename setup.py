@@ -41,10 +41,11 @@ with open('README.rst') as f:
 # Load requirements
 with open('requirements.txt') as f:
     requirements = []
+    requirements_docs = []
     for line in f:
         requirements.append(line.strip())
+        requirements_docs.append(line.strip())
 
-requirements_docs = requirements.copy()
 requirements_docs.extend([
     'sphinx',
     'sphinx-rtd-theme'
