@@ -19,9 +19,9 @@ pygame-menu
     :target: https://www.python.org/downloads
     :alt: Python 2.7+/3.5+
 
-.. image:: https://img.shields.io/badge/pygame-1.9%2B%2F2.0%2B-orange
+.. image:: https://img.shields.io/badge/pygame-1.9.3%2B%2F2.0%2B-orange
     :target: https://www.pygame.org
-    :alt: Pygame 1.9+/2.0+
+    :alt: Pygame 1.9.3+/2.0+
 
 .. image:: https://badge.fury.io/py/pygame-menu.svg
     :target: https://pypi.org/project/pygame-menu

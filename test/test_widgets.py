@@ -647,7 +647,7 @@ class WidgetsTest(unittest.TestCase):
         )
         textinput = menu.add_text_input('title', input_underline='_')
         width = 107
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             width = 106
         self.assertEqual(menu._widget_offset[1], width)
         self.assertEqual(textinput.get_width(), 376)

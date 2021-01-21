@@ -99,7 +99,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_menubar_widget().get_height(), 55)
 
         h = 41
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             h = 42
 
         self.assertEqual(btn.get_height(), h)
@@ -516,7 +516,7 @@ class MenuTest(unittest.TestCase):
         menu.add_vertical_margin(100)
         menu.add_label('Text #2')
         v = 36
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             v = 35
 
         self.assertEqual(menu._widget_offset[1], v)
@@ -826,7 +826,7 @@ class MenuTest(unittest.TestCase):
         btn.active = True
         focus = menu._draw_focus_widget(surface, btn)
         self.assertEqual(len(focus), 4)
-        if pygame.version.vernum.major < 2:
+        if pygame.version.vernum[0] < 2:
             self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 301), (0, 301)))
             self.assertEqual(focus[2], ((0, 302), (261, 302), (261, 353), (0, 353)))
             self.assertEqual(focus[3], ((337, 302), (600, 302), (600, 353), (337, 353)))

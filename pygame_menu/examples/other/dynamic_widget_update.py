@@ -56,7 +56,10 @@ class App(object):
         # Start pygame
         pygame.init()
         os.environ['SDL_VIDEO_CENTERED'] = '1'
-        self.surface = pygame.display.set_mode((640, 480), flags=pygame.NOFRAME)
+        try:
+            self.surface = pygame.display.set_mode((640, 480), flags=pygame.NOFRAME)
+        except TypeError:
+            self.surface = pygame.display.set_mode((640, 480))
 
         # Load image
         default_image = pygame_menu.baseimage.BaseImage(
