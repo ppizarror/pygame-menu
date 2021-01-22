@@ -147,7 +147,7 @@ class Selector(Widget):
 
     def _render(self) -> Optional[bool]:
         string = self._sformat.format(self._title, self.get_value()[0][0])
-        if not self._render_hash_changed(string, self.selected, self.visible, self._index, self.readonly):
+        if not self._render_hash_changed(string, self._selected, self._visible, self._index, self.readonly):
             return True
         self._surface = self._render_string(string, self.get_font_color_status())
         self._apply_transforms()
@@ -261,7 +261,7 @@ class Selector(Widget):
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._left()
                 updated = True
 
@@ -269,14 +269,14 @@ class Selector(Widget):
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._right()
                 updated = True
 
             # Press enter
             elif keydown and event.key == _controls.KEY_APPLY or \
                     joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
-                self.sound.play_open_menu()
+                self._sound.play_open_menu()
                 self.apply(*self._elements[self._index][1:])
                 updated = True
 

@@ -298,7 +298,7 @@ class ToggleSwitch(Widget):
         surface.blit(self._slider, (sliderx, slidery))
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self.selected, self._title, self.visible, self.readonly,
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
                                          self._state):
             return True
 
@@ -375,7 +375,7 @@ class ToggleSwitch(Widget):
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._left()
                 updated = True
 
@@ -383,13 +383,13 @@ class ToggleSwitch(Widget):
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._right()
                 updated = True
 
             # Press enter
             elif keydown and event.key == _controls.KEY_APPLY and self._total_states == 2:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()
                 updated = True
@@ -424,7 +424,7 @@ class ToggleSwitch(Widget):
                                 target_index = i
                                 best = dx
                         if target_index != self._state:
-                            self.sound.play_key_add()
+                            self._sound.play_key_add()
                             self._state = target_index
                             self.change()
 

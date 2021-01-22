@@ -1034,23 +1034,23 @@ class MenuTest(unittest.TestCase):
         # Select second button
         self.assertRaises(ValueError, lambda: menu.select_widget(btn2))
         menu.select_widget(btn4)
-        self.assertTrue(btn4.selected)
+        self.assertTrue(btn4.is_selected())
 
         # Move to right, btn6 should be selected
         menu._move_selected_left_right(1)
-        self.assertFalse(btn4.selected)
-        self.assertTrue(btn6.selected)
-        self.assertFalse(btn7.selected)
+        self.assertFalse(btn4.is_selected())
+        self.assertTrue(btn6.is_selected())
+        self.assertFalse(btn7.is_selected())
 
         # Move right, as third column only has 1 widget, that should be selected
         menu._move_selected_left_right(1)
-        self.assertFalse(btn6.selected)
-        self.assertTrue(btn7.selected)
+        self.assertFalse(btn6.is_selected())
+        self.assertTrue(btn7.is_selected())
 
         # Move right, moves from 3 to 1 column, then button 3 should be selected
         menu._move_selected_left_right(1)
-        self.assertFalse(btn7.selected)
-        self.assertTrue(btn3.selected)
+        self.assertFalse(btn7.is_selected())
+        self.assertTrue(btn3.is_selected())
 
         # Set btn4 as floating, then the layout should be
         # btn3   | btn6
@@ -1357,9 +1357,9 @@ class MenuTest(unittest.TestCase):
             self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
 
         # Test cases where the focus must fail
-        btn.selected = False
+        btn._selected = False
         self.assertEqual(None, menu._draw_focus_widget(surface, btn))
-        btn.selected = True
+        btn._selected = True
 
         # Set active false
         btn.active = False
@@ -1379,7 +1379,7 @@ class MenuTest(unittest.TestCase):
         menu._mouse_motion_selection = True
 
         btn.active = True
-        btn.selected = True
+        btn._selected = True
         self.assertNotEqual(None, menu._draw_focus_widget(surface, btn))
 
     def test_visible(self) -> None:
@@ -1389,7 +1389,7 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(title='menu')
         btn1 = menu.add_button('nice', None)
         btn2 = menu.add_button('nice', None)
-        self.assertTrue(btn1.selected)
+        self.assertTrue(btn1.is_selected())
         btn2.hide()
         menu.select_widget(btn1)
 
@@ -1402,8 +1402,8 @@ class MenuTest(unittest.TestCase):
         btn1.hide()
         btn2.hide()
 
-        self.assertFalse(btn1.selected)
-        self.assertFalse(btn2.selected)
+        self.assertFalse(btn1.is_selected())
+        self.assertFalse(btn2.is_selected())
 
         c1, r1, i1 = btn1.get_col_row_index()
         c2, r2, i2 = btn2.get_col_row_index()
@@ -1436,16 +1436,16 @@ class MenuTest(unittest.TestCase):
 
         menu = MenuUtils.generic_menu(title='menu')
         btn = menu.add_button('button', None)
-        self.assertTrue(btn.selected)
+        self.assertTrue(btn.is_selected())
         btn.hide()
 
         # As theres no more visible widgets, index must be -1
         self.assertEqual(menu._index, -1)
-        self.assertFalse(btn.selected)
+        self.assertFalse(btn.is_selected())
         btn.show()
 
         # Widget should be selected, and index must be 0
-        self.assertTrue(btn.selected)
+        self.assertTrue(btn.is_selected())
         self.assertEqual(menu._index, 0)
 
         # Hide button, and set is as unselectable
@@ -1456,7 +1456,7 @@ class MenuTest(unittest.TestCase):
 
         # Now, as widget is not selectable, button should not
         # be selected and index still -1
-        self.assertFalse(btn.selected)
+        self.assertFalse(btn.is_selected())
         self.assertEqual(menu._index, -1)
 
         # Set selectable again

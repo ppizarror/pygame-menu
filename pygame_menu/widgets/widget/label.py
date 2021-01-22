@@ -66,7 +66,7 @@ class Label(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._title, self._font_color, self.visible):
+        if not self._render_hash_changed(self._title, self._font_color, self._visible):
             return True
         self._surface = self._render_string(self._title, self._font_color)
         self._apply_transforms()

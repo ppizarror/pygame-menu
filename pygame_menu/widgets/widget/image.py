@@ -135,7 +135,7 @@ class Image(Widget):
             return True
         self._surface = self._image.get_surface()
         self._rect.width, self._rect.height = self._surface.get_size()
-        if not self._render_hash_changed(self.visible):
+        if not self._render_hash_changed(self._visible):
             return True
         self.force_menu_surface_update()
 

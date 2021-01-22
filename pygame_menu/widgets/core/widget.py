@@ -84,6 +84,7 @@ class Widget(object):
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
     _events: List['pygame.event.Event']
     _flip: Tuple2BoolType
+    _floating: bool
     _font: Optional['pygame.font.Font']
     _font_antialias: bool
     _font_background_color: Optional[ColorType]
@@ -109,6 +110,7 @@ class Widget(object):
     _padding_transform: Tuple4IntType
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
+    _selected: bool
     _selection_effect: 'Selection'
     _selection_time: NumberType
     _shadow: bool
@@ -116,20 +118,18 @@ class Widget(object):
     _shadow_offset: NumberType
     _shadow_position: str
     _shadow_tuple: Tuple2IntType
+    _sound: 'Sound'
     _surface: Optional['pygame.Surface']
     _title: str
     _touchscreen_enabled: bool
     _translate: Tuple2IntType
     _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
+    _visible: bool
     active: bool
-    floating: bool
     is_selectable: bool
     lock_position: bool
     readonly: bool
-    selected: bool
     selection_expand_background: bool
-    sound: 'Sound'
-    visible: bool
 
     def __init__(self,
                  title: Any = '',
@@ -160,14 +160,18 @@ class Widget(object):
         self._decorator = Decorator(self)
         self._default_value = _NoWidgetValue()
         self._events = []
+        self._floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self._id = str(widget_id)
         self._margin = (0, 0)
         self._max_height = [None, False, True]  # size, width_scale, smooth
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
+        self._selected = False  # Use select() to modify this status
         self._selection_time = 0
+        self._sound = Sound()
         self._title = str(title)
+        self._visible = True  # Use show() or hide() to modify this status
 
         # Widget transforms
         self._angle = 0  # Rotation angle (degrees)
@@ -232,19 +236,49 @@ class Widget(object):
         # was created. Initially it was None
         self._selection_effect = _NullSelection()
 
-        # Public attributes
-        self.active = False  # Widget requests focus
-        self.floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
-        self.is_selectable = True  # Some widgets cannot be selected like labels
+        # Inputs
         self._joystick_enabled = True
-        self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
         self._mouse_enabled = True  # Accept mouse interaction
-        self.readonly = False  # If True, widget ignores all input
-        self.selected = False  # Use select() to modify this status
-        self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
-        self.sound = Sound()
         self._touchscreen_enabled = True
-        self.visible = True  # Use show() or hide() to modify this status
+
+        # Public statutes. These values can be changed without calling for methods (safe to update)
+        self.active = False  # Widget requests focus
+        self.is_selectable = True  # Some widgets cannot be selected like labels
+        self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
+        self.readonly = False  # If True, widget ignores all input
+        self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
+
+    def get_sound(self) -> 'Sound':
+        """
+        Return widget sound engine.
+
+        :return: Sound API
+        """
+        return self._sound
+
+    def is_selected(self) -> bool:
+        """
+        Return ``True`` if the widget is selected.
+
+        :return: Selected status
+        """
+        return self._selected
+
+    def is_visible(self) -> bool:
+        """
+        Return ``True`` if widget is visible.
+
+        :return: Visible status
+        """
+        return self._visible
+
+    def is_floating(self) -> bool:
+        """
+        Return ``True`` if the widget is floating.
+
+        :return: Float status
+        """
+        return self._floating
 
     def __copy__(self) -> 'Menu':
         """
@@ -508,7 +542,7 @@ class Widget(object):
         """
         if self._background_color is None:
             return
-        if not (self.selection_expand_background and self.selected):
+        if not (self.selection_expand_background and self._selected):
             inflate = self._background_inflate
         else:
             inflate = self._selection_effect.get_xy_margin()
@@ -995,10 +1029,10 @@ class Widget(object):
         :return: Color by widget status
         """
         if self.readonly:
-            if self.selected:
+            if self._selected:
                 return self._font_readonly_selected_color
             return self._font_readonly_color
-        if self.selected:
+        if self._selected:
             return self._font_selected_color
         return self._font_color
 
@@ -1490,9 +1524,9 @@ class Widget(object):
         assert isinstance(status, bool)
         if not self.is_selectable:
             return
-        self.selected = status
+        self._selected = status
         self.active = False
-        if self.selected:
+        if self._selected:
             self._focus()
             self._selection_time = time.time()
         else:
@@ -1500,7 +1534,7 @@ class Widget(object):
             self._events = []  # Remove events
         self._force_render()
         if self._on_select is not None:
-            self._on_select(self.selected, self, self.get_menu())
+            self._on_select(self._selected, self, self.get_menu())
         if update_menu:
             assert self._menu is not None
             self._menu.select_widget(self)
@@ -1512,7 +1546,7 @@ class Widget(object):
 
         :return: Time in milliseconds
         """
-        if not self.selected:
+        if not self._selected:
             return 0
         return (time.time() - self._selection_time) * 1000
 
@@ -1606,7 +1640,7 @@ class Widget(object):
         :param sound: Sound object
         :return: None
         """
-        self.sound = sound
+        self._sound = sound
 
     def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> None:
         """
@@ -1818,7 +1852,7 @@ class Widget(object):
         :return: None
         """
         assert isinstance(float_status, bool)
-        self.floating = float_status
+        self._floating = float_status
         self.force_menu_surface_update()
 
     def show(self) -> None:
@@ -1827,7 +1861,7 @@ class Widget(object):
 
         :return: None
         """
-        self.visible = True
+        self._visible = True
         self._render()
         if self._menu is not None:
             # noinspection PyProtectedMember
@@ -1839,7 +1873,7 @@ class Widget(object):
 
         :return: None
         """
-        self.visible = False
+        self._visible = False
         self._render()
         if self._menu is not None:
             # noinspection PyProtectedMember

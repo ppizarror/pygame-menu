@@ -123,8 +123,9 @@ class SoundTest(unittest.TestCase):
         menu.add_button('submenu', submenu)
         button = menu.add_button('button', lambda: None)
         menu.set_sound(self.sound, True)
-        self.assertEqual(button.sound, self.sound)
+        self.assertEqual(button.get_sound(), self.sound)
 
         # This will remove the sound engine
         menu.set_sound(None, True)
-        self.assertNotEqual(button.sound, self.sound)
+        self.assertNotEqual(button.get_sound(), self.sound)
+        self.assertEqual(menu.get_sound(), menu._sound)

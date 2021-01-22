@@ -317,11 +317,11 @@ class WidgetsTest(unittest.TestCase):
         w = self.menu.add_label('Text')
         lasthash = w._last_render_hash
         w.hide()
-        self.assertFalse(w.visible)
+        self.assertFalse(w.is_visible())
         self.assertNotEqual(w._last_render_hash, lasthash)
         lasthash = w._last_render_hash
         w.show()
-        self.assertTrue(w.visible)
+        self.assertTrue(w.is_visible())
         self.assertNotEqual(w._last_render_hash, lasthash)
 
         w = Button('title')
@@ -415,7 +415,7 @@ class WidgetsTest(unittest.TestCase):
         self.menu.draw(surface)
 
         selector.draw(surface)
-        selector.selected = False
+        selector._selected = False
         selector.draw(surface)
 
         # Test events
@@ -733,9 +733,9 @@ class WidgetsTest(unittest.TestCase):
         # Create text input widget
         textinput = self.menu.add_text_input('title', input_underline='_')
         textinput.set_value('new_value')  # No error
-        textinput.selected = False
+        textinput._selected = False
         textinput.draw(surface)
-        textinput.selected = True
+        textinput._selected = True
         textinput.draw(surface)
         self.assertEqual(textinput.get_value(), 'new_value')
         textinput.clear()
@@ -745,9 +745,9 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(ValueError,  # Password cannot be set
                           lambda: passwordinput.set_value('new_value'))
         passwordinput.set_value('')  # No error
-        passwordinput.selected = False
+        passwordinput._selected = False
         passwordinput.draw(surface)
-        passwordinput.selected = True
+        passwordinput._selected = True
         passwordinput.draw(surface)
         self.assertEqual(passwordinput.get_value(), '')
         passwordinput.clear()
@@ -1198,7 +1198,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(r.height, 0)
 
         self.assertFalse(wid.is_selectable)
-        self.assertTrue(wid.visible)
+        self.assertTrue(wid.is_visible())
 
         wid.apply()
         wid.change()
@@ -1217,9 +1217,9 @@ class WidgetsTest(unittest.TestCase):
         wid.draw_selection(surface)
 
         wid.hide()
-        self.assertFalse(wid.visible)
+        self.assertFalse(wid.is_visible())
         wid.show()
-        self.assertTrue(wid.visible)
+        self.assertTrue(wid.is_visible())
 
         wid.set_value('epic')
         self.assertRaises(ValueError, lambda: wid.get_value())
@@ -1263,7 +1263,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Selection
         wid.select()
-        self.assertFalse(wid.selected)
+        self.assertFalse(wid.is_selected())
         self.assertFalse(wid.is_selectable)
 
         # noinspection PyUnusedLocal
@@ -1280,7 +1280,7 @@ class WidgetsTest(unittest.TestCase):
 
         # noinspection PyTypeChecker
         wid.set_sound(None)
-        self.assertNotEqual(wid.sound, None)
+        self.assertNotEqual(wid._sound, None)
 
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)

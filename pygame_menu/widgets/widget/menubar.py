@@ -274,7 +274,7 @@ class MenuBar(Widget):
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
         if not self._render_hash_changed(self._menu.get_id(), self._rect.x, self._rect.y, self._title,
-                                         self._font_selected_color, menu_prev_condition, self.visible):
+                                         self._font_selected_color, menu_prev_condition, self._visible):
             return True
 
         # Update box mode
@@ -463,13 +463,13 @@ class MenuBar(Widget):
 
             if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
-                    self.sound.play_click_mouse()
+                    self._sound.play_click_mouse()
                     self.apply()
                     updated = True
 
             elif self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
                 if event.button == _controls.JOY_BUTTON_BACK:
-                    self.sound.play_key_del()
+                    self._sound.play_key_del()
                     self.apply()
                     updated = True
 
@@ -477,7 +477,7 @@ class MenuBar(Widget):
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):
-                    self.sound.play_click_mouse()
+                    self._sound.play_click_mouse()
                     self.apply()
                     updated = True
 

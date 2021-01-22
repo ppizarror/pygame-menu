@@ -437,7 +437,7 @@ class TextInput(Widget):
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
 
         # Draw cursor
-        if self.selected and self._cursor_surface and \
+        if self._selected and self._cursor_surface and \
                 (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)) and \
                 not self.readonly:
             x = self._rect.x + self._cursor_surface_pos[0]
@@ -448,8 +448,8 @@ class TextInput(Widget):
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
 
-        if not self._render_hash_changed(self._menu.get_id(), string, self.selected, self._cursor_render,
-                                         self._selection_enabled, self.active, self.visible, self.readonly,
+        if not self._render_hash_changed(self._menu.get_id(), string, self._selected, self._cursor_render,
+                                         self._selection_enabled, self.active, self._visible, self.readonly,
                                          self._menu.get_width(inner=True)):
             return True
 
@@ -1261,7 +1261,7 @@ class TextInput(Widget):
             char_limit = self._maxchar - len(self._input_string)
             text_end = min(char_limit, text_end)
             if text_end <= 0:  # If there's not more space, returns
-                self.sound.play_event_error()
+                self._sound.play_event_error()
                 return False
 
         new_string = self._input_string[0:self._cursor_position] + \
@@ -1276,7 +1276,7 @@ class TextInput(Widget):
                 if char not in self._keychar_size:
                     self._get_char_size(char)  # This updates the self._keychar_size variable
 
-            self.sound.play_key_add()
+            self._sound.play_key_add()
             self._input_string = new_string  # For a purpose of computing render_box
             for i in range(len(text)):  # Move cursor
                 self._move_cursor_right()
@@ -1285,7 +1285,7 @@ class TextInput(Widget):
             self._update_maxlimit_renderbox()
             self._block_copy_paste = True
         else:
-            self.sound.play_event_error()
+            self._sound.play_event_error()
             return False
 
         return True
@@ -1411,7 +1411,7 @@ class TextInput(Widget):
         # Check input exceeded the limit returns
         if self._check_input_size():
             if sounds:
-                self.sound.play_event_error()
+                self._sound.play_event_error()
             return False
 
         # If no special key is pressed, add unicode of key to input_string
@@ -1429,7 +1429,7 @@ class TextInput(Widget):
         # Check if char is valid
         if self._valid_chars is not None and keychar not in self._valid_chars:
             if sounds:
-                self.sound.play_event_error()
+                self._sound.play_event_error()
             return False
 
         # If data is valid
@@ -1444,7 +1444,7 @@ class TextInput(Widget):
 
                 # Update string
                 if sounds:
-                    self.sound.play_key_add()
+                    self._sound.play_key_add()
                 self._cursor_position += 1  # Some are empty, e.g. K_UP
                 self._input_string = new_string  # Only here this is changed (due to renderbox update)
                 self._update_input_string(new_string)  # Update the string and the history
@@ -1453,7 +1453,7 @@ class TextInput(Widget):
                 return True
         else:
             if sounds:
-                self.sound.play_event_error()
+                self._sound.play_event_error()
         return False
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
@@ -1508,18 +1508,18 @@ class TextInput(Widget):
                     # Ctrl+C copy
                     if event.key == pygame.K_c:
                         if not self._copy_paste_enabled:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                             return False
                         self.active = True
                         copy_status = self._copy()
                         if not copy_status:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                         return copy_status
 
                     # Ctrl+V paste
                     elif event.key == pygame.K_v:
                         if not self._copy_paste_enabled:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                             return False
                         self.active = True
                         return self._paste()
@@ -1527,34 +1527,34 @@ class TextInput(Widget):
                     # Ctrl+Z undo
                     elif event.key == pygame.K_z:
                         if self._max_history == 0:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                             return False
                         self.active = True
-                        self.sound.play_key_del()
+                        self._sound.play_key_del()
                         return self._undo()
 
                     # Ctrl+Y redo
                     elif event.key == pygame.K_y:
                         if self._max_history == 0:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                             return False
                         self.active = True
-                        self.sound.play_key_add()
+                        self._sound.play_key_add()
                         return self._redo()
 
                     # Ctrl+X cut
                     elif event.key == pygame.K_x:
                         if not self._copy_paste_enabled:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                             return False
                         self.active = True
-                        self.sound.play_key_del()
+                        self._sound.play_key_del()
                         return self._cut()
 
                     # Ctrl+A select all
                     elif event.key == pygame.K_a:
                         if not self._selection_enabled:
-                            self.sound.play_event_error()
+                            self._sound.play_event_error()
                             return False
                         self.active = True
                         self._select_all()
@@ -1569,9 +1569,9 @@ class TextInput(Widget):
 
                     # Play sound
                     if self._cursor_position == 0:
-                        self.sound.play_event_error()
+                        self._sound.play_event_error()
                     else:
-                        self.sound.play_key_del()
+                        self._sound.play_key_del()
 
                     # If text is selected
                     if self._selection_surface:
@@ -1588,9 +1588,9 @@ class TextInput(Widget):
 
                     # Play sound
                     if self._cursor_position == len(self._input_string):
-                        self.sound.play_event_error()
+                        self._sound.play_event_error()
                     else:
-                        self.sound.play_key_del()
+                        self._sound.play_key_del()
 
                     # If text is selected
                     if self._selection_surface:
@@ -1607,9 +1607,9 @@ class TextInput(Widget):
 
                     # Play sound
                     if self._cursor_position == len(self._input_string):
-                        self.sound.play_event_error()
+                        self._sound.play_event_error()
                     else:
-                        self.sound.play_key_add()
+                        self._sound.play_key_add()
 
                     # Update selection box
                     if self._selection_active:
@@ -1634,9 +1634,9 @@ class TextInput(Widget):
 
                     # Play sound
                     if self._cursor_position == 0:
-                        self.sound.play_event_error()
+                        self._sound.play_event_error()
                     else:
-                        self.sound.play_key_add()
+                        self._sound.play_key_add()
 
                     # Update selection box
                     if self._selection_active:
@@ -1666,7 +1666,7 @@ class TextInput(Widget):
 
                 # End
                 elif event.key == pygame.K_END:
-                    self.sound.play_key_add()
+                    self._sound.play_key_add()
                     self._cursor_position = len(self._input_string)
                     self._update_renderbox(end=True)
                     self._unselect_text()
@@ -1675,7 +1675,7 @@ class TextInput(Widget):
 
                 # Home
                 elif event.key == pygame.K_HOME:
-                    self.sound.play_key_add()
+                    self._sound.play_key_add()
                     self._cursor_position = 0
                     self._update_renderbox(start=True)
                     self._unselect_text()
@@ -1691,7 +1691,7 @@ class TextInput(Widget):
 
                 # Enter
                 elif event.key == _controls.KEY_APPLY:
-                    self.sound.play_open_menu()
+                    self._sound.play_open_menu()
                     self.apply()
                     self._unselect_text()
                     updated = True
