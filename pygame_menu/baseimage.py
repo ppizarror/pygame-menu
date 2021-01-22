@@ -157,6 +157,11 @@ class BaseImage(object):
 
         # Convert from bas64 to bytesio
         if frombase64:
+            if 'base64,' in image_path:  # Remove header of file
+                for i in range(len(image_path)):
+                    if image_path[i] == ',':
+                        image_path = image_path[(i + 1):]
+                        break
             image_path = BytesIO(base64.b64decode(image_path))
 
         # Load the image and store as a surface
@@ -184,6 +189,39 @@ class BaseImage(object):
         :return: New instance of the object
         """
         return self.copy()
+
+    def crop_rect(self, rect: 'pygame.Rect') -> 'BaseImage':
+        """
+        Crop image from rect.
+
+        :param rect: Crop rect geometry
+        :return: Self reference
+        """
+        self._surface = self._surface.subsurface(rect)
+        return self
+
+    def crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'BaseImage':
+        """
+        Crops the image from coordinate *(x, y)*.
+
+        :param x: X position (px) within your image
+        :param y: Y position (px)
+        :param width: Crop width (px)
+        :param height: Crop height (px)
+        :return: Self reference
+        """
+        assert 0 <= x < self.get_width(), 'X position must be between 0 and the image width'
+        assert 0 <= y < self.get_height(), 'Y position must be between 0 and the image width'
+        assert 0 < width <= self.get_width(), 'Width must be greater than zero and less than the image width'
+        assert 0 < height <= self.get_height(), 'Height must be greater than zero and less than the image height'
+        assert (x + width) <= self.get_width(), 'Crop box cannot exceed image width'
+        assert (y + height) <= self.get_height(), 'Crop box cannot exceed image height'
+        rect = pygame.Rect(0, 0, 0, 0)
+        rect.x = x
+        rect.y = y
+        rect.width = width
+        rect.height = height
+        return self.crop_rect(rect)
 
     def copy(self) -> 'BaseImage':
         """
@@ -219,18 +257,19 @@ class BaseImage(object):
         """
         return self._drawing_mode
 
-    def set_drawing_mode(self, drawing_mode: int) -> None:
+    def set_drawing_mode(self, drawing_mode: int) -> 'BaseImage':
         """
         Set the image drawing mode.
 
         :param drawing_mode: Drawing mode
-        :return: None
+        :return: Self reference
         """
         assert isinstance(drawing_mode, int)
         assert drawing_mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
                                 IMAGE_MODE_REPEAT_Y, IMAGE_MODE_REPEAT_XY, IMAGE_MODE_SIMPLE], \
             'unknown image drawing mode'
         self._drawing_mode = drawing_mode
+        return self
 
     def get_drawing_offset(self) -> Tuple2IntType:
         """
@@ -240,15 +279,16 @@ class BaseImage(object):
         """
         return self._drawing_offset
 
-    def set_drawing_offset(self, drawing_offset: Vector2NumberType) -> None:
+    def set_drawing_offset(self, drawing_offset: Vector2NumberType) -> 'BaseImage':
         """
         Set the image drawing offset.
 
         :param drawing_offset: Drawing offset tuple *(x, y)*
-        :return: None
+        :return: Self reference
         """
         assert_vector(drawing_offset, 2)
         self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
+        return self
 
     def get_width(self) -> int:
         """
@@ -284,16 +324,17 @@ class BaseImage(object):
         assert_vector(pos, 2)
         return self._surface.get_at(pos)
 
-    def set_at(self, pos: Tuple2NumberType, color: Union['pygame.Color', str, List[int], ColorType]) -> None:
+    def set_at(self, pos: Tuple2NumberType, color: Union['pygame.Color', str, List[int], ColorType]) -> 'BaseImage':
         """
         Set the color of the *(x, y)* pixel.
 
         :param pos: Position in *(x, y)*
         :param color: Color
-        :return: None
+        :return: Self reference
         """
         assert_vector(pos, 2)
         self._surface.set_at(pos, color)
+        return self
 
     def get_bitsize(self) -> int:
         """
@@ -339,21 +380,23 @@ class BaseImage(object):
         im2 = pygame.image.tostring(image._surface, 'RGBA')
         return im1 == im2
 
-    def restore(self) -> None:
+    def restore(self) -> 'BaseImage':
         """
         Restore image to the original surface.
 
-        :return: None
+        :return: Self reference
         """
         self._surface = self._original_surface.copy()
+        return self
 
-    def checkpoint(self) -> None:
+    def checkpoint(self) -> 'BaseImage':
         """
         Updates the original surface to the current surface.
 
-        :return: None
+        :return: Self reference
         """
         self._original_surface = self._surface.copy()
+        return self
 
     def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple4IntType]
                              ) -> 'BaseImage':
