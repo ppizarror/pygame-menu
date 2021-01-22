@@ -46,6 +46,7 @@ if __pygame_version__ is not None:
     BaseImage: Provides basic image loading an manipulation with pygame
     """
     import pygame_menu.baseimage
+    from pygame_menu.baseimage import BaseImage
 
     """
     Controls: Default controls of menu object and key definition
@@ -70,6 +71,7 @@ if __pygame_version__ is not None:
     """
     Menu: Menu class
     """
+    import pygame_menu.menu
     from pygame_menu.menu import Menu
 
     """
