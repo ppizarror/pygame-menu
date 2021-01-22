@@ -20,6 +20,7 @@ build/
 dist/
 
 # Other
+*.ai
 run_gource.bat
 pygame_menu/examples/other/_test.py
 

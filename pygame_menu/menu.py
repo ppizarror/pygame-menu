@@ -84,9 +84,9 @@ class Menu(object):
 
         Menu cannot be copied or deepcopied.
 
-    :param height: Height of the Menu (px)
-    :param width: Width of the Menu (px)
     :param title: Title of the Menu
+    :param width: Width of the Menu (px)
+    :param height: Height of the Menu (px)
     :param center_content: Auto centers the Menu on the vertical position after a widget is added/deleted
     :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400,500)`` (first column 400px, second 500). If ``0`` uses the Menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
     :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400,500)`` (first column 400px, second 500). Negative values are not accepted
@@ -139,7 +139,7 @@ class Menu(object):
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scroll: 'ScrollArea'
     _scrollarea_margin: List[int]
-    _sounds: 'Sound'
+    _sound: 'Sound'
     _stats: '_MenuStats'
     _submenus: List['Menu']
     _theme: '_themes.Theme'
@@ -161,9 +161,9 @@ class Menu(object):
     _window_size: Tuple2IntType
 
     def __init__(self,
-                 height: NumberType,
-                 width: NumberType,
                  title: str,
+                 width: NumberType,
+                 height: NumberType,
                  center_content: bool = True,
                  column_max_width: MenuColumnMaxWidthType = None,
                  column_min_width: MenuColumnMinWidthType = 0,
@@ -184,9 +184,8 @@ class Menu(object):
                  touchscreen: bool = False,
                  touchscreen_motion_selection: bool = False
                  ) -> None:
-        assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
-        # assert isinstance(title, str)
+        assert isinstance(height, (int, float))
 
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (tuple, list, type(None), int, float))
@@ -349,7 +348,7 @@ class Menu(object):
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._onclose = None  # Function or event called on Menu close
-        self._sounds = Sound()
+        self._sound = Sound()
         self._stats = _MenuStats()
         self._submenus = []
         self._theme = theme
@@ -1750,7 +1749,7 @@ class Menu(object):
         assert isinstance(widget, _widgets.core.Widget)
         if not widget.is_selectable:
             raise ValueError('widget is not selectable')
-        if not widget.visible:
+        if not widget.is_visible():
             raise ValueError('widget is not visible')
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1785,6 +1784,14 @@ class Menu(object):
         self._stats.removed_widgets += 1
         widget.set_menu(None)  # Removes Menu reference from widget
 
+    def get_sound(self) -> 'Sound':
+        """
+        Return the Menu sound engine.
+
+        :return: Sound API
+        """
+        return self._sound
+
     def _update_after_remove_or_hidden(self, index: int, update_surface: bool = True) -> None:
         """
         Update widgets after removal or hidden.
@@ -1798,7 +1805,7 @@ class Menu(object):
         last_selectable = 0
         for indx in range(len(self._widgets)):
             wid = self._widgets[indx]
-            if wid.is_selectable and wid.visible:
+            if wid.is_selectable and wid.is_visible():
                 nselect += 1
                 last_selectable = indx
 
@@ -1837,7 +1844,7 @@ class Menu(object):
         if len(self._widgets) > 0:
             if self._index != -1:
                 selected_widget = self._widgets[self._index % len(self._widgets)]
-                if not selected_widget.visible:
+                if not selected_widget.is_visible():
                     selected_widget.select(False)  # Unselect
                     self._update_after_remove_or_hidden(-1, update_surface=False)
             else:
@@ -1871,7 +1878,7 @@ class Menu(object):
             widget = self._widgets[index]
 
             # If not visible, continue to the next widget
-            if not widget.visible:
+            if not widget.is_visible():
                 widget.set_col_row_index(-1, -1, index)
                 continue
 
@@ -1895,11 +1902,11 @@ class Menu(object):
             self._used_columns = max(self._used_columns, col + 1)
 
             # If widget is floating don't update the current index
-            if not widget.floating:
+            if not widget.is_floating():
                 i_index += 1
 
             # If floating, don't contribute to the column width
-            if widget.floating:
+            else:
                 continue
 
             self._column_widths[col] = max(
@@ -1990,7 +1997,7 @@ class Menu(object):
             rect = widget_rects[widget.get_id()]
             selection_effect = widget.get_selection_effect()
 
-            if not widget.visible:
+            if not widget.is_visible():
                 widget.set_position(0, 0)
                 continue
 
@@ -2021,7 +2028,7 @@ class Menu(object):
                 _, r, _ = rwidget.get_col_row_index()
                 if r >= row:
                     break
-                if rwidget.visible and not rwidget.floating:
+                if rwidget.is_visible() and not rwidget.is_floating():
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
 
@@ -2452,10 +2459,10 @@ class Menu(object):
 
             # Iterate through widgets and draw them
             for widget in self._current._widgets:
-                if not widget.visible:
+                if not widget.is_visible():
                     continue
                 widget.draw(self._current._widgets_surface)
-                if widget.selected:
+                if widget.is_selected():
                     widget.draw_selection(self._current._widgets_surface)
 
             self._current._stats.draw_update_cached += 1
@@ -2483,8 +2490,8 @@ class Menu(object):
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (_widgets.core.Widget, type(None)))
 
-        if widget is None or not widget.active or not widget.is_selectable or not widget.selected or \
-                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.visible:
+        if widget is None or not widget.active or not widget.is_selectable or not widget.is_selected() or \
+                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.is_visible():
             return
         window_width, window_height = self._window_size
 
@@ -2697,7 +2704,7 @@ class Menu(object):
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]
-            if not selected_widget.visible or not selected_widget.is_selectable:
+            if not selected_widget.is_visible() or not selected_widget.is_selectable:
                 selected_widget = None
 
         # Update scroll bars
@@ -2725,26 +2732,26 @@ class Menu(object):
 
                     if event.key == _controls.KEY_MOVE_DOWN:
                         self._current._select(self._current._index - 1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_MOVE_UP:
                         self._current._select(self._current._index + 1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_LEFT and self._current._used_columns > 1:
                         self._current._move_selected_left_right(-1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_RIGHT and self._current._used_columns > 1:
                         self._current._move_selected_left_right(1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_BACK and self._top._prev is not None:
-                        self._current._sounds.play_close_menu()
+                        self._current._sound.play_close_menu()
                         self.reset(1)  # public, do not use _current
 
                     elif event.key == _controls.KEY_CLOSE_MENU:
-                        self._current._sounds.play_close_menu()
+                        self._current._sound.play_close_menu()
                         if self._current._close():
                             updated = True
 
@@ -2803,7 +2810,7 @@ class Menu(object):
                     if not self._current._mouse_motion_selection:
                         for index in range(len(self._current._widgets)):
                             widget = self._current._widgets[index]
-                            if widget.is_selectable and widget.visible and \
+                            if widget.is_selectable and widget.is_visible() and \
                                     self._current._scroll.collide(widget, event):
                                 self._current._select(index)
 
@@ -2819,14 +2826,14 @@ class Menu(object):
                         not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
-                        if widget.is_selectable and widget.visible and \
+                        if widget.is_selectable and widget.is_visible() and \
                                 self._current._scroll.collide(widget, event):
                             self._current._select(index)
 
                 # Mouse events in selected widget
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None and \
                         event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
-                    self._current._sounds.play_click_mouse()
+                    self._current._sound.play_click_mouse()
 
                     if self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(event.type, **event.dict)
@@ -2843,7 +2850,7 @@ class Menu(object):
                     if not self._current._touchscreen_motion_selection:
                         for index in range(len(self._current._widgets)):
                             widget = self._current._widgets[index]
-                            if widget.is_selectable and widget.visible and \
+                            if widget.is_selectable and widget.is_visible() and \
                                     self._current._scroll.collide(widget, event):
                                 self._current._select(index)
 
@@ -2864,7 +2871,7 @@ class Menu(object):
 
                 # Touchscreen events in selected widget
                 elif self._current._touchscreen and event.type == pygame.FINGERUP and selected_widget is not None:
-                    self._current._sounds.play_click_mouse()
+                    self._current._sound.play_click_mouse()
 
                     if self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(pygame.MOUSEBUTTONUP, **event.dict)
@@ -3040,11 +3047,11 @@ class Menu(object):
         :param recursive: Set the sound engine to all submenus
         :return: None
         """
-        assert isinstance(sound, (type(self._sounds), type(None))), \
+        assert isinstance(sound, (type(self._sound), type(None))), \
             'sound must be pygame_menu.Sound type or None'
         if sound is None:
             sound = Sound()
-        self._sounds = sound
+        self._sound = sound
         for widget in self._widgets:
             widget.set_sound(sound)
         if recursive:
@@ -3219,7 +3226,7 @@ class Menu(object):
         new_widget = curr_widget._widgets[new_index]
 
         # If new widget is not selectable or visible
-        if not new_widget.is_selectable or not new_widget.visible:
+        if not new_widget.is_selectable or not new_widget.is_visible():
             if curr_widget._index >= 0:  # There's at least 1 selectable option
                 curr_widget._select(new_index + dwidget, dwidget)
                 return
@@ -3250,7 +3257,7 @@ class Menu(object):
             curr_widget._scroll.scroll_to_rect(rect)
 
         # Play widget selection sound
-        self._sounds.play_widget_selection()
+        self._sound.play_widget_selection()
         self._stats.select += 1
 
     def get_id(self) -> str:
