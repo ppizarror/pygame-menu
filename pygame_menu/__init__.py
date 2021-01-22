@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Menu']
+__all__ = ['Menu', 'BaseImage']
 
 # Check if pygame exists, if not maybe the module is being used by setup.py
 __pygame_version__ = None
