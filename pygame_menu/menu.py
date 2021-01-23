@@ -2948,6 +2948,7 @@ class Menu(object):
                 bgfun() <or> bgfun(Menu)
 
         kwargs (Optional)
+            - ``clear_surface``     *(bool)* - If ``True`` surface is cleared using ``theme.surface_clear_color``
             - ``disable_loop``      *(bool)* - If ``True`` the mainloop only runs once. Use for running draw and update in a single call
             - ``fps_limit``         *(int)* - Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
             - ``pause_key_event``   *(int, None)* - If set, the menu is paused. That is, menu does not draw and only accepts the pause event key
@@ -2962,14 +2963,18 @@ class Menu(object):
         :return: None
         """
         # Unpack kwargs
+        clear_surface = kwargs.get('clear_surface', True)
         disable_loop = kwargs.get('disable_loop', False)
         fps_limit = kwargs.get('fps_limit', self._theme.fps)
+        pause_key_event = kwargs.get('pause_key_event', None)
 
-        assert isinstance(surface, pygame.Surface)
+        assert isinstance(clear_surface, bool)
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
+        assert isinstance(pause_key_event, (int, type(None)))
+        assert isinstance(surface, pygame.Surface)
+
         assert fps_limit >= 0, 'fps limit cannot be negative'
-        fps_limit = int(fps_limit)
 
         # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
@@ -2992,16 +2997,33 @@ class Menu(object):
         # Force rendering before loop
         self._current._widgets_surface = None
 
+        # Execution variables
+        paused = False
+
+        # Start loop
         while True:
             self._current._stats.loop += 1
             self._current._clock.tick(fps_limit)
 
-            # Draw the menu
-            self.draw(surface=surface, clear_surface=True)
+            # If pause key exists, check for the pause key
+            events = pygame.event.get()
+            if pause_key_event is not None:
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pause_key_event:
+                            paused = not paused
+                    elif event.type == _events.PYGAME_QUIT or (
+                            event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
+                            event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
+                            event.type == _events.PYGAME_WINDOWCLOSE:
+                        self._current._exit()
 
-            # If loop, gather events by Menu and draw the background function, if this method
-            # returns true then the mainloop will break
-            self.update(pygame.event.get())
+            if not paused:
+                # Draw the menu
+                self.draw(surface=surface, clear_surface=clear_surface)
+
+                # Gather events by Menu
+                self.update(events)
 
             # Flip contents to screen
             pygame.display.flip()
