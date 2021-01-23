@@ -43,7 +43,7 @@ surface = pygame.display.set_mode((400, 300))
 pygame.display.set_caption('pygame-menu v4')
 
 # Set pygame-menu image
-icon = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).get_surface()
+icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).get_surface()
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
@@ -51,7 +51,7 @@ EXAMPLE = 'TOGGLESWITCH'
 
 # Create example
 menu: 'pygame_menu.Menu'
-widgets: List['pygame_menu.widgets.core.widget.Widget']
+widgets: List['pygame_menu.widgets.Widget']
 
 
 def make_menu(menu_theme: 'pygame_menu.themes.Theme', title: str) -> 'pygame_menu.Menu':

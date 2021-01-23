@@ -29,7 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Menu', 'BaseImage']
+__all__ = [
+
+    # Common classes
+    'BaseImage',
+    'Menu',
+    'Theme'
+
+]
 
 # Check if pygame exists, if not maybe the module is being used by setup.py
 __pygame_version__ = None
@@ -88,6 +95,7 @@ if __pygame_version__ is not None:
     Themes: Menu themes
     """
     import pygame_menu.themes
+    from pygame_menu.themes import Theme
 
     """
     Widgets: Menu widgets
