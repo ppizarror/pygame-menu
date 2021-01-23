@@ -197,7 +197,7 @@ class BaseImage(object):
         :param rect: Crop rect geometry
         :return: Self reference
         """
-        self._surface = self._surface.subsurface(rect)
+        self._surface = self.get_crop_rect(rect)
         return self
 
     def crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'BaseImage':
@@ -210,6 +210,28 @@ class BaseImage(object):
         :param height: Crop height (px)
         :return: Self reference
         """
+        self._surface = self.get_crop(x, y, width, height)
+        return self
+
+    def get_crop_rect(self, rect: 'pygame.Rect') -> 'pygame.surface':
+        """
+        Get a crop surface of the image from rect.
+
+        :param rect: Crop rect geometry
+        :return: Cropped surface
+        """
+        return self._surface.subsurface(rect)
+
+    def get_crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'pygame.Surface':
+        """
+        Get a crop of the image from coordinate *(x, y)*.
+
+        :param x: X position (px) within your image
+        :param y: Y position (px)
+        :param width: Crop width (px)
+        :param height: Crop height (px)
+        :return: Cropped surface
+        """
         assert 0 <= x < self.get_width(), 'X position must be between 0 and the image width'
         assert 0 <= y < self.get_height(), 'Y position must be between 0 and the image width'
         assert 0 < width <= self.get_width(), 'Width must be greater than zero and less than the image width'
@@ -221,7 +243,7 @@ class BaseImage(object):
         rect.y = y
         rect.width = width
         rect.height = height
-        return self.crop_rect(rect)
+        return self.get_crop_rect(rect)
 
     def copy(self) -> 'BaseImage':
         """
@@ -344,12 +366,15 @@ class BaseImage(object):
         """
         return self._surface.get_bitsize()
 
-    def get_surface(self) -> 'pygame.Surface':
+    def get_surface(self, new: bool = True) -> 'pygame.Surface':
         """
         Return the surface object of the image.
 
+        :param new: Return a new surface, if ``False`` return the same object
         :return: Image surface
         """
+        if new:
+            return self.get_crop_rect(self.get_rect())
         return self._surface
 
     def get_namefile(self) -> str:
@@ -487,7 +512,7 @@ class BaseImage(object):
         self._surface = pygame.transform.flip(self._surface, x, y)
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'BaseImage':
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'BaseImage':
         """
         Scale the image to a desired width and height factor.
 
