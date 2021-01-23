@@ -406,8 +406,13 @@ class MenuBar(Widget):
         if self._backbox:
             backbox_margin = 4
 
+            # Subtract the scrollarea thickness if float and enabled
+            scroll_delta = 0
+            if self._floating:
+                scroll_delta = self.get_menu().get_width() - self.get_menu().get_width(inner=True)
+
             self._backbox_rect = pygame.Rect(
-                int(self._rect.x + self._width - cross_size + backbox_margin),
+                int(self._rect.x + self._width - cross_size + backbox_margin - scroll_delta),
                 int(self._rect.y + backbox_margin),
                 int(cross_size - 2 * backbox_margin),
                 int(cross_size - 2 * backbox_margin)
@@ -456,6 +461,11 @@ class MenuBar(Widget):
         if self._menu is not None:
             self._render()
         return self
+
+    def get_height(self, apply_padding: bool = True, apply_selection: bool = False) -> int:
+        if self._floating:
+            return 0
+        return super(MenuBar, self).get_height(apply_padding, apply_selection)
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         updated = False

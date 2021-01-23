@@ -137,6 +137,8 @@ class Theme(object):
     :type title_bar_style: int
     :param title_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
     :type title_close_button: bool
+    :param title_floating: If ``True`` title don't contributes height to the Menu. Thus, scroll uses full menu width/height
+    :type title_floating: bool
     :param title_font: Optional title font, if ``None`` theme uses the Menu default font
     :type title_font: str, None
     :param title_font_antialias: Title font renders with antialiasing
@@ -223,6 +225,7 @@ class Theme(object):
     title_bar_modify_scrollarea: bool
     title_bar_style: int
     title_close_button: bool
+    title_floating: bool
     title_font: str
     title_font_antialias: bool
     title_font_color: ColorType
@@ -275,6 +278,7 @@ class Theme(object):
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
+        self.title_floating = self._get(kwargs, 'title_floating', bool, False)
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
@@ -373,6 +377,7 @@ class Theme(object):
         assert isinstance(self.scrollbar_shadow_offset, (int, float))
         assert isinstance(self.scrollbar_slider_pad, (int, float))
         assert isinstance(self.scrollbar_thick, (int, float))
+        assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font, str)
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_shadow_offset, (int, float))
