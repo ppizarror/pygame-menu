@@ -42,7 +42,7 @@ class ThemeTest(unittest.TestCase):
         Validate theme.
         """
         theme = pygame_menu.themes.THEME_ORANGE.copy()
-        self.assertEqual(theme.validate(), None)
+        self.assertEqual(theme.validate(), theme)
 
         # Modify property to invalid and assert error
         theme.widget_padding = 'Epic'
@@ -52,12 +52,12 @@ class ThemeTest(unittest.TestCase):
         theme.widget_padding = (-1, -1)
         self.assertRaises(AssertionError, lambda: theme.validate())
         theme.widget_padding = (1, 1)
-        self.assertEqual(theme.validate(), None)
+        self.assertEqual(theme.validate(), theme)
 
         # Disable validation
         theme._disable_validation = True
         theme.widget_padding = 'Epic'
-        self.assertEqual(theme.validate(), None)
+        self.assertEqual(theme.validate(), theme)
 
     def test_copy(self) -> None:
         """
