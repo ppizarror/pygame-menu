@@ -31,8 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['VMargin']
 
+import pygame
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.none import NoneWidget
+from pygame_menu.custom_types import Optional, Tuple2IntType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -51,5 +53,10 @@ class VMargin(NoneWidget):
         super(VMargin, self).__init__(widget_id=widget_id)
 
     def set_margin(self, x: int, y: int) -> 'Widget':
-        self._margin = (x, y)
+        self._rect.width = 0
+        self._rect.height = y
         return self
+
+    def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
+                 use_transformed_padding: bool = True) -> 'pygame.Rect':
+        return self._rect.copy()

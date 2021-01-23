@@ -1158,11 +1158,11 @@ class WidgetsTest(unittest.TestCase):
         w = menu.add_vertical_margin(999)
         w._render()
         self.assertEqual(w.get_rect().width, 0)
-        self.assertEqual(w.get_rect().height, 0)
+        self.assertEqual(w.get_rect().height, 999)
         self.assertEqual(w.update([]), False)
         self.assertEqual(w._font_size, 0)
         self.assertEqual(w.get_margin()[0], 0)
-        self.assertEqual(w.get_margin()[1], 999)
+        self.assertEqual(w.get_margin()[1], 0)
         w.draw(surface)
 
     def test_none(self) -> None:
