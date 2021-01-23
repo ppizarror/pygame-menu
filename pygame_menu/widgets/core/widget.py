@@ -41,7 +41,7 @@ from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
-    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType
+    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType, Tuple3IntType
 
 from pathlib import Path
 from uuid import uuid4
@@ -78,7 +78,7 @@ class Widget(object):
     _border_color: ColorType
     _border_inflate: Tuple2IntType
     _border_width: int
-    _col_row_index: Tuple[int, int, int]
+    _col_row_index: Tuple3IntType
     _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
@@ -315,7 +315,9 @@ class Widget(object):
 
     def force_menu_surface_update(self) -> 'Widget':
         """
-        Forces menu surface update. This calls all render, including all widgets decorations.
+        Forces menu surface update after next rendering call.
+        This method automatically updates widget decoration cache as Menu render
+        forces it to re-render.
 
         ..note ::
 
@@ -334,12 +336,13 @@ class Widget(object):
 
     def force_menu_surface_cache_update(self) -> 'Widget':
         """
-        Forces menu surface cache to update. This also updates widget decoration.
+        Forces menu surface cache to update after next drawing call.
+        This also updates widget decoration.
 
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widget as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference
@@ -970,6 +973,8 @@ class Widget(object):
             y = 1
         elif self._shadow_position == _locals.POSITION_WEST:
             x = -1
+        elif self._shadow_position == _locals.POSITION_CENTER:
+            pass  # (0, 0)
 
         self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
         self._force_render()
@@ -1376,7 +1381,7 @@ class Widget(object):
         self._max_height[0] = None
         self.render()
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'Widget':
         """
         Transformation: Scale the widget to a desired width and height factor.
 
@@ -1431,7 +1436,7 @@ class Widget(object):
         self._force_render()
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'Widget':
         """
         Transformation: Set the widget size to another size.
 
@@ -2007,7 +2012,7 @@ class Widget(object):
         self._col_row_index = (col, row, index)
         return self
 
-    def get_col_row_index(self) -> Tuple[int, int, int]:
+    def get_col_row_index(self) -> Tuple3IntType:
         """
         Get the widget column/row position.
 
