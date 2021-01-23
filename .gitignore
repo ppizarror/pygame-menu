@@ -27,5 +27,9 @@ pygame_menu/examples/other/_test.py
 # Tox
 tox.ini
 
-# Poetry lock file
-poetry.lock
+# Pyproject
+pyproject_update.py
+pyproject.toml
+
+# Lock file
+*.lock
