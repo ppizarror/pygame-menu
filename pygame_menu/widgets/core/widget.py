@@ -544,8 +544,8 @@ class Widget(object):
         pad_bottom = self._padding[2] * apply_padding + inflate[1] / 2
         pad_left = self._padding[3] * apply_padding + inflate[0] / 2
 
-        return pygame.Rect(int(self._rect.x - pad_left + self._translate[0]),
-                           int(self._rect.y - pad_top + self._translate[1]),
+        return pygame.Rect(int(self._rect.x - pad_left),
+                           int(self._rect.y - pad_top),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
 
@@ -846,10 +846,12 @@ class Widget(object):
         :type posy: int, float
         :return: None
         """
+        assert isinstance(posx, (int, float))
+        assert isinstance(posy, (int, float))
         if self.lock_position:
             return
-        self._rect.x = int(posx)
-        self._rect.y = int(posy)
+        self._rect.x = int(posx) + self._translate[0]
+        self._rect.y = int(posy) + self._translate[1]
 
     def get_position(self):
         """
@@ -858,7 +860,7 @@ class Widget(object):
         :return: Widget position
         :rtype: tuple
         """
-        return self._rect.x + self._translate[0], self._rect.y + self._translate[1]
+        return self._rect.x, self._rect.y
 
     def get_width(self, apply_padding=True, apply_selection=False):
         """
@@ -929,6 +931,11 @@ class Widget(object):
         This method can flip the widget either vertically, horizontally, or both.
         Flipping a widget is non-destructive and does not change the dimensions.
 
+        .. note::
+
+            Flip is only applied after widget rendering. Thus, the changes are
+            not immediate.
+
         :param x: Flip in x axis
         :type x: bool
         :param y: Flip on y axis
@@ -947,6 +954,11 @@ class Widget(object):
         .. note::
 
             Not all widgets are affected by scale.
+
+        .. note::
+
+            Scale is only applied after widget rendering. Thus, the changes are
+            not immediate.
 
         :param width: Scale factor of the width
         :type width: int, float
@@ -974,6 +986,11 @@ class Widget(object):
             This method calls ``widget.scale`` method; thus, some widgets
             may not support this transformation.
 
+        .. note::
+
+            Resize is only applied after widget rendering. Thus, the changes are
+            not immediate.
+
         :param width: New width of the widget in px
         :type width: int, float
         :param height: New height of the widget in px
@@ -993,6 +1010,13 @@ class Widget(object):
 
             To revert changes, only set to *(0,0)*.
 
+        .. note::
+
+            Translate is only applied when updating the widget position (calling
+            :py:meth:`pygame_menu.widgets.core.Widget.set_position`. This is done
+            by Menu when rendering the surface. Thus, the position change is not
+            immediate.
+
         :param x: +X in px
         :type x: int, float
         :param y: +Y in px
@@ -1001,7 +1025,7 @@ class Widget(object):
         """
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
-        self._translate = (x, y)
+        self._translate = (int(x), int(y))
         self._menu_surface_needs_update = True
 
     def rotate(self, angle):
@@ -1014,6 +1038,11 @@ class Widget(object):
             Not all widgets accepts rotation. Also this rotation only affects the text or images,
             the selection or background is not rotated.
 
+        .. note::
+
+            Rotation is only applied after widget rendering. Thus, the changes are
+            not immediate.
+
         :param angle: Rotation angle (degrees 0-360)
         :type angle: int, float
         :return: None
@@ -1025,6 +1054,12 @@ class Widget(object):
     def set_alignment(self, align):
         """
         Set the alignment of the widget.
+
+        .. note::
+
+            Alignment is only applied when updating the widget position, done
+            by Menu when rendering the surface. Thus, the alignment change is not
+            immediate.
 
         :param align: Widget align, see locals
         :type align: str

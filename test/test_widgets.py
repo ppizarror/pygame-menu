@@ -134,6 +134,10 @@ class WidgetsTest(unittest.TestCase):
         x, y = w.get_position()
         w.translate(10, 10)
         xt, yt = w.get_position()
+        self.assertNotEqual(xt - x, 10)
+        self.assertNotEqual(yt - y, 10)
+        self.menu.render()
+        xt, yt = w.get_position()
         self.assertEqual(xt - x, 10)
         self.assertEqual(yt - y, 10)
 
