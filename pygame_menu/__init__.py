@@ -110,7 +110,7 @@ import pygame_menu.version
 """
 Metadata: Information about the project
 """
-__author__ = 'ppizarror'
+__author__ = 'Pablo Pizarro R. @ppizarror'
 __contributors__ = [
     'anxuae',
     'arpruss',
@@ -141,3 +141,14 @@ __url_bug_tracker__ = 'https://github.com/ppizarror/pygame-menu/issues'
 __url_documentation__ = 'https://pygame-menu.readthedocs.io/en/latest/'
 __url_source_code__ = 'https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu'
 __version__ = pygame_menu.version.ver
+
+"""
+Print pygame-menu version.
+"""
+import os
+
+if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and 'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
+    print('{} {}'.format(__module_name__, __version__))
+
+# Cleanup namespace
+del os
