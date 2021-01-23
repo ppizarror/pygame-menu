@@ -125,7 +125,7 @@ class PygameUtils(object):
                                    })]
 
     @staticmethod
-    def test_widget_key_press(widget: 'pygame_menu.widgets.core.Widget') -> None:
+    def test_widget_key_press(widget: 'pygame_menu.widgets.Widget') -> None:
         """
         Test keypress widget.
 

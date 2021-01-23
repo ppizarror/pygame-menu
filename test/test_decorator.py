@@ -195,7 +195,7 @@ class DecoratorTest(unittest.TestCase):
         deco.add_circle(50, 50, 100, color, True)
 
         # Surface
-        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+        img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
         img.scale(0.15, 0.15)
         deco.add_surface(60, 60, img.get_surface(), prev=False)
 

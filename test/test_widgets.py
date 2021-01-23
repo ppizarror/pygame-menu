@@ -81,7 +81,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget copy.
         """
-        widget = pygame_menu.widgets.core.widget.Widget()
+        widget = pygame_menu.widgets.Widget()
         self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.copy(widget))
         self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.deepcopy(widget))
 
@@ -179,7 +179,7 @@ class WidgetsTest(unittest.TestCase):
         w.draw(surface)
         self.assertEqual(w._background_inflate[0], 10)
         self.assertEqual(w._background_inflate[1], 10)
-        w.set_background_color(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
+        w.set_background_color(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
         w.draw(surface)
 
     def test_transform(self) -> None:
@@ -212,7 +212,7 @@ class WidgetsTest(unittest.TestCase):
                                          ('The final mode', 3)]),
             self.menu.add_color_input('color', 'rgb'),
             self.menu.add_label('nice'),
-            self.menu.add_image(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
+            self.menu.add_image(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
             self.menu.add_vertical_margin(10),
             self.menu.add_text_input('nice')
         ]
@@ -949,7 +949,7 @@ class WidgetsTest(unittest.TestCase):
             menu.add_button('eee', None),  # widget
             [1, 2, 3],  # list
             (1, 2, 3),  # tuple
-            pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
+            pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
         ]
         for i in invalid:
             self.assertRaises(ValueError, lambda: menu.add_button('b1', i))

@@ -63,7 +63,7 @@ class ThemeTest(unittest.TestCase):
         """
         Test theme copy.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
         # Create theme
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
@@ -78,7 +78,7 @@ class ThemeTest(unittest.TestCase):
         """
         Test theme method.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
         # Create theme
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
@@ -111,7 +111,7 @@ class ThemeTest(unittest.TestCase):
         self.assertEqual(t._format_opacity([1, 2, 3]), (1, 2, 3, 255))
         self.assertEqual(t._format_opacity([1, 2, 3, 25]), (1, 2, 3, 25))
         self.assertRaises(AssertionError, lambda: t._format_opacity([1, 2]))
-        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertEqual(img, t._format_opacity(img))
         self.assertEqual(t._format_opacity(None), None)
         self.assertRaises(ValueError, lambda: t._format_opacity('1,2,3'))
@@ -123,7 +123,7 @@ class ThemeTest(unittest.TestCase):
         Test custom types get.
         """
         t = pygame_menu.themes.THEME_DEFAULT
-        img = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
         class Test(object):
             """

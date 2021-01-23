@@ -51,7 +51,7 @@ class BaseImageTest(unittest.TestCase):
         Test image load with pathlib.
         """
         pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.baseimage.BaseImage(pathimg)
+        image = pygame_menu.BaseImage(pathimg)
         image.draw(surface)
         self.assertEqual(image.get_path(), str(pathimg))
 
@@ -96,7 +96,7 @@ class BaseImageTest(unittest.TestCase):
                 'AAs5ktbWYHXdpBN7oFin5aoTcdARAYutCnHtEERJ3qQo960xPA81MdwgcqsEDYVaABEpD97CnQgArITgK1l33sYy+72+NudrGfXe1in' \
                 'zveVVABFSQBYIgIBAA7'
         output = io.BytesIO(base64.b64decode(photo))
-        image = pygame_menu.baseimage.BaseImage(output)
+        image = pygame_menu.BaseImage(output)
         self.assertEqual(image.get_width(), 70)
         self.assertEqual(image.get_height(), 70)
         self.assertEqual(image.get_bitsize(), 8)
@@ -105,7 +105,7 @@ class BaseImageTest(unittest.TestCase):
         self.assertEqual(image.get_extension(), 'BytesIO')
 
         # Assemble new from base64 bs
-        image2 = pygame_menu.baseimage.BaseImage(photo, frombase64=True)
+        image2 = pygame_menu.BaseImage(photo, frombase64=True)
         self.assertTrue(image.equals(image2))
         self.assertEqual(image2.get_extension(), 'base64')
 
@@ -120,20 +120,20 @@ class BaseImageTest(unittest.TestCase):
         """
         for mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, IMAGE_MODE_REPEAT_XY,
                      IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE]:
-            image = pygame_menu.baseimage.BaseImage(
+            image = pygame_menu.BaseImage(
                 pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
                 drawing_mode=mode
             )
             image.draw(surface)
 
         # Attempt to create an invalid drawing mode
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage(
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=-1
         ))
 
         # Get drawing mode
-        image = pygame_menu.baseimage.BaseImage(
+        image = pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=IMAGE_MODE_CENTER
         )
@@ -143,7 +143,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Test drawing offset.
         """
-        image = pygame_menu.baseimage.BaseImage(
+        image = pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=IMAGE_MODE_CENTER
         )
@@ -155,7 +155,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Test path.
         """
-        image = pygame_menu.baseimage.BaseImage(
+        image = pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=IMAGE_MODE_CENTER
         )
@@ -165,16 +165,16 @@ class BaseImageTest(unittest.TestCase):
         """
         Validate a image extension.
         """
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('invalid.pnng'))
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('invalid'))
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('file_invalid.png'))
-        pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage('invalid.pnng'))
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage('invalid'))
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage('file_invalid.png'))
+        pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
     def test_image_properties(self) -> None:
         """
         Test the getters of the image object.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         w, h = image.get_size()
         self.assertEqual(w, 256)
         self.assertEqual(h, 256)
@@ -185,8 +185,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the file operations.
         """
-        image_original = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertTrue(image.equals(image_original))
 
         # Flip
@@ -207,7 +207,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Test copy image.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image_copied = image.copy()
         self.assertTrue(image.equals(image_copied))
         image_copy = copy.copy(image)
@@ -219,8 +219,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the image transformation.
         """
-        image_original = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
         # Scale
         image.scale(0.5, 0.5)
@@ -283,7 +283,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Cache draw test.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertEqual(image._last_transform[2], None)
 
         image.set_drawing_mode(pygame_menu.baseimage.IMAGE_MODE_FILL)
