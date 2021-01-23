@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-from typing import Any
-from functools import partial
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+from typing import Any
+from functools import partial
 
 FPS = 30
 WINDOW_SIZE = (800, 600)

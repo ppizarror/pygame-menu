@@ -31,16 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import sys
-import math
-from typing import Dict, Any
-
-sys.path.insert(0, '../../')
-sys.path.insert(0, '../../../')
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+import math
+from typing import Dict, Any
 
 
 class App(object):

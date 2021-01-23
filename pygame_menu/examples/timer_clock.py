@@ -31,13 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import datetime
-from random import randrange
-from typing import List, Tuple, Optional
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+import datetime
+from random import randrange
+from typing import List, Tuple, Optional
 
 # -----------------------------------------------------------------------------
 # Constants and global variables

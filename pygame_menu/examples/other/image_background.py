@@ -31,15 +31,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import sys
-from typing import Optional
-
-sys.path.insert(0, '../../')
-sys.path.insert(0, '../../../')
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+from typing import Optional
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
