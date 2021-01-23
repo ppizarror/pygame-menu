@@ -311,15 +311,15 @@ class ScrollArea(object):
                 sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
                                    (self._view_rect.height + self.get_hidden_height()))
 
-    def draw(self, surface: 'pygame.Surface') -> None:
+    def draw(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
         Draw the scrollarea.
 
         :param surface: Surface to render the area
-        :return: None
+        :return: Self reference
         """
         if not self._world:
-            return
+            return self
 
         # Background surface already has previous decorators
         if self._bg_surface:
@@ -337,6 +337,7 @@ class ScrollArea(object):
         # noinspection PyTypeChecker
         surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
         self._decorator.draw_post(surface)
+        return self
 
     def get_hidden_width(self) -> int:
         """
@@ -514,13 +515,13 @@ class ScrollArea(object):
                 sbar.set_value(value)
 
     # noinspection PyTypeChecker
-    def scroll_to_rect(self, rect: 'pygame.Rect', margin: NumberType = 10) -> None:
+    def scroll_to_rect(self, rect: 'pygame.Rect', margin: NumberType = 10) -> bool:
         """
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
         :param margin: Extra margin around the rect (px)
-        :return: None
+        :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
         assert isinstance(margin, (int, float))
         real_rect = self.to_real_position(rect)
@@ -532,7 +533,7 @@ class ScrollArea(object):
                 and self._view_rect.topleft[1] <= real_rect.topleft[1] + sy \
                 and self._view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
                 and self._view_rect.bottomright[1] + sy >= real_rect.bottomright[1]:
-            return
+            return False
 
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
@@ -547,28 +548,31 @@ class ScrollArea(object):
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
+        return True
 
-    def set_position(self, posx: int, posy: int) -> None:
+    def set_position(self, posx: int, posy: int) -> 'ScrollArea':
         """
         Set the position.
 
         :param posx: X position
         :param posy: Y position
-        :return: None
+        :return: Self reference
         """
         self._rect.x = posx
         self._rect.y = posy
         self._apply_size_changes()
+        return self
 
-    def set_world(self, surface: 'pygame.Surface') -> None:
+    def set_world(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
         Update the scrolled surface.
 
         :param surface: New world surface
-        :return: None
+        :return: Self reference
         """
         self._world = surface
         self._apply_size_changes()
+        return self
 
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
                          ) -> Union['pygame.Rect', Tuple2IntType]:
@@ -643,16 +647,17 @@ class ScrollArea(object):
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
-    def set_menu(self, menu: 'Menu') -> None:
+    def set_menu(self, menu: 'Menu') -> 'ScrollArea':
         """
         Set the Menu reference.
 
         :param menu: Menu object
-        :return: None
+        :return: Self reference
         """
         self._menu = menu
         for sbar in self._scrollbars:
             sbar.set_menu(menu)
+        return self
 
     def get_menu(self) -> Optional['Menu']:
         """

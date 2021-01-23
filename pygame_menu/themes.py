@@ -341,7 +341,7 @@ class Theme(object):
         # Test purpose only, if True disables any validation
         self._disable_validation = False
 
-    def validate(self) -> None:
+    def validate(self) -> 'Theme':
         """
         Validate the values of the theme. If there's a invalid parameter throws an
         ``AssertionError``.
@@ -349,10 +349,10 @@ class Theme(object):
         This function also converts all lists to tuples. This is done because lists
         are mutable.
 
-        :return: None
+        :return: Self reference
         """
         if self._disable_validation:
-            return
+            return self
 
         # Boolean asserts
         assert isinstance(self.title_close_button, bool)
@@ -448,18 +448,21 @@ class Theme(object):
         assert self.focus_background_color[3] != 0, \
             'focus background color cannot be fully transparent, suggested opacity between 1 and 255'
 
-    def set_background_color_opacity(self, opacity: float) -> None:
+        return self
+
+    def set_background_color_opacity(self, opacity: float) -> 'Theme':
         """
         Modify the Menu background color with given opacity.
 
         :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (opaque)
-        :return: None
+        :return: Self reference
         """
         _utils.assert_color(self.background_color)
         assert isinstance(opacity, float)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
                                  self.background_color[2], int(opacity * 255))
+        return self
 
     @staticmethod
     def _vec_to_tuple(obj: Union[Tuple, List], check_length: int = 0) -> Tuple:

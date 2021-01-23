@@ -201,6 +201,10 @@ class DecoratorTest(unittest.TestCase):
         deco.remove(callid)
         self.assertFalse(callid in deco._decor_enabled.keys())
 
+        # Disable unknown deco
+        self.assertRaises(IndexError, lambda: deco.disable('unknown'))
+        self.assertRaises(IndexError, lambda: deco.enable('unknown'))
+
     def test_general(self) -> None:
         """
         Test all decorators.

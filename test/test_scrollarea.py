@@ -33,7 +33,7 @@ __all__ = ['ScrollAreaTest']
 
 import copy
 import unittest
-from test._utils import MenuUtils, PygameUtils
+from test._utils import MenuUtils, PygameUtils, surface
 import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu.scrollarea import get_scrollbars_from_position
@@ -81,6 +81,10 @@ class ScrollAreaTest(unittest.TestCase):
         sa.force_menu_surface_cache_update()
         sa.force_menu_surface_update()
         self.assertTrue(menu._widgets_surface_need_update)
+
+        # Remove world and draw
+        sa._world = None
+        sa.draw(surface)
 
     def test_copy(self) -> None:
         """

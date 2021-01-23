@@ -193,18 +193,19 @@ class Decorator(object):
         """
         return len(self._decor[DECOR_TYPE_PREV]) + len(self._decor[DECOR_TYPE_POST])
 
-    def force_cache_update(self, prev: Optional[bool] = None) -> None:
+    def force_cache_update(self, prev: Optional[bool] = None) -> 'Decorator':
         """
         Forces cache update.
 
         :param prev: Update the previous or post surface cache. If ``None`` forces both caches to update
-        :return: None
+        :return: Self reference
         """
         if prev is None:
             self.force_cache_update(True)
             self.force_cache_update(False)
-            return
+            return self
         self._cache_needs_update[DECOR_TYPE_PREV if prev else DECOR_TYPE_POST] = True
+        return self
 
     def add_polygon(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]], color: ColorType,
                     filled: bool, width: int = 0, prev: bool = True, gfx: bool = True) -> str:
@@ -557,39 +558,39 @@ class Decorator(object):
         assert y1 != y2
         return self.add_line((x, y1), (x, y2), color, width, prev)
 
-    def disable(self, decorid: str) -> None:
+    def disable(self, decorid: str) -> 'Decorator':
         """
         Disable a certain decoration from ID. Raises ``IndexError`` if decoration was
         not found.
 
         :param decorid: Decoration ID
-        :return: None
+        :return: Self reference
         """
-        try:
-            self._decor_enabled[decorid] = False
-        except KeyError:
+        if decorid not in self._decor_enabled.keys():
             raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+        self._decor_enabled[decorid] = False
+        return self
 
-    def enable(self, decorid: str) -> None:
+    def enable(self, decorid: str) -> 'Decorator':
         """
         Enable a certain decoration from ID. Raises ``IndexError`` if decoration was
         not found.
 
         :param decorid: Decoration ID
-        :return: None
+        :return: Self reference
         """
-        try:
-            self._decor_enabled[decorid] = True
-        except KeyError:
+        if decorid not in self._decor_enabled.keys():
             raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+        self._decor_enabled[decorid] = True
+        return self
 
-    def remove(self, decorid: str) -> None:
+    def remove(self, decorid: str) -> 'Decorator':
         """
         Remove a decoration from a given ID. Raises ``IndexError`` if decoration was
         not found.
 
         :param decorid: Decoration ID
-        :return: None
+        :return: Self reference
         """
         assert isinstance(decorid, str)
         if decorid in self._coord_cache.keys():
@@ -600,24 +601,25 @@ class Decorator(object):
                     self._decor[p].remove(d)
                     self._cache_needs_update[p] = True
                     del self._decor_enabled[decorid]
-                    return
+                    return self
         raise IndexError('decoration ID "{0}" was not found'.format(decorid))
 
-    def remove_all(self, prev: Optional[bool] = None) -> None:
+    def remove_all(self, prev: Optional[bool] = None) -> 'Decorator':
         """
         Remove all decorations.
 
         :param prev: Remove from ``prev`` or ``post``. If ``None`` both are removed
-        :return: None
+        :return: Self reference
         """
         if prev is None:
             self.remove_all(True)
             self.remove_all(False)
-            return
+            return self
         p = DECOR_TYPE_PREV if prev else DECOR_TYPE_POST
         self._cache_needs_update[p] = False
         del self._decor[p]
         self._decor[p] = []
+        return self
 
     def _draw_assemble_cache(self, prev: str, deco: List[Tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
         """
@@ -651,30 +653,33 @@ class Decorator(object):
 
         surface.blit(self._cache_surface[prev], (0, 0))
 
-    def draw_prev(self, surface: 'pygame.Surface') -> None:
+    def draw_prev(self, surface: 'pygame.Surface') -> 'Decorator':
         """
         Draw prev.
 
         :param surface: Pygame surface
-        :return: None
+        :return: Self reference
         """
         if not self.cache:
             self._draw(self._decor[DECOR_TYPE_PREV], surface)
         else:
             self._draw_assemble_cache(DECOR_TYPE_PREV, self._decor[DECOR_TYPE_PREV], surface)
+        return self
 
-    def draw_post(self, surface: 'pygame.Surface') -> None:
+    def draw_post(self, surface: 'pygame.Surface') -> 'Decorator':
         """
         Draw post.
 
         :param surface: Pygame surface
-        :return: None
+        :return: Self reference
         """
         if not self.cache:
             self._draw(self._decor[DECOR_TYPE_POST], surface)
         else:
             self._draw_assemble_cache(DECOR_TYPE_POST, self._decor[DECOR_TYPE_POST], surface)
+        return self
 
+    # noinspection PyArgumentList
     def _draw(self, deco: List[Tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
         """
         Draw.

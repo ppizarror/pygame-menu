@@ -777,14 +777,14 @@ class BaseImage(object):
             raise ValueError('unknown drawing position')
 
     def draw(self, surface: 'pygame.Surface', area: Optional['pygame.Rect'] = None,
-             position: Tuple2IntType = (0, 0)) -> None:
+             position: Tuple2IntType = (0, 0)) -> 'BaseImage':
         """
         Draw the image in a given surface.
 
         :param surface: Pygame surface object
         :param area: Area to draw; if ``None`` the image will be drawn on entire surface
         :param position: Position to draw in *(x, y)*
-        :return: None
+        :return: Self reference
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(area, (pygame.Rect, type(None)))
@@ -891,3 +891,5 @@ class BaseImage(object):
                 ),
                 area
             )
+
+        return self
