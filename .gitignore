@@ -25,5 +25,7 @@ run_gource.bat
 pygame_menu/examples/other/_test.py
 
 # Tox
-pyproject.toml
 tox.ini
+
+# Poetry lock file
+poetry.lock
