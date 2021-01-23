@@ -60,7 +60,7 @@ from pygame_menu.custom_types import Union, List, Tuple, CallbackType, Tuple2Int
 import warnings
 
 if TYPE_CHECKING:
-    from pygame_menu.widgets.core.selection import Selection
+    from pygame_menu.widgets.core import Selection
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -161,26 +161,26 @@ class MenuBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding: PaddingType) -> None:
-        pass
+    def set_padding(self, padding: PaddingType) -> 'Widget':
+        return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def set_max_height(self, height: NumberType, scale_width: NumberType = False, smooth: bool = True) -> None:
-        pass
+    def set_max_height(self, height: NumberType, scale_width: NumberType = False, smooth: bool = True) -> 'Widget':
+        return self
 
-    def set_max_width(self, width: NumberType, scale_height: NumberType = False, smooth: bool = True) -> None:
-        pass
+    def set_max_width(self, width: NumberType, scale_height: NumberType = False, smooth: bool = True) -> 'Widget':
+        return self
 
-    def set_selection_effect(self, selection: 'Selection') -> None:
-        pass
+    def set_selection_effect(self, selection: 'Selection') -> 'Widget':
+        return self
 
-    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
-        pass
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> 'Widget':
+        return self
 
     def _check_title_color(self, background_menu: bool) -> None:
         """
@@ -439,14 +439,14 @@ class MenuBar(Widget):
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
 
-    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> None:
+    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'Widget':
         """
         Set the menubar title.
 
         :param title: Menu title
         :param offsetx: Offset x-position of title (px)
         :param offsety: Offset y-position of title (px)
-        :return: None
+        :return: Self reference
         """
         assert isinstance(offsetx, (int, float))
         assert isinstance(offsety, (int, float))
@@ -455,6 +455,7 @@ class MenuBar(Widget):
         self._offsetx = offsetx
         if self._menu is not None:
             self._render()
+        return self
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         updated = False

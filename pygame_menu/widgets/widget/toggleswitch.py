@@ -224,25 +224,25 @@ class ToggleSwitch(Widget):
         assert 0 <= value < self._total_states, 'state value exceeds the total states'
         self._state = value
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> None:
-        pass
+                      smooth: bool = True) -> 'Widget':
+        return self
 
     def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> None:
-        pass
+                       smooth: bool = True) -> 'Widget':
+        return self
 
-    def rotate(self, angle: NumberType) -> None:
-        pass
+    def rotate(self, angle: NumberType) -> 'Widget':
+        return self
 
-    def flip(self, x: bool, y: bool) -> None:
-        pass
+    def flip(self, x: bool, y: bool) -> 'Widget':
+        return self
 
     def get_value(self) -> Any:
         return self._state_values[self._state]

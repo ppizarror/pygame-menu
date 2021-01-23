@@ -36,7 +36,7 @@ from pygame_menu.utils import assert_color
 from pygame_menu.custom_types import NumberType, ColorType, TYPE_CHECKING, Tuple2IntType, Tuple4IntType
 
 if TYPE_CHECKING:
-    from pygame_menu.widgets.core import Widget
+    from pygame_menu.widgets import Widget
 
 
 class Selection(object):

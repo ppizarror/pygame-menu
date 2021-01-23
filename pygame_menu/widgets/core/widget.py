@@ -313,7 +313,7 @@ class Widget(object):
         self._last_render_hash = 0
         return self._render()
 
-    def force_menu_surface_update(self) -> None:
+    def force_menu_surface_update(self) -> 'Widget':
         """
         Forces menu surface update. This calls all render, including all widgets decorations.
 
@@ -322,7 +322,7 @@ class Widget(object):
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
 
-        :return: None
+        :return: Self reference
         """
         if self._menu is not None:
             # Don't set _menu._widgets_surface to None because if so
@@ -330,8 +330,9 @@ class Widget(object):
             # an Error. The usage of _widgets_surface_need_update is only on
             # Menu _render()
             self._menu._widgets_surface_need_update = True
+        return self
 
-    def force_menu_surface_cache_update(self) -> None:
+    def force_menu_surface_cache_update(self) -> 'Widget':
         """
         Forces menu surface cache to update. This also updates widget decoration.
 
@@ -341,13 +342,14 @@ class Widget(object):
             of all Menu widget as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
             does.
 
-        :return: None
+        :return: Self reference
         """
         if self._menu is not None:
             # Menu _widget_surface_cache_need_update property is only accessed on
             # draw method. This does not set _menu._widgets_surface to None
             self._menu._widget_surface_cache_need_update = True
             self._decorator.force_cache_update()
+        return self
 
     def render(self) -> Optional[bool]:
         """
@@ -390,16 +392,17 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def set_attribute(self, key: str, value: Any) -> None:
+    def set_attribute(self, key: str, value: Any) -> 'Widget':
         """
         Set a widget attribute.
 
         :param key: Key of the attribute
         :param value: Value of the attribute
-        :return: None
+        :return: Self reference
         """
         assert isinstance(key, str)
         self._attributes[key] = value
+        return self
 
     def get_attribute(self, key: str, default: Any = None) -> Any:
         """
@@ -424,16 +427,17 @@ class Widget(object):
         assert isinstance(key, str)
         return key in self._attributes.keys()
 
-    def remove_attribute(self, key: str) -> None:
+    def remove_attribute(self, key: str) -> 'Widget':
         """
         Removes the given attribute from the widget. Throws ``IndexError`` if given key does not exist.
 
         :param key: Key of the attribute
-        :return: None
+        :return: Self reference
         """
         if not self.has_attribute(key):
             raise IndexError('attribute "{0}" does not exists on widget'.format(key))
         del self._attributes[key]
+        return self
 
     @staticmethod
     def _hash_variables(*args) -> int:
@@ -463,7 +467,7 @@ class Widget(object):
             return True
         return False
 
-    def set_title(self, title: str) -> None:  # lgtm [py/inheritance/incorrect-overridden-signature]
+    def set_title(self, title: str) -> 'Widget':  # lgtm [py/inheritance/incorrect-overridden-signature]
         """
         Update the widget title.
 
@@ -473,11 +477,12 @@ class Widget(object):
             accept a title.
 
         :param title: New title
-        :return: None
+        :return: Self reference
         """
         self._title = str(title)
         self._apply_font()
         self._force_render()
+        return self
 
     def get_title(self) -> str:
         """
@@ -493,13 +498,13 @@ class Widget(object):
         return self._title
 
     def set_background_color(self, color: Optional[Union[ColorType, '_baseimage.BaseImage']],
-                             inflate: Optional[Tuple2IntType] = (0, 0)) -> None:
+                             inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
         """
         Set the widget background color.
 
         :param color: Widget background color
         :param inflate: Inflate background in *(x, y)*. If ``None``, the widget value is not updated
-        :return: None
+        :return: Self reference
         """
         if color is not None:
             if isinstance(color, _baseimage.BaseImage):
@@ -516,8 +521,9 @@ class Widget(object):
         self._background_color = color
         self._background_inflate = tuple(inflate)
         self._force_render()
+        return self
 
-    def background_inflate_to_selection_effect(self) -> None:
+    def background_inflate_to_selection_effect(self) -> 'Widget':
         """
         Expand background inflate to match the selection effect
         (the widget don't require to be selected).
@@ -529,9 +535,10 @@ class Widget(object):
 
             This method may have unexpected results with certain selection effects.
 
-        :return: None
+        :return: Self reference
         """
         self._background_inflate = self._selection_effect.get_xy_margin()
+        return self
 
     def _draw_background_color(self, surface: 'pygame.Surface') -> None:
         """
@@ -590,7 +597,7 @@ class Widget(object):
         """
         return self._selection_effect
 
-    def set_selection_effect(self, selection: 'Selection') -> None:
+    def set_selection_effect(self, selection: 'Selection') -> 'Widget':
         """
         Set the selection effect handler.
 
@@ -600,13 +607,14 @@ class Widget(object):
             to ``_NullSelection`` class.
 
         :param selection: Selection effect class
-        :return: None
+        :return: Self reference
         """
         assert isinstance(selection, (Selection, type(None)))
         if selection is None:
             selection = _NullSelection()
         self._selection_effect = selection
         self._force_render()
+        return self
 
     def apply(self, *args) -> Any:
         """
@@ -672,12 +680,12 @@ class Widget(object):
                 pass
             return self._on_change(*args, **self._kwargs)
 
-    def draw(self, surface: 'pygame.Surface') -> None:
+    def draw(self, surface: 'pygame.Surface') -> 'Widget':
         """
         Draw the widget on a given surface.
 
         :param surface: Surface to draw
-        :return: None
+        :return: Self reference
         """
         self._render()
         self._draw_background_color(surface)
@@ -686,6 +694,7 @@ class Widget(object):
         self._draw_border(surface)
         self._decorator.draw_post(surface)
         self.apply_draw_callbacks()
+        return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         """
@@ -697,16 +706,17 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def draw_selection(self, surface: 'pygame.Surface') -> None:
+    def draw_selection(self, surface: 'pygame.Surface') -> 'Widget':
         """
         Draw the selection widget effect on a given surface.
 
         :param surface: Surface to draw
-        :return: None
+        :return: Self reference
         """
         if not self.is_selectable:
-            return
+            return self
         self._selection_effect.draw(surface, self)
+        return self
 
     def get_margin(self) -> Tuple2IntType:
         """
@@ -716,18 +726,19 @@ class Widget(object):
         """
         return self._margin
 
-    def set_margin(self, x: NumberType, y: NumberType) -> None:
+    def set_margin(self, x: NumberType, y: NumberType) -> 'Widget':
         """
         Set the widget margin *(left, bottom)*.
 
         :param x: Margin on x axis (left)
         :param y: Margin on y axis (bottom)
-        :return: None
+        :return: Self reference
         """
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
         self._margin = (x, y)
         self._force_render()
+        return self
 
     def get_padding(self, transformed: bool = True) -> Tuple:
         """
@@ -740,7 +751,7 @@ class Widget(object):
             return self._padding_transform
         return self._padding
 
-    def set_padding(self, padding: PaddingType) -> None:
+    def set_padding(self, padding: PaddingType) -> 'Widget':
         """
         Set the widget padding according to CSS rules.
 
@@ -754,7 +765,7 @@ class Widget(object):
             See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
 
         :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
-        :return: None
+        :return: Self reference
         """
         assert isinstance(padding, (int, float, tuple, list))
 
@@ -777,6 +788,7 @@ class Widget(object):
 
         self._padding_transform = self._padding
         self._force_render()
+        return self
 
     def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
                  use_transformed_padding: bool = True) -> 'pygame.Rect':
@@ -800,8 +812,8 @@ class Widget(object):
         pad_bottom = padding[2] * apply_padding + inflate[1] / 2
         pad_left = padding[3] * apply_padding + inflate[0] / 2
 
-        return pygame.Rect(int(self._rect.x - pad_left + self._translate[0]),
-                           int(self._rect.y - pad_top + self._translate[1]),
+        return pygame.Rect(int(self._rect.x - pad_left),
+                           int(self._rect.y - pad_top),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
 
@@ -827,31 +839,33 @@ class Widget(object):
         """
         return self._id
 
-    def change_id(self, widget_id: str) -> None:
+    def change_id(self, widget_id: str) -> 'Widget':
         """
         Change the widget ID.
 
         :param widget_id: Widget ID
-        :return: None
+        :return: Self reference
         """
         assert isinstance(widget_id, str)
         if self._menu is not None:
             # noinspection PyProtectedMember
             self._menu._check_id_duplicated(widget_id)
         self._id = widget_id
+        return self
 
-    def add_self_to_kwargs(self, key: str = 'widget') -> None:
+    def add_self_to_kwargs(self, key: str = 'widget') -> 'Widget':
         """
         Adds widget to kwargs, it helps to get the widget reference for callbacks.
         It raises ``KeyError`` if key is duplicated.
 
         :param key: Name of the parameter
-        :return: None
+        :return: Self reference
         """
         assert isinstance(key, str)
         if key in self._kwargs.keys():
             raise KeyError('duplicated key')
         self._kwargs[key] = self
+        return self
 
     def _font_render_string(self, text: str, color: ColorType = (0, 0, 0),
                             use_background_color: bool = True) -> 'pygame.Surface':
@@ -908,7 +922,7 @@ class Widget(object):
                    color: Optional[ColorType] = None,
                    position: Optional[str] = None,
                    offset: NumberType = 2
-                   ) -> None:
+                   ) -> 'Widget':
         """
         Set text shadow.
 
@@ -920,7 +934,7 @@ class Widget(object):
         :param color: Shadow color
         :param position: Shadow position
         :param offset: Shadow offset
-        :return: None
+        :return: Self reference
         """
         self._shadow = enabled
         if color is not None:
@@ -959,6 +973,7 @@ class Widget(object):
 
         self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
         self._force_render()
+        return self
 
     def _apply_transforms(self) -> None:
         """
@@ -1045,7 +1060,7 @@ class Widget(object):
                  readonly_selected_color: ColorType,
                  background_color: Optional[ColorType],
                  antialias: bool = True
-                 ) -> None:
+                 ) -> 'Widget':
         """
         Set the widget font.
 
@@ -1057,7 +1072,7 @@ class Widget(object):
         :param readonly_selected_color: Font color if widget is selected and in readonly mode
         :param background_color: Font background color. If ``None`` no background color is used
         :param antialias: Determines if antialias is applied to font (uses more processing power)
-        :return: None
+        :return: Self reference
         """
         assert isinstance(font, (str, Path))
         assert isinstance(font_size, int)
@@ -1091,8 +1106,9 @@ class Widget(object):
 
         self._apply_font()
         self._force_render()
+        return self
 
-    def update_font(self, style: Dict[str, Any]) -> None:
+    def update_font(self, style: Dict[str, Any]) -> 'Widget':
         """
         Updates the widget font. This method receives a style dict (non empty).
 
@@ -1112,7 +1128,7 @@ class Widget(object):
             from :py:meth:`pygame_menu.widgets.core.Widget.get_font_info` method.
 
         :param style: Font style dict
-        :return: None
+        :return: Self reference
         """
         assert isinstance(style, dict)
         assert 1 <= len(style.keys()) <= 6
@@ -1120,7 +1136,7 @@ class Widget(object):
         for k in current_font.keys():
             if k not in style.keys():
                 style[k] = current_font[k]
-        self.set_font(
+        return self.set_font(
             antialias=style['antialias'],
             background_color=style['background_color'],
             color=style['color'],
@@ -1148,17 +1164,18 @@ class Widget(object):
             'size': self._font_size
         }
 
-    def set_menu(self, menu: Optional['Menu']) -> None:
+    def set_menu(self, menu: Optional['Menu']) -> 'Widget':
         """
         Set the Menu reference.
 
         :param menu: Menu object
         :type menu: :py:class:`pygame_menu.Menu`, None
-        :return: None
+        :return: Self reference
         """
         self._menu = menu
         if menu is None:
             self._col_row_index = (-1, -1, -1)
+        return self
 
     def get_menu(self) -> Optional['Menu']:
         """
@@ -1181,7 +1198,7 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def set_position(self, posx: NumberType, posy: NumberType) -> None:
+    def set_position(self, posx: NumberType, posy: NumberType) -> 'Widget':
         """
         Set the widget position.
 
@@ -1192,14 +1209,15 @@ class Widget(object):
 
         :param posx: X position in px
         :param posy: Y position in px
-        :return: None
+        :return: Self reference
         """
         assert isinstance(posx, (int, float))
         assert isinstance(posy, (int, float))
         if self.lock_position:
-            return
-        self._rect.x = int(posx)
-        self._rect.y = int(posy)
+            return self
+        self._rect.x = int(posx) + self._translate[0]
+        self._rect.y = int(posy) + self._translate[1]
+        return self
 
     def get_position(self) -> Tuple2IntType:
         """
@@ -1207,9 +1225,9 @@ class Widget(object):
 
         :return: Widget position
         """
-        return self._rect.x + self._translate[0], self._rect.y + self._translate[1]
+        return self._rect.x, self._rect.y
 
-    def flip(self, x: bool, y: bool) -> None:
+    def flip(self, x: bool, y: bool) -> 'Widget':
         """
         Transformation: This method can flip the widget either vertically, horizontally,
         or both. Flipping a widget is non-destructive and does not change the dimensions.
@@ -1221,15 +1239,16 @@ class Widget(object):
 
         :param x: Flip in x axis
         :param y: Flip on y axis
-        :return: None
+        :return: Self reference
         """
         assert isinstance(x, bool)
         assert isinstance(y, bool)
         self._flip = (x, y)
         self._force_render()
+        return self
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> None:
+                      smooth: bool = True) -> 'Widget':
         """
         Transformation: Set the widget max width, it applies an scaling factor
         if the widget width is greater than the limit.
@@ -1256,7 +1275,7 @@ class Widget(object):
         :param width: Width in px, ``None`` if max width is disabled
         :param scale_height: If ``True`` the height is also scaled if the width exceeds the limit
         :param smooth: Smooth scaling
-        :return: None
+        :return: Self reference
         """
         assert isinstance(scale_height, bool)
         assert isinstance(smooth, bool)
@@ -1272,16 +1291,17 @@ class Widget(object):
                 msg = 'widget already has a scaling factor applied. Scaling has been' \
                       'disabled'
                 warnings.warn(msg)
-                return
+                return self
             if self._max_height[0] is not None:
                 msg = 'widget already has a max_height. Widget max height has been disabled'
                 warnings.warn(msg)
-                return
+                return self
 
         self._force_render()
+        return self
 
     def set_max_height(self, height: NumberType, scale_width: NumberType = False,
-                       smooth: bool = True) -> None:
+                       smooth: bool = True) -> 'Widget':
         """
         Transformation: Set the widget max height, it applies an scaling factor
         if the widget height is greater than the limit.
@@ -1303,7 +1323,7 @@ class Widget(object):
         :param height: Height in px, ``None`` if max height is disabled
         :param scale_width: If ``True`` the width is also scaled if the height exceeds the limit
         :param smooth: Smooth scaling
-        :return: None
+        :return: Self reference
         """
         assert isinstance(scale_width, bool)
         assert isinstance(smooth, bool)
@@ -1319,13 +1339,14 @@ class Widget(object):
                 msg = 'widget already has a scaling factor applied. Scaling has been' \
                       'disabled'
                 warnings.warn(msg)
-                return
+                return self
             if self._max_width[0] is not None:
                 msg = 'widget already has a max_width. Widget max width has been disabled'
                 warnings.warn(msg)
-                return
+                return self
 
         self._force_render()
+        return self
 
     def _disable_scale(self) -> None:
         """
@@ -1340,7 +1361,7 @@ class Widget(object):
         self._max_height[0] = None
         self.render()
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
         """
         Transformation: Scale the widget to a desired width and height factor.
 
@@ -1365,7 +1386,7 @@ class Widget(object):
         :param width: Scale factor of the width
         :param height: Scale factor of the height
         :param smooth: Smooth scaling
-        :return: None
+        :return: Self reference
         """
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
@@ -1377,19 +1398,20 @@ class Widget(object):
             msg = 'widget max width is not None. Set widget.set_max_width(None) ' \
                   'for disabling such feature. This scaling will be ignored'
             warnings.warn(msg)
-            return
+            return self
         if self._max_height[0] is not None:
             msg = 'widget max height is not None. Set widget.set_max_height(None) ' \
                   'for disabling such feature. This scaling will be ignored'
             warnings.warn(msg)
-            return
+            return self
         self._scale = [True, width, height, smooth]
         if width == 1 and height == 1:  # Disables scaling
             self._scale[0] = False
 
         self._force_render()
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
         """
         Transformation: Set the widget size to another size.
 
@@ -1417,15 +1439,16 @@ class Widget(object):
         :param width: New width of the widget in px
         :param height: New height of the widget in px
         :param smooth: Smooth scaling
-        :return: None
+        :return: Self reference
         """
         self._disable_scale()
         if width == 1 and height == 1:
             msg = 'did you mean widget.scale(1,1) instead of widget.resize(1,1)?'
             warnings.warn(msg)
         self.scale(float(width) / self.get_width(), float(height) / self.get_height(), smooth)
+        return self
 
-    def translate(self, x: NumberType, y: NumberType) -> None:
+    def translate(self, x: NumberType, y: NumberType) -> 'Widget':
         """
         Transformation: Translate to *(+x, +y)* according to the default position.
 
@@ -1444,10 +1467,15 @@ class Widget(object):
         """
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
+        self._rect.x -= self._translate[0]
+        self._rect.y -= self._translate[1]
         self._translate = (int(x), int(y))
+        self._rect.x += self._translate[0]
+        self._rect.y += self._translate[1]
         self._force_render()
+        return self
 
-    def rotate(self, angle: NumberType) -> None:
+    def rotate(self, angle: NumberType) -> 'Widget':
         """
         Transformation: Unfiltered counterclockwise rotation. The angle argument represents degrees
         and can be any floating point value. Negative angle amounts will rotate clockwise.
@@ -1463,13 +1491,14 @@ class Widget(object):
             widget rendering after calling this method.
 
         :param angle: Rotation angle (degrees ``0-360``)
-        :return: None
+        :return: Self reference
         """
         assert isinstance(angle, (int, float))
         self._angle = angle
         self._force_render()
+        return self
 
-    def set_alignment(self, align: str) -> None:
+    def set_alignment(self, align: str) -> 'Widget':
         """
         Set the alignment of the widget.
 
@@ -1483,11 +1512,12 @@ class Widget(object):
             See :py:mod:`pygame_menu.locals` for valid ``align`` values.
 
         :param align: Widget align
-        :return: None
+        :return: Self reference
         """
         assert_alignment(align)
         self._alignment = align
         self._force_render()
+        return self
 
     def get_alignment(self) -> str:
         """
@@ -1497,7 +1527,7 @@ class Widget(object):
         """
         return self._alignment
 
-    def select(self, status: bool = True, update_menu: bool = False) -> None:
+    def select(self, status: bool = True, update_menu: bool = False) -> 'Widget':
         """
         Mark the widget as selected and execute the ``on_selected`` callback
         function as follows:
@@ -1519,11 +1549,11 @@ class Widget(object):
 
         :param status: Selection status
         :param update_menu: If ``True`` this status is also applied on the menu that contains this widget
-        :return: None
+        :return: Self reference
         """
         assert isinstance(status, bool)
         if not self.is_selectable:
-            return
+            return self
         self._selected = status
         self.active = False
         if self._selected:
@@ -1538,6 +1568,7 @@ class Widget(object):
         if update_menu:
             assert self._menu is not None
             self._menu.select_widget(self)
+        return self
 
     def get_selected_time(self) -> NumberType:
         """
@@ -1633,23 +1664,24 @@ class Widget(object):
         """
         pass
 
-    def set_sound(self, sound: 'Sound') -> None:
+    def set_sound(self, sound: 'Sound') -> 'Widget':
         """
         Set sound engine to the widget.
 
         :param sound: Sound object
-        :return: None
+        :return: Self reference
         """
         self._sound = sound
+        return self
 
-    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> None:
+    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> 'Widget':
         """
         Enable interfaces to control the widget.
 
         :param joystick: Use joystick
         :param mouse: Use mouse
         :param touchscreen: Use touchscreen
-        :return: None
+        :return: Self reference
         """
         assert isinstance(joystick, bool)
         assert isinstance(mouse, bool)
@@ -1657,6 +1689,7 @@ class Widget(object):
         self._joystick_enabled = joystick
         self._mouse_enabled = mouse
         self._touchscreen_enabled = touchscreen
+        return self
 
     def set_value(self, value: Any) -> None:
         """
@@ -1677,7 +1710,7 @@ class Widget(object):
         raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
                                                                self.get_id()))
 
-    def set_default_value(self, value: Any) -> None:
+    def set_default_value(self, value: Any) -> 'Widget':
         """
         Set the widget value, and then make it as default.
 
@@ -1691,19 +1724,21 @@ class Widget(object):
             Not all widgets accepts a value, for example the image widget.
 
         :param value: Default widget value
-        :return: None
+        :return: Self reference
         """
         self.set_value(value)
         self._default_value = value
+        return self
 
-    def reset_value(self) -> None:
+    def reset_value(self) -> 'Widget':
         """
         Reset the widget value to the default one.
 
-        :return: None
+        :return: Self reference
         """
         if not isinstance(self._default_value, _NoWidgetValue):
             self.set_value(self._default_value)
+        return self
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         """
@@ -1735,8 +1770,16 @@ class Widget(object):
             button = menu.add_button('This button updates its padding', None)
             button.set_draw_callback(draw_update_function)
 
-        After creating a new callback, this functions returns the ID of the call. It can be removed
-        anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_draw_callback`
+        After creating a new callback, this functions returns the ID of the call. It can be
+        removed anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_draw_callback`
+
+        .. note::
+
+            If Menu surface cache is enabled this method may run only once. To force run
+            the added method each time call ``widget.force_menu_surface_update()`` to force
+            Menu update the cache status if the drawing callback does not make the widget
+            to render. Remember that rendering the widget forces the Menu to update its
+            surface, thus updating the cache too.
 
         :param draw_callback: Function
         :type draw_callback: callable, None
@@ -1747,28 +1790,30 @@ class Widget(object):
         self._draw_callbacks[callback_id] = draw_callback
         return callback_id
 
-    def remove_draw_callback(self, callback_id: str) -> None:
+    def remove_draw_callback(self, callback_id: str) -> 'Widget':
         """
         Removes draw callback from ID.
 
         :param callback_id: Callback ID
-        :return: None
+        :return: Self reference
         """
         assert isinstance(callback_id, str)
         if callback_id not in self._draw_callbacks.keys():
             raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
         del self._draw_callbacks[callback_id]
+        return self
 
-    def apply_draw_callbacks(self) -> None:
+    def apply_draw_callbacks(self) -> 'Widget':
         """
         Apply callbacks on widget draw.
 
-        :return: None
+        :return: Self reference
         """
         if len(self._draw_callbacks) == 0:
-            return
+            return self
         for callback in self._draw_callbacks.values():
             callback(self, self._menu)
+        return self
 
     def add_update_callback(self, update_callback: Callable[['Widget', 'Menu'], Any]) -> str:
         """
@@ -1794,28 +1839,30 @@ class Widget(object):
         self._update_callbacks[callback_id] = update_callback
         return callback_id
 
-    def remove_update_callback(self, callback_id: str) -> None:
+    def remove_update_callback(self, callback_id: str) -> 'Widget':
         """
         Removes update callback from ID.
 
         :param callback_id: Callback ID
-        :return: None
+        :return: Self reference
         """
         assert isinstance(callback_id, str)
         if callback_id not in self._update_callbacks.keys():
             raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
         del self._update_callbacks[callback_id]
+        return self
 
-    def apply_update_callbacks(self) -> None:
+    def apply_update_callbacks(self) -> 'Widget':
         """
         Apply callbacks on widget update.
 
-        :return: None
+        :return: Self reference
         """
         if len(self._update_callbacks) == 0 or self.readonly:
-            return
+            return self
         for callback in self._update_callbacks.values():
             callback(self, self._menu)
+        return self
 
     def _add_event(self, event: 'pygame.event.Event') -> None:
         """
@@ -1843,43 +1890,69 @@ class Widget(object):
         self._events = []
         return copy_events
 
-    def set_float(self, float_status: bool) -> None:
+    def set_float(self, float_status: bool = True, menu_render: bool = False) -> 'Widget':
         """
         Set the floating status. If ``True`` the widget don't contributes
-        the width/height to the Menu widget positioning computation.
+        the width/height to the Menu widget positioning computation (for example,
+        the surface area or the column/row layout), and don't add one unit to
+        the rows (use the same vertical place as the previous widget.
+
+        For example, before floating:
+
+            .. code-block:: python
+
+                ----------------------------
+                |    wid1    |    wid3     |
+                |    wid2    |    wid4     |
+                ----------------------------
+
+        After ``wid3.set_float(True)``:
+
+            .. code-block:: python
+
+                ----------------------------
+                |    wid1    |    wid4     |
+                | wid2,wid3  |             |
+                ----------------------------
 
         :param float_status: Float status
+        :param menu_render: If ``True`` forces the menu to render instantly
         :return: None
         """
         assert isinstance(float_status, bool)
         self._floating = float_status
         self.force_menu_surface_update()
+        if menu_render and self._menu is not None:
+            self._menu.render()
+        return self
 
-    def show(self) -> None:
+    def show(self) -> 'Widget':
         """
         Set the widget visible.
 
-        :return: None
+        :return: Self reference
         """
         self._visible = True
         self._render()
         if self._menu is not None:
             # noinspection PyProtectedMember
             self._menu._update_selection_if_hidden()
+        return self
 
-    def hide(self) -> None:
+    def hide(self) -> 'Widget':
         """
         Hides the widget.
 
-        :return: None
+        :return: Self reference
         """
         self._visible = False
         self._render()
         if self._menu is not None:
             # noinspection PyProtectedMember
             self._menu._update_selection_if_hidden()
+        return self
 
-    def set_col_row_index(self, col: int, row: int, index: int) -> None:
+    def set_col_row_index(self, col: int, row: int, index: int) -> 'Widget':
         """
         Set the *(column,row,index)* position. If the column or row is ``-1`` then the
         widget is not assigned to a certain column/row (for example, if it's hidden).
@@ -1887,12 +1960,13 @@ class Widget(object):
         :param col: Column
         :param row: Row
         :param index: Index in Menu widget list
-        :return: None
+        :return: Self reference
         """
         assert isinstance(col, int) and col >= -1
         assert isinstance(row, int) and row >= -1
         assert isinstance(index, int) and index >= -1
         self._col_row_index = (col, row, index)
+        return self
 
     def get_col_row_index(self) -> Tuple[int, int, int]:
         """
@@ -1902,14 +1976,14 @@ class Widget(object):
         """
         return self._col_row_index
 
-    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> 'Widget':
         """
         Set widget border.
 
         :param width: Border width (px)
         :param color: Border color
         :param inflate: Inflate in *(x, y)* axis in px
-        :return: None
+        :return: Self reference
         """
         assert isinstance(width, int) and width >= 0
         assert_color(color)
@@ -1917,6 +1991,7 @@ class Widget(object):
         self._border_width = width
         self._border_color = color
         self._border_inflate = inflate
+        return self
 
     def get_decorator(self) -> 'Decorator':
         """

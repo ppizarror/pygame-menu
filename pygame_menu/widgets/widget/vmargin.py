@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['VMargin']
 
+from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.none import NoneWidget
 
 
@@ -49,5 +50,6 @@ class VMargin(NoneWidget):
     def __init__(self, widget_id: str = '') -> None:
         super(VMargin, self).__init__(widget_id=widget_id)
 
-    def set_margin(self, x: int, y: int) -> None:
+    def set_margin(self, x: int, y: int) -> 'Widget':
         self._margin = (x, y)
+        return self

@@ -133,11 +133,13 @@ class Selector(Widget):
             self._right()
         self.set_default_value(default)
 
-    def set_default_value(self, index: int) -> None:
+    def set_default_value(self, index: int) -> 'Widget':
         self._default_value = index
+        return self
 
-    def reset_value(self) -> None:
+    def reset_value(self) -> 'Widget':
         self._index = self._default_value
+        return self
 
     def _apply_font(self) -> None:
         self._title_size = int(self._font.size(self._title)[0])

@@ -415,14 +415,14 @@ class TextInput(Widget):
                 value = 0
         return value
 
-    def rotate(self, angle: NumberType) -> None:
-        pass
+    def rotate(self, angle: NumberType) -> 'Widget':
+        return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def flip(self, x: bool, y: bool) -> None:  # Actually flip on x axis is disabled
-        super(TextInput, self).flip(False, y)
+    def flip(self, x: bool, y: bool) -> 'Widget':  # Actually flip on x axis is disabled
+        return super(TextInput, self).flip(False, y)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
 
