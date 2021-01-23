@@ -51,7 +51,7 @@ from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is
 if TYPE_CHECKING:
     from pygame_menu.menu import Menu
     from pygame_menu.scrollarea import ScrollArea
-    from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu.widgets import Widget
 
 # Decoration constants
 DECORATION_ARC = 2000
@@ -670,7 +670,7 @@ class Decorator(object):
             elif dtype == DECORATION_SURFACE or dtype == DECORATION_BASEIMAGE or dtype == DECORATION_TEXT:
                 pos, surf, centered = data
                 if isinstance(surf, _baseimage.BaseImage):
-                    surf = surf.get_surface()
+                    surf = surf.get_surface(new=False)
                 pos = self._update_pos_list(rect, decoid, pos)[0]
                 surfrect = surf.get_rect()
                 surfrect.x += pos[0]

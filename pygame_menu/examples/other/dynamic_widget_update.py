@@ -64,7 +64,7 @@ class App(object):
                                              flags=pygame.NOFRAME)
 
         # Load image
-        default_image = pygame_menu.baseimage.BaseImage(
+        default_image = pygame_menu.BaseImage(
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
         ).scale(0.2, 0.2)
 
@@ -135,7 +135,7 @@ class App(object):
         self._update_from_selection(int(self.selector_widget.get_value()[0][1]))
 
     def animate_quit_button(self,
-                            widget: 'pygame_menu.widgets.core.Widget',
+                            widget: 'pygame_menu.widgets.Widget',
                             menu: 'pygame_menu.Menu'
                             ) -> None:
         """

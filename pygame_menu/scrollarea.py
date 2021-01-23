@@ -42,7 +42,7 @@ from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, 
     TYPE_CHECKING, Tuple2NumberType, Optional, Tuple2IntType
 
 if TYPE_CHECKING:
-    from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu.widgets import Widget
     from pygame_menu.menu import Menu
 
 

@@ -256,7 +256,7 @@ def main(test: bool = False) -> None:
     # Create menus: Column buttons
     # -------------------------------------------------------------------------
     button_column_menu_theme = pygame_menu.themes.THEME_ORANGE.copy()
-    button_column_menu_theme.background_color = pygame_menu.baseimage.BaseImage(
+    button_column_menu_theme.background_color = pygame_menu.BaseImage(
         image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
         drawing_mode=pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY
     )
@@ -274,7 +274,7 @@ def main(test: bool = False) -> None:
         button_column_menu.add_button('Button {0}'.format(i), pygame_menu.events.BACK)
     button_column_menu.add_button(
         'Return to main menu', pygame_menu.events.BACK,
-        background_color=pygame_menu.baseimage.BaseImage(
+        background_color=pygame_menu.BaseImage(
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_METAL
         )
     ).background_inflate_to_selection_effect()
