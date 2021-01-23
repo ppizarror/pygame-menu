@@ -68,7 +68,7 @@ from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
-from pygame_menu.custom_types import NumberType, Dict, Any, Optional, Union
+from pygame_menu._custom_types import NumberType, Dict, Any, Optional, Union
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
@@ -368,9 +368,9 @@ class Sound(object):
         # Play the sound
         soundtime = time.time()
 
-        # If the previous sound is the same and has not ended (max 20% overlap)
+        # If the previous sound is the same and has not ended (max 10% overlap)
         if sound['type'] != self._last_play or \
-                soundtime - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
+                soundtime - self._last_time >= 0.1 * sound['length'] or self._uniquechannel:
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()

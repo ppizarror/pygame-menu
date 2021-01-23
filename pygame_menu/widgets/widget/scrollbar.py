@@ -32,11 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ScrollBar']
 
 import pygame
-from pygame_menu.custom_types import NumberType
+from pygame_menu._custom_types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 import pygame_menu.locals as _locals
-from pygame_menu.custom_types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, \
+from pygame_menu._custom_types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, \
     CallbackType, Union
 
 

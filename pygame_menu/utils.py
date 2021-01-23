@@ -48,7 +48,7 @@ import functools
 
 import pygame
 import pygame_menu.locals as _locals
-from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
+from pygame_menu._custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple
 
 

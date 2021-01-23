@@ -34,7 +34,7 @@ __all__ = ['NoneWidget']
 import pygame
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
-from pygame_menu.custom_types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
+from pygame_menu._custom_types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
     TYPE_CHECKING, Dict, Any, Tuple, CallbackType
 
 if TYPE_CHECKING:

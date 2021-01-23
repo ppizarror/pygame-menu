@@ -62,7 +62,7 @@ from pathlib import Path
 import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import assert_vector, assert_position
-from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
+from pygame_menu._custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
     NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType, Tuple3IntType, Any
 
 # Example image paths
@@ -98,9 +98,10 @@ class BaseImage(object):
     Object that loads an image, stores as a surface, transform it and
     let write the image to an surface.
 
-    :param image_path: Path of the image to be loaded. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
+    :param image_path: Path of the image to be loaded. It can be a string (path, base64), :py:class:`pathlib.Path`, or :py:class:`io.BytesIO`
     :param drawing_mode: Drawing mode of the image
     :param drawing_offset: Offset of the image in drawing method
+    :param drawing_position: Drawing position if mode is ``IMAGE_MODE_SIMPLE``. See :py:mod:`pygame_menu.locals` for valid ``position`` values
     :param load_from_file: Loads the image from the given path
     :param frombase64: If ``True`` consider ``image_path`` as base64 string
     """
@@ -123,7 +124,7 @@ class BaseImage(object):
                  image_path: Union[str, 'Path', 'BytesIO'],
                  drawing_mode: int = IMAGE_MODE_FILL,
                  drawing_offset: Vector2NumberType = (0, 0),
-                 drawing_position: str = _locals.POSITION_NORTHEAST,
+                 drawing_position: str = _locals.POSITION_NORTHWEST,
                  load_from_file: bool = True,
                  frombase64: bool = False
                  ) -> None:
@@ -795,6 +796,10 @@ class BaseImage(object):
 
         # Compute offset based on drawing offset + drawing position
         px, py = self._get_position_delta()
+        if self._drawing_mode != IMAGE_MODE_SIMPLE:
+            px = 0
+            py = 0
+
         offx = self._drawing_offset[0] - px
         offy = self._drawing_offset[1] - py
 

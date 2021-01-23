@@ -38,7 +38,7 @@ from pygame_menu.decorator import Decorator
 from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
-from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
+from pygame_menu._custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
     TYPE_CHECKING, Tuple2NumberType, Optional, Tuple2IntType
 
 if TYPE_CHECKING:

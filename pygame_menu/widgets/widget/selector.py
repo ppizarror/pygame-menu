@@ -35,7 +35,7 @@ import pygame
 import pygame_menu.controls as _controls
 from pygame_menu.utils import check_key_pressed_valid
 from pygame_menu.widgets.core import Widget
-from pygame_menu.custom_types import Tuple, Union, List, Any, Optional, CallbackType
+from pygame_menu._custom_types import Tuple, Union, List, Any, Optional, CallbackType
 
 
 def check_selector_elements(elements: Union[Tuple, List]) -> None:

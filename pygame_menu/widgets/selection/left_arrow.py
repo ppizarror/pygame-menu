@@ -33,7 +33,7 @@ __all__ = ['LeftArrowSelection']
 
 import pygame
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
-from pygame_menu.custom_types import Tuple2IntType, NumberType, TYPE_CHECKING
+from pygame_menu._custom_types import Tuple2IntType, NumberType, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core import Widget

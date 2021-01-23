@@ -34,7 +34,7 @@ __all__ = ['VMargin']
 import pygame
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu.custom_types import Optional, Tuple2IntType
+from pygame_menu._custom_types import Optional, Tuple2IntType
 
 
 # noinspection PyMissingOrEmptyDocstring

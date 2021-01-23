@@ -40,7 +40,7 @@ from pygame_menu.decorator import Decorator
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
-from pygame_menu.custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
+from pygame_menu._custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType, Tuple3IntType
 
 from pathlib import Path
@@ -1036,6 +1036,7 @@ class Widget(object):
             w, h = new_size
             pad_width = w / width
             pad_height = h / height
+
             # (top,right,bottom,left)
             self._padding_transform = (int(self._padding[0] * pad_height),
                                        int(self._padding[1] * pad_width),

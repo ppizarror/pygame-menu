@@ -54,11 +54,12 @@ from pygame_menu.decorator import Decorator
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 
-from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
-from pygame_menu.widgets.widget.textinput import TextInputModeType
-from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
+# Import types
+from pygame_menu._custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
     Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Tuple2IntType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional, Tuple2BoolType
+from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.textinput import TextInputModeType
 
 # Joy events
 JOY_EVENT_LEFT = 1

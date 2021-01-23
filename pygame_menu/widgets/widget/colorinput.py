@@ -52,7 +52,7 @@ import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
+from pygame_menu._custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
     Literal, Tuple3IntType
 
 import math

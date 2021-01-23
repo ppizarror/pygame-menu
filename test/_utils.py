@@ -37,7 +37,8 @@ import random
 
 from pygame_menu.font import FONT_EXAMPLES
 
-from pygame_menu.custom_types import NumberType, Union, List, Tuple, Optional, \
+# noinspection PyProtectedMember
+from pygame_menu._custom_types import NumberType, Union, List, Tuple, Optional, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]

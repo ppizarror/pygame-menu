@@ -34,7 +34,7 @@ __all__ = ['ArrowSelection']
 import pygame
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core import Selection
-from pygame_menu.custom_types import NumberType, Tuple2IntType, TYPE_CHECKING, Optional
+from pygame_menu._custom_types import NumberType, Tuple2IntType, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core import Widget

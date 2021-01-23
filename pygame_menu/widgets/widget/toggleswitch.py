@@ -35,7 +35,7 @@ import pygame
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
 import pygame_menu.font as _fonts
-from pygame_menu.custom_types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
+from pygame_menu._custom_types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
     Tuple2NumberType, Tuple2IntType
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 

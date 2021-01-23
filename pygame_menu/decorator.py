@@ -44,7 +44,7 @@ from math import pi
 from pathlib import Path
 from uuid import uuid4
 
-from pygame_menu.custom_types import TYPE_CHECKING, List, Tuple2NumberType, ColorType, Tuple, \
+from pygame_menu._custom_types import TYPE_CHECKING, List, Tuple2NumberType, ColorType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector
 
