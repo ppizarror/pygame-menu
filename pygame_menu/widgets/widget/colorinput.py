@@ -53,11 +53,9 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
 from pygame_menu.custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
-    Literal
+    Literal, Tuple3IntType
 
 import math
-
-ColorType = Tuple[int, int, int]
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'
@@ -130,7 +128,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  title: Any = '',
                  colorinput_id: str = '',
                  color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
-                 cursor_color: ColorType = (0, 0, 0),
+                 cursor_color: Tuple3IntType = (0, 0, 0),
                  cursor_ms_counter: NumberType = 500,
                  dynamic_width: bool = True,
                  hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
@@ -255,7 +253,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             super(ColorInput, self).set_value('#')
         self.change()
 
-    def set_value(self, color: Optional[Union[str, ColorType]]) -> None:
+    def set_value(self, color: Optional[Union[str, Tuple3IntType]]) -> None:
         if color is None:
             color = ''
         format_color = ''
@@ -301,16 +299,16 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         super(ColorInput, self).set_value(format_color)
         self._format_hex()
 
-    def get_value(self, as_string: bool = False) -> Union[str, ColorType]:
+    def get_value(self, as_string: bool = False) -> Union[str, Tuple3IntType]:
         """
         Return the color value as a tuple or red blue and green channels.
 
         .. note::
 
-            If the data is invalid the widget returns ``(-1,-1,-1)``.
+            If the data is invalid the widget returns ``(-1, -1, -1)``.
 
         :param as_string: If ``True`` returns the widget value as plain text
-        :return: Color tuple as (R,G,B) or color string
+        :return: Color tuple as *(R, G, B)* or color string
         """
         assert isinstance(as_string, bool)
         if as_string:
