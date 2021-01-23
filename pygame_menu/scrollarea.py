@@ -70,6 +70,8 @@ def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], T
         return _locals.POSITION_SOUTH, _locals.POSITION_NORTH
     elif position == _locals.SCROLLAREA_POSITION_BOTH_VERTICAL:
         return _locals.POSITION_EAST, _locals.POSITION_WEST
+    elif position == _locals.POSITION_CENTER:
+        raise ValueError('cannot init strollbars from center position')
     else:
         raise ValueError('unknown ScrollArea position')
 
@@ -233,6 +235,39 @@ class ScrollArea(object):
         """
         raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
 
+    def force_menu_surface_update(self) -> 'ScrollArea':
+        """
+        Forces menu surface update after next rendering call.
+
+        ..note ::
+
+            This method is expensive, as menu surface update forces re-rendering of
+            all widgets (because them can change in size, position, etc...).
+
+        :return: Self reference
+        """
+        if self._menu is not None:
+            self._menu._widgets_surface_need_update = True
+        return self
+
+    def force_menu_surface_cache_update(self) -> 'ScrollArea':
+        """
+        Forces menu surface cache to update after next drawing call.
+        This also updates widget decoration.
+
+        .. note::
+
+            This method only updates the surface cache, without forcing re-rendering
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            does.
+
+        :return: Self reference
+        """
+        if self._menu is not None:
+            self._menu._widget_surface_cache_need_update = True
+            self._decorator.force_cache_update()
+        return self
+
     def _apply_size_changes(self) -> None:
         """
         Apply size changes to scrollbar.
@@ -255,6 +290,8 @@ class ScrollArea(object):
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.top - self._scrollbar_thick + dy)
             elif pos == _locals.POSITION_SOUTH:  # South
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.bottom + dy)
+            elif pos == _locals.POSITION_CENTER:
+                raise ValueError('center position cannot be applied to scrollbar')
             else:
                 raise ValueError('unknown position')
 
@@ -284,7 +321,7 @@ class ScrollArea(object):
         if not self._world:
             return
 
-        self._decorator.draw_prev(surface)
+        # Background surface already has previous decorators
         if self._bg_surface:
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
