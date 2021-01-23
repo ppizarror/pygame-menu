@@ -69,6 +69,18 @@ class ScrollAreaTest(unittest.TestCase):
 
         # Invalid
         self.assertRaises(ValueError, lambda: get_scrollbars_from_position(_locals.INPUT_TEXT))
+        self.assertRaises(ValueError, lambda: get_scrollbars_from_position(_locals.POSITION_CENTER))
+
+    def test_surface_cache(self) -> None:
+        """
+        Surface cache tests.
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        self.assertFalse(menu._widgets_surface_need_update)
+        sa.force_menu_surface_cache_update()
+        sa.force_menu_surface_update()
+        self.assertTrue(menu._widgets_surface_need_update)
 
     def test_copy(self) -> None:
         """

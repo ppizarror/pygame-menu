@@ -1,11 +1,12 @@
-
 ==========================
 Migration Guide - v3 to v4
 ==========================
 
 - ``pygame_menu v4`` no longer python 2.7 to 3.5.
+- ``VMargin`` widget now updates it's height rather than modifying the margin.
 - Added ``__all__`` to module, then some usage cases importing with * may fail.
 - All locals inner value have changed. If you used the value as-is you'll get an error.
+- BaseImage applies ``smooth`` by default, also rotation applies on checkpointed surface.
 - Menu ``add_image`` method parameter ``scale_smooth`` is now ``True`` by default.
 - Menu ``clear`` method now receives ``reset`` argument.
 - Menu ``mainloop``, ``update`` and ``draw`` now raises ``RuntimeError`` if it's disabled. This behaviour can be changed though Menu private property ``_runtime_errors``.
@@ -13,7 +14,7 @@ Migration Guide - v3 to v4
 - Menu constructor changed from ``Menu(height, width, title, ...)`` to  ``Menu(title, width, height, ...)``.
 - Menu method ``get_width()`` changes to``get_width(inner=False, widget=False)``.
 - Moved ``previsualization_width`` colorinput method to ``kwargs``.
-- Removed ``column_force_fit_text`` from ``Menu`` constructor.
+- Removed ``column_force_fit_text`` from ``Menu`` constructor. Use Widget ``set_max_width`` or ``set_max_height`` instead.
 - Removed ``dummy_function`` from ``pygame_menu.utils``.
 - Removed ``events.DISABLE_CLOSE``, use ``None`` or ``events.NONE`` instead.
 - Removed ``Widget`` method ``surface_needs_update()``. Now use method ``force_menu_surface_update`` if needed.

@@ -111,7 +111,8 @@ def assert_position(position: str) -> None:
     assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
                         _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
                         _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
+                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST,
+                        _locals.POSITION_CENTER], \
         'invalid position value "{0}"'.format(position)
 
 

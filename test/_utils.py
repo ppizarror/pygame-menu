@@ -227,7 +227,7 @@ class PygameUtils(object):
         """
         event_obj = pygame.event.Event(evtype,
                                        {
-                                           'pos': [float(x), float(y)],
+                                           'pos': (float(x), float(y)),
                                            'test': True,
                                            'button': 3
                                        })

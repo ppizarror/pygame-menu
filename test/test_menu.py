@@ -1363,6 +1363,9 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(test[0])
         self.assertTrue(test[1])
 
+        self.assertRaises(AssertionError, lambda: menu.mainloop(surface, pause_key_event='ee'))
+        menu.mainloop(surface, pause_key_event=pygame.K_p, disable_loop=True)
+
     # noinspection PyArgumentList
     def test_invalid_args(self) -> None:
         """
@@ -1668,3 +1671,13 @@ class MenuTest(unittest.TestCase):
 
         # This should be proportional
         self.assertEqual(menu._column_widths, [100, 250, 250])
+
+    def test_surface_cache(self) -> None:
+        """
+        Surface cache tests.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertFalse(menu._widgets_surface_need_update)
+        menu.force_surface_cache_update()
+        menu.force_surface_update()
+        self.assertTrue(menu._widgets_surface_need_update)

@@ -74,15 +74,16 @@ class Selection(object):
         self.margin_right = margin_right
         self.margin_top = margin_top
 
-    def set_color(self, color: ColorType) -> None:
+    def set_color(self, color: ColorType) -> 'Selection':
         """
         Set the selection effect color.
 
         :param color: Selection color
-        :return: None
+        :return: Self reference
         """
         assert_color(color)
         self.color = color
+        return self
 
     def get_margin(self) -> Tuple4IntType:
         """
