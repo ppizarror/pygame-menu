@@ -1960,6 +1960,7 @@ class Menu(object):
 
         # Check others
         else:
+            
             for event in events:  # type: pygame.event.Event
 
                 if event.type == pygame.KEYDOWN:
@@ -2042,13 +2043,14 @@ class Menu(object):
                     # If mouse motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
                     else:
-                        if not self._current._scroll.collide(selected_widget, event):
-                            selected_widget.active = False
+                        if selected_widget is not None:
+                            if not self._current._scroll.collide(selected_widget, event):
+                                selected_widget.active = False
 
                 # Select widgets by mouse motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
                 elif self._current._mouse_motion_selection and event.type == pygame.MOUSEMOTION and \
-                        not selected_widget.active:
+                        selected_widget is not None and not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]  # type: _widgets.core.Widget
                         if self._current._scroll.collide(widget, event) and widget.is_selectable and widget.visible:
@@ -2080,13 +2082,14 @@ class Menu(object):
                     # If touchscreen motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
                     else:
-                        if not self._current._scroll.collide(selected_widget, event):
-                            selected_widget.active = False
+                        if selected_widget is not None:
+                            if not self._current._scroll.collide(selected_widget, event):
+                                selected_widget.active = False
 
                 # Select widgets by touchscreen motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
                 elif self._current._touchscreen_motion_selection and event.type == pygame.FINGERMOTION and \
-                        not selected_widget.active:
+                        selected_widget is not None and not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]  # type: _widgets.core.Widget
                         if self._current._scroll.collide(widget, event) and widget.is_selectable:
