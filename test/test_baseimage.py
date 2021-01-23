@@ -114,6 +114,23 @@ class BaseImageTest(unittest.TestCase):
         if pygame.version.vernum[0] >= 2:
             self.assertTrue(image2.equals(image3))
 
+    def test_crop(self) -> None:
+        """
+        Test baseimage crop.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        imagec = image.get_crop(0, 0, 10, 10)
+        imagecr = image.get_crop_rect(pygame.Rect(0, 0, 10, 10))
+        im1 = pygame.image.tostring(imagec, 'RGBA')
+        im2 = pygame.image.tostring(imagecr, 'RGBA')
+        self.assertTrue(im1 == im2)
+
+        # Save the whole image crop
+        w, h = image.get_size()
+        image2 = image.copy()
+        image2.crop(0, 0, w, h)
+        self.assertTrue(image2.equals(image))
+
     def test_modes(self) -> None:
         """
         Test drawing modes.

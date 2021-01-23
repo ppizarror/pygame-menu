@@ -1234,6 +1234,11 @@ class Widget(object):
 
         .. note::
 
+            Flip is only applied after widget rendering. Thus, the changes are
+            not immediate.
+
+        .. note::
+
             Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
             widget rendering after calling this method.
 
@@ -1261,6 +1266,11 @@ class Widget(object):
         .. note::
 
             Max width considers padding.
+
+        .. note::
+
+            Max width is only applied after widget rendering. Thus, the changes are
+            not immediate.
 
         .. note::
 
@@ -1309,6 +1319,11 @@ class Widget(object):
         .. note::
 
             Max height considers padding.
+
+        .. note::
+
+            Max height is only applied after widget rendering. Thus, the changes are
+            not immediate.
 
         .. note::
 
@@ -1371,7 +1386,12 @@ class Widget(object):
 
         .. note::
 
-            Scaling considers widget padding.
+            Scale considers widget padding.
+
+        .. note::
+
+            Scale is only applied after widget rendering. Thus, the changes are
+            not immediate.
 
         .. note::
 
@@ -1428,6 +1448,11 @@ class Widget(object):
 
         .. note::
 
+            Resize is only applied after widget rendering. Thus, the changes are
+            not immediate.
+
+        .. note::
+
             Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
             widget rendering after calling this method.
 
@@ -1454,6 +1479,13 @@ class Widget(object):
 
         .. note::
 
+            Translate is only applied when updating the widget position (calling
+            :py:meth:`pygame_menu.widgets.core.Widget.set_position`. This is done
+            by Menu when rendering the surface. Thus, the position change is not
+            immediate. To force translation update you may call Menu render method.
+
+        .. note::
+
             To revert changes, only set to ``(0,0)``.
 
         .. note::
@@ -1467,11 +1499,7 @@ class Widget(object):
         """
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
-        self._rect.x -= self._translate[0]
-        self._rect.y -= self._translate[1]
         self._translate = (int(x), int(y))
-        self._rect.x += self._translate[0]
-        self._rect.y += self._translate[1]
         self._force_render()
         return self
 
@@ -1484,6 +1512,11 @@ class Widget(object):
 
             Not all widgets accepts rotation. Also this rotation only affects the
             text or images, the selection or background is not rotated.
+
+        .. note::
+
+            Rotation is only applied after widget rendering. Thus, the changes are
+            not immediate.
 
         .. note::
 
@@ -1501,6 +1534,12 @@ class Widget(object):
     def set_alignment(self, align: str) -> 'Widget':
         """
         Set the alignment of the widget.
+
+        .. note::
+
+            Alignment is only applied when updating the widget position, done
+            by Menu when rendering the surface. Thus, the alignment change is not
+            immediate.
 
         .. note::
 
