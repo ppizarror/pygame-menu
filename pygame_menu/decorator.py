@@ -453,8 +453,8 @@ class Decorator(object):
         assert_color(color)
         return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color))
 
-    def add_callable(self, fun: Callable[['pygame.Surface', Any], Any], prev: bool = True,
-                     pass_args: bool = True) -> str:
+    def add_callable(self, fun: Union[Callable[['pygame.Surface', Any], Any], Callable[[], Any]],
+                     prev: bool = True, pass_args: bool = True) -> str:
         """
         Add a callable method. The function receives the surface and the object; for example,
         if adding to a widget:

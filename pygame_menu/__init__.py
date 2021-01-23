@@ -110,7 +110,7 @@ import pygame_menu.version
 """
 Metadata: Information about the project
 """
-__author__ = 'Pablo Pizarro R. @ppizarror'
+__author__ = 'Pablo Pizarro R.'
 __contributors__ = [
     'anxuae',
     'arpruss',
