@@ -109,12 +109,12 @@ class Menu(object):
     """
     _attributes: Dict[str, Any]
     _auto_centering: bool
-    _background_function: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]
+    _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]]
     _clock: 'pygame.time.Clock'
     _column_max_width: VectorType
     _column_min_width: VectorType
     _column_pos_x: List[NumberType]
-    _column_widths: Optional[List[NumberType]]
+    _column_widths: List[NumberType]
     _columns: int
     _current: 'Menu'
     _decorator: 'Decorator'
@@ -340,10 +340,11 @@ class Menu(object):
 
         # General properties of the Menu
         self._attributes = {}
-        self._background_function = None
         self._auto_centering = center_content
+        self._background_function = (False, None)  # Accept menu as argument, callable object
         self._clock = pygame.time.Clock()
         self._decorator = Decorator(self)
+        self._enabled = enabled  # Menu is enabled or not. If disabled menu can't update or draw
         self._height = int(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
@@ -371,10 +372,6 @@ class Menu(object):
 
         # Top is the same for the menus and submenus if the user moves through them
         self._top = self
-
-        # Enabled and closed belongs to top, closing a submenu is equal as closing the root
-        # Menu. If the menu is disabled adding widgets don't trigger rendering
-        self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
         self._position = (0, 0)
@@ -425,7 +422,7 @@ class Menu(object):
         self._column_max_width = column_max_width
         self._column_min_width = column_min_width
         self._column_pos_x = []  # Stores the center x position of each column
-        self._column_widths = None
+        self._column_widths = []
         self._columns = columns
         self._max_row_column_elements = 0
         self._rows = rows
@@ -1901,8 +1898,13 @@ class Menu(object):
             # Update used columns
             self._used_columns = max(self._used_columns, col + 1)
 
-            # If widget is floating don't update the current index
-            if not widget.is_floating():
+            # Get the next widget, if don't exist use the same
+            next_widget = widget
+            if index < len(self._widgets) - 1:
+                next_widget = self._widgets[index + 1]
+
+            # If widget is floating don't update the next
+            if not next_widget.is_floating():
                 i_index += 1
 
             # If floating, don't contribute to the column width
@@ -1927,7 +1929,8 @@ class Menu(object):
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         # only None column_max_widths and columns less than the maximum are scaled
         sum_width_columns = sum(self._column_widths)
-        if 0 < sum_width_columns < self._width:
+        max_width = self.get_width()
+        if 0 <= sum_width_columns < max_width and len(self._widgets) > 0:
 
             # First, scale columns to its maximum
             sum_contrib = []
@@ -1939,9 +1942,9 @@ class Menu(object):
                 else:
                     sum_contrib.append(0)
 
-            delta = float(self._width) - sum(sum_contrib) - sum_width_columns
+            delta = max_width - sum(sum_contrib) - sum_width_columns
             if delta < 0:  # Scale contrib back
-                scale = (float(self._width) - sum_width_columns) / sum(sum_contrib)
+                scale = (max_width - sum_width_columns) / sum(sum_contrib)
                 sum_contrib = [sum_contrib[i] * scale for i in range(len(sum_contrib))]
 
             # Increase to its maximums
@@ -1951,7 +1954,6 @@ class Menu(object):
 
             # Scale column widths if None
             sum_width_columns = sum(self._column_widths)
-
             sum_contrib = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
@@ -1959,14 +1961,38 @@ class Menu(object):
                 else:
                     sum_contrib.append(0)
 
-            delta = float(self._width) - sum_width_columns
+            delta = max_width - sum_width_columns
             if delta > 0:
                 for col in range(self._used_columns):
                     if sum_contrib[col] > 0:
                         self._column_widths[col] += delta * sum_contrib[col] / sum(sum_contrib)
 
+            # Re-compute sum
+            sum_width_columns = sum(self._column_widths)
+
+            # If column width still 0, set all the column the same width (only used)
+            # This only can happen if column_min_width was not set
+            if sum_width_columns < max_width and self._used_columns >= 1:
+
+                # The width it would be added for each column
+                modwidth = max_width  # Available left width for non max columns
+                nonmax = self._used_columns
+
+                # First fill all maximum width columns
+                for col in range(self._used_columns):
+                    if self._column_max_width[col] is not None:
+                        self._column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
+                        modwidth -= self._column_widths[col]
+                        nonmax -= 1
+
+                # Now, update the rest (non maximum set)
+                if nonmax > 0:
+                    for col in range(self._used_columns):
+                        if self._column_max_width[col] is None:
+                            self._column_widths[col] = modwidth / nonmax
+
         # Final column width
-        total_col_width = float(sum(self._column_widths))
+        total_col_width = sum(self._column_widths)
         if self._used_columns > 1:
             # Calculate column width scale (weights)
             column_weights = tuple(
@@ -2441,11 +2467,11 @@ class Menu(object):
             surface.fill(self._current._theme.surface_clear_color)
 
         # Call background function (set from mainloop)
-        if self._top._background_function is not None:
-            try:
-                self._top._background_function(self._current)
-            except TypeError:
-                self._top._background_function()
+        if self._top._background_function[1] is not None:
+            if self._top._background_function[0]:
+                self._top._background_function[1](self._current)
+            else:
+                self._top._background_function[1]()
 
         # Draw the prev decorator
         self._current._decorator.draw_prev(surface)
@@ -2457,6 +2483,10 @@ class Menu(object):
             # Fill the scrolling surface (clear previous state)
             self._current._widgets_surface.fill((255, 255, 255, 0))
 
+            # This should be update before drawing widgets. As widget
+            # draw may trigger surface cache updating
+            self._current._widget_surface_cache_need_update = False
+
             # Iterate through widgets and draw them
             for widget in self._current._widgets:
                 if not widget.is_visible():
@@ -2466,7 +2496,6 @@ class Menu(object):
                     widget.draw_selection(self._current._widgets_surface)
 
             self._current._stats.draw_update_cached += 1
-            self._current._widget_surface_cache_need_update = False
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
@@ -2896,8 +2925,7 @@ class Menu(object):
     def mainloop(self,
                  surface: 'pygame.Surface',
                  bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
-                 disable_loop: bool = False,
-                 fps_limit: int = 30
+                 **kwargs
                  ) -> None:
         """
         Main loop of the **current** Menu. In this function, the Menu handle exceptions and draw.
@@ -2919,6 +2947,11 @@ class Menu(object):
             draw(...):
                 bgfun() <or> bgfun(Menu)
 
+        kwargs (Optional)
+            - ``disable_loop``      *(bool)* - If ``True`` the mainloop only runs once. Use for running draw and update in a single call
+            - ``fps_limit``         *(int)* - Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
+            - ``pause_key_event``   *(int, None)* - If set, the menu is paused. That is, menu does not draw and only accepts the pause event key
+
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
@@ -2926,16 +2959,15 @@ class Menu(object):
 
         :param surface: Pygame surface to draw the Menu
         :param bgfun: Background function called on each loop iteration before drawing the Menu
-        :param disable_loop: If ``True`` run this method for only ``1`` loop
-        :param fps_limit: Limit frames per second of the loop, if ``0`` there's no limit
         :return: None
         """
+        # Unpack kwargs
+        disable_loop = kwargs.get('disable_loop', False)
+        fps_limit = kwargs.get('fps_limit', self._theme.fps)
+
         assert isinstance(surface, pygame.Surface)
-        if bgfun:
-            assert _utils.is_callable(bgfun), \
-                'background function must be callable (function-type) object'
         assert isinstance(disable_loop, bool)
-        assert isinstance(fps_limit, int)
+        assert isinstance(fps_limit, (int, float))
         assert fps_limit >= 0, 'fps limit cannot be negative'
         fps_limit = int(fps_limit)
 
@@ -2943,8 +2975,21 @@ class Menu(object):
         if not self.is_enabled():
             return self._current._runtime_errors.throw(self._current._runtime_errors.mainloop, 'menu is not enabled')
 
+        # Check background function
+        bgfun_accept_menu = False
+        if bgfun:
+            assert _utils.is_callable(bgfun), \
+                'background function must be callable (function-type) object'
+            try:
+                bgfun(self._current)
+                bgfun_accept_menu = True
+            except TypeError:
+                pass
+
         # Store background function and force render
-        self._current._background_function = bgfun
+        self._current._background_function = (bgfun_accept_menu, bgfun)
+
+        # Force rendering before loop
         self._current._widgets_surface = None
 
         while True:
@@ -2963,7 +3008,6 @@ class Menu(object):
 
             # Menu closed or disabled
             if not self.is_enabled() or disable_loop:
-                self._current._background_function = None
                 return
 
     def get_input_data(self, recursive: bool = False) -> Dict[str, Any]:

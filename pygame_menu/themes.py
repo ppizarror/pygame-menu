@@ -100,6 +100,8 @@ class Theme(object):
     :type cursor_switch_ms: int, float
     :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements *(R, G, B, A)*
     :type focus_background_color: tuple, list
+    :param fps: Menu max fps (frames per second). If ``0`` there's no limit
+    :type fps: int, float
     :param readonly_color: Color of the widget in readonly mode
     :type readonly_color: tuple, list
     :param readonly_selected_color: Color of the selected widget in readonly mode
@@ -202,6 +204,7 @@ class Theme(object):
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
     focus_background_color: ColorType
+    fps: NumberType
     readonly_color: ColorType
     readonly_selected_color: ColorType
     scrollarea_outer_margin: Tuple2NumberType
@@ -256,6 +259,7 @@ class Theme(object):
         # Menu general
         self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
+        self.fps = self._get(kwargs, 'fps', (int, float), 30)
         self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
         self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
@@ -365,6 +369,7 @@ class Theme(object):
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
 
         assert isinstance(self.cursor_switch_ms, (int, float))
+        assert isinstance(self.fps, (int, float))
         assert isinstance(self.scrollbar_shadow_offset, (int, float))
         assert isinstance(self.scrollbar_slider_pad, (int, float))
         assert isinstance(self.scrollbar_thick, (int, float))
@@ -423,6 +428,7 @@ class Theme(object):
             'widget border inflate must be equal or greater than zero in both axis'
 
         assert self.cursor_switch_ms > 0, 'cursor switch ms must be greater than zero'
+        assert self.fps >= 0, 'fps must be equal or greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
         assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
