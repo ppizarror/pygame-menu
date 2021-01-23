@@ -58,6 +58,7 @@ DECORATION_ARC = 2000
 DECORATION_BASEIMAGE = 2001
 DECORATION_BEZIER = 2002
 DECORATION_CALLABLE = 2003
+DECORATION_CALLABLE_NO_ARGS = 2015
 DECORATION_CIRCLE = 2004
 DECORATION_ELLIPSE = 2005
 DECORATION_LINE = 2006
@@ -84,6 +85,7 @@ class Decorator(object):
     _cache_needs_update: Dict[str, bool]
     _cache_surface: Dict[str, Optional['pygame.Surface']]
     _decor: Dict[str, List[Tuple[int, str, Any]]]  # type, id, data
+    _decor_enabled: Dict[str, bool]
     _obj: Union['Widget', 'ScrollArea', 'Menu']
     _post_enabled: bool
     _prev_enabled: bool
@@ -99,6 +101,7 @@ class Decorator(object):
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
         self._obj = obj
+        self._decor_enabled = {}
 
         self._prev_enabled = True
         self._post_enabled = True
@@ -167,6 +170,9 @@ class Decorator(object):
         # Check sizes
         if self._total_decor() >= 300 and not self.cache:
             warnings.warn('cache is recommended if the total number of decorations exceeds 300')
+
+        # Set automatically as enabled
+        self._decor_enabled[decor_id] = True
 
         return decor_id
 
@@ -447,22 +453,34 @@ class Decorator(object):
         assert_color(color)
         return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color))
 
-    def add_callable(self, fun: Callable[['pygame.Surface', Any], Any], prev: bool = True) -> str:
+    def add_callable(self, fun: Callable[['pygame.Surface', Any], Any], prev: bool = True,
+                     pass_args: bool = True) -> str:
         """
-        Add a callable method. The function receives the surface and the object.
+        Add a callable method. The function receives the surface and the object; for example,
+        if adding to a widget:
+
+        .. code-block:: python
+
+            fun(surface, object)
 
         .. note::
 
             If your callable function changes over time set ``decorator.cache=False``
             or force cache manually by calling Decorator method
-            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`.
+            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`. Also, the object
+            should force the menu surface cache to update.
 
         :param fun: Function
         :param prev: If ``True`` draw previous the object, else draws post
+        :param pass_args: If ``False`` function is called without (surface, object) as args
         :return: ID of the decoration
         """
         assert is_callable(fun), 'fun must be a callable type'
-        return self._add_decor(DECORATION_CALLABLE, prev, fun)
+        assert isinstance(pass_args, bool)
+        if pass_args:
+            return self._add_decor(DECORATION_CALLABLE, prev, fun)
+        else:
+            return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
 
     def add_textured_polygon(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
                              texture: Union['pygame.Surface', '_baseimage.BaseImage'],
@@ -539,6 +557,32 @@ class Decorator(object):
         assert y1 != y2
         return self.add_line((x, y1), (x, y2), color, width, prev)
 
+    def disable(self, decorid: str) -> None:
+        """
+        Disable a certain decoration from ID. Raises ``IndexError`` if decoration was
+        not found.
+
+        :param decorid: Decoration ID
+        :return: None
+        """
+        try:
+            self._decor_enabled[decorid] = False
+        except KeyError:
+            raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+
+    def enable(self, decorid: str) -> None:
+        """
+        Enable a certain decoration from ID. Raises ``IndexError`` if decoration was
+        not found.
+
+        :param decorid: Decoration ID
+        :return: None
+        """
+        try:
+            self._decor_enabled[decorid] = True
+        except KeyError:
+            raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+
     def remove(self, decorid: str) -> None:
         """
         Remove a decoration from a given ID. Raises ``IndexError`` if decoration was
@@ -555,6 +599,7 @@ class Decorator(object):
                 if d[1] == decorid:
                     self._decor[p].remove(d)
                     self._cache_needs_update[p] = True
+                    del self._decor_enabled[decorid]
                     return
         raise IndexError('decoration ID "{0}" was not found'.format(decorid))
 
@@ -641,8 +686,11 @@ class Decorator(object):
         if len(deco) == 0:
             return
         rect = self._obj.get_rect()
+
         for d in deco:
             dtype, decoid, data = d
+            if not self._decor_enabled[decoid]:
+                continue
 
             if dtype == DECORATION_POLYGON:
                 points, color, filled, width, gfx = data
@@ -690,6 +738,9 @@ class Decorator(object):
 
             elif dtype == DECORATION_CALLABLE:
                 data(surface, self._obj)
+
+            elif dtype == DECORATION_CALLABLE_NO_ARGS:
+                data()
 
             elif dtype == DECORATION_TEXTURE_POLYGON:
                 pos, texture, tx, ty = data

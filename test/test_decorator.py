@@ -166,6 +166,41 @@ class DecoratorTest(unittest.TestCase):
         deco.remove(p)
         self.assertEqual(len(deco._coord_cache.keys()), 0)
 
+    def test_enable_disable(self) -> None:
+        """
+        Test enable disable decoration.
+        """
+        menu = MenuUtils.generic_menu()
+        btn = menu.add_button('Button', None)
+        deco = btn.get_decorator()
+
+        # Callable
+        test = [False]
+
+        def fun(surf, obj: 'pygame_menu.widgets.Button') -> None:
+            """
+            Test callable decoration.
+            """
+            test[0] = True
+            assert isinstance(surf, pygame.Surface)
+            assert isinstance(obj, pygame_menu.widgets.Button)
+
+        callid = deco.add_callable(fun)
+        self.assertFalse(test[0])
+        btn.draw(surface)
+        self.assertTrue(test[0])
+
+        # Now disable the decoration
+        deco.disable(callid)
+        test[0] = False
+        btn.draw(surface)
+        self.assertFalse(test[0])
+        deco.enable(callid)
+        btn.draw(surface)
+        self.assertTrue(test[0])
+        deco.remove(callid)
+        self.assertFalse(callid in deco._decor_enabled.keys())
+
     def test_general(self) -> None:
         """
         Test all decorators.
@@ -268,6 +303,19 @@ class DecoratorTest(unittest.TestCase):
 
         deco.add_callable(fun)
         self.assertFalse(test[0])
+        btn.draw(surface)
+        self.assertTrue(test[0])
+
+        test[0] = False
+
+        def fun_noargs() -> None:
+            """
+            No args fun.
+            """
+            test[0] = True
+
+        self.assertFalse(test[0])
+        deco.add_callable(fun_noargs, pass_args=False)
         btn.draw(surface)
         self.assertTrue(test[0])
 
