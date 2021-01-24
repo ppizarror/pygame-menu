@@ -53,14 +53,16 @@ class Planet(object):
     name: str
     period: float
     radius: float
+    url: str
 
-    def __init__(self, image: 'pygame_menu.BaseImage', info: str, radius: float, period: float,
+    def __init__(self, image: 'pygame_menu.BaseImage', info: str, url: str, radius: float, period: float,
                  fontsize: Union[int, float]) -> None:
         """
         Create a planet.
 
         :param image: Planet image
         :param info: Planet info
+        :param url: Info url
         :param radius: Rotation radius
         :param period: Rotation period
         :param fontsize: Button text font size
@@ -72,6 +74,7 @@ class Planet(object):
         self.name = ''
         self.period = period
         self.radius = radius
+        self.url = url
 
 
 class SolarSystemApp(object):
@@ -111,6 +114,7 @@ class SolarSystemApp(object):
                 "temperatures and densities in its core high enough to sustain nuclear fusion of hydrogen into "
                 "helium, making it a main-sequence star. This releases an enormous amount of energy, "
                 "mostly radiated into space as electromagnetic radiation peaking in visible light.",
+                "https://en.wikipedia.org/wiki/Sun",
                 radius=0,
                 period=0,
                 fontsize=theme.widget_font_size * 1.25
@@ -124,6 +128,7 @@ class SolarSystemApp(object):
                 "consists of atoms blasted off its surface by the solar wind. Its relatively large iron core and thin "
                 "mantle have not yet been adequately explained. Hypotheses include that its outer layers were stripped "
                 "off by a giant impact, or that it was prevented from fully accreting by the young Sun's energy.",
+                "https://en.wikipedia.org/wiki/Mercury_(planet)",
                 radius=0.4,
                 period=0.24,
                 fontsize=theme.widget_font_size * 0.5
@@ -138,6 +143,7 @@ class SolarSystemApp(object):
                 "geological activity has been detected on Venus, but it has no magnetic field that would prevent "
                 "depletion of its substantial atmosphere, which suggests that its atmosphere is being replenished "
                 "by volcanic eruptions.",
+                "https://en.wikipedia.org/wiki/Venus",
                 radius=0.7,
                 period=0.615,
                 fontsize=theme.widget_font_size * 0.6
@@ -150,6 +156,7 @@ class SolarSystemApp(object):
                 "has been observed. Earth's atmosphere is radically different from those of the other planets, having "
                 "been altered by the presence of life to contain 21% free oxygen. It has one natural satellite, the "
                 "Moon, the only large satellite of a terrestrial planet in the Solar System.",
+                "https://en.wikipedia.org/wiki/Earth",
                 radius=1,
                 period=1,
                 fontsize=theme.widget_font_size * 0.85
@@ -162,6 +169,7 @@ class SolarSystemApp(object):
                 "larger than any dwarf planet. The Moon orbits Earth at an average lunar distance of 384,400 km "
                 "(238,900 mi), or 1.28 light-seconds. Its gravitational influence produces Earth's tides and slightly "
                 "lengthens Earth's day.",
+                "https://en.wikipedia.org/wiki/Moon",
                 radius=0.35,
                 period=0.2,
                 fontsize=theme.widget_font_size * 0.5
@@ -175,6 +183,7 @@ class SolarSystemApp(object):
                 "colour comes from iron oxide (rust) in its soil. Mars has two tiny natural satellites (Deimos and "
                 "Phobos) thought to be either captured asteroids, or ejected debris from a massive impact early in "
                 "Mars's history.",
+                "https://en.wikipedia.org/wiki/Mars",
                 radius=1.25,
                 period=1.880,
                 fontsize=theme.widget_font_size * 0.95
@@ -187,6 +196,7 @@ class SolarSystemApp(object):
                 "satellites. The four largest, Ganymede, Callisto, Io, and Europa, show similarities to the "
                 "terrestrial planets, such as volcanism and internal heating. Ganymede, the largest satellite in the "
                 "Solar System, is larger than Mercury.",
+                "https://en.wikipedia.org/wiki/Jupiter",
                 radius=1.75,
                 period=11.862,
                 fontsize=theme.widget_font_size * 1.1
@@ -197,6 +207,7 @@ class SolarSystemApp(object):
                 "it orbits the Sun on its side; its axial tilt is over ninety degrees to the ecliptic. It has a much "
                 "colder core than the other giant planets and radiates very little heat into space. Uranus has 27 "
                 "known satellites, the largest ones being Titania, Oberon, Umbriel, Ariel, and Miranda.",
+                "https://en.wikipedia.org/wiki/Uranus",
                 radius=2,
                 period=84.0205,
                 fontsize=theme.widget_font_size
@@ -208,6 +219,7 @@ class SolarSystemApp(object):
                 "satellites. The largest, Triton, is geologically active, with geysers of liquid nitrogen. Triton is "
                 "the only large satellite with a retrograde orbit. Neptune is accompanied in its orbit by several "
                 "minor planets, termed Neptune trojans, that are in 1:1 resonance with it.",
+                "https://en.wikipedia.org/wiki/Neptune",
                 radius=2.25,
                 period=164.8,
                 fontsize=theme.widget_font_size
@@ -232,12 +244,15 @@ class SolarSystemApp(object):
 
             # Add go back button with a background image
             submenu.add.vertical_margin(150)
-            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK,
-                                        cursor=pygame.SYSTEM_CURSOR_HAND)
+            if pygame.version.vernum[0] < 2:
+                cursor = None
+            else:
+                cursor = pygame.SYSTEM_CURSOR_HAND
+            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=cursor)
             goback_img = planet.image.copy().resize(150, 150)
             goback_color = goback_img.get_at((100, 100), ignore_alpha=True)  # Get color from the figure's center pixel
             goback.get_decorator().add_baseimage(0, 0, goback_img, centered=True)
-            goback_selection = pygame_menu.widgets.HighlightSelection(border_width=10)
+            goback_selection = pygame_menu.widgets.HighlightSelection(border_width=2)
             goback.set_selection_effect(goback_selection.set_color(goback_color))
 
             # Description
@@ -249,12 +264,14 @@ class SolarSystemApp(object):
                                      font_color=(255, 255, 255))
             for line in labl:
                 line.set_max_width(580)
+            submenu.add.url(planet.url, align=pygame_menu.locals.ALIGN_LEFT, margin=(20, 1), font_size=20,
+                            font_name=pygame_menu.font.FONT_PT_SERIF)
             submenu.add.vertical_margin(40)  # Bottom margin
 
             # Create advanced button
             planet.image.scale(0.35, 0.35)
             button = self.menu.add.button(planet.name, submenu, font_size=planet.fontsize)
-            button.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            button.set_cursor(cursor)
             button.set_float()
             button.get_decorator().add_baseimage(0, 0, planet.image, centered=True)
             button.set_attribute('planet', planet)
