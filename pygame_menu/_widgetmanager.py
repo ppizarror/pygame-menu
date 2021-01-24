@@ -31,11 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['WidgetManager']
 
-import textwrap
-import warnings
 from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
+import re
+import textwrap
+import warnings
+import webbrowser
 
 import pygame
 import pygame_menu
@@ -49,6 +51,16 @@ from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInpu
 from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     NumberType, Vector2NumberType, List, Tuple
+
+# Compatibility with pygame < 2
+PYGAME_CURSOR_HAND = None
+if hasattr(pygame, 'SYSTEM_CURSOR_HAND'):
+    PYGAME_CURSOR_HAND = pygame.SYSTEM_CURSOR_HAND
+
+try:
+    PygameCursorType = (int, pygame.cursors.Cursor, type(None))
+except AttributeError:
+    PygameCursorType = (int, type(None))
 
 
 # noinspection PyProtectedMember
@@ -116,7 +128,7 @@ class WidgetManager(object):
         attributes['border_width'] = border_width
 
         cursor = kwargs.pop('cursor', None)
-        assert isinstance(cursor, (int, pygame.cursors.Cursor, type(None)))
+        assert isinstance(cursor, PygameCursorType)
         attributes['cursor'] = cursor
 
         attributes['font_antialias'] = self._theme.widget_font_antialias
@@ -333,6 +345,10 @@ class WidgetManager(object):
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
             - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``False`` by default
+            - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
+            - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
+            - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
 
         .. note::
 
@@ -376,6 +392,12 @@ class WidgetManager(object):
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+
+        # Button underline
+        underline = kwargs.pop('underline', False)
+        underline_color = kwargs.pop('underline_color', attributes['font_color'])
+        underline_offset = kwargs.pop('underline_offset', 1)
+        underline_width = kwargs.pop('underline_width', 1)
 
         # Change action if certain events
         if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
@@ -430,7 +452,10 @@ class WidgetManager(object):
             except ValueError:
                 warnings.warn('button cannot accept kwargs. If you want to use kwargs options set accept_kwargs=True')
                 raise
+
         self._configure_widget(widget=widget, **attributes)
+        if underline:
+            widget.add_underline(underline_color, underline_offset, underline_width)
         widget.set_selection_callback(onselect)
         self._append_widget(widget)
         return widget
@@ -775,14 +800,10 @@ class WidgetManager(object):
     def url(self,
             href: str,
             title: str = '',
-            cursor: Union[int, 'pygame.cursors.Cursor'] = pygame.SYSTEM_CURSOR_HAND,
-            max_char: int = 0,
-            onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
-            selectable: bool = False,
             **kwargs
-            ) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
+            ) -> 'pygame_menu.widgets.Button':
         """
-        Adds a Label url. Clicking the widget will open the link. If title is defined, the link will
+        Adds a Button url. Clicking the widget will open the link. If title is defined, the link will
         not be written. For example: ``href='google.com', title=''`` will write the link, but
         ``href='google.com', title='Google'`` will write 'Google' and opens 'google.com' if clicked.
 
@@ -799,6 +820,7 @@ class WidgetManager(object):
             - ``border_color``              *(tuple, list)* - Widget border color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
+            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``HAND``
             - ``font_background_color``     *(tuple, list, None)* - Widget font background color
             - ``font_color``                *(tuple, list)* - Widget font color. If not defined, uses ``theme.widget_url_color``
             - ``font_name``                 *(str, Path)* - Widget font path
@@ -811,7 +833,7 @@ class WidgetManager(object):
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
             - ``shadow_offset``             *(int)* - Text shadow offset
-            - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``False`` by default
+            - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``True`` by default
             - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
@@ -828,14 +850,42 @@ class WidgetManager(object):
 
         :param href: Link to open
         :param title: Alternative title of the link
-        :param cursor: Cursor if user places the mouse over
-        :param max_char: Split the url in several labels if the string length exceeds ``max_char``; ``0``: don't split, ``-1``: split to Menu width
-        :param onselect: Callback executed when selecting the widget
-        :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
         :param kwargs: Optional keyword arguments
         :return: Widget object, or List of widgets if the text overflows
-        :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
+        :rtype: :py:class:`pygame_menu.widgets.Button`
         """
+        # Validate link
+        assert isinstance(href, str) and len(href) > 0
+
+        regex = re.compile(
+            r'^(?:http|ftp)s?://'  # http:// or https://
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+            r'localhost|'  # localhost...
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+            r'(?::\d+)?'  # optional port
+            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        assert re.match(regex, href) is not None, 'invalid link format'
+
+        def action() -> None:
+            """
+            Opens the link.
+            """
+            webbrowser.open(href)
+
+        # Configure kwargs
+        if 'cursor' not in kwargs.keys():
+            kwargs['cursor'] = PYGAME_CURSOR_HAND
+        if 'font_color' not in kwargs.keys():
+            kwargs['font_color'] = self._theme.widget_url_color
+        if 'selection_color' not in kwargs.keys():
+            kwargs['selection_color'] = self._theme.widget_url_color
+        if 'selection_effect' not in kwargs.keys():
+            kwargs['selection_effect'] = pygame_menu.widgets.NoneSelection()
+        if 'underline' not in kwargs.keys():
+            kwargs['underline'] = True
+
+        # Return new button
+        return self.button(title if title != '' else href, action, **kwargs)
 
     def selector(self,
                  title: Any,
