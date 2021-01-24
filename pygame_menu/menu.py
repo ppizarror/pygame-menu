@@ -129,6 +129,8 @@ class Menu(object):
     _columns: int
     _current: 'Menu'
     _decorator: 'Decorator'
+    _disable_draw: bool
+    _disable_update: bool
     _enabled: bool
     _height: int
     _id: str
@@ -163,6 +165,7 @@ class Menu(object):
     _widget_columns: Dict[int, List['pygame_menu.widgets.Widget']]
     _widget_max_position: Tuple2IntType
     _widget_min_position: Tuple2IntType
+    _widget_mouseover: Optional['pygame_menu.widgets.Widget']
     _widget_offset: List[int]
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
@@ -173,8 +176,6 @@ class Menu(object):
     _width: int
     _window_size: Tuple2IntType
     add: 'WidgetManager'
-    disable_draw: bool
-    disable_update: bool
 
     def __init__(self,
                  title: str,
@@ -399,6 +400,7 @@ class Menu(object):
 
         # Menu widgets, it should not be accessed outside the object as strange issues can occur
         self.add = WidgetManager(self)
+        self._widget_mouseover = None  # Current mouse that has the mouse over
         self._widgets = []
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
 
@@ -476,11 +478,13 @@ class Menu(object):
 
         # Init mouse
         if mouse_motion_selection:
+            assert mouse_enabled, \
+                'mouse motion selection cannot be enabled if mouse is disabled'
             assert mouse_visible, 'mouse motion cannot be enabled if mouse is not visible'
             assert hasattr(pygame, 'MOUSEMOTION'), \
                 'pygame MOUSEMOTION does not exist, thus, mouse motion selection cannot be enabled'
         self._mouse = mouse_enabled and mouse_visible
-        self._mouse_motion_selection = mouse_motion_selection and mouse_visible
+        self._mouse_motion_selection = mouse_motion_selection
         self._mouse_visible = mouse_visible
         self._mouse_visible_default = mouse_visible
 
@@ -490,7 +494,7 @@ class Menu(object):
             assert version_major >= 2, 'touchscreen is only supported in pygame v2+'
         if touchscreen_motion_selection:
             assert touchscreen, \
-                'touchscreen_motion_selection cannot be enabled if touchscreen is disabled'
+                'touchscreen motion selection cannot be enabled if touchscreen is disabled'
             assert hasattr(pygame, 'FINGERMOTION'), \
                 'pygame FINGERMOTION does not exist, thus, touchscreen motion selection cannot be enabled'
         self._touchscreen = touchscreen
@@ -555,9 +559,9 @@ class Menu(object):
         # Controls the behaviour of runtime errors
         self._runtime_errors = _MenuRuntimeErrorConfig()
 
-        # Public properties. These can be changed without any major problem
-        self.disable_draw = False
-        self.disable_update = False
+        # These can be changed without any major problem
+        self._disable_draw = False
+        self._disable_update = False
 
     def __copy__(self) -> 'Menu':
         """
@@ -1317,6 +1321,7 @@ class Menu(object):
 
         :return: Self reference
         """
+        self._check_widget_mouseleave(force=True)
         self._top._enabled = False
         return self
 
@@ -1513,7 +1518,7 @@ class Menu(object):
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
             return self._current
-        if self._current.disable_draw:
+        if self._current._disable_draw:
             return self._current
 
         # Render menu
@@ -1792,7 +1797,7 @@ class Menu(object):
         # Call onupdate callback
         if self._current._onupdate is not None:
             self._current._onupdate(events, self._current)
-        if self._current.disable_update:
+        if self._current._disable_update:
             return False
 
         # Check if window closed
@@ -1834,13 +1839,14 @@ class Menu(object):
         else:
 
             # If mouse motion enabled, add the current mouse position to event list
-            if self._current._mouse_motion_selection:
+            if self._current._mouse and self._current._mouse_motion_selection:
                 mousex, mousey = pygame.mouse.get_pos()
                 events.append(pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)}))
 
             for event in events:
 
                 if event.type == pygame.KEYDOWN:
+
                     # Check key event is valid
                     if not _utils.check_key_pressed_valid(event):
                         continue
@@ -1928,6 +1934,7 @@ class Menu(object):
                             if widget.is_selectable and widget.is_visible() and \
                                     self._current._scroll.collide(widget, event):
                                 self._current._select(index)
+                                break
 
                     # If mouse motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
@@ -1936,15 +1943,32 @@ class Menu(object):
                             if not self._current._scroll.collide(selected_widget, event):
                                 selected_widget.active = False
 
-                # Select widgets by mouse motion, this is valid only if the current selected widget
-                # is not active and the pointed widget is selectable
-                elif self._current._mouse_motion_selection and event.type == pygame.MOUSEMOTION and \
-                        selected_widget is not None and not selected_widget.active:
-                    for index in range(len(self._current._widgets)):
-                        widget = self._current._widgets[index]
-                        if widget.is_selectable and widget.is_visible() and \
-                                self._current._scroll.collide(widget, event):
-                            self._current._select(index)
+                # Mouse motion. It changes the cursor of the mouse if enabled
+                elif self._current._mouse and event.type == pygame.MOUSEMOTION:
+
+                    # Select widgets by mouse motion, this is valid only if the current selected widget
+                    # is not active and the pointed widget is selectable. Also check mouse over
+                    if self._current._mouse_motion_selection and \
+                            (selected_widget is not None and not selected_widget.active or selected_widget is None):
+                        for index in range(len(self._current._widgets)):
+                            widget = self._current._widgets[index]
+                            if widget.is_visible() and self._current._scroll.collide(widget, event):
+                                if widget.is_selectable:
+                                    self._current._select(index)
+                                if self._current._widget_mouseover != widget:
+                                    widget.mouseover(event)
+                                    self._current._widget_mouseover = widget
+                                break
+
+                    # Check mouse over
+                    else:
+                        for index in range(len(self._current._widgets)):
+                            widget = self._current._widgets[index]
+                            if widget.is_visible() and self._current._scroll.collide(widget, event):
+                                if self._current._widget_mouseover != widget:
+                                    widget.mouseover(event)
+                                    self._current._widget_mouseover = widget
+                                break
 
                 # Mouse events in selected widget
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None and \
@@ -1969,6 +1993,7 @@ class Menu(object):
                             if widget.is_selectable and widget.is_visible() and \
                                     self._current._scroll.collide(widget, event):
                                 self._current._select(index)
+                                break
 
                     # If touchscreen motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
@@ -1980,11 +2005,12 @@ class Menu(object):
                 # Select widgets by touchscreen motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
                 elif self._current._touchscreen_motion_selection and event.type == pygame.FINGERMOTION and \
-                        selected_widget is not None and not selected_widget.active:
+                        (selected_widget is not None and not selected_widget.active or selected_widget is None):
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
                         if widget.is_selectable and self._current._scroll.collide(widget, event):
                             self._current._select(index)
+                            break
 
                 # Touchscreen events in selected widget
                 elif self._current._touchscreen and event.type == pygame.FINGERUP and selected_widget is not None:
@@ -2000,6 +2026,10 @@ class Menu(object):
                         updated = True  # It is updated
                         break
 
+        # If the over menu is not None, check the current mouse position is still over the widget,
+        # if not, call onmouseleave
+        self._current._check_widget_mouseleave(force=False)
+
         # If cache is enabled, always force a rendering (user may have have changed any status)
         if self._current._widget_surface_cache_enabled and updated:
             self._current._widget_surface_cache_need_update = True
@@ -2009,6 +2039,22 @@ class Menu(object):
             updated = True
 
         return updated
+
+    def _check_widget_mouseleave(self, force: bool) -> None:
+        """
+        Check ``mouseleave`` on current over widget.
+
+        :param force: Force leave if ``True``
+        :return: None
+        """
+        if self._widget_mouseover is not None:
+            mousex, mousey = pygame.mouse.get_pos()
+            mouse_motion_current_pos = pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)})
+            if not self._scroll.collide(self._widget_mouseover, mouse_motion_current_pos) or force:
+                self._widget_mouseover.mouseleave(mouse_motion_current_pos)
+                self._widget_mouseover = None
+        if force:
+            self._current._check_widget_mouseleave(force=False)
 
     def mainloop(self,
                  surface: 'pygame.Surface',
@@ -2295,6 +2341,10 @@ class Menu(object):
         # Select the first widget
         self._select(0, 1)
 
+        # Re-render menu
+        self._check_widget_mouseleave(force=True)
+        self._render()
+
     def reset(self, total: int) -> 'Menu':
         """
         Go back in Menu history a certain number of times from the **current** Menu.
@@ -2330,6 +2380,8 @@ class Menu(object):
             except TypeError:
                 self._current._onreset()
 
+        self._current._widgets_surface = None
+        self._current._check_widget_mouseleave(force=True)
         self._current._select(self._top._current._index)
         self._current._stats.reset += 1
         return self._current

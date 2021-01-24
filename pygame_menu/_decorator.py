@@ -205,6 +205,10 @@ class Decorator(object):
         """
         Add polygon.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
         :param filled: If ``True`` fills the polygon with the given color
@@ -231,6 +235,10 @@ class Decorator(object):
         """
         Add bezier curve.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
         :param steps: Interpolation steps
@@ -247,6 +255,10 @@ class Decorator(object):
                    width: int = 0, prev: bool = True, gfx: bool = True) -> str:
         """
         Add circle.
+
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -277,6 +289,10 @@ class Decorator(object):
         """
         Add arc.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param radius: Circle radius (px)
@@ -305,6 +321,10 @@ class Decorator(object):
         """
         Add a unfilled pie.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param radius: Circle radius (px)
@@ -328,6 +348,10 @@ class Decorator(object):
         """
         Adds a surface.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param surface: Surface
@@ -344,6 +368,10 @@ class Decorator(object):
                       prev: bool = True, centered: bool = False) -> str:
         """
         Adds a :py:class:`pygame_menu.baseimage.BaseImage` object.
+
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
 
         .. note::
 
@@ -368,6 +396,10 @@ class Decorator(object):
         """
         Adds a BaseImage object.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param rect: Rect to draw
@@ -385,6 +417,10 @@ class Decorator(object):
                  color: ColorType, prev: bool = True, antialias=True, centered=False) -> str:
         """
         Adds a text.
+
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -415,6 +451,10 @@ class Decorator(object):
         """
         Add an ellipse.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param rx: Horizontal radius of the ellipse
@@ -435,6 +475,10 @@ class Decorator(object):
     def add_pixel(self, x: NumberType, y: NumberType, color: ColorType, prev: bool = True) -> str:
         """
         Add a pixel.
+
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -464,6 +508,10 @@ class Decorator(object):
             :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`. Also, the object
             should force the menu surface cache to update.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param fun: Function
         :param prev: If ``True`` draw previous the object, else draws post
         :param pass_args: If ``False`` function is called without (surface, object) as args
@@ -488,6 +536,10 @@ class Decorator(object):
             set ``decorator.cache=False`` or force cache manually by calling
             :py:class:`pygame_menu._decorator.Decorator.force_cache_update`.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
         :param tx: X offset of the texture (px)
@@ -505,6 +557,10 @@ class Decorator(object):
                  prev: bool = True) -> str:
         """
         Adds a line.
+
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
 
         :param pos1: Position 1 *(x1, y1)*
         :param pos2: Position 2 *(x2, y2)*
@@ -524,6 +580,10 @@ class Decorator(object):
         """
         Adds a horizontal line.
 
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
+
         :param x1: Horizontal position 1 in px
         :param x2: Horizontal position 2 in px
         :param y: Vertical position in px
@@ -539,6 +599,10 @@ class Decorator(object):
                   prev: bool = True) -> str:
         """
         Adds a vertical line.
+
+        .. note::
+
+            Consider ``(0, 0)** coordinates as the center of the object.
 
         :param x: Horizontal position in px
         :param y1: Vertical position 1 in px

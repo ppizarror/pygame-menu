@@ -48,6 +48,10 @@ import random
 import time
 import warnings
 
+# Stores the previous cursor. This should be a common variable
+# because there's only 1 cursor
+_CURSOR_PREV = [None]
+
 
 class Widget(object):
     """
@@ -75,6 +79,7 @@ class Widget(object):
     _border_inflate: Tuple2IntType
     _border_width: int
     _col_row_index: Tuple3IntType
+    _cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
     _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
@@ -99,9 +104,11 @@ class Widget(object):
     _max_width: List[Optional[bool]]
     _menu: Optional['pygame_menu.Menu']
     _mouse_enabled: bool
-    _on_change: CallbackType
-    _on_return: CallbackType
-    _on_select: CallbackType
+    _onchange: CallbackType
+    _onmouseleave: CallbackType
+    _onmouseover: CallbackType
+    _onreturn: CallbackType
+    _onselect: CallbackType
     _padding: Tuple4IntType
     _padding_transform: Tuple4IntType
     _rect: 'pygame.Rect'
@@ -131,18 +138,14 @@ class Widget(object):
                  title: Any = '',
                  widget_id: str = '',
                  onchange: CallbackType = None,
+                 onmouseleave: CallbackType = None,
+                 onmouseover: CallbackType = None,
                  onreturn: CallbackType = None,
                  onselect: CallbackType = None,
                  args=None,
                  kwargs=None
                  ) -> None:
         assert isinstance(widget_id, str), 'widget id must be a string'
-        if onchange:
-            assert is_callable(onchange), 'onchange must be callable (function-type) or None'
-        if onreturn:
-            assert is_callable(onreturn), 'onreturn must be callable (function-type) or None'
-        if onselect:
-            assert is_callable(onselect), 'onselect must be callable (function-type) or None'
 
         # Store ID, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
@@ -153,6 +156,7 @@ class Widget(object):
         self._background_color = None
         self._background_inflate = (0, 0)
         self._col_row_index = (-1, -1, -1)
+        self._cursor = None
         self._decorator = Decorator(self)
         self._default_value = _NoWidgetValue()
         self._events = []
@@ -187,11 +191,14 @@ class Widget(object):
         self._draw_callbacks = {}
         self._update_callbacks = {}
 
+        self.set_onchange(onchange)
+        self.set_onmouseleave(onmouseleave)
+        self.set_onmouseover(onmouseover)
+        self.set_onreturn(onreturn)
+        self.set_onselect(onselect)
+
         self._args = args or []
         self._kwargs = kwargs or {}
-        self._on_change = onchange
-        self._on_return = onreturn
-        self._on_select = onselect
 
         # Surface of the widget
         self._surface = None
@@ -243,6 +250,143 @@ class Widget(object):
         self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
+
+    def set_onchange(self, callback: CallbackType) -> 'Widget':
+        """
+        Set ``onchange`` callback. This method is executed in
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.change` method.
+        The callback function receives the following arguments:
+
+        .. code-block:: python
+
+            callback_func(value, *args, *widget._args, **widget._kwargs)
+
+        :param callback: Callback executed if the widget changes its value
+        :return: Self reference
+        """
+        if callback:
+            assert is_callable(callback), 'onchange must be callable (function-type) or None'
+        self._onchange = callback
+        return self
+
+    def set_onreturn(self, callback: CallbackType) -> 'Widget':
+        """
+        Set ``onreturn`` callback. This method is executed in
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.apply` method.
+        The callback function receives the following arguments:
+
+        .. code-block:: python
+
+            callback_func(value, *args, *widget._args, **widget._kwargs)
+
+        :param callback: Callback executed if user applies on widget
+        :return: Self reference
+        """
+        if callback:
+            assert is_callable(callback), 'onreturn must be callable (function-type) or None'
+        self._onreturn = callback
+        return self
+
+    def set_onselect(self, callback: CallbackType) -> 'Widget':
+        """
+        Set ``onselect`` callback. This method is executed in
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.select` method.
+        The callback function receives the following arguments:
+
+        .. code-block:: python
+
+            callback_func(value, *args, *widget._args, **widget._kwargs)
+
+        :param callback: Callback executed if user selects the widget
+        :return: Self reference
+        """
+        if callback:
+            assert is_callable(callback), 'onselect must be callable (function-type) or None'
+        self._onselect = callback
+        return self
+
+    def set_onmouseover(self, callback: CallbackType) -> 'Widget':
+        """
+        Set ``onmouseover`` callback. This method is executed in
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseover` method.
+        The callback function receives the following arguments:
+
+        .. code-block:: python
+
+            callback_func(widget, event)
+
+        :param callback: Callback executed if user enters the widget with the mouse
+        :return: Self reference
+        """
+        if callback:
+            assert is_callable(callback), 'onmouseover must be callable (function-type) or None'
+        self._onmouseover = callback
+        return self
+
+    def set_onmouseleave(self, callback: CallbackType) -> 'Widget':
+        """
+        Set ``onmouseover`` callback. This method is executed in
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseleave` method.
+        The callback function receives the following arguments:
+
+        .. code-block:: python
+
+            callback_func(widget, event)
+
+        :param callback: Callback executed if user enters the widget with the mouse
+        :return: Self reference
+        """
+        if callback:
+            assert is_callable(callback), 'onmouseover must be callable (function-type) or None'
+        self._onmouseleave = callback
+        return self
+
+    def mouseover(self, event: 'pygame.event.Event') -> 'Widget':
+        """
+        Runs the ``mouseover`` callbacks if the mouse is placed over the widget. The callbacks
+        receive the widget object reference and the mouse event.
+
+        .. code-block:: python
+
+            callback_func(widget, event)
+
+        :return: Self reference
+        """
+        if self._onmouseover is not None:
+            self._onmouseover(self, event)
+        if self._cursor is not None:
+            if _CURSOR_PREV[0] is None:
+                _CURSOR_PREV[0] = pygame.mouse.get_cursor()
+            pygame.mouse.set_cursor(self._cursor)
+        return self
+
+    def mouseleave(self, event: 'pygame.event.Event') -> 'Widget':
+        """
+        Runs the ``mouseleave`` callbacks if the mouse is placed outside the widget. The callbacks
+        receive the widget object reference and the mouse event.
+
+        .. code-block:: python
+
+            callback_func(widget, event)
+
+        :return: Self reference
+        """
+        if self._onmouseleave is not None:
+            self._onmouseleave(self, event)
+        if self._cursor is not None and _CURSOR_PREV[0] is not None:
+            pygame.mouse.set_cursor(_CURSOR_PREV[0])
+            _CURSOR_PREV[0] = None
+        return self
+
+    def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
+        """
+        Set the widget cursor if user places the mouse over the widget.
+
+        :param cursor: Pygame cursor
+        :return: Self reference
+        """
+        self._cursor = cursor
+        return self
 
     def get_sound(self) -> 'Sound':
         """
@@ -639,13 +783,13 @@ class Widget(object):
         """
         if self.readonly:
             return
-        if self._on_return:
+        if self._onreturn:
             args = list(args) + list(self._args)
             try:
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            return self._on_return(*args, **self._kwargs)
+            return self._onreturn(*args, **self._kwargs)
 
     def change(self, *args) -> Any:
         """
@@ -671,13 +815,13 @@ class Widget(object):
         """
         if self.readonly:
             return
-        if self._on_change:
+        if self._onchange:
             args = list(args) + list(self._args)
             try:
                 args.insert(0, self.get_value())
             except ValueError:
                 pass
-            return self._on_change(*args, **self._kwargs)
+            return self._onchange(*args, **self._kwargs)
 
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         """
@@ -920,7 +1064,7 @@ class Widget(object):
                    enabled: bool = True,
                    color: Optional[ColorType] = None,
                    position: Optional[str] = None,
-                   offset: NumberType = 2
+                   offset: int = 2
                    ) -> 'Widget':
         """
         Set text shadow.
@@ -942,9 +1086,9 @@ class Widget(object):
         if position is not None:
             assert_position(position)
             self._shadow_position = position
-        assert isinstance(offset, (int, float))
+        assert isinstance(offset, int)
         assert offset > 0, 'shadow offset must be greater than zero'
-        self._shadow_offset = int(offset)
+        self._shadow_offset = offset
 
         # Set position
         x = 0
@@ -1602,8 +1746,8 @@ class Widget(object):
             self._blur()
             self._events = []  # Remove events
         self._force_render()
-        if self._on_select is not None:
-            self._on_select(self._selected, self, self.get_menu())
+        if self._onselect is not None:
+            self._onselect(self._selected, self, self.get_menu())
         if update_menu:
             assert self._menu is not None
             self._menu.select_widget(self)

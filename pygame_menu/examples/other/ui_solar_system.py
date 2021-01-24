@@ -232,7 +232,8 @@ class SolarSystemApp(object):
 
             # Add go back button with a background image
             submenu.add.vertical_margin(150)
-            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK)
+            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK,
+                                        cursor=pygame.SYSTEM_CURSOR_HAND)
             goback_img = planet.image.copy().resize(150, 150)
             goback_color = goback_img.get_at((100, 100), ignore_alpha=True)  # Get color from the figure's center pixel
             goback.get_decorator().add_baseimage(0, 0, goback_img, centered=True)
@@ -253,6 +254,7 @@ class SolarSystemApp(object):
             # Create advanced button
             planet.image.scale(0.35, 0.35)
             button = self.menu.add.button(planet.name, submenu, font_size=planet.fontsize)
+            button.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             button.set_float()
             button.get_decorator().add_baseimage(0, 0, planet.image, centered=True)
             button.set_attribute('planet', planet)
@@ -369,6 +371,7 @@ class SolarSystemApp(object):
         # This line forces cache update for submenus that call this method
         self.menu.force_surface_cache_update()
 
+    # noinspection PyProtectedMember
     def process_events(self, events: List['pygame.event.Event'], menu: 'pygame_menu.Menu') -> None:
         """
         Process events from user.
@@ -380,18 +383,18 @@ class SolarSystemApp(object):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    menu.disable_draw = not menu.disable_draw
+                    menu._disable_draw = not menu._disable_draw
                 elif event.key == pygame.K_q:
-                    if not menu.disable_draw:
+                    if not menu._disable_draw:
                         self.rotation_velocity += 5e-5
                 elif event.key == pygame.K_e:
-                    if not menu.disable_draw:
+                    if not menu._disable_draw:
                         self.rotation_velocity = max(0.0, self.rotation_velocity - 5e-5)
                 elif event.key == pygame.K_s:
-                    if not menu.disable_draw:
+                    if not menu._disable_draw:
                         self.add_star()
                 elif event.key == pygame.K_c:
-                    if not menu.disable_draw:
+                    if not menu._disable_draw:
                         self.add_shooting_star()
 
     def rotate_planet(self, widget: 'pygame_menu.widgets.Widget', menu: 'pygame_menu.Menu') -> None:

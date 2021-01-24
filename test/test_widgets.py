@@ -718,6 +718,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label[1].get_title(), 'long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
 
+        # Add underline
+        label = self.menu.add.label('nice')
+        self.assertEqual(label._decorator._total_decor(), 0)
+        label.add_underline((0, 0, 0), 1, 1, force_render=True)
+        self.assertEqual(label._decorator._total_decor(), 1)
+
     def test_textinput(self) -> None:
         """
         Test TextInput widget.
@@ -1029,15 +1035,15 @@ class WidgetsTest(unittest.TestCase):
 
         # Test pygame events
         btn = menu.add.button('epic', pygame_menu.events.PYGAME_QUIT)
-        self.assertEqual(btn._on_return, menu._exit)
+        self.assertEqual(btn._onreturn, menu._exit)
         btn = menu.add.button('epic', pygame_menu.events.PYGAME_WINDOWCLOSE)
-        self.assertEqual(btn._on_return, menu._exit)
+        self.assertEqual(btn._onreturn, menu._exit)
 
         # Test None
         btn = menu.add.button('epic', pygame_menu.events.NONE)
-        self.assertEqual(btn._on_return, None)
+        self.assertEqual(btn._onreturn, None)
         btn = menu.add.button('epic', None)
-        self.assertEqual(btn._on_return, None)
+        self.assertEqual(btn._onreturn, None)
 
         # Test invalid kwarg
         self.assertRaises(ValueError, lambda: menu.add.button('epic', callback, key=True))
@@ -1045,6 +1051,13 @@ class WidgetsTest(unittest.TestCase):
         # Remove button
         menu.remove_widget(btn)
         self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
+
+        # Test underline
+        # Add underline
+        btn = menu.add.button('epic', pygame_menu.events.NONE)
+        self.assertEqual(btn._decorator._total_decor(), 0)
+        btn.add_underline((0, 0, 0), 1, 1, force_render=True)
+        self.assertEqual(btn._decorator._total_decor(), 1)
 
         # Test return fun
         def fun() -> str:
@@ -1358,7 +1371,7 @@ class WidgetsTest(unittest.TestCase):
                        orientation,
                        onreturn=-1
                        )
-        self.assertEqual(sb._on_return, None)
+        self.assertEqual(sb._onreturn, None)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
         # Scrollbar ignores scaling

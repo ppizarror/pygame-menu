@@ -199,6 +199,8 @@ class Theme(object):
     :type widget_shadow_offset: int, float
     :param widget_shadow_position: Position of the widget shadow. See :py:mod:`pygame_menu.locals`
     :type widget_shadow_position: str
+    :param widget_url_color: Color of url text links
+    :type widget_url_color: tuple, list
     """
     _disable_validation: bool
     background_color: Union[ColorType, 'BaseImage']
@@ -256,6 +258,7 @@ class Theme(object):
     widget_shadow_color: ColorType
     widget_shadow_offset: NumberType
     widget_shadow_position: str
+    widget_url_color: ColorType
 
     def __init__(self, **kwargs) -> None:
 
@@ -329,9 +332,10 @@ class Theme(object):
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
-        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', (int, float), 2)
+        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', int, 2)
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
                                                 _locals.POSITION_NORTHWEST)
+        self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
@@ -387,7 +391,7 @@ class Theme(object):
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, (int, float, tuple, list))
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
-        assert isinstance(self.widget_shadow_offset, (int, float))
+        assert isinstance(self.widget_shadow_offset, int)
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
@@ -408,6 +412,7 @@ class Theme(object):
         self.widget_background_color = self._format_opacity(self.widget_background_color)
         self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)
         self.widget_font_color = self._format_opacity(self.widget_font_color)
+        self.widget_url_color = self._format_opacity(self.widget_url_color)
 
         # List to tuple
         self.scrollarea_outer_margin = self._vec_to_tuple(self.scrollarea_outer_margin, 2)
