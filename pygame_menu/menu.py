@@ -1956,6 +1956,8 @@ class Menu(object):
                                 if widget.is_selectable:
                                     self._current._select(index)
                                 if self._current._widget_mouseover != widget:
+                                    if self._current._widget_mouseover is not None:
+                                        self._current._widget_mouseover.mouseleave(event)
                                     widget.mouseover(event)
                                     self._current._widget_mouseover = widget
                                 break
@@ -1966,6 +1968,8 @@ class Menu(object):
                             widget = self._current._widgets[index]
                             if widget.is_visible() and self._current._scroll.collide(widget, event):
                                 if self._current._widget_mouseover != widget:
+                                    if self._current._widget_mouseover is not None:
+                                        self._current._widget_mouseover.mouseleave(event)
                                     widget.mouseover(event)
                                     self._current._widget_mouseover = widget
                                 break
