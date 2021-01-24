@@ -283,8 +283,8 @@ class Selector(Widget):
                 updated = True
 
             # Click on selector
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP or \
-                    self._touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3) or \
+                    self._touchscreen_enabled and event.type == pygame.FINGERUP:  # Don't consider the mouse wheel (button 4 & 5)
 
                 # Get event position based on input type
                 if self._touchscreen_enabled and event.type == pygame.FINGERUP:
