@@ -39,6 +39,7 @@ from pygame.font import Font
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
+import math
 import warnings
 from math import pi
 from pathlib import Path
@@ -573,6 +574,8 @@ class Decorator(object):
         assert_vector(pos2, 2)
         assert_color(color)
         assert isinstance(width, int) and width >= 1
+        length = math.sqrt(math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
+        assert length > 0, 'line cannot be zero-length'
         return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width))
 
     def add_hline(self, x1: NumberType, x2: NumberType, y: NumberType, color: ColorType, width: int = 1,
