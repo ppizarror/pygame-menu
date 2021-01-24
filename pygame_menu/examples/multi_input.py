@@ -137,20 +137,20 @@ def main(test: bool = False) -> None:
     )
 
     # Add text inputs with different configurations
-    settings_menu.add_text_input(
+    settings_menu.add.text_input(
         'First name: ',
         default='John',
         onreturn=check_name_test,
         textinput_id='first_name'
     )
-    settings_menu.add_text_input(
+    settings_menu.add.text_input(
         'Last name: ',
         default='Rambo',
         maxchar=10,
         textinput_id='last_name',
         input_underline='.'
     )
-    settings_menu.add_text_input(
+    settings_menu.add.text_input(
         'Your age: ',
         default=25,
         maxchar=3,
@@ -159,13 +159,13 @@ def main(test: bool = False) -> None:
         input_type=pygame_menu.locals.INPUT_INT,
         cursor_selection_enable=False
     )
-    settings_menu.add_text_input(
+    settings_menu.add.text_input(
         'Some long text: ',
         maxwidth=19,
         textinput_id='long_text',
         input_underline='_'
     )
-    settings_menu.add_text_input(
+    settings_menu.add.text_input(
         'Password: ',
         maxchar=6,
         password=True,
@@ -174,7 +174,7 @@ def main(test: bool = False) -> None:
     )
 
     # Create selector with 3 difficulty options
-    settings_menu.add_selector(
+    settings_menu.add.selector(
         'Select difficulty ',
         [('Easy', 'EASY'),
          ('Medium', 'MEDIUM'),
@@ -184,8 +184,8 @@ def main(test: bool = False) -> None:
     )
 
     # Create switch
-    settings_menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
-    settings_menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+    settings_menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
+    settings_menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
                                     state_text=('Apagado', 'Encencido'))
 
     def data_fun() -> None:
@@ -199,9 +199,9 @@ def main(test: bool = False) -> None:
         for k in data.keys():
             print(u'\t{0}\t=>\t{1}'.format(k, data[k]))
 
-    settings_menu.add_button('Store data', data_fun)  # Call function
-    settings_menu.add_button('Restore original values', settings_menu.reset_value)
-    settings_menu.add_button('Return to main menu', pygame_menu.events.BACK,
+    settings_menu.add.button('Store data', data_fun)  # Call function
+    settings_menu.add.button('Restore original values', settings_menu.reset_value)
+    settings_menu.add.button('Return to main menu', pygame_menu.events.BACK,
                              align=pygame_menu.locals.ALIGN_CENTER)
 
     # -------------------------------------------------------------------------
@@ -214,16 +214,16 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.9
     )
 
-    more_settings_menu.add_image(
+    more_settings_menu.add.image(
         pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
         scale=(0.25, 0.25),
         align=pygame_menu.locals.ALIGN_CENTER
     )
-    more_settings_menu.add_color_input(
+    more_settings_menu.add.color_input(
         'Color 1 RGB: ',
         color_type='rgb'
     )
-    more_settings_menu.add_color_input(
+    more_settings_menu.add.color_input(
         'Color 2 RGB: ',
         color_type='rgb',
         default=(255, 0, 0),
@@ -239,15 +239,15 @@ def main(test: bool = False) -> None:
         """
         print('Returned color: ', color)
 
-    more_settings_menu.add_color_input(
+    more_settings_menu.add.color_input(
         'Color in Hex: ',
         color_type='hex',
         hex_format='lower',
         onreturn=print_color
     )
 
-    more_settings_menu.add_vertical_margin(25)
-    more_settings_menu.add_button(
+    more_settings_menu.add.vertical_margin(25)
+    more_settings_menu.add.button(
         'Return to main menu',
         pygame_menu.events.BACK,
         align=pygame_menu.locals.ALIGN_CENTER
@@ -272,8 +272,8 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.9
     )
     for i in range(4):
-        button_column_menu.add_button('Button {0}'.format(i), pygame_menu.events.BACK)
-    button_column_menu.add_button(
+        button_column_menu.add.button('Button {0}'.format(i), pygame_menu.events.BACK)
+    button_column_menu.add.button(
         'Return to main menu', pygame_menu.events.BACK,
         background_color=pygame_menu.BaseImage(
             image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_METAL
@@ -296,13 +296,13 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.8
     )
 
-    main_menu.add_button('Settings', settings_menu, padding=(0, 0, 0, 0))
-    main_menu.add_button('More Settings', more_settings_menu)
-    main_menu.add_button('Menu in textures and columns', button_column_menu)
-    main_menu.add_selector('Menu sounds ',
+    main_menu.add.button('Settings', settings_menu, padding=(0, 0, 0, 0))
+    main_menu.add.button('More Settings', more_settings_menu)
+    main_menu.add.button('Menu in textures and columns', button_column_menu)
+    main_menu.add.selector('Menu sounds ',
                            [('Off', False), ('On', True)],
                            onchange=update_menu_sound)
-    main_menu.add_button('Quit', pygame_menu.events.EXIT)
+    main_menu.add.button('Quit', pygame_menu.events.EXIT)
 
     # -------------------------------------------------------------------------
     # Main loop

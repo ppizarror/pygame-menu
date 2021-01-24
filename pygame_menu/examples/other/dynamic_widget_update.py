@@ -106,7 +106,7 @@ class App(object):
             width=640
         )
 
-        self.selector_widget = self.menu.add_selector(
+        self.selector_widget = self.menu.add.selector(
             title='Pick one option: ',
             items=[('The first', 1),
                    ('The second', 2),
@@ -114,16 +114,16 @@ class App(object):
             onchange=self._on_selector_change
         )
 
-        self.image_widget = self.menu.add_image(
+        self.image_widget = self.menu.add.image(
             image_path=self.modes[1]['image'],
             padding=(25, 0, 0, 0)  # top, right, bottom, left
         )
 
-        self.item_description_widget = self.menu.add_label(title='')
+        self.item_description_widget = self.menu.add.label(title='')
 
-        self.quit_button = self.menu.add_button('Quit', pygame_menu.events.EXIT)
+        self.quit_button = self.menu.add.button('Quit', pygame_menu.events.EXIT)
 
-        self.quit_button_fake = self.menu.add_button('You cannot quit', self.fake_quit, font_color=(255, 255, 255))
+        self.quit_button_fake = self.menu.add.button('You cannot quit', self.fake_quit, font_color=(255, 255, 255))
         self.quit_button_fake.add_draw_callback(self.animate_quit_button)
 
         # Update the widgets based on selected value from selector

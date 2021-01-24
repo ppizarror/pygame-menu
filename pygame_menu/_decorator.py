@@ -33,9 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Decorator']
 
 import pygame
-import pygame_menu.baseimage as _baseimage
+import pygame_menu
 from pygame.font import Font
-import pygame_menu.font as _fonts
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
@@ -44,14 +43,9 @@ from math import pi
 from pathlib import Path
 from uuid import uuid4
 
-from pygame_menu._types import TYPE_CHECKING, List, Tuple2NumberType, ColorType, Tuple, \
+from pygame_menu._types import List, Tuple2NumberType, ColorType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector
-
-if TYPE_CHECKING:
-    from pygame_menu.menu import Menu
-    from pygame_menu.scrollarea import ScrollArea
-    from pygame_menu.widgets import Widget
 
 # Decoration constants
 DECORATION_ARC = 2000
@@ -86,12 +80,14 @@ class Decorator(object):
     _cache_surface: Dict[str, Optional['pygame.Surface']]
     _decor: Dict[str, List[Tuple[int, str, Any]]]  # type, id, data
     _decor_enabled: Dict[str, bool]
-    _obj: Union['Widget', 'ScrollArea', 'Menu']
+    _obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
     _post_enabled: bool
     _prev_enabled: bool
     cache: bool
 
-    def __init__(self, obj: Union['Widget', 'ScrollArea', 'Menu']) -> None:
+    def __init__(self,
+                 obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
+                 ) -> None:
         """
         Constructor.
 
@@ -347,7 +343,7 @@ class Decorator(object):
         assert isinstance(surface, pygame.Surface)
         return self._add_decor(DECORATION_SURFACE, prev, (tuple(coords), surface, centered))
 
-    def add_baseimage(self, x: NumberType, y: NumberType, image: '_baseimage.BaseImage',
+    def add_baseimage(self, x: NumberType, y: NumberType, image: 'pygame_menu.BaseImage',
                       prev: bool = True, centered: bool = False) -> str:
         """
         Adds a :py:class:`pygame_menu.baseimage.BaseImage` object.
@@ -367,7 +363,7 @@ class Decorator(object):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert isinstance(image, _baseimage.BaseImage)
+        assert isinstance(image, pygame_menu.BaseImage)
         return self._add_decor(DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered))
 
     def add_rect(self, x: NumberType, y: NumberType, rect: 'pygame.Rect', color: ColorType, width: int = 0,
@@ -407,7 +403,7 @@ class Decorator(object):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         text = str(text)
-        font_obj = _fonts.get_font(font, size)
+        font_obj = pygame_menu.font.get_font(font, size)
         surface_font = font_obj.render(text, antialias, color)
         surface = make_surface(
             width=surface_font.get_width(),
@@ -484,7 +480,7 @@ class Decorator(object):
             return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
 
     def add_textured_polygon(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                             texture: Union['pygame.Surface', '_baseimage.BaseImage'],
+                             texture: Union['pygame.Surface', 'pygame_menu.BaseImage'],
                              tx: int = 0, ty: int = 0, prev: bool = True) -> str:
         """
         Add a textured polygon.
@@ -504,7 +500,7 @@ class Decorator(object):
         """
         assert_list_vector(coords, 2)
         assert len(coords) >= 3
-        assert isinstance(texture, (pygame.Surface, _baseimage.BaseImage))
+        assert isinstance(texture, (pygame.Surface, pygame_menu.BaseImage))
         assert isinstance(tx, int) and isinstance(ty, int)
         return self._add_decor(DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty))
 
@@ -722,7 +718,7 @@ class Decorator(object):
 
             elif dtype == DECORATION_SURFACE or dtype == DECORATION_BASEIMAGE or dtype == DECORATION_TEXT:
                 pos, surf, centered = data
-                if isinstance(surf, _baseimage.BaseImage):
+                if isinstance(surf, pygame_menu.BaseImage):
                     surf = surf.get_surface(new=False)
                 pos = self._update_pos_list(rect, decoid, pos)[0]
                 surfrect = surf.get_rect()
@@ -750,7 +746,7 @@ class Decorator(object):
             elif dtype == DECORATION_TEXTURE_POLYGON:
                 pos, texture, tx, ty = data
                 pos = self._update_pos_list(rect, decoid, pos)
-                if isinstance(texture, _baseimage.BaseImage):
+                if isinstance(texture, pygame_menu.BaseImage):
                     texture = texture.get_surface()
                 gfxdraw.textured_polygon(surface, pos, texture, tx, ty)
 

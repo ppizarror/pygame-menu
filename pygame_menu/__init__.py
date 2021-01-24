@@ -34,6 +34,7 @@ __all__ = [
     # Common classes
     'BaseImage',
     'Menu',
+    'Sound',
     'Theme'
 
 ]
@@ -78,18 +79,18 @@ if __pygame_version__ is not None:
     """
     Menu: Menu class
     """
-    import pygame_menu.menu  # lgtm [py/import-and-import-from]
     from pygame_menu.menu import Menu
 
     """
-    ScrollArea: Scroll area class to manage scrolling in Menu
+    ScrollArea: Scrollarea class
     """
     import pygame_menu.scrollarea
 
     """
     Sound: Sound class
     """
-    import pygame_menu.sound
+    import pygame_menu.sound  # lgtm [py/import-and-import-from]
+    from pygame_menu.sound import Sound
 
     """
     Themes: Menu themes

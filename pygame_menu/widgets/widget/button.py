@@ -32,13 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Button']
 
 import pygame
+import pygame_menu
 from pygame_menu.utils import is_callable
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
-from pygame_menu._types import Any, CallbackType, Callable, TYPE_CHECKING, Union, List, Tuple, Optional
-
-if TYPE_CHECKING:
-    from pygame_menu.menu import Menu
+from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -80,7 +78,7 @@ class Button(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_selection_callback(self, callback: Optional[Callable[[bool, 'Widget', 'Menu'], Any]]) -> None:
+    def set_selection_callback(self, callback: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]) -> None:
         """
         Update the button selection callback, once button is selected, the callback
         function is executed as follows:
@@ -100,7 +98,7 @@ class Button(Widget):
     def update_callback(self, callback: Callable, *args) -> None:
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
-        behaviour is only valid using :py:meth:`pygame_menu.Menu.add_button` method.
+        behaviour is only valid using :py:meth:`pygame_menu.Menu.add.button` method.
 
         .. note::
 

@@ -32,9 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ToggleSwitch']
 
 import pygame
+import pygame_menu
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
-import pygame_menu.font as _fonts
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
     Tuple2NumberType, Tuple2IntType
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
@@ -252,7 +252,7 @@ class ToggleSwitch(Widget):
             self._state_text_font = self._font_name
         if self._state_text_font_size is None:
             self._state_text_font_size = self._font_size
-        self._state_font = _fonts.get_font(self._state_text_font, self._state_text_font_size)
+        self._state_font = pygame_menu.font.get_font(self._state_text_font, self._state_text_font_size)
 
         # Compute the height
         height = self._font_render_string('TEST').get_height()

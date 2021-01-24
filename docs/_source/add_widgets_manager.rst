@@ -13,3 +13,4 @@ WidgetManager
 
 .. autoclass:: pygame_menu._widgetmanager.WidgetManager
     :members:
+    :noindex:

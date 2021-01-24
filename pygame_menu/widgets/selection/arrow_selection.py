@@ -32,12 +32,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ArrowSelection']
 
 import pygame
+import pygame_menu
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core import Selection
-from pygame_menu._types import NumberType, Tuple2IntType, TYPE_CHECKING, Optional
-
-if TYPE_CHECKING:
-    from pygame_menu.widgets.core import Widget
+from pygame_menu._types import NumberType, Tuple2IntType, Optional
 
 SELECTOR_CLOCK = pygame.time.Clock()
 
@@ -60,7 +58,7 @@ class ArrowSelection(Selection):
     _blink_ms: NumberType
     _blink_time: NumberType
     _blink_status: bool
-    _last_widget: Optional['Widget']
+    _last_widget: Optional['pygame_menu.widgets.Widget']
 
     def __init__(self, margin_left: NumberType, margin_right: NumberType, margin_top: NumberType,
                  margin_bottom: NumberType, arrow_size: Tuple2IntType = (10, 15),
@@ -84,10 +82,10 @@ class ArrowSelection(Selection):
         self._last_widget = None
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> None:
         raise NotImplementedError('override is mandatory')
 
-    def _draw_arrow(self, surface: 'pygame.Surface', widget: 'Widget',
+    def _draw_arrow(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget',
                     a: Tuple2IntType, b: Tuple2IntType, c: Tuple2IntType) -> None:
         """
         Draw the selection arrow.

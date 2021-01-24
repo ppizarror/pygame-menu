@@ -32,8 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Widget']
 
 import pygame
-import pygame_menu.baseimage as _baseimage
-import pygame_menu.font as _fonts
+import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu._decorator import Decorator
@@ -41,16 +40,13 @@ from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
-    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType, Tuple3IntType
+    List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType
 
 from pathlib import Path
 from uuid import uuid4
 import random
 import time
 import warnings
-
-if TYPE_CHECKING:
-    from pygame_menu.menu import Menu
 
 
 class Widget(object):
@@ -73,7 +69,7 @@ class Widget(object):
     _angle: NumberType
     _args: List[Any]
     _attributes: Dict[str, Any]
-    _background_color: Optional[Union[ColorType, '_baseimage.BaseImage']]
+    _background_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']]
     _background_inflate: Tuple2IntType
     _border_color: ColorType
     _border_inflate: Tuple2IntType
@@ -81,7 +77,7 @@ class Widget(object):
     _col_row_index: Tuple3IntType
     _decorator: 'Decorator'
     _default_value: Any
-    _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
+    _draw_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
     _events: List['pygame.event.Event']
     _flip: Tuple2BoolType
     _floating: bool
@@ -101,7 +97,7 @@ class Widget(object):
     _margin: Tuple2IntType
     _max_height: List[Optional[bool]]
     _max_width: List[Optional[bool]]
-    _menu: Optional['Menu']
+    _menu: Optional['pygame_menu.Menu']
     _mouse_enabled: bool
     _on_change: CallbackType
     _on_return: CallbackType
@@ -123,7 +119,7 @@ class Widget(object):
     _title: str
     _touchscreen_enabled: bool
     _translate: Tuple2IntType
-    _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
+    _update_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
     _visible: bool
     active: bool
     is_selectable: bool
@@ -280,7 +276,7 @@ class Widget(object):
         """
         return self._floating
 
-    def __copy__(self) -> 'Menu':
+    def __copy__(self) -> 'pygame_menu.Menu':
         """
         Copy method.
 
@@ -288,7 +284,7 @@ class Widget(object):
         """
         raise _WidgetCopyException('Widget class cannot be copied')
 
-    def __deepcopy__(self, memodict: Dict) -> 'Menu':
+    def __deepcopy__(self, memodict: Dict) -> 'pygame_menu.Menu':
         """
         Deepcopy method.
 
@@ -500,7 +496,7 @@ class Widget(object):
         """
         return self._title
 
-    def set_background_color(self, color: Optional[Union[ColorType, '_baseimage.BaseImage']],
+    def set_background_color(self, color: Optional[Union[ColorType, 'pygame_menu.BaseImage']],
                              inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
         """
         Set the widget background color.
@@ -510,8 +506,8 @@ class Widget(object):
         :return: Self reference
         """
         if color is not None:
-            if isinstance(color, _baseimage.BaseImage):
-                assert color.get_drawing_mode() == _baseimage.IMAGE_MODE_FILL, \
+            if isinstance(color, pygame_menu.BaseImage):
+                assert color.get_drawing_mode() == pygame_menu.baseimage.IMAGE_MODE_FILL, \
                     'currently widget only supports IMAGE_MODE_FILL drawing mode'
             else:
                 assert_color(color)
@@ -557,7 +553,7 @@ class Widget(object):
         else:
             inflate = self._selection_effect.get_xy_margin()
         rect = self.get_rect(inflate=inflate)
-        if isinstance(self._background_color, _baseimage.BaseImage):
+        if isinstance(self._background_color, pygame_menu.BaseImage):
             self._background_color.draw(
                 surface=surface,
                 area=rect,
@@ -1100,7 +1096,7 @@ class Widget(object):
 
         font_size = int(font_size)
 
-        self._font = _fonts.get_font(font, font_size)
+        self._font = pygame_menu.font.get_font(font, font_size)
         self._font_antialias = antialias
         self._font_background_color = background_color
         self._font_color = color
@@ -1170,7 +1166,7 @@ class Widget(object):
             'size': self._font_size
         }
 
-    def set_menu(self, menu: Optional['Menu']) -> 'Widget':
+    def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Widget':
         """
         Set the Menu reference.
 
@@ -1183,7 +1179,7 @@ class Widget(object):
             self._col_row_index = (-1, -1, -1)
         return self
 
-    def get_menu(self) -> Optional['Menu']:
+    def get_menu(self) -> Optional['pygame_menu.Menu']:
         """
         Return the Menu reference, ``None`` if it has not been set.
 
@@ -1796,7 +1792,7 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def add_draw_callback(self, draw_callback: Callable[['Widget', 'Menu'], Any]) -> str:
+    def add_draw_callback(self, draw_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]) -> str:
         """
         Adds a function to the widget to be executed each time the widget is drawn.
 
@@ -1812,7 +1808,7 @@ class Widget(object):
                 t += menu.get_clock().get_time()
                 widget.set_padding(10*(1 + math.sin(t)))) # Oscillating padding
 
-            button = menu.add_button('This button updates its padding', None)
+            button = menu.add.button('This button updates its padding', None)
             button.set_draw_callback(draw_update_function)
 
         After creating a new callback, this functions returns the ID of the call. It can be
@@ -1860,7 +1856,7 @@ class Widget(object):
             callback(self, self._menu)
         return self
 
-    def add_update_callback(self, update_callback: Callable[['Widget', 'Menu'], Any]) -> str:
+    def add_update_callback(self, update_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]) -> str:
         """
         Adds a function to the widget to be executed each time the widget is updated.
 

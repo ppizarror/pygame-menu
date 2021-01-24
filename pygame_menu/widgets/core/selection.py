@@ -32,11 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Selection']
 
 import pygame
+import pygame_menu
 from pygame_menu.utils import assert_color
-from pygame_menu._types import NumberType, ColorType, TYPE_CHECKING, Tuple2IntType, Tuple4IntType
-
-if TYPE_CHECKING:
-    from pygame_menu.widgets import Widget
+from pygame_menu._types import NumberType, ColorType, Tuple2IntType, Tuple4IntType
 
 
 class Selection(object):
@@ -132,7 +130,7 @@ class Selection(object):
                            int(rect.width + self.margin_left + self.margin_right),
                            int(rect.height + self.margin_top + self.margin_bottom))
 
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> None:
         """
         Draw the selection.
 

@@ -96,38 +96,38 @@ def func(name):
 if EXAMPLE == 'IMAGE':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Image')
     image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
-    menu.add_image(image_path, angle=10, scale=(0.15, 0.15))
-    menu.add_image(image_path, angle=-10, scale=(0.15, 0.15))
+    menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
+    menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
 elif EXAMPLE == 'VERTICALMARGIN':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical spacer')
-    menu.add_label('Text #1')
-    menu.add_vertical_margin(100)
-    menu.add_label('Text #2')
+    menu.add.label('Text #1')
+    menu.add.vertical_margin(100)
+    menu.add.label('Text #2')
 elif EXAMPLE == 'TOGGLESWITCH':
     menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Switches')
-    menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
-    menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+    menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
+    menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
                            state_text=('Apagado', 'Encencido'), state_text_font_size=18)
 elif EXAMPLE == 'TEXTINPUT':
     menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Text Entry')
-    menu.add_text_input('First name: ', default='John')
-    menu.add_text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
-    menu.add_text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
+    menu.add.text_input('First name: ', default='John')
+    menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
+    menu.add.text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
 elif EXAMPLE == 'LABEL':
     menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
     HELP = "Press ESC to enable/disable Menu " \
            "Press ENTER to access a Sub-Menu or use an option " \
            "Press UP/DOWN to move through Menu " \
            "Press LEFT/RIGHT to move through Selectors."
-    menu.add_label(HELP, max_char=-1, font_size=20)
+    menu.add.label(HELP, max_char=-1, font_size=20)
 elif EXAMPLE == 'COLORINPUT':
     menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
-    menu.add_color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), font_size=18)
-    menu.add_color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
-    menu.add_color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
+    menu.add.color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), font_size=18)
+    menu.add.color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
+    menu.add.color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
 elif EXAMPLE == 'SELECTOR':
     menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')
-    selector = menu.add_selector(
+    selector = menu.add.selector(
         title='Current color: ',
         items=[('Default', (255, 255, 255)),
                ('Black', (0, 0, 0)),
@@ -140,11 +140,11 @@ elif EXAMPLE == 'SELECTOR':
 elif EXAMPLE == 'BUTTON':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Button')
     about_menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'About')
-    menu.add_button('Exec', func, 'foo',  # Execute a function, it receives 'foo' as *arg
+    menu.add.button('Exec', func, 'foo',  # Execute a function, it receives 'foo' as *arg
                     align=pygame_menu.locals.ALIGN_LEFT)
-    btn = menu.add_button(about_menu.get_title(), about_menu,  # Open a sub-menu
+    btn = menu.add.button(about_menu.get_title(), about_menu,  # Open a sub-menu
                           shadow=True, shadow_color=(0, 0, 100))
-    menu.add_button('Exit', pygame_menu.events.EXIT,  # Link to exit action
+    menu.add.button('Exit', pygame_menu.events.EXIT,  # Link to exit action
                     align=pygame_menu.locals.ALIGN_RIGHT)
     btn.select(update_menu=True)
 else:

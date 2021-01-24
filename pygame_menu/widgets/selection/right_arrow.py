@@ -32,11 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['RightArrowSelection']
 
 import pygame
+import pygame_menu
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
-from pygame_menu._types import Tuple2IntType, NumberType, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from pygame_menu.widgets.core import Widget
+from pygame_menu._types import Tuple2IntType, NumberType
 
 
 class RightArrowSelection(ArrowSelection):
@@ -70,7 +68,7 @@ class RightArrowSelection(ArrowSelection):
         self._arrow_left_margin = arrow_left_margin
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> None:
         #                 /A
         # widget        B
         #                \ C

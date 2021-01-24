@@ -67,7 +67,7 @@ class Menu(object):
     """
     Menu object.
 
-     Menu can receive many callbacks; callbacks ``onclose`` and ``onreset`` are fired
+    Menu can receive many callbacks; callbacks ``onclose`` and ``onreset`` are fired
     (if them are callable-type). They can only receive 1 argument maximum, if so,
     the Menu instance is provided
 
@@ -713,7 +713,7 @@ class Menu(object):
         Warn about a deprecated method.
 
         :param method: Method's name to warn about
-        :param new_method: New method's
+        :param new_method: New method name
         :return: None
         """
         warnings.warn('Menu method {} is deprecated. Use menu.add.{} instead, (see docs). '
@@ -2755,18 +2755,6 @@ class _MenuStats(object):
     """
 
     def __init__(self) -> None:
-        # Widget addition
-        self.add_button = 0
-        self.add_color_input = 0
-        self.add_generic_widget = 0
-        self.add_image = 0
-        self.add_label = 0
-        self.add_none_widget = 0
-        self.add_selector = 0
-        self.add_text_input = 0
-        self.add_toggle_switch = 0
-        self.add_vertical_margin = 0
-
         # Widget update
         self.added_widgets = 0
         self.removed_widgets = 0

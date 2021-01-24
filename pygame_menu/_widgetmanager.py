@@ -37,6 +37,7 @@ from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
 
+import pygame_menu
 import pygame_menu.baseimage as _baseimage
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
@@ -46,11 +47,8 @@ import pygame_menu.widgets as _widgets
 
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.textinput import TextInputModeType
-from pygame_menu._types import TYPE_CHECKING, Any, Union, Callable, Dict, Optional, CallbackType, \
+from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     NumberType, Vector2NumberType, List, Tuple
-
-if TYPE_CHECKING:
-    from pygame_menu.menu import Menu
 
 
 # noinspection PyProtectedMember
@@ -58,9 +56,9 @@ class WidgetManager(object):
     """
     Add/Remove widgets to the Menu.
     """
-    _menu: 'Menu'
+    _menu: 'pygame_menu.Menu'
 
-    def __init__(self, menu: 'Menu') -> None:
+    def __init__(self, menu: 'pygame_menu.Menu') -> None:
         """
         Constructor.
 
@@ -280,7 +278,7 @@ class WidgetManager(object):
 
     def button(self,
                title: Any,
-               action: Optional[Union['Menu', '_events.MenuAction', Callable, int]],
+               action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]],
                *args,
                **kwargs
                ) -> '_widgets.Button':
@@ -431,7 +429,6 @@ class WidgetManager(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_selection_callback(onselect)
         self._append_widget(widget)
-        self._menu._stats.add_button += 1
         return widget
 
     def color_input(self,
@@ -444,7 +441,7 @@ class WidgetManager(object):
                     input_underline: str = '_',
                     onchange: CallbackType = None,
                     onreturn: CallbackType = None,
-                    onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
+                    onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
                     **kwargs
                     ) -> '_widgets.ColorInput':
         """
@@ -547,7 +544,6 @@ class WidgetManager(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_default_value(default)
         self._append_widget(widget)
-        self._menu._stats.add_color_input += 1
 
         return widget
 
@@ -555,7 +551,7 @@ class WidgetManager(object):
               image_path: Union[str, 'Path', '_baseimage.BaseImage', 'BytesIO'],
               angle: NumberType = 0,
               image_id: str = '',
-              onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
+              onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
               scale: Vector2NumberType = (1, 1),
               scale_smooth: bool = True,
               selectable: bool = False,
@@ -626,7 +622,6 @@ class WidgetManager(object):
         self._check_kwargs(kwargs)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-        self._menu._stats.add_image += 1
 
         return widget
 
@@ -634,7 +629,7 @@ class WidgetManager(object):
               title: Any,
               label_id: str = '',
               max_char: int = 0,
-              onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
+              onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
               selectable: bool = False,
               **kwargs
               ) -> Union['_widgets.Label', List['_widgets.Label']]:
@@ -734,7 +729,6 @@ class WidgetManager(object):
             self._check_kwargs(kwargs)
             self._configure_widget(widget=widget, **attributes)
             self._append_widget(widget)
-            self._menu._stats.add_label += 1
 
         else:
             self._menu._check_id_duplicated(label_id)  # Before adding + LEN
@@ -759,7 +753,7 @@ class WidgetManager(object):
                  default: int = 0,
                  onchange: CallbackType = None,
                  onreturn: CallbackType = None,
-                 onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
+                 onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
                  selector_id: str = '',
                  **kwargs
                  ) -> '_widgets.Selector':
@@ -850,7 +844,6 @@ class WidgetManager(object):
 
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-        self._menu._stats.add_selector += 1
 
         return widget
 
@@ -977,7 +970,6 @@ class WidgetManager(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_default_value(default)
         self._append_widget(widget)
-        self._menu._stats.add_toggle_switch += 1
 
         return widget
 
@@ -993,7 +985,7 @@ class WidgetManager(object):
                    maxwidth: int = 0,
                    onchange: CallbackType = None,
                    onreturn: CallbackType = None,
-                   onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'Menu'], Any]] = None,
+                   onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
                    password: bool = False,
                    tab_size: int = 4,
                    textinput_id: str = '',
@@ -1108,7 +1100,6 @@ class WidgetManager(object):
         self._configure_widget(widget=widget, **attributes)
         widget.set_default_value(default)
         self._append_widget(widget)
-        self._menu._stats.add_text_input += 1
 
         return widget
 
@@ -1132,13 +1123,12 @@ class WidgetManager(object):
         """
         assert isinstance(margin, (int, float))
         assert margin > 0, \
-            'zero margin is not valid, prefer adding a NoneWidget menu.add_none_widget()'
+            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
 
         attributes = self._filter_widget_attributes({'margin': (0, margin)})
         widget = _widgets.VMargin(widget_id=margin_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-        self._menu._stats.add_vertical_margin += 1
 
         return widget
 
@@ -1168,7 +1158,6 @@ class WidgetManager(object):
         widget = _widgets.NoneWidget(widget_id=widget_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
-        self._menu._stats.add_none_widget += 1
 
         return widget
 
@@ -1214,5 +1203,4 @@ class WidgetManager(object):
 
         widget.set_controls(self._menu._joystick, self._menu._mouse, self._menu._touchscreen)
         self._append_widget(widget)
-        self._menu._stats.add_generic_widget += 1
         return widget

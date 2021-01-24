@@ -1,4 +1,3 @@
-
 ====================
 Package organization
 ====================
@@ -91,17 +90,18 @@ basic widget should contain this code:
                  from pygame_menu.widgets.widget.mywidget import MyWidget
 
 To add the widget to the :py:class:`pygame_menu.Menu` class, a public method
-:py:meth:`pygame_menu.Menu.add_mywidget` with the following structure has to be
-added. Or :py:meth:`pygame_menu.Menu.add_generic_widget` can be used.
+:py:meth:`add_mywidget` must be added to the :py:class:`pygame_menu._widgetmanager.WidgetManager`
+class with the following structure. Or :py:meth:`pygame_menu._widgetmanager.WidgetManager.generic_widget`
+can be used.
 
 .. code-block:: python
 
     import pygame_menu.widgets as _widgets
 
-    class Menu(object):
+    class WidgetManager(object):
         ...
 
-        def add_mywidget(self, params, current=False, **kwargs):
+        def mywidget(self, params, **kwargs):
             """
             Add MyWidget to the menu.
             """
@@ -111,30 +111,38 @@ added. Or :py:meth:`pygame_menu.Menu.add_generic_widget` can be used.
             widget = _widgets.MyWidget(..., **kwargs)
 
             self._configure_widget(widget=widget, **attributes)
+            widget.set_default_value(default) # May add the default value
             self._append_widget(widget)
+
             return widget
 
         ...
 
-.. note:: This method uses the **kwargs** parameter for defining the settings of the
-          Widget, such as the background, margin, etc. This is applied automatically
-          by the Menu in :py:meth:`pygame_menu.Menu._configure_widget`
-          method. If **MyWidget** needs additional parameters, please use some that
-          are not named as the default kwargs used by the Menu Widget system.
+.. note::
 
-          The function must return the created `widget` object.
+    This method uses the **kwargs** parameter for defining the settings of the
+    Widget, such as the background, margin, etc. This is applied automatically
+    by the Menu in :py:meth:`pygame_menu.Menu._configure_widget`
+    method. If **MyWidget** needs additional parameters, please use some that
+    are not named as the default kwargs used by the Menu Widget system.
 
-.. note:: The widget ``_render`` method should allways call
-          :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update` method, this
-          ensures that Menu updates the surface and the positioning.
+    The function must return the created `widget` object.
 
-.. note:: From ``v4`` menu introduced a cache state for the draw surface. This cache
-          is updated if any widget update its status (``update()`` returned True) or
-          the surface was rendered. Anyway, execution-time elements that changes over
-          time (outside ``_render``) should force cache rendering (for example the blinking
-          cursor of text). If your widget has any property like this, the method
-          :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_cache_update`
-          must be called within your Widget.
+.. note::
+
+    The widget ``_render`` method should allways call
+    :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update` method, this
+    ensures that Menu updates the surface and the positioning.
+
+.. note::
+
+    From ``v4`` menu introduced a cache state for the draw surface. This cache
+    is updated if any widget update its status (``update()`` returned True) or
+    the surface was rendered. Anyway, execution-time elements that changes over
+    time (outside ``_render``) should force cache rendering (for example the blinking
+    cursor of text). If your widget has any property like this, the method
+    :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_cache_update`
+    must be called within your Widget.
 
 
 =========================
@@ -148,11 +156,11 @@ The widgets in Menu are drawn with the following idea:
 #. Active widgets have a decoration, named *Selection*
 #. The drawing process is:
 
- #. Draw Menu background color/image
- #. Draw all widgets
- #. Draw *Selection* decoration on selected widget surface area
- #. Draw menubar
- #. Draw scrollbar
+    #. Draw Menu background color/image
+    #. Draw all widgets
+    #. Draw *Selection* decoration on selected widget surface area
+    #. Draw menubar
+    #. Draw scrollbar
 
 For defining a new selection effect, a new :py:class:`pygame_menu.widgets.core.Selection`
 subclass must be added to the :py:mod:`pygame_menu.widgets.selection` package. A basic class must
@@ -186,12 +194,14 @@ contain the following code:
             """
             surface.draw(.....)
 
-.. warning:: After creating the selection effect, it must be added to  ``__init__.py`` file of the
-             :py:mod:`pygame_menu.widgets` package.
+.. warning::
 
-             .. code-block:: python
+    After creating the selection effect, it must be added to  ``__init__.py`` file of the
+    :py:mod:`pygame_menu.widgets` package.
 
-                 from pygame_menu.widgets.selection.myselection import MySelection
+    .. code-block:: python
+
+        from pygame_menu.widgets.selection.myselection import MySelection
 
 Finally, this new selection effect can be set by following one of these two instructions:
 
@@ -202,7 +212,7 @@ Finally, this new selection effect can be set by following one of these two inst
         import pygame_menu
 
         menu = pygame_menu.Menu(...)
-        menu.add_button(..., selection_effect=pygame_menu.widgets.MySelection(...))
+        menu.add.button(..., selection_effect=pygame_menu.widgets.MySelection(...))
 
 2. To apply it on all menus and widgets (and avoid passing it for each added widget),
    a theme can be created

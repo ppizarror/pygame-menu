@@ -120,8 +120,8 @@ class SoundTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         submenu = MenuUtils.generic_menu()
 
-        menu.add_button('submenu', submenu)
-        button = menu.add_button('button', lambda: None)
+        menu.add.button('submenu', submenu)
+        button = menu.add.button('button', lambda: None)
         menu.set_sound(self.sound, True)
         self.assertEqual(button.get_sound(), self.sound)
 
