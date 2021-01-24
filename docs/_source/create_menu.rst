@@ -11,7 +11,7 @@ Ready to go deeper into menu usage?
 Configuring the menu
 --------------------
 
-The :py:class:`pygame_menu.Menu` is the base class to draw the graphical items on
+The :py:class:`pygame_menu.menu.Menu` is the base class to draw the graphical items on
 the screen. It offers many parameters to let you adapt the behavior and the visual
 aspects of the menu.
 
@@ -89,15 +89,15 @@ as *disabling* it, but with callback firing.
  - A specific event of :py:mod:`pygame_menu`. The possible events are
    the following:
 
-   ===========================================  =============================================================
+   ===========================================  ========================================================
    Event                                        Description
-   ===========================================  =============================================================
-   :py:data:`pygame_menu.events.BACK`           Go back to the previously opened menu and disable the current
+   ===========================================  ========================================================
+   :py:data:`pygame_menu.events.BACK`           Go back to the previous menu and disable the current
    :py:data:`pygame_menu.events.CLOSE`          Only disables the current menu
    :py:data:`pygame_menu.events.NONE`           The same as ``onclose=None``
    :py:data:`pygame_menu.events.EXIT`           Exit the program (not only the menu)
    :py:data:`pygame_menu.events.RESET`          Go back to the first opened menu and disable the current
-   ===========================================  =============================================================
+   ===========================================  ========================================================
 
 
 Display a menu
@@ -146,9 +146,12 @@ it is necessary.
         pygame.display.update()
 
 
+Menu API
+--------
+
 .. Document here only the members relative to the menu itself, members
 .. for adding widgets are documented in another chapter.
 
-.. autoclass:: pygame_menu.Menu
+.. autoclass:: Menu
     :members:
-    :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin, add_generic_widget, add_none_widget
+    :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin, add_generic_widget, add_none_widget, add_toggle_switch

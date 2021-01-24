@@ -1066,7 +1066,7 @@ class Widget(object):
         """
         Set the widget font.
 
-        :param font: Font name (see :py:class:`pygame.font.match_font` for precise format)
+        :param font: Font name (see :py:meth:`pygame.font.match_font` for precise format)
         :param font_size: Size of font in pixels
         :param color: Normal font color
         :param selected_color: Font color if widget is selected

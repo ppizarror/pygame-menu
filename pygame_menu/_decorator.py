@@ -349,7 +349,7 @@ class Decorator(object):
 
             If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
             set ``decorator.cache=False`` or force cache manually by calling
-            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`.
+            :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -461,7 +461,7 @@ class Decorator(object):
 
             If your callable function changes over time set ``decorator.cache=False``
             or force cache manually by calling Decorator method
-            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`. Also, the object
+            :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`. Also, the object
             should force the menu surface cache to update.
 
         :param fun: Function
@@ -486,7 +486,7 @@ class Decorator(object):
 
             If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
             set ``decorator.cache=False`` or force cache manually by calling
-            :py:class:`pygame_menu.decorator.Decorator.force_cache_update`.
+            :py:class:`pygame_menu._decorator.Decorator.force_cache_update`.
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object

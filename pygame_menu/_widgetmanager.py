@@ -38,6 +38,7 @@ from pathlib import Path
 from uuid import uuid4
 
 import pygame_menu
+import pygame_menu.widgets
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
@@ -301,7 +302,7 @@ class WidgetManager(object):
         kwargs (Optional)
             - ``accept_kwargs``             *(bool)* – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``back_count``                *(int)* - Number of menus to go back if action is :py:class:`pygame_menu.events.BACK` event, default is ``1``
+            - ``back_count``                *(int)* - Number of menus to go back if action is :py:data:`pygame_menu.events.BACK` event, default is ``1``
             - ``background_color``          *(tuple, list,* :py:class:`pygame_menu.baseimage.BaseImage`) - Color of the background
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
             - ``border_color``              *(tuple, list)* - Widget border color
@@ -348,6 +349,7 @@ class WidgetManager(object):
         :param args: Additional arguments used by a function
         :param kwargs: Optional keyword arguments
         :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.Button`
         """
         total_back = kwargs.pop('back_count', 1)
         assert isinstance(total_back, int) and 1 <= total_back
