@@ -98,7 +98,7 @@ class Label(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._title, self._font_color, self._visible):
+        if not self._render_hash_changed(self._title, self._font_color, self._visible, self._last_underline[1]):
             return True
 
         # Render surface
@@ -112,12 +112,13 @@ class Label(Widget):
             w = self._surface.get_width()
             h = self._surface.get_height()
             color, offset, width = self._last_underline[1]
-            self._last_underline[0] = self._decorator.add_line(
-                pos1=(-w / 2, h / 2 + offset),
-                pos2=(w / 2, h / 2 + offset),
-                color=color,
-                width=width
-            )
+            if w > 0 and h > 0:
+                self._last_underline[0] = self._decorator.add_line(
+                    pos1=(-w / 2, h / 2 + offset),
+                    pos2=(w / 2, h / 2 + offset),
+                    color=color,
+                    width=width
+                )
 
         self.force_menu_surface_update()
 

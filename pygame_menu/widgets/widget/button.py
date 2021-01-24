@@ -158,7 +158,8 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
+                                         self._last_underline[1]):
             return True
 
         # Render surface
@@ -172,12 +173,13 @@ class Button(Widget):
             w = self._surface.get_width()
             h = self._surface.get_height()
             color, offset, width = self._last_underline[1]
-            self._last_underline[0] = self._decorator.add_line(
-                pos1=(-w / 2, h / 2 + offset),
-                pos2=(w / 2, h / 2 + offset),
-                color=color,
-                width=width
-            )
+            if w > 0 and h > 0:
+                self._last_underline[0] = self._decorator.add_line(
+                    pos1=(-w / 2, h / 2 + offset),
+                    pos2=(w / 2, h / 2 + offset),
+                    color=color,
+                    width=width
+                )
 
         self.force_menu_surface_update()
 
@@ -196,7 +198,8 @@ class Button(Widget):
                 self.apply()
                 updated = True
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 self._sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()

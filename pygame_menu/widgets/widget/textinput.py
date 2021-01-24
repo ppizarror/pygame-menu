@@ -1736,7 +1736,8 @@ class TextInput(Widget):
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self._rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
@@ -1744,7 +1745,8 @@ class TextInput(Widget):
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
