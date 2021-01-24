@@ -29,7 +29,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Menu']
+__all__ = [
+
+    # Common classes
+    'BaseImage',
+    'Menu',
+    'Theme'
+
+]
 
 # Check if pygame exists, if not maybe the module is being used by setup.py
 __pygame_version__ = None
@@ -45,7 +52,8 @@ if __pygame_version__ is not None:
     """
     BaseImage: Provides basic image loading an manipulation with pygame
     """
-    import pygame_menu.baseimage
+    import pygame_menu.baseimage  # lgtm [py/import-and-import-from]
+    from pygame_menu.baseimage import BaseImage
 
     """
     Controls: Default controls of menu object and key definition
@@ -70,6 +78,7 @@ if __pygame_version__ is not None:
     """
     Menu: Menu class
     """
+    import pygame_menu.menu  # lgtm [py/import-and-import-from]
     from pygame_menu.menu import Menu
 
     """
@@ -85,7 +94,8 @@ if __pygame_version__ is not None:
     """
     Themes: Menu themes
     """
-    import pygame_menu.themes
+    import pygame_menu.themes  # lgtm [py/import-and-import-from]
+    from pygame_menu.themes import Theme
 
     """
     Widgets: Menu widgets
@@ -100,7 +110,7 @@ import pygame_menu.version
 """
 Metadata: Information about the project
 """
-__author__ = 'ppizarror'
+__author__ = 'Pablo Pizarro R.'
 __contributors__ = [
     'anxuae',
     'arpruss',
@@ -131,3 +141,14 @@ __url_bug_tracker__ = 'https://github.com/ppizarror/pygame-menu/issues'
 __url_documentation__ = 'https://pygame-menu.readthedocs.io/en/latest/'
 __url_source_code__ = 'https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu'
 __version__ = pygame_menu.version.ver
+
+"""
+Print pygame-menu version.
+"""
+import os
+
+if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and 'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
+    print('{} {}'.format(__module_name__, __version__))
+
+# Cleanup namespace
+del os

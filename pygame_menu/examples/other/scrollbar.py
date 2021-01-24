@@ -31,10 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import sys
-
-sys.path.insert(0, '../../../')
-
 import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.examples import create_example_window

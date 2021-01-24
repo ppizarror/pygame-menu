@@ -37,7 +37,8 @@ import random
 
 from pygame_menu.font import FONT_EXAMPLES
 
-from pygame_menu.custom_types import NumberType, Union, List, Tuple, Optional, \
+# noinspection PyProtectedMember
+from pygame_menu._custom_types import NumberType, Union, List, Tuple, Optional, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
@@ -125,7 +126,7 @@ class PygameUtils(object):
                                    })]
 
     @staticmethod
-    def test_widget_key_press(widget: 'pygame_menu.widgets.core.Widget') -> None:
+    def test_widget_key_press(widget: 'pygame_menu.widgets.Widget') -> None:
         """
         Test keypress widget.
 
@@ -227,7 +228,7 @@ class PygameUtils(object):
         """
         event_obj = pygame.event.Event(evtype,
                                        {
-                                           'pos': [float(x), float(y)],
+                                           'pos': (float(x), float(y)),
                                            'test': True,
                                            'button': 3
                                        })

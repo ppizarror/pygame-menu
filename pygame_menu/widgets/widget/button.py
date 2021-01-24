@@ -35,7 +35,7 @@ import pygame
 from pygame_menu.utils import is_callable
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
-from pygame_menu.custom_types import Any, CallbackType, Callable, TYPE_CHECKING, Union, List, Tuple, Optional
+from pygame_menu._custom_types import Any, CallbackType, Callable, TYPE_CHECKING, Union, List, Tuple, Optional
 
 if TYPE_CHECKING:
     from pygame_menu.menu import Menu
@@ -130,7 +130,7 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self.selected, self._title, self.visible, self.readonly):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly):
             return True
         self._surface = self._render_string(self._title, self.get_font_color_status())
         self._apply_transforms()
@@ -148,18 +148,18 @@ class Button(Widget):
             if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
                     self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
                     event.button == _controls.JOY_BUTTON_SELECT:
-                self.sound.play_open_menu()
+                self._sound.play_open_menu()
                 self.apply()
                 updated = True
 
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
-                self.sound.play_click_mouse()
+                self._sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()
                     updated = True
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
-                self.sound.play_click_mouse()
+                self._sound.play_click_mouse()
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos):

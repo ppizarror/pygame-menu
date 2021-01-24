@@ -51,7 +51,7 @@ import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
-from pygame_menu.custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
+from pygame_menu._custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
     Tuple2NumberType, NumberType, PaddingType, Optional, Type
 
 import copy
@@ -100,6 +100,8 @@ class Theme(object):
     :type cursor_switch_ms: int, float
     :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements *(R, G, B, A)*
     :type focus_background_color: tuple, list
+    :param fps: Menu max fps (frames per second). If ``0`` there's no limit
+    :type fps: int, float
     :param readonly_color: Color of the widget in readonly mode
     :type readonly_color: tuple, list
     :param readonly_selected_color: Color of the selected widget in readonly mode
@@ -135,6 +137,8 @@ class Theme(object):
     :type title_bar_style: int
     :param title_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
     :type title_close_button: bool
+    :param title_floating: If ``True`` title don't contributes height to the Menu. Thus, scroll uses full menu width/height
+    :type title_floating: bool
     :param title_font: Optional title font, if ``None`` theme uses the Menu default font
     :type title_font: str, None
     :param title_font_antialias: Title font renders with antialiasing
@@ -202,6 +206,7 @@ class Theme(object):
     cursor_selection_color: ColorType
     cursor_switch_ms: NumberType
     focus_background_color: ColorType
+    fps: NumberType
     readonly_color: ColorType
     readonly_selected_color: ColorType
     scrollarea_outer_margin: Tuple2NumberType
@@ -220,6 +225,7 @@ class Theme(object):
     title_bar_modify_scrollarea: bool
     title_bar_style: int
     title_close_button: bool
+    title_floating: bool
     title_font: str
     title_font_antialias: bool
     title_font_color: ColorType
@@ -256,6 +262,7 @@ class Theme(object):
         # Menu general
         self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
+        self.fps = self._get(kwargs, 'fps', (int, float), 30)
         self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
         self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
@@ -271,6 +278,7 @@ class Theme(object):
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
+        self.title_floating = self._get(kwargs, 'title_floating', bool, False)
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
@@ -333,7 +341,7 @@ class Theme(object):
         # Test purpose only, if True disables any validation
         self._disable_validation = False
 
-    def validate(self) -> None:
+    def validate(self) -> 'Theme':
         """
         Validate the values of the theme. If there's a invalid parameter throws an
         ``AssertionError``.
@@ -341,10 +349,10 @@ class Theme(object):
         This function also converts all lists to tuples. This is done because lists
         are mutable.
 
-        :return: None
+        :return: Self reference
         """
         if self._disable_validation:
-            return
+            return self
 
         # Boolean asserts
         assert isinstance(self.title_close_button, bool)
@@ -365,9 +373,11 @@ class Theme(object):
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
 
         assert isinstance(self.cursor_switch_ms, (int, float))
+        assert isinstance(self.fps, (int, float))
         assert isinstance(self.scrollbar_shadow_offset, (int, float))
         assert isinstance(self.scrollbar_slider_pad, (int, float))
         assert isinstance(self.scrollbar_thick, (int, float))
+        assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font, str)
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_shadow_offset, (int, float))
@@ -423,6 +433,7 @@ class Theme(object):
             'widget border inflate must be equal or greater than zero in both axis'
 
         assert self.cursor_switch_ms > 0, 'cursor switch ms must be greater than zero'
+        assert self.fps >= 0, 'fps must be equal or greater than zero'
         assert self.scrollbar_shadow_offset > 0, 'scrollbar shadow offset must be greater than zero'
         assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
@@ -437,18 +448,21 @@ class Theme(object):
         assert self.focus_background_color[3] != 0, \
             'focus background color cannot be fully transparent, suggested opacity between 1 and 255'
 
-    def set_background_color_opacity(self, opacity: float) -> None:
+        return self
+
+    def set_background_color_opacity(self, opacity: float) -> 'Theme':
         """
         Modify the Menu background color with given opacity.
 
         :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (opaque)
-        :return: None
+        :return: Self reference
         """
         _utils.assert_color(self.background_color)
         assert isinstance(opacity, float)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
                                  self.background_color[2], int(opacity * 255))
+        return self
 
     @staticmethod
     def _vec_to_tuple(obj: Union[Tuple, List], check_length: int = 0) -> Tuple:

@@ -54,11 +54,12 @@ from pygame_menu.decorator import Decorator
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 
-from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
-from pygame_menu.widgets.widget.textinput import TextInputModeType
-from pygame_menu.custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
+# Import types
+from pygame_menu._custom_types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
     Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Tuple2IntType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, CallbackType, Optional, Tuple2BoolType
+from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.textinput import TextInputModeType
 
 # Joy events
 JOY_EVENT_LEFT = 1
@@ -71,7 +72,7 @@ class Menu(object):
     """
     Menu object.
 
-    If menu is closed or reset, the callbacks ``onclose`` and ``onreset`` are fired
+     Menu can receive many callbacks; callbacks ``onclose`` and ``onreset`` are fired
     (if them are callable-type). They can only receive 1 argument maximum, if so,
     the Menu instance is provided
 
@@ -80,13 +81,27 @@ class Menu(object):
         onclose() <or> onclose(Menu)
         onreset() <or> onreset(Menu)
 
+    Callback ``onupdate`` is executed before updating the Menu, it receives the event
+    list and the menu reference:
+
+    .. code-block:: python
+
+        onupdate(event_list, Menu)
+
+    Callback ``onbeforeopen`` is executed before opening the Menu, it receives the
+    current Menu and the next Menu.
+
+    .. code-block:: python
+
+        onbeforeopen(current Menu <from>, next Menu <to>)
+
     .. note::
 
         Menu cannot be copied or deepcopied.
 
-    :param height: Height of the Menu (px)
-    :param width: Width of the Menu (px)
     :param title: Title of the Menu
+    :param width: Width of the Menu (px)
+    :param height: Height of the Menu (px)
     :param center_content: Auto centers the Menu on the vertical position after a widget is added/deleted
     :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400,500)`` (first column 400px, second 500). If ``0`` uses the Menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
     :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400,500)`` (first column 400px, second 500). Negative values are not accepted
@@ -100,6 +115,7 @@ class Menu(object):
     :param mouse_visible: Set mouse visible on Menu
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
+    :param onupdate: Function executed when updating the Menu. The function receives the list of gathered pygame events, and the Menu reference
     :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
@@ -109,12 +125,12 @@ class Menu(object):
     """
     _attributes: Dict[str, Any]
     _auto_centering: bool
-    _background_function: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]
+    _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]]
     _clock: 'pygame.time.Clock'
     _column_max_width: VectorType
     _column_min_width: VectorType
     _column_pos_x: List[NumberType]
-    _column_widths: Optional[List[NumberType]]
+    _column_widths: List[NumberType]
     _columns: int
     _current: 'Menu'
     _decorator: 'Decorator'
@@ -131,15 +147,17 @@ class Menu(object):
     _mouse_motion_selection: bool
     _mouse_visible: bool
     _mouse_visible_default: bool
+    _onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
     _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
     _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
+    _onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scroll: 'ScrollArea'
     _scrollarea_margin: List[int]
-    _sounds: 'Sound'
+    _sound: 'Sound'
     _stats: '_MenuStats'
     _submenus: List['Menu']
     _theme: '_themes.Theme'
@@ -161,9 +179,9 @@ class Menu(object):
     _window_size: Tuple2IntType
 
     def __init__(self,
-                 height: NumberType,
-                 width: NumberType,
                  title: str,
+                 width: NumberType,
+                 height: NumberType,
                  center_content: bool = True,
                  column_max_width: MenuColumnMaxWidthType = None,
                  column_min_width: MenuColumnMinWidthType = 0,
@@ -175,8 +193,10 @@ class Menu(object):
                  mouse_enabled: bool = True,
                  mouse_motion_selection: bool = False,
                  mouse_visible: bool = True,
+                 onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]] = None,
                  onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
                  onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
+                 onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]] = None,
                  overflow: Vector2BoolType = (True, True),
                  rows: MenuRowsType = None,
                  screen_dimension: Optional[Vector2IntType] = None,
@@ -184,9 +204,8 @@ class Menu(object):
                  touchscreen: bool = False,
                  touchscreen_motion_selection: bool = False
                  ) -> None:
-        assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
-        # assert isinstance(title, str)
+        assert isinstance(height, (int, float))
 
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (tuple, list, type(None), int, float))
@@ -341,23 +360,26 @@ class Menu(object):
 
         # General properties of the Menu
         self._attributes = {}
-        self._background_function = None
         self._auto_centering = center_content
+        self._background_function = (False, None)  # Accept menu as argument, callable object
         self._clock = pygame.time.Clock()
         self._decorator = Decorator(self)
+        self._enabled = enabled  # Menu is enabled or not. If disabled menu can't update or draw
         self._height = int(height)
         self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._onclose = None  # Function or event called on Menu close
-        self._sounds = Sound()
+        self._sound = Sound()
         self._stats = _MenuStats()
         self._submenus = []
         self._theme = theme
         self._width = int(width)
 
         # Set callbacks
+        self.set_onbeforeopen(onbeforeopen)
         self.set_onclose(onclose)
         self.set_onreset(onreset)
+        self.set_onupdate(onupdate)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accessing self should be through "_current", because user can move through submenus
@@ -372,10 +394,6 @@ class Menu(object):
 
         # Top is the same for the menus and submenus if the user moves through them
         self._top = self
-
-        # Enabled and closed belongs to top, closing a submenu is equal as closing the root
-        # Menu. If the menu is disabled adding widgets don't trigger rendering
-        self._enabled = enabled  # Menu is enabled or not
 
         # Position of Menu
         self._position = (0, 0)
@@ -426,7 +444,7 @@ class Menu(object):
         self._column_max_width = column_max_width
         self._column_min_width = column_min_width
         self._column_pos_x = []  # Stores the center x position of each column
-        self._column_widths = None
+        self._column_widths = []
         self._columns = columns
         self._max_row_column_elements = 0
         self._rows = rows
@@ -449,6 +467,10 @@ class Menu(object):
         self._joy_event_repeat = pygame.NUMEVENTS - 1
 
         # Init mouse
+        if mouse_motion_selection:
+            assert mouse_visible, 'mouse motion cannot be enabled if mouse is not visible'
+            assert hasattr(pygame, 'MOUSEMOTION'), \
+                'pygame MOUSEMOTION does not exist, thus, mouse motion selection cannot be enabled'
         self._mouse = mouse_enabled and mouse_visible
         self._mouse_motion_selection = mouse_motion_selection and mouse_visible
         self._mouse_visible = mouse_visible
@@ -459,7 +481,10 @@ class Menu(object):
             version_major, _, _ = pygame.version.vernum
             assert version_major >= 2, 'touchscreen is only supported in pygame v2+'
         if touchscreen_motion_selection:
-            assert touchscreen, 'touchscreen_motion_selection cannot be enabled if touchscreen is disabled'
+            assert touchscreen, \
+                'touchscreen_motion_selection cannot be enabled if touchscreen is disabled'
+            assert hasattr(pygame, 'FINGERMOTION'), \
+                'pygame FINGERMOTION does not exist, thus, touchscreen motion selection cannot be enabled'
         self._touchscreen = touchscreen
         self._touchscreen_motion_selection = touchscreen_motion_selection
 
@@ -493,6 +518,8 @@ class Menu(object):
             position=self._theme.title_shadow_position
         )
         self._menubar.set_controls(self._joystick, self._mouse, self._touchscreen)
+        if self._theme.title_floating:
+            self._menubar.set_float()
 
         # Widget surface
         self._widgets_surface = None
@@ -529,6 +556,10 @@ class Menu(object):
         # Controls the behaviour of runtime errors
         self._runtime_errors = _MenuRuntimeErrorConfig()
 
+        # Public properties. These can be changed without any major problem
+        self.disable_draw = False
+        self.disable_update = False
+
     def __copy__(self) -> 'Menu':
         """
         Copy method.
@@ -546,9 +577,88 @@ class Menu(object):
         """
         raise _MenuCopyException('Menu class cannot be deep-copied')
 
+    def force_surface_update(self) -> 'Menu':
+        """
+        Forces current Menu surface update after next rendering call.
+
+        ..note ::
+
+            This method is expensive, as menu surface update forces re-rendering of
+            all widgets (because them can change in size, position, etc...).
+
+        .. warning::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            for example, ``menu.get_current().update(...)``
+
+        :return: Self reference
+        """
+        self._current._widgets_surface_need_update = True
+        return self
+
+    def force_surface_cache_update(self) -> 'Menu':
+        """
+        Forces current Menu surface cache to update after next drawing call.
+
+        .. note::
+
+            This method only updates the surface cache, without forcing re-rendering
+            of all Menu widgets.
+
+        .. warning::
+
+            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            for example, ``menu.get_current().update(...)``
+
+        :return: Self reference
+        """
+        self._current._widget_surface_cache_need_update = True
+        self._current._decorator.force_cache_update()
+        return self
+
+    def set_onbeforeopen(self,
+                         onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
+                         ) -> 'Menu':
+        """
+        Set ``onbeforeopen`` callback.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param onbeforeopen: Onbeforeopen callback, it can be a function or None
+        :return: Self reference
+        """
+        assert _utils.is_callable(onbeforeopen) or onbeforeopen is None, \
+            'onbeforeopen must be callable (function-type) or None'
+        self._onbeforeopen = onbeforeopen
+        return self
+
+    def set_onupdate(self,
+                     onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
+                     ) -> 'Menu':
+        """
+        Set ``onupdate`` callback.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param onupdate: Onupdate callback, it can be a function or None
+        :return: Self reference
+        """
+        assert _utils.is_callable(onupdate) or onupdate is None, \
+            'onupdate must be a callable (function-type) or None'
+        self._onupdate = onupdate
+        return self
+
     def set_onclose(self,
                     onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
-                    ) -> None:
+                    ) -> 'Menu':
         """
         Set ``onclose`` callback.
 
@@ -559,17 +669,18 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param onclose: Onclose callback, it can be a function, an event, or None
-        :return: None
+        :return: Self reference
         """
         assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
             'onclose must be a MenuAction, callable (function-type) or None'
         if onclose == _events.NONE:
             onclose = None
         self._onclose = onclose
+        return self
 
     def set_onreset(self,
                     onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
-                    ) -> None:
+                    ) -> 'Menu':
         """
         Set ``onreset`` callback.
 
@@ -580,11 +691,12 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param onreset: Onreset callback, it can be a function or None
-        :return: None
+        :return: Self reference
         """
         assert _utils.is_callable(onreset) or onreset is None, \
             'onreset must be a callable (function-type) or None'
         self._onreset = onreset
+        return self
 
     def get_current(self) -> 'Menu':
         """
@@ -592,7 +704,7 @@ class Menu(object):
         the pointer object must be the same as the base. If not, this
         will return the opened Menu pointer.
 
-        :return: Menu object
+        :return: Menu object **(current)**
         """
         return self._current
 
@@ -1503,7 +1615,8 @@ class Menu(object):
 
         return widget
 
-    def add_generic_widget(self, widget: '_widgets.core.Widget', configure_defaults: bool = False) -> None:
+    def add_generic_widget(self, widget: '_widgets.core.Widget', configure_defaults: bool = False
+                           ) -> '_widgets.core.Widget':
         """
         Add generic widget to the Menu.
 
@@ -1524,7 +1637,7 @@ class Menu(object):
 
         :param widget: Widget to be added
         :param configure_defaults: Apply defaults widget configuration (for example, theme)
-        :return: None
+        :return: The added widget
         """
         assert isinstance(widget, _widgets.core.Widget)
         if widget.get_menu() is not None:
@@ -1545,6 +1658,7 @@ class Menu(object):
         widget.set_controls(self._joystick, self._mouse, self._touchscreen)
         self._append_widget(widget)
         self._stats.add_generic_widget += 1
+        return widget
 
     def _filter_widget_attributes(self, kwargs: Dict) -> Dict[str, Any]:
         """
@@ -1734,7 +1848,7 @@ class Menu(object):
         self._widgets_surface = None  # If added on execution time forces the update of the surface
         self._render()
 
-    def select_widget(self, widget: '_widgets.core.Widget') -> None:
+    def select_widget(self, widget: '_widgets.core.Widget') -> 'Menu':
         """
         Select a widget from the Menu.
 
@@ -1745,12 +1859,12 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param widget: Widget to be selected
-        :return: None
+        :return: Self reference
         """
         assert isinstance(widget, _widgets.core.Widget)
         if not widget.is_selectable:
             raise ValueError('widget is not selectable')
-        if not widget.visible:
+        if not widget.is_visible():
             raise ValueError('widget is not visible')
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1758,8 +1872,9 @@ class Menu(object):
             raise ValueError('widget is not in Menu, check if exists on the current '
                              'with menu.get_current().remove_widget(widget)')
         self._select(index)
+        return self
 
-    def remove_widget(self, widget: '_widgets.core.Widget') -> None:
+    def remove_widget(self, widget: '_widgets.core.Widget') -> 'Menu':
         """
         Remove the ``widget`` from the Menu. If widget not exists on Menu this
         method raises a ``ValueError`` exception.
@@ -1771,7 +1886,7 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param widget: Widget object
-        :return: None
+        :return: Self reference
         """
         assert isinstance(widget, _widgets.core.Widget)
 
@@ -1784,6 +1899,15 @@ class Menu(object):
         self._update_after_remove_or_hidden(index)
         self._stats.removed_widgets += 1
         widget.set_menu(None)  # Removes Menu reference from widget
+        return self
+
+    def get_sound(self) -> 'Sound':
+        """
+        Return the Menu sound engine.
+
+        :return: Sound API
+        """
+        return self._sound
 
     def _update_after_remove_or_hidden(self, index: int, update_surface: bool = True) -> None:
         """
@@ -1798,7 +1922,7 @@ class Menu(object):
         last_selectable = 0
         for indx in range(len(self._widgets)):
             wid = self._widgets[indx]
-            if wid.is_selectable and wid.visible:
+            if wid.is_selectable and wid.is_visible():
                 nselect += 1
                 last_selectable = indx
 
@@ -1837,7 +1961,7 @@ class Menu(object):
         if len(self._widgets) > 0:
             if self._index != -1:
                 selected_widget = self._widgets[self._index % len(self._widgets)]
-                if not selected_widget.visible:
+                if not selected_widget.is_visible():
                     selected_widget.select(False)  # Unselect
                     self._update_after_remove_or_hidden(-1, update_surface=False)
             else:
@@ -1871,7 +1995,7 @@ class Menu(object):
             widget = self._widgets[index]
 
             # If not visible, continue to the next widget
-            if not widget.visible:
+            if not widget.is_visible():
                 widget.set_col_row_index(-1, -1, index)
                 continue
 
@@ -1894,12 +2018,17 @@ class Menu(object):
             # Update used columns
             self._used_columns = max(self._used_columns, col + 1)
 
-            # If widget is floating don't update the current index
-            if not widget.floating:
+            # Get the next widget, if don't exist use the same
+            next_widget = widget
+            if index < len(self._widgets) - 1:
+                next_widget = self._widgets[index + 1]
+
+            # If widget is floating don't update the next
+            if not next_widget.is_floating():
                 i_index += 1
 
             # If floating, don't contribute to the column width
-            if widget.floating:
+            else:
                 continue
 
             self._column_widths[col] = max(
@@ -1920,7 +2049,8 @@ class Menu(object):
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         # only None column_max_widths and columns less than the maximum are scaled
         sum_width_columns = sum(self._column_widths)
-        if 0 < sum_width_columns < self._width:
+        max_width = self.get_width()
+        if 0 <= sum_width_columns < max_width and len(self._widgets) > 0:
 
             # First, scale columns to its maximum
             sum_contrib = []
@@ -1932,9 +2062,9 @@ class Menu(object):
                 else:
                     sum_contrib.append(0)
 
-            delta = float(self._width) - sum(sum_contrib) - sum_width_columns
+            delta = max_width - sum(sum_contrib) - sum_width_columns
             if delta < 0:  # Scale contrib back
-                scale = (float(self._width) - sum_width_columns) / sum(sum_contrib)
+                scale = (max_width - sum_width_columns) / sum(sum_contrib)
                 sum_contrib = [sum_contrib[i] * scale for i in range(len(sum_contrib))]
 
             # Increase to its maximums
@@ -1944,7 +2074,6 @@ class Menu(object):
 
             # Scale column widths if None
             sum_width_columns = sum(self._column_widths)
-
             sum_contrib = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
@@ -1952,14 +2081,38 @@ class Menu(object):
                 else:
                     sum_contrib.append(0)
 
-            delta = float(self._width) - sum_width_columns
+            delta = max_width - sum_width_columns
             if delta > 0:
                 for col in range(self._used_columns):
                     if sum_contrib[col] > 0:
                         self._column_widths[col] += delta * sum_contrib[col] / sum(sum_contrib)
 
+            # Re-compute sum
+            sum_width_columns = sum(self._column_widths)
+
+            # If column width still 0, set all the column the same width (only used)
+            # This only can happen if column_min_width was not set
+            if sum_width_columns < max_width and self._used_columns >= 1:
+
+                # The width it would be added for each column
+                modwidth = max_width  # Available left width for non max columns
+                nonmax = self._used_columns
+
+                # First fill all maximum width columns
+                for col in range(self._used_columns):
+                    if self._column_max_width[col] is not None:
+                        self._column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
+                        modwidth -= self._column_widths[col]
+                        nonmax -= 1
+
+                # Now, update the rest (non maximum set)
+                if nonmax > 0:
+                    for col in range(self._used_columns):
+                        if self._column_max_width[col] is None:
+                            self._column_widths[col] = modwidth / nonmax
+
         # Final column width
-        total_col_width = float(sum(self._column_widths))
+        total_col_width = sum(self._column_widths)
         if self._used_columns > 1:
             # Calculate column width scale (weights)
             column_weights = tuple(
@@ -1990,7 +2143,7 @@ class Menu(object):
             rect = widget_rects[widget.get_id()]
             selection_effect = widget.get_selection_effect()
 
-            if not widget.visible:
+            if not widget.is_visible():
                 widget.set_position(0, 0)
                 continue
 
@@ -2021,7 +2174,7 @@ class Menu(object):
                 _, r, _ = rwidget.get_col_row_index()
                 if r >= row:
                     break
-                if rwidget.visible and not rwidget.floating:
+                if rwidget.is_visible() and not rwidget.is_floating():
                     ysum += widget_rects[rwidget.get_id()].height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
 
@@ -2218,7 +2371,7 @@ class Menu(object):
                 break
         return depth
 
-    def disable(self) -> None:
+    def disable(self) -> 'Menu':
         """
         Disables the Menu *(doesn't check events and draw on the surface)*.
 
@@ -2227,11 +2380,12 @@ class Menu(object):
             This method does not fires ``onclose`` callback. Use ``Menu.close()``
             instead.
 
-        :return: None
+        :return: Self reference
         """
         self._top._enabled = False
+        return self
 
-    def set_relative_position(self, position_x: NumberType, position_y: NumberType) -> None:
+    def set_relative_position(self, position_x: NumberType, position_y: NumberType) -> 'Menu':
         """
         Set the Menu position relative to the window.
 
@@ -2253,7 +2407,7 @@ class Menu(object):
 
         :param position_x: Left position of the window
         :param position_y: Top position of the window
-        :return: None
+        :return: Self reference
         """
         assert isinstance(position_x, (int, float))
         assert isinstance(position_y, (int, float))
@@ -2265,8 +2419,9 @@ class Menu(object):
         self._position = (int((window_width - self._width) * position_x),
                           int((window_height - self._height) * position_y))
         self._widgets_surface = None  # This forces an update of the widgets
+        return self
 
-    def center_content(self) -> None:
+    def center_content(self) -> 'Menu':
         """
         Centers the content of the Menu vertically. This action rewrites ``widget_offset``.
 
@@ -2281,12 +2436,12 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
-        :return: None
+        :return: Self reference
         """
         self._stats.center_content += 1
         if len(self._widgets) == 0:  # If this happen, get_widget_max returns an immense value
             self._widget_offset[1] = 0
-            return
+            return self
         if self._widgets_surface is None:
             self._update_widget_position()  # For position (max/min)
         available = self.get_height(inner=True)
@@ -2295,11 +2450,12 @@ class Menu(object):
             if self._widget_offset[1] != 0:
                 self._widgets_surface = None
                 self._widget_offset[1] = 0
-                return
+                return self
         new_offset = int(max(float(available - widget_height) / 2, 0))
         if abs(new_offset - self._widget_offset[1]) > 1:
             self._widget_offset[1] = new_offset
             self._widgets_surface = None  # Rebuild on the next draw
+        return self
 
     def get_width(self, inner: bool = False, widget: bool = False) -> int:
         """
@@ -2359,7 +2515,7 @@ class Menu(object):
         """
         return self.get_width(inner=inner, widget=widget), self.get_height(inner=inner, widget=widget)
 
-    def render(self) -> None:
+    def render(self) -> 'Menu':
         """
         Force **current** Menu rendering. Useful to force widget update.
 
@@ -2373,11 +2529,12 @@ class Menu(object):
             This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
             for example, ``menu.get_current().render(...)``
 
-        :return: None
+        :return: Self reference **(current)**
         """
         self._current._widgets_surface = None
         self._current._render()
         self._current._stats.render_public += 1
+        return self
 
     def _render(self) -> bool:
         """
@@ -2402,7 +2559,7 @@ class Menu(object):
         self._stats.total_rendering_time += time.time() - t0
         return changed
 
-    def draw(self, surface: 'pygame.Surface', clear_surface: bool = False) -> None:
+    def draw(self, surface: 'pygame.Surface', clear_surface: bool = False) -> 'Menu':
         """
         Draw the **current** Menu into the given surface.
 
@@ -2413,13 +2570,16 @@ class Menu(object):
 
         :param surface: Pygame surface to draw the Menu
         :param clear_surface: Clear surface using theme default color
-        :return: None
+        :return: Self reference **(curent)**
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(clear_surface, bool)
 
         if not self.is_enabled():
-            return self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
+            self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
+            return self._current
+        if self._current.disable_draw:
+            return self._current
 
         # Render menu
         render = self._current._render()  # If True, the surface widget has changed, thus cache should change if enabled
@@ -2434,32 +2594,45 @@ class Menu(object):
             surface.fill(self._current._theme.surface_clear_color)
 
         # Call background function (set from mainloop)
-        if self._top._background_function is not None:
-            try:
-                self._top._background_function(self._current)
-            except TypeError:
-                self._top._background_function()
+        if self._top._background_function[1] is not None:
+            if self._top._background_function[0]:
+                self._top._background_function[1](self._current)
+            else:
+                self._top._background_function[1]()
 
         # Draw the prev decorator
         self._current._decorator.draw_prev(surface)
+
+        # print('value', self._current.get_title(), self._current._widget_surface_cache_need_update, id(self._current._widget_surface_cache_need_update))
+        # print(self._current._scroll.get_decorator()._decor)
 
         # Draw widgets, update cache if enabled
         if not self._current._widget_surface_cache_enabled or \
                 (render or self._current._widget_surface_cache_need_update):
 
+            # This should be update before drawing widgets. As widget
+            # draw may trigger surface cache updating. Don't move this
+            # line or unexpected errors may occur
+            self._current._widget_surface_cache_need_update = False
+
             # Fill the scrolling surface (clear previous state)
             self._current._widgets_surface.fill((255, 255, 255, 0))
 
+            # Call scrollarea draw decorator. This must be done before filling the
+            # surface
+            scrollarea_decorator = self._current._scroll.get_decorator()
+            scrollarea_decorator.force_cache_update()
+            scrollarea_decorator.draw_prev(self._current._widgets_surface)
+
             # Iterate through widgets and draw them
             for widget in self._current._widgets:
-                if not widget.visible:
+                if not widget.is_visible():
                     continue
                 widget.draw(self._current._widgets_surface)
-                if widget.selected:
+                if widget.is_selected():
                     widget.draw_selection(self._current._widgets_surface)
 
             self._current._stats.draw_update_cached += 1
-            self._current._widget_surface_cache_need_update = False
 
         self._current._scroll.draw(surface)
         self._current._menubar.draw(surface)
@@ -2468,6 +2641,7 @@ class Menu(object):
         self._current._draw_focus_widget(surface, self._current.get_selected_widget())
         self._current._decorator.draw_post(surface)
         self._current._stats.draw += 1
+        return self._current
 
     def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['_widgets.core.Widget']
                            ) -> Optional[Dict[int, Tuple4Tuple2IntType]]:
@@ -2483,8 +2657,8 @@ class Menu(object):
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (_widgets.core.Widget, type(None)))
 
-        if widget is None or not widget.active or not widget.is_selectable or not widget.selected or \
-                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.visible:
+        if widget is None or not widget.active or not widget.is_selectable or not widget.is_selected() or \
+                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.is_visible():
             return
         window_width, window_height = self._window_size
 
@@ -2534,7 +2708,7 @@ class Menu(object):
             gfxdraw.filled_polygon(surface, coords[area], self._theme.focus_background_color)
         return coords
 
-    def enable(self) -> None:
+    def enable(self) -> 'Menu':
         """
         Enables Menu (can check events and draw).
 
@@ -2544,11 +2718,12 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
-        :return: None
+        :return: Self reference
         """
         self._top._enabled = True
+        return self
 
-    def toggle(self) -> None:
+    def toggle(self) -> 'Menu':
         """
         Switch between enable/disable Menu.
 
@@ -2558,9 +2733,10 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
-        :return: None
+        :return: Self reference
         """
         self._top._enabled = not self._top._enabled
+        return self
 
     def _exit(self) -> None:
         """
@@ -2678,6 +2854,12 @@ class Menu(object):
             return False
         self._current._stats.update += 1
 
+        # Call onupdate callback
+        if self._current._onupdate is not None:
+            self._current._onupdate(events, self._current)
+        if self._current.disable_update:
+            return False
+
         # Check if window closed
         for event in events:
             if event.type == _events.PYGAME_QUIT or (
@@ -2697,7 +2879,7 @@ class Menu(object):
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]
-            if not selected_widget.visible or not selected_widget.is_selectable:
+            if not selected_widget.is_visible() or not selected_widget.is_selectable:
                 selected_widget = None
 
         # Update scroll bars
@@ -2716,6 +2898,11 @@ class Menu(object):
         # Check others
         else:
 
+            # If mouse motion enabled, add the current mouse position to event list
+            if self._current._mouse_motion_selection:
+                mousex, mousey = pygame.mouse.get_pos()
+                events.append(pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)}))
+
             for event in events:
 
                 if event.type == pygame.KEYDOWN:
@@ -2725,26 +2912,26 @@ class Menu(object):
 
                     if event.key == _controls.KEY_MOVE_DOWN:
                         self._current._select(self._current._index - 1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_MOVE_UP:
                         self._current._select(self._current._index + 1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_LEFT and self._current._used_columns > 1:
                         self._current._move_selected_left_right(-1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_RIGHT and self._current._used_columns > 1:
                         self._current._move_selected_left_right(1)
-                        self._current._sounds.play_key_add()
+                        self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_BACK and self._top._prev is not None:
-                        self._current._sounds.play_close_menu()
+                        self._current._sound.play_close_menu()
                         self.reset(1)  # public, do not use _current
 
                     elif event.key == _controls.KEY_CLOSE_MENU:
-                        self._current._sounds.play_close_menu()
+                        self._current._sound.play_close_menu()
                         if self._current._close():
                             updated = True
 
@@ -2803,30 +2990,31 @@ class Menu(object):
                     if not self._current._mouse_motion_selection:
                         for index in range(len(self._current._widgets)):
                             widget = self._current._widgets[index]
-                            if widget.is_selectable and widget.visible and \
+                            if widget.is_selectable and widget.is_visible() and \
                                     self._current._scroll.collide(widget, event):
                                 self._current._select(index)
 
                     # If mouse motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
                     else:
-                        if not self._current._scroll.collide(selected_widget, event):
-                            selected_widget.active = False
+                        if selected_widget is not None:
+                            if not self._current._scroll.collide(selected_widget, event):
+                                selected_widget.active = False
 
                 # Select widgets by mouse motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
                 elif self._current._mouse_motion_selection and event.type == pygame.MOUSEMOTION and \
-                        not selected_widget.active:
+                        selected_widget is not None and not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
-                        if widget.is_selectable and widget.visible and \
+                        if widget.is_selectable and widget.is_visible() and \
                                 self._current._scroll.collide(widget, event):
                             self._current._select(index)
 
                 # Mouse events in selected widget
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None and \
                         event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
-                    self._current._sounds.play_click_mouse()
+                    self._current._sound.play_click_mouse()
 
                     if self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(event.type, **event.dict)
@@ -2843,20 +3031,21 @@ class Menu(object):
                     if not self._current._touchscreen_motion_selection:
                         for index in range(len(self._current._widgets)):
                             widget = self._current._widgets[index]
-                            if widget.is_selectable and widget.visible and \
+                            if widget.is_selectable and widget.is_visible() and \
                                     self._current._scroll.collide(widget, event):
                                 self._current._select(index)
 
                     # If touchscreen motion selection, clicking will disable the active state
                     # only if the user clicked outside the widget
                     else:
-                        if not self._current._scroll.collide(selected_widget, event):
-                            selected_widget.active = False
+                        if selected_widget is not None:
+                            if not self._current._scroll.collide(selected_widget, event):
+                                selected_widget.active = False
 
                 # Select widgets by touchscreen motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
                 elif self._current._touchscreen_motion_selection and event.type == pygame.FINGERMOTION and \
-                        not selected_widget.active:
+                        selected_widget is not None and not selected_widget.active:
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
                         if widget.is_selectable and self._current._scroll.collide(widget, event):
@@ -2864,7 +3053,7 @@ class Menu(object):
 
                 # Touchscreen events in selected widget
                 elif self._current._touchscreen and event.type == pygame.FINGERUP and selected_widget is not None:
-                    self._current._sounds.play_click_mouse()
+                    self._current._sound.play_click_mouse()
 
                     if self._current._scroll.collide(selected_widget, event):
                         new_event = pygame.event.Event(pygame.MOUSEBUTTONUP, **event.dict)
@@ -2889,9 +3078,8 @@ class Menu(object):
     def mainloop(self,
                  surface: 'pygame.Surface',
                  bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
-                 disable_loop: bool = False,
-                 fps_limit: int = 30
-                 ) -> None:
+                 **kwargs
+                 ) -> 'Menu':
         """
         Main loop of the **current** Menu. In this function, the Menu handle exceptions and draw.
         The Menu pauses the application and checks :py:mod:`pygame` events itself.
@@ -2912,6 +3100,11 @@ class Menu(object):
             draw(...):
                 bgfun() <or> bgfun(Menu)
 
+        kwargs (Optional)
+            - ``clear_surface``     *(bool)* - If ``True`` surface is cleared using ``theme.surface_clear_color``
+            - ``disable_loop``      *(bool)* - If ``True`` the mainloop only runs once. Use for running draw and update in a single call
+            - ``fps_limit``         *(int)* - Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
+
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
@@ -2919,36 +3112,52 @@ class Menu(object):
 
         :param surface: Pygame surface to draw the Menu
         :param bgfun: Background function called on each loop iteration before drawing the Menu
-        :param disable_loop: If ``True`` run this method for only ``1`` loop
-        :param fps_limit: Limit frames per second of the loop, if ``0`` there's no limit
-        :return: None
+        :param kwargs: Optional keyword arguments
+        :return: Self reference **(current)**
         """
-        assert isinstance(surface, pygame.Surface)
-        if bgfun:
-            assert _utils.is_callable(bgfun), \
-                'background function must be callable (function-type) object'
+        # Unpack kwargs
+        clear_surface = kwargs.get('clear_surface', True)
+        disable_loop = kwargs.get('disable_loop', False)
+        fps_limit = kwargs.get('fps_limit', self._theme.fps)
+
+        assert isinstance(clear_surface, bool)
         assert isinstance(disable_loop, bool)
-        assert isinstance(fps_limit, int)
+        assert isinstance(fps_limit, (int, float))
+        assert isinstance(surface, pygame.Surface)
+
         assert fps_limit >= 0, 'fps limit cannot be negative'
-        fps_limit = int(fps_limit)
 
         # NOTE: For Menu accessor, use only _current, as the Menu pointer can change through the execution
         if not self.is_enabled():
-            return self._current._runtime_errors.throw(self._current._runtime_errors.mainloop, 'menu is not enabled')
+            self._current._runtime_errors.throw(self._current._runtime_errors.mainloop, 'menu is not enabled')
+            return self._current
+
+        # Check background function
+        bgfun_accept_menu = False
+        if bgfun:
+            assert _utils.is_callable(bgfun), \
+                'background function must be callable (function-type) object'
+            try:
+                bgfun(self._current)
+                bgfun_accept_menu = True
+            except TypeError:
+                pass
 
         # Store background function and force render
-        self._current._background_function = bgfun
+        self._current._background_function = (bgfun_accept_menu, bgfun)
+
+        # Force rendering before loop
         self._current._widgets_surface = None
 
+        # Start loop
         while True:
             self._current._stats.loop += 1
             self._current._clock.tick(fps_limit)
 
             # Draw the menu
-            self.draw(surface=surface, clear_surface=True)
+            self.draw(surface=surface, clear_surface=clear_surface)
 
-            # If loop, gather events by Menu and draw the background function, if this method
-            # returns true then the mainloop will break
+            # Gather events by Menu
             self.update(pygame.event.get())
 
             # Flip contents to screen
@@ -2956,8 +3165,7 @@ class Menu(object):
 
             # Menu closed or disabled
             if not self.is_enabled() or disable_loop:
-                self._current._background_function = None
-                return
+                return self._current
 
     def get_input_data(self, recursive: bool = False) -> Dict[str, Any]:
         """
@@ -3025,7 +3233,7 @@ class Menu(object):
         """
         return pygame.Rect(int(self._position[0]), int(self._position[1]), int(self._width), int(self._height))
 
-    def set_sound(self, sound: Optional['Sound'], recursive: bool = False) -> None:
+    def set_sound(self, sound: Optional['Sound'], recursive: bool = False) -> 'Menu':
         """
         Add a sound engine to the Menu. If ``recursive=True``, the sound is
         applied to all submenus.
@@ -3038,18 +3246,19 @@ class Menu(object):
 
         :param sound: Sound object
         :param recursive: Set the sound engine to all submenus
-        :return: None
+        :return: Self reference
         """
-        assert isinstance(sound, (type(self._sounds), type(None))), \
+        assert isinstance(sound, (type(self._sound), type(None))), \
             'sound must be pygame_menu.Sound type or None'
         if sound is None:
             sound = Sound()
-        self._sounds = sound
+        self._sound = sound
         for widget in self._widgets:
             widget.set_sound(sound)
         if recursive:
             for menu in self._submenus:
                 menu.set_sound(sound, recursive=True)
+        return self
 
     def get_title(self) -> str:
         """
@@ -3065,7 +3274,7 @@ class Menu(object):
         """
         return self._menubar.get_title()
 
-    def set_title(self, title: Any, offset: Optional[Vector2NumberType] = None) -> None:
+    def set_title(self, title: Any, offset: Optional[Vector2NumberType] = None) -> 'Menu':
         """
         Set the title of the Menu.
 
@@ -3077,15 +3286,16 @@ class Menu(object):
 
         :param title: New menu title
         :param offset: If ``None`` uses theme offset, else it defines the title offset in *(x, y)*
-        :return: None
+        :return: Self reference
         """
         if offset is None:
             offset = self._theme.title_offset
         else:
             _utils.assert_vector(offset, 2)
         self._menubar.set_title(title, offsetx=offset[0], offsety=offset[1])
+        return self
 
-    def full_reset(self) -> None:
+    def full_reset(self) -> 'Menu':
         """
         Reset the Menu back to the first opened Menu.
 
@@ -3095,13 +3305,14 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
-        :return: None
+        :return: Self reference
         """
         depth = self._get_depth()
         if depth > 0:
             self.reset(depth)
+        return self
 
-    def clear(self, reset: bool = True) -> None:
+    def clear(self, reset: bool = True) -> 'Menu':
         """
         Clears all widgets.
 
@@ -3112,7 +3323,7 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param reset: If ``True`` the menu full-resets
-        :return: None
+        :return: Self reference
         """
         if reset:
             self.full_reset()
@@ -3121,6 +3332,7 @@ class Menu(object):
         self._index = -1
         self._stats.clear += 1
         self._render()
+        return self
 
     def _open(self, menu: 'Menu') -> None:
         """
@@ -3141,10 +3353,14 @@ class Menu(object):
         self._top._current = menu._current
         self._top._prev = [self._top._prev, current]
 
+        # Call event
+        if menu._onbeforeopen is not None:
+            menu._onbeforeopen(current, menu)
+
         # Select the first widget
         self._select(0, 1)
 
-    def reset(self, total: int) -> None:
+    def reset(self, total: int) -> 'Menu':
         """
         Go back in Menu history a certain number of times from the **current** Menu.
         This method operates through the **current** Menu pointer.
@@ -3155,7 +3371,7 @@ class Menu(object):
             for example, ``menu.get_current().reset(...)``
 
         :param total: How many menus to go back
-        :return: None
+        :return: Self reference **(current)**
         """
         assert isinstance(total, int)
         assert total > 0, 'total must be greater than zero'
@@ -3181,6 +3397,7 @@ class Menu(object):
 
         self._current._select(self._top._current._index)
         self._current._stats.reset += 1
+        return self._current
 
     def _select(self, new_index: int, dwidget: int = 0) -> None:
         """
@@ -3219,7 +3436,7 @@ class Menu(object):
         new_widget = curr_widget._widgets[new_index]
 
         # If new widget is not selectable or visible
-        if not new_widget.is_selectable or not new_widget.visible:
+        if not new_widget.is_selectable or not new_widget.is_visible():
             if curr_widget._index >= 0:  # There's at least 1 selectable option
                 curr_widget._select(new_index + dwidget, dwidget)
                 return
@@ -3250,7 +3467,7 @@ class Menu(object):
             curr_widget._scroll.scroll_to_rect(rect)
 
         # Play widget selection sound
-        self._sounds.play_widget_selection()
+        self._sound.play_widget_selection()
         self._stats.select += 1
 
     def get_id(self) -> str:
@@ -3367,7 +3584,7 @@ class Menu(object):
                     return widget
         return None
 
-    def reset_value(self, recursive: bool = False) -> None:
+    def reset_value(self, recursive: bool = False) -> 'Menu':
         """
         Reset all widget values to default.
 
@@ -3378,13 +3595,14 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param recursive: Set value recursively
-        :return: None
+        :return: Self reference
         """
         for widget in self._widgets:
             widget.reset_value()
         if recursive:
             for sm in self._submenus:
                 sm.reset_value(recursive)
+        return self
 
     def in_submenu(self, menu: 'Menu', recursive: bool = False) -> bool:
         """
@@ -3494,7 +3712,7 @@ class Menu(object):
         except (IndexError, ZeroDivisionError):
             return None
 
-    def set_attribute(self, key: str, value: Any) -> None:
+    def set_attribute(self, key: str, value: Any) -> 'Menu':
         """
         Set an attribute value.
 
@@ -3506,10 +3724,11 @@ class Menu(object):
 
         :param key: Key of the attribute
         :param value: Value of the attribute
-        :return: None
+        :return: Self reference
         """
         assert isinstance(key, str)
         self._attributes[key] = value
+        return self
 
     def get_attribute(self, key: str, default: Any = None) -> Any:
         """
@@ -3532,7 +3751,7 @@ class Menu(object):
 
     def has_attribute(self, key: str) -> bool:
         """
-        Return ``True`` if the widget has the given attribute.
+        Return ``True`` if the Menu has the given attribute.
 
         .. note::
 
@@ -3546,7 +3765,7 @@ class Menu(object):
         assert isinstance(key, str)
         return key in self._attributes.keys()
 
-    def remove_attribute(self, key: str) -> None:
+    def remove_attribute(self, key: str) -> 'Menu':
         """
         Removes the given attribute. Throws ``IndexError`` if given key does not exist.
 
@@ -3557,11 +3776,12 @@ class Menu(object):
             to :py:meth:`pygame_menu.Menu.get_current` object.
 
         :param key: Key of the attribute
-        :return: None
+        :return: Self reference
         """
         if not self.has_attribute(key):
             raise IndexError('attribute "{0}" does not exists on menu'.format(key))
         del self._attributes[key]
+        return self
 
     def get_decorator(self) -> 'Decorator':
         """

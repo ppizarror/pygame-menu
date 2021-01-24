@@ -35,7 +35,7 @@ import pygame
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
 import pygame_menu.font as _fonts
-from pygame_menu.custom_types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
+from pygame_menu._custom_types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
     Tuple2NumberType, Tuple2IntType
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 
@@ -224,25 +224,25 @@ class ToggleSwitch(Widget):
         assert 0 <= value < self._total_states, 'state value exceeds the total states'
         self._state = value
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> None:
-        pass
+                      smooth: bool = True) -> 'Widget':
+        return self
 
     def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> None:
-        pass
+                       smooth: bool = True) -> 'Widget':
+        return self
 
-    def rotate(self, angle: NumberType) -> None:
-        pass
+    def rotate(self, angle: NumberType) -> 'Widget':
+        return self
 
-    def flip(self, x: bool, y: bool) -> None:
-        pass
+    def flip(self, x: bool, y: bool) -> 'Widget':
+        return self
 
     def get_value(self) -> Any:
         return self._state_values[self._state]
@@ -298,7 +298,7 @@ class ToggleSwitch(Widget):
         surface.blit(self._slider, (sliderx, slidery))
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self.selected, self._title, self.visible, self.readonly,
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
                                          self._state):
             return True
 
@@ -375,7 +375,7 @@ class ToggleSwitch(Widget):
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._left()
                 updated = True
 
@@ -383,13 +383,13 @@ class ToggleSwitch(Widget):
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._right()
                 updated = True
 
             # Press enter
             elif keydown and event.key == _controls.KEY_APPLY and self._total_states == 2:
-                self.sound.play_key_add()
+                self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()
                 updated = True
@@ -424,7 +424,7 @@ class ToggleSwitch(Widget):
                                 target_index = i
                                 best = dx
                         if target_index != self._state:
-                            self.sound.play_key_add()
+                            self._sound.play_key_add()
                             self._state = target_index
                             self.change()
 

@@ -36,8 +36,8 @@ from pathlib import Path
 
 import pygame
 from pygame_menu.baseimage import BaseImage
-from pygame_menu.widgets.core import Widget
-from pygame_menu.custom_types import Union, List, NumberType, CallbackType, Tuple2NumberType, Tuple, Optional
+from pygame_menu.widgets import Widget
+from pygame_menu._custom_types import Union, List, NumberType, CallbackType, Tuple2NumberType, Tuple, Optional
 from pygame_menu.utils import assert_vector
 
 
@@ -85,8 +85,8 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-    def set_title(self, title: str) -> None:
-        pass
+    def set_title(self, title: str) -> 'Widget':
+        return self
 
     def get_image(self) -> 'BaseImage':
         """
@@ -110,22 +110,26 @@ class Image(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def rotate(self, angle: NumberType) -> None:
+    def rotate(self, angle: NumberType) -> 'Widget':
         self._image.rotate(angle)
         self._surface = None
+        return self
 
-    def flip(self, x: bool, y: bool) -> None:
+    def flip(self, x: bool, y: bool) -> 'Widget':
         if x or y:
             self._image.flip(x, y)
             self._surface = None
+        return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
         self._image.scale(width, height, smooth)
         self._surface = None
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
         self._image.resize(width, height, smooth)
         self._surface = None
+        return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
@@ -133,9 +137,9 @@ class Image(Widget):
     def _render(self) -> Optional[bool]:
         if self._surface is not None:
             return True
-        self._surface = self._image.get_surface()
+        self._surface = self._image.get_surface(new=False)
         self._rect.width, self._rect.height = self._surface.get_size()
-        if not self._render_hash_changed(self.visible):
+        if not self._render_hash_changed(self._visible):
             return True
         self.force_menu_surface_update()
 

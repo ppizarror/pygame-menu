@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
 from typing import Tuple, Any
 
 surface = create_example_window('Example - Simple', (600, 400))

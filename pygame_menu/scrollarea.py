@@ -38,11 +38,11 @@ from pygame_menu.decorator import Decorator
 from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
-from pygame_menu.custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
+from pygame_menu._custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
     TYPE_CHECKING, Tuple2NumberType, Optional, Tuple2IntType
 
 if TYPE_CHECKING:
-    from pygame_menu.widgets.core.widget import Widget
+    from pygame_menu.widgets import Widget
     from pygame_menu.menu import Menu
 
 
@@ -70,6 +70,8 @@ def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], T
         return _locals.POSITION_SOUTH, _locals.POSITION_NORTH
     elif position == _locals.SCROLLAREA_POSITION_BOTH_VERTICAL:
         return _locals.POSITION_EAST, _locals.POSITION_WEST
+    elif position == _locals.POSITION_CENTER:
+        raise ValueError('cannot init strollbars from center position')
     else:
         raise ValueError('unknown ScrollArea position')
 
@@ -233,6 +235,39 @@ class ScrollArea(object):
         """
         raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
 
+    def force_menu_surface_update(self) -> 'ScrollArea':
+        """
+        Forces menu surface update after next rendering call.
+
+        ..note ::
+
+            This method is expensive, as menu surface update forces re-rendering of
+            all widgets (because them can change in size, position, etc...).
+
+        :return: Self reference
+        """
+        if self._menu is not None:
+            self._menu._widgets_surface_need_update = True
+        return self
+
+    def force_menu_surface_cache_update(self) -> 'ScrollArea':
+        """
+        Forces menu surface cache to update after next drawing call.
+        This also updates widget decoration.
+
+        .. note::
+
+            This method only updates the surface cache, without forcing re-rendering
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            does.
+
+        :return: Self reference
+        """
+        if self._menu is not None:
+            self._menu._widget_surface_cache_need_update = True
+            self._decorator.force_cache_update()
+        return self
+
     def _apply_size_changes(self) -> None:
         """
         Apply size changes to scrollbar.
@@ -255,6 +290,8 @@ class ScrollArea(object):
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.top - self._scrollbar_thick + dy)
             elif pos == _locals.POSITION_SOUTH:  # South
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.bottom + dy)
+            elif pos == _locals.POSITION_CENTER:
+                raise ValueError('center position cannot be applied to scrollbar')
             else:
                 raise ValueError('unknown position')
 
@@ -274,17 +311,17 @@ class ScrollArea(object):
                 sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
                                    (self._view_rect.height + self.get_hidden_height()))
 
-    def draw(self, surface: 'pygame.Surface') -> None:
+    def draw(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
         Draw the scrollarea.
 
         :param surface: Surface to render the area
-        :return: None
+        :return: Self reference
         """
         if not self._world:
-            return
+            return self
 
-        self._decorator.draw_prev(surface)
+        # Background surface already has previous decorators
         if self._bg_surface:
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
@@ -300,6 +337,7 @@ class ScrollArea(object):
         # noinspection PyTypeChecker
         surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
         self._decorator.draw_post(surface)
+        return self
 
     def get_hidden_width(self) -> int:
         """
@@ -477,13 +515,13 @@ class ScrollArea(object):
                 sbar.set_value(value)
 
     # noinspection PyTypeChecker
-    def scroll_to_rect(self, rect: 'pygame.Rect', margin: NumberType = 10) -> None:
+    def scroll_to_rect(self, rect: 'pygame.Rect', margin: NumberType = 10) -> bool:
         """
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
         :param margin: Extra margin around the rect (px)
-        :return: None
+        :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
         assert isinstance(margin, (int, float))
         real_rect = self.to_real_position(rect)
@@ -495,7 +533,7 @@ class ScrollArea(object):
                 and self._view_rect.topleft[1] <= real_rect.topleft[1] + sy \
                 and self._view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
                 and self._view_rect.bottomright[1] + sy >= real_rect.bottomright[1]:
-            return
+            return False
 
         for sbar in self._scrollbars:
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
@@ -510,28 +548,31 @@ class ScrollArea(object):
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
+        return True
 
-    def set_position(self, posx: int, posy: int) -> None:
+    def set_position(self, posx: int, posy: int) -> 'ScrollArea':
         """
         Set the position.
 
         :param posx: X position
         :param posy: Y position
-        :return: None
+        :return: Self reference
         """
         self._rect.x = posx
         self._rect.y = posy
         self._apply_size_changes()
+        return self
 
-    def set_world(self, surface: 'pygame.Surface') -> None:
+    def set_world(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
         Update the scrolled surface.
 
         :param surface: New world surface
-        :return: None
+        :return: Self reference
         """
         self._world = surface
         self._apply_size_changes()
+        return self
 
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
                          ) -> Union['pygame.Rect', Tuple2IntType]:
@@ -606,16 +647,17 @@ class ScrollArea(object):
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
-    def set_menu(self, menu: 'Menu') -> None:
+    def set_menu(self, menu: 'Menu') -> 'ScrollArea':
         """
         Set the Menu reference.
 
         :param menu: Menu object
-        :return: None
+        :return: Self reference
         """
         self._menu = menu
         for sbar in self._scrollbars:
             sbar.set_menu(menu)
+        return self
 
     def get_menu(self) -> Optional['Menu']:
         """

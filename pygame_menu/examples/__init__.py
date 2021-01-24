@@ -83,7 +83,7 @@ def create_example_window(
             if _PYGAME_ICON[0] is not None:
                 pygame.display.set_icon(_PYGAME_ICON[0])
             else:
-                icon = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU).get_surface()
+                icon = BaseImage(IMAGE_EXAMPLE_PYGAME_MENU).get_surface(new=False)
                 pygame.display.set_icon(icon)
                 _PYGAME_ICON[0] = icon
         except BaseException:  # lgtm [py/catch-base-exception]

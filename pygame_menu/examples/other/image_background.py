@@ -31,15 +31,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import sys
-from typing import Optional
-
-sys.path.insert(0, '../../')
-sys.path.insert(0, '../../../')
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+from typing import Optional
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -54,7 +50,7 @@ main_menu: Optional['pygame_menu.Menu'] = None
 # -----------------------------------------------------------------------------
 # Load image
 # -----------------------------------------------------------------------------
-background_image = pygame_menu.baseimage.BaseImage(
+background_image = pygame_menu.BaseImage(
     image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_WALLPAPER
 )
 
@@ -118,7 +114,7 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.8
     )
 
-    button_image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_CARBON_FIBER)
+    button_image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_CARBON_FIBER)
 
     widget_colors.add_button('Opaque color button', None,
                              background_color=(100, 100, 100))

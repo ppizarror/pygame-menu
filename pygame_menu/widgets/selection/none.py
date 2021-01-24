@@ -33,7 +33,7 @@ __all__ = ['NoneSelection']
 
 import pygame
 from pygame_menu.widgets.core import Selection
-from pygame_menu.custom_types import TYPE_CHECKING
+from pygame_menu._custom_types import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame_menu.widgets.core import Widget

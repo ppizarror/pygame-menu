@@ -32,11 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ScrollBar']
 
 import pygame
-from pygame_menu.custom_types import NumberType
+from pygame_menu._custom_types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 import pygame_menu.locals as _locals
-from pygame_menu.custom_types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, \
+from pygame_menu._custom_types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, \
     CallbackType, Union
 
 
@@ -140,28 +140,28 @@ class ScrollBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding: PaddingType) -> None:
-        pass
+    def set_padding(self, padding: PaddingType) -> 'Widget':
+        return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> None:
-        pass
+                      smooth: bool = True) -> 'Widget':
+        return self
 
     def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> None:
-        pass
+                       smooth: bool = True) -> 'Widget':
+        return self
 
-    def rotate(self, angle: NumberType) -> None:
-        pass
+    def rotate(self, angle: NumberType) -> 'Widget':
+        return self
 
-    def flip(self, x: bool, y: bool) -> None:
-        pass
+    def flip(self, x: bool, y: bool) -> 'Widget':
+        return self
 
     def _apply_size_changes(self) -> None:
         """
@@ -237,7 +237,7 @@ class ScrollBar(Widget):
 
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self._rect.size, self._slider_rect.x, self._slider_rect.y,
-                                         self._slider_rect.width, self._slider_rect.height, self.visible):
+                                         self._slider_rect.width, self._slider_rect.height, self._visible):
             return True
 
         self._surface = make_surface(*self._rect.size)

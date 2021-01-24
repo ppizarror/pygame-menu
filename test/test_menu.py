@@ -193,8 +193,8 @@ class MenuTest(unittest.TestCase):
         sel1 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
         sel2 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
         play1 = menu.add_button('Play', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_LEFT)
-        play1.set_float(True)
         play2 = menu.add_button('Play 2', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_RIGHT)
+        play2.set_float()
         hidden = menu.add_button('Hidden', None, font_size=100)
         hidden.hide()
         quit2 = menu.add_button('Quit', pygame_menu.events.EXIT)
@@ -251,6 +251,52 @@ class MenuTest(unittest.TestCase):
         menu.render()
         self.assertEqual(menu.get_height(widget=True), img.get_height() + btn.get_height() + margin)
         self.assertEqual(int((menu.get_height(inner=True) - menu.get_height(widget=True)) / 2), menu._widget_offset[1])
+
+        # Test alternating float
+        # b1,b2
+        # b3
+        # b4,b5,b6
+        # b7
+        menu = MenuUtils.generic_menu()
+        b1 = menu.add_button('b1', None)
+        b2 = menu.add_button('b2', None).set_float()
+        b3 = menu.add_button('b3', None)
+        b4 = menu.add_button('b4', None)
+        b5 = menu.add_button('b5', None).set_float()
+        b6 = menu.add_button('b6', None).set_float()
+        b7 = menu.add_button('b37', None)
+        self.assertEqual(b1.get_col_row_index(), (0, 0, 0))
+        self.assertEqual(b2.get_col_row_index(), (0, 0, 1))
+        self.assertEqual(b3.get_col_row_index(), (0, 1, 2))
+        self.assertEqual(b4.get_col_row_index(), (0, 2, 3))
+        self.assertEqual(b5.get_col_row_index(), (0, 2, 4))
+        self.assertEqual(b6.get_col_row_index(), (0, 2, 5))
+        self.assertEqual(b7.get_col_row_index(), (0, 3, 6))
+
+        # b1,b2
+        # b3,b5,b6
+        # b7
+        menu.remove_widget(b4)
+
+        self.assertEqual(b1.get_col_row_index(), (0, 0, 0))
+        self.assertEqual(b2.get_col_row_index(), (0, 0, 1))
+        self.assertEqual(b3.get_col_row_index(), (0, 1, 2))
+        self.assertEqual(b4.get_col_row_index(), (-1, -1, -1))
+        self.assertEqual(b5.get_col_row_index(), (0, 1, 3))
+        self.assertEqual(b6.get_col_row_index(), (0, 1, 4))
+        self.assertEqual(b7.get_col_row_index(), (0, 2, 5))
+
+        # b1,b2,b5,b6
+        # b7
+        menu.remove_widget(b3)
+
+        self.assertEqual(b1.get_col_row_index(), (0, 0, 0))
+        self.assertEqual(b2.get_col_row_index(), (0, 0, 1))
+        self.assertEqual(b3.get_col_row_index(), (-1, -1, -1))
+        self.assertEqual(b4.get_col_row_index(), (-1, -1, -1))
+        self.assertEqual(b5.get_col_row_index(), (0, 0, 2))
+        self.assertEqual(b6.get_col_row_index(), (0, 0, 3))
+        self.assertEqual(b7.get_col_row_index(), (0, 1, 4))
 
     def test_attributes(self) -> None:
         """
@@ -1034,28 +1080,28 @@ class MenuTest(unittest.TestCase):
         # Select second button
         self.assertRaises(ValueError, lambda: menu.select_widget(btn2))
         menu.select_widget(btn4)
-        self.assertTrue(btn4.selected)
+        self.assertTrue(btn4.is_selected())
 
         # Move to right, btn6 should be selected
         menu._move_selected_left_right(1)
-        self.assertFalse(btn4.selected)
-        self.assertTrue(btn6.selected)
-        self.assertFalse(btn7.selected)
+        self.assertFalse(btn4.is_selected())
+        self.assertTrue(btn6.is_selected())
+        self.assertFalse(btn7.is_selected())
 
         # Move right, as third column only has 1 widget, that should be selected
         menu._move_selected_left_right(1)
-        self.assertFalse(btn6.selected)
-        self.assertTrue(btn7.selected)
+        self.assertFalse(btn6.is_selected())
+        self.assertTrue(btn7.is_selected())
 
         # Move right, moves from 3 to 1 column, then button 3 should be selected
         menu._move_selected_left_right(1)
-        self.assertFalse(btn7.selected)
-        self.assertTrue(btn3.selected)
+        self.assertFalse(btn7.is_selected())
+        self.assertTrue(btn3.is_selected())
 
         # Set btn4 as floating, then the layout should be
-        # btn3   | btn6
-        # btn4,5 | btn7
-        btn4.set_float(True)
+        # btn3,4 | btn6
+        # btn5   | btn7
+        btn4.set_float()
         menu.render()
         c, r, i = btn3.get_col_row_index()
         self.assertEqual(c, 0)
@@ -1063,7 +1109,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(i, 0)
         c, r, i = btn4.get_col_row_index()
         self.assertEqual(c, 0)
-        self.assertEqual(r, 1)
+        self.assertEqual(r, 0)
         self.assertEqual(i, 1)
         c, r, i = btn5.get_col_row_index()
         self.assertEqual(c, 0)
@@ -1081,6 +1127,10 @@ class MenuTest(unittest.TestCase):
         # Test sizing
         # btn3   | btn6
         # btn4,5 | btn7
+        btn4.set_float(False)
+        btn5.set_float()
+        menu.render()
+
         self.assertEqual(btn3.get_width(apply_selection=True), 65)
         for colw in menu._column_widths:
             self.assertEqual(colw, width / 2)
@@ -1285,6 +1335,34 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(text2.get_value(), 'not epic')
         self.assertEqual(selector.get_index(), 1)
 
+    def test_mainloop_kwargs(self) -> None:
+        """
+        Test menu mainloop kwargs.
+        """
+        test = [False, False]
+
+        def test_accept_menu(m: 'pygame_menu.Menu') -> None:
+            """
+            This method accept menu as argument.
+            """
+            assert isinstance(m, pygame_menu.Menu)
+            test[0] = True
+
+        def test_not_accept_menu() -> None:
+            """
+            This method does not accept menu as argument.
+            """
+            test[1] = True
+
+        menu = MenuUtils.generic_menu()
+        self.assertFalse(test[0])
+        menu.mainloop(surface, test_accept_menu, disable_loop=True)
+        self.assertTrue(test[0])
+        self.assertFalse(test[1])
+        menu.mainloop(surface, test_not_accept_menu, disable_loop=True)
+        self.assertTrue(test[0])
+        self.assertTrue(test[1])
+
     # noinspection PyArgumentList
     def test_invalid_args(self) -> None:
         """
@@ -1332,6 +1410,27 @@ class MenuTest(unittest.TestCase):
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 
+    def test_beforeopen(self) -> None:
+        """
+        Test beforeopen event.
+        """
+        menu = MenuUtils.generic_menu()
+        menu2 = MenuUtils.generic_menu()
+        test = [False]
+
+        def onbeforeopen(menu_from: 'pygame_menu.Menu', menu_to: 'pygame_menu.Menu') -> None:
+            """
+            Before open callback.
+            """
+            self.assertEqual(menu_from, menu)
+            self.assertEqual(menu_to, menu2)
+            test[0] = True
+
+        menu2.set_onbeforeopen(onbeforeopen)
+        self.assertFalse(test[0])
+        menu.add_button('to2', menu2).apply()
+        self.assertTrue(test[0])
+
     def test_focus(self) -> None:
         """
         Test menu focus effect.
@@ -1357,9 +1456,9 @@ class MenuTest(unittest.TestCase):
             self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
 
         # Test cases where the focus must fail
-        btn.selected = False
+        btn._selected = False
         self.assertEqual(None, menu._draw_focus_widget(surface, btn))
-        btn.selected = True
+        btn._selected = True
 
         # Set active false
         btn.active = False
@@ -1379,7 +1478,7 @@ class MenuTest(unittest.TestCase):
         menu._mouse_motion_selection = True
 
         btn.active = True
-        btn.selected = True
+        btn._selected = True
         self.assertNotEqual(None, menu._draw_focus_widget(surface, btn))
 
     def test_visible(self) -> None:
@@ -1389,7 +1488,7 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(title='menu')
         btn1 = menu.add_button('nice', None)
         btn2 = menu.add_button('nice', None)
-        self.assertTrue(btn1.selected)
+        self.assertTrue(btn1.is_selected())
         btn2.hide()
         menu.select_widget(btn1)
 
@@ -1402,8 +1501,8 @@ class MenuTest(unittest.TestCase):
         btn1.hide()
         btn2.hide()
 
-        self.assertFalse(btn1.selected)
-        self.assertFalse(btn2.selected)
+        self.assertFalse(btn1.is_selected())
+        self.assertFalse(btn2.is_selected())
 
         c1, r1, i1 = btn1.get_col_row_index()
         c2, r2, i2 = btn2.get_col_row_index()
@@ -1436,16 +1535,16 @@ class MenuTest(unittest.TestCase):
 
         menu = MenuUtils.generic_menu(title='menu')
         btn = menu.add_button('button', None)
-        self.assertTrue(btn.selected)
+        self.assertTrue(btn.is_selected())
         btn.hide()
 
         # As theres no more visible widgets, index must be -1
         self.assertEqual(menu._index, -1)
-        self.assertFalse(btn.selected)
+        self.assertFalse(btn.is_selected())
         btn.show()
 
         # Widget should be selected, and index must be 0
-        self.assertTrue(btn.selected)
+        self.assertTrue(btn.is_selected())
         self.assertEqual(menu._index, 0)
 
         # Hide button, and set is as unselectable
@@ -1456,7 +1555,7 @@ class MenuTest(unittest.TestCase):
 
         # Now, as widget is not selectable, button should not
         # be selected and index still -1
-        self.assertFalse(btn.selected)
+        self.assertFalse(btn.is_selected())
         self.assertEqual(menu._index, -1)
 
         # Set selectable again
@@ -1544,3 +1643,59 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), widg[0])
         menu_top.update([PygameUtils.middle_rect_click(widg[1].get_rect(), menu, evtype=pygame.FINGERDOWN)])
         self.assertEqual(menu.get_selected_widget(), widg[0])
+
+    def test_floating_pos(self) -> None:
+        """
+        Test floating widgets.
+        """
+        # First, add a widget and test the positioning
+        menu = MenuUtils.generic_menu()
+        btn = menu.add_button('floating', None)
+        self.assertEqual(btn.get_alignment(), pygame_menu.locals.ALIGN_CENTER)
+        expc_pos = (247, 153)
+        if pygame.version.vernum[0] < 2:
+            expc_pos = (247, 152)
+        self.assertEqual(btn.get_position(), expc_pos)
+        btn.set_float()
+        self.assertEqual(btn.get_position(), expc_pos)
+        btn.set_float(menu_render=True)
+        self.assertEqual(btn.get_position(), expc_pos)
+
+        # Auto set pos width if zero
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2])
+        self.assertEqual(len(menu._column_widths), 0)
+        for i in range(6):
+            menu.add_none_widget()
+        self.assertEqual(menu._column_widths, [200, 200, 200])
+
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2], column_min_width=[300, 100, 100])
+        self.assertEqual(len(menu._column_widths), 0)
+        for i in range(6):
+            menu.add_none_widget()
+        # This should be proportional
+        self.assertEqual(menu._column_widths, [360.0, 120.0, 120.0])
+
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2], column_min_width=[600, 600, 600])
+        self.assertEqual(len(menu._column_widths), 0)
+        for i in range(6):
+            menu.add_none_widget()
+        # This should be proportional
+        self.assertEqual(menu._column_widths, [600, 600, 600])
+
+        menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2], column_max_width=[100, None, None])
+        self.assertEqual(len(menu._column_widths), 0)
+        for i in range(6):
+            menu.add_none_widget()
+
+        # This should be proportional
+        self.assertEqual(menu._column_widths, [100, 250, 250])
+
+    def test_surface_cache(self) -> None:
+        """
+        Surface cache tests.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertFalse(menu._widgets_surface_need_update)
+        menu.force_surface_cache_update()
+        menu.force_surface_update()
+        self.assertTrue(menu._widgets_surface_need_update)

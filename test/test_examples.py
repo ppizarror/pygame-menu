@@ -44,6 +44,7 @@ import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
 import pygame_menu.examples.other.scrollbar as scroll_bar
 import pygame_menu.examples.other.scrollbar_area as scroll_area
+import pygame_menu.examples.other.ui_solar_system as ui_solarsystem
 
 
 class ExamplesTest(unittest.TestCase):
@@ -139,4 +140,12 @@ class ExamplesTest(unittest.TestCase):
         Test background image example.
         """
         image_background.main(test=True)
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_other_ui_solar_system() -> None:
+        """
+        Test solar system.
+        """
+        ui_solarsystem.main(test=True)
         test_reset_surface()

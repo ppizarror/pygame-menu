@@ -31,13 +31,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-import datetime
-from random import randrange
-from typing import List, Tuple, Optional
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+import datetime
+from random import randrange
+from typing import List, Tuple, Optional
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -180,7 +180,7 @@ def main(test: bool = False) -> None:
     # -------------------------------------------------------------------------
     # Create menus: Help
     # -------------------------------------------------------------------------
-    help_theme = pygame_menu.themes.Theme(
+    help_theme = pygame_menu.Theme(
         background_color=(30, 50, 107, 190),  # 75% opacity
         title_background_color=(120, 45, 30, 190),
         title_font=pygame_menu.font.FONT_FRANCHISE,

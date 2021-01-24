@@ -20,9 +20,16 @@ build/
 dist/
 
 # Other
+pygame_menu/examples/other/sources/**
 run_gource.bat
 pygame_menu/examples/other/_test.py
 
 # Tox
-pyproject.toml
 tox.ini
+
+# Pyproject
+pyproject_update.py
+pyproject.toml
+
+# Lock file
+*.lock

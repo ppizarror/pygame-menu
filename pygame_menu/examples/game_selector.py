@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['main']
 
-from random import randrange
-from typing import Tuple, Any, Optional, List
-
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
+
+from random import randrange
+from typing import Tuple, Any, Optional, List
 
 # -----------------------------------------------------------------------------
 # Constants and global variables

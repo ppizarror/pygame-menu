@@ -40,6 +40,7 @@ INPUT_INT = 'input-int'
 INPUT_TEXT = 'input-text'
 
 # Position
+POSITION_CENTER = 'position-center'
 POSITION_EAST = 'position-east'
 POSITION_NORTH = 'position-north'
 POSITION_NORTHEAST = 'position-northeast'

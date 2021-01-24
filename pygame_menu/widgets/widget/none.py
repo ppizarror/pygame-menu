@@ -34,13 +34,13 @@ __all__ = ['NoneWidget']
 import pygame
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
-from pygame_menu.custom_types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
+from pygame_menu._custom_types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
     TYPE_CHECKING, Dict, Any, Tuple, CallbackType
 
 if TYPE_CHECKING:
     from pygame_menu.baseimage import BaseImage
     from pygame_menu.sound import Sound
-    from pygame_menu.widgets.core.selection import Selection
+    from pygame_menu.widgets.core import Selection
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -63,19 +63,19 @@ class NoneWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding: PaddingType) -> None:
-        pass
+    def set_padding(self, padding: PaddingType) -> 'Widget':
+        return self
 
-    def set_title(self, title: str) -> None:
-        pass
+    def set_title(self, title: str) -> 'Widget':
+        return self
 
     def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
                  use_transformed_padding: bool = True) -> 'pygame.Rect':
         return pygame.Rect(0, 0, 0, 0)
 
     def set_background_color(self, color: Optional[Union[ColorType, 'BaseImage']],
-                             inflate: Optional[Tuple2IntType] = (0, 0)) -> None:
-        pass
+                             inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
+        return self
 
     def _draw_background_color(self, surface: 'pygame.Surface') -> None:
         pass
@@ -83,8 +83,8 @@ class NoneWidget(Widget):
     def _draw_border(self, surface: 'pygame.Surface') -> None:
         pass
 
-    def set_selection_effect(self, selection: 'Selection') -> None:
-        pass
+    def set_selection_effect(self, selection: 'Selection') -> 'Widget':
+        return self
 
     def apply(self, *args) -> None:
         pass
@@ -98,11 +98,11 @@ class NoneWidget(Widget):
     def _render(self) -> Optional[bool]:
         pass
 
-    def draw_selection(self, surface: pygame.Surface) -> None:
-        pass
+    def draw_selection(self, surface: pygame.Surface) -> 'Widget':
+        return self
 
-    def set_margin(self, x: int, y: int) -> None:
-        pass
+    def set_margin(self, x: int, y: int) -> 'Widget':
+        return self
 
     def _apply_transforms(self) -> None:
         pass
@@ -116,52 +116,52 @@ class NoneWidget(Widget):
                  readonly_selected_color: ColorType,
                  background_color: Optional[ColorType],
                  antialias: bool = True
-                 ) -> None:
-        pass
+                 ) -> 'Widget':
+        return self
 
-    def update_font(self, style: Dict[str, Any]) -> None:
-        pass
+    def update_font(self, style: Dict[str, Any]) -> 'Widget':
+        return self
 
-    def set_position(self, posx: int, posy: int) -> None:
-        pass
+    def set_position(self, posx: int, posy: int) -> 'Widget':
+        return self
 
-    def flip(self, x: bool, y: bool) -> None:
-        pass
+    def flip(self, x: bool, y: bool) -> 'Widget':
+        return self
 
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> None:
-        pass
+                      smooth: bool = True) -> 'Widget':
+        return self
 
     def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> None:
-        pass
+                       smooth: bool = True) -> 'Widget':
+        return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> None:
-        pass
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+        return self
 
-    def translate(self, x: int, y: int) -> None:
-        pass
+    def translate(self, x: int, y: int) -> 'Widget':
+        return self
 
-    def rotate(self, angle: NumberType) -> None:
-        pass
+    def rotate(self, angle: NumberType) -> 'Widget':
+        return self
 
-    def set_alignment(self, align: str) -> None:
-        pass
+    def set_alignment(self, align: str) -> 'Widget':
+        return self
 
-    def select(self, select: bool = True, update_menu: bool = False) -> None:
-        pass
+    def select(self, select: bool = True, update_menu: bool = False) -> 'Widget':
+        return self
 
-    def set_shadow(self, enabled: bool = True, color: bool = None, position=None, offset=None) -> None:
-        pass
+    def set_shadow(self, enabled: bool = True, color: bool = None, position=None, offset=None) -> 'Widget':
+        return self
 
-    def set_sound(self, sound: 'Sound') -> None:
-        pass
+    def set_sound(self, sound: 'Sound') -> 'Widget':
+        return self
 
-    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> None:
-        pass
+    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> 'Widget':
+        return self
 
     def set_value(self, value: Any) -> None:
         pass
@@ -172,11 +172,11 @@ class NoneWidget(Widget):
     def add_update_callback(self, update_callback: CallbackType) -> None:
         pass
 
-    def remove_update_callback(self, callback_id: str) -> None:
-        pass
+    def remove_update_callback(self, callback_id: str) -> 'Widget':
+        return self
 
-    def apply_update_callbacks(self) -> None:
-        pass
+    def apply_update_callbacks(self) -> 'Widget':
+        return self
 
-    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> None:
-        pass
+    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> 'Widget':
+        return self

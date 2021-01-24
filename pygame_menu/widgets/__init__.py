@@ -30,7 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 # Widgets core
-import pygame_menu.widgets.core
+import pygame_menu.widgets.core  # lgtm [py/import-and-import-from]
+from pygame_menu.widgets.core import Widget
 
 # Selection
 from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection, NoneSelection, \

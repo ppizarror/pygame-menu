@@ -60,9 +60,10 @@ from io import BytesIO
 from pathlib import Path
 
 import pygame
-from pygame_menu.utils import assert_vector
-from pygame_menu.custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType
+import pygame_menu.locals as _locals
+from pygame_menu.utils import assert_vector, assert_position
+from pygame_menu._custom_types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
+    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType, Tuple3IntType, Any
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -97,20 +98,25 @@ class BaseImage(object):
     Object that loads an image, stores as a surface, transform it and
     let write the image to an surface.
 
-    :param image_path: Path of the image to be loaded. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
+    :param image_path: Path of the image to be loaded. It can be a string (path, base64), :py:class:`pathlib.Path`, or :py:class:`io.BytesIO`
     :param drawing_mode: Drawing mode of the image
     :param drawing_offset: Offset of the image in drawing method
+    :param drawing_position: Drawing position if mode is ``IMAGE_MODE_SIMPLE``. See :py:mod:`pygame_menu.locals` for valid ``position`` values
     :param load_from_file: Loads the image from the given path
     :param frombase64: If ``True`` consider ``image_path`` as base64 string
     """
+    _angle: NumberType
+    _attributes: Dict[str, Any]
     _drawing_mode: int
     _drawing_offset: Tuple2IntType
+    _drawing_position: str
     _extension: str
     _filename: str
     _filepath: Union[str, 'BytesIO']
     _frombase64: bool
     _last_transform: Tuple[int, int, Optional['pygame.Surface']]
     _original_surface: 'pygame.Surface'
+    _rotated: bool
     _surface: 'pygame.Surface'
     smooth_scaling: bool
 
@@ -118,6 +124,7 @@ class BaseImage(object):
                  image_path: Union[str, 'Path', 'BytesIO'],
                  drawing_mode: int = IMAGE_MODE_FILL,
                  drawing_offset: Vector2NumberType = (0, 0),
+                 drawing_position: str = _locals.POSITION_NORTHWEST,
                  load_from_file: bool = True,
                  frombase64: bool = False
                  ) -> None:
@@ -151,12 +158,19 @@ class BaseImage(object):
         # Drawing mode
         self._drawing_mode = 0
         self._drawing_offset = (0, 0)
+        self._drawing_position = ''
 
         self.set_drawing_mode(drawing_mode)
         self.set_drawing_offset(drawing_offset)
+        self.set_drawing_position(drawing_position)
 
         # Convert from bas64 to bytesio
         if frombase64:
+            if 'base64,' in image_path:  # Remove header of file
+                for i in range(len(image_path)):
+                    if image_path[i] == ',':
+                        image_path = image_path[(i + 1):]
+                        break
             image_path = BytesIO(base64.b64decode(image_path))
 
         # Load the image and store as a surface
@@ -165,7 +179,10 @@ class BaseImage(object):
             self._original_surface = self._surface.copy()
 
         # Other internals
+        self._angle = 0
+        self._attributes = {}
         self._last_transform = (0, 0, None)  # Improves drawing
+        self._rotated = False
         self.smooth_scaling = True  # Uses smooth scaling by default in draw() method
 
     def __copy__(self) -> 'BaseImage':
@@ -185,6 +202,137 @@ class BaseImage(object):
         """
         return self.copy()
 
+    def set_attribute(self, key: str, value: Any) -> 'BaseImage':
+        """
+        Set an attribute value.
+
+        :param key: Key of the attribute
+        :param value: Value of the attribute
+        :return: Self reference
+        """
+        assert isinstance(key, str)
+        self._attributes[key] = value
+        return self
+
+    def get_attribute(self, key: str, default: Any = None) -> Any:
+        """
+        Get an attribute value.
+
+        :param key: Key of the attribute
+        :param default: Value if does not exists
+        :return: Attribute data
+        """
+        assert isinstance(key, str)
+        if not self.has_attribute(key):
+            return default
+        return self._attributes[key]
+
+    def has_attribute(self, key: str) -> bool:
+        """
+        Return ``True`` if the image has the given attribute.
+
+        :param key: Key of the attribute
+        :return: ``True`` if exists
+        """
+        assert isinstance(key, str)
+        return key in self._attributes.keys()
+
+    def remove_attribute(self, key: str) -> 'BaseImage':
+        """
+        Removes the given attribute. Throws ``IndexError`` if given key does not exist.
+
+        :param key: Key of the attribute
+        :return: Self reference
+        """
+        if not self.has_attribute(key):
+            raise IndexError('attribute "{0}" does not exists on baseimage'.format(key))
+        del self._attributes[key]
+        return self
+
+    def crop_rect(self, rect: 'pygame.Rect') -> 'BaseImage':
+        """
+        Crop image from rect.
+
+        :param rect: Crop rect geometry
+        :return: Self reference
+        """
+        self._surface = self.get_crop_rect(rect)
+        return self
+
+    def set_alpha(self, value: Optional[int], flags: int = 0) -> 'BaseImage':
+        """
+        Set the current alpha value for the Surface. When blitting this Surface
+        onto a destination, the pixels will be drawn slightly transparent. The alpha
+        value is an integer from ``0`` to ``255``, ``0`` is fully transparent and
+        ``255`` is fully opaque. If None is passed for the alpha value, then alpha
+        blending will be disabled, including per-pixel alpha.
+
+        This value is different than the per pixel Surface alpha. For a surface with
+        per pixel alpha, blanket alpha is ignored and None is returned.
+
+        For pygame 2.0: per-surface alpha can be combined with per-pixel alpha.
+
+        The optional flags argument can be set to pygame.RLEACCEL to provide better
+        performance on non accelerated displays. An RLEACCEL Surface will be slower
+        to modify, but quicker to blit as a source.
+
+        :param value: Transparency value from ``0`` to ``255``
+        :param flags: Optional flags
+        :return: Self reference
+        """
+        if value is None:
+            self._surface.set_alpha(None)
+            return self
+        assert isinstance(value, int)
+        assert 0 <= value <= 255, 'alpha value must be an integer between 0 and 255'
+        self._surface.set_alpha(value, flags)
+        return self
+
+    def crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'BaseImage':
+        """
+        Crops the image from coordinate *(x, y)*.
+
+        :param x: X position (px) within your image
+        :param y: Y position (px)
+        :param width: Crop width (px)
+        :param height: Crop height (px)
+        :return: Self reference
+        """
+        self._surface = self.get_crop(x, y, width, height)
+        return self
+
+    def get_crop_rect(self, rect: 'pygame.Rect') -> 'pygame.surface':
+        """
+        Get a crop surface of the image from rect.
+
+        :param rect: Crop rect geometry
+        :return: Cropped surface
+        """
+        return self._surface.subsurface(rect)
+
+    def get_crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'pygame.Surface':
+        """
+        Get a crop of the image from coordinate *(x, y)*.
+
+        :param x: X position (px) within your image
+        :param y: Y position (px)
+        :param width: Crop width (px)
+        :param height: Crop height (px)
+        :return: Cropped surface
+        """
+        assert 0 <= x < self.get_width(), 'X position must be between 0 and the image width'
+        assert 0 <= y < self.get_height(), 'Y position must be between 0 and the image width'
+        assert 0 < width <= self.get_width(), 'Width must be greater than zero and less than the image width'
+        assert 0 < height <= self.get_height(), 'Height must be greater than zero and less than the image height'
+        assert (x + width) <= self.get_width(), 'Crop box cannot exceed image width'
+        assert (y + height) <= self.get_height(), 'Crop box cannot exceed image height'
+        rect = pygame.Rect(0, 0, 0, 0)
+        rect.x = x
+        rect.y = y
+        rect.width = width
+        rect.height = height
+        return self.get_crop_rect(rect)
+
     def copy(self) -> 'BaseImage':
         """
         Return a copy of the image.
@@ -198,9 +346,12 @@ class BaseImage(object):
             load_from_file=False,
             frombase64=self._frombase64
         )
+        image._angle = self._angle
         image._surface = self._surface.copy()
         image._original_surface = self._surface.copy()
         image.smooth_scaling = self.smooth_scaling
+        for k in self._attributes.keys():
+            image.set_attribute(k, self._attributes[k])
         return image
 
     def get_path(self) -> Union[str, 'BytesIO']:
@@ -219,18 +370,19 @@ class BaseImage(object):
         """
         return self._drawing_mode
 
-    def set_drawing_mode(self, drawing_mode: int) -> None:
+    def set_drawing_mode(self, drawing_mode: int) -> 'BaseImage':
         """
         Set the image drawing mode.
 
         :param drawing_mode: Drawing mode
-        :return: None
+        :return: Self reference
         """
         assert isinstance(drawing_mode, int)
         assert drawing_mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
                                 IMAGE_MODE_REPEAT_Y, IMAGE_MODE_REPEAT_XY, IMAGE_MODE_SIMPLE], \
             'unknown image drawing mode'
         self._drawing_mode = drawing_mode
+        return self
 
     def get_drawing_offset(self) -> Tuple2IntType:
         """
@@ -240,15 +392,31 @@ class BaseImage(object):
         """
         return self._drawing_offset
 
-    def set_drawing_offset(self, drawing_offset: Vector2NumberType) -> None:
+    def set_drawing_offset(self, offset: Vector2NumberType) -> 'BaseImage':
         """
         Set the image drawing offset.
 
-        :param drawing_offset: Drawing offset tuple *(x, y)*
-        :return: None
+        :param offset: Drawing offset tuple *(x, y)*
+        :return: Self reference
         """
-        assert_vector(drawing_offset, 2)
-        self._drawing_offset = (int(drawing_offset[0]), int(drawing_offset[1]))
+        assert_vector(offset, 2)
+        self._drawing_offset = (int(offset[0]), int(offset[1]))
+        return self
+
+    def set_drawing_position(self, position: str) -> 'BaseImage':
+        """
+        Set the image position.
+
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
+
+        :param position: Image position
+        :return: Self reference
+        """
+        assert_position(position)
+        self._drawing_position = position
+        return self
 
     def get_width(self) -> int:
         """
@@ -274,26 +442,43 @@ class BaseImage(object):
         """
         return self.get_width(), self.get_height()
 
-    def get_at(self, pos: Tuple2NumberType) -> Tuple4IntType:
+    def get_at(self, pos: Tuple2NumberType, ignore_alpha: bool = False) -> Union[Tuple3IntType, Tuple4IntType]:
         """
         Get the color from a certain position in image *(x, y)*.
 
+        ``get_at`` return a copy of the RGBA Color value at the given pixel. If the
+        Surface has no per pixel alpha, then the alpha value will always be 255
+        (opaque). If the pixel position is outside the area of the Surface an
+        ``IndexError`` exception will be raised.
+
+        Getting and setting pixels one at a time is generally too slow to be used
+        in a game or realtime situation. It is better to use methods which operate
+        on many pixels at a time like with the blit, fill and draw methods - or by
+        using pygame.surfarraypygame module for accessing surface pixel data using
+        array interfaces/pygame.PixelArraypygame object for direct pixel access of
+        surfaces.
+
         :param pos: Position in *(x, y)*
+        :param ignore_alpha: If ``True`` returns only the three main channels
         :return: Color
         """
         assert_vector(pos, 2)
-        return self._surface.get_at(pos)
+        color = self._surface.get_at(pos)
+        if ignore_alpha:
+            return color[0], color[1], color[2]
+        return color
 
-    def set_at(self, pos: Tuple2NumberType, color: Union['pygame.Color', str, List[int], ColorType]) -> None:
+    def set_at(self, pos: Tuple2NumberType, color: Union['pygame.Color', str, List[int], ColorType]) -> 'BaseImage':
         """
         Set the color of the *(x, y)* pixel.
 
         :param pos: Position in *(x, y)*
         :param color: Color
-        :return: None
+        :return: Self reference
         """
         assert_vector(pos, 2)
         self._surface.set_at(pos, color)
+        return self
 
     def get_bitsize(self) -> int:
         """
@@ -303,12 +488,15 @@ class BaseImage(object):
         """
         return self._surface.get_bitsize()
 
-    def get_surface(self) -> 'pygame.Surface':
+    def get_surface(self, new: bool = True) -> 'pygame.Surface':
         """
         Return the surface object of the image.
 
+        :param new: Return a new surface, if ``False`` return the same object
         :return: Image surface
         """
+        if new:
+            return self.get_crop_rect(self.get_rect())
         return self._surface
 
     def get_namefile(self) -> str:
@@ -339,21 +527,23 @@ class BaseImage(object):
         im2 = pygame.image.tostring(image._surface, 'RGBA')
         return im1 == im2
 
-    def restore(self) -> None:
+    def restore(self) -> 'BaseImage':
         """
         Restore image to the original surface.
 
-        :return: None
+        :return: Self reference
         """
         self._surface = self._original_surface.copy()
+        return self
 
-    def checkpoint(self) -> None:
+    def checkpoint(self) -> 'BaseImage':
         """
         Updates the original surface to the current surface.
 
-        :return: None
+        :return: Self reference
         """
         self._original_surface = self._surface.copy()
+        return self
 
     def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple4IntType]
                              ) -> 'BaseImage':
@@ -383,6 +573,10 @@ class BaseImage(object):
     def to_bw(self) -> 'BaseImage':
         """
         Converts the image to black and white.
+
+        .. note::
+
+            This function is slow for large images.
 
         :return: Self reference
         """
@@ -444,7 +638,7 @@ class BaseImage(object):
         self._surface = pygame.transform.flip(self._surface, x, y)
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'BaseImage':
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'BaseImage':
         """
         Scale the image to a desired width and height factor.
 
@@ -481,7 +675,7 @@ class BaseImage(object):
         self._surface = pygame.transform.scale2x(self._surface)
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'BaseImage':
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'BaseImage':
         """
         Set the image size to another size.
 
@@ -503,11 +697,14 @@ class BaseImage(object):
         """
         Return the rect of the image.
 
+        ``get_rect`` returns a new rectangle covering the entire surface. This rectangle
+        will always start at *(0, 0)* with a width and height the same size as the image.
+
         :return: Pygame rect object
         """
         return self._surface.get_rect()
 
-    def rotate(self, angle: NumberType) -> 'BaseImage':
+    def rotate(self, angle: NumberType, auto_checkpoint: bool = True) -> 'BaseImage':
         """
         Unfiltered counterclockwise rotation. The angle argument represents degrees
         and can be any floating point value. Negative angle amounts will rotate clockwise.
@@ -519,22 +716,78 @@ class BaseImage(object):
             Otherwise pygame will pick a color that matches the image colorkey or the topleft
             pixel value.
 
+        .. warning::
+
+            Image should be rotated once. If this method is called once the Class rotates
+            the previously checkpointed state. If you wish to rotate the current image use
+            ``checkpoint`` to update the surface. This may increase the image size, because
+            the bounding rectangle of a rotated image is always greater than the bounding
+            rectangle of the original image (except some rotations by multiples of 90 degrees).
+            The image gets distort because of the multiply copies. Each rotation generates
+            a small error (inaccuracy). The sum of the errors is growing and the images
+            decays.
+
         :param angle: Rotation angle (degrees ``0-360``)
+        :param auto_checkpoint: Checkpoint after first rotation to avoid rotating the same image. If multiple rotations are applied to the same surface it will increase its size very fast because of innacuracies
         :return: Self reference
         """
         assert isinstance(angle, (int, float))
+        if angle == self._angle:
+            return self
+        if not self._rotated and auto_checkpoint:
+            self.checkpoint()
+        if self._rotated:
+            self.restore()
+        self._rotated = True
         self._surface = pygame.transform.rotate(self._surface, angle)
+        self._angle = angle % 360
         return self
 
+    def get_angle(self) -> NumberType:
+        """
+        Return the image angle.
+
+        :return: Angle in degrees
+        """
+        return self._angle
+
+    def _get_position_delta(self) -> Tuple2IntType:
+        """
+        Return the delta from drawing position.
+
+        :return: Delta position in *(x, y)*
+        """
+        rect = self.get_rect()
+        if self._drawing_position == _locals.POSITION_NORTHWEST:
+            return rect.topleft
+        elif self._drawing_position == _locals.POSITION_NORTH:
+            return rect.midtop
+        elif self._drawing_position == _locals.POSITION_NORTHEAST:
+            return rect.topright
+        elif self._drawing_position == _locals.POSITION_WEST:
+            return rect.midleft
+        elif self._drawing_position == _locals.POSITION_CENTER:
+            return rect.center
+        elif self._drawing_position == _locals.POSITION_EAST:
+            return rect.midright
+        elif self._drawing_position == _locals.POSITION_SOUTHWEST:
+            return rect.bottomleft
+        elif self._drawing_position == _locals.POSITION_SOUTH:
+            return rect.midbottom
+        elif self._drawing_position == _locals.POSITION_SOUTHEAST:
+            return rect.bottomright
+        else:
+            raise ValueError('unknown drawing position')
+
     def draw(self, surface: 'pygame.Surface', area: Optional['pygame.Rect'] = None,
-             position: Tuple2IntType = (0, 0)) -> None:
+             position: Tuple2IntType = (0, 0)) -> 'BaseImage':
         """
         Draw the image in a given surface.
 
         :param surface: Pygame surface object
         :param area: Area to draw; if ``None`` the image will be drawn on entire surface
         :param position: Position to draw in *(x, y)*
-        :return: None
+        :return: Self reference
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(area, (pygame.Rect, type(None)))
@@ -542,6 +795,15 @@ class BaseImage(object):
 
         if area is None:
             area = surface.get_rect()
+
+        # Compute offset based on drawing offset + drawing position
+        px, py = self._get_position_delta()
+        if self._drawing_mode != IMAGE_MODE_SIMPLE:
+            px = 0
+            py = 0
+
+        offx = self._drawing_offset[0] - px
+        offy = self._drawing_offset[1] - py
 
         if self._drawing_mode == IMAGE_MODE_FILL:
 
@@ -559,8 +821,8 @@ class BaseImage(object):
             surface.blit(
                 surf,
                 (
-                    self._drawing_offset[0] + position[0],
-                    self._drawing_offset[1] + position[1]
+                    offx + position[0],
+                    offy + position[1]
                 ))
 
         elif self._drawing_mode == IMAGE_MODE_REPEAT_X:
@@ -573,8 +835,8 @@ class BaseImage(object):
                 surface.blit(
                     self._surface,
                     (
-                        x * w + self._drawing_offset[0] + position[0],
-                        self._drawing_offset[1] + position[1]
+                        x * w + offx + position[0],
+                        offy + position[1]
                     ),
                     area
                 )
@@ -589,8 +851,8 @@ class BaseImage(object):
                 surface.blit(
                     self._surface,
                     (
-                        0 + self._drawing_offset[0] + position[0],
-                        y * h + self._drawing_offset[1] + position[1]
+                        0 + offx + position[0],
+                        y * h + offy + position[1]
                     ),
                     area
                 )
@@ -607,8 +869,8 @@ class BaseImage(object):
                     surface.blit(
                         self._surface,
                         (
-                            x * w + self._drawing_offset[0] + position[0],
-                            y * h + self._drawing_offset[1] + position[1]
+                            x * w + offx + position[0],
+                            y * h + offy + position[1]
                         ),
                         area
                     )
@@ -620,8 +882,8 @@ class BaseImage(object):
             surface.blit(
                 self._surface,
                 (
-                    float(sw - w) / 2 + self._drawing_offset[0] + position[0],
-                    float(hw - h) / 2 + self._drawing_offset[1] + position[1]
+                    float(sw - w) / 2 + offx + position[0],
+                    float(hw - h) / 2 + offy + position[1]
                 ),
                 area
             )
@@ -631,8 +893,10 @@ class BaseImage(object):
             surface.blit(
                 self._surface,
                 (
-                    self._drawing_offset[0] + position[0],
-                    self._drawing_offset[1] + position[1]
+                    offx + position[0],
+                    offy + position[1]
                 ),
                 area
             )
+
+        return self

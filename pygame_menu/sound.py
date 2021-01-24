@@ -68,7 +68,7 @@ from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
-from pygame_menu.custom_types import NumberType, Dict, Any, Optional, Union
+from pygame_menu._custom_types import NumberType, Dict, Any, Optional, Union
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
@@ -338,16 +338,17 @@ class Sound(object):
         }
         return True
 
-    def load_example_sounds(self, volume: float = 0.5) -> None:
+    def load_example_sounds(self, volume: float = 0.5) -> 'Sound':
         """
         Load the example sounds provided by the package.
 
         :param volume: Volume of the sound, ``(0-1)``
-        :return: None
+        :return: Self reference
         """
         assert isinstance(volume, float)
         for sound in range(len(SOUND_TYPES)):
             self.set_sound(SOUND_TYPES[sound], SOUND_EXAMPLES[sound], volume=volume)
+        return self
 
     def _play_sound(self, sound: Optional[Dict[str, Any]]) -> bool:
         """
@@ -367,9 +368,9 @@ class Sound(object):
         # Play the sound
         soundtime = time.time()
 
-        # If the previous sound is the same and has not ended (max 20% overlap)
+        # If the previous sound is the same and has not ended (max 10% overlap)
         if sound['type'] != self._last_play or \
-                soundtime - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
+                soundtime - self._last_time >= 0.1 * sound['length'] or self._uniquechannel:
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()
@@ -386,119 +387,131 @@ class Sound(object):
         self._last_time = soundtime
         return True
 
-    def play_click_mouse(self) -> None:
+    def play_click_mouse(self) -> 'Sound':
         """
         Play click mouse sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_CLICK_MOUSE])
+        return self
 
-    def play_error(self) -> None:
+    def play_error(self) -> 'Sound':
         """
         Play error sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_ERROR])
+        return self
 
-    def play_event(self) -> None:
+    def play_event(self) -> 'Sound':
         """
         Play event sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_EVENT])
+        return self
 
-    def play_event_error(self) -> None:
+    def play_event_error(self) -> 'Sound':
         """
         Play event error sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_EVENT_ERROR])
+        return self
 
-    def play_key_add(self) -> None:
+    def play_key_add(self) -> 'Sound':
         """
         Play key addition sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_ADDITION])
+        return self
 
-    def play_key_del(self) -> None:
+    def play_key_del(self) -> 'Sound':
         """
         Play key deletion sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_KEY_DELETION])
+        return self
 
-    def play_open_menu(self) -> None:
+    def play_open_menu(self) -> 'Sound':
         """
         Play open Menu sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_OPEN_MENU])
+        return self
 
-    def play_close_menu(self) -> None:
+    def play_close_menu(self) -> 'Sound':
         """
         Play close Menu sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_CLOSE_MENU])
+        return self
 
-    def play_widget_selection(self) -> None:
+    def play_widget_selection(self) -> 'Sound':
         """
         Play widget selection sound.
 
-        :return: None
+        :return: Self reference
         """
         self._play_sound(self._sound[SOUND_TYPE_WIDGET_SELECTION])
+        return self
 
-    def stop(self) -> None:
+    def stop(self) -> 'Sound':
         """
         Stop the the channel.
 
-        :return: None
+        :return: Self reference
         """
         channel = self.get_channel()
         if channel is None:  # The sound can't be played because all channels are busy
-            return
+            return self
         try:
             channel.stop()
         except pygame_error:
             pass
+        return self
 
-    def pause(self) -> None:
+    def pause(self) -> 'Sound':
         """
         Pause the channel.
 
-        :return: None
+        :return: Self reference
         """
         channel = self.get_channel()
         if channel is None:  # The sound can't be played because all channels are busy
-            return
+            return self
         try:
             channel.pause()
         except pygame_error:
             pass
+        return self
 
-    def unpause(self) -> None:
+    def unpause(self) -> 'Sound':
         """
         Unpause channel.
 
-        :return: None
+        :return: Self reference
         """
         channel = self.get_channel()
         if channel is None:  # The sound can't be played because all channels are busy
-            return
+            return self
         try:
             channel.unpause()
         except pygame_error:
             pass
+        return self
 
     def get_channel_info(self) -> Dict[str, Any]:
         """

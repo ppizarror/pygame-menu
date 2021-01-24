@@ -48,7 +48,7 @@ import functools
 
 import pygame
 import pygame_menu.locals as _locals
-from pygame_menu.custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
+from pygame_menu._custom_types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple
 
 
@@ -111,7 +111,8 @@ def assert_position(position: str) -> None:
     assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
                         _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
                         _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST], \
+                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST,
+                        _locals.POSITION_CENTER], \
         'invalid position value "{0}"'.format(position)
 
 

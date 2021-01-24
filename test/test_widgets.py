@@ -81,7 +81,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget copy.
         """
-        widget = pygame_menu.widgets.core.widget.Widget()
+        widget = pygame_menu.widgets.Widget()
         self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.copy(widget))
         self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.deepcopy(widget))
 
@@ -179,7 +179,7 @@ class WidgetsTest(unittest.TestCase):
         w.draw(surface)
         self.assertEqual(w._background_inflate[0], 10)
         self.assertEqual(w._background_inflate[1], 10)
-        w.set_background_color(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
+        w.set_background_color(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES))
         w.draw(surface)
 
     def test_transform(self) -> None:
@@ -212,7 +212,7 @@ class WidgetsTest(unittest.TestCase):
                                          ('The final mode', 3)]),
             self.menu.add_color_input('color', 'rgb'),
             self.menu.add_label('nice'),
-            self.menu.add_image(pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
+            self.menu.add_image(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
             self.menu.add_vertical_margin(10),
             self.menu.add_text_input('nice')
         ]
@@ -236,6 +236,10 @@ class WidgetsTest(unittest.TestCase):
         w = self.menu.add_label('text')
         x, y = w.get_position()
         w.translate(10, 10)
+        xt, yt = w.get_position()
+        self.assertNotEqual(xt - x, 10)
+        self.assertNotEqual(yt - y, 10)
+        self.menu.render()
         xt, yt = w.get_position()
         self.assertEqual(xt - x, 10)
         self.assertEqual(yt - y, 10)
@@ -317,11 +321,11 @@ class WidgetsTest(unittest.TestCase):
         w = self.menu.add_label('Text')
         lasthash = w._last_render_hash
         w.hide()
-        self.assertFalse(w.visible)
+        self.assertFalse(w.is_visible())
         self.assertNotEqual(w._last_render_hash, lasthash)
         lasthash = w._last_render_hash
         w.show()
-        self.assertTrue(w.visible)
+        self.assertTrue(w.is_visible())
         self.assertNotEqual(w._last_render_hash, lasthash)
 
         w = Button('title')
@@ -415,7 +419,7 @@ class WidgetsTest(unittest.TestCase):
         self.menu.draw(surface)
 
         selector.draw(surface)
-        selector.selected = False
+        selector._selected = False
         selector.draw(surface)
 
         # Test events
@@ -733,9 +737,9 @@ class WidgetsTest(unittest.TestCase):
         # Create text input widget
         textinput = self.menu.add_text_input('title', input_underline='_')
         textinput.set_value('new_value')  # No error
-        textinput.selected = False
+        textinput._selected = False
         textinput.draw(surface)
-        textinput.selected = True
+        textinput._selected = True
         textinput.draw(surface)
         self.assertEqual(textinput.get_value(), 'new_value')
         textinput.clear()
@@ -745,9 +749,9 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(ValueError,  # Password cannot be set
                           lambda: passwordinput.set_value('new_value'))
         passwordinput.set_value('')  # No error
-        passwordinput.selected = False
+        passwordinput._selected = False
         passwordinput.draw(surface)
-        passwordinput.selected = True
+        passwordinput._selected = True
         passwordinput.draw(surface)
         self.assertEqual(passwordinput.get_value(), '')
         passwordinput.clear()
@@ -949,7 +953,7 @@ class WidgetsTest(unittest.TestCase):
             menu.add_button('eee', None),  # widget
             [1, 2, 3],  # list
             (1, 2, 3),  # tuple
-            pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
+            pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
         ]
         for i in invalid:
             self.assertRaises(ValueError, lambda: menu.add_button('b1', i))
@@ -1154,11 +1158,11 @@ class WidgetsTest(unittest.TestCase):
         w = menu.add_vertical_margin(999)
         w._render()
         self.assertEqual(w.get_rect().width, 0)
-        self.assertEqual(w.get_rect().height, 0)
+        self.assertEqual(w.get_rect().height, 999)
         self.assertEqual(w.update([]), False)
         self.assertEqual(w._font_size, 0)
         self.assertEqual(w.get_margin()[0], 0)
-        self.assertEqual(w.get_margin()[1], 999)
+        self.assertEqual(w.get_margin()[1], 0)
         w.draw(surface)
 
     def test_none(self) -> None:
@@ -1198,7 +1202,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(r.height, 0)
 
         self.assertFalse(wid.is_selectable)
-        self.assertTrue(wid.visible)
+        self.assertTrue(wid.is_visible())
 
         wid.apply()
         wid.change()
@@ -1217,9 +1221,9 @@ class WidgetsTest(unittest.TestCase):
         wid.draw_selection(surface)
 
         wid.hide()
-        self.assertFalse(wid.visible)
+        self.assertFalse(wid.is_visible())
         wid.show()
-        self.assertTrue(wid.visible)
+        self.assertTrue(wid.is_visible())
 
         wid.set_value('epic')
         self.assertRaises(ValueError, lambda: wid.get_value())
@@ -1263,7 +1267,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Selection
         wid.select()
-        self.assertFalse(wid.selected)
+        self.assertFalse(wid.is_selected())
         self.assertFalse(wid.is_selectable)
 
         # noinspection PyUnusedLocal
@@ -1280,7 +1284,7 @@ class WidgetsTest(unittest.TestCase):
 
         # noinspection PyTypeChecker
         wid.set_sound(None)
-        self.assertNotEqual(wid.sound, None)
+        self.assertNotEqual(wid._sound, None)
 
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)

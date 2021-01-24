@@ -51,7 +51,7 @@ class BaseImageTest(unittest.TestCase):
         Test image load with pathlib.
         """
         pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.baseimage.BaseImage(pathimg)
+        image = pygame_menu.BaseImage(pathimg)
         image.draw(surface)
         self.assertEqual(image.get_path(), str(pathimg))
 
@@ -96,7 +96,7 @@ class BaseImageTest(unittest.TestCase):
                 'AAs5ktbWYHXdpBN7oFin5aoTcdARAYutCnHtEERJ3qQo960xPA81MdwgcqsEDYVaABEpD97CnQgArITgK1l33sYy+72+NudrGfXe1in' \
                 'zveVVABFSQBYIgIBAA7'
         output = io.BytesIO(base64.b64decode(photo))
-        image = pygame_menu.baseimage.BaseImage(output)
+        image = pygame_menu.BaseImage(output)
         self.assertEqual(image.get_width(), 70)
         self.assertEqual(image.get_height(), 70)
         self.assertEqual(image.get_bitsize(), 8)
@@ -105,7 +105,7 @@ class BaseImageTest(unittest.TestCase):
         self.assertEqual(image.get_extension(), 'BytesIO')
 
         # Assemble new from base64 bs
-        image2 = pygame_menu.baseimage.BaseImage(photo, frombase64=True)
+        image2 = pygame_menu.BaseImage(photo, frombase64=True)
         self.assertTrue(image.equals(image2))
         self.assertEqual(image2.get_extension(), 'base64')
 
@@ -114,26 +114,94 @@ class BaseImageTest(unittest.TestCase):
         if pygame.version.vernum[0] >= 2:
             self.assertTrue(image2.equals(image3))
 
+    def test_rotation(self) -> None:
+        """
+        Test rotation.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image.rotate(360)
+        prev_size = image.get_size()
+        self.assertEqual(prev_size, (256, 256))
+        isum = 0
+        for i in range(91):
+            image.rotate(isum)
+            isum += 1  # Rotate the image many angles
+        self.assertEqual(image.get_size(), prev_size)
+
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+        self.assertEqual(image.get_size(), (640, 505))
+        image.rotate(90)
+        self.assertEqual(image.get_size(), (505, 640))
+        image.rotate(180)
+        self.assertEqual(image.get_size(), (640, 505))
+        image.rotate(270)
+        self.assertEqual(image.get_size(), (505, 640))
+        image.rotate(360)
+        self.assertEqual(image.get_size(), (640, 505))
+
+        self.assertEqual(image.get_angle(), 0)
+        image.rotate(60)
+        self.assertEqual(image.get_size(), (757, 806))
+        self.assertEqual(image.get_angle(), 60)
+        image.rotate(160)
+        self.assertEqual(image.get_size(), (774, 693))
+        self.assertEqual(image.get_angle(), 160)
+        image.rotate(180)
+        self.assertEqual(image.get_angle(), 180)
+        self.assertEqual(image.get_size(), (640, 505))
+
+    def test_crop(self) -> None:
+        """
+        Test baseimage crop.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        imagec = image.get_crop(0, 0, 10, 10)
+        imagecr = image.get_crop_rect(pygame.Rect(0, 0, 10, 10))
+        im1 = pygame.image.tostring(imagec, 'RGBA')
+        im2 = pygame.image.tostring(imagecr, 'RGBA')
+        self.assertTrue(im1 == im2)
+
+        # Save the whole image crop
+        w, h = image.get_size()
+        image2 = image.copy()
+        image2.crop(0, 0, w, h)
+        self.assertTrue(image2.equals(image))
+
+        # Crop from rect
+        image.crop_rect(pygame.Rect(0, 0, 8, 8))
+        self.assertEqual(image.get_size(), (8, 8))
+
+    # noinspection PyTypeChecker
+    def test_alpha(self) -> None:
+        """
+        Test alpha modes.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertRaises(AssertionError, lambda: image.set_alpha(0.5))
+        self.assertRaises(AssertionError, lambda: image.set_alpha(-1))
+        self.assertRaises(AssertionError, lambda: image.set_alpha(267))
+        image.set_alpha(None)
+
     def test_modes(self) -> None:
         """
         Test drawing modes.
         """
         for mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, IMAGE_MODE_REPEAT_XY,
                      IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE]:
-            image = pygame_menu.baseimage.BaseImage(
+            image = pygame_menu.BaseImage(
                 pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
                 drawing_mode=mode
             )
             image.draw(surface)
 
         # Attempt to create an invalid drawing mode
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage(
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=-1
         ))
 
         # Get drawing mode
-        image = pygame_menu.baseimage.BaseImage(
+        image = pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=IMAGE_MODE_CENTER
         )
@@ -143,7 +211,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Test drawing offset.
         """
-        image = pygame_menu.baseimage.BaseImage(
+        image = pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=IMAGE_MODE_CENTER
         )
@@ -155,7 +223,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Test path.
         """
-        image = pygame_menu.baseimage.BaseImage(
+        image = pygame_menu.BaseImage(
             pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
             drawing_mode=IMAGE_MODE_CENTER
         )
@@ -165,16 +233,16 @@ class BaseImageTest(unittest.TestCase):
         """
         Validate a image extension.
         """
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('invalid.pnng'))
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('invalid'))
-        self.assertRaises(AssertionError, lambda: pygame_menu.baseimage.BaseImage('file_invalid.png'))
-        pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage('invalid.pnng'))
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage('invalid'))
+        self.assertRaises(AssertionError, lambda: pygame_menu.BaseImage('file_invalid.png'))
+        pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
     def test_image_properties(self) -> None:
         """
         Test the getters of the image object.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         w, h = image.get_size()
         self.assertEqual(w, 256)
         self.assertEqual(h, 256)
@@ -185,8 +253,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the file operations.
         """
-        image_original = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertTrue(image.equals(image_original))
 
         # Flip
@@ -207,7 +275,7 @@ class BaseImageTest(unittest.TestCase):
         """
         Test copy image.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image_copied = image.copy()
         self.assertTrue(image.equals(image_copied))
         image_copy = copy.copy(image)
@@ -219,8 +287,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the image transformation.
         """
-        image_original = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
         # Scale
         image.scale(0.5, 0.5)
@@ -237,6 +305,7 @@ class BaseImageTest(unittest.TestCase):
         # Set size
         image.restore()
         image.resize(100, 50)
+        image.resize(100, 50)  # This should do nothing
         w, h = image.get_size()
         self.assertEqual(w, 100)
         self.assertEqual(h, 50)
@@ -245,7 +314,7 @@ class BaseImageTest(unittest.TestCase):
 
         # As the example is not 24/32 bits smooth scale fails, but baseimage should notice that
         imagc = image.copy()
-        imagc.resize(100, 100, True)
+        imagc.resize(100, 100)
 
         # Get rect
         rect = image.get_rect()
@@ -279,11 +348,62 @@ class BaseImageTest(unittest.TestCase):
         image.set_at((10, 10), (0, 0, 0))
         # self.assertEqual(image.get_at((10, 10)), (0, 0, 0, 255))
 
+    def test_drawing_position(self) -> None:
+        """
+        Test drawing position.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_offset=(100, 100))
+        w, h = image.get_size()
+        image.set_drawing_position(pygame_menu.locals.POSITION_NORTHWEST)
+        self.assertEqual(image._get_position_delta(), (0, 0))
+        image.set_drawing_position(pygame_menu.locals.POSITION_NORTH)
+        self.assertEqual(image._get_position_delta(), (w / 2, 0))
+        image.set_drawing_position(pygame_menu.locals.POSITION_NORTHEAST)
+        self.assertEqual(image._get_position_delta(), (w, 0))
+        image.set_drawing_position(pygame_menu.locals.POSITION_WEST)
+        self.assertEqual(image._get_position_delta(), (0, h / 2))
+        image.set_drawing_position(pygame_menu.locals.POSITION_CENTER)
+        self.assertEqual(image._get_position_delta(), (w / 2, h / 2))
+        image.set_drawing_position(pygame_menu.locals.POSITION_EAST)
+        self.assertEqual(image._get_position_delta(), (w, h / 2))
+        image.set_drawing_position(pygame_menu.locals.POSITION_SOUTHWEST)
+        self.assertEqual(image._get_position_delta(), (0, h))
+        image.set_drawing_position(pygame_menu.locals.POSITION_SOUTH)
+        self.assertEqual(image._get_position_delta(), (w / 2, h))
+        image.set_drawing_position(pygame_menu.locals.POSITION_SOUTHEAST)
+        self.assertEqual(image._get_position_delta(), (w, h))
+        self.assertRaises(AssertionError, lambda: image.set_drawing_position(pygame_menu.locals.ALIGN_LEFT))
+
+    def test_attributes(self) -> None:
+        """
+        Test image attributes.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_offset=(100, 100))
+        self.assertFalse(image.has_attribute('epic'))
+        self.assertRaises(IndexError, lambda: image.remove_attribute('epic'))
+        image.set_attribute('epic', True)
+        self.assertTrue(image.has_attribute('epic'))
+        self.assertTrue(image.get_attribute('epic'))
+        image.set_attribute('epic', False)
+        self.assertFalse(image.get_attribute('epic'))
+        image.remove_attribute('epic')
+        self.assertFalse(image.has_attribute('epic'))
+        self.assertEqual(image.get_attribute('epic', 420), 420)
+        image.set_attribute('angle', 0)
+
+        image2 = image.copy()
+        self.assertTrue(image2.has_attribute('angle'))
+        self.assertEqual(image2.get_attribute('angle'), 0)
+        self.assertEqual(image.get_attribute('angle'), 0)
+        image2.set_attribute('angle', 1)
+        self.assertEqual(image2.get_attribute('angle'), 1)
+        self.assertEqual(image.get_attribute('angle'), 0)
+
     def test_cache(self) -> None:
         """
         Cache draw test.
         """
-        image = pygame_menu.baseimage.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertEqual(image._last_transform[2], None)
 
         image.set_drawing_mode(pygame_menu.baseimage.IMAGE_MODE_FILL)
