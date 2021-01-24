@@ -1699,3 +1699,21 @@ class MenuTest(unittest.TestCase):
         menu.force_surface_cache_update()
         menu.force_surface_update()
         self.assertTrue(menu._widgets_surface_need_update)
+
+    def test_compatibility_addition(self) -> None:
+        """
+        Test compatibility for addition methods.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertIsInstance(menu.add_button('title', None), pygame_menu.widgets.Button)
+        self.assertIsInstance(menu.add_color_input('title', 'rgb'), pygame_menu.widgets.ColorInput)
+        self.assertIsInstance(menu.add_image(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU),
+                              pygame_menu.widgets.Image)
+        self.assertIsInstance(menu.add_label('title'), pygame_menu.widgets.Label)
+        self.assertIsInstance(menu.add_selector(title='epic selector', items=[('1', '3'), ('2', '4')]),
+                              pygame_menu.widgets.Selector)
+        self.assertIsInstance(menu.add_text_input(title='text', default='the default text'),
+                              pygame_menu.widgets.TextInput)
+        self.assertIsInstance(menu.add_vertical_margin(10), pygame_menu.widgets.VMargin)
+        self.assertIsInstance(menu.add_generic_widget(pygame_menu.widgets.NoneWidget()),
+                              pygame_menu.widgets.NoneWidget)

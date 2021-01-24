@@ -745,7 +745,7 @@ class Menu(object):
 
     def add_label(self, *args, **kwargs) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
         """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.image` instead. This
+        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.label` instead. This
         method shorthand will be removed in version 4.1.
         """
         self._warn_widgetmanager('add_label', 'label')
@@ -758,14 +758,6 @@ class Menu(object):
         """
         self._warn_widgetmanager('add_selector', 'selector')
         return self.add.selector(*args, **kwargs)
-
-    def add_toggle_switch(self, *args, **kwargs) -> 'pygame_menu.widgets.ToggleSwitch':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.toggle_switch` instead. This
-        method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_toggle_switch', 'toggle_switch')
-        return self.add.toggle_switch(*args, **kwargs)
 
     def add_text_input(self, *args, **kwargs) -> 'pygame_menu.widgets.TextInput':
         """
@@ -782,14 +774,6 @@ class Menu(object):
         """
         self._warn_widgetmanager('add_vertical_margin', 'vertical_margin')
         return self.add.vertical_margin(*args, **kwargs)
-
-    def add_none_widget(self, *args, **kwargs) -> 'pygame_menu.widgets.NoneWidget':
-        """
-        Use :py:meth:`pygame_menu._widgetmanager.WidgetManager.none_widget` instead. This
-        method shorthand will be removed in version 4.1.
-        """
-        self._warn_widgetmanager('add_none_widget', 'none_widget')
-        return self.add.none_widget(*args, **kwargs)
 
     def add_generic_widget(self, *args, **kwargs) -> 'pygame_menu.widgets.Widget':
         """

@@ -154,4 +154,4 @@ Menu API
 
 .. autoclass:: Menu
     :members:
-    :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin, add_generic_widget, add_none_widget, add_toggle_switch
+    :exclude-members: add_button, add_color_input, add_image, add_label, add_text_input, add_selector, add_vertical_margin, add_generic_widget
