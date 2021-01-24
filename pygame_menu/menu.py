@@ -93,7 +93,7 @@ class Menu(object):
 
     .. code-block:: python
 
-        onbeforeopen(current Menu, next Menu)
+        onbeforeopen(current Menu <from>, next Menu <to>)
 
     .. note::
 
@@ -3354,8 +3354,8 @@ class Menu(object):
         self._top._prev = [self._top._prev, current]
 
         # Call event
-        if self._onbeforeopen is not None:
-            self._onbeforeopen(current, menu)
+        if menu._onbeforeopen is not None:
+            menu._onbeforeopen(current, menu)
 
         # Select the first widget
         self._select(0, 1)

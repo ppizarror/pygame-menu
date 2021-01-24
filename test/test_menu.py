@@ -1410,6 +1410,27 @@ class MenuTest(unittest.TestCase):
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 
+    def test_beforeopen(self) -> None:
+        """
+        Test beforeopen event.
+        """
+        menu = MenuUtils.generic_menu()
+        menu2 = MenuUtils.generic_menu()
+        test = [False]
+
+        def onbeforeopen(menu_from: 'pygame_menu.Menu', menu_to: 'pygame_menu.Menu') -> None:
+            """
+            Before open callback.
+            """
+            self.assertEqual(menu_from, menu)
+            self.assertEqual(menu_to, menu2)
+            test[0] = True
+
+        menu2.set_onbeforeopen(onbeforeopen)
+        self.assertFalse(test[0])
+        menu.add_button('to2', menu2).apply()
+        self.assertTrue(test[0])
+
     def test_focus(self) -> None:
         """
         Test menu focus effect.
