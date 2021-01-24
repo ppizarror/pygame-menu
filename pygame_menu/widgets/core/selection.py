@@ -130,13 +130,12 @@ class Selection(object):
                            int(rect.width + self.margin_left + self.margin_right),
                            int(rect.height + self.margin_top + self.margin_bottom))
 
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> None:
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         """
         Draw the selection.
 
         :param surface: Surface to draw
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.core.Widget`
-        :return: None
+        :return: Self reference
         """
         raise NotImplementedError('override is mandatory')

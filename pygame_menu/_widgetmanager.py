@@ -38,12 +38,10 @@ from pathlib import Path
 from uuid import uuid4
 
 import pygame_menu
-import pygame_menu.baseimage as _baseimage
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
-import pygame_menu.widgets as _widgets
 
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.textinput import TextInputModeType
@@ -55,16 +53,12 @@ from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackTyp
 class WidgetManager(object):
     """
     Add/Remove widgets to the Menu.
+
+    :param menu: Menu reference
     """
     _menu: 'pygame_menu.Menu'
 
     def __init__(self, menu: 'pygame_menu.Menu') -> None:
-        """
-        Constructor.
-
-        :param menu: Menu reference
-        :type menu: Menu
-        """
         self._menu = menu
 
     @property
@@ -92,7 +86,7 @@ class WidgetManager(object):
         background_is_color = False
         background_color = kwargs.pop('background_color', self._theme.widget_background_color)
         if background_color is not None:
-            if isinstance(background_color, _baseimage.BaseImage):
+            if isinstance(background_color, pygame_menu.BaseImage):
                 pass
             else:
                 _utils.assert_color(background_color)
@@ -166,8 +160,8 @@ class WidgetManager(object):
 
         selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
         if selection_effect is None:
-            selection_effect = _widgets.NoneSelection()
-        assert isinstance(selection_effect, _widgets.core.Selection)
+            selection_effect = pygame_menu.widgets.NoneSelection()
+        assert isinstance(selection_effect, pygame_menu.widgets.core.Selection)
         attributes['selection_effect'] = selection_effect
 
         shadow = kwargs.pop('shadow', self._theme.widget_shadow)
@@ -200,14 +194,14 @@ class WidgetManager(object):
             msg = 'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
             raise ValueError(msg)
 
-    def _append_widget(self, widget: '_widgets.core.Widget') -> None:
+    def _append_widget(self, widget: 'pygame_menu.widgets.Widget') -> None:
         """
         Add a widget to the list of widgets.
 
         :param widget: Widget object
         :return: None
         """
-        assert isinstance(widget, _widgets.core.Widget)
+        assert isinstance(widget, pygame_menu.widgets.Widget)
         assert widget.get_menu() == self._menu, 'widget cannot have a different instance of menu'
         self._menu._widgets.append(widget)
         if self._menu._index < 0 and widget.is_selectable:
@@ -217,7 +211,7 @@ class WidgetManager(object):
         self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
         self._menu._render()
 
-    def _configure_widget(self, widget: '_widgets.core.Widget', **kwargs) -> None:
+    def _configure_widget(self, widget: 'pygame_menu.widgets.Widget', **kwargs) -> None:
         """
         Update the given widget with the parameters defined at
         the Menu level.
@@ -226,7 +220,7 @@ class WidgetManager(object):
         :param kwargs: Optional keywords arguments
         :return: None
         """
-        assert isinstance(widget, _widgets.core.Widget)
+        assert isinstance(widget, pygame_menu.widgets.Widget)
         assert widget.get_menu() is None, 'widget cannot have an instance of menu'
 
         widget.set_menu(self._menu)
@@ -281,7 +275,7 @@ class WidgetManager(object):
                action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]],
                *args,
                **kwargs
-               ) -> '_widgets.Button':
+               ) -> 'pygame_menu.widgets.Button':
         """
         Adds a button to the Menu.
 
@@ -354,7 +348,6 @@ class WidgetManager(object):
         :param args: Additional arguments used by a function
         :param kwargs: Optional keyword arguments
         :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.Button`
         """
         total_back = kwargs.pop('back_count', 1)
         assert isinstance(total_back, int) and 1 <= total_back
@@ -390,31 +383,31 @@ class WidgetManager(object):
                 raise ValueError(msg)
 
             self._menu._submenus.append(action)
-            widget = _widgets.Button(title, button_id, self._menu._open, action)
+            widget = pygame_menu.widgets.Button(title, button_id, self._menu._open, action)
             widget.to_menu = True
 
         # If element is a MenuAction
         elif action == _events.BACK:  # Back to Menu
-            widget = _widgets.Button(title, button_id, self._menu.reset, total_back)
+            widget = pygame_menu.widgets.Button(title, button_id, self._menu.reset, total_back)
 
         elif action == _events.CLOSE:  # Close Menu
-            widget = _widgets.Button(title, button_id, self._menu._close)
+            widget = pygame_menu.widgets.Button(title, button_id, self._menu._close)
 
         elif action == _events.EXIT:  # Exit program
-            widget = _widgets.Button(title, button_id, self._menu._exit)
+            widget = pygame_menu.widgets.Button(title, button_id, self._menu._exit)
 
         elif action == _events.NONE:  # None action
-            widget = _widgets.Button(title, button_id)
+            widget = pygame_menu.widgets.Button(title, button_id)
 
         elif action == _events.RESET:  # Back to Top Menu
-            widget = _widgets.Button(title, button_id, self._menu.full_reset)
+            widget = pygame_menu.widgets.Button(title, button_id, self._menu.full_reset)
 
         # If element is a function or callable
         elif _utils.is_callable(action):
             if not accept_kwargs:
-                widget = _widgets.Button(title, button_id, action, *args)
+                widget = pygame_menu.widgets.Button(title, button_id, action, *args)
             else:
-                widget = _widgets.Button(title, button_id, action, *args, **kwargs)
+                widget = pygame_menu.widgets.Button(title, button_id, action, *args, **kwargs)
 
         else:
             raise ValueError('action must be a Menu, a MenuAction (event), a function (callable), or None')
@@ -441,9 +434,9 @@ class WidgetManager(object):
                     input_underline: str = '_',
                     onchange: CallbackType = None,
                     onreturn: CallbackType = None,
-                    onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
+                    onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
                     **kwargs
-                    ) -> '_widgets.ColorInput':
+                    ) -> 'pygame_menu.widgets.ColorInput':
         """
         Add a color widget with RGB or Hex format to the Menu.
         Includes a preview box that renders the given color.
@@ -522,7 +515,7 @@ class WidgetManager(object):
         prev_margin = kwargs.pop('previsualization_margin', 10)
         prev_width = kwargs.pop('previsualization_width', 3)
 
-        widget = _widgets.ColorInput(
+        widget = pygame_menu.widgets.ColorInput(
             color_type=color_type,
             colorinput_id=color_id,
             cursor_color=self._theme.cursor_color,
@@ -548,15 +541,15 @@ class WidgetManager(object):
         return widget
 
     def image(self,
-              image_path: Union[str, 'Path', '_baseimage.BaseImage', 'BytesIO'],
+              image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
               angle: NumberType = 0,
               image_id: str = '',
-              onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
+              onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
               scale: Vector2NumberType = (1, 1),
               scale_smooth: bool = True,
               selectable: bool = False,
               **kwargs
-              ) -> '_widgets.Image':
+              ) -> 'pygame_menu.widgets.Image':
         """
         Add a simple image to the Menu.
 
@@ -609,7 +602,7 @@ class WidgetManager(object):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        widget = _widgets.Image(
+        widget = pygame_menu.widgets.Image(
             angle=angle,
             image_id=image_id,
             image_path=image_path,
@@ -629,10 +622,10 @@ class WidgetManager(object):
               title: Any,
               label_id: str = '',
               max_char: int = 0,
-              onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
+              onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
               selectable: bool = False,
               **kwargs
-              ) -> Union['_widgets.Label', List['_widgets.Label']]:
+              ) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
         """
         Add a simple text to the Menu.
 
@@ -713,14 +706,14 @@ class WidgetManager(object):
         # Wrap text to Menu width (imply additional calls to render functions)
         if max_char < 0:
             dummy_attrs = self._filter_widget_attributes(kwargs.copy())
-            dummy = _widgets.Label(title=title)
+            dummy = pygame_menu.widgets.Label(title=title)
             self._configure_widget(dummy, **dummy_attrs)
             max_char = int(1.0 * self._menu.get_width(inner=True) * len(title) / dummy.get_width())
 
         # If no overflow
         if len(title) <= max_char or max_char == 0:
             attributes = self._filter_widget_attributes(kwargs)
-            widget = _widgets.Label(
+            widget = pygame_menu.widgets.Label(
                 label_id=label_id,
                 onselect=onselect,
                 title=title
@@ -753,10 +746,10 @@ class WidgetManager(object):
                  default: int = 0,
                  onchange: CallbackType = None,
                  onreturn: CallbackType = None,
-                 onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
+                 onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
                  selector_id: str = '',
                  **kwargs
-                 ) -> '_widgets.Selector':
+                 ) -> 'pygame_menu.widgets.Selector':
         """
         Add a selector to the Menu: several items with values and
         two functions that are executed when changing the selector (left/right)
@@ -831,7 +824,7 @@ class WidgetManager(object):
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
-        widget = _widgets.Selector(
+        widget = pygame_menu.widgets.Selector(
             default=default,
             elements=items,
             onchange=onchange,
@@ -855,7 +848,7 @@ class WidgetManager(object):
                       state_text: Tuple[str, ...] = ('Off', 'On'),
                       state_values: Tuple[Any, ...] = (False, True),
                       **kwargs
-                      ) -> '_widgets.ToggleSwitch':
+                      ) -> 'pygame_menu.widgets.ToggleSwitch':
         """
         Add a toggle switch to the Menu: It can switch between two states.
 
@@ -947,7 +940,7 @@ class WidgetManager(object):
         switch_margin = kwargs.pop('switch_margin', (25, 0))
         width = kwargs.pop('width', 150)
 
-        widget = _widgets.ToggleSwitch(
+        widget = pygame_menu.widgets.ToggleSwitch(
             default_state=default,
             infinite=infinite,
             onchange=onchange,
@@ -985,13 +978,13 @@ class WidgetManager(object):
                    maxwidth: int = 0,
                    onchange: CallbackType = None,
                    onreturn: CallbackType = None,
-                   onselect: Optional[Callable[[bool, '_widgets.core.Widget', 'pygame_menu.Menu'], Any]] = None,
+                   onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
                    password: bool = False,
                    tab_size: int = 4,
                    textinput_id: str = '',
                    valid_chars: Optional[List[str]] = None,
                    **kwargs
-                   ) -> '_widgets.TextInput':
+                   ) -> 'pygame_menu.widgets.TextInput':
         """
         Add a text input to the Menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -1074,7 +1067,7 @@ class WidgetManager(object):
         if password and default != '':
             raise ValueError('default value must be empty if the input is a password')
 
-        widget = _widgets.TextInput(
+        widget = pygame_menu.widgets.TextInput(
             copy_paste_enable=copy_paste_enable,
             cursor_color=self._theme.cursor_color,
             cursor_selection_color=self._theme.cursor_selection_color,
@@ -1106,7 +1099,7 @@ class WidgetManager(object):
     def vertical_margin(self,
                         margin: NumberType,
                         margin_id: str = ''
-                        ) -> '_widgets.VMargin':
+                        ) -> 'pygame_menu.widgets.VMargin':
         """
         Adds a vertical margin to the Menu.
 
@@ -1126,13 +1119,13 @@ class WidgetManager(object):
             'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
 
         attributes = self._filter_widget_attributes({'margin': (0, margin)})
-        widget = _widgets.VMargin(widget_id=margin_id)
+        widget = pygame_menu.widgets.VMargin(widget_id=margin_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
         return widget
 
-    def none_widget(self, widget_id: str = '') -> '_widgets.NoneWidget':
+    def none_widget(self, widget_id: str = '') -> 'pygame_menu.widgets.NoneWidget':
         """
         Add none widget to the Menu.
 
@@ -1155,14 +1148,14 @@ class WidgetManager(object):
         """
         attributes = self._filter_widget_attributes({})
 
-        widget = _widgets.NoneWidget(widget_id=widget_id)
+        widget = pygame_menu.widgets.NoneWidget(widget_id=widget_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
         return widget
 
-    def generic_widget(self, widget: '_widgets.core.Widget', configure_defaults: bool = False
-                       ) -> '_widgets.core.Widget':
+    def generic_widget(self, widget: 'pygame_menu.widgets.Widget', configure_defaults: bool = False
+                       ) -> 'pygame_menu.widgets.Widget':
         """
         Add generic widget to the Menu.
 
@@ -1185,12 +1178,12 @@ class WidgetManager(object):
         :param configure_defaults: Apply defaults widget configuration (for example, theme)
         :return: The added widget
         """
-        assert isinstance(widget, _widgets.core.Widget)
+        assert isinstance(widget, pygame_menu.widgets.Widget)
         if widget.get_menu() is not None:
             raise ValueError('widget to be added is already appended to another Menu')
 
         # Raise warning if adding button with Menu
-        if isinstance(widget, _widgets.Button) and widget.to_menu:
+        if isinstance(widget, pygame_menu.widgets.Button) and widget.to_menu:
             msg = 'prefer adding nested submenus using add_button method instead, unintended behaviours may occur'
             warnings.warn(msg)
 

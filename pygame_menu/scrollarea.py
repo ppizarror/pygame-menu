@@ -660,7 +660,6 @@ class ScrollArea(object):
         Return the Menu reference (if exists).
 
         :return: Menu reference
-        :rtype: :py:class:`pygame_menu.Menu`, None
         """
         return self._menu
 

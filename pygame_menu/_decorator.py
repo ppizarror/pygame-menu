@@ -34,6 +34,7 @@ __all__ = ['Decorator']
 
 import pygame
 import pygame_menu
+import pygame_menu.menu
 from pygame.font import Font
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
@@ -72,6 +73,8 @@ DECOR_TYPE_POST = 'post'
 class Decorator(object):
     """
     Decorator class.
+
+    :param obj: Object to decorate
     """
     _coord_cache: Dict[
         str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
@@ -88,12 +91,6 @@ class Decorator(object):
     def __init__(self,
                  obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
                  ) -> None:
-        """
-        Constructor.
-
-        :param obj: Object
-        :type obj: :py:class:`pygame_menu.widgets.core.Widget`, :py:class:`pygame_menu.Menu`, :py:class:`pygame_menu.scrollarea.ScrollArea`
-        """
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
         self._obj = obj

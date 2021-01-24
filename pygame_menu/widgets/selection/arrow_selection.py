@@ -82,7 +82,7 @@ class ArrowSelection(Selection):
         self._last_widget = None
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> None:
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         raise NotImplementedError('override is mandatory')
 
     def _draw_arrow(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget',
@@ -92,7 +92,6 @@ class ArrowSelection(Selection):
 
         :param surface: Surface to draw
         :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.core.Widget`
         :param a: Arrow coord A
         :param b: Arrow coord B
         :param c: Arrow coord C

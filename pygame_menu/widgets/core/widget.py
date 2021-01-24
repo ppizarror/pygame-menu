@@ -2052,6 +2052,7 @@ class _NullSelection(Selection):
     .. note::
 
         Prefer using :py:class:`pygame_menu.widgets.selection.NoneSelection` class instead.
+
     """
 
     def __init__(self) -> None:
@@ -2059,8 +2060,8 @@ class _NullSelection(Selection):
             margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
         )
 
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
-        return
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> 'Selection':
+        return self
 
 
 class _WidgetCopyException(Exception):

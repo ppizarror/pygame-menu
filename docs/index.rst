@@ -98,7 +98,14 @@ for :py:mod:`pygame-menu`. The main addressed topics are:
    :caption: Advanced usage
 
    _source/advanced
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Menu APIs
+
    _source/baseimage
+   _source/scrollarea.rst
 
 
 ===========

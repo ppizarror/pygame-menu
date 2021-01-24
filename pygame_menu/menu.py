@@ -40,12 +40,12 @@ import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
+import pygame_menu.widgets
 import pygame_menu.controls as _controls
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
-import pygame_menu.widgets as _widgets
 from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu._decorator import Decorator
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
@@ -137,7 +137,7 @@ class Menu(object):
     _joy_event_repeat: int
     _joystick: bool
     _max_row_column_elements: int
-    _menubar: '_widgets.MenuBar'
+    _menubar: 'pygame_menu.widgets.MenuBar'
     _mouse: bool
     _mouse_motion_selection: bool
     _mouse_visible: bool
@@ -160,13 +160,13 @@ class Menu(object):
     _touchscreen: bool
     _touchscreen_motion_selection: bool
     _used_columns: int
-    _widget_columns: Dict[int, List['_widgets.core.Widget']]
+    _widget_columns: Dict[int, List['pygame_menu.widgets.Widget']]
     _widget_max_position: Tuple2IntType
     _widget_min_position: Tuple2IntType
     _widget_offset: List[int]
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
-    _widgets: List['_widgets.core.Widget']
+    _widgets: List['pygame_menu.widgets.Widget']
     _widgets_surface: Optional['pygame.Surface']
     _widgets_surface_last: Tuple[int, int, Optional['pygame.Surface']]
     _widgets_surface_need_update: bool
@@ -719,7 +719,7 @@ class Menu(object):
         warnings.warn('Menu method {} is deprecated. Use menu.add.{} instead, (see docs). '
                       'This method will be removed in v4.1'.format(method, new_method))
 
-    def add_button(self, *args, **kwargs) -> '_widgets.Button':
+    def add_button(self, *args, **kwargs) -> 'pygame_menu.widgets.Button':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.button` instead. This
         method shorthand will be removed in version 4.1.
@@ -727,7 +727,7 @@ class Menu(object):
         self._warn_widgetmanager('add_button', 'button')
         return self.add.button(*args, **kwargs)
 
-    def add_color_input(self, *args, **kwargs) -> '_widgets.ColorInput':
+    def add_color_input(self, *args, **kwargs) -> 'pygame_menu.widgets.ColorInput':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.color_input` instead. This
         method shorthand will be removed in version 4.1.
@@ -735,7 +735,7 @@ class Menu(object):
         self._warn_widgetmanager('add_color_input', 'color_input')
         return self.add.color_input(*args, **kwargs)
 
-    def add_image(self, *args, **kwargs) -> '_widgets.Image':
+    def add_image(self, *args, **kwargs) -> 'pygame_menu.widgets.Image':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.image` instead. This
         method shorthand will be removed in version 4.1.
@@ -743,7 +743,7 @@ class Menu(object):
         self._warn_widgetmanager('add_image', 'image')
         return self.add.image(*args, **kwargs)
 
-    def add_label(self, *args, **kwargs) -> Union['_widgets.Label', List['_widgets.Label']]:
+    def add_label(self, *args, **kwargs) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.image` instead. This
         method shorthand will be removed in version 4.1.
@@ -751,7 +751,7 @@ class Menu(object):
         self._warn_widgetmanager('add_label', 'label')
         return self.add.label(*args, **kwargs)
 
-    def add_selector(self, *args, **kwargs) -> '_widgets.Selector':
+    def add_selector(self, *args, **kwargs) -> 'pygame_menu.widgets.Selector':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.selector` instead. This
         method shorthand will be removed in version 4.1.
@@ -759,7 +759,7 @@ class Menu(object):
         self._warn_widgetmanager('add_selector', 'selector')
         return self.add.selector(*args, **kwargs)
 
-    def add_toggle_switch(self, *args, **kwargs) -> '_widgets.ToggleSwitch':
+    def add_toggle_switch(self, *args, **kwargs) -> 'pygame_menu.widgets.ToggleSwitch':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.toggle_switch` instead. This
         method shorthand will be removed in version 4.1.
@@ -767,7 +767,7 @@ class Menu(object):
         self._warn_widgetmanager('add_toggle_switch', 'toggle_switch')
         return self.add.toggle_switch(*args, **kwargs)
 
-    def add_text_input(self, *args, **kwargs) -> '_widgets.TextInput':
+    def add_text_input(self, *args, **kwargs) -> 'pygame_menu.widgets.TextInput':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.text_input` instead. This
         method shorthand will be removed in version 4.1.
@@ -775,7 +775,7 @@ class Menu(object):
         self._warn_widgetmanager('add_text_input', 'text_input')
         return self.add.text_input(*args, **kwargs)
 
-    def add_vertical_margin(self, *args, **kwargs) -> '_widgets.VMargin':
+    def add_vertical_margin(self, *args, **kwargs) -> 'pygame_menu.widgets.VMargin':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.vertical_margin` instead. This
         method shorthand will be removed in version 4.1.
@@ -783,7 +783,7 @@ class Menu(object):
         self._warn_widgetmanager('add_vertical_margin', 'vertical_margin')
         return self.add.vertical_margin(*args, **kwargs)
 
-    def add_none_widget(self, *args, **kwargs) -> '_widgets.NoneWidget':
+    def add_none_widget(self, *args, **kwargs) -> 'pygame_menu.widgets.NoneWidget':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.none_widget` instead. This
         method shorthand will be removed in version 4.1.
@@ -791,7 +791,7 @@ class Menu(object):
         self._warn_widgetmanager('add_none_widget', 'none_widget')
         return self.add.none_widget(*args, **kwargs)
 
-    def add_generic_widget(self, *args, **kwargs) -> '_widgets.core.Widget':
+    def add_generic_widget(self, *args, **kwargs) -> 'pygame_menu.widgets.Widget':
         """
         Use py:meth:`pygame_menu._widgetmanager.WidgetManager.generic_widget` instead. This
         method shorthand will be removed in version 4.1.
@@ -799,7 +799,7 @@ class Menu(object):
         self._warn_widgetmanager('add_generic_widget', 'generic_widget')
         return self.add.generic_widget(*args, **kwargs)
 
-    def select_widget(self, widget: '_widgets.core.Widget') -> 'Menu':
+    def select_widget(self, widget: 'pygame_menu.widgets.Widget') -> 'Menu':
         """
         Select a widget from the Menu.
 
@@ -812,7 +812,7 @@ class Menu(object):
         :param widget: Widget to be selected
         :return: Self reference
         """
-        assert isinstance(widget, _widgets.core.Widget)
+        assert isinstance(widget, pygame_menu.widgets.Widget)
         if not widget.is_selectable:
             raise ValueError('widget is not selectable')
         if not widget.is_visible():
@@ -825,7 +825,7 @@ class Menu(object):
         self._select(index)
         return self
 
-    def remove_widget(self, widget: '_widgets.core.Widget') -> 'Menu':
+    def remove_widget(self, widget: 'pygame_menu.widgets.Widget') -> 'Menu':
         """
         Remove the ``widget`` from the Menu. If widget not exists on Menu this
         method raises a ``ValueError`` exception.
@@ -839,7 +839,7 @@ class Menu(object):
         :param widget: Widget object
         :return: Self reference
         """
-        assert isinstance(widget, _widgets.core.Widget)
+        assert isinstance(widget, pygame_menu.widgets.Widget)
 
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1594,7 +1594,7 @@ class Menu(object):
         self._current._stats.draw += 1
         return self._current
 
-    def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['_widgets.core.Widget']
+    def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['pygame_menu.widgets.Widget']
                            ) -> Optional[Dict[int, Tuple4Tuple2IntType]]:
         """
         Draw the focus background from a given widget. Widget must be selectable,
@@ -1606,7 +1606,7 @@ class Menu(object):
         :return: Returns the focus region, ``None`` if the focus could not be possible
         """
         assert isinstance(surface, pygame.Surface)
-        assert isinstance(widget, (_widgets.core.Widget, type(None)))
+        assert isinstance(widget, (pygame_menu.widgets.Widget, type(None)))
 
         if widget is None or not widget.active or not widget.is_selectable or not widget.is_selected() or \
                 not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.is_visible():
@@ -1826,7 +1826,7 @@ class Menu(object):
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
 
-        selected_widget: Optional['_widgets.core.Widget'] = None
+        selected_widget: Optional['pygame_menu.widgets.Widget'] = None
         if len(self._current._widgets) >= 1:
             index = self._current._index % len(self._current._widgets)
             selected_widget = self._current._widgets[index]
@@ -2449,7 +2449,7 @@ class Menu(object):
         """
         return self._window_size
 
-    def get_widgets(self) -> Tuple['_widgets.core.Widget']:
+    def get_widgets(self) -> Tuple['pygame_menu.widgets.Widget']:
         """
         Return the Menu widgets as a tuple.
 
@@ -2467,7 +2467,7 @@ class Menu(object):
         """
         return tuple(self._widgets)
 
-    def get_menubar_widget(self) -> '_widgets.MenuBar':
+    def get_menubar_widget(self) -> 'pygame_menu.widgets.MenuBar':
         """
         Return menubar widget.
 
@@ -2503,7 +2503,7 @@ class Menu(object):
         """
         return self._scroll
 
-    def get_widget(self, widget_id: str, recursive: bool = False) -> Optional['_widgets.core.Widget']:
+    def get_widget(self, widget_id: str, recursive: bool = False) -> Optional['pygame_menu.widgets.Widget']:
         """
         Return a widget by a given ID from the Menu.
 
@@ -2641,7 +2641,7 @@ class Menu(object):
         """
         return self._index
 
-    def get_selected_widget(self) -> Optional['_widgets.core.Widget']:
+    def get_selected_widget(self) -> Optional['pygame_menu.widgets.Widget']:
         """
         Return the selected widget on the Menu.
 
