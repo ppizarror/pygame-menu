@@ -81,6 +81,7 @@ class SolarSystemApp(object):
     menu: 'pygame_menu.Menu'
     nebulas: List['pygame_menu.BaseImage']
     planets: Dict[str, 'Planet']
+    rotation_velocity: float
     stars: List[List[Union[int, float]]]
     surface: 'pygame.Surface'
 
@@ -268,14 +269,13 @@ class SolarSystemApp(object):
         # Add draw stars as Menu's decoration
         self.menu.get_scrollarea().get_decorator().add_callable(self.draw_universe_background)
 
+        # Set update event
+        self.menu.set_onupdate(self.process_events)
+
         # Initialize stars random colors
         self.stars = []
         for i in range(100):
-            self.stars.append([
-                random.randrange(1, self.menu.get_width()),  # x position
-                random.randrange(1, self.menu.get_height()),  # y position
-                2 * math.pi * random.random()  # initial flickering
-            ])
+            self.add_star()
 
         # Set the nebulas
         nebula = pygame_menu.BaseImage(NEBULA_IMG, frombase64=True,
@@ -288,23 +288,46 @@ class SolarSystemApp(object):
         for nebula in self.nebulas:
             nebula.set_drawing_position(pygame_menu.locals.POSITION_CENTER)
             nebula.checkpoint()  # Because rotation method works from checkpointed surface
-            nebula.set_attribute('delta_angle', random.randint(-1, 1) * random.random())
+            nebula.set_attribute('delta_angle', 0.25 * random.randint(-1, 1) * random.random())
 
         # Add shooting stars
         self.shooting_stars = []
         for i in range(3):
-            dx = random.randrange(-25, 25)
-            dy = random.randrange(-25, 25)
-            angle = math.atan2(dy, dx)
-            self.shooting_stars.append([
-                random.randrange(1, self.menu.get_width()),  # x position
-                random.randrange(1, self.menu.get_height()),  # y position
-                dx,
-                dy,
-                angle,
-                random.randrange(1, 5),  # speed
-                2 * math.pi * random.random()  # initial flickering
-            ])
+            self.add_shooting_star()
+
+        # Update values
+        self.rotation_velocity = 0.0003
+
+    def add_shooting_star(self) -> None:
+        """
+        Add a new shooting star to the simulation.
+
+        :return: None
+        """
+        dx = random.randrange(-25, 25)
+        dy = random.randrange(-25, 25)
+        angle = math.atan2(dy, dx)
+        self.shooting_stars.append([
+            random.randrange(1, self.menu.get_width()),  # x position
+            random.randrange(1, self.menu.get_height()),  # y position
+            dx,
+            dy,
+            angle,
+            random.randrange(1, 5),  # speed
+            2 * math.pi * random.random()  # initial flickering
+        ])
+
+    def add_star(self) -> None:
+        """
+        Add a new star to the simulation.
+
+        :return: None
+        """
+        self.stars.append([
+            random.randrange(1, self.menu.get_width()),  # x position
+            random.randrange(1, self.menu.get_height()),  # y position
+            2 * math.pi * random.random()  # initial flickering
+        ])
 
     # noinspection PyUnusedLocal
     def draw_universe_background(self, surface: 'pygame.Surface', *args) -> None:
@@ -346,6 +369,31 @@ class SolarSystemApp(object):
         # This line forces cache update for submenus that call this method
         self.menu.force_surface_cache_update()
 
+    def process_events(self, events: List['pygame.event.Event'], menu: 'pygame_menu.Menu') -> None:
+        """
+        Process events from user.
+
+        :param events: Events
+        :param menu: Menu
+        :return: None
+        """
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    menu.disable_draw = not menu.disable_draw
+                elif event.key == pygame.K_q:
+                    if not menu.disable_draw:
+                        self.rotation_velocity += 5e-5
+                elif event.key == pygame.K_e:
+                    if not menu.disable_draw:
+                        self.rotation_velocity = max(0.0, self.rotation_velocity - 5e-5)
+                elif event.key == pygame.K_s:
+                    if not menu.disable_draw:
+                        self.add_star()
+                elif event.key == pygame.K_c:
+                    if not menu.disable_draw:
+                        self.add_shooting_star()
+
     def rotate_planet(self, widget: 'pygame_menu.widgets.Widget', menu: 'pygame_menu.Menu') -> None:
         """
         Rotate a planet.
@@ -360,7 +408,7 @@ class SolarSystemApp(object):
         # Update time from attribute
         t = widget.get_attribute('t')
         if planet.period != 0:
-            t -= menu.get_clock().get_time() * 0.0005 / planet.period
+            t -= menu.get_clock().get_time() * self.rotation_velocity / planet.period
         widget.set_attribute('t', t)
         radius_factor = 110  # Visual only
 
@@ -371,7 +419,7 @@ class SolarSystemApp(object):
         if planet.name == 'Moon':
             xc, yc = self.planets['earth'].button.get_attribute('pos')  # Center of earth
             x += xc + 1
-            y += yc - 3
+            y += yc - 10
 
         # Visual offset
         if planet.name != 'Sun':
@@ -387,7 +435,12 @@ class SolarSystemApp(object):
 
         :param test: Test status
         """
-        self.menu.mainloop(self.surface, disable_loop=test, pause_key_event=pygame.K_p)
+        print('Press P to pause the planets')
+        print('Press E to increase the rotation velocity')
+        print('Press Q to decrease the rotation velocity')
+        print('Press S to add a new star')
+        print('Press C to add a new shooting star')
+        self.menu.mainloop(self.surface, disable_loop=test)
 
 
 def main(test: bool = False) -> None:

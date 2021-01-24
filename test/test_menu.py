@@ -1363,9 +1363,6 @@ class MenuTest(unittest.TestCase):
         self.assertTrue(test[0])
         self.assertTrue(test[1])
 
-        self.assertRaises(AssertionError, lambda: menu.mainloop(surface, pause_key_event='ee'))
-        menu.mainloop(surface, pause_key_event=pygame.K_p, disable_loop=True)
-
     # noinspection PyArgumentList
     def test_invalid_args(self) -> None:
         """

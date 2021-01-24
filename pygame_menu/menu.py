@@ -72,7 +72,7 @@ class Menu(object):
     """
     Menu object.
 
-    If menu is closed or reset, the callbacks ``onclose`` and ``onreset`` are fired
+     Menu can receive many callbacks; callbacks ``onclose`` and ``onreset`` are fired
     (if them are callable-type). They can only receive 1 argument maximum, if so,
     the Menu instance is provided
 
@@ -80,6 +80,20 @@ class Menu(object):
 
         onclose() <or> onclose(Menu)
         onreset() <or> onreset(Menu)
+
+    Callback ``onupdate`` is executed before updating the Menu, it receives the event
+    list and the menu reference:
+
+    .. code-block:: python
+
+        onupdate(event_list, Menu)
+
+    Callback ``onbeforeopen`` is executed before opening the Menu, it receives the
+    current Menu and the next Menu.
+
+    .. code-block:: python
+
+        onbeforeopen(current Menu, next Menu)
 
     .. note::
 
@@ -101,6 +115,7 @@ class Menu(object):
     :param mouse_visible: Set mouse visible on Menu
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
+    :param onupdate: Function executed when updating the Menu. The function receives the list of gathered pygame events, and the Menu reference
     :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
@@ -132,8 +147,10 @@ class Menu(object):
     _mouse_motion_selection: bool
     _mouse_visible: bool
     _mouse_visible_default: bool
+    _onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
     _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
     _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
+    _onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
@@ -176,8 +193,10 @@ class Menu(object):
                  mouse_enabled: bool = True,
                  mouse_motion_selection: bool = False,
                  mouse_visible: bool = True,
+                 onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]] = None,
                  onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
                  onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
+                 onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]] = None,
                  overflow: Vector2BoolType = (True, True),
                  rows: MenuRowsType = None,
                  screen_dimension: Optional[Vector2IntType] = None,
@@ -357,8 +376,10 @@ class Menu(object):
         self._width = int(width)
 
         # Set callbacks
+        self.set_onbeforeopen(onbeforeopen)
         self.set_onclose(onclose)
         self.set_onreset(onreset)
+        self.set_onupdate(onupdate)
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accessing self should be through "_current", because user can move through submenus
@@ -535,6 +556,10 @@ class Menu(object):
         # Controls the behaviour of runtime errors
         self._runtime_errors = _MenuRuntimeErrorConfig()
 
+        # Public properties. These can be changed without any major problem
+        self.disable_draw = False
+        self.disable_update = False
+
     def __copy__(self) -> 'Menu':
         """
         Copy method.
@@ -589,6 +614,46 @@ class Menu(object):
         """
         self._current._widget_surface_cache_need_update = True
         self._current._decorator.force_cache_update()
+        return self
+
+    def set_onbeforeopen(self,
+                         onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
+                         ) -> 'Menu':
+        """
+        Set ``onbeforeopen`` callback.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param onbeforeopen: Onbeforeopen callback, it can be a function or None
+        :return: Self reference
+        """
+        assert _utils.is_callable(onbeforeopen) or onbeforeopen is None, \
+            'onbeforeopen must be callable (function-type) or None'
+        self._onbeforeopen = onbeforeopen
+        return self
+
+    def set_onupdate(self,
+                     onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
+                     ) -> 'Menu':
+        """
+        Set ``onupdate`` callback.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.Menu.get_current` object.
+
+        :param onupdate: Onupdate callback, it can be a function or None
+        :return: Self reference
+        """
+        assert _utils.is_callable(onupdate) or onupdate is None, \
+            'onupdate must be a callable (function-type) or None'
+        self._onupdate = onupdate
         return self
 
     def set_onclose(self,
@@ -2513,6 +2578,8 @@ class Menu(object):
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
             return self._current
+        if self._current.disable_draw:
+            return self._current
 
         # Render menu
         render = self._current._render()  # If True, the surface widget has changed, thus cache should change if enabled
@@ -2787,6 +2854,12 @@ class Menu(object):
             return False
         self._current._stats.update += 1
 
+        # Call onupdate callback
+        if self._current._onupdate is not None:
+            self._current._onupdate(events, self._current)
+        if self._current.disable_update:
+            return False
+
         # Check if window closed
         for event in events:
             if event.type == _events.PYGAME_QUIT or (
@@ -3031,7 +3104,6 @@ class Menu(object):
             - ``clear_surface``     *(bool)* - If ``True`` surface is cleared using ``theme.surface_clear_color``
             - ``disable_loop``      *(bool)* - If ``True`` the mainloop only runs once. Use for running draw and update in a single call
             - ``fps_limit``         *(int)* - Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
-            - ``pause_key_event``   *(int, None)* - If set, the menu is paused. That is, menu does not draw and only accepts the pause event key
 
         .. warning::
 
@@ -3047,12 +3119,10 @@ class Menu(object):
         clear_surface = kwargs.get('clear_surface', True)
         disable_loop = kwargs.get('disable_loop', False)
         fps_limit = kwargs.get('fps_limit', self._theme.fps)
-        pause_key_event = kwargs.get('pause_key_event', None)
 
         assert isinstance(clear_surface, bool)
         assert isinstance(disable_loop, bool)
         assert isinstance(fps_limit, (int, float))
-        assert isinstance(pause_key_event, (int, type(None)))
         assert isinstance(surface, pygame.Surface)
 
         assert fps_limit >= 0, 'fps limit cannot be negative'
@@ -3079,33 +3149,16 @@ class Menu(object):
         # Force rendering before loop
         self._current._widgets_surface = None
 
-        # Execution variables
-        paused = False
-
         # Start loop
         while True:
             self._current._stats.loop += 1
             self._current._clock.tick(fps_limit)
 
-            # If pause key exists, check for the pause key
-            events = pygame.event.get()
-            if pause_key_event is not None:
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pause_key_event:
-                            paused = not paused
-                    elif event.type == _events.PYGAME_QUIT or (
-                            event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
-                            event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
-                            event.type == _events.PYGAME_WINDOWCLOSE:
-                        self._current._exit()
+            # Draw the menu
+            self.draw(surface=surface, clear_surface=clear_surface)
 
-            if not paused:
-                # Draw the menu
-                self.draw(surface=surface, clear_surface=clear_surface)
-
-                # Gather events by Menu
-                self.update(events)
+            # Gather events by Menu
+            self.update(pygame.event.get())
 
             # Flip contents to screen
             pygame.display.flip()
@@ -3299,6 +3352,10 @@ class Menu(object):
         menu._top = self._top
         self._top._current = menu._current
         self._top._prev = [self._top._prev, current]
+
+        # Call event
+        if self._onbeforeopen is not None:
+            self._onbeforeopen(current, menu)
 
         # Select the first widget
         self._select(0, 1)
