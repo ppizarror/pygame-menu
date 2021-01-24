@@ -1,12 +1,12 @@
 
+
 ==============
 Adding widgets
 ==============
 
 For adding new widgets to the Menu you can create new instances of the respective
-widget class. Or you can use the :py:class:`pygame_menu._widgetmanager.WidgetManager`
-class stored in ``Menu.add`` property. These methods configure the widget and add
-to the Menu in a simple way.
+widget class. Or you can use the :py:class:`pygame_menu._widgetmanager.WidgetManager` class stored in ``Menu.add``
+property. These methods configure the widget and add to the Menu in a simple way.
 
 
 Add a button
@@ -16,7 +16,7 @@ A button is a text that fire action when the user trigger it. An action
 is linked to a button by defining the `action` parameter with one of the
 three values:
 
- - an other :py:class:`pygame_menu.Menu`, in this case, it will be displayed
+ - an other :py:class:`pygame_menu.menu.Menu`, in this case, it will be displayed
    when the button is triggered.
  - a python callable object (a function, a method, a class, ...)
    that will be called with the given arguments.

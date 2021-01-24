@@ -337,7 +337,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -486,7 +486,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -581,7 +581,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
         :param angle: Angle of the image in degrees (clockwise)
@@ -665,7 +665,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param title: Text to be displayed
         :param label_id: ID of the label
@@ -805,7 +805,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -907,7 +907,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -1032,7 +1032,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -1109,7 +1109,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param margin: Vertical margin in px
         :param margin_id: ID of the margin
@@ -1142,7 +1142,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget_id: Widget ID
         :return: Widget object
@@ -1169,7 +1169,7 @@ class WidgetManager(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 

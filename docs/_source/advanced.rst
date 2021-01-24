@@ -59,7 +59,7 @@ basic widget should contain this code:
 
             .. note::
 
-                Render methods should call :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update`
+                Render methods should call :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
                 to force Menu to update the drawing surface.
             """
             ...
@@ -89,7 +89,7 @@ basic widget should contain this code:
 
                  from pygame_menu.widgets.widget.mywidget import MyWidget
 
-To add the widget to the :py:class:`pygame_menu.Menu` class, a public method
+To add the widget to the :py:class:`pygame_menu.menu.Menu` class, a public method
 :py:meth:`add_mywidget` must be added to the :py:class:`pygame_menu._widgetmanager.WidgetManager`
 class with the following structure. Or :py:meth:`pygame_menu._widgetmanager.WidgetManager.generic_widget`
 can be used.
@@ -122,16 +122,16 @@ can be used.
 
     This method uses the **kwargs** parameter for defining the settings of the
     Widget, such as the background, margin, etc. This is applied automatically
-    by the Menu in :py:meth:`pygame_menu.Menu._configure_widget`
-    method. If **MyWidget** needs additional parameters, please use some that
-    are not named as the default kwargs used by the Menu Widget system.
+    by the Menu widget addition class (``WidgetManager``). If **MyWidget** needs
+    additional parameters, please use some that are not named as the default kwargs
+    used by the Menu Widget system.
 
     The function must return the created `widget` object.
 
 .. note::
 
     The widget ``_render`` method should allways call
-    :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update` method, this
+    :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` method, this
     ensures that Menu updates the surface and the positioning.
 
 .. note::
@@ -141,7 +141,7 @@ can be used.
     the surface was rendered. Anyway, execution-time elements that changes over
     time (outside ``_render``) should force cache rendering (for example the blinking
     cursor of text). If your widget has any property like this, the method
-    :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_cache_update`
+    :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_cache_update`
     must be called within your Widget.
 
 

@@ -59,9 +59,9 @@ class Widget(object):
 
     :param title: Widget title
     :param widget_id: Widget identifier
-    :param onchange: Callback when updating the status of the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.change`
-    :param onreturn: Callback when applying on the widget (return), executed in :py:meth:`pygame_menu.widgets.core.Widget.apply`
-    :param onselect: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+    :param onchange: Callback when updating the status of the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.change`
+    :param onreturn: Callback when applying on the widget (return), executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.apply`
+    :param onselect: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.set_selected`
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
@@ -300,8 +300,8 @@ class Widget(object):
         .. note::
 
             If this method is used it's not necesary to call Widget methods
-            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update` and
-            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_cache_update`.
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` and
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_cache_update`.
             As `render` should force Menu render, updating both surface and cache.
 
         :return: Render return value
@@ -315,7 +315,7 @@ class Widget(object):
         This method automatically updates widget decoration cache as Menu render
         forces it to re-render.
 
-        ..note ::
+        .. note ::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -338,7 +338,7 @@ class Widget(object):
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference
@@ -357,7 +357,7 @@ class Widget(object):
         .. note::
 
             Unlike private ``_render`` method, public method forces widget rendering
-            (calling :py:meth:`pygame_menu.widgets.core.Widget._force_render`). Use
+            (calling :py:meth:`pygame_menu.widgets.core.widget.Widget._force_render`). Use
             this method only if the widget has changed the state. Running this
             function many times may affect the performance.
 
@@ -384,7 +384,7 @@ class Widget(object):
 
         .. note::
 
-            Render methods should call :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update`
+            Render methods should call :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             to force Menu to update the drawing surface.
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
@@ -625,7 +625,7 @@ class Widget(object):
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
         Where
-            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.Widget.get_value`
+            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.widget.Widget.get_value`
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
@@ -657,7 +657,7 @@ class Widget(object):
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
         Where
-            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.Widget.get_value`
+            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.widget.Widget.get_value`
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
@@ -1127,7 +1127,7 @@ class Widget(object):
         .. note::
 
             If a key is not defined it will be rewritten using current font style
-            from :py:meth:`pygame_menu.widgets.core.Widget.get_font_info` method.
+            from :py:meth:`pygame_menu.widgets.core.widget.Widget.get_font_info` method.
 
         :param style: Font style dict
         :return: Self reference
@@ -1171,7 +1171,6 @@ class Widget(object):
         Set the Menu reference.
 
         :param menu: Menu object
-        :type menu: :py:class:`pygame_menu.Menu`, None
         :return: Self reference
         """
         self._menu = menu
@@ -1188,7 +1187,6 @@ class Widget(object):
             Use with caution.
 
         :return: Menu reference
-        :rtype: :py:class:`pygame_menu.Menu`, None
         """
         return self._menu
 
@@ -1206,7 +1204,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param posx: X position in px
@@ -1241,7 +1239,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param x: Flip in x axis
@@ -1276,7 +1274,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1329,7 +1327,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1397,13 +1395,13 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
 
-            Widget will scale only if :py:meth:`pygame_menu.widgets.core.Widget.set_max_width`
-            and :py:meth:`pygame_menu.widgets.core.Widget.set_max_height` are set to ``None``.
+            Widget will scale only if :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_width`
+            and :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_height` are set to ``None``.
 
         :param width: Scale factor of the width
         :param height: Scale factor of the height
@@ -1439,7 +1437,7 @@ class Widget(object):
 
         .. note::
 
-            This method calls :py:meth:`pygame_menu.widgets.core.Widget.scale` method;
+            This method calls :py:meth:`pygame_menu.widgets.core.widget.Widget.scale` method;
             thus, some widgets may not support this transformation.
 
         .. note::
@@ -1455,7 +1453,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1482,7 +1480,7 @@ class Widget(object):
         .. note::
 
             Translate is only applied when updating the widget position (calling
-            :py:meth:`pygame_menu.widgets.core.Widget.set_position`. This is done
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.set_position`. This is done
             by Menu when rendering the surface. Thus, the position change is not
             immediate. To force translation update you may call Menu render method.
 
@@ -1492,7 +1490,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param x: +X in px
@@ -1522,7 +1520,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param angle: Rotation angle (degrees ``0-360``)
@@ -1545,7 +1543,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. note::
@@ -1581,7 +1579,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1757,7 +1755,7 @@ class Widget(object):
 
         .. note::
 
-            This method is intended to be used along :py:meth:`pygame_menu.widgets.core.Widget.reset_value`
+            This method is intended to be used along :py:meth:`pygame_menu.widgets.core.widget.Widget.reset_value`
             method that sets the widget value back to the default set with this method.
 
         .. note::
@@ -1812,18 +1810,17 @@ class Widget(object):
             button.set_draw_callback(draw_update_function)
 
         After creating a new callback, this functions returns the ID of the call. It can be
-        removed anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_draw_callback`
+        removed anytime using :py:meth:`pygame_menu.widgets.core.widget.Widget.remove_draw_callback`
 
         .. note::
 
-            If Menu surface cache is enabled this method may run only once. To force run
+            If Menu surface cache is enabled this method may run only once. To force running
             the added method each time call ``widget.force_menu_surface_update()`` to force
             Menu update the cache status if the drawing callback does not make the widget
             to render. Remember that rendering the widget forces the Menu to update its
             surface, thus updating the cache too.
 
         :param draw_callback: Function
-        :type draw_callback: callable, None
         :return: Callback ID
         """
         assert is_callable(draw_callback), 'draw callback must be callable (function-type)'
@@ -1861,10 +1858,10 @@ class Widget(object):
         Adds a function to the widget to be executed each time the widget is updated.
 
         The function that this method receives receives two objects: the widget itself and
-        the Menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.Widget.add_draw_callback`
+        the Menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.widget.Widget.add_draw_callback`
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
-        anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_update_callback`.
+        anytime using :py:meth:`pygame_menu.widgets.core.widget.Widget.remove_update_callback`.
 
         .. note::
 
@@ -1872,7 +1869,6 @@ class Widget(object):
             in some widgets (for example, label or images).
 
         :param update_callback: Function
-        :type update_callback: callable, None
         :return: Callback ID
         """
         assert is_callable(update_callback), 'update callback must be callable (function-type)'

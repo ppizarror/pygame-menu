@@ -553,7 +553,7 @@ class BaseImage(object):
 
         .. note::
 
-            See :py:meth:`pygame_menu.BaseImage.to_bw` method as an example.
+            See :py:meth:`pygame_menu.baseimage.BaseImage.to_bw` method as an example.
 
         :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple *(r, g, b, a)*
         :return: Self reference

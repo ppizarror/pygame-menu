@@ -39,7 +39,7 @@ In the same way, an offset can be defined for the title using the parameter
 ``title_offset``.
 
 The content of the menu can be centered vertically after all widgets have
-been added by calling the method :py:meth:`pygame_menu.Menu.center_content`:
+been added by calling the method :py:meth:`pygame_menu.menu.Menu.center_content`:
 
 .. code-block:: python
     :emphasize-lines: 6
@@ -82,7 +82,7 @@ as *disabling* it, but with callback firing.
 
 ``onclose`` parameter can take one of these three types of values:
 
- - ``None``, the menu don't disables if :py:meth:`pygame_menu.Menu.close`
+ - ``None``, the menu don't disables if :py:meth:`pygame_menu.menu.Menu.close`
    is called
  - A python callable object (a function, a method) that will be called
    without any arguments, or with the ``Menu`` instance.
@@ -105,7 +105,7 @@ Display a menu
 
 The :ref:`First steps` chapter shows the way to display the menu, this
 method lets `pygame-menu` managing the event loop by calling the
-:py:meth:`pygame_menu.Menu.mainloop`:
+:py:meth:`pygame_menu.menu.Menu.mainloop`:
 
 .. code-block:: python
     :emphasize-lines: 6

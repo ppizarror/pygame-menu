@@ -111,7 +111,7 @@ class ScrollArea(object):
     _extend_x: int
     _extend_y: int
     _menu: Optional['pygame_menu.Menu']
-    _menubar: 'MenuBar'
+    _menubar: 'pygame_menu.widgets.MenuBar'
     _rect: 'pygame.Rect'
     _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: NumberType
@@ -235,7 +235,7 @@ class ScrollArea(object):
         """
         Forces menu surface update after next rendering call.
 
-        ..note ::
+        .. note ::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -254,7 +254,7 @@ class ScrollArea(object):
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference

@@ -580,14 +580,14 @@ class Menu(object):
         """
         Forces current Menu surface update after next rendering call.
 
-        ..note ::
+        .. note ::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().update(...)``
 
         :return: Self reference
@@ -606,7 +606,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().update(...)``
 
         :return: Self reference
@@ -625,7 +625,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param onbeforeopen: Onbeforeopen callback, it can be a function or None
         :return: Self reference
@@ -645,7 +645,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param onupdate: Onupdate callback, it can be a function or None
         :return: Self reference
@@ -665,7 +665,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param onclose: Onclose callback, it can be a function, an event, or None
         :return: Self reference
@@ -687,7 +687,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param onreset: Onreset callback, it can be a function or None
         :return: Self reference
@@ -807,7 +807,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget: Widget to be selected
         :return: Self reference
@@ -834,7 +834,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget: Widget object
         :return: Self reference
@@ -1295,7 +1295,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().reset(...)``
 
         :return: None
@@ -1354,7 +1354,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param position_x: Left position of the window
         :param position_y: Top position of the window
@@ -1385,7 +1385,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Self reference
         """
@@ -1416,7 +1416,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param inner: If ``True`` returns the available width (menu width minus scroll if visible)
         :param widget: If ``True`` returns the total width used by the widgets
@@ -1437,7 +1437,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param inner: If ``True`` returns the available height (menu height minus scroll and menubar)
         :param widget: If ``True`` returns the total height used by the widgets
@@ -1458,7 +1458,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param inner: If ``True`` returns the available *(width, height)* (menu height minus scroll and menubar)
         :param widget: If ``True`` returns the total *(width, height)* used by the widgets
@@ -1473,11 +1473,11 @@ class Menu(object):
         .. note::
 
             This method should not be called if the Menu is being drawn as
-            this method is called by :py:meth:`pygame_menu.Menu.draw`
+            this method is called by :py:meth:`pygame_menu.menu.Menu.draw`
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().render(...)``
 
         :return: Self reference **(current)**
@@ -1516,7 +1516,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().draw(...)``
 
         :param surface: Pygame surface to draw the Menu
@@ -1667,7 +1667,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Self reference
         """
@@ -1682,7 +1682,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Self reference
         """
@@ -1713,7 +1713,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Menu enabled status
         """
@@ -1790,7 +1790,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().update(...)``
 
         :param events: Pygame events as a list
@@ -2058,7 +2058,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().mainloop(...)``
 
         :param surface: Pygame surface to draw the Menu
@@ -2128,7 +2128,7 @@ class Menu(object):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed),
-            for such behaviour apply to :py:meth:`pygame_menu.Menu.get_current` object.
+            for such behaviour apply to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param recursive: Look in Menu and sub-menus
         :return: Input dict e.g.: ``{'id1': value, 'id2': value, ...}``
@@ -2178,7 +2178,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Rect
         """
@@ -2193,7 +2193,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param sound: Sound object
         :param recursive: Set the sound engine to all submenus
@@ -2219,7 +2219,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Menu title
         """
@@ -2233,7 +2233,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param title: New menu title
         :param offset: If ``None`` uses theme offset, else it defines the title offset in *(x, y)*
@@ -2254,7 +2254,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Self reference
         """
@@ -2271,7 +2271,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param reset: If ``True`` the menu full-resets
         :return: Self reference
@@ -2291,7 +2291,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().reset(...)``
 
         :param menu: Menu object
@@ -2318,7 +2318,7 @@ class Menu(object):
 
         .. warning::
 
-            This method should not be used along :py:meth:`pygame_menu.Menu.get_current`,
+            This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().reset(...)``
 
         :param total: How many menus to go back
@@ -2429,7 +2429,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Menu ID
         """
@@ -2443,7 +2443,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Window size in px
         """
@@ -2457,7 +2457,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -2475,7 +2475,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -2493,7 +2493,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -2513,7 +2513,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. note::
 
@@ -2543,7 +2543,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param recursive: Set value recursively
         :return: Self reference
@@ -2563,7 +2563,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param menu: Menu to check
         :param recursive: Check recursively
@@ -2603,7 +2603,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -2621,7 +2621,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Pygame clock object
         """
@@ -2635,7 +2635,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Selected widget index
         """
@@ -2649,7 +2649,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Widget object, ``None`` if no widget is selected
         """
@@ -2671,7 +2671,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param key: Key of the attribute
         :param value: Value of the attribute
@@ -2689,7 +2689,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param key: Key of the attribute
         :param default: Value if does not exists
@@ -2708,7 +2708,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param key: Key of the attribute
         :return: ``True`` if exists
@@ -2724,7 +2724,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param key: Key of the attribute
         :return: Self reference
@@ -2742,7 +2742,7 @@ class Menu(object):
 
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.Menu.get_current` object.
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :return: Decorator API
         """

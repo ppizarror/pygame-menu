@@ -87,7 +87,7 @@ class Button(Widget):
 
             callback(selected, widget, menu)
 
-        :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+        :param callback: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.set_selected`
         :return: None
         """
         if callback is not None:
@@ -97,7 +97,7 @@ class Button(Widget):
     def update_callback(self, callback: Callable, *args) -> None:
         """
         Update function triggered by the button; ``callback`` cannot point to a Menu, that
-        behaviour is only valid using :py:meth:`pygame_menu.Menu.add.button` method.
+        behaviour is only valid using :py:meth:`pygame_menu.menu.Menu.add.button` method.
 
         .. note::
 

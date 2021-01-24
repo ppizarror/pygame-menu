@@ -19,7 +19,7 @@ menu window itself and all its widgets.
 
 .. note:: The theme parameters can be overwritten locally
           when adding a widget to the menu. See the overwritable
-          ones in the :ref:`add_... methods <Adding widgets>`
+          ones in the :ref:`add... methods <Adding widgets>`
 
 
 Default themes
@@ -132,7 +132,7 @@ Widget selection effect
 
 A **selection effect** is a drawing class used to define the way to highlight the focused widget.
 An instance of the selection effect class is defined in the :py:attr:`Theme.widget_selection_effect`
-parameter of a theme. See example on how to add a selection effect in :ref:`Create a selection effect`
+Theme property. See example on how to add a selection effect in :ref:`Create a selection effect`
 chapter.
 
 The available selection effects are:
@@ -204,7 +204,7 @@ Position                                           Description
 :py:data:`pygame_menu.locals.POSITION_WEST`        West position
 =================================================  ========================
 
-Special positions used by Menu ``ScrollArea`` (all above are available):
+Special positions used by Menu :py:class:`pygame_menu.scrollarea.ScrollArea` (all above are available):
 
 =====================================================================  ===========================
 Position                                                               Description
