@@ -49,7 +49,7 @@ three values:
     menu.add_button('Exit', pygame_menu.events.EXIT,         # Link to exit action
                     align=pygame_menu.locals.ALIGN_RIGHT)
 
-.. automethod:: pygame_menu.Menu.add_button
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.button
 
 
 Add a choices list (selector)

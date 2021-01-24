@@ -231,12 +231,12 @@ To add a decoration, you must access the decorator class from the object (Menu,
 ScrollArea, any Widget) using ``get_decorator()`` method. And use the ``Decorator``
 class API to add decorations to your object.
 
-:: note::
+.. note::
 
     Decorations don't change the width/height of the object. These are visual/only. If
     applied on a widget, use padding to *enlarge* the widget rect if you need such feature.
 
-:: note::
+.. note::
 
     For all decoration, the *(0, 0)* coordinate belongs to the center of the object.
 
@@ -255,5 +255,5 @@ class API to add decorations to your object.
 Decorator API
 -------------
 
-.. autoclass:: pygame_menu.decorator.Decorator
+.. autoclass:: pygame_menu._decorator.Decorator
     :members:

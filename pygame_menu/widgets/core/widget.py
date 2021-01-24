@@ -36,11 +36,11 @@ import pygame_menu.baseimage as _baseimage
 import pygame_menu.font as _fonts
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
-from pygame_menu.decorator import Decorator
+from pygame_menu._decorator import Decorator
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
-from pygame_menu._custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
+from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType, Tuple3IntType
 
 from pathlib import Path

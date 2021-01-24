@@ -44,7 +44,7 @@ from math import pi
 from pathlib import Path
 from uuid import uuid4
 
-from pygame_menu._custom_types import TYPE_CHECKING, List, Tuple2NumberType, ColorType, Tuple, \
+from pygame_menu._types import TYPE_CHECKING, List, Tuple2NumberType, ColorType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector
 
@@ -217,7 +217,7 @@ class Decorator(object):
         :param filled: If ``True`` fills the polygon with the given color
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
-        :param gfx: If ``True```uses pygame gfxdraw instead of draw
+        :param gfx: If ``True`` uses pygame gfxdraw instead of draw
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
@@ -262,7 +262,7 @@ class Decorator(object):
         :param filled: If ``True`` fills the polygon with the given color
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
-        :param gfx: If ``True```uses pygame gfxdraw instead of draw
+        :param gfx: If ``True`` uses pygame gfxdraw instead of draw
         :return: ID of the decoration
         """
         coords = [(x, y)]
@@ -292,7 +292,7 @@ class Decorator(object):
         :param color: Color of the polygon
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
-        :param gfx: If ``True```uses pygame gfxdraw instead of draw
+        :param gfx: If ``True`` uses pygame gfxdraw instead of draw
         :return: ID of the decoration
         """
         coords = [(x, y)]
