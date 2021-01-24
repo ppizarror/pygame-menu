@@ -283,6 +283,8 @@ class BaseImage(object):
         if value is None:
             self._surface.set_alpha(None)
             return self
+        assert isinstance(value, int)
+        assert 0 <= value <= 255, 'alpha value must be an integer between 0 and 255'
         self._surface.set_alpha(value, flags)
         return self
 

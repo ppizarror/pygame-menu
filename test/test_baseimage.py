@@ -167,6 +167,21 @@ class BaseImageTest(unittest.TestCase):
         image2.crop(0, 0, w, h)
         self.assertTrue(image2.equals(image))
 
+        # Crop from rect
+        image.crop_rect(pygame.Rect(0, 0, 8, 8))
+        self.assertEqual(image.get_size(), (8, 8))
+
+    # noinspection PyTypeChecker
+    def test_alpha(self) -> None:
+        """
+        Test alpha modes.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        self.assertRaises(AssertionError, lambda: image.set_alpha(0.5))
+        self.assertRaises(AssertionError, lambda: image.set_alpha(-1))
+        self.assertRaises(AssertionError, lambda: image.set_alpha(267))
+        image.set_alpha(None)
+
     def test_modes(self) -> None:
         """
         Test drawing modes.
@@ -290,6 +305,7 @@ class BaseImageTest(unittest.TestCase):
         # Set size
         image.restore()
         image.resize(100, 50)
+        image.resize(100, 50)  # This should do nothing
         w, h = image.get_size()
         self.assertEqual(w, 100)
         self.assertEqual(h, 50)
