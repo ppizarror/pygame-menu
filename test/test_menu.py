@@ -80,16 +80,16 @@ class MenuTest(unittest.TestCase):
         # Add several widgets
         add_decorator = True
         for i in range(30):
-            btn = menu.add_button(title='epic', action=events.BACK)
+            btn = menu.add.button(title='epic', action=events.BACK)
             btndeco = btn.get_decorator()
             if add_decorator:
                 for j in range(10):
                     btndeco.add_pixel(j * 10, j * 20, (10, 10, 150))
-            menu.add_vertical_margin(margin=10)
-            menu.add_label(title='epic test')
-            menu.add_color_input(title='color', color_type='rgb', default=(234, 33, 2))
-            menu.add_selector(title='epic selector', items=[('1', '3'), ('2', '4')])
-            menu.add_text_input(title='text', default='the default text')
+            menu.add.vertical_margin(margin=10)
+            menu.add.label(title='epic test')
+            menu.add.color_input(title='color', color_type='rgb', default=(234, 33, 2))
+            menu.add.selector(title='epic selector', items=[('1', '3'), ('2', '4')])
+            menu.add.text_input(title='text', default='the default text')
 
         def draw_and_update() -> None:
             """
@@ -130,7 +130,7 @@ class MenuTest(unittest.TestCase):
         """
         # Test centering
         menu = MenuUtils.generic_menu()
-        btn = menu.add_button('button', None)
+        btn = menu.add.button('button', None)
         menu.center_content()
         self.assertEqual(menu.get_height(), 400)
         self.assertEqual(menu.get_height(inner=True), 345)
@@ -150,7 +150,7 @@ class MenuTest(unittest.TestCase):
 
         # If there's too many widgets, the centering should be disabled
         for i in range(20):
-            menu.add_button('button', None)
+            menu.add.button('button', None)
         self.assertEqual(menu._widget_offset[1], 0)
 
         theme = menu.get_theme()
@@ -163,7 +163,7 @@ class MenuTest(unittest.TestCase):
 
         # Test menu not centered
         menu = MenuUtils.generic_menu(center_content=False)
-        btn = menu.add_button('button', None)
+        btn = menu.add.button('button', None)
         btneff = btn.get_selection_effect().get_margin()[0]
         self.assertEqual(btn.get_position()[1], btneff + 1)
 
@@ -188,17 +188,17 @@ class MenuTest(unittest.TestCase):
             width=400
         )
 
-        quit1 = menu.add_button('Quit', pygame_menu.events.EXIT)
-        name1 = menu.add_text_input('Name: ', default='John Doe', maxchar=10, padding=30)
-        sel1 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
-        sel2 = menu.add_selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
-        play1 = menu.add_button('Play', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_LEFT)
-        play2 = menu.add_button('Play 2', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_RIGHT)
+        quit1 = menu.add.button('Quit', pygame_menu.events.EXIT)
+        name1 = menu.add.text_input('Name: ', default='John Doe', maxchar=10, padding=30)
+        sel1 = menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        sel2 = menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        play1 = menu.add.button('Play', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_LEFT)
+        play2 = menu.add.button('Play 2', pygame_menu.events.NONE, align=pygame_menu.locals.ALIGN_RIGHT)
         play2.set_float()
-        hidden = menu.add_button('Hidden', None, font_size=100)
+        hidden = menu.add.button('Hidden', None, font_size=100)
         hidden.hide()
-        quit2 = menu.add_button('Quit', pygame_menu.events.EXIT)
-        label = menu.add_label('This label is really epic')
+        quit2 = menu.add.button('Quit', pygame_menu.events.EXIT)
+        label = menu.add.label('This label is really epic')
         label.rotate(90)
 
         menu.render()
@@ -234,19 +234,19 @@ class MenuTest(unittest.TestCase):
 
         # Test no selectable position
         menu = MenuUtils.generic_menu(center_content=False)
-        btn = menu.add_button('button', None)
+        btn = menu.add.button('button', None)
         btn.is_selectable = False
         menu.render()
         self.assertEqual(btn.get_position()[1], 1)
 
         # Test no selectable + widget
         menu = MenuUtils.generic_menu()
-        img = menu.add_image(
+        img = menu.add.image(
             pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU,
             scale=(0.25, 0.25),
             align=pygame_menu.locals.ALIGN_CENTER
         )
-        btn = menu.add_button('Nice', None)
+        btn = menu.add.button('Nice', None)
         margin = menu.get_theme().widget_margin[1]
         menu.render()
         self.assertEqual(menu.get_height(widget=True), img.get_height() + btn.get_height() + margin)
@@ -258,13 +258,13 @@ class MenuTest(unittest.TestCase):
         # b4,b5,b6
         # b7
         menu = MenuUtils.generic_menu()
-        b1 = menu.add_button('b1', None)
-        b2 = menu.add_button('b2', None).set_float()
-        b3 = menu.add_button('b3', None)
-        b4 = menu.add_button('b4', None)
-        b5 = menu.add_button('b5', None).set_float()
-        b6 = menu.add_button('b6', None).set_float()
-        b7 = menu.add_button('b37', None)
+        b1 = menu.add.button('b1', None)
+        b2 = menu.add.button('b2', None).set_float()
+        b3 = menu.add.button('b3', None)
+        b4 = menu.add.button('b4', None)
+        b5 = menu.add.button('b5', None).set_float()
+        b6 = menu.add.button('b6', None).set_float()
+        b7 = menu.add.button('b37', None)
         self.assertEqual(b1.get_col_row_index(), (0, 0, 0))
         self.assertEqual(b2.get_col_row_index(), (0, 0, 1))
         self.assertEqual(b3.get_col_row_index(), (0, 1, 2))
@@ -376,7 +376,7 @@ class MenuTest(unittest.TestCase):
 
         # Add button with submenu, and open it
         self.assertEqual(menu2.get_current().get_title(), '2')
-        menu2.add_button('to1', menu).apply()
+        menu2.add.button('to1', menu).apply()
         self.assertEqual(menu2.get_current().get_title(), '1')
         self.assertEqual(menu2.get_current(), menu)
 
@@ -466,7 +466,7 @@ class MenuTest(unittest.TestCase):
         menu = None
         for i in range(1, 11):
             menu = MenuUtils.generic_menu(title='submenu {0}'.format(i))
-            button = menu_prev.add_button('open', menu)
+            button = menu_prev.add.button('open', menu)
             button.apply()
             menu_prev = menu
         self.menu.enable()
@@ -515,7 +515,7 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
 
-        widget = self.menu.add_text_input('test', textinput_id='some_id')
+        widget = self.menu.add.text_input('test', textinput_id='some_id')
         widget_found = self.menu.get_widget('some_id')
         self.assertEqual(widget, widget_found)
 
@@ -523,12 +523,12 @@ class MenuTest(unittest.TestCase):
         prev_menu = self.menu
         for i in range(11):
             menu = MenuUtils.generic_menu()
-            prev_menu.add_button('menu', menu)
+            prev_menu.add.button('menu', menu)
             prev_menu = menu
 
         # Add a deep input
-        deep_widget = prev_menu.add_text_input('title', textinput_id='deep_id')
-        deep_selector = prev_menu.add_selector('selector', [('0', 0), ('1', 1)], selector_id='deep_selector', default=1)
+        deep_widget = prev_menu.add.text_input('title', textinput_id='deep_id')
+        deep_selector = prev_menu.add.selector('selector', [('0', 0), ('1', 1)], selector_id='deep_selector', default=1)
 
         self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
@@ -540,12 +540,12 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
         menu = MenuUtils.generic_menu()
-        btn = menu.add_button('nice', None)
+        btn = menu.add.button('nice', None)
         w = Button('title')
-        self.menu.add_generic_widget(w)
-        self.assertRaises(ValueError, lambda: menu.add_generic_widget(w))
+        self.menu.add.generic_widget(w)
+        self.assertRaises(ValueError, lambda: menu.add.generic_widget(w))
         btn._menu = None
-        self.menu.add_generic_widget(btn)
+        self.menu.add.generic_widget(btn)
 
     # noinspection PyArgumentEqualDefault
     def test_get_selected_widget(self) -> None:
@@ -555,16 +555,16 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
 
         # Test widget selection and removal
-        widget = self.menu.add_text_input('test', default='some_id')
+        widget = self.menu.add.text_input('test', default='some_id')
         self.assertEqual(widget, self.menu.get_selected_widget())
         self.menu.remove_widget(widget)
         self.assertEqual(self.menu.get_selected_widget(), None)
         self.assertEqual(self.menu.get_index(), -1)
 
         # Add two widgets, first widget will be selected first, but if removed the second should be selected
-        widget1 = self.menu.add_text_input('test', default='some_id', textinput_id='epic')
-        self.assertRaises(IndexError, lambda: self.menu.add_text_input('test', default='some_id', textinput_id='epic'))
-        widget2 = self.menu.add_text_input('test', default='some_id')
+        widget1 = self.menu.add.text_input('test', default='some_id', textinput_id='epic')
+        self.assertRaises(IndexError, lambda: self.menu.add.text_input('test', default='some_id', textinput_id='epic'))
+        widget2 = self.menu.add.text_input('test', default='some_id')
         self.assertEqual(widget1.get_menu(), self.menu)
         self.assertEqual(widget1, self.menu.get_selected_widget())
         self.menu.remove_widget(widget1)
@@ -575,10 +575,10 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(len(self.menu.get_widgets()), 0)
 
         # Add 3 widgets, select the last one and remove it, then the selected widget must be the first
-        w1 = self.menu.add_button('1', None)
+        w1 = self.menu.add.button('1', None)
         w2 = Label('2')
-        self.menu.add_generic_widget(w2, configure_defaults=True)
-        w3 = self.menu.add_button('3', None)
+        self.menu.add.generic_widget(w2, configure_defaults=True)
+        w3 = self.menu.add.button('3', None)
         self.assertEqual(self.menu.get_selected_widget(), w1)
         self.menu.select_widget(w3)
         self.assertEqual(self.menu.get_selected_widget(), w3)
@@ -602,13 +602,13 @@ class MenuTest(unittest.TestCase):
 
         # Mark w1 as selectable
         w1.is_selectable = True
-        self.menu.add_generic_widget(w2)
+        self.menu.add.generic_widget(w2)
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
         # Add a new widget that cannot be selected
-        self.menu.add_label('not selectable')
-        self.menu.add_label('not selectable')
-        wlast = self.menu.add_label('not selectable', selectable=True)
+        self.menu.add.label('not selectable')
+        self.menu.add.label('not selectable')
+        wlast = self.menu.add.label('not selectable', selectable=True)
 
         # If w2 is removed, then menu will try to select labels, but as them are not selectable it should select the last one
         w2.hide()
@@ -657,7 +657,7 @@ class MenuTest(unittest.TestCase):
         """
         menu = MenuUtils.generic_menu()
         menu2 = MenuUtils.generic_menu()
-        btn = menu.add_button('btn', menu2)
+        btn = menu.add.button('btn', menu2)
         self.assertTrue(btn.to_menu)
         self.assertTrue(menu.in_submenu(menu2))
         self.assertFalse(menu2.in_submenu(menu))
@@ -670,9 +670,9 @@ class MenuTest(unittest.TestCase):
         menu.clear()
         menu2.clear()
 
-        self.assertRaises(ValueError, lambda: menu.add_button('to self', menu))
-        menu.add_button('to2', menu2)
-        self.assertRaises(ValueError, lambda: menu2.add_button('to1', menu))
+        self.assertRaises(ValueError, lambda: menu.add.button('to self', menu))
+        menu.add.button('to2', menu2)
+        self.assertRaises(ValueError, lambda: menu2.add.button('to1', menu))
 
     def test_centering(self) -> None:
         """
@@ -709,9 +709,9 @@ class MenuTest(unittest.TestCase):
             width=400
         )
 
-        menu.add_label('Text #1')
-        menu.add_vertical_margin(100)
-        menu.add_label('Text #2')
+        menu.add.label('Text #1')
+        menu.add.vertical_margin(100)
+        menu.add.label('Text #2')
         v = 36
         if pygame.version.vernum[0] < 2:
             v = 35
@@ -750,7 +750,7 @@ class MenuTest(unittest.TestCase):
         button = None
         wid = []
         for i in range(5):
-            button = self.menu.add_button('button', _some_event)
+            button = self.menu.add.button('button', _some_event)
             wid.append(button.get_id())
         self.assertEqual(len(self.menu.get_widgets()), 5)
 
@@ -800,7 +800,7 @@ class MenuTest(unittest.TestCase):
         self.menu.clear()
         self.assertEqual(self.menu._get_depth(), 0)
         menu = MenuUtils.generic_menu(title='submenu')
-        button = self.menu.add_button('open', menu)
+        button = self.menu.add.button('open', menu)
         button.apply()
         self.assertEqual(self.menu._get_depth(), 1)
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_BACK, keydown=True))  # go back
@@ -814,11 +814,11 @@ class MenuTest(unittest.TestCase):
         self.menu.enable()
 
         submenu = MenuUtils.generic_menu()  # 1 option
-        submenu.add_button('button', lambda: None)
+        submenu.add.button('button', lambda: None)
 
-        self.menu.add_button('button', lambda: None)
-        self.menu.add_button('button', lambda: None)
-        button = self.menu.add_button('button', submenu)
+        self.menu.add.button('button', lambda: None)
+        self.menu.add.button('button', lambda: None)
+        button = self.menu.add.button('button', submenu)
         self.menu.disable()
         self.assertRaises(RuntimeError, lambda: self.menu.draw(surface))
         self.menu.enable()
@@ -833,31 +833,31 @@ class MenuTest(unittest.TestCase):
         """
         self.menu.clear()
 
-        self.menu.add_text_input('text1', textinput_id='id1', default=1)  # Force to string
+        self.menu.add.text_input('text1', textinput_id='id1', default=1)  # Force to string
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id1'], '1')
 
-        self.menu.add_text_input('text1', textinput_id='id2', default=1.5, input_type=pygame_menu.locals.INPUT_INT)
+        self.menu.add.text_input('text1', textinput_id='id2', default=1.5, input_type=pygame_menu.locals.INPUT_INT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id2'], 1)  # Cast to int
-        self.assertRaises(IndexError, lambda: self.menu.add_text_input('text1', textinput_id='id1', default=1))
+        self.assertRaises(IndexError, lambda: self.menu.add.text_input('text1', textinput_id='id1', default=1))
 
-        self.menu.add_text_input('text1', textinput_id='id3', default=1.5, input_type=pygame_menu.locals.INPUT_FLOAT)
+        self.menu.add.text_input('text1', textinput_id='id3', default=1.5, input_type=pygame_menu.locals.INPUT_FLOAT)
         data = self.menu.get_input_data(True)
         self.assertEqual(data['id3'], 1.5)  # Correct
 
         # Add input to a submenu
         submenu = MenuUtils.generic_menu()
-        submenu.add_text_input('text', textinput_id='id4', default='thewidget')
-        self.menu.add_button('submenu', submenu)
+        submenu.add.text_input('text', textinput_id='id4', default='thewidget')
+        self.menu.add.button('submenu', submenu)
         data = self.menu.get_input_data(recursive=True)
         self.assertEqual(data['id4'], 'thewidget')
 
         # Add a submenu within submenu with a repeated id, menu.get_input_data
         # should raise an exception
         subsubmenu = MenuUtils.generic_menu()
-        subsubmenu.add_text_input('text', textinput_id='id4', default='repeateddata')
-        submenu.add_button('submenu', subsubmenu)
+        subsubmenu.add.text_input('text', textinput_id='id4', default='repeateddata')
+        submenu.add.button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(recursive=True))
 
     # noinspection PyTypeChecker
@@ -875,7 +875,7 @@ class MenuTest(unittest.TestCase):
         # Assert append more widgets than number of rows*columns
         column_menu = MenuUtils.generic_menu(columns=2, rows=4, enabled=False)
         for _ in range(8):
-            column_menu.add_button('test', pygame_menu.events.BACK)
+            column_menu.add.button('test', pygame_menu.events.BACK)
         self.assertRaises(RuntimeError, lambda: column_menu.mainloop(surface, bgfun=dummy_function, disable_loop=True))
         column_menu._move_selected_left_right(-1)
         column_menu._move_selected_left_right(1)
@@ -885,7 +885,7 @@ class MenuTest(unittest.TestCase):
         column_menu.draw(surface)
         column_menu.disable()
         self.assertRaises(RuntimeError, lambda: column_menu.draw(surface))
-        self.assertRaises(AssertionError, lambda: column_menu.add_button('test', pygame_menu.events.BACK))
+        self.assertRaises(AssertionError, lambda: column_menu.add.button('test', pygame_menu.events.BACK))
         self.assertRaises(AssertionError, lambda: column_menu._update_widget_position())  # 9th item
 
         # Test max width
@@ -932,12 +932,12 @@ class MenuTest(unittest.TestCase):
         # Create widget positioning
         width = 600
         menu = MenuUtils.generic_menu(columns=3, rows=2, width=width)
-        btn1 = menu.add_button('btn', None)
-        btn2 = menu.add_button('btn', None)
-        btn3 = menu.add_button('btn', None)
-        btn4 = menu.add_button('btn', None)
-        btn5 = menu.add_button('btn', None)
-        btn6 = menu.add_button('btn', None)
+        btn1 = menu.add.button('btn', None)
+        btn2 = menu.add.button('btn', None)
+        btn3 = menu.add.button('btn', None)
+        btn4 = menu.add.button('btn', None)
+        btn5 = menu.add.button('btn', None)
+        btn6 = menu.add.button('btn', None)
         c, r, i = btn1.get_col_row_index()
         self.assertEqual(c, 0)
         self.assertEqual(r, 0)
@@ -1071,7 +1071,7 @@ class MenuTest(unittest.TestCase):
             self.assertEqual(colw, width / 2)  # 600/2
 
         # Add a new button
-        btn7 = menu.add_button('btn', None)
+        btn7 = menu.add.button('btn', None)
 
         # Layout:
         # btn3 | btn5 | btn7
@@ -1153,11 +1153,11 @@ class MenuTest(unittest.TestCase):
 
         # Test different rows per column
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 1, 2], width=width, column_max_width=[300, None, 100])
-        btn1 = menu.add_button('btn', None)
-        btn2 = menu.add_button('btn', None)
-        btn3 = menu.add_button('btn', None)
-        btn4 = menu.add_button('btn', None)
-        btn5 = menu.add_button('btn', None)
+        btn1 = menu.add.button('btn', None)
+        btn2 = menu.add.button('btn', None)
+        btn3 = menu.add.button('btn', None)
+        btn4 = menu.add.button('btn', None)
+        btn5 = menu.add.button('btn', None)
         c, r, i = btn1.get_col_row_index()
         self.assertEqual(c, 0)
         self.assertEqual(r, 0)
@@ -1218,11 +1218,11 @@ class MenuTest(unittest.TestCase):
                                       column_max_width=[200, None, 150], column_min_width=[150, 150, 150])
         # btn1 | btn3 | btn4
         # btn2 |      | btn5
-        btn1 = menu.add_button('btn', None)
-        menu.add_button('btn', None)
-        menu.add_button('btn', None)
-        menu.add_button('btn', None)
-        menu.add_button('btn', None)
+        btn1 = menu.add.button('btn', None)
+        menu.add.button('btn', None)
+        menu.add.button('btn', None)
+        menu.add.button('btn', None)
+        menu.add.button('btn', None)
         btn1.scale(10, 1)
         menu.render()  # This should scale 2 column
         self.assertEqual(menu._column_widths[0], 200)
@@ -1231,11 +1231,11 @@ class MenuTest(unittest.TestCase):
 
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 1, 2], width=width,
                                       column_max_width=[200, 150, 150], column_min_width=[150, 150, 150])
-        btn1 = menu.add_button('btn', None)
-        btn2 = menu.add_button('btn', None)
-        btn3 = menu.add_button('btn', None)
-        menu.add_button('btn', None)
-        menu.add_button('btn', None)
+        btn1 = menu.add.button('btn', None)
+        btn2 = menu.add.button('btn', None)
+        btn3 = menu.add.button('btn', None)
+        menu.add.button('btn', None)
+        menu.add.button('btn', None)
         btn1.scale(10, 1)
         btn2.scale(10, 1)
         btn3.scale(10, 1)
@@ -1281,7 +1281,7 @@ class MenuTest(unittest.TestCase):
             return 'the value'
 
         # Add some widgets
-        button = menu.add_button('button', _some_event)
+        button = menu.add.button('button', _some_event)
 
         # Check touch
         if hasattr(pygame, 'FINGERUP'):
@@ -1305,12 +1305,12 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(title='mainmenu')
         menu2 = MenuUtils.generic_menu(title='other')
 
-        color = menu.add_color_input('title', default='ff0000', color_type='hex')
-        text = menu.add_text_input('title', default='epic')
-        selector = menu.add_selector('title', items=[('a', 1), ('b', 2)], default=1)
-        text2 = menu2.add_text_input('titlesub', default='not epic')
-        menu.add_label('mylabel')
-        menu.add_button('submenu', menu2)
+        color = menu.add.color_input('title', default='ff0000', color_type='hex')
+        text = menu.add.text_input('title', default='epic')
+        selector = menu.add.selector('title', items=[('a', 1), ('b', 2)], default=1)
+        text2 = menu2.add.text_input('titlesub', default='not epic')
+        menu.add.label('mylabel')
+        menu.add.button('submenu', menu2)
 
         # Change values
         color.set_value('aaaaaa')
@@ -1406,7 +1406,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_height(widget=True), 0)
 
         # Adds a button, hide it, then the height should be 0 as well
-        btn = menu.add_button('hidden', None)
+        btn = menu.add.button('hidden', None)
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 
@@ -1428,7 +1428,7 @@ class MenuTest(unittest.TestCase):
 
         menu2.set_onbeforeopen(onbeforeopen)
         self.assertFalse(test[0])
-        menu.add_button('to2', menu2).apply()
+        menu.add.button('to2', menu2).apply()
         self.assertTrue(test[0])
 
     def test_focus(self) -> None:
@@ -1436,8 +1436,8 @@ class MenuTest(unittest.TestCase):
         Test menu focus effect.
         """
         menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
-        btn = menu.add_button('nice', None)
-        # menu.add_button('nice', None)
+        btn = menu.add.button('nice', None)
+        # menu.add.button('nice', None)
 
         # Test focus
         btn.active = True
@@ -1486,8 +1486,8 @@ class MenuTest(unittest.TestCase):
         Test visible.
         """
         menu = MenuUtils.generic_menu(title='menu')
-        btn1 = menu.add_button('nice', None)
-        btn2 = menu.add_button('nice', None)
+        btn1 = menu.add.button('nice', None)
+        btn2 = menu.add.button('nice', None)
         self.assertTrue(btn1.is_selected())
         btn2.hide()
         menu.select_widget(btn1)
@@ -1534,7 +1534,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(i2, -1)
 
         menu = MenuUtils.generic_menu(title='menu')
-        btn = menu.add_button('button', None)
+        btn = menu.add.button('button', None)
         self.assertTrue(btn.is_selected())
         btn.hide()
 
@@ -1585,10 +1585,10 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(columns=4, rows=2, touchscreen=True,
                                       touchscreen_motion_selection=True, column_min_width=[400, 300, 400, 300],
                                       joystick_enabled=True)  # submenu
-        menu_top.add_button('menu', menu).apply()
+        menu_top.add.button('menu', menu).apply()
         widg = []
         for i in range(8):
-            b = menu.add_button('test' + str(i), pygame_menu.events.BACK)
+            b = menu.add.button('test' + str(i), pygame_menu.events.BACK)
             widg.append(b)
         # btn0 | btn2 | btn4 | btn6
         # btn1 | btn3 | btn5 | btn7
@@ -1650,7 +1650,7 @@ class MenuTest(unittest.TestCase):
         """
         # First, add a widget and test the positioning
         menu = MenuUtils.generic_menu()
-        btn = menu.add_button('floating', None)
+        btn = menu.add.button('floating', None)
         self.assertEqual(btn.get_alignment(), pygame_menu.locals.ALIGN_CENTER)
         expc_pos = (247, 153)
         if pygame.version.vernum[0] < 2:
@@ -1665,27 +1665,27 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2])
         self.assertEqual(len(menu._column_widths), 0)
         for i in range(6):
-            menu.add_none_widget()
+            menu.add.none_widget()
         self.assertEqual(menu._column_widths, [200, 200, 200])
 
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2], column_min_width=[300, 100, 100])
         self.assertEqual(len(menu._column_widths), 0)
         for i in range(6):
-            menu.add_none_widget()
+            menu.add.none_widget()
         # This should be proportional
         self.assertEqual(menu._column_widths, [360.0, 120.0, 120.0])
 
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2], column_min_width=[600, 600, 600])
         self.assertEqual(len(menu._column_widths), 0)
         for i in range(6):
-            menu.add_none_widget()
+            menu.add.none_widget()
         # This should be proportional
         self.assertEqual(menu._column_widths, [600, 600, 600])
 
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 2, 2], column_max_width=[100, None, None])
         self.assertEqual(len(menu._column_widths), 0)
         for i in range(6):
-            menu.add_none_widget()
+            menu.add.none_widget()
 
         # This should be proportional
         self.assertEqual(menu._column_widths, [100, 250, 250])
@@ -1699,3 +1699,21 @@ class MenuTest(unittest.TestCase):
         menu.force_surface_cache_update()
         menu.force_surface_update()
         self.assertTrue(menu._widgets_surface_need_update)
+
+    def test_compatibility_addition(self) -> None:
+        """
+        Test compatibility for addition methods.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertIsInstance(menu.add_button('title', None), pygame_menu.widgets.Button)
+        self.assertIsInstance(menu.add_color_input('title', 'rgb'), pygame_menu.widgets.ColorInput)
+        self.assertIsInstance(menu.add_image(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU),
+                              pygame_menu.widgets.Image)
+        self.assertIsInstance(menu.add_label('title'), pygame_menu.widgets.Label)
+        self.assertIsInstance(menu.add_selector(title='epic selector', items=[('1', '3'), ('2', '4')]),
+                              pygame_menu.widgets.Selector)
+        self.assertIsInstance(menu.add_text_input(title='text', default='the default text'),
+                              pygame_menu.widgets.TextInput)
+        self.assertIsInstance(menu.add_vertical_margin(10), pygame_menu.widgets.VMargin)
+        self.assertIsInstance(menu.add_generic_widget(pygame_menu.widgets.NoneWidget()),
+                              pygame_menu.widgets.NoneWidget)

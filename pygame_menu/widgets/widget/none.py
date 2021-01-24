@@ -32,15 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['NoneWidget']
 
 import pygame
+import pygame_menu
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
-from pygame_menu._custom_types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
-    TYPE_CHECKING, Dict, Any, Tuple, CallbackType
-
-if TYPE_CHECKING:
-    from pygame_menu.baseimage import BaseImage
-    from pygame_menu.sound import Sound
-    from pygame_menu.widgets.core import Selection
+from pygame_menu._types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
+    Dict, Any, Tuple, CallbackType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -73,7 +69,7 @@ class NoneWidget(Widget):
                  use_transformed_padding: bool = True) -> 'pygame.Rect':
         return pygame.Rect(0, 0, 0, 0)
 
-    def set_background_color(self, color: Optional[Union[ColorType, 'BaseImage']],
+    def set_background_color(self, color: Optional[Union[ColorType, 'pygame_menu.BaseImage']],
                              inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
         return self
 
@@ -83,7 +79,7 @@ class NoneWidget(Widget):
     def _draw_border(self, surface: 'pygame.Surface') -> None:
         pass
 
-    def set_selection_effect(self, selection: 'Selection') -> 'Widget':
+    def set_selection_effect(self, selection: 'pygame_menu.widgets.core.Selection') -> 'Widget':
         return self
 
     def apply(self, *args) -> None:
@@ -157,7 +153,7 @@ class NoneWidget(Widget):
     def set_shadow(self, enabled: bool = True, color: bool = None, position=None, offset=None) -> 'Widget':
         return self
 
-    def set_sound(self, sound: 'Sound') -> 'Widget':
+    def set_sound(self, sound: 'pygame_menu.Sound') -> 'Widget':
         return self
 
     def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> 'Widget':

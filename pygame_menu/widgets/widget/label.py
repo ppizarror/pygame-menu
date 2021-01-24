@@ -33,7 +33,7 @@ __all__ = ['Label']
 
 import pygame
 from pygame_menu.widgets.core import Widget
-from pygame_menu._custom_types import Any, CallbackType, List, Union, Tuple, Optional
+from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional
 
 
 # noinspection PyMissingOrEmptyDocstring

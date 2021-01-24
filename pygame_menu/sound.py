@@ -68,7 +68,7 @@ from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
-from pygame_menu._custom_types import NumberType, Dict, Any, Optional, Union
+from pygame_menu._types import NumberType, Dict, Any, Optional, Union
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE

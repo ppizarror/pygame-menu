@@ -4,8 +4,8 @@
 .. This page is orphan because it is the documentation entry point
 
 .. image:: _static/pygame_menu.png
-   :scale: 35%
-   :align: center
+    :scale: 35%
+    :align: center
 
 .. include:: ../README.rst
 
@@ -51,10 +51,10 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
     menu = pygame_menu.Menu(300, 400, 'Welcome',
                            theme=pygame_menu.themes.THEME_BLUE)
 
-    menu.add_text_input('Name :', default='John Doe')
-    menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
-    menu.add_button('Play', start_the_game)
-    menu.add_button('Quit', pygame_menu.events.EXIT)
+    menu.add.text_input('Name :', default='John Doe')
+    menu.add.selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
+    menu.add.button('Play', start_the_game)
+    menu.add.button('Quit', pygame_menu.events.EXIT)
 
 4. Run your menu
 
@@ -63,23 +63,23 @@ Here is a simple example of how to create a menu with :py:mod:`pygame-menu`
     menu.mainloop(surface)
 
 .. figure:: _static/first_steps.png
-   :scale: 40%
-   :align: center
+    :scale: 40%
+    :align: center
 
-   Tadada... !!! Such a beautiful menu ＼(^o^)／
+    Tadada... !!! Such a beautiful menu ＼(^o^)／
 
 **Interested in** :ref:`going deeper into menu design <Creating menus>` **?**
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: First steps
+    :maxdepth: 2
+    :hidden:
+    :caption: First steps
 
-   _source/create_menu
-   _source/add_widgets
-   _source/add_sounds
-   _source/themes
-   _source/gallery
+    _source/create_menu
+    _source/add_widgets
+    _source/add_sounds
+    _source/themes
+    _source/gallery
 
 
 ==============
@@ -98,7 +98,14 @@ for :py:mod:`pygame-menu`. The main addressed topics are:
    :caption: Advanced usage
 
    _source/advanced
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Menu APIs
+
    _source/baseimage
+   _source/scrollarea.rst
 
 
 ===========
@@ -117,15 +124,17 @@ Access to a widget in a menu can easily be done with two methods:
 Each :py:mod:`pygame_menu` widget and its behaviors are defined in a
 class. The currently existing classes are:
 
- - :py:class:`~pygame_menu.widgets.Button`
- - :py:class:`~pygame_menu.widgets.ColorInput`
- - :py:class:`~pygame_menu.widgets.Image`
- - :py:class:`~pygame_menu.widgets.Label`
- - :py:class:`~pygame_menu.widgets.MenuBar`
- - :py:class:`~pygame_menu.widgets.ScrollBar`
- - :py:class:`~pygame_menu.widgets.Selector`
- - :py:class:`~pygame_menu.widgets.TextInput`
- - :py:class:`~pygame_menu.widgets.VMargin`
+    - :py:class:`~pygame_menu.widgets.Button`
+    - :py:class:`~pygame_menu.widgets.ColorInput`
+    - :py:class:`~pygame_menu.widgets.Image`
+    - :py:class:`~pygame_menu.widgets.Label`
+    - :py:class:`~pygame_menu.widgets.MenuBar`
+    - :py:class:`~pygame_menu.widgets.NoneWidget`
+    - :py:class:`~pygame_menu.widgets.ScrollBar`
+    - :py:class:`~pygame_menu.widgets.Selector`
+    - :py:class:`~pygame_menu.widgets.TextInput`
+    - :py:class:`~pygame_menu.widgets.ToggleSwitch`
+    - :py:class:`~pygame_menu.widgets.VMargin`
 
 For advanced programmers, those classes can be used to design custom
 menus or windows.
@@ -135,21 +144,21 @@ instance. It shows how to use the :py:class:`pygame_menu.widgets.ScrollBar`
 class to display large custom surfaces.
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Widgets API
+    :maxdepth: 2
+    :hidden:
+    :caption: Widgets API
 
-   _source/widgets_button
-   _source/widgets_colorinput
-   _source/widgets_image
-   _source/widgets_label
-   _source/widgets_none
-   _source/widgets_menubar
-   _source/widgets_scrollbar
-   _source/widgets_selector
-   _source/widgets_textinput
-   _source/widgets_toggleswitch
-   _source/widgets_vmargin
+    _source/widgets_button
+    _source/widgets_colorinput
+    _source/widgets_image
+    _source/widgets_label
+    _source/widgets_none
+    _source/widgets_menubar
+    _source/widgets_scrollbar
+    _source/widgets_selector
+    _source/widgets_textinput
+    _source/widgets_toggleswitch
+    _source/widgets_vmargin
 
 
 =================
@@ -163,12 +172,12 @@ just want to let me know what you think about the library, feel free to
 email me at pablo@ppizarror.com
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: About pygame-menu
+    :maxdepth: 2
+    :hidden:
+    :caption: About pygame-menu
 
-   _source/license
-   _source/contributors
+    _source/license
+    _source/contributors
 
 
 ==================
@@ -180,9 +189,9 @@ Indices and tables
 * :ref:`search`
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Migration Guides
+    :maxdepth: 2
+    :hidden:
+    :caption: Migration Guides
 
-   _source/migration_guide_2_to_3
-   _source/migration_guide_3_to_4
+    _source/migration_guide_2_to_3
+    _source/migration_guide_3_to_4

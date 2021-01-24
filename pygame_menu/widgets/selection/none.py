@@ -32,11 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['NoneSelection']
 
 import pygame
+import pygame_menu
 from pygame_menu.widgets.core import Selection
-from pygame_menu._custom_types import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from pygame_menu.widgets.core import Widget
 
 
 class NoneSelection(Selection):
@@ -50,5 +47,5 @@ class NoneSelection(Selection):
         )
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
-        return
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
+        return self

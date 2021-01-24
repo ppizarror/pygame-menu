@@ -52,7 +52,7 @@ import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu._custom_types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
+from pygame_menu._types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
     Literal, Tuple3IntType
 
 import math
@@ -86,11 +86,11 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
     .. note::
 
-        This widget implements the same transformations as :py:class:`pygame_menu.widgets.widget.TextInput`.
+        This widget implements the same transformations as :py:class:`pygame_menu.widgets.TextInput`.
 
     .. note::
 
-        This class cannot select text as :py:class:`pygame_menu.widgets.widget.TextInput` does. Also, copy
+        This class cannot select text as :py:class:`pygame_menu.widgets.TextInput` does. Also, copy
         and paste is disabled.
 
     :param title: Color input title

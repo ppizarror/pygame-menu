@@ -231,8 +231,8 @@ class SolarSystemApp(object):
             submenu_area_deco.add_callable(self.draw_universe_background)
 
             # Add go back button with a background image
-            submenu.add_vertical_margin(150)
-            goback = submenu.add_button('Back to Menu', pygame_menu.events.BACK)
+            submenu.add.vertical_margin(150)
+            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK)
             goback_img = planet.image.copy().resize(150, 150)
             goback_color = goback_img.get_at((100, 100), ignore_alpha=True)  # Get color from the figure's center pixel
             goback.get_decorator().add_baseimage(0, 0, goback_img, centered=True)
@@ -240,19 +240,19 @@ class SolarSystemApp(object):
             goback.set_selection_effect(goback_selection.set_color(goback_color))
 
             # Description
-            submenu.add_vertical_margin(75)
-            submenu.add_label('Description', align=pygame_menu.locals.ALIGN_LEFT,
+            submenu.add.vertical_margin(75)
+            submenu.add.label('Description', align=pygame_menu.locals.ALIGN_LEFT,
                               font_name=pygame_menu.font.FONT_OPEN_SANS_BOLD, margin=(5, 10))
-            labl = submenu.add_label(planet.info, max_char=70, align=pygame_menu.locals.ALIGN_LEFT,
+            labl = submenu.add.label(planet.info, max_char=70, align=pygame_menu.locals.ALIGN_LEFT,
                                      margin=(20, 1), font_size=20, font_name=pygame_menu.font.FONT_PT_SERIF,
                                      font_color=(255, 255, 255))
             for line in labl:
                 line.set_max_width(580)
-            submenu.add_vertical_margin(40)  # Bottom margin
+            submenu.add.vertical_margin(40)  # Bottom margin
 
             # Create advanced button
             planet.image.scale(0.35, 0.35)
-            button = self.menu.add_button(planet.name, submenu, font_size=planet.fontsize)
+            button = self.menu.add.button(planet.name, submenu, font_size=planet.fontsize)
             button.set_float()
             button.get_decorator().add_baseimage(0, 0, planet.image, centered=True)
             button.set_attribute('planet', planet)

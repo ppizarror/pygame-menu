@@ -52,7 +52,7 @@ def add_dynamic_button() -> None:
     :return: None
     """
     print('Adding a button dynamically')
-    btn = menu.add_button(randrange(0, 10), None)
+    btn = menu.add.button(randrange(0, 10), None)
 
     def _update_button() -> None:
         count = btn.get_attribute('count', int(btn.get_title())) + 1
@@ -62,9 +62,9 @@ def add_dynamic_button() -> None:
     btn.update_callback(_update_button)
 
 
-menu.add_text_input('Name: ', default='John Doe')
-menu.add_button('Play', add_dynamic_button)
-menu.add_button('Quit', pygame_menu.events.EXIT)
+menu.add.text_input('Name: ', default='John Doe')
+menu.add.button('Play', add_dynamic_button)
+menu.add.button('Quit', pygame_menu.events.EXIT)
 
 
 def main(test: bool = False) -> None:

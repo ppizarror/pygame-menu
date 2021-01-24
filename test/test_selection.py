@@ -64,7 +64,7 @@ class SelectionTest(unittest.TestCase):
         """
         w = Button('epic')
         w.set_selection_effect(LeftArrowSelection())
-        self.menu.add_generic_widget(w)
+        self.menu.add.generic_widget(w)
         self.menu.draw(surface)
         w.set_selection_effect(RightArrowSelection())
         self.menu.draw(surface)
@@ -82,7 +82,7 @@ class SelectionTest(unittest.TestCase):
             margin_x=margin_x,
             margin_y=margin_y
         ))
-        self.menu.add_generic_widget(w)
+        self.menu.add.generic_widget(w)
         self.menu.draw(surface)
 
         sel = w.get_selection_effect()
@@ -101,7 +101,7 @@ class SelectionTest(unittest.TestCase):
         """
         w = Button('epic')
         w.set_selection_effect(NoneSelection())
-        self.menu.add_generic_widget(w)
+        self.menu.add.generic_widget(w)
         self.menu.draw(surface)
 
         rect = w.get_rect()

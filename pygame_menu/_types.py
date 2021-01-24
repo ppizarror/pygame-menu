@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optional
 
 # noinspection PyUnresolvedReferences
-from typing import Dict, Type, TYPE_CHECKING  # lgtm [py/unused-import]
+from typing import Dict, Type  # lgtm [py/unused-import]
 
 # noinspection PyUnresolvedReferences
 from typing_extensions import Literal  # lgtm [py/unused-import]

@@ -1,7 +1,12 @@
 
+
 ==============
 Adding widgets
 ==============
+
+For adding new widgets to the Menu you can create new instances of the respective
+widget class. Or you can use the :py:class:`pygame_menu._widgetmanager.WidgetManager` class stored in ``Menu.add``
+property. These methods configure the widget and add to the Menu in a simple way.
 
 
 Add a button
@@ -11,21 +16,21 @@ A button is a text that fire action when the user trigger it. An action
 is linked to a button by defining the `action` parameter with one of the
 three values:
 
- - an other :py:class:`pygame_menu.Menu`, in this case, it will be displayed
+ - an other :py:class:`pygame_menu.menu.Menu`, in this case, it will be displayed
    when the button is triggered.
  - a python callable object (a function, a method, a class, ...)
    that will be called with the given arguments.
  - a specific event of :py:mod:`pygame_menu`. The possible events are
    the following:
 
-   ==========================================   ========================================
+   ==========================================   =====================================
    Event                                        Description
-   ==========================================   ========================================
+   ==========================================   =====================================
    :py:data:`pygame_menu.events.BACK`           Go back to previously opened menu
    :py:data:`pygame_menu.events.CLOSE`          Close the menu
    :py:data:`pygame_menu.events.EXIT`           Exit the program (not only the menu)
    :py:data:`pygame_menu.events.RESET`          Go back to first opened menu
-   ==========================================   ========================================
+   ==========================================   =====================================
 
 **Example:**
 
@@ -42,14 +47,14 @@ three values:
 
     about_menu = pygame_menu.Menu(...)
 
-    menu.add_button('Exec', func, 'foo',                    # Execute a function
+    menu.add.button('Exec', func, 'foo',                    # Execute a function
                     align=pygame_menu.locals.ALIGN_LEFT)
-    menu.add_button(about_menu.get_title(), about_menu,     # Open a sub-menu
+    menu.add.button(about_menu.get_title(), about_menu,     # Open a sub-menu
                     shadow=True, shadow_color=(0, 0, 100))
-    menu.add_button('Exit', pygame_menu.events.EXIT,         # Link to exit action
+    menu.add.button('Exit', pygame_menu.events.EXIT,         # Link to exit action
                     align=pygame_menu.locals.ALIGN_RIGHT)
 
-.. automethod:: pygame_menu.Menu.add_button
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.button
 
 
 Add a choices list (selector)
@@ -70,7 +75,7 @@ displayed, the others are the arguments passed to the callbacks
 
     def change_background_color(selected_value, color, **kwargs):
         value_tuple, index = selected_value
-        print('Change widget color to', value_tuple[0])  # selected_value format ('Color', surface, color)
+        print('Change widget color to', value_tuple[0])  # selected_value ('Color', surface, color)
         if color == (-1, -1, -1):  # Generate a random color
             color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
         widget: 'pygame_menu.widgets.Selector' = kwargs.get('widget')
@@ -79,7 +84,7 @@ displayed, the others are the arguments passed to the callbacks
 
     menu = pygame_menu.Menu(...)
 
-    selector = menu.add_selector(
+    selector = menu.add.selector(
         title='Current color: ',
         items=[('Default', (255, 255, 255)),
                ('Black', (0, 0, 0)),
@@ -90,7 +95,7 @@ displayed, the others are the arguments passed to the callbacks
     )
     selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
 
-.. automethod:: pygame_menu.Menu.add_selector
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.selector
 
 
 Add a color entry
@@ -114,11 +119,14 @@ is a comma (``,``).
 
     menu = pygame_menu.Menu(...)
 
-    menu.add_color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), onreturn=check_color, font_size=18)
-    menu.add_color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
-    menu.add_color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
+    menu.add.color_input('RGB color 1: ', color_type='rgb',
+        default=(255, 0, 255), onreturn=check_color, font_size=18)
+    menu.add.color_input('RGB color 2: ', color_type='rgb',
+        input_separator='-', font_size=18)
+    menu.add.color_input('HEX color 3: ', color_type='hex',
+        default='#ffaa11', font_size=18)
 
-.. automethod:: pygame_menu.Menu.add_color_input
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.color_input
 
 
 Add a generic widget
@@ -138,12 +146,12 @@ configured before the addition.
     widget_image = pygame_menu.widgets.Image(...)
 
     # This applies menu default widget configuration
-    menu.add_generic_widget(widget_label, configure_defaults=True)
+    menu.add.generic_widget(widget_label, configure_defaults=True)
 
     # Adds menu without default configuration
-    menu.add_generic_widget(widget_image)
+    menu.add.generic_widget(widget_image)
 
-.. automethod:: pygame_menu.Menu.add_generic_widget
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.generic_widget
 
 
 Add a label
@@ -166,9 +174,9 @@ can be wrapped in order to fit the menu size.
            "Press LEFT/RIGHT to move through Selectors."
 
     menu = pygame_menu.Menu(...)
-    menu.add_label(HELP, max_char=-1, font_size=20)
+    menu.add.label(HELP, max_char=-1, font_size=20)
 
-.. automethod:: pygame_menu.Menu.add_label
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.label
 
 
 Add a none widget
@@ -180,9 +188,9 @@ or even add drawing callbacks for being executed on each menu draw.
 .. code-block:: python
 
     menu = pygame_menu.Menu(...)
-    menu.add_none_widget()
+    menu.add.none_widget()
 
-.. automethod:: pygame_menu.Menu.add_none_widget
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.none_widget
 
 
 Add a text entry
@@ -205,11 +213,11 @@ on entered characters can be set using ``input_type``, ``maxchar``,
 
     menu = pygame_menu.Menu(...)
 
-    menu.add_text_input('First name: ', default='John', onreturn=check_name)
-    menu.add_text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
-    menu.add_text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
+    menu.add.text_input('First name: ', default='John', onreturn=check_name)
+    menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
+    menu.add.text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
 
-.. automethod:: pygame_menu.Menu.add_text_input
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.text_input
 
 
 Add a toggle switch
@@ -228,11 +236,11 @@ you need more options, take a look at the ``ToggleSwitch`` widget class.
 
     menu = pygame_menu.Menu(...)
 
-    menu.add_toggle_switch('First Switch', False, toggleswitch_id='first_switch')
-    menu.add_toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+    menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
+    menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
                            state_text=('Apagado', 'Encencido'), state_text_font_size=18)
 
-.. automethod:: pygame_menu.Menu.add_toggle_switch
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.toggle_switch
 
 
 Add a vertical spacer
@@ -251,11 +259,11 @@ visual rendering of the menu.
 
     menu = pygame_menu.Menu(...)
 
-    menu.add_label('Text #1')
-    menu.add_vertical_margin(100)
-    menu.add_label('Text #2')
+    menu.add.label('Text #1')
+    menu.add.vertical_margin(100)
+    menu.add.label('Text #2')
 
-.. automethod:: pygame_menu.Menu.add_vertical_margin
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.vertical_margin
 
 
 Add an image
@@ -277,7 +285,7 @@ requires more CPU resources.
     menu = pygame_menu.Menu(...)
 
     image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
-    menu.add_image(image_path, angle=10, scale=(0.15, 0.15))
-    menu.add_image(image_path, angle=-10, scale=(0.15, 0.15))
+    menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
+    menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
 
-.. automethod:: pygame_menu.Menu.add_image
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.image

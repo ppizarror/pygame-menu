@@ -32,25 +32,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Widget']
 
 import pygame
-import pygame_menu.baseimage as _baseimage
-import pygame_menu.font as _fonts
+import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
-from pygame_menu.decorator import Decorator
+from pygame_menu._decorator import Decorator
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
-from pygame_menu._custom_types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
-    List, Tuple, Any, CallbackType, Dict, Callable, TYPE_CHECKING, Tuple4IntType, Tuple2BoolType, Tuple3IntType
+from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
+    List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType
 
 from pathlib import Path
 from uuid import uuid4
 import random
 import time
 import warnings
-
-if TYPE_CHECKING:
-    from pygame_menu.menu import Menu
 
 
 class Widget(object):
@@ -63,9 +59,9 @@ class Widget(object):
 
     :param title: Widget title
     :param widget_id: Widget identifier
-    :param onchange: Callback when updating the status of the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.change`
-    :param onreturn: Callback when applying on the widget (return), executed in :py:meth:`pygame_menu.widgets.core.Widget.apply`
-    :param onselect: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.Widget.set_selected`
+    :param onchange: Callback when updating the status of the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.change`
+    :param onreturn: Callback when applying on the widget (return), executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.apply`
+    :param onselect: Callback when selecting the widget, executed in :py:meth:`pygame_menu.widgets.core.widget.Widget.set_selected`
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
@@ -73,7 +69,7 @@ class Widget(object):
     _angle: NumberType
     _args: List[Any]
     _attributes: Dict[str, Any]
-    _background_color: Optional[Union[ColorType, '_baseimage.BaseImage']]
+    _background_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']]
     _background_inflate: Tuple2IntType
     _border_color: ColorType
     _border_inflate: Tuple2IntType
@@ -81,7 +77,7 @@ class Widget(object):
     _col_row_index: Tuple3IntType
     _decorator: 'Decorator'
     _default_value: Any
-    _draw_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
+    _draw_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
     _events: List['pygame.event.Event']
     _flip: Tuple2BoolType
     _floating: bool
@@ -101,7 +97,7 @@ class Widget(object):
     _margin: Tuple2IntType
     _max_height: List[Optional[bool]]
     _max_width: List[Optional[bool]]
-    _menu: Optional['Menu']
+    _menu: Optional['pygame_menu.Menu']
     _mouse_enabled: bool
     _on_change: CallbackType
     _on_return: CallbackType
@@ -123,7 +119,7 @@ class Widget(object):
     _title: str
     _touchscreen_enabled: bool
     _translate: Tuple2IntType
-    _update_callbacks: Dict[str, Callable[['Widget', 'Menu'], Any]]
+    _update_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
     _visible: bool
     active: bool
     is_selectable: bool
@@ -280,7 +276,7 @@ class Widget(object):
         """
         return self._floating
 
-    def __copy__(self) -> 'Menu':
+    def __copy__(self) -> 'pygame_menu.Menu':
         """
         Copy method.
 
@@ -288,7 +284,7 @@ class Widget(object):
         """
         raise _WidgetCopyException('Widget class cannot be copied')
 
-    def __deepcopy__(self, memodict: Dict) -> 'Menu':
+    def __deepcopy__(self, memodict: Dict) -> 'pygame_menu.Menu':
         """
         Deepcopy method.
 
@@ -304,8 +300,8 @@ class Widget(object):
         .. note::
 
             If this method is used it's not necesary to call Widget methods
-            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update` and
-            :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_cache_update`.
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` and
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_cache_update`.
             As `render` should force Menu render, updating both surface and cache.
 
         :return: Render return value
@@ -319,7 +315,7 @@ class Widget(object):
         This method automatically updates widget decoration cache as Menu render
         forces it to re-render.
 
-        ..note ::
+        .. note ::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -342,7 +338,7 @@ class Widget(object):
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference
@@ -361,7 +357,7 @@ class Widget(object):
         .. note::
 
             Unlike private ``_render`` method, public method forces widget rendering
-            (calling :py:meth:`pygame_menu.widgets.core.Widget._force_render`). Use
+            (calling :py:meth:`pygame_menu.widgets.core.widget.Widget._force_render`). Use
             this method only if the widget has changed the state. Running this
             function many times may affect the performance.
 
@@ -388,7 +384,7 @@ class Widget(object):
 
         .. note::
 
-            Render methods should call :py:meth:`pygame_menu.widget.core.Widget.force_menu_surface_update`
+            Render methods should call :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             to force Menu to update the drawing surface.
 
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
@@ -500,7 +496,7 @@ class Widget(object):
         """
         return self._title
 
-    def set_background_color(self, color: Optional[Union[ColorType, '_baseimage.BaseImage']],
+    def set_background_color(self, color: Optional[Union[ColorType, 'pygame_menu.BaseImage']],
                              inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
         """
         Set the widget background color.
@@ -510,8 +506,8 @@ class Widget(object):
         :return: Self reference
         """
         if color is not None:
-            if isinstance(color, _baseimage.BaseImage):
-                assert color.get_drawing_mode() == _baseimage.IMAGE_MODE_FILL, \
+            if isinstance(color, pygame_menu.BaseImage):
+                assert color.get_drawing_mode() == pygame_menu.baseimage.IMAGE_MODE_FILL, \
                     'currently widget only supports IMAGE_MODE_FILL drawing mode'
             else:
                 assert_color(color)
@@ -557,7 +553,7 @@ class Widget(object):
         else:
             inflate = self._selection_effect.get_xy_margin()
         rect = self.get_rect(inflate=inflate)
-        if isinstance(self._background_color, _baseimage.BaseImage):
+        if isinstance(self._background_color, pygame_menu.BaseImage):
             self._background_color.draw(
                 surface=surface,
                 area=rect,
@@ -629,7 +625,7 @@ class Widget(object):
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
         Where
-            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.Widget.get_value`
+            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.widget.Widget.get_value`
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
@@ -661,7 +657,7 @@ class Widget(object):
             callback_func(value, *args, *widget._args, **widget._kwargs)
 
         Where
-            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.Widget.get_value`
+            - ``value`` if something is returned by :py:meth:`pygame_menu.widgets.core.widget.Widget.get_value`
             - ``args`` given to this method
             - ``args`` of the widget
             - ``kwargs`` of the widget
@@ -1070,7 +1066,7 @@ class Widget(object):
         """
         Set the widget font.
 
-        :param font: Font name (see :py:class:`pygame.font.match_font` for precise format)
+        :param font: Font name (see :py:meth:`pygame.font.match_font` for precise format)
         :param font_size: Size of font in pixels
         :param color: Normal font color
         :param selected_color: Font color if widget is selected
@@ -1100,7 +1096,7 @@ class Widget(object):
 
         font_size = int(font_size)
 
-        self._font = _fonts.get_font(font, font_size)
+        self._font = pygame_menu.font.get_font(font, font_size)
         self._font_antialias = antialias
         self._font_background_color = background_color
         self._font_color = color
@@ -1131,7 +1127,7 @@ class Widget(object):
         .. note::
 
             If a key is not defined it will be rewritten using current font style
-            from :py:meth:`pygame_menu.widgets.core.Widget.get_font_info` method.
+            from :py:meth:`pygame_menu.widgets.core.widget.Widget.get_font_info` method.
 
         :param style: Font style dict
         :return: Self reference
@@ -1170,12 +1166,11 @@ class Widget(object):
             'size': self._font_size
         }
 
-    def set_menu(self, menu: Optional['Menu']) -> 'Widget':
+    def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Widget':
         """
         Set the Menu reference.
 
         :param menu: Menu object
-        :type menu: :py:class:`pygame_menu.Menu`, None
         :return: Self reference
         """
         self._menu = menu
@@ -1183,7 +1178,7 @@ class Widget(object):
             self._col_row_index = (-1, -1, -1)
         return self
 
-    def get_menu(self) -> Optional['Menu']:
+    def get_menu(self) -> Optional['pygame_menu.Menu']:
         """
         Return the Menu reference, ``None`` if it has not been set.
 
@@ -1192,7 +1187,6 @@ class Widget(object):
             Use with caution.
 
         :return: Menu reference
-        :rtype: :py:class:`pygame_menu.Menu`, None
         """
         return self._menu
 
@@ -1210,7 +1204,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param posx: X position in px
@@ -1245,7 +1239,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param x: Flip in x axis
@@ -1280,7 +1274,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1333,7 +1327,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1401,13 +1395,13 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
 
-            Widget will scale only if :py:meth:`pygame_menu.widgets.core.Widget.set_max_width`
-            and :py:meth:`pygame_menu.widgets.core.Widget.set_max_height` are set to ``None``.
+            Widget will scale only if :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_width`
+            and :py:meth:`pygame_menu.widgets.core.widget.Widget.set_max_height` are set to ``None``.
 
         :param width: Scale factor of the width
         :param height: Scale factor of the height
@@ -1443,7 +1437,7 @@ class Widget(object):
 
         .. note::
 
-            This method calls :py:meth:`pygame_menu.widgets.core.Widget.scale` method;
+            This method calls :py:meth:`pygame_menu.widgets.core.widget.Widget.scale` method;
             thus, some widgets may not support this transformation.
 
         .. note::
@@ -1459,7 +1453,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1486,7 +1480,7 @@ class Widget(object):
         .. note::
 
             Translate is only applied when updating the widget position (calling
-            :py:meth:`pygame_menu.widgets.core.Widget.set_position`. This is done
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.set_position`. This is done
             by Menu when rendering the surface. Thus, the position change is not
             immediate. To force translation update you may call Menu render method.
 
@@ -1496,7 +1490,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param x: +X in px
@@ -1526,7 +1520,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         :param angle: Rotation angle (degrees ``0-360``)
@@ -1549,7 +1543,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. note::
@@ -1585,7 +1579,7 @@ class Widget(object):
 
         .. note::
 
-            Use :py:meth:`pygame_menu.widgets.core.Widget.render` method to force
+            Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             widget rendering after calling this method.
 
         .. warning::
@@ -1761,7 +1755,7 @@ class Widget(object):
 
         .. note::
 
-            This method is intended to be used along :py:meth:`pygame_menu.widgets.core.Widget.reset_value`
+            This method is intended to be used along :py:meth:`pygame_menu.widgets.core.widget.Widget.reset_value`
             method that sets the widget value back to the default set with this method.
 
         .. note::
@@ -1796,7 +1790,7 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def add_draw_callback(self, draw_callback: Callable[['Widget', 'Menu'], Any]) -> str:
+    def add_draw_callback(self, draw_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]) -> str:
         """
         Adds a function to the widget to be executed each time the widget is drawn.
 
@@ -1812,22 +1806,21 @@ class Widget(object):
                 t += menu.get_clock().get_time()
                 widget.set_padding(10*(1 + math.sin(t)))) # Oscillating padding
 
-            button = menu.add_button('This button updates its padding', None)
+            button = menu.add.button('This button updates its padding', None)
             button.set_draw_callback(draw_update_function)
 
         After creating a new callback, this functions returns the ID of the call. It can be
-        removed anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_draw_callback`
+        removed anytime using :py:meth:`pygame_menu.widgets.core.widget.Widget.remove_draw_callback`
 
         .. note::
 
-            If Menu surface cache is enabled this method may run only once. To force run
+            If Menu surface cache is enabled this method may run only once. To force running
             the added method each time call ``widget.force_menu_surface_update()`` to force
             Menu update the cache status if the drawing callback does not make the widget
             to render. Remember that rendering the widget forces the Menu to update its
             surface, thus updating the cache too.
 
         :param draw_callback: Function
-        :type draw_callback: callable, None
         :return: Callback ID
         """
         assert is_callable(draw_callback), 'draw callback must be callable (function-type)'
@@ -1860,15 +1853,15 @@ class Widget(object):
             callback(self, self._menu)
         return self
 
-    def add_update_callback(self, update_callback: Callable[['Widget', 'Menu'], Any]) -> str:
+    def add_update_callback(self, update_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]) -> str:
         """
         Adds a function to the widget to be executed each time the widget is updated.
 
         The function that this method receives receives two objects: the widget itself and
-        the Menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.Widget.add_draw_callback`
+        the Menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.widget.Widget.add_draw_callback`
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
-        anytime using :py:meth:`pygame_menu.widgets.core.Widget.remove_update_callback`.
+        anytime using :py:meth:`pygame_menu.widgets.core.widget.Widget.remove_update_callback`.
 
         .. note::
 
@@ -1876,7 +1869,6 @@ class Widget(object):
             in some widgets (for example, label or images).
 
         :param update_callback: Function
-        :type update_callback: callable, None
         :return: Callback ID
         """
         assert is_callable(update_callback), 'update callback must be callable (function-type)'
@@ -2056,6 +2048,7 @@ class _NullSelection(Selection):
     .. note::
 
         Prefer using :py:class:`pygame_menu.widgets.selection.NoneSelection` class instead.
+
     """
 
     def __init__(self) -> None:
@@ -2063,8 +2056,8 @@ class _NullSelection(Selection):
             margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
         )
 
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
-        return
+    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> 'Selection':
+        return self
 
 
 class _WidgetCopyException(Exception):

@@ -116,26 +116,26 @@ def main(test: bool = False) -> None:
 
     button_image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_CARBON_FIBER)
 
-    widget_colors.add_button('Opaque color button', None,
+    widget_colors.add.button('Opaque color button', None,
                              background_color=(100, 100, 100))
-    widget_colors.add_button('Transparent color button', None,
+    widget_colors.add.button('Transparent color button', None,
                              background_color=(50, 50, 50, 200), font_size=40)
-    widget_colors.add_button('Transparent background inflate to selection effect', None,
+    widget_colors.add.button('Transparent background inflate to selection effect', None,
                              background_color=(50, 50, 50, 200), margin=(0, 15)
                              ).background_inflate_to_selection_effect()
-    widget_colors.add_button('Background inflate + font background color', None,
+    widget_colors.add.button('Background inflate + font background color', None,
                              background_color=(50, 50, 50, 200), font_background_color=(200, 200, 200)
                              ).background_inflate_to_selection_effect()
-    widget_colors.add_button('This inflates background to match selection effect', None,
+    widget_colors.add.button('This inflates background to match selection effect', None,
                              background_color=button_image, font_color=(255, 255, 255), font_size=15
                              ).selection_expand_background = True
-    widget_colors.add_button('This is already inflated to match selection effect', None,
+    widget_colors.add.button('This is already inflated to match selection effect', None,
                              background_color=button_image, font_color=(255, 255, 255), font_size=15
                              ).background_inflate_to_selection_effect()
 
-    main_menu.add_button('Test different widget colors', widget_colors)
-    main_menu.add_button('Another fancy button', lambda: print('This button has been pressed'))
-    main_menu.add_button('Quit', pygame_menu.events.EXIT)
+    main_menu.add.button('Test different widget colors', widget_colors)
+    main_menu.add.button('Another fancy button', lambda: print('This button has been pressed'))
+    main_menu.add.button('Quit', pygame_menu.events.EXIT)
 
     # -------------------------------------------------------------------------
     # Main loop

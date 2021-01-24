@@ -171,7 +171,7 @@ class DecoratorTest(unittest.TestCase):
         Test enable disable decoration.
         """
         menu = MenuUtils.generic_menu()
-        btn = menu.add_button('Button', None)
+        btn = menu.add.button('Button', None)
         deco = btn.get_decorator()
 
         # Callable
@@ -210,7 +210,7 @@ class DecoratorTest(unittest.TestCase):
         Test all decorators.
         """
         menu = MenuUtils.generic_menu()
-        btn = menu.add_button('Button', None)
+        btn = menu.add.button('Button', None)
 
         deco = btn.get_decorator()
         poly = [(50, 50), (50, 100), (100, 50)]

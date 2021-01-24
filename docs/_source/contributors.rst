@@ -24,6 +24,5 @@ Other contributors:
 - `werdeil <https://github.com/werdeil>`_
 - `tzPaw <https://github.com/zPaw>`_
 
-Ideas and contributions are always welcome. Any found bugs or
-enhancement suggestions should be posted on
+Ideas and contributions are always welcome. Any found bugs or enhancement suggestions should be posted on
 `GitHub project page <https://github.com/ppizarror/pygame-menu>`_ .

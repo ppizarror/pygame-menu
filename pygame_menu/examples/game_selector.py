@@ -194,21 +194,21 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.7
     )
     for i in range(30):
-        play_submenu.add_button('Back {0}'.format(i), pygame_menu.events.BACK)
-    play_submenu.add_button('Return to main menu', pygame_menu.events.RESET)
+        play_submenu.add.button('Back {0}'.format(i), pygame_menu.events.BACK)
+    play_submenu.add.button('Return to main menu', pygame_menu.events.RESET)
 
-    play_menu.add_button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
+    play_menu.add.button('Start',  # When pressing return -> play(DIFFICULTY[0], font)
                          play_function,
                          DIFFICULTY,
                          pygame.font.Font(pygame_menu.font.FONT_FRANCHISE, 30))
-    play_menu.add_selector('Select difficulty ',
+    play_menu.add.selector('Select difficulty ',
                            [('1 - Easy', 'EASY'),
                             ('2 - Medium', 'MEDIUM'),
                             ('3 - Hard', 'HARD')],
                            onchange=change_difficulty,
                            selector_id='select_difficulty')
-    play_menu.add_button('Another menu', play_submenu)
-    play_menu.add_button('Return to main menu', pygame_menu.events.BACK)
+    play_menu.add.button('Another menu', play_submenu)
+    play_menu.add.button('Return to main menu', pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus:About
@@ -224,9 +224,9 @@ def main(test: bool = False) -> None:
     )
 
     for m in ABOUT:
-        about_menu.add_label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)
-    about_menu.add_label('')
-    about_menu.add_button('Return to menu', pygame_menu.events.BACK)
+        about_menu.add.label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)
+    about_menu.add.label('')
+    about_menu.add.button('Return to menu', pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------
     # Create menus: Main
@@ -240,9 +240,9 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.6
     )
 
-    main_menu.add_button('Play', play_menu)
-    main_menu.add_button('About', about_menu)
-    main_menu.add_button('Quit', pygame_menu.events.EXIT)
+    main_menu.add.button('Play', play_menu)
+    main_menu.add.button('About', about_menu)
+    main_menu.add.button('Quit', pygame_menu.events.EXIT)
 
     # -------------------------------------------------------------------------
     # Main loop

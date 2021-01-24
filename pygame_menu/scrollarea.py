@@ -32,18 +32,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ScrollArea', 'get_scrollbars_from_position']
 
 import pygame
-import pygame_menu.baseimage as _baseimage
+import pygame_menu
 import pygame_menu.locals as _locals
-from pygame_menu.decorator import Decorator
+from pygame_menu._decorator import Decorator
 from pygame_menu.utils import make_surface, assert_color, assert_position
 from pygame_menu.widgets import ScrollBar, MenuBar
 
-from pygame_menu._custom_types import ColorType, Union, NumberType, Tuple, List, Dict, \
-    TYPE_CHECKING, Tuple2NumberType, Optional, Tuple2IntType
-
-if TYPE_CHECKING:
-    from pygame_menu.widgets import Widget
-    from pygame_menu.menu import Menu
+from pygame_menu._types import ColorType, Union, NumberType, Tuple, List, Dict, \
+    Tuple2NumberType, Optional, Tuple2IntType
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -114,8 +110,8 @@ class ScrollArea(object):
     _decorator: 'Decorator'
     _extend_x: int
     _extend_y: int
-    _menu: Optional['Menu']
-    _menubar: 'MenuBar'
+    _menu: Optional['pygame_menu.Menu']
+    _menubar: 'pygame_menu.widgets.MenuBar'
     _rect: 'pygame.Rect'
     _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: NumberType
@@ -126,7 +122,7 @@ class ScrollArea(object):
     def __init__(self,
                  area_width: int,
                  area_height: int,
-                 area_color: Optional[Union[ColorType, '_baseimage.BaseImage']] = None,
+                 area_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']] = None,
                  extend_x: int = 0,
                  extend_y: int = 0,
                  menubar: Optional['MenuBar'] = None,
@@ -172,7 +168,7 @@ class ScrollArea(object):
         if area_color:
             self._bg_surface = make_surface(width=area_width + extend_x,
                                             height=area_height + self._extend_y)
-            if isinstance(area_color, _baseimage.BaseImage):
+            if isinstance(area_color, pygame_menu.BaseImage):
                 area_color.draw(surface=self._bg_surface, area=self._bg_surface.get_rect())
             else:
                 self._bg_surface.fill(area_color)
@@ -239,7 +235,7 @@ class ScrollArea(object):
         """
         Forces menu surface update after next rendering call.
 
-        ..note ::
+        .. note ::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -258,7 +254,7 @@ class ScrollArea(object):
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.Widget.force_menu_surface_update`
+            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference
@@ -647,7 +643,7 @@ class ScrollArea(object):
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
-    def set_menu(self, menu: 'Menu') -> 'ScrollArea':
+    def set_menu(self, menu: 'pygame_menu.Menu') -> 'ScrollArea':
         """
         Set the Menu reference.
 
@@ -659,16 +655,15 @@ class ScrollArea(object):
             sbar.set_menu(menu)
         return self
 
-    def get_menu(self) -> Optional['Menu']:
+    def get_menu(self) -> Optional['pygame_menu.Menu']:
         """
         Return the Menu reference (if exists).
 
         :return: Menu reference
-        :rtype: :py:class:`pygame_menu.Menu`, None
         """
         return self._menu
 
-    def collide(self, widget: 'Widget', event: 'pygame.event.Event') -> bool:
+    def collide(self, widget: 'pygame_menu.widgets.Widget', event: 'pygame.event.Event') -> bool:
         """
         If user event collides a widget within the scroll area respect to the relative position.
 

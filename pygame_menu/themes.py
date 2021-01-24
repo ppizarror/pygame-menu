@@ -51,7 +51,7 @@ import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
-from pygame_menu._custom_types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
+from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
     Tuple2NumberType, NumberType, PaddingType, Optional, Type
 
 import copy

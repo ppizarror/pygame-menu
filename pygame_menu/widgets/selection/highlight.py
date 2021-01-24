@@ -32,11 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['HighlightSelection']
 
 import pygame
+import pygame_menu
 from pygame_menu.widgets.core import Selection
-from pygame_menu._custom_types import NumberType, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from pygame_menu.widgets.core import Widget
+from pygame_menu._types import NumberType
 
 
 class HighlightSelection(Selection):
@@ -72,7 +70,7 @@ class HighlightSelection(Selection):
         self._border_width = border_width
 
     # noinspection PyMissingOrEmptyDocstring
-    def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> None:
+    def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         # noinspection PyArgumentList
         pygame.draw.rect(
             surface,
@@ -80,3 +78,4 @@ class HighlightSelection(Selection):
             self.inflate(widget.get_rect()),
             self._border_width
         )
+        return self
