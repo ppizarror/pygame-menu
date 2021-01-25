@@ -356,6 +356,7 @@ class Widget(object):
             self._onmouseover(self, event)
         if self._cursor is not None:
             if _CURSOR_PREV[0] is None:
+                # noinspection PyTypeChecker
                 _CURSOR_PREV[0] = pygame.mouse.get_cursor()
             pygame.mouse.set_cursor(self._cursor)
         return self

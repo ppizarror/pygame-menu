@@ -266,6 +266,28 @@ visual rendering of the menu.
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.vertical_margin
 
 
+Add a url link
+---------------------
+
+Adds a clickeable url link.
+
+**Example:**
+
+.. image:: ../_static/widget_url.png
+    :scale: 70%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    menu.add.url('https://github.com/ppizarror/pygame-menu')
+    menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
+    menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.url
+
+
 Add an image
 ------------
 

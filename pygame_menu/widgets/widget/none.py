@@ -156,6 +156,9 @@ class NoneWidget(Widget):
     def set_sound(self, sound: 'pygame_menu.Sound') -> 'Widget':
         return self
 
+    def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
+        return self
+
     def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> 'Widget':
         return self
 

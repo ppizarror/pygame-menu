@@ -208,7 +208,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
@@ -238,7 +238,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
@@ -259,7 +259,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -292,7 +292,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -324,7 +324,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -351,7 +351,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -372,7 +372,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         .. note::
 
@@ -399,7 +399,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -421,7 +421,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -454,7 +454,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -479,7 +479,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -511,7 +511,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param fun: Function
         :param prev: If ``True`` draw previous the object, else draws post
@@ -539,7 +539,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
@@ -561,7 +561,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param pos1: Position 1 *(x1, y1)*
         :param pos2: Position 2 *(x2, y2)*
@@ -585,7 +585,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x1: Horizontal position 1 in px
         :param x2: Horizontal position 2 in px
@@ -605,7 +605,7 @@ class Decorator(object):
 
         .. note::
 
-            Consider ``(0, 0)** coordinates as the center of the object.
+            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param x: Horizontal position in px
         :param y1: Vertical position 1 in px

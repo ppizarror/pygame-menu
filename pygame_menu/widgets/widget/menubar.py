@@ -267,6 +267,9 @@ class MenuBar(Widget):
                 return t, (0, -t)
         return 0, (0, 0)
 
+    def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
+        return self
+
     def _render(self) -> Optional[bool]:
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
