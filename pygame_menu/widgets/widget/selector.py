@@ -261,7 +261,8 @@ class Selector(Widget):
                 self.apply(*self._elements[self._index][1:])
                 updated = True
 
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if rect.collidepoint(*event.pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
