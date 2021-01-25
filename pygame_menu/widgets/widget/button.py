@@ -137,7 +137,8 @@ class Button(Widget):
                 self.apply()
                 updated = True
 
-            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self.mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 self.sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()
