@@ -125,7 +125,7 @@ class Decorator(object):
 
         :return: Raises copy exception
         """
-        raise _DecoratorCopyException('Decorator class cannot be copied')
+        raise DecoratorCopyException('Decorator class cannot be copied')
 
     def __deepcopy__(self, memodict: Dict) -> 'Decorator':
         """
@@ -134,7 +134,7 @@ class Decorator(object):
         :param memodict: Memo dict
         :return: Raises copy exception
         """
-        raise _DecoratorCopyException('Decorator class cannot be deep-copied')
+        raise DecoratorCopyException('Decorator class cannot be deep-copied')
 
     def _add_decor(self, decortype: int, prev: bool, data: Any) -> str:
         """
@@ -891,7 +891,7 @@ class Decorator(object):
         return new_pos
 
 
-class _DecoratorCopyException(Exception):
+class DecoratorCopyException(Exception):
     """
     If user tries to copy a Decorator.
     """

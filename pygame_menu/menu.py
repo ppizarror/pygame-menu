@@ -151,11 +151,11 @@ class Menu(object):
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
-    _runtime_errors: '_MenuRuntimeErrorConfig'
+    _runtime_errors: 'MenuRuntimeErrorConfig'
     _scroll: 'ScrollArea'
     _scrollarea_margin: List[int]
     _sound: 'Sound'
-    _stats: '_MenuStats'
+    _stats: 'MenuStats'
     _submenus: List['Menu']
     _theme: '_themes.Theme'
     _top: 'Menu'
@@ -369,7 +369,7 @@ class Menu(object):
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._onclose = None  # Function or event called on Menu close
         self._sound = Sound()
-        self._stats = _MenuStats()
+        self._stats = MenuStats()
         self._submenus = []
         self._theme = theme
         self._width = int(width)
@@ -557,7 +557,7 @@ class Menu(object):
         self._overflow = tuple(overflow)
 
         # Controls the behaviour of runtime errors
-        self._runtime_errors = _MenuRuntimeErrorConfig()
+        self._runtime_errors = MenuRuntimeErrorConfig()
 
         # These can be changed without any major problem
         self._disable_draw = False
@@ -569,7 +569,7 @@ class Menu(object):
 
         :return: Raises copy exception
         """
-        raise _MenuCopyException('Menu class cannot be copied')
+        raise MenuCopyException('Menu class cannot be copied')
 
     def __deepcopy__(self, memodict: Dict) -> 'Menu':
         """
@@ -578,7 +578,7 @@ class Menu(object):
         :param memodict: Memo dict
         :return: Raises copy exception
         """
-        raise _MenuCopyException('Menu class cannot be deep-copied')
+        raise MenuCopyException('Menu class cannot be deep-copied')
 
     def force_surface_update(self) -> 'Menu':
         """
@@ -2783,7 +2783,7 @@ class Menu(object):
         return self._decorator
 
 
-class _MenuStats(object):
+class MenuStats(object):
     """
     Menu stats.
     """
@@ -2815,14 +2815,14 @@ class _MenuStats(object):
         self.update = 0
 
 
-class _MenuCopyException(Exception):
+class MenuCopyException(Exception):
     """
     If user tries to copy a Menu.
     """
     pass
 
 
-class _MenuRuntimeErrorConfig(object):
+class MenuRuntimeErrorConfig(object):
     """
     Controls the runtime errors of the Menu.
     """

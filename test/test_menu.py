@@ -110,8 +110,8 @@ class MenuTest(unittest.TestCase):
         Test menu copy.
         """
         menu = MenuUtils.generic_menu()
-        self.assertRaises(pygame_menu.menu._MenuCopyException, lambda: copy.copy(menu))
-        self.assertRaises(pygame_menu.menu._MenuCopyException, lambda: copy.deepcopy(menu))
+        self.assertRaises(pygame_menu.menu.MenuCopyException, lambda: copy.copy(menu))
+        self.assertRaises(pygame_menu.menu.MenuCopyException, lambda: copy.deepcopy(menu))
 
     def test_size_constructor(self) -> None:
         """
@@ -1745,6 +1745,8 @@ class MenuTest(unittest.TestCase):
         cursor = None
         if pygame.version.vernum[0] >= 2:
             cursor = pygame.SYSTEM_CURSOR_HAND
+        else:
+            cursor = -1
         btn1.set_cursor(cursor)
 
         # Test before
@@ -1758,10 +1760,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
-        if pygame.version.vernum[0] >= 2:
-            self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        else:
-            self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+        self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
 
         # Place mouse away. This should force widget 1 mouseleave
         menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
@@ -1787,10 +1786,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
-        if pygame.version.vernum[0] >= 2:
-            self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        else:
-            self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+        self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
         menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(menu.get_selected_widget(), btn1)
@@ -1810,10 +1806,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
-        if pygame.version.vernum[0] >= 2:
-            self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        else:
-            self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+        self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
         menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(menu.get_selected_widget(), btn2)
