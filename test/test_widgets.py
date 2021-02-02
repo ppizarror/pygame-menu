@@ -431,7 +431,7 @@ class WidgetsTest(unittest.TestCase):
         selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
         selector.update(PygameUtils.joy_motion(1, 0))
         selector.update(PygameUtils.joy_motion(-1, 0))
-        click_pos = PygameUtils.get_middle_rect(selector.get_rect())
+        click_pos = selector.get_rect().center
         selector.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
 
         # Update elements
@@ -1124,7 +1124,7 @@ class WidgetsTest(unittest.TestCase):
         btn = menu.add.button('button', None)
         callid = btn.add_update_callback(update)
         self.assertEqual(btn.get_attribute('attr', False), False)
-        click_pos = PygameUtils.get_middle_rect(btn.get_rect())
+        click_pos = btn.get_rect().center
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertEqual(btn.get_attribute('attr', False), True)
         btn.set_attribute('attr', False)

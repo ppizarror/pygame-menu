@@ -1543,9 +1543,6 @@ class Menu(object):
         # Draw the prev decorator
         self._current._decorator.draw_prev(surface)
 
-        # print('value', self._current.get_title(), self._current._widget_surface_cache_need_update, id(self._current._widget_surface_cache_need_update))
-        # print(self._current._scroll.get_decorator()._decor)
-
         # Draw widgets, update cache if enabled
         if not self._current._widget_surface_cache_enabled or \
                 (render or self._current._widget_surface_cache_need_update):
@@ -1814,6 +1811,7 @@ class Menu(object):
 
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
+        mouse_changed_over = False  # Set to True if widgetover has changed
 
         selected_widget: Optional['pygame_menu.widgets.Widget'] = None
         if len(self._current._widgets) >= 1:
@@ -1946,33 +1944,23 @@ class Menu(object):
                 # Mouse motion. It changes the cursor of the mouse if enabled
                 elif self._current._mouse and event.type == pygame.MOUSEMOTION:
 
-                    # Select widgets by mouse motion, this is valid only if the current selected widget
-                    # is not active and the pointed widget is selectable. Also check mouse over
-                    if self._current._mouse_motion_selection and \
-                            (selected_widget is not None and not selected_widget.active or selected_widget is None):
-                        for index in range(len(self._current._widgets)):
-                            widget = self._current._widgets[index]
-                            if widget.is_visible() and self._current._scroll.collide(widget, event):
-                                if widget.is_selectable:
-                                    self._current._select(index)
-                                if self._current._widget_mouseover != widget:
-                                    if self._current._widget_mouseover is not None:
-                                        self._current._widget_mouseover.mouseleave(event)
-                                    widget.mouseover(event)
-                                    self._current._widget_mouseover = widget
-                                break
+                    # If selected widget is active then motion should not select or change mouseover
+                    # widget
+                    if self._current._mouse_motion_selection and selected_widget is not None and selected_widget.active:
+                        continue
 
-                    # Check mouse over
-                    else:
-                        for index in range(len(self._current._widgets)):
-                            widget = self._current._widgets[index]
-                            if widget.is_visible() and self._current._scroll.collide(widget, event):
-                                if self._current._widget_mouseover != widget:
-                                    if self._current._widget_mouseover is not None:
-                                        self._current._widget_mouseover.mouseleave(event)
-                                    widget.mouseover(event)
-                                    self._current._widget_mouseover = widget
-                                break
+                    for index in range(len(self._current._widgets)):
+                        widget = self._current._widgets[index]
+                        if widget.is_visible() and self._current._scroll.collide(widget, event):
+                            if self._current._mouse_motion_selection and widget.is_selectable:
+                                self._current._select(index)
+                            if self._current._widget_mouseover != widget:
+                                if self._current._widget_mouseover is not None:
+                                    self._current._widget_mouseover.mouseleave(event)
+                                widget.mouseover(event)
+                                self._current._widget_mouseover = widget
+                                mouse_changed_over = True
+                            break
 
                 # Mouse events in selected widget
                 elif self._current._mouse and event.type == pygame.MOUSEBUTTONUP and selected_widget is not None and \
@@ -2008,13 +1996,18 @@ class Menu(object):
 
                 # Select widgets by touchscreen motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
-                elif self._current._touchscreen_motion_selection and event.type == pygame.FINGERMOTION and \
-                        (selected_widget is not None and not selected_widget.active or selected_widget is None):
+                elif self._current._touchscreen_motion_selection and event.type == pygame.FINGERMOTION:
+
+                    # If selectede widget is active then motion should not select any widget
+                    if selected_widget is not None and selected_widget.active:
+                        continue
+
                     for index in range(len(self._current._widgets)):
                         widget = self._current._widgets[index]
-                        if widget.is_selectable and self._current._scroll.collide(widget, event):
-                            self._current._select(index)
-                            break
+                        if widget.is_selectable and widget.is_visible():
+                            if self._current._scroll.collide(widget, event):
+                                self._current._select(index)
+                                break
 
                 # Touchscreen events in selected widget
                 elif self._current._touchscreen and event.type == pygame.FINGERUP and selected_widget is not None:
@@ -2032,7 +2025,8 @@ class Menu(object):
 
         # If the over menu is not None, check the current mouse position is still over the widget,
         # if not, call onmouseleave
-        self._current._check_widget_mouseleave(force=False)
+        if not mouse_changed_over:
+            self._current._check_widget_mouseleave(force=False)
 
         # If cache is enabled, always force a rendering (user may have have changed any status)
         if self._current._widget_surface_cache_enabled and updated:
@@ -2393,55 +2387,54 @@ class Menu(object):
     def _select(self, new_index: int, dwidget: int = 0) -> None:
         """
         Select the widget at the given index and unselect others. Selection forces
-        rendering of the widget. Also play widget selection sound.
+        rendering of the widget. Also play widget selection sound. This is applied
+        to the base menu pointer.
 
         :param new_index: Widget index
         :param dwidget: Direction to search if ``new_index`` widget is non selectable
         :return: None
         """
-        curr_widget = self._top._current
-        if len(curr_widget._widgets) == 0:
+        if len(self._widgets) == 0:
             return
 
         # This stores +/-1 if the index increases or decreases
         # Used by non-selectable selection
         if dwidget == 0:
-            if new_index < curr_widget._index:
+            if new_index < self._index:
                 dwidget = -1
             else:
                 dwidget = 1
 
         # Limit the index to the length
-        total_curr_widgets = len(curr_widget._widgets)
-        new_index %= total_curr_widgets
-        if new_index == curr_widget._index:  # Index has not changed
-            return
+        new_index %= len(self._widgets)
 
         # Get both widgets
-        if curr_widget._index >= total_curr_widgets:  # The length of the Menu changed during execution time
-            for i in range(total_curr_widgets):  # Unselect all possible candidates
-                curr_widget._widgets[i].select(False)
-            curr_widget._index = 0
+        if self._index >= len(self._widgets):  # The length of the Menu changed during execution time
+            for i in range(len(self._widgets)):  # Unselect all possible candidates
+                self._widgets[i].select(False)
+            self._index = 0
 
-        old_widget = curr_widget._widgets[curr_widget._index]
-        new_widget = curr_widget._widgets[new_index]
+        old_widget = self._widgets[self._index]
+        new_widget = self._widgets[new_index]
+        if old_widget == new_widget and self._index != -1:
+            return
 
         # If new widget is not selectable or visible
         if not new_widget.is_selectable or not new_widget.is_visible():
-            if curr_widget._index >= 0:  # There's at least 1 selectable option
-                curr_widget._select(new_index + dwidget, dwidget)
+            if self._index >= 0:  # There's at least 1 selectable option
+                self._select(new_index + dwidget, dwidget)
                 return
             else:  # No selectable options, quit
                 return
 
         # Selecting widgets forces rendering
         old_widget.select(False)
-        curr_widget._index = new_index  # Update selected index
+        self._index = new_index  # Update selected index
         new_widget.select()
 
         # Scroll to rect
         rect = new_widget.get_rect()
-        if curr_widget._index == 0:  # Scroll to the top of the Menu
+        if self._index == 0:  # Scroll to the top of the Menu
             rect = pygame.Rect(int(rect.x), 0, int(rect.width), int(rect.height))
 
         # Get scroll thickness
@@ -2455,10 +2448,11 @@ class Menu(object):
                 rect.x += sx / 2
             rect.x = min(rect.x, rx_min)
             rect.width = int(max(rect.width, self._column_widths[col])) - sy
-            curr_widget._scroll.scroll_to_rect(rect)
+            self._scroll.scroll_to_rect(rect)
 
         # Play widget selection sound
-        self._sound.play_widget_selection()
+        if old_widget != new_widget:
+            self._sound.play_widget_selection()
         self._stats.select += 1
 
     def get_id(self) -> str:

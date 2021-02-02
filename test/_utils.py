@@ -39,7 +39,7 @@ from pygame_menu.font import FONT_EXAMPLES
 
 # noinspection PyProtectedMember
 from pygame_menu._types import NumberType, Union, List, Tuple, Optional, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
 
@@ -60,6 +60,10 @@ if hasattr(pygame, 'FINGERDOWN'):
 FINGERUP = -1
 if hasattr(pygame, 'FINGERUP'):
     FINGERUP = pygame.FINGERUP
+
+FINGERMOTION = -1
+if hasattr(pygame, 'FINGERMOTION'):
+    FINGERMOTION = pygame.FINGERMOTION
 
 
 def test_reset_surface() -> None:
@@ -268,24 +272,10 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def get_middle_rect(rect: 'pygame.Rect') -> Tuple[float, float]:
-        """
-        Get middle position from a rect.
-
-        :param rect: Pygame rect
-        :return: Position as a tuple
-        """
-        rect_obj = rect
-        x1, y1 = rect_obj.bottomleft
-        x2, y2 = rect_obj.topright
-
-        x = float(x1 + x2) / 2
-        y = float(y1 + y2) / 2
-        return x, y
-
-    @staticmethod
-    def middle_rect_click(rect: 'pygame.Rect', menu: Optional['pygame_menu.Menu'] = None,
-                          evtype: int = pygame.MOUSEBUTTONUP) -> 'pygame.event.Event':
+    def middle_rect_click(rect: Union['pygame.Rect', 'pygame_menu.widgets.Widget', Tuple2NumberType],
+                          menu: Optional['pygame_menu.Menu'] = None,
+                          evtype: int = pygame.MOUSEBUTTONUP
+                          ) -> 'pygame.event.Event':
         """
         Return event clicking the middle of a given rect.
 
@@ -294,22 +284,33 @@ class PygameUtils(object):
         :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, FINGERUP, FINGERDOWN
         :return: Event
         """
-        x, y = PygameUtils.get_middle_rect(rect)
+        if isinstance(rect, pygame_menu.widgets.Widget):
+            x, y = rect.get_rect().center
+        elif isinstance(rect, pygame.Rect):
+            x, y = rect.center
+        elif isinstance(rect, tuple):
+            x, y = rect
+        elif isinstance(rect, list):
+            x, y = rect[0], rect[1]
+        else:
+            raise ValueError('unknown rect type')
+        offx, offy = (0, 0)
         if menu is not None:
             sar = menu.get_scrollarea().get_rect()
+            offx, offy = menu.get_scrollarea().get_offsets()
         else:
             sar = pygame.Rect(0, 0, 0, 0)
-        if evtype == FINGERDOWN or evtype == FINGERUP:
+        if evtype == FINGERDOWN or evtype == FINGERUP or evtype == FINGERMOTION:
             assert menu is not None, 'menu cannot be none if FINGER'
             display = menu.get_window_size()
             return pygame.event.Event(evtype,
                                       {
-                                          'x': (x + sar.x) / display[0],
-                                          'y': (y + sar.y) / display[1],
+                                          'x': (x + sar.x - offx) / display[0],
+                                          'y': (y + sar.y - offy) / display[1],
                                           'test': True,
                                           'button': 3
                                       })
-        return PygameUtils.mouse_click(x + sar.x, y + sar.y, inlist=False, evtype=evtype)
+        return PygameUtils.mouse_click(x + sar.x - offx, y + sar.y - offy, inlist=False, evtype=evtype)
 
 
 class MenuUtils(object):

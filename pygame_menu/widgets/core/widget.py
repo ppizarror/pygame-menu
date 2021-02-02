@@ -343,12 +343,17 @@ class Widget(object):
 
     def mouseover(self, event: 'pygame.event.Event') -> 'Widget':
         """
-        Runs the ``mouseover`` callbacks if the mouse is placed over the widget. The callbacks
+        Run the ``mouseover`` callback if the mouse is placed over the widget. The callbacks
         receive the widget object reference and the mouse event.
 
         .. code-block:: python
 
             callback_func(widget, event)
+
+        .. note::
+
+            This method does not evaluate if the mouse is placed over the widget. Only
+            executes the callback and updates the cursor if enabled.
 
         :return: Self reference
         """
@@ -363,12 +368,17 @@ class Widget(object):
 
     def mouseleave(self, event: 'pygame.event.Event') -> 'Widget':
         """
-        Runs the ``mouseleave`` callbacks if the mouse is placed outside the widget. The callbacks
+        Run the ``mouseleave`` callback if the mouse is placed outside the widget. The callbacks
         receive the widget object reference and the mouse event.
 
         .. code-block:: python
 
             callback_func(widget, event)
+
+        .. note::
+
+            This method does not evaluate if the mouse is placed over the widget. Only
+            executes the callback and updates the cursor if enabled.
 
         :return: Self reference
         """
