@@ -695,7 +695,7 @@ class BaseImage(object):
 
     def get_rect(self) -> 'pygame.Rect':
         """
-        Return the rect of the image.
+        Return the the :py:class:`pygame.Rect` object of the image.
 
         ``get_rect`` returns a new rectangle covering the entire surface. This rectangle
         will always start at *(0, 0)* with a width and height the same size as the image.

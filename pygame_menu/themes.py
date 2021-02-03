@@ -52,18 +52,12 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
 from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
-    Tuple2NumberType, NumberType, PaddingType, Optional, Type, Literal
+    Tuple2NumberType, NumberType, PaddingType, Optional, Type
 
 import copy
 
-AlignmentType = Literal[_locals.ALIGN_LEFT, _locals.ALIGN_CENTER, _locals.ALIGN_RIGHT]
-TitleBarStyleType = Literal[_widgets.MENUBAR_STYLE_ADAPTIVE, _widgets.MENUBAR_STYLE_SIMPLE,
-                            _widgets.MENUBAR_STYLE_TITLE_ONLY, _widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
-                            _widgets.MENUBAR_STYLE_NONE, _widgets.MENUBAR_STYLE_UNDERLINE,
-                            _widgets.MENUBAR_STYLE_UNDERLINE_TITLE]
 
-
-def _check_menubar_style(style: TitleBarStyleType) -> bool:
+def _check_menubar_style(style: int) -> bool:
     """
     Check menubar style.
 
@@ -233,7 +227,7 @@ class Theme(object):
     surface_clear_color: ColorType
     title_background_color: ColorType
     title_bar_modify_scrollarea: bool
-    title_bar_style: TitleBarStyleType
+    title_bar_style: int
     title_close_button: bool
     title_floating: bool
     title_font: str
@@ -246,7 +240,7 @@ class Theme(object):
     title_shadow_offset: NumberType
     title_shadow_position: str
     title_updates_pygame_display: bool
-    widget_alignment: AlignmentType
+    widget_alignment: str
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
     widget_background_inflate: Tuple2NumberType
     widget_background_inflate_to_selection: bool

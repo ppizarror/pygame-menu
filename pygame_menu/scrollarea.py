@@ -375,7 +375,7 @@ class ScrollArea(object):
 
     def get_rect(self) -> 'pygame.Rect':
         """
-        Return the Rect object.
+        Return the the :py:class:`pygame.Rect` object.
 
         :return: Pygame.Rect object
         """

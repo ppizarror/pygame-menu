@@ -537,7 +537,7 @@ class Decorator(object):
         """
         assert isinstance(width, (int, float)) and width > 0
         assert isinstance(height, (int, float)) and height > 0
-        rect = pygame.rect.Rect(0, 0, width, height)
+        rect = pygame.Rect(0, 0, width, height)
         return self.add_rect(x, y, rect, color, border, prev, **kwargs)
 
     def add_text(self,
@@ -1064,7 +1064,7 @@ class Decorator(object):
                 raise ValueError('unknown decoration type')
 
     def _update_pos_list(self,
-                         rect: 'pygame.rect.Rect',
+                         rect: 'pygame.Rect',
                          decoid: str,
                          pos: Union[Tuple2NumberType, Tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
                          use_center_positioning=True
