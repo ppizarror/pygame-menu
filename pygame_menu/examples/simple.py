@@ -53,7 +53,7 @@ def start_the_game() -> None:
 
     :return: None
     """
-    print('Do the job here !')
+    print('Do the job here!')
 
 
 menu = pygame_menu.Menu(

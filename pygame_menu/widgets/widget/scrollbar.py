@@ -69,6 +69,7 @@ class ScrollBar(Widget):
     :param page_ctrl_color: Page control color
     :param onchange: Callback when pressing and moving the scroll
     """
+    _mouseover: bool
     _opp_orientation: int
     _orientation: int
     _page_ctrl_color: ColorType
@@ -115,6 +116,8 @@ class ScrollBar(Widget):
 
         self._values_range = list(values_range)
         self.scrolling = False
+        self._mouseover = False
+
         self._orientation = 0
         self._opp_orientation = int(not self._orientation)
 
@@ -256,11 +259,12 @@ class ScrollBar(Widget):
         else:
             pygame.draw.rect(self._surface, self._slider_color, self._slider_rect)
 
-    def _scroll(self, pixels: NumberType) -> bool:
+    def _scroll(self, rect: 'pygame.Rect', pixels: NumberType) -> bool:
         """
         Moves the slider based on mouse events relative to change along axis.
         The slider travel is limited to page control length.
 
+        :param rect: Precomputed rect
         :param pixels: Number of pixels to scroll
         :return: ``True`` is scroll position has changed
         """
@@ -269,11 +273,11 @@ class ScrollBar(Widget):
             return False
 
         axis = self._orientation
-        space_before = self._rect.topleft[axis] - \
-                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
+        space_before = rect.topleft[axis] - \
+                       self._slider_rect.move(*rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
-        space_after = self._rect.bottomright[axis] - \
-                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
+        space_after = rect.bottomright[axis] - \
+                      self._slider_rect.move(*rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
 
         if not move:
@@ -389,12 +393,13 @@ class ScrollBar(Widget):
         pixels = max(0, pixels)
         pixels = min(self._page_ctrl_length - self._page_step, pixels)
 
-        self._scroll(pixels - self._slider_position)
+        self._scroll(self.get_rect(), pixels - self._slider_position)
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         if self.readonly:
             return False
         updated = False
+        rect = self.get_rect()  # Padding increases the extents of the button
 
         for event in events:
 
@@ -407,34 +412,45 @@ class ScrollBar(Widget):
                     step = self._page_step
                     if keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT]:
                         step *= 0.35
-                    if self._scroll(direction * step):
+                    if self._scroll(rect, direction * step):
                         self.change()
                         updated = True
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEMOTION and self.scrolling:
-                if self._scroll(event.rel[self._orientation]):
+            elif self._mouse_enabled and event.type == pygame.MOUSEMOTION:
+                # Check scrolling
+                if self.scrolling and self._scroll(rect, event.rel[self._orientation]):
                     self.change()
                     updated = True
+
+                # Check mouse over
+                if rect.collidepoint(*event.pos):
+                    if not self._mouseover:
+                        self._mouseover = True
+                        self.mouseover(event)
+                else:
+                    if self._mouseover:
+                        self._mouseover = False
+                        self.mouseleave(event)
 
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button in (4, 5) and self._orientation == 1:
                     # Vertical bar: scroll down (4) or up (5)
                     direction = -1 if event.button == 4 else 1
-                    if self._scroll(direction * self._single_step):
+                    if self._scroll(rect, direction * self._single_step):
                         self.change()
                         updated = True
                 else:
                     # The _slider_rect origin is related to the widget surface
-                    if self._slider_rect.move(*self._rect.topleft).collidepoint(event.pos):
+                    if self._slider_rect.move(*rect.topleft).collidepoint(*event.pos):
                         # Initialize scrolling
                         self.scrolling = True
 
-                    elif self._rect.collidepoint(*event.pos):
+                    elif rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
-                        srect = self._slider_rect.move(*self._rect.topleft)
+                        srect = self._slider_rect.move(*rect.topleft)
                         pos = (srect.x, srect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
-                        if self._scroll(direction * self._page_step):
+                        if self._scroll(rect, direction * self._page_step):
                             self.change()
                             updated = True
 

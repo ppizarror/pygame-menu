@@ -44,6 +44,9 @@ __all__ = [
 
 ]
 
+import pygame
+import copy
+
 import pygame_menu.font as _font
 import pygame_menu.locals as _locals
 import pygame_menu.utils as _utils
@@ -53,8 +56,6 @@ from pygame_menu.scrollarea import get_scrollbars_from_position
 
 from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
     Tuple2NumberType, NumberType, PaddingType, Optional, Type
-
-import copy
 
 
 def _check_menubar_style(style: int) -> bool:
@@ -78,11 +79,11 @@ class Theme(object):
 
         All colors must be defined with a tuple of 3 or 4 numbers in the formats:
 
-            - (R,G,B)
-            - (R,G,B,A)
+            - *(R, G, B)*
+            - *(R, G, B, A)*
 
-        Red (R), Green (G) and Blue (B) must be numbers between 0 and 255.
-        A means the alpha channel (opacity), if 0 the color is transparent, 100 means opaque.
+        Red (R), Green (G), and Blue (B) must be numbers between ``0`` and ``255``.
+        A means the alpha channel (opacity), if ``0`` the color is transparent, ``100`` means opaque.
 
     .. note::
 
@@ -112,6 +113,8 @@ class Theme(object):
     :type scrollarea_position: str
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
+    :param scrollbar_cursor: Scrollbar cursor if mouse is placed over. If ``None`` the scrollbar don't changes the cursor
+    :type scrollbar_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
     :type scrollbar_shadow: bool
     :param scrollbar_shadow_color: Color of the scrollbar shadow
@@ -173,6 +176,8 @@ class Theme(object):
     :type widget_border_inflate: tuple, list
     :param widget_border_width: Widget border width (px). If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
     :type widget_border_width: int
+    :param widget_cursor: Widget cursor if mouse is placed over. If ``None`` the widget don't changes the cursor
+    :type widget_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param widget_font: Widget font path or name
     :type widget_font: str
     :param widget_font_antialias: Widget font renders with antialiasing
@@ -216,6 +221,7 @@ class Theme(object):
     scrollarea_outer_margin: Tuple2NumberType
     scrollarea_position: str
     scrollbar_color: ColorType
+    scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
     scrollbar_shadow: bool
     scrollbar_shadow_color: ColorType
     scrollbar_shadow_offset: NumberType
@@ -229,6 +235,7 @@ class Theme(object):
     title_bar_modify_scrollarea: bool
     title_bar_style: int
     title_close_button: bool
+    title_close_button_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
     title_floating: bool
     title_font: str
     title_font_antialias: bool
@@ -247,6 +254,7 @@ class Theme(object):
     widget_border_color: Optional[ColorType]
     widget_border_inflate: Tuple2NumberType
     widget_border_width: int
+    widget_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
     widget_font: str
     widget_font_antialias: str
     widget_font_background_color: Optional[ColorType]
@@ -283,7 +291,8 @@ class Theme(object):
         self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
-        self.title_close_button = self._get(kwargs, 'menubar_close_button', bool, True)
+        self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
+        self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor', _locals.CURSOR_HAND)
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
@@ -303,6 +312,7 @@ class Theme(object):
 
         # ScrollBar
         self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (220, 220, 220))
+        self.scrollbar_cursor = self._get(kwargs, 'scrollbar_cursor', 'cursor')
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
         self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
         self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float), 2)
@@ -326,6 +336,7 @@ class Theme(object):
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color_none', (0, 0, 0))
         self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2', widget_selection_margin)
         self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
+        self.widget_cursor = self._get(kwargs, 'widget_cursor', 'cursor')
         self.widget_font = self._get(kwargs, 'widget_font', str, _font.FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
@@ -376,6 +387,9 @@ class Theme(object):
 
         # Value type checks
         _utils.assert_alignment(self.widget_alignment)
+        _utils.assert_cursor(self.scrollbar_cursor)
+        _utils.assert_cursor(self.title_close_button_cursor)
+        _utils.assert_cursor(self.widget_cursor)
         _utils.assert_position(self.scrollbar_shadow_position)
         _utils.assert_position(self.title_shadow_position)
         _utils.assert_position(self.widget_shadow_position)
@@ -560,6 +574,7 @@ class Theme(object):
             -   color_image         Color or :py:class:`pygame_menu.baseimage.BaseImage`
             -   color_image_none    Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
             -   color_none          Color or None
+            -   cursor              Cursor object (pygame)
             -   image               Value must be ``BaseImage``
             -   none                None only
             -   position            pygame-menu position (locals)}
@@ -590,19 +605,19 @@ class Theme(object):
                     _utils.assert_color(value)
 
                 elif valtype == 'color_image':
-                    if isinstance(value, BaseImage):
-                        return value
-                    _utils.assert_color(value)
+                    if not isinstance(value, BaseImage):
+                        _utils.assert_color(value)
 
                 elif valtype == 'color_image_none':
-                    if value is None or isinstance(value, BaseImage):
-                        return value
-                    _utils.assert_color(value)
+                    if not (value is None or isinstance(value, BaseImage)):
+                        _utils.assert_color(value)
 
                 elif valtype == 'color_none':
-                    if value is None:
-                        return value
-                    _utils.assert_color(value)
+                    if value is not None:
+                        _utils.assert_color(value)
+
+                elif valtype == 'cursor':
+                    _utils.assert_cursor(value)
 
                 elif valtype == 'image':
                     assert isinstance(value, BaseImage), 'value must be BaseImage type'

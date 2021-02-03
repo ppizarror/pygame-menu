@@ -123,7 +123,7 @@ class WidgetManager(object):
         assert isinstance(border_width, int) and border_width >= 0
         attributes['border_width'] = border_width
 
-        cursor = kwargs.pop('cursor', None)
+        cursor = kwargs.pop('cursor', self._theme.widget_cursor)
         assert isinstance(cursor, PygameCursorType)
         attributes['cursor'] = cursor
 

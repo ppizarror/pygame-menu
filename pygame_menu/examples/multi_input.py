@@ -133,8 +133,7 @@ def main(test: bool = False) -> None:
         height=WINDOW_SIZE[1] * 0.85,
         theme=settings_menu_theme,
         title='Settings',
-        width=WINDOW_SIZE[0] * 0.9,
-        mouse_motion_selection=True
+        width=WINDOW_SIZE[0] * 0.9
     )
 
     # Add text inputs with different configurations

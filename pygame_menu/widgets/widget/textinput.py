@@ -425,7 +425,6 @@ class TextInput(Widget):
         return super(TextInput, self).flip(False, y)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
-
         # Draw selection surface
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
@@ -1479,6 +1478,7 @@ class TextInput(Widget):
 
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
+        rect = self.get_rect()
 
         for event in events:
 
@@ -1738,7 +1738,7 @@ class TextInput(Widget):
 
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
-                if self._rect.collidepoint(*event.pos) and \
+                if rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False
@@ -1759,7 +1759,7 @@ class TextInput(Widget):
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if self._rect.collidepoint(*finger_pos) and \
+                if rect.collidepoint(*finger_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False

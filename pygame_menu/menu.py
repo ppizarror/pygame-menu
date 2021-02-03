@@ -524,6 +524,7 @@ class Menu(object):
             readonly_selected_color=self._theme.readonly_selected_color,
             selected_color=self._theme.title_font_color
         )
+        self._menubar.set_cursor(self._theme.title_close_button_cursor)
         self._menubar.set_shadow(
             color=self._theme.title_shadow_color,
             enabled=self._theme.title_shadow,
@@ -542,6 +543,7 @@ class Menu(object):
             area_color=self._theme.background_color,
             area_height=self._height - menubar_height,
             area_width=self._width,
+            cursor=self._theme.scrollbar_cursor,
             extend_y=menubar_height,
             menubar=self._menubar,
             scrollbar_color=self._theme.scrollbar_color,
@@ -1917,7 +1919,8 @@ class Menu(object):
 
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
-        mouse_changed_over = False  # Set to True if widgetover has changed
+        mouse_changed_over_widget = False  # Set to True if widgetover has changed
+        mouse_changed_over_menu = False  # Set to True if mousemenuover has changed
 
         selected_widget: Optional['pygame_menu.widgets.Widget'] = None
         if len(self._current._widgets) >= 1:
@@ -2065,13 +2068,13 @@ class Menu(object):
                             self._current._mouseover = True
                             if self._current._onmouseover is not None:
                                 self._current._onmouseover(self._current, event)
-                            mouse_changed_over = True
+                            mouse_changed_over_menu = True
                     else:
                         if not self._current.collide(event):
                             self._current._mouseover = False
                             if self._current._onmouseleave is not None:
                                 self._current._onmouseleave(self._current, event)
-                            mouse_changed_over = True
+                            mouse_changed_over_menu = True
 
                     # If selected widget is active then motion should not select or change mouseover
                     # widget
@@ -2088,7 +2091,7 @@ class Menu(object):
                                     self._current._widget_mouseover.mouseleave(event)
                                 widget.mouseover(event)
                                 self._current._widget_mouseover = widget
-                                mouse_changed_over = True
+                                mouse_changed_over_widget = True
                             break
 
                 # Mouse events in selected widget
@@ -2154,8 +2157,10 @@ class Menu(object):
 
         # If the over menu is not None, check the current mouse position is still over the widget,
         # if not, call onmouseleave
-        if not mouse_changed_over:
-            self._current._check_mouseleave(force=False)
+        if not mouse_changed_over_widget:
+            self._current._check_mouseleave(force=False, menu=False)
+        if not mouse_changed_over_menu:
+            self._current._check_mouseleave(force=False, widget=False)
 
         # If cache is enabled, always force a rendering (user may have have changed any status)
         if self._current._widget_surface_cache_enabled and updated:
@@ -2167,25 +2172,29 @@ class Menu(object):
 
         return updated
 
-    def _check_mouseleave(self, force: bool) -> None:
+    def _check_mouseleave(self, force: bool, widget: bool = True, menu: bool = True) -> None:
         """
         Check ``mouseleave`` on current Menu/Widget.
 
         :param force: Force leave if ``True``
+        :param widget: Check widget
+        :param menu: Check menu
         :return: None
         """
         mousex, mousey = pygame.mouse.get_pos()
         mouse_motion_current_pos = pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)})
-        if self._widget_mouseover is not None:
+        if self._widget_mouseover is not None and widget:
             if not self._scroll.collide(self._widget_mouseover, mouse_motion_current_pos) or force:
                 self._widget_mouseover.mouseleave(mouse_motion_current_pos)
                 self._widget_mouseover = None
-        if self._mouseover and not self.collide(mouse_motion_current_pos) or force:
+            self._scroll.update([mouse_motion_current_pos])
+        if (self._mouseover and not self.collide(mouse_motion_current_pos) or force) and menu:
             if self._onmouseleave is not None:
                 self._onmouseleave(self, mouse_motion_current_pos)
             self._mouseover = False
+            self._menubar.update([mouse_motion_current_pos])
         if force:
-            self._current._check_mouseleave(force=False)
+            self._current._check_mouseleave(force=False, widget=widget, menu=menu)
 
     def collide(self, event: 'pygame.event.Event') -> bool:
         """
