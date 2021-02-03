@@ -9,3 +9,4 @@ TextInput
     :members:
     :show-inheritance:
     :inherited-members:
+    :exclude-members: rotate, scale, flip
