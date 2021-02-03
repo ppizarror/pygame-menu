@@ -35,6 +35,7 @@ __all__ = [
     'FONT_8BIT',
     'FONT_BEBAS',
     'FONT_COMIC_NEUE',
+    'FONT_DIGITAL',
     'FONT_FRANCHISE',
     'FONT_HELVETICA',
     'FONT_MUNRO',
@@ -62,6 +63,7 @@ __fonts_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'f
 FONT_8BIT = __fonts_path__.format('8bit.ttf')
 FONT_BEBAS = __fonts_path__.format('bebas.ttf')
 FONT_COMIC_NEUE = __fonts_path__.format('comic_neue.ttf')
+FONT_DIGITAL = __fonts_path__.format('digital.ttf')
 FONT_FRANCHISE = __fonts_path__.format('franchise.ttf')
 FONT_HELVETICA = __fonts_path__.format('helvetica.ttf')
 FONT_MUNRO = __fonts_path__.format('munro.ttf')
@@ -72,7 +74,7 @@ FONT_OPEN_SANS_ITALIC = __fonts_path__.format('opensans_italic.ttf')
 FONT_OPEN_SANS_LIGHT = __fonts_path__.format('opensans_light.ttf')
 FONT_PT_SERIF = __fonts_path__.format('ptserif_regular.ttf')
 
-FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_FRANCHISE, FONT_HELVETICA,
+FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRANCHISE, FONT_HELVETICA,
                  FONT_MUNRO, FONT_NEVIS, FONT_OPEN_SANS, FONT_OPEN_SANS_BOLD, FONT_OPEN_SANS_ITALIC,
                  FONT_OPEN_SANS_LIGHT, FONT_PT_SERIF)
 

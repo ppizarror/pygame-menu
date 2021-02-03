@@ -167,6 +167,7 @@ Available fonts                                     Preview
 :py:class:`pygame_menu.font.FONT_8BIT`              .. image:: ../_static/font_8bit.png
 :py:class:`pygame_menu.font.FONT_BEBAS`             .. image:: ../_static/font_bebas.png
 :py:class:`pygame_menu.font.FONT_COMIC_NEUE`        .. image:: ../_static/font_comic_neue.png
+:py:class:`pygame_menu.font.FONT_DIGITAL`           .. image:: ../_static/font_digital.png
 :py:class:`pygame_menu.font.FONT_FRANCHISE`         .. image:: ../_static/font_franchise.png
 :py:class:`pygame_menu.font.FONT_HELVETICA`         .. image:: ../_static/font_helvetica.png
 :py:class:`pygame_menu.font.FONT_MUNRO`             .. image:: ../_static/font_munro.png
