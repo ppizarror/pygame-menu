@@ -35,6 +35,7 @@ import copy
 import unittest
 import timeit
 from test._utils import surface, test_reset_surface, MenuUtils, PygameUtils
+from typing import Any
 
 import pygame
 import pygame_menu
@@ -1693,6 +1694,72 @@ class MenuTest(unittest.TestCase):
         menu._mouse_motion_selection = True
         menu_top.update([PygameUtils.middle_rect_click(wrect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
         self.assertFalse(widg.active)
+
+        # Test mouseover and mouseleave
+        test: Any = [None]
+
+        def onover(m: 'pygame_menu.Menu', e: 'pygame.event.Event') -> None:
+            """
+            Mouse over menu.
+            """
+            self.assertIsInstance(m, pygame_menu.Menu)
+            self.assertEqual(e.type, pygame.MOUSEMOTION)
+            test[0] = True
+
+        def onleave(m: 'pygame_menu.Menu', e: 'pygame.event.Event') -> None:
+            """
+            Mouse leave menu.
+            """
+            self.assertIsInstance(m, pygame_menu.Menu)
+            self.assertEqual(e.type, pygame.MOUSEMOTION)
+            test[0] = False
+
+        menu = MenuUtils.generic_menu(width=100, height=100)
+        menu.set_onmouseover(onover)
+        menu.set_onmouseleave(onleave)
+
+        self.assertEqual(test[0], None)
+        ev = PygameUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION)
+        self.assertEqual(menu._mouseover, False)
+        menu.update(ev)
+        self.assertFalse(test[0])
+
+        rect = menu.get_rect()
+        ev = PygameUtils.mouse_click(rect.centerx, rect.centery, inlist=True, evtype=pygame.MOUSEMOTION)
+        menu.update(ev)
+        self.assertTrue(test[0])
+        self.assertEqual(menu._mouseover, True)
+
+        ev = PygameUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION)
+        menu.update(ev)
+        self.assertEqual(menu._mouseover, False)
+        self.assertFalse(test[0])
+
+        # Test window mouseover and mouseleave
+        test: Any = [None]
+
+        def onover(m: 'pygame_menu.Menu') -> None:
+            """
+            Mouse over window.
+            """
+            self.assertIsInstance(m, pygame_menu.Menu)
+            test[0] = True
+
+        def onleave(m: 'pygame_menu.Menu') -> None:
+            """
+            Mouse leave window.
+            """
+            self.assertIsInstance(m, pygame_menu.Menu)
+            test[0] = False
+
+        menu.set_onwindowmouseover(onover)
+        menu.set_onwindowmouseleave(onleave)
+
+        self.assertEqual(test[0], None)
+        menu.update([pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 1})])  # Enter
+        self.assertEqual(test[0], True)
+        menu.update([pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 0})])  # Enter
+        self.assertEqual(test[0], False)
 
     def test_mouseover_widget(self) -> None:
         """

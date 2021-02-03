@@ -76,20 +76,6 @@ class Menu(object):
         onclose() <or> onclose(Menu)
         onreset() <or> onreset(Menu)
 
-    Callback ``onupdate`` is executed before updating the Menu, it receives the event
-    list and the menu reference:
-
-    .. code-block:: python
-
-        onupdate(event_list, Menu)
-
-    Callback ``onbeforeopen`` is executed before opening the Menu, it receives the
-    current Menu and the next Menu.
-
-    .. code-block:: python
-
-        onbeforeopen(current Menu <from>, next Menu <to>)
-
     .. note::
 
         Menu cannot be copied or deepcopied.
@@ -110,7 +96,6 @@ class Menu(object):
     :param mouse_visible: Set mouse visible on Menu
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
-    :param onupdate: Function executed when updating the Menu. The function receives the list of gathered pygame events, and the Menu reference
     :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
@@ -144,10 +129,15 @@ class Menu(object):
     _mouse_motion_selection: bool
     _mouse_visible: bool
     _mouse_visible_default: bool
+    _mouseover: bool
     _onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
     _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
+    _onmouseleave: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
+    _onmouseover: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
     _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
     _onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
+    _onwindowmouseleave: Optional[Callable[['Menu'], Any]]
+    _onwindowmouseover: Optional[Callable[['Menu'], Any]]
     _overflow: Tuple2BoolType
     _position: Tuple2IntType
     _prev: Optional[List[Union['Menu', List['Menu']]]]
@@ -192,10 +182,8 @@ class Menu(object):
                  mouse_enabled: bool = True,
                  mouse_motion_selection: bool = False,
                  mouse_visible: bool = True,
-                 onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]] = None,
                  onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
                  onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
-                 onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]] = None,
                  overflow: Vector2BoolType = (True, True),
                  rows: MenuRowsType = None,
                  screen_dimension: Optional[Vector2IntType] = None,
@@ -247,7 +235,6 @@ class Menu(object):
         assert columns >= 1, \
             'the number of columns must be equal or greater than 1 (current={0})'.format(columns)
         if columns > 1:
-
             assert rows is not None, 'rows cannot be None if the number of columns is greater than 1'
             if isinstance(rows, int):
                 msg = 'if number of columns is greater than 1 (current={0}) then the number ' \
@@ -264,7 +251,6 @@ class Menu(object):
                 assert i >= 1, 'each item of the rows tuple/list must be equal or greater than one'
 
         else:
-
             if rows is None:
                 rows = 10000000  # Set rows as a big number
             else:
@@ -384,10 +370,15 @@ class Menu(object):
         self._width = int(width)
 
         # Set callbacks
-        self.set_onbeforeopen(onbeforeopen)
         self.set_onclose(onclose)
         self.set_onreset(onreset)
-        self.set_onupdate(onupdate)
+
+        self._onbeforeopen = None
+        self._onmouseleave = None
+        self._onmouseover = None
+        self._onupdate = None
+        self._onwindowmouseleave = None
+        self._onwindowmouseover = None
 
         # Menu links (pointer to previous and next menus in nested submenus), for public methods
         # accessing self should be through "_current", because user can move through submenus
@@ -493,6 +484,7 @@ class Menu(object):
             assert hasattr(pygame, 'MOUSEMOTION'), \
                 'pygame MOUSEMOTION does not exist, thus, mouse motion selection cannot be enabled'
         self._mouse = mouse_enabled and mouse_visible
+        self._mouseover = False
         self._mouse_motion_selection = mouse_motion_selection
         self._mouse_visible = mouse_visible
         self._mouse_visible_default = mouse_visible
@@ -632,7 +624,12 @@ class Menu(object):
                          onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
                          ) -> 'Menu':
         """
-        Set ``onbeforeopen`` callback.
+        Set ``onbeforeopen`` callback. Callback is executed before opening the Menu,
+        it receives the current Menu and the next Menu:
+
+        .. code-block:: python
+
+            onbeforeopen(current Menu <from>, next Menu <to>)
 
         .. note::
 
@@ -652,7 +649,12 @@ class Menu(object):
                      onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
                      ) -> 'Menu':
         """
-        Set ``onupdate`` callback.
+        Set ``onupdate`` callback. Callback is executed before updating the Menu, it receives
+        the event list and the menu reference:
+
+        .. code-block:: python
+
+            onupdate(event_list, Menu)
 
         .. note::
 
@@ -672,7 +674,12 @@ class Menu(object):
                     onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
                     ) -> 'Menu':
         """
-        Set ``onclose`` callback.
+        Set ``onclose`` callback. Callback can only receive 1 argument maximum (if not ``None``),
+        if so, the Menu instance is provided:
+
+        .. code-block:: python
+
+            onclose() <or> onclose(Menu)
 
         .. note::
 
@@ -680,11 +687,11 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param onclose: Onclose callback, it can be a function, an event, or None
+        :param onclose: Onclose callback, it can be a function, a pygame-menu event, or None
         :return: Self reference
         """
         assert _utils.is_callable(onclose) or _events.is_event(onclose) or onclose is None, \
-            'onclose must be a MenuAction, callable (function-type) or None'
+            'onclose must be a MenuAction (event), callable (function-type), or None'
         if onclose == _events.NONE:
             onclose = None
         self._onclose = onclose
@@ -694,7 +701,12 @@ class Menu(object):
                     onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
                     ) -> 'Menu':
         """
-        Set ``onreset`` callback.
+        Set ``onreset`` callback. Callback can only receive 1 argument maximum (if not ``None``),
+        if so, the Menu instance is provided:
+
+        .. code-block:: python
+
+            onreset() <or> onreset(Menu)
 
         .. note::
 
@@ -708,6 +720,90 @@ class Menu(object):
         assert _utils.is_callable(onreset) or onreset is None, \
             'onreset must be a callable (function-type) or None'
         self._onreset = onreset
+        return self
+
+    def set_onwindowmouseover(self,
+                              onwindowmouseover: Optional[Callable[['Menu'], Any]]
+                              ) -> 'Menu':
+        """
+        Set ``onwindowmouseover`` callback. This method is executed in
+        :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
+        following arguments:
+
+        .. code-block:: python
+
+            onwindowmouseover(menu)
+
+        :param onwindowmouseover: Callback executed if user enters the window with the mouse; it can be a function or None
+        :return: Self reference
+        """
+        if onwindowmouseover:
+            assert _utils.is_callable(onwindowmouseover), \
+                'onwindowmouseover must be callable (function-type) or None'
+        self._onwindowmouseover = onwindowmouseover
+        return self
+
+    def set_onwindowmouseleave(self,
+                               onwindowmouseleave: Optional[Callable[['Menu'], Any]]
+                               ) -> 'Menu':
+        """
+        Set ``onmouseleave`` callback. This method is executed in
+        :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
+        following arguments:
+
+        .. code-block:: python
+
+            onwindowmouseleave(menu)
+
+        :param onwindowmouseleave: Callback executed if user leaves the window with the mouse; it can be a function or None
+        :return: Self reference
+        """
+        if onwindowmouseleave:
+            assert _utils.is_callable(onwindowmouseleave), \
+                'onwindowmouseleave must be callable (function-type) or None'
+        self._onwindowmouseleave = onwindowmouseleave
+        return self
+
+    def set_onmouseover(self,
+                        onmouseover: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
+                        ) -> 'Menu':
+        """
+        Set ``onmouseover`` callback. This method is executed in
+        :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
+        following arguments:
+
+        .. code-block:: python
+
+            onmouseover(menu, event)
+
+        :param onmouseover: Callback executed if user enters the Menu with the mouse; it can be a function or None
+        :return: Self reference
+        """
+        if onmouseover:
+            assert _utils.is_callable(onmouseover), \
+                'onmouseover must be callable (function-type) or None'
+        self._onmouseover = onmouseover
+        return self
+
+    def set_onmouseleave(self,
+                         onmouseleave: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
+                         ) -> 'Menu':
+        """
+        Set ``onmouseleave`` callback. This method is executed in
+        :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
+        following arguments:
+
+        .. code-block:: python
+
+            onmouseleave(menu, event)
+
+        :param onmouseleave: Callback executed if user leaves the Menu with the mouse; it can be a function or None
+        :return: Self reference
+        """
+        if onmouseleave:
+            assert _utils.is_callable(onmouseleave), \
+                'onmouseleave must be callable (function-type) or None'
+        self._onmouseleave = onmouseleave
         return self
 
     def get_current(self) -> 'Menu':
@@ -1331,7 +1427,7 @@ class Menu(object):
 
         :return: Self reference
         """
-        self._check_widget_mouseleave(force=True)
+        self._check_mouseleave(force=True)
         self._top._enabled = False
         return self
 
@@ -1341,13 +1437,13 @@ class Menu(object):
 
         .. note::
 
-            - Menu left position (x) must be between 0 and 100, if 0 the margin
-              is at the left of the window, if 100 the Menu is at the right
+            - Menu left position (x) must be between ``0`` and ``100``, if ``0`` the
+              margin is at the left of the window, if ``100`` the Menu is at the right
               of the window.
 
-            - Menu top position (y) must be between 0 and 100, if 0 the margin is
-              at the top of the window, if 100 the margin is at the bottom of
-              the window.
+            - Menu top position (y) must be between ``0`` and ``100``, if ``0`` the
+              margin is at the top of the window, if ``100`` the margin is at the bottom
+              of the window.
 
         .. note::
 
@@ -1951,8 +2047,31 @@ class Menu(object):
                             if not self._current._scroll.collide(selected_widget, event):
                                 selected_widget.active = False
 
+                # Mouse enters or leaves the window
+                elif event.type == pygame.ACTIVEEVENT:
+                    if event.gain == 1:  # Enter
+                        if self._current._onwindowmouseover is not None:
+                            self._current._onwindowmouseover(self._current)
+                    else:  # Leave
+                        if self._current._onwindowmouseleave is not None:
+                            self._current._onwindowmouseleave(self._current)
+
                 # Mouse motion. It changes the cursor of the mouse if enabled
                 elif self._current._mouse and event.type == pygame.MOUSEMOTION:
+
+                    # Check if mouse over menu
+                    if not self._current._mouseover:
+                        if self._current.collide(event):
+                            self._current._mouseover = True
+                            if self._current._onmouseover is not None:
+                                self._current._onmouseover(self._current, event)
+                            mouse_changed_over = True
+                    else:
+                        if not self._current.collide(event):
+                            self._current._mouseover = False
+                            if self._current._onmouseleave is not None:
+                                self._current._onmouseleave(self._current, event)
+                            mouse_changed_over = True
 
                     # If selected widget is active then motion should not select or change mouseover
                     # widget
@@ -2036,7 +2155,7 @@ class Menu(object):
         # If the over menu is not None, check the current mouse position is still over the widget,
         # if not, call onmouseleave
         if not mouse_changed_over:
-            self._current._check_widget_mouseleave(force=False)
+            self._current._check_mouseleave(force=False)
 
         # If cache is enabled, always force a rendering (user may have have changed any status)
         if self._current._widget_surface_cache_enabled and updated:
@@ -2048,21 +2167,47 @@ class Menu(object):
 
         return updated
 
-    def _check_widget_mouseleave(self, force: bool) -> None:
+    def _check_mouseleave(self, force: bool) -> None:
         """
-        Check ``mouseleave`` on current over widget.
+        Check ``mouseleave`` on current Menu/Widget.
 
         :param force: Force leave if ``True``
         :return: None
         """
+        mousex, mousey = pygame.mouse.get_pos()
+        mouse_motion_current_pos = pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)})
         if self._widget_mouseover is not None:
-            mousex, mousey = pygame.mouse.get_pos()
-            mouse_motion_current_pos = pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)})
             if not self._scroll.collide(self._widget_mouseover, mouse_motion_current_pos) or force:
                 self._widget_mouseover.mouseleave(mouse_motion_current_pos)
                 self._widget_mouseover = None
+        if self._mouseover and not self.collide(mouse_motion_current_pos) or force:
+            if self._onmouseleave is not None:
+                self._onmouseleave(self, mouse_motion_current_pos)
+            self._mouseover = False
         if force:
-            self._current._check_widget_mouseleave(force=False)
+            self._current._check_mouseleave(force=False)
+
+    def collide(self, event: 'pygame.event.Event') -> bool:
+        """
+        Check if user event collides the Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param event: Pygame event
+        :return: ``True`` if collide
+        """
+        if hasattr(pygame, 'FINGERDOWN') and (
+                event.type == pygame.FINGERDOWN or event.type == pygame.FINGERUP or
+                event.type == pygame.FINGERMOTION):
+            display_size = self.get_window_size()
+            finger_pos = (event.x * display_size[0], event.y * display_size[1])
+            return bool(self.get_rect().collidepoint(*finger_pos))
+        else:
+            return bool(self.get_rect().collidepoint(*event.pos))
 
     def mainloop(self,
                  surface: 'pygame.Surface',
@@ -2210,7 +2355,7 @@ class Menu(object):
 
     def get_rect(self) -> 'pygame.Rect':
         """
-        Return the Menu rect.
+        Return the :py:class:`pygame.Rect` object of the Menu.
 
         .. note::
 
@@ -2350,7 +2495,7 @@ class Menu(object):
         self._select(0, 1)
 
         # Re-render menu
-        self._check_widget_mouseleave(force=True)
+        self._check_mouseleave(force=True)
         self._render()
 
     def reset(self, total: int) -> 'Menu':
@@ -2389,7 +2534,7 @@ class Menu(object):
                 self._current._onreset()
 
         self._current._widgets_surface = None
-        self._current._check_widget_mouseleave(force=True)
+        self._current._check_mouseleave(force=True)
         self._current._select(self._top._current._index)
         self._current._stats.reset += 1
         return self._current

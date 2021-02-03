@@ -159,7 +159,8 @@ class NoneWidget(Widget):
     def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
         return self
 
-    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> 'Widget':
+    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True,
+                     keyboard: bool = True) -> 'Widget':
         return self
 
     def set_value(self, value: Any) -> None:

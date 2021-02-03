@@ -269,14 +269,14 @@ class Widget(object):
     def set_onchange(self, onchange: CallbackType) -> 'Widget':
         """
         Set ``onchange`` callback. This method is executed in
-        :py:meth:`pygame_menu.widgets.core.widget.Widget.change` method.
-        The callback function receives the following arguments:
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.change` method. The callback function receives
+        the following arguments:
 
         .. code-block:: python
 
             onchange(value, *args, *widget._args, **widget._kwargs)
 
-        :param onchange: Callback executed if the widget changes its value; it can be a function or None
+        :param onchange: Callback executed if the Widget changes its value; it can be a function or None
         :return: Self reference
         """
         if onchange:
@@ -287,14 +287,14 @@ class Widget(object):
     def set_onreturn(self, onreturn: CallbackType) -> 'Widget':
         """
         Set ``onreturn`` callback. This method is executed in
-        :py:meth:`pygame_menu.widgets.core.widget.Widget.apply` method.
-        The callback function receives the following arguments:
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.apply` method. The callback function receives
+        the following arguments:
 
         .. code-block:: python
 
             onreturn(value, *args, *widget._args, **widget._kwargs)
 
-        :param onreturn: Callback executed if user applies on widget; it can be a function or None
+        :param onreturn: Callback executed if user applies on Widget; it can be a function or None
         :return: Self reference
         """
         if onreturn:
@@ -305,14 +305,14 @@ class Widget(object):
     def set_onselect(self, onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]) -> 'Widget':
         """
         Set ``onselect`` callback. This method is executed in
-        :py:meth:`pygame_menu.widgets.core.widget.Widget.select` method.
-        The callback function receives the following arguments:
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.select` method. The callback function receives
+        the following arguments:
 
         .. code-block:: python
 
             onselect(selected, widget, menu)
 
-        :param onselect: Callback executed if user selects the widget; it can be a function or None
+        :param onselect: Callback executed if user selects the Widget; it can be a function or None
         :return: Self reference
         """
         if onselect:
@@ -323,8 +323,8 @@ class Widget(object):
     def set_onmouseover(self, onmouseover: Optional[Callable[['Widget', 'pygame.event.Event'], Any]]) -> 'Widget':
         """
         Set ``onmouseover`` callback. This method is executed in
-        :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseover` method.
-        The callback function receives the following arguments:
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseover` method. The callback function receives
+        the following arguments:
 
         .. code-block:: python
 
@@ -341,8 +341,8 @@ class Widget(object):
     def set_onmouseleave(self, onmouseleave: Optional[Callable[['Widget', 'pygame.event.Event'], Any]]) -> 'Widget':
         """
         Set ``onmouseleave`` callback. This method is executed in
-        :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseleave` method.
-        The callback function receives the following arguments:
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseleave` method. The callback function receives
+        the following arguments:
 
         .. code-block:: python
 
@@ -358,8 +358,8 @@ class Widget(object):
 
     def mouseover(self, event: 'pygame.event.Event') -> 'Widget':
         """
-        Run the ``onmouseover`` if the mouse is placed over the Widget. The callbacks
-        receive the widget object reference and the mouse event.
+        Run the ``onmouseover`` if the mouse is placed over the Widget. The callback receive the Widget
+        object reference and the mouse event:
 
         .. code-block:: python
 
@@ -393,8 +393,8 @@ class Widget(object):
 
     def mouseleave(self, event: 'pygame.event.Event') -> 'Widget':
         """
-        Run the ``onmouseleave`` callback if the mouse is placed outside the Widget. The callbacks
-        receive the widget object reference and the mouse event.
+        Run the ``onmouseleave`` callback if the mouse is placed outside the Widget. The callback receive
+        the Widget object reference and the mouse event:
 
         .. code-block:: python
 
@@ -402,7 +402,7 @@ class Widget(object):
 
         .. warning::
 
-            This method does not evaluate if the mouse is placed over the widget. Only
+            This method does not evaluate if the mouse is placed over the Widget. Only
             executes the callback and updates the cursor if enabled.
 
         :return: Self reference
@@ -978,7 +978,8 @@ class Widget(object):
     def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
                  use_transformed_padding: bool = True) -> 'pygame.Rect':
         """
-        Return the :py:class:`pygame.Rect` object, this forces the widget rendering.
+        Return the :py:class:`pygame.Rect` object of the Widget.
+        This method forces rendering.
 
         :param inflate: Inflate rect *(x, y)* in px
         :param apply_padding: Apply widget padding
