@@ -1309,7 +1309,6 @@ class WidgetsTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=-1))
         self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1.5))
-        self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1, border_color=None))
         self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1,
                                                                   border_color=(0, 0, 0), border_inflate=(-1, - 1)))
         btn = menu.add.button('', None, border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))

@@ -39,6 +39,7 @@ import pygame_menu.examples.multi_input as multi_input
 import pygame_menu.examples.scroll_menu as scroll_menu
 import pygame_menu.examples.timer_clock as timer_clock
 
+import pygame_menu.examples.other.calculator as calculator
 import pygame_menu.examples.other.dynamic_button_append as dynamic_button
 import pygame_menu.examples.other.dynamic_widget_update as dynamic_widget
 import pygame_menu.examples.other.image_background as image_background
@@ -110,6 +111,14 @@ class ExamplesTest(unittest.TestCase):
         Test scroll bar example.
         """
         scroll_bar.main(test=True)
+        test_reset_surface()
+
+    @staticmethod
+    def test_example_other_calculator() -> None:
+        """
+        Test calculator example.
+        """
+        calculator.main(test=True)
         test_reset_surface()
 
     @staticmethod
