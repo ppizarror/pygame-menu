@@ -218,7 +218,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
@@ -257,7 +257,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
@@ -291,7 +291,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -338,7 +338,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -381,7 +381,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -419,7 +419,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -456,7 +456,7 @@ class Decorator(object):
             :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -488,7 +488,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -523,7 +523,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -560,7 +560,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -605,7 +605,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -640,7 +640,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -712,7 +712,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
@@ -744,7 +744,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param pos1: Position 1 *(x1, y1)*
         :param pos2: Position 2 *(x2, y2)*
@@ -779,7 +779,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x1: Horizontal position 1 in px
         :param x2: Horizontal position 2 in px
@@ -810,7 +810,7 @@ class Decorator(object):
             Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: Horizontal position in px
         :param y1: Vertical position 1 in px

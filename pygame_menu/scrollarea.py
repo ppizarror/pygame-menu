@@ -337,7 +337,7 @@ class ScrollArea(object):
 
     def get_hidden_width(self) -> int:
         """
-        Return the total width out of the bounds of the the viewable area.
+        Return the total width out of the bounds of the viewable area.
         Zero is returned if the world width is lower than the viewable area.
 
         :return: Hidden width (px)
@@ -348,7 +348,7 @@ class ScrollArea(object):
 
     def get_hidden_height(self) -> int:
         """
-        Return the total height out of the bounds of the the viewable area.
+        Return the total height out of the bounds of the viewable area.
         Zero is returned if the world height is lower than the viewable area.
 
         :return: Hidden height (px)
@@ -375,7 +375,7 @@ class ScrollArea(object):
 
     def get_rect(self) -> 'pygame.Rect':
         """
-        Return the the :py:class:`pygame.Rect` object.
+        Return the :py:class:`pygame.Rect` object of the ScrollArea.
 
         :return: Pygame.Rect object
         """

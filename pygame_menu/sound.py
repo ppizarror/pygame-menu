@@ -470,7 +470,7 @@ class Sound(object):
 
     def stop(self) -> 'Sound':
         """
-        Stop the the channel.
+        Stop the channel.
 
         :return: Self reference
         """
