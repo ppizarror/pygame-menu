@@ -50,7 +50,7 @@ import warnings
 
 # Stores the previous cursor. This should be a common variable
 # because there's only 1 cursor
-_CURSOR_PREV = [None]
+_CURSOR_PREV: List[Any] = [None]
 
 
 class Widget(object):
@@ -158,7 +158,7 @@ class Widget(object):
         self._col_row_index = (-1, -1, -1)
         self._cursor = None
         self._decorator = Decorator(self)
-        self._default_value = _NoWidgetValue()
+        self._default_value = _WidgetNoValue()
         self._events = []
         self._floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self._id = str(widget_id)
@@ -237,7 +237,7 @@ class Widget(object):
 
         # Selection effect, for avoiding exception while getting object rect, NullSelection
         # was created. Initially it was None
-        self._selection_effect = _NullSelection()
+        self._selection_effect = _WidgetNullSelection()
 
         # Inputs
         self._joystick_enabled = True
@@ -359,11 +359,19 @@ class Widget(object):
         """
         if self._onmouseover is not None:
             self._onmouseover(self, event)
+
+        # Change cursor
         if self._cursor is not None:
+            try:
+                pygame.mouse.set_cursor(self._cursor)
+                cursor = pygame.mouse.get_cursor()
+            except (pygame.error, TypeError):
+                msg = 'could not stablish widget cursor, invalid value {0}'.format(self._cursor)
+                warnings.warn(msg)
+                cursor = _WidgetUnknownCursor()
             if _CURSOR_PREV[0] is None:
-                # noinspection PyTypeChecker
-                _CURSOR_PREV[0] = pygame.mouse.get_cursor()
-            pygame.mouse.set_cursor(self._cursor)
+                _CURSOR_PREV[0] = cursor
+
         return self
 
     def mouseleave(self, event: 'pygame.event.Event') -> 'Widget':
@@ -384,8 +392,11 @@ class Widget(object):
         """
         if self._onmouseleave is not None:
             self._onmouseleave(self, event)
-        if self._cursor is not None and _CURSOR_PREV[0] is not None:
-            pygame.mouse.set_cursor(_CURSOR_PREV[0])
+        if not isinstance(_CURSOR_PREV[0], _WidgetUnknownCursor):
+            if self._cursor is not None and _CURSOR_PREV[0] is not None:
+                pygame.mouse.set_cursor(_CURSOR_PREV[0])
+                _CURSOR_PREV[0] = None
+        else:
             _CURSOR_PREV[0] = None
         return self
 
@@ -740,7 +751,7 @@ class Widget(object):
 
         .. note::
 
-            If no selection has been provided, ``_NullSelection`` class
+            If no selection has been provided, ``_WidgetNullSelection`` class
             will be returned.
 
         .. warning::
@@ -758,14 +769,14 @@ class Widget(object):
         .. note::
 
             If ``selection=None`` the selection effect will be established
-            to ``_NullSelection`` class.
+            to ``_WidgetNullSelection`` class.
 
         :param selection: Selection effect class
         :return: Self reference
         """
         assert isinstance(selection, (Selection, type(None)))
         if selection is None:
-            selection = _NullSelection()
+            selection = _WidgetNullSelection()
         self._selection_effect = selection
         self._force_render()
         return self
@@ -1930,7 +1941,7 @@ class Widget(object):
 
         :return: Self reference
         """
-        if not isinstance(self._default_value, _NoWidgetValue):
+        if not isinstance(self._default_value, _WidgetNoValue):
             self.set_value(self._default_value)
         return self
 
@@ -2194,8 +2205,7 @@ class Widget(object):
         return self._decorator
 
 
-# noinspection PyMissingOrEmptyDocstring
-class _NullSelection(Selection):
+class _WidgetNullSelection(Selection):
     """
     Null selection. It redefines :py:class:`pygame_menu.widgets.selection.NoneSelection`
     because that class cannot be imported directly from widget.py.
@@ -2207,10 +2217,11 @@ class _NullSelection(Selection):
     """
 
     def __init__(self) -> None:
-        super(_NullSelection, self).__init__(
+        super(_WidgetNullSelection, self).__init__(
             margin_left=0, margin_right=0, margin_top=0, margin_bottom=0
         )
 
+    # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface: 'pygame.Surface', widget: 'Widget') -> 'Selection':
         return self
 
@@ -2222,10 +2233,15 @@ class _WidgetCopyException(Exception):
     pass
 
 
-class _NoWidgetValue(object):
+class _WidgetNoValue(object):
     """
     No value class.
     """
+    pass
 
-    def __init__(self) -> None:
-        pass
+
+class _WidgetUnknownCursor(object):
+    """
+    Unknown cursor class.
+    """
+    pass

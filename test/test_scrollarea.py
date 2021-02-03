@@ -91,8 +91,8 @@ class ScrollAreaTest(unittest.TestCase):
         Test scroll area copy.
         """
         sa = MenuUtils.generic_menu().get_scrollarea()
-        self.assertRaises(pygame_menu.scrollarea.ScrollAreaCopyException, lambda: copy.copy(sa))
-        self.assertRaises(pygame_menu.scrollarea.ScrollAreaCopyException, lambda: copy.deepcopy(sa))
+        self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
+        self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.deepcopy(sa))
 
     def test_decorator(self) -> None:
         """

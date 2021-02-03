@@ -110,8 +110,8 @@ class MenuTest(unittest.TestCase):
         Test menu copy.
         """
         menu = MenuUtils.generic_menu()
-        self.assertRaises(pygame_menu.menu.MenuCopyException, lambda: copy.copy(menu))
-        self.assertRaises(pygame_menu.menu.MenuCopyException, lambda: copy.deepcopy(menu))
+        self.assertRaises(pygame_menu.menu._MenuCopyException, lambda: copy.copy(menu))
+        self.assertRaises(pygame_menu.menu._MenuCopyException, lambda: copy.deepcopy(menu))
 
     def test_size_constructor(self) -> None:
         """
