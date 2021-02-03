@@ -62,6 +62,7 @@ class CalculatorApp(object):
         theme.background_color = (43, 43, 43)
         theme.title_background_color = (43, 43, 43)
         theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE
+        theme.title_close_button_cursor = pygame_menu.locals.CURSOR_HAND
         theme.title_font_size = 35
         theme.widget_alignment = pygame_menu.locals.ALIGN_LEFT
         theme.widget_background_color = None

@@ -292,7 +292,7 @@ class Theme(object):
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, _widgets.MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
-        self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor', _locals.CURSOR_HAND)
+        self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)

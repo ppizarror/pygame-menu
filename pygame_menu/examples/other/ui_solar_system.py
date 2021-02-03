@@ -97,9 +97,11 @@ class SolarSystemApp(object):
 
         # Create app theme and menu
         theme = pygame_menu.Theme()
+
         theme.background_color = (0, 0, 0)
         theme.scrollbar_cursor = pygame_menu.locals.CURSOR_HAND
         theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY
+        theme.title_close_button_cursor = pygame_menu.locals.CURSOR_HAND
         theme.title_floating = True
         theme.widget_selection_effect = pygame_menu.widgets.NoneSelection()
 
