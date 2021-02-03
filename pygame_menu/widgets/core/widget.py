@@ -53,6 +53,20 @@ import warnings
 _CURSOR_PREV: List[Any] = [None]
 
 
+def _restore_cursor() -> None:
+    """
+    Restore cursor status.
+
+    :return: None
+    """
+    if not isinstance(_CURSOR_PREV[0], _WidgetUnknownCursor):
+        if _CURSOR_PREV[0] is not None:
+            pygame.mouse.set_cursor(_CURSOR_PREV[0])
+            _CURSOR_PREV[0] = None
+    else:
+        _CURSOR_PREV[0] = None
+
+
 class Widget(object):
     """
     Widget abstract class.
@@ -240,6 +254,7 @@ class Widget(object):
         self._selection_effect = _WidgetNullSelection()
 
         # Inputs
+        self._keyboard_enabled = True
         self._joystick_enabled = True
         self._mouse_enabled = True  # Accept mouse interaction
         self._touchscreen_enabled = True
@@ -295,7 +310,7 @@ class Widget(object):
 
         .. code-block:: python
 
-            callback_func(value, *args, *widget._args, **widget._kwargs)
+            callback_func(selected, widget, menu)
 
         :param callback: Callback executed if user selects the widget
         :return: Self reference
@@ -363,14 +378,16 @@ class Widget(object):
         # Change cursor
         if self._cursor is not None:
             try:
+                cursor = pygame.mouse.get_cursor()  # Previous cursor
                 pygame.mouse.set_cursor(self._cursor)
-                cursor = pygame.mouse.get_cursor()
             except (pygame.error, TypeError):
                 msg = 'could not stablish widget cursor, invalid value {0}'.format(self._cursor)
                 warnings.warn(msg)
                 cursor = _WidgetUnknownCursor()
             if _CURSOR_PREV[0] is None:
                 _CURSOR_PREV[0] = cursor
+        else:
+            _restore_cursor()
 
         return self
 
@@ -392,12 +409,7 @@ class Widget(object):
         """
         if self._onmouseleave is not None:
             self._onmouseleave(self, event)
-        if not isinstance(_CURSOR_PREV[0], _WidgetUnknownCursor):
-            if self._cursor is not None and _CURSOR_PREV[0] is not None:
-                pygame.mouse.set_cursor(_CURSOR_PREV[0])
-                _CURSOR_PREV[0] = None
-        else:
-            _CURSOR_PREV[0] = None
+        _restore_cursor()
         return self
 
     def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
@@ -735,7 +747,7 @@ class Widget(object):
         :param surface: Surface to draw the border
         :return: None
         """
-        if self._border_width == 0:
+        if self._border_width == 0 or self._border_color is None:
             return
         rect = self.get_rect(inflate=self._border_inflate)
         pygame.draw.rect(
@@ -2179,7 +2191,7 @@ class Widget(object):
         """
         return self._col_row_index
 
-    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> 'Widget':
+    def set_border(self, width: int, color: Optional[ColorType], inflate: Tuple2IntType) -> 'Widget':
         """
         Set widget border.
 
@@ -2189,7 +2201,8 @@ class Widget(object):
         :return: Self reference
         """
         assert isinstance(width, int) and width >= 0
-        assert_color(color)
+        if color is not None:
+            assert_color(color)
         assert isinstance(inflate, tuple) and inflate[0] >= 0 and inflate[1] >= 0
         self._border_width = width
         self._border_color = color
