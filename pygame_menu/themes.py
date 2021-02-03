@@ -497,6 +497,14 @@ class Theme(object):
         """
         return copy.deepcopy(self)
 
+    def __copy__(self) -> 'Theme':
+        """
+        Copy method.
+
+        :return: Copied theme
+        """
+        return self.copy()
+
     @staticmethod
     def _format_opacity(color: Optional[Union[VectorType, 'BaseImage']]
                         ) -> Optional[Union[ColorType, 'BaseImage']]:

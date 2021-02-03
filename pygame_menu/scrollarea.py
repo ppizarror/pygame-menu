@@ -220,7 +220,7 @@ class ScrollArea(object):
 
         :return: Raises copy exception
         """
-        raise ScrollAreaCopyException('ScrollArea class cannot be copied')
+        raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
 
     def __deepcopy__(self, memodict: Dict) -> 'ScrollArea':
         """
@@ -229,7 +229,7 @@ class ScrollArea(object):
         :param memodict: Memo dict
         :return: Raises copy exception
         """
-        raise ScrollAreaCopyException('ScrollArea class cannot be copied')
+        raise _ScrollAreaCopyException('ScrollArea class cannot be copied')
 
     def force_menu_surface_update(self) -> 'ScrollArea':
         """
@@ -690,7 +690,7 @@ class ScrollArea(object):
         return self._decorator
 
 
-class ScrollAreaCopyException(Exception):
+class _ScrollAreaCopyException(Exception):
     """
     If user tries to copy a ScrollArea.
     """
