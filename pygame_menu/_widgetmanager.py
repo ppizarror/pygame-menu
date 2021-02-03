@@ -114,7 +114,8 @@ class WidgetManager(object):
         attributes['background_inflate'] = background_inflate
 
         border_color = kwargs.pop('border_color', self._theme.widget_border_color)
-        _utils.assert_color(border_color)
+        if border_color is not None:
+            _utils.assert_color(border_color)
         attributes['border_color'] = border_color
 
         border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
@@ -291,6 +292,10 @@ class WidgetManager(object):
             position=kwargs['shadow_position']
         )
 
+        # Finals
+        if self._theme.widget_background_inflate_to_selection:
+            widget.background_inflate_to_selection_effect()
+
     def button(self,
                title: Any,
                action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]],
@@ -323,9 +328,9 @@ class WidgetManager(object):
             - ``accept_kwargs``             *(bool)* – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``back_count``                *(int)* - Number of menus to go back if action is :py:data:`pygame_menu.events.BACK` event, default is ``1``
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``button_id``                 *(str)* - Widget ID
@@ -488,9 +493,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
@@ -598,9 +603,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
@@ -678,9 +683,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
@@ -815,9 +820,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``HAND``
@@ -922,9 +927,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
@@ -1008,9 +1013,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
@@ -1150,9 +1155,9 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
             - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
