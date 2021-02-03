@@ -251,12 +251,13 @@ class ScrollBar(Widget):
         if not pixels:
             return False
 
+        rect = self.get_rect()
         axis = self._orientation
-        space_before = self._rect.topleft[axis] - \
-                       self._slider_rect.move(*self._rect.topleft).topleft[axis] + self._slider_pad
+        space_before = rect.topleft[axis] - \
+                       self._slider_rect.move(*rect.topleft).topleft[axis] + self._slider_pad
         move = max(round(pixels), space_before)
-        space_after = self._rect.bottomright[axis] - \
-                      self._slider_rect.move(*self._rect.topleft).bottomright[axis] - self._slider_pad
+        space_after = rect.bottomright[axis] - \
+                      self._slider_rect.move(*rect.topleft).bottomright[axis] - self._slider_pad
         move = min(move, space_after)
 
         if not move:
@@ -382,6 +383,7 @@ class ScrollBar(Widget):
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         updated = False
+        rect = self.get_rect()  # Padding increases the extents
 
         for event in events:  # type: pygame.event.Event
 
@@ -411,13 +413,13 @@ class ScrollBar(Widget):
                         updated = True
                 else:
                     # The _slider_rect origin is related to the widget surface
-                    if self._slider_rect.move(*self._rect.topleft).collidepoint(event.pos):
+                    if self._slider_rect.move(*rect.topleft).collidepoint(*event.pos):
                         # Initialize scrolling
                         self.scrolling = True
 
-                    elif self._rect.collidepoint(*event.pos):
+                    elif rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
-                        srect = self._slider_rect.move(*self._rect.topleft)
+                        srect = self._slider_rect.move(*rect.topleft)
                         pos = (srect.x, srect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(direction * self._page_step):

@@ -218,21 +218,20 @@ class ScrollArea(object):
         if self._bg_surface:
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
-        offsets = self.get_offsets()
         for sbar in self._scrollbars:  # type: ScrollBar
             if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
                 if self.get_hidden_width():
-                    sbar.draw(surface)  # Display scrollbar
+                    sbar.draw(surface)
             else:
                 if self.get_hidden_height():
-                    sbar.draw(surface)  # Display scrollbar
+                    sbar.draw(surface)
 
         # noinspection PyTypeChecker
-        surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
+        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
 
     def get_hidden_width(self):
         """
-        Return the total width out of the bounds of the the viewable area.
+        Return the total width out of the bounds of the viewable area.
         Zero is returned if the world width is lower than the viewable area.
 
         :return: Hidden width (px)
@@ -244,7 +243,7 @@ class ScrollArea(object):
 
     def get_hidden_height(self):
         """
-        Return the total height out of the bounds of the the viewable area.
+        Return the total height out of the bounds of the viewable area.
         Zero is returned if the world height is lower than the viewable area.
 
         :return: Hidden height (px)
