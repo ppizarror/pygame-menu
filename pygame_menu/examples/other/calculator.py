@@ -84,29 +84,25 @@ class CalculatorApp(object):
                                           selectable=True, selection_effect=None)
         self.menu.add.vertical_margin(15)
 
-        if pygame.version.vernum[0] < 2:
-            cursor = None
-        else:
-            cursor = pygame.SYSTEM_CURSOR_HAND
-
+        cursor = pygame_menu.locals.CURSOR_HAND
         b1 = self.menu.add.button('1', lambda: self._press(1), cursor=cursor, margin=(10, 0))
-        b2 = self.menu.add.button('2', lambda: self._press(2), cursor=cursor, margin=(120, 0)).set_float()
+        b2 = self.menu.add.button('2', lambda: self._press(2), cursor=cursor, margin=(123, 0)).set_float()
         b3 = self.menu.add.button('3', lambda: self._press(3), cursor=cursor, margin=(235, 0)).set_float()
-        self.menu.add_vertical_margin(10)
+        self.menu.add.vertical_margin(10)
         b4 = self.menu.add.button('4', lambda: self._press(4), cursor=cursor, margin=(10, 0))
-        b5 = self.menu.add.button('5', lambda: self._press(5), cursor=cursor, margin=(120, 0)).set_float()
+        b5 = self.menu.add.button('5', lambda: self._press(5), cursor=cursor, margin=(123, 0)).set_float()
         b6 = self.menu.add.button('6', lambda: self._press(6), cursor=cursor, margin=(235, 0)).set_float()
-        self.menu.add_vertical_margin(10)
+        self.menu.add.vertical_margin(10)
         b7 = self.menu.add.button('7', lambda: self._press(7), cursor=cursor, margin=(10, 0))
-        b8 = self.menu.add.button('8', lambda: self._press(8), cursor=cursor, margin=(120, 0)).set_float()
+        b8 = self.menu.add.button('8', lambda: self._press(8), cursor=cursor, margin=(123, 0)).set_float()
         b9 = self.menu.add.button('9', lambda: self._press(9), cursor=cursor, margin=(235, 0)).set_float()
-        self.menu.add_vertical_margin(10)
+        self.menu.add.vertical_margin(10)
         b0 = self.menu.add.button('0', lambda: self._press(0), cursor=cursor, margin=(10, 0))
-        bplus = self.menu.add.button('+', lambda: self._press('+'), cursor=cursor, margin=(120, 0)).set_float()
+        bplus = self.menu.add.button('+', lambda: self._press('+'), cursor=cursor, margin=(123, 0)).set_float()
         bminus = self.menu.add.button('-', lambda: self._press('-'), cursor=cursor, margin=(235, 0)).set_float()
-        self.menu.add_vertical_margin(10)
+        self.menu.add.vertical_margin(10)
         btimes = self.menu.add.button('x', lambda: self._press('x'), cursor=cursor, margin=(10, 0))
-        bdiv = self.menu.add.button('/', lambda: self._press('/'), cursor=cursor, margin=(120, 0)).set_float()
+        bdiv = self.menu.add.button('/', lambda: self._press('/'), cursor=cursor, margin=(123, 0)).set_float()
         beq = self.menu.add.button('=', lambda: self._press('='), cursor=cursor, margin=(235, 0)).set_float()
 
         # Add decorator for each object
@@ -140,6 +136,7 @@ class CalculatorApp(object):
         self.op = ''
 
         self.menu.set_onupdate(self.process_events)
+        self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
 
     def process_events(self, events: List['pygame.event.Event'], _) -> None:
         """

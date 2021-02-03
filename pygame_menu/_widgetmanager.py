@@ -52,11 +52,6 @@ from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     NumberType, Vector2NumberType, List, Tuple
 
-# Compatibility with pygame < 2
-PYGAME_CURSOR_HAND = None
-if hasattr(pygame, 'SYSTEM_CURSOR_HAND'):
-    PYGAME_CURSOR_HAND = pygame.SYSTEM_CURSOR_HAND
-
 try:
     PygameCursorType = (int, pygame.cursors.Cursor, type(None))
 except AttributeError:
@@ -879,7 +874,7 @@ class WidgetManager(object):
 
         # Configure kwargs
         if 'cursor' not in kwargs.keys():
-            kwargs['cursor'] = PYGAME_CURSOR_HAND
+            kwargs['cursor'] = _locals.CURSOR_HAND
         if 'font_color' not in kwargs.keys():
             kwargs['font_color'] = self._theme.widget_url_color
         if 'selection_color' not in kwargs.keys():

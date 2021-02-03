@@ -29,6 +29,39 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+__all__ = [
+
+    # Alignment
+    'ALIGN_CENTER',
+    'ALIGN_LEFT',
+    'ALIGN_RIGHT',
+
+    # Data types
+    'INPUT_FLOAT',
+    'INPUT_INT',
+    'INPUT_TEXT',
+
+    # Positioning
+    'POSITION_CENTER',
+    'POSITION_EAST',
+    'POSITION_NORTH',
+    'POSITION_NORTHEAST',
+    'POSITION_SOUTHWEST',
+    'POSITION_SOUTH',
+    'POSITION_SOUTHEAST',
+    'POSITION_NORTHWEST',
+    'POSITION_WEST',
+
+    # Scrollarea
+    'SCROLLAREA_POSITION_BOTH_HORIZONTAL',
+    'SCROLLAREA_POSITION_BOTH_VERTICAL',
+    'SCROLLAREA_POSITION_FULL',
+
+    # Cursors
+    'CURSOR_HAND'
+
+]
+
 # Alignment
 ALIGN_CENTER = 'align-center'
 ALIGN_LEFT = 'align-left'
@@ -58,3 +91,10 @@ SCROLLAREA_POSITION_FULL = 'scrollarea-position-full'
 # Orientation
 ORIENTATION_HORIZONTAL = 'orientation-horizontal'
 ORIENTATION_VERTICAL = 'orientation-vertical'
+
+# Cursors
+import pygame as _pygame
+
+CURSOR_HAND = None
+if hasattr(_pygame, 'SYSTEM_CURSOR_HAND'):
+    CURSOR_HAND = _pygame.SYSTEM_CURSOR_HAND

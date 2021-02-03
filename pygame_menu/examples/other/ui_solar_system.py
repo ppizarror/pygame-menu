@@ -229,11 +229,6 @@ class SolarSystemApp(object):
         self.menu = pygame_menu.Menu('Solar System', 640, 480, onclose=pygame_menu.events.EXIT,
                                      theme=theme, mouse_motion_selection=True)
 
-        if pygame.version.vernum[0] < 2:
-            cursor = None
-        else:
-            cursor = pygame.SYSTEM_CURSOR_HAND
-
         # Configure planets and add them to the Menu
         for p in self.planets.keys():
             planet: 'Planet' = self.planets[p]
@@ -249,7 +244,7 @@ class SolarSystemApp(object):
 
             # Add go back button with a background image
             submenu.add.vertical_margin(150)
-            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=cursor)
+            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=pygame_menu.locals.CURSOR_HAND)
             goback_img = planet.image.copy().resize(150, 150)
             goback_color = goback_img.get_at((100, 100), ignore_alpha=True)  # Get color from the figure's center pixel
             goback.get_decorator().add_baseimage(0, 0, goback_img, centered=True)
@@ -272,7 +267,7 @@ class SolarSystemApp(object):
             # Create advanced button
             planet.image.scale(0.35, 0.35)
             button = self.menu.add.button(planet.name, submenu, font_size=planet.fontsize)
-            button.set_cursor(cursor)
+            button.set_cursor(pygame_menu.locals.CURSOR_HAND)
             button.set_float()
             button.get_decorator().add_baseimage(0, 0, planet.image, centered=True)
             button.set_attribute('planet', planet)
