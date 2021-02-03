@@ -685,6 +685,16 @@ class ScrollArea(object):
         """
         Return the ScrollArea decorator API.
 
+        .. note:: Menu drawing order:
+
+            1. Menu background color/image
+            2. Menu ``prev`` decorator
+            3. **Menu ScrollArea ``prev`` decorator**
+            4. **Menu ScrollArea widgets**
+            5. **Menu ScrollArea ``post`` decorator**
+            6. Menu title
+            7. Menu ``post`` decorator
+
         :return: Decorator API
         """
         return self._decorator

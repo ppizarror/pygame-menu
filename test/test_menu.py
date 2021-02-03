@@ -1873,10 +1873,18 @@ class MenuTest(unittest.TestCase):
         menu.force_surface_update()
         self.assertTrue(menu._widgets_surface_need_update)
 
-    def test_compatibility_addition(self) -> None:
+    def test_compatibility(self) -> None:
         """
-        Test compatibility for addition methods.
+        Test compatibility.
         """
+        # Test Menu constructor
+        # noinspection PyTypeChecker
+        menu = pygame_menu.Menu(400, 300, 'title')
+        self.assertEqual(menu._width, 300)
+        self.assertEqual(menu._height, 400)
+        self.assertEqual(menu.get_title(), 'title')
+
+        # Test widget addition compatibility
         menu = MenuUtils.generic_menu()
         self.assertIsInstance(menu.add_button('title', None), pygame_menu.widgets.Button)
         self.assertIsInstance(menu.add_color_input('title', 'rgb'), pygame_menu.widgets.ColorInput)

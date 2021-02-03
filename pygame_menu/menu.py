@@ -203,6 +203,15 @@ class Menu(object):
                  touchscreen: bool = False,
                  touchscreen_motion_selection: bool = False
                  ) -> None:
+        # Compatibility from (height, width, title) to (title, width, height)
+        if not isinstance(title, str) and isinstance(height, str):
+            _title = title
+            title = height
+            height = _title
+            msg = 'Menu constructor changed from Menu(height, width, title, ...) to ' \
+                  'Menu(title, width, height, ...). This alert will be removed in v4.1'
+            warnings.warn(msg)
+
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))
 
@@ -720,8 +729,9 @@ class Menu(object):
         :param new_method: New method name
         :return: None
         """
-        warnings.warn('Menu method {} is deprecated. Use menu.add.{} instead, (see docs). '
-                      'This method will be removed in v4.1'.format(method, new_method))
+        msg = 'Menu method {0} is deprecated. Use menu.add.{1} instead, (see docs). ' \
+              'This method will be removed in v4.1'.format(method, new_method)
+        warnings.warn(msg)
 
     def add_button(self, *args, **kwargs) -> 'pygame_menu.widgets.Button':
         """
@@ -1556,7 +1566,7 @@ class Menu(object):
             self._current._widgets_surface.fill((255, 255, 255, 0))
 
             # Call scrollarea draw decorator. This must be done before filling the
-            # surface
+            # surface. ScrollArea post decorator is drawn on _scroll.draw(surface) call
             scrollarea_decorator = self._current._scroll.get_decorator()
             scrollarea_decorator.force_cache_update()
             scrollarea_decorator.draw_prev(self._current._widgets_surface)
@@ -2771,6 +2781,22 @@ class Menu(object):
     def get_decorator(self) -> 'Decorator':
         """
         Return the Menu decorator API.
+
+        .. note::
+
+            ``prev`` menu decorator may not draw because :py:class:`pygame_menu.widgets.MenuBar`
+            and :py:class:`pygame_menu.scrollarea.ScrollArea` objects
+            draw over it. If it's desired to draw a decorator behind widgets, use the scroll area
+            decorator, for example: :py:data:`menu.get_scrollarea().get_decorator()`. The
+            menu drawing order is:
+
+            1. Menu background color/image
+            2. Menu ``prev`` decorator
+            3. Menu ScrollArea ``prev`` decorator
+            4. Menu ScrollArea widgets
+            5. Menu ScrollArea ``post`` decorator
+            6. Menu title
+            7. Menu ``post`` decorator
 
         .. note::
 
