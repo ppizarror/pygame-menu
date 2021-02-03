@@ -52,12 +52,18 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
 from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
-    Tuple2NumberType, NumberType, PaddingType, Optional, Type
+    Tuple2NumberType, NumberType, PaddingType, Optional, Type, Literal
 
 import copy
 
+AlignmentType = Literal[_locals.ALIGN_LEFT, _locals.ALIGN_CENTER, _locals.ALIGN_RIGHT]
+TitleBarStyleType = Literal[_widgets.MENUBAR_STYLE_ADAPTIVE, _widgets.MENUBAR_STYLE_SIMPLE,
+                            _widgets.MENUBAR_STYLE_TITLE_ONLY, _widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL,
+                            _widgets.MENUBAR_STYLE_NONE, _widgets.MENUBAR_STYLE_UNDERLINE,
+                            _widgets.MENUBAR_STYLE_UNDERLINE_TITLE]
 
-def _check_menubar_style(style: int) -> bool:
+
+def _check_menubar_style(style: TitleBarStyleType) -> bool:
     """
     Check menubar style.
 
@@ -165,6 +171,8 @@ class Theme(object):
     :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
     :param widget_background_inflate: Inflate background in *(x, y)* in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
     :type widget_background_inflate: tuple, list
+    :param widget_background_inflate_to_selection: If ``True`` widget will inflate to match selection effect margin and overrides ``widget_background_inflate``
+    :type widget_background_inflate_to_selection: bool
     :param widget_border_color: Widget border color
     :type widget_border_color: tuple, list
     :param widget_border_inflate: Widget inflate size in *(x, y)* in px. These values cannot be negative
@@ -225,7 +233,7 @@ class Theme(object):
     surface_clear_color: ColorType
     title_background_color: ColorType
     title_bar_modify_scrollarea: bool
-    title_bar_style: int
+    title_bar_style: TitleBarStyleType
     title_close_button: bool
     title_floating: bool
     title_font: str
@@ -238,10 +246,11 @@ class Theme(object):
     title_shadow_offset: NumberType
     title_shadow_position: str
     title_updates_pygame_display: bool
-    widget_alignment: str
+    widget_alignment: AlignmentType
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
     widget_background_inflate: Tuple2NumberType
-    widget_border_color: ColorType
+    widget_background_inflate_to_selection: bool
+    widget_border_color: Optional[ColorType]
     widget_border_inflate: Tuple2NumberType
     widget_border_width: int
     widget_font: str
@@ -312,12 +321,15 @@ class Theme(object):
         # Generic widget themes
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
                                                  _widgets.HighlightSelection())
+        self.widget_selection_effect.set_color(self.selection_color)
         widget_selection_margin = self.widget_selection_effect.get_xy_margin()
 
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', _locals.ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
         self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2', (0, 0))
-        self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
+        self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection',
+                                                                bool, False)
+        self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color_none', (0, 0, 0))
         self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2', widget_selection_margin)
         self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
         self.widget_font = self._get(kwargs, 'widget_font', str, _font.FONT_OPEN_SANS)
@@ -376,6 +388,10 @@ class Theme(object):
         assert _check_menubar_style(self.title_bar_style)
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
 
+        # Check selection effect if None
+        if self.widget_selection_effect is None:
+            self.widget_selection_effect = _widgets.NoneSelection()
+
         assert isinstance(self.cursor_switch_ms, (int, float))
         assert isinstance(self.fps, (int, float))
         assert isinstance(self.scrollbar_shadow_offset, (int, float))
@@ -386,6 +402,7 @@ class Theme(object):
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_shadow_offset, (int, float))
         assert isinstance(self.title_updates_pygame_display, bool)
+        assert isinstance(self.widget_background_inflate_to_selection, bool)
         assert isinstance(self.widget_border_width, int)
         assert isinstance(self.widget_font, str)
         assert isinstance(self.widget_font_size, int)
@@ -445,9 +462,6 @@ class Theme(object):
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
         assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
-
-        # Configs
-        self.widget_selection_effect.set_color(self.selection_color)
 
         # Color asserts
         assert self.focus_background_color[3] != 0, \
