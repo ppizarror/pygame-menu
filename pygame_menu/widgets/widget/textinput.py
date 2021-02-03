@@ -1482,7 +1482,7 @@ class TextInput(Widget):
 
         for event in events:
 
-            if event.type == pygame.KEYDOWN:
+            if self._keyboard_enabled and event.type == pygame.KEYDOWN:
 
                 # Check if any key is pressed, if True the event is invalid
                 if not check_key_pressed_valid(event):
@@ -1723,7 +1723,7 @@ class TextInput(Widget):
                     self.active = True
                     updated = True
 
-            elif event.type == pygame.KEYUP:
+            elif self._keyboard_enabled and event.type == pygame.KEYUP:
                 # Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]

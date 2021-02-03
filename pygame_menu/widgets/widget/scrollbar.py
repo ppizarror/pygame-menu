@@ -400,7 +400,8 @@ class ScrollBar(Widget):
 
             if event.type == pygame.KEYDOWN:
 
-                if self._orientation == 1 and event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN):
+                if self._keyboard_enabled and self._orientation == 1 and \
+                        event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN):
                     direction = 1 if event.key == pygame.K_PAGEDOWN else -1
                     keys_pressed = pygame.key.get_pressed()
                     step = self._page_step

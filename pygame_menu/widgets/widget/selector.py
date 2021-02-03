@@ -254,7 +254,7 @@ class Selector(Widget):
                     continue
 
             # Events
-            keydown = event.type == pygame.KEYDOWN
+            keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
             joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
             joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
