@@ -201,8 +201,15 @@ class Decorator(object):
         self._cache_needs_update[DECOR_TYPE_PREV if prev else DECOR_TYPE_POST] = True
         return self
 
-    def add_polygon(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]], color: ColorType,
-                    filled: bool, width: int = 0, prev: bool = True, gfx: bool = True) -> str:
+    def add_polygon(self,
+                    coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+                    color: ColorType,
+                    filled: bool,
+                    width: int = 0,
+                    prev: bool = True,
+                    gfx: bool = True,
+                    **kwargs
+                    ) -> str:
         """
         Add polygon.
 
@@ -210,12 +217,16 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
         :param filled: If ``True`` fills the polygon with the given color
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
         :param gfx: If ``True`` uses pygame gfxdraw instead of draw
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
@@ -229,10 +240,15 @@ class Decorator(object):
         else:
             if width != 0 and gfx:
                 gfx = False  # gfx don't support width
-        return self._add_decor(DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx))
+        return self._add_decor(DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx, kwargs))
 
-    def add_bezier(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                   color: ColorType, steps: int = 5, prev: bool = True) -> str:
+    def add_bezier(self,
+                   coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+                   color: ColorType,
+                   steps: int = 5,
+                   prev: bool = True,
+                   **kwargs
+                   ) -> str:
         """
         Add bezier curve.
 
@@ -240,26 +256,42 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
         :param steps: Interpolation steps
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
         assert_color(color)
         assert len(coords) >= 3
         assert isinstance(steps, int) and steps >= 1
-        return self._add_decor(DECORATION_BEZIER, prev, (tuple(coords), color, steps))
+        return self._add_decor(DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs))
 
-    def add_circle(self, x: NumberType, y: NumberType, radius: NumberType, color: ColorType, filled: bool,
-                   width: int = 0, prev: bool = True, gfx: bool = True) -> str:
+    def add_circle(self,
+                   x: NumberType,
+                   y: NumberType,
+                   radius: NumberType,
+                   color: ColorType,
+                   filled: bool,
+                   width: int = 0,
+                   prev: bool = True,
+                   gfx: bool = True,
+                   **kwargs
+                   ) -> str:
         """
         Add circle.
 
         .. note::
 
             Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -269,6 +301,7 @@ class Decorator(object):
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
         :param gfx: If ``True`` uses pygame gfxdraw instead of draw
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
@@ -282,17 +315,30 @@ class Decorator(object):
         else:
             if width != 0 and gfx:
                 gfx = False  # gfx don't support width
-        return self._add_decor(DECORATION_CIRCLE, prev, (tuple(coords), int(radius), color, filled, width, gfx))
+        return self._add_decor(DECORATION_CIRCLE, prev,
+                               (tuple(coords), int(radius), color, filled, width, gfx, kwargs))
 
-    def add_arc(self, x: NumberType, y: NumberType, radius: NumberType,
-                init_angle: NumberType, final_angle: NumberType, color: ColorType,
-                width: int = 0, prev: bool = True, gfx: bool = True) -> str:
+    def add_arc(self,
+                x: NumberType,
+                y: NumberType,
+                radius: NumberType,
+                init_angle: NumberType,
+                final_angle: NumberType,
+                color: ColorType,
+                width: int = 0,
+                prev: bool = True,
+                gfx: bool = True,
+                **kwargs
+                ) -> str:
         """
         Add arc.
 
         .. note::
 
             Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -303,6 +349,7 @@ class Decorator(object):
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
         :param gfx: If ``True`` uses pygame gfxdraw instead of draw
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
@@ -313,18 +360,28 @@ class Decorator(object):
         assert isinstance(final_angle, (int, float))
         assert isinstance(width, int) and width >= 0
         assert init_angle != final_angle
-        return self._add_decor(DECORATION_ARC, prev, (tuple(coords), int(radius), init_angle, final_angle,
-                                                      color, width, gfx))
+        return self._add_decor(DECORATION_ARC, prev,
+                               (tuple(coords), int(radius), init_angle, final_angle, color, width, gfx, kwargs))
 
-    def add_pie(self, x: NumberType, y: NumberType, radius: NumberType,
-                init_angle: NumberType, final_angle: NumberType, color: ColorType,
-                prev: bool = True) -> str:
+    def add_pie(self,
+                x: NumberType,
+                y: NumberType,
+                radius: NumberType,
+                init_angle: NumberType,
+                final_angle: NumberType,
+                color: ColorType,
+                prev: bool = True,
+                **kwargs
+                ) -> str:
         """
         Add a unfilled pie.
 
         .. note::
 
             Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -333,6 +390,7 @@ class Decorator(object):
         :param final_angle: Final angle in degrees ``(0-360)``
         :param color: Color of the polygon
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
@@ -342,10 +400,17 @@ class Decorator(object):
         assert isinstance(init_angle, (int, float))
         assert isinstance(final_angle, (int, float))
         assert init_angle != final_angle
-        return self._add_decor(DECORATION_PIE, prev, (tuple(coords), int(radius), init_angle, final_angle, color))
+        return self._add_decor(DECORATION_PIE, prev,
+                               (tuple(coords), int(radius), init_angle, final_angle, color, kwargs))
 
-    def add_surface(self, x: NumberType, y: NumberType, surface: 'pygame.Surface',
-                    prev: bool = True, centered: bool = False) -> str:
+    def add_surface(self,
+                    x: NumberType,
+                    y: NumberType,
+                    surface: 'pygame.Surface',
+                    prev: bool = True,
+                    centered: bool = False,
+                    **kwargs
+                    ) -> str:
         """
         Adds a surface.
 
@@ -353,20 +418,30 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param surface: Surface
         :param prev: If ``True`` draw previous the object, else draws post
         :param centered: If ``True`` the text is centered into the position
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert isinstance(surface, pygame.Surface)
-        return self._add_decor(DECORATION_SURFACE, prev, (tuple(coords), surface, centered))
+        return self._add_decor(DECORATION_SURFACE, prev, (tuple(coords), surface, centered, kwargs))
 
-    def add_baseimage(self, x: NumberType, y: NumberType, image: 'pygame_menu.BaseImage',
-                      prev: bool = True, centered: bool = False) -> str:
+    def add_baseimage(self,
+                      x: NumberType,
+                      y: NumberType,
+                      image: 'pygame_menu.BaseImage',
+                      prev: bool = True,
+                      centered: bool = False,
+                      **kwargs
+                      ) -> str:
         """
         Adds a :py:class:`pygame_menu.baseimage.BaseImage` object.
 
@@ -380,20 +455,31 @@ class Decorator(object):
             set ``decorator.cache=False`` or force cache manually by calling
             :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param image: ``BaseImage`` object
         :param prev: If ``True`` draw previous the object, else draws post
         :param centered: If ``True`` the text is centered into the position
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert isinstance(image, pygame_menu.BaseImage)
-        return self._add_decor(DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered))
+        return self._add_decor(DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered, kwargs))
 
-    def add_rect(self, x: NumberType, y: NumberType, rect: 'pygame.Rect', color: ColorType, width: int = 0,
-                 prev: bool = True) -> str:
+    def add_rect(self,
+                 x: NumberType,
+                 y: NumberType,
+                 rect: 'pygame.Rect',
+                 color: ColorType,
+                 width: int = 0,
+                 prev: bool = True,
+                 **kwargs
+                 ) -> str:
         """
         Adds a BaseImage object.
 
@@ -401,27 +487,80 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param rect: Rect to draw
         :param color: Color of the rect
-        :param width: Width of the rect. If ``0`` draw a filled rectangle
+        :param width: Border width of the rect. If ``0`` draw a filled rectangle
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
+        assert isinstance(width, int) and width >= 0
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert isinstance(rect, pygame.Rect)
-        return self._add_decor(DECORATION_RECT, prev, (tuple(coords), rect, color, width))
+        return self._add_decor(DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs))
 
-    def add_text(self, x: NumberType, y: NumberType, text: str, font: Union[str, 'Font', 'Path'], size: int,
-                 color: ColorType, prev: bool = True, antialias=True, centered=False) -> str:
+    def add_rectangle(self,
+                      x: NumberType,
+                      y: NumberType,
+                      width: NumberType,
+                      height: NumberType,
+                      color: ColorType,
+                      border: int = 0,
+                      prev: bool = True,
+                      **kwargs
+                      ) -> str:
+        """
+        Adds a BaseImage object.
+
+        .. note::
+
+            Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
+        :param x: X position (px), being ``0`` the center of the object
+        :param y: Y position (px), being ``0`` the center of the object
+        :param width: Rectangle width
+        :param height: Rectangle height
+        :param color: Color of the rectangle
+        :param border: Border width of the rectangle. If ``0`` draw a filled rectangle
+        :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
+        :return: ID of the decoration
+        """
+        assert isinstance(width, (int, float)) and width > 0
+        assert isinstance(height, (int, float)) and height > 0
+        rect = pygame.rect.Rect(0, 0, width, height)
+        return self.add_rect(x, y, rect, color, border, prev, **kwargs)
+
+    def add_text(self,
+                 x: NumberType,
+                 y: NumberType,
+                 text: str,
+                 font: Union[str, 'Font', 'Path'],
+                 size: int,
+                 color: ColorType,
+                 prev: bool = True,
+                 antialias=True,
+                 centered=False,
+                 **kwargs
+                 ) -> str:
         """
         Adds a text.
 
         .. note::
 
             Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -432,6 +571,7 @@ class Decorator(object):
         :param prev: If ``True`` draw previous the object, else draws post
         :param antialias: Font antialias enabled
         :param centered: If ``True`` the text is centered into the position
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
@@ -445,16 +585,27 @@ class Decorator(object):
             alpha=True
         )
         surface.blit(surface_font, (0, 0))
-        return self._add_decor(DECORATION_TEXT, prev, (tuple(coords), surface, centered))
+        return self._add_decor(DECORATION_TEXT, prev, (tuple(coords), surface, centered, kwargs))
 
-    def add_ellipse(self, x: NumberType, y: NumberType, rx: NumberType, ry: NumberType, color: ColorType,
-                    filled: bool, prev: bool = True) -> str:
+    def add_ellipse(self,
+                    x: NumberType,
+                    y: NumberType,
+                    rx: NumberType,
+                    ry: NumberType,
+                    color: ColorType,
+                    filled: bool,
+                    prev: bool = True,
+                    **kwargs
+                    ) -> str:
         """
         Add an ellipse.
 
         .. note::
 
             Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
 
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
@@ -463,6 +614,7 @@ class Decorator(object):
         :param color: Color of the polygon
         :param filled: If ``True`` fills the polygon with the given color
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
@@ -471,9 +623,15 @@ class Decorator(object):
         assert isinstance(rx, (int, float)) and rx > 0
         assert isinstance(ry, (int, float)) and ry > 0
         assert isinstance(filled, bool)
-        return self._add_decor(DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled))
+        return self._add_decor(DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs))
 
-    def add_pixel(self, x: NumberType, y: NumberType, color: ColorType, prev: bool = True) -> str:
+    def add_pixel(self,
+                  x: NumberType,
+                  y: NumberType,
+                  color: ColorType,
+                  prev: bool = True,
+                  **kwargs
+                  ) -> str:
         """
         Add a pixel.
 
@@ -481,19 +639,26 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param color: Color of the pixel
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert_color(color)
-        return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color))
+        return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color, kwargs))
 
-    def add_callable(self, fun: Union[Callable[['pygame.Surface', Any], Any], Callable[[], Any]],
-                     prev: bool = True, pass_args: bool = True) -> str:
+    def add_callable(self,
+                     fun: Union[Callable[['pygame.Surface', Any], Any], Callable[[], Any]],
+                     prev: bool = True,
+                     pass_args: bool = True
+                     ) -> str:
         """
         Add a callable method. The function receives the surface and the object; for example,
         if adding to a widget:
@@ -525,9 +690,14 @@ class Decorator(object):
         else:
             return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
 
-    def add_textured_polygon(self, coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+    def add_textured_polygon(self,
+                             coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
                              texture: Union['pygame.Surface', 'pygame_menu.BaseImage'],
-                             tx: int = 0, ty: int = 0, prev: bool = True) -> str:
+                             tx: int = 0,
+                             ty: int = 0,
+                             prev: bool = True,
+                             **kwargs
+                             ) -> str:
         """
         Add a textured polygon.
 
@@ -541,21 +711,31 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
         :param tx: X offset of the texture (px)
         :param ty: Y offset of the texture (px)
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
         assert len(coords) >= 3
         assert isinstance(texture, (pygame.Surface, pygame_menu.BaseImage))
         assert isinstance(tx, int) and isinstance(ty, int)
-        return self._add_decor(DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty))
+        return self._add_decor(DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty, kwargs))
 
-    def add_line(self, pos1: Tuple2NumberType, pos2: Tuple2NumberType, color: ColorType, width: int = 1,
-                 prev: bool = True) -> str:
+    def add_line(self,
+                 pos1: Tuple2NumberType,
+                 pos2: Tuple2NumberType,
+                 color: ColorType,
+                 width: int = 1,
+                 prev: bool = True,
+                 **kwargs
+                 ) -> str:
         """
         Adds a line.
 
@@ -563,11 +743,15 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param pos1: Position 1 *(x1, y1)*
         :param pos2: Position 2 *(x2, y2)*
         :param color: Line color
         :param width: Line width in px
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         assert_vector(pos1, 2)
@@ -576,10 +760,17 @@ class Decorator(object):
         assert isinstance(width, int) and width >= 1
         length = math.sqrt(math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
         assert length > 0, 'line cannot be zero-length'
-        return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width))
+        return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs))
 
-    def add_hline(self, x1: NumberType, x2: NumberType, y: NumberType, color: ColorType, width: int = 1,
-                  prev: bool = True) -> str:
+    def add_hline(self,
+                  x1: NumberType,
+                  x2: NumberType,
+                  y: NumberType,
+                  color: ColorType,
+                  width: int = 1,
+                  prev: bool = True,
+                  **kwargs
+                  ) -> str:
         """
         Adds a horizontal line.
 
@@ -587,19 +778,30 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param x1: Horizontal position 1 in px
         :param x2: Horizontal position 2 in px
         :param y: Vertical position in px
         :param color: Line color
         :param width: Line width in px
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         assert x1 != x2
-        return self.add_line((x1, y), (x2, y), color, width, prev)
+        return self.add_line((x1, y), (x2, y), color, width, prev, **kwargs)
 
-    def add_vline(self, x: NumberType, y1: NumberType, y2: NumberType, color: ColorType, width: int = 1,
-                  prev: bool = True) -> str:
+    def add_vline(self,
+                  x: NumberType,
+                  y1: NumberType,
+                  y2: NumberType,
+                  color: ColorType,
+                  width: int = 1,
+                  prev: bool = True,
+                  **kwargs
+                  ) -> str:
         """
         Adds a vertical line.
 
@@ -607,16 +809,20 @@ class Decorator(object):
 
             Consider ``(0, 0)`` coordinates as the center of the object.
 
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as (0,0). ``True`` by default
+
         :param x: Horizontal position in px
         :param y1: Vertical position 1 in px
         :param y2: Vertical position 2 in px
         :param color: Line color
         :param width: Line width in px
         :param prev: If ``True`` draw previous the object, else draws post
+        :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
         assert y1 != y2
-        return self.add_line((x, y1), (x, y2), color, width, prev)
+        return self.add_line((x, y1), (x, y2), color, width, prev, **kwargs)
 
     def disable(self, decorid: str) -> 'Decorator':
         """
@@ -758,8 +964,8 @@ class Decorator(object):
                 continue
 
             if dtype == DECORATION_POLYGON:
-                points, color, filled, width, gfx = data
-                points = self._update_pos_list(rect, decoid, points)
+                points, color, filled, width, gfx, kwargs = data
+                points = self._update_pos_list(rect, decoid, points, **kwargs)
                 if gfx:
                     if filled:
                         gfxdraw.filled_polygon(surface, points, color)
@@ -769,8 +975,8 @@ class Decorator(object):
                     pydraw.polygon(surface, color, points, width)
 
             elif dtype == DECORATION_CIRCLE:
-                points, r, color, filled, width, gfx = data
-                points = self._update_pos_list(rect, decoid, points)
+                points, r, color, filled, width, gfx, kwargs = data
+                points = self._update_pos_list(rect, decoid, points, **kwargs)
                 x, y = points[0]
                 if filled:
                     if gfx:
@@ -781,10 +987,10 @@ class Decorator(object):
                     pydraw.circle(surface, color, (x, y), r, width)
 
             elif dtype == DECORATION_SURFACE or dtype == DECORATION_BASEIMAGE or dtype == DECORATION_TEXT:
-                pos, surf, centered = data
+                pos, surf, centered, kwargs = data
                 if isinstance(surf, pygame_menu.BaseImage):
                     surf = surf.get_surface(new=False)
-                pos = self._update_pos_list(rect, decoid, pos)[0]
+                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
                 surfrect = surf.get_rect()
                 surfrect.x += pos[0]
                 surfrect.y += pos[1]
@@ -794,8 +1000,8 @@ class Decorator(object):
                 surface.blit(surf, surfrect)
 
             elif dtype == DECORATION_ELLIPSE:
-                pos, rx, ry, color, filled = data
-                pos = self._update_pos_list(rect, decoid, pos)[0]
+                pos, rx, ry, color, filled, kwargs = data
+                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
                 if filled:
                     gfxdraw.filled_ellipse(surface, pos[0], pos[1], rx, ry, color)
                 else:
@@ -808,15 +1014,15 @@ class Decorator(object):
                 data()
 
             elif dtype == DECORATION_TEXTURE_POLYGON:
-                pos, texture, tx, ty = data
-                pos = self._update_pos_list(rect, decoid, pos)
+                pos, texture, tx, ty, kwargs = data
+                pos = self._update_pos_list(rect, decoid, pos, **kwargs)
                 if isinstance(texture, pygame_menu.BaseImage):
                     texture = texture.get_surface()
                 gfxdraw.textured_polygon(surface, pos, texture, tx, ty)
 
             elif dtype == DECORATION_ARC:
-                points, r, ia, fa, color, width, gfx = data
-                points = self._update_pos_list(rect, decoid, points)
+                points, r, ia, fa, color, width, gfx, kwargs = data
+                points = self._update_pos_list(rect, decoid, points, **kwargs)
                 x, y = points[0]
                 rectarc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
                 if gfx:
@@ -825,33 +1031,33 @@ class Decorator(object):
                     pydraw.arc(surface, color, rectarc, ia / (2 * pi), fa / (2 * pi), width)
 
             elif dtype == DECORATION_PIE:
-                points, r, ia, fa, color = data
-                points = self._update_pos_list(rect, decoid, points)
+                points, r, ia, fa, color, kwargs = data
+                points = self._update_pos_list(rect, decoid, points, **kwargs)
                 x, y = points[0]
                 gfxdraw.pie(surface, x, y, r, ia, fa, color)
 
             elif dtype == DECORATION_BEZIER:
-                points, color, steps = data
-                points = self._update_pos_list(rect, decoid, points)
+                points, color, steps, kwargs = data
+                points = self._update_pos_list(rect, decoid, points, **kwargs)
                 gfxdraw.bezier(surface, points, steps, color)
 
             elif dtype == DECORATION_RECT:
                 drect: 'pygame.Rect'
-                pos, drect, color, width = data
-                pos = self._update_pos_list(rect, decoid, pos)[0]
+                pos, drect, color, width, kwargs = data
+                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
                 drect = drect.copy()
                 drect.x += pos[0]
                 drect.y += pos[1]
                 pygame.draw.rect(surface, color, drect, width)
 
             elif dtype == DECORATION_PIXEL:
-                pos, color = data
-                pos = self._update_pos_list(rect, decoid, pos)[0]
+                pos, color, kwargs = data
+                pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
                 gfxdraw.pixel(surface, pos[0], pos[1], color)
 
             elif dtype == DECORATION_LINE:
-                pos, color, width = data
-                pos = self._update_pos_list(rect, decoid, pos)
+                pos, color, width, kwargs = data
+                pos = self._update_pos_list(rect, decoid, pos, **kwargs)
                 pydraw.line(surface, color, pos[0], pos[1], width)
 
             else:
@@ -860,7 +1066,8 @@ class Decorator(object):
     def _update_pos_list(self,
                          rect: 'pygame.rect.Rect',
                          decoid: str,
-                         pos: Union[Tuple2NumberType, Tuple[Tuple2NumberType, ...]]  # only (x, y) or ((x1,y1), ...
+                         pos: Union[Tuple2NumberType, Tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
+                         use_center_positioning=True
                          ) -> Union[Tuple[Tuple2IntType, ...], Tuple2IntType]:
         """
         Updates position list based on rect center. If position of the rect changes, update
@@ -869,8 +1076,11 @@ class Decorator(object):
         :param rect: Object precomputed rect
         :param decoid: Decoration id
         :param pos: Original position tuple of the decoration
+        :param use_center_positioning: If ``True`` use *(0, 0)* as the object center
         :return: Position list updated to
         """
+        if not use_center_positioning:
+            return tuple(pos)
         cx, cy = rect.centerx, rect.centery  # Center position
 
         # Position of the rect has not changed and exists
