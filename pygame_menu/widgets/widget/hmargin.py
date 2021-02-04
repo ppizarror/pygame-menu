@@ -32,30 +32,27 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['HMargin']
 
 import pygame
-from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu._types import Optional, Tuple2IntType
+from pygame_menu._types import Optional, Tuple2IntType, NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
 class HMargin(NoneWidget):
     """
-    Horizontal margin widget. HMargin only accepts margin, not padding.
+    Horizontal margin widget.
 
     .. note::
 
         This widget does not implement any transformation.
 
+    :param margin: Horizontal margin (px)
     :param widget_id: ID of the widget
     """
 
-    def __init__(self, widget_id: str = '') -> None:
+    def __init__(self, margin: NumberType, widget_id: str = '') -> None:
         super(HMargin, self).__init__(widget_id=widget_id)
-
-    def set_margin(self, x: int, y: int) -> 'Widget':
-        self._rect.width = x
+        self._rect.width = int(margin)
         self._rect.height = 0
-        return self
 
     def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
                  use_transformed_padding: bool = True) -> 'pygame.Rect':
