@@ -96,7 +96,7 @@ class Menu(object):
     :param mouse_visible: Set mouse visible on Menu
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
-    :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*
+    :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*. If ``False`` or ``True`` the value will be set in both axis
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :param theme: Menu theme
@@ -184,7 +184,7 @@ class Menu(object):
                  mouse_visible: bool = True,
                  onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
                  onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
-                 overflow: Vector2BoolType = (True, True),
+                 overflow: Union[Vector2BoolType, bool] = (True, True),
                  rows: MenuRowsType = None,
                  screen_dimension: Optional[Vector2IntType] = None,
                  theme: '_themes.Theme' = _themes.THEME_DEFAULT.copy(),
@@ -214,7 +214,7 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
-        assert isinstance(overflow, (tuple, list))
+        assert isinstance(overflow, (tuple, list, bool))
         assert isinstance(rows, (int, type(None), tuple, list))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
@@ -344,6 +344,8 @@ class Menu(object):
                 width, height, window_width, window_height)
 
         # Assert overflow
+        if isinstance(overflow, bool):  # If single value
+            overflow = overflow, overflow
         assert len(overflow) == 2, 'overflow must be a 2-item tuple/list of booleans (x-axis,y-axis)'
         assert isinstance(overflow[0], bool), 'overflow in x axis must be a boolean object'
         assert isinstance(overflow[1], bool), 'overflow in y axis must be a boolean object'
