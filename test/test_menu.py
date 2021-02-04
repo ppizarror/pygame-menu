@@ -509,7 +509,8 @@ class MenuTest(unittest.TestCase):
             title='test',
             height=300,
             theme=theme,
-            width=400
+            width=400,
+            overflow=False
         )
 
         menu.add_label('Text #1')
