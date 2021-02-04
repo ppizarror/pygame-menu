@@ -167,8 +167,8 @@ class PygameUtils(object):
             display = menu.get_window_size()
             return pygame.event.Event(evtype,
                                       {
-                                          'x': (x + sar.x - offx) / display[0],
-                                          'y': (y + sar.y - offy) / display[1],
+                                          'x': float((x + sar.x - offx)) / display[0],
+                                          'y': float(y + sar.y - offy) / display[1],
                                           'test': True,
                                           'button': 3
                                       })
