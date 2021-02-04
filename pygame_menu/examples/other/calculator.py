@@ -88,25 +88,46 @@ class CalculatorApp(object):
         self.menu.add.vertical_margin(15)
 
         cursor = pygame_menu.locals.CURSOR_HAND
-        b1 = self.menu.add.button('1', lambda: self._press(1), cursor=cursor, margin=(10, 0))
-        b2 = self.menu.add.button('2', lambda: self._press(2), cursor=cursor, margin=(123, 0)).set_float()
-        b3 = self.menu.add.button('3', lambda: self._press(3), cursor=cursor, margin=(235, 0)).set_float()
+
+        # Add horizontal frames
+        f1 = self.menu.add.frame_h(299, 54, margin=(10, 0))
+        b1 = f1.pack(self.menu.add.button('1', lambda: self._press(1), cursor=cursor))
+        b2 = f1.pack(self.menu.add.button('2', lambda: self._press(2), cursor=cursor),
+                     alignment=pygame_menu.locals.ALIGN_CENTER)
+        b3 = f1.pack(self.menu.add.button('3', lambda: self._press(3), cursor=cursor),
+                     alignment=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
-        b4 = self.menu.add.button('4', lambda: self._press(4), cursor=cursor, margin=(10, 0))
-        b5 = self.menu.add.button('5', lambda: self._press(5), cursor=cursor, margin=(123, 0)).set_float()
-        b6 = self.menu.add.button('6', lambda: self._press(6), cursor=cursor, margin=(235, 0)).set_float()
+
+        f2 = self.menu.add.frame_h(299, 54, margin=(10, 0))
+        b4 = f2.pack(self.menu.add.button('4', lambda: self._press(4), cursor=cursor))
+        b5 = f2.pack(self.menu.add.button('5', lambda: self._press(5), cursor=cursor),
+                     alignment=pygame_menu.locals.ALIGN_CENTER)
+        b6 = f2.pack(self.menu.add.button('6', lambda: self._press(6), cursor=cursor),
+                     alignment=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
-        b7 = self.menu.add.button('7', lambda: self._press(7), cursor=cursor, margin=(10, 0))
-        b8 = self.menu.add.button('8', lambda: self._press(8), cursor=cursor, margin=(123, 0)).set_float()
-        b9 = self.menu.add.button('9', lambda: self._press(9), cursor=cursor, margin=(235, 0)).set_float()
+
+        f3 = self.menu.add.frame_h(299, 54, margin=(10, 0))
+        b7 = f3.pack(self.menu.add.button('7', lambda: self._press(7), cursor=cursor))
+        b8 = f3.pack(self.menu.add.button('8', lambda: self._press(8), cursor=cursor),
+                     alignment=pygame_menu.locals.ALIGN_CENTER)
+        b9 = f3.pack(self.menu.add.button('9', lambda: self._press(9), cursor=cursor),
+                     alignment=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
-        b0 = self.menu.add.button('0', lambda: self._press(0), cursor=cursor, margin=(10, 0))
-        bplus = self.menu.add.button('+', lambda: self._press('+'), cursor=cursor, margin=(123, 0)).set_float()
-        bminus = self.menu.add.button('-', lambda: self._press('-'), cursor=cursor, margin=(235, 0)).set_float()
+
+        f4 = self.menu.add.frame_h(299, 54, margin=(10, 0))
+        b0 = f4.pack(self.menu.add.button('0', lambda: self._press(0), cursor=cursor))
+        bplus = f4.pack(self.menu.add.button('+', lambda: self._press('+'), cursor=cursor),
+                        alignment=pygame_menu.locals.ALIGN_CENTER)
+        bminus = f4.pack(self.menu.add.button('-', lambda: self._press('-'), cursor=cursor),
+                         alignment=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
-        btimes = self.menu.add.button('x', lambda: self._press('x'), cursor=cursor, margin=(10, 0))
-        bdiv = self.menu.add.button('/', lambda: self._press('/'), cursor=cursor, margin=(123, 0)).set_float()
-        beq = self.menu.add.button('=', lambda: self._press('='), cursor=cursor, margin=(235, 0)).set_float()
+
+        f5 = self.menu.add.frame_h(299, 54, margin=(10, 0))
+        btimes = f5.pack(self.menu.add.button('x', lambda: self._press('x'), cursor=cursor))
+        bdiv = f5.pack(self.menu.add.button('/', lambda: self._press('/'), cursor=cursor),
+                       alignment=pygame_menu.locals.ALIGN_CENTER)
+        beq = f5.pack(self.menu.add.button('=', lambda: self._press('='), cursor=cursor),
+                      alignment=pygame_menu.locals.ALIGN_RIGHT)
 
         # Add decorator for each object
         for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, bplus, bminus, btimes, bdiv):
@@ -171,7 +192,7 @@ class CalculatorApp(object):
                     self._press('+')
                 elif event.key == pygame.K_MINUS:
                     self._press('-')
-                elif event.key == pygame.K_SLASH or event.key == pygame.K_PERCENT:
+                elif event.key == pygame.K_SLASH or hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT:
                     self._press('/')
                 elif event.key == pygame.K_ASTERISK or event.key == pygame.K_x:
                     self._press('x')
