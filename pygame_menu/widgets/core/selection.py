@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Selection']
 
+import copy
 import pygame
 import pygame_menu
 from pygame_menu.utils import assert_color
@@ -71,6 +72,34 @@ class Selection(object):
         self.margin_left = margin_left
         self.margin_right = margin_right
         self.margin_top = margin_top
+
+    def zero_margin(self) -> 'Selection':
+        """
+        Makes selection margin zero.
+
+        :return: Self reference
+        """
+        self.margin_top = 0
+        self.margin_left = 0
+        self.margin_right = 0
+        self.margin_bottom = 0
+        return self
+
+    def copy(self) -> 'Selection':
+        """
+        Creates a deep copy of the object.
+
+        :return: Copied selection effect
+        """
+        return copy.deepcopy(self)
+
+    def __copy__(self) -> 'Selection':
+        """
+        Copy method.
+
+        :return: Copied selection
+        """
+        return self.copy()
 
     def set_color(self, color: ColorType) -> 'Selection':
         """
