@@ -73,9 +73,11 @@ class CalculatorApp(object):
 
         self.menu = pygame_menu.Menu('', 320, 480,
                                      center_content=False,
-                                     onclose=pygame_menu.events.EXIT,
                                      mouse_motion_selection=True,
-                                     theme=theme)
+                                     onclose=pygame_menu.events.EXIT,
+                                     overflow=False,
+                                     theme=theme,
+                                     )
         menu_deco = self.menu.get_scrollarea().get_decorator()
 
         # Add the layout
@@ -139,7 +141,7 @@ class CalculatorApp(object):
         self.menu.set_onupdate(self.process_events)
         self.menu.set_onwindowmouseleave(lambda m: self.screen.select(update_menu=True))
 
-    def process_events(self, events: List['pygame.event.Event'], _) -> None:
+    def process_events(self, events: List['pygame.event.Event'], _=None) -> None:
         """
         Process events from user.
         """
@@ -169,11 +171,14 @@ class CalculatorApp(object):
                     self._press('+')
                 elif event.key == pygame.K_MINUS:
                     self._press('-')
-                elif event.key == pygame.K_SLASH:
+                elif event.key == pygame.K_SLASH or event.key == pygame.K_PERCENT:
                     self._press('/')
                 elif event.key == pygame.K_ASTERISK or event.key == pygame.K_x:
                     self._press('x')
-                elif event.key == pygame.K_EQUALS:
+                elif event.key == pygame.K_EQUALS or event.key == pygame.K_RETURN:
+                    self._press('=')
+                elif event.key == pygame.K_BACKSPACE:
+                    self._press('=')
                     self._press('=')
 
     def _operate(self) -> Union[int, float]:
@@ -206,12 +211,22 @@ class CalculatorApp(object):
         :return: None
         """
         if digit in ('+', '-', 'x', '/'):
-            if self.curr != '' and self.op != '':
-                self.prev = str(self._operate())
+            if self.curr != '':
+                if self.op != '':
+                    self.prev = str(self._operate())
+                else:
+                    self.prev = self.curr
                 self.curr = ''
             self.op = digit
-            self.screen.set_title(self.prev + self.op)
+            if len(self.prev) <= 8:
+                self.screen.set_title(self.prev + self.op)
+            else:
+                self.screen.set_title('Ans' + self.op)
         elif digit == '=':
+            if self.prev == '':
+                self.curr = ''
+                self.screen.set_title('0')
+                return
             c = self._operate()
             self.screen.set_title(str(c))
             if len(str(c)) > 8:
@@ -227,7 +242,7 @@ class CalculatorApp(object):
                     self.prev = self._format(self.prev)
                 self.screen.set_title(self.prev)
             else:
-                if len(self.prev) <= 8:
+                if len(self.curr) <= 7:
                     self.curr += str(digit)
                     self.curr = self._format(self.curr)
                 self.screen.set_title(self.curr)
@@ -256,15 +271,16 @@ class CalculatorApp(object):
         self.menu.mainloop(self.surface, disable_loop=test)
 
 
-def main(test: bool = False) -> None:
+def main(test: bool = False) -> 'CalculatorApp':
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :return: None
+    :return: App object
     """
     app = CalculatorApp()
     app.mainloop(test)
+    return app
 
 
 if __name__ == '__main__':
