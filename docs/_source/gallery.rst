@@ -90,8 +90,8 @@ Timer clock example
 Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/timer_clock.py>`_
 
 
-Other - Calculator (Decoration, Events, OOP)
---------------------------------------------
+Other - Calculator (Decoration, Events, OOP, Frames)
+----------------------------------------------------
 
 .. image:: ../_static/example_other_calculator.gif
     :align: center
