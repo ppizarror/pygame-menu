@@ -1255,6 +1255,7 @@ class WidgetsTest(unittest.TestCase):
 
         wid.remove_update_callback('none')
         wid.add_update_callback(None)
+        wid.apply_update_callbacks()
 
         draw = [False]
 
