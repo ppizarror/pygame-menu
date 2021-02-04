@@ -39,7 +39,7 @@ from pygame_menu.font import FONT_EXAMPLES
 
 # noinspection PyProtectedMember
 from pygame_menu._types import NumberType, Union, List, Tuple, Optional, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType, VectorIntType
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
 
@@ -182,6 +182,22 @@ class PygameUtils(object):
         if inlist:
             event_obj = [event_obj]
         return event_obj
+
+    @staticmethod
+    def keydown(key: Union[int, VectorIntType]) -> EventListType:
+        """
+        Keydown list.
+
+        :param key: Key to press
+        :return: Event list
+        """
+        if isinstance(key, int):
+            key = [key]
+        ev = []
+        for k in key:
+            assert isinstance(k, int)
+            ev.append(PygameUtils.key(k, keydown=True, inlist=False))
+        return ev
 
     @staticmethod
     def key(key: int, char: str = ' ', inlist: bool = True,
