@@ -109,6 +109,7 @@ class Widget(object):
     _font_readonly_selected_color: ColorType
     _font_selected_color: ColorType
     _font_size: int
+    _frame: Optional['Widget']
     _id: str
     _joystick_enabled: bool
     _kwargs: Dict[Any, Any]
@@ -175,6 +176,7 @@ class Widget(object):
         self._default_value = _WidgetNoValue()
         self._events = []
         self._floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
+        self._frame = None
         self._id = str(widget_id)
         self._margin = (0, 0)
         self._max_height = [None, False, True]  # size, width_scale, smooth
@@ -891,18 +893,6 @@ class Widget(object):
         """
         raise NotImplementedError('override is mandatory')
 
-    def draw_selection(self, surface: 'pygame.Surface') -> 'Widget':
-        """
-        Draw the selection Widget effect on a given surface.
-
-        :param surface: Surface to draw
-        :return: Self reference
-        """
-        if not self.is_selectable:
-            return self
-        self._selection_effect.draw(surface, self)
-        return self
-
     def get_margin(self) -> Tuple2IntType:
         """
         Return the Widget margin.
@@ -921,7 +911,7 @@ class Widget(object):
         """
         assert isinstance(x, (int, float))
         assert isinstance(y, (int, float))
-        self._margin = (x, y)
+        self._margin = (int(x), int(y))
         self._force_render()
         return self
 
@@ -1014,8 +1004,8 @@ class Widget(object):
 
         :return: Widget data value
         """
-        raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
-                                                               self.get_id()))
+        raise ValueError('{}<"{}"> does not accept value'.format(self.__class__.__name__,
+                                                                 self.get_id()))
 
     def get_id(self) -> str:
         """
@@ -1937,8 +1927,8 @@ class Widget(object):
         :param value: Value to be set on the widget
         :return: None
         """
-        raise ValueError('{}({}) does not accept value'.format(self.__class__.__name__,
-                                                               self.get_id()))
+        raise ValueError('{}<"{}"> does not accept value'.format(self.__class__.__name__,
+                                                                 self.get_id()))
 
     def set_default_value(self, value: Any) -> 'Widget':
         """
@@ -2076,7 +2066,7 @@ class Widget(object):
         """
         assert isinstance(callback_id, str)
         if callback_id not in self._update_callbacks.keys():
-            raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
+            raise IndexError('callback<"{0}"> does not exist'.format(callback_id))
         del self._update_callbacks[callback_id]
         return self
 
@@ -2229,6 +2219,26 @@ class Widget(object):
         :return: Decorator API
         """
         return self._decorator
+
+    def get_frame(self) -> Optional['pygame_menu.widgets.Frame']:
+        """
+        Get container frame of Widget. If Widget is not within a Frame, the method returns ``None``.
+
+        :return: Frame object
+        """
+        return self._frame
+
+    def set_frame(self, frame: 'Widget') -> 'Widget':
+        """
+        Set Widget frame.
+
+        :param frame: Frame object
+        :return: Self reference
+        """
+        assert self._frame is None, 'Widget is already in another frame'
+        assert isinstance(frame, Widget)
+        self._frame = frame
+        return self
 
 
 class _WidgetNullSelection(Selection):
