@@ -1275,6 +1275,11 @@ class WidgetsTest(unittest.TestCase):
         wid.rotate(10)
         self.assertEqual(wid._angle, 0)
 
+        wid.resize(10, 10)
+        self.assertEqual(wid._scale[0], False)
+        self.assertEqual(wid._scale[1], 1)
+        self.assertEqual(wid._scale[2], 1)
+
         wid.scale(100, 100)
         self.assertEqual(wid._scale[0], False)
         self.assertEqual(wid._scale[1], 1)
@@ -1639,3 +1644,77 @@ class WidgetsTest(unittest.TestCase):
             frame_numbers.unpack(w)
         self.assertEqual(len(frame_numbers._widgets), 0)
         self.assertRaises(AssertionError, lambda: frame_numbers.unpack(previwdg[0]))
+
+        # Test sizes
+        size_exception = pygame_menu.widgets.widget.frame._FrameSizeException
+        self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(100, 400)))
+        self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(400, 10)))
+        self.assertEqual(len(frame_numbers.get_widgets()), 0)
+        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_CENTER)
+        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_RIGHT)
+        frame_numbers.pack(menu.add.frame_v(10, 10))
+
+        frame_v = menu.add.frame_v(400, 100)
+        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 400)))
+        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(500, 100)))
+        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
+        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
+        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
+        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_SOUTH)
+        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 1)))
+
+        # Apply transforms
+        wid = frame_v
+        wid.set_position(1, 1)
+        pos = wid.get_position()
+        self.assertEqual(pos[0], 1)
+        self.assertEqual(pos[1], 1)
+
+        wid.translate(1, 1)
+        self.assertEqual(wid._translate[0], 1)
+        self.assertEqual(wid._translate[1], 1)
+
+        wid.rotate(10)
+        self.assertEqual(wid._angle, 0)
+
+        wid.scale(100, 100)
+        self.assertEqual(wid._scale[0], False)
+        self.assertEqual(wid._scale[1], 1)
+        self.assertEqual(wid._scale[2], 1)
+
+        wid.resize(10, 10)
+        self.assertEqual(wid._scale[0], False)
+        self.assertEqual(wid._scale[1], 1)
+        self.assertEqual(wid._scale[2], 1)
+
+        wid.flip(True, True)
+        self.assertFalse(wid._flip[0])
+        self.assertFalse(wid._flip[1])
+
+        wid.set_max_width(100)
+        self.assertEqual(wid._max_width[0], None)
+
+        wid.set_max_height(100)
+        self.assertEqual(wid._max_height[0], None)
+
+        # Selection
+        wid.select()
+        self.assertFalse(wid.is_selected())
+        self.assertFalse(wid.is_selectable)
+
+        draw = [False]
+
+        # noinspection PyUnusedLocal
+        def _draw(*args) -> None:
+            draw[0] = True
+
+        drawid = wid.add_draw_callback(_draw)
+        wid.draw(surface)
+        self.assertTrue(draw[0])
+        draw[0] = False
+        wid.remove_draw_callback(drawid)
+        wid.draw(surface)
+        self.assertFalse(draw[0])
+
+        wid._draw(surface)
+        wid.update([])

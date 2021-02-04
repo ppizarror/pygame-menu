@@ -345,7 +345,7 @@ class Frame(Widget):
         :param widget: Widget to unpack
         :return: Self reference
         """
-        assert len(self._widgets) >0, 'frame is empty'
+        assert len(self._widgets) > 0, 'frame is empty'
         wid = widget.get_id()
         if wid not in self._widgets.keys():
             msg = 'widget<"{0}"> does not exist in frame'.format(wid)
@@ -355,7 +355,10 @@ class Frame(Widget):
         widget._translate = (0, 0)
         widget.set_float(False)
         del self._widgets[wid]
-        del self._pos[wid]
+        try:
+            del self._pos[wid]
+        except KeyError:
+            pass
         self.force_menu_surface_update()
         if self._control_widget == widget:
             if len(self._widgets) == 0:
@@ -471,7 +474,11 @@ class Frame(Widget):
             self._control_widget_last_pos = self._control_widget.get_position()
 
         # Render is mandatory as it modifies row/column layout
-        menu.render()
+        try:
+            menu.render()
+        except _FrameSizeException:
+            self.unpack(widget)
+            raise
         self.update_indices()
 
         return widget
