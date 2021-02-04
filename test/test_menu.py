@@ -243,6 +243,130 @@ class MenuTest(unittest.TestCase):
         menu._close()
         self.assertTrue(menu.get_attribute('epic'))
 
+    # noinspection PyArgumentEqualDefault
+    def test_events(self):
+        """
+        Test events gather.
+        """
+        if pygame.vernum[0] < 2:
+            return
+        menu_top = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(columns=4, rows=2, touchscreen_enabled=True,
+                                      touchscreen_motion_selection=True,
+                                      joystick_enabled=True)  # submenu
+        menu_top.add_button('menu', menu).apply()
+        widg = []
+        for i in range(8):
+            b = menu.add_button('test' + str(i), None)
+            widg.append(b)
+        # btn0 | btn2 | btn4 | btn6
+        # btn1 | btn3 | btn5 | btn7
+        self.assertEqual(menu_top.get_current(), menu)
+
+        # Arrow keys
+        menu_top.mainloop(surface)
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[3])
+        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), widg[2])
+
+        # Joy key
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_DOWN))
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
+        self.assertEqual(menu.get_selected_widget(), widg[3])
+        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_UP))
+        self.assertEqual(menu.get_selected_widget(), widg[2])
+
+        # Joy hat
+        menu_top.update(PygameUtils.joy_motion(-10, 0))
+        menu_top.enable()
+        self.assertEqual(menu_top.get_current()._joy_event, menu._joy_event_left)
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update(PygameUtils.joy_motion(0, 10))
+        self.assertEqual(menu_top.get_current()._joy_event, menu._joy_event_down)
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(PygameUtils.joy_motion(10, 0))
+        self.assertEqual(menu_top.get_current()._joy_event, menu._joy_event_right)
+        self.assertEqual(menu.get_selected_widget(), widg[3])
+        menu_top.update(PygameUtils.joy_motion(0, -10))
+        self.assertEqual(menu_top.get_current()._joy_event, menu._joy_event_up)
+        self.assertEqual(menu.get_selected_widget(), widg[2])
+
+        # Menu should keep a recursive state of joy
+        self.assertNotEqual(menu.get_current()._joy_event, 0)
+        menu_top.update(PygameUtils.center_joy())  # center !!
+        self.assertEqual(menu.get_current()._joy_event, 0)
+
+        # Click widget
+        menu_top.enable()
+        menu_top.update(
+            [PygameUtils.middle_rect_click(widg[1].get_rect(), menu_top, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu_top.update(
+            [PygameUtils.middle_rect_click(widg[0].get_rect(), menu_top, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+        menu_top.update(
+            [PygameUtils.middle_rect_click(widg[1].get_rect(), menu_top, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+
+        # It should not change the menu selection (button up)
+        self.assertTrue(
+            menu_top.update([PygameUtils.middle_rect_click(widg[1].get_rect(), menu, evtype=pygame.MOUSEBUTTONUP)]))
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+
+        # Applying button up in a non-selected widget must return false
+        self.assertFalse(
+            menu.update([PygameUtils.middle_rect_click(widg[0].get_rect(), menu, evtype=pygame.MOUSEBUTTONUP)]))
+
+        # Fingerdown don't change selected widget if _touchscreen_motion_selection is enabled
+        self.assertTrue(menu._touchscreen_motion_selection)
+        menu.update([PygameUtils.middle_rect_click(widg[0].get_rect(), menu_top, evtype=pygame.FINGERDOWN)])
+        # self.assertNotEqual(menu.get_selected_widget(), widg[0])
+
+        # If touchscreen motion is disabled, then fingerdown should select the widget
+        menu._touchscreen_motion_selection = False
+        menu.update([PygameUtils.middle_rect_click(widg[1].get_rect(), menu_top, evtype=pygame.FINGERDOWN)])
+        self.assertEqual(menu.get_selected_widget(), widg[1])
+        menu._touchscreen_motion_selection = True
+
+        # Fingermoution should select widgets as touchscreen is active
+        menu.update([PygameUtils.middle_rect_click(widg[0].get_rect(), menu_top, evtype=pygame.FINGERMOTION)])
+        self.assertEqual(menu.get_selected_widget(), widg[0])
+
+        # Infinite joy
+        menu_top.update(PygameUtils.joy_motion(0, 10))
+        menu.update([pygame.event.Event(menu._joy_event_repeat)])
+        self.assertNotEqual(menu._joy_event, 0)
+
+        # Now disable joy event, then event repeat should not continue
+        menu._joy_event = 0
+        menu.update([pygame.event.Event(menu._joy_event_repeat)])
+        menu_top.update(PygameUtils.center_joy())  # center !!
+        self.assertEqual(menu.get_current()._joy_event, 0)
+
+        # Active widget, and click outside to disable it (only if motion selection enabled)
+        widg = menu.get_selected_widget()
+        widg.active = True
+        wrect = widg.get_rect()
+
+        # Clicking the same rect should not fire the callback
+        menu_top.update([PygameUtils.middle_rect_click(wrect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertTrue(widg.active)
+        self.assertTrue(widg.selected)
+
+        wrect.x += 500
+        menu._mouse_motion_selection = True
+        menu_top.update([PygameUtils.middle_rect_click(wrect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
+        self.assertFalse(widg.active)
+
     def test_enabled(self):
         """
         Test menu enable/disable feature.

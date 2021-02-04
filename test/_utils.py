@@ -61,6 +61,10 @@ FINGERUP = -1
 if hasattr(pygame, 'FINGERUP'):
     FINGERUP = pygame.FINGERUP
 
+FINGERMOTION = -1
+if hasattr(pygame, 'FINGERMOTION'):
+    FINGERMOTION = pygame.FINGERMOTION
+
 
 def test_reset_surface():
     """
@@ -76,6 +80,21 @@ class PygameUtils(object):
     """
     Static class for pygame testing.
     """
+
+    @staticmethod
+    def center_joy():
+        """
+        Centers the joy.
+
+        :return: Center joy event
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
+        """
+        return [pygame.event.Event(pygame.JOYAXISMOTION,
+                                   {
+                                       'value': 0,
+                                       'axis': pygame_menu.controls.JOY_AXIS_Y,
+                                       'test': True
+                                   })]
 
     @staticmethod
     def joy_motion(x=0.0, y=0.0, inlist=True, testmode=True):
@@ -114,6 +133,46 @@ class PygameUtils(object):
         if inlist:
             event_obj = [event_obj]
         return event_obj
+
+    @staticmethod
+    def middle_rect_click(rect, menu=None, evtype=pygame.MOUSEBUTTONUP):
+        """
+        Return event clicking the middle of a given rect.
+
+        :param rect: Rect object
+        :param menu: Menu object
+        :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, FINGERUP, FINGERDOWN
+        :type evtype: int
+        :return: Event
+        :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
+        """
+        if isinstance(rect, pygame_menu.widgets.core.Widget):
+            x, y = rect.get_rect().center
+        elif isinstance(rect, pygame.Rect):
+            x, y = rect.center
+        elif isinstance(rect, tuple):
+            x, y = rect
+        elif isinstance(rect, list):
+            x, y = rect[0], rect[1]
+        else:
+            raise ValueError('unknown rect type')
+        offx, offy = (0, 0)
+        if menu is not None:
+            sar = menu.get_scrollarea().get_rect()
+            offx, offy = menu.get_scrollarea().get_offsets()
+        else:
+            sar = pygame.Rect(0, 0, 0, 0)
+        if evtype == FINGERDOWN or evtype == FINGERUP or evtype == FINGERMOTION:
+            assert menu is not None, 'menu cannot be none if FINGER'
+            display = menu.get_window_size()
+            return pygame.event.Event(evtype,
+                                      {
+                                          'x': (x + sar.x - offx) / display[0],
+                                          'y': (y + sar.y - offy) / display[1],
+                                          'test': True,
+                                          'button': 3
+                                      })
+        return PygameUtils.mouse_click(x + sar.x - offx, y + sar.y - offy, inlist=False, evtype=evtype)
 
     @staticmethod
     def test_widget_key_press(widget):
