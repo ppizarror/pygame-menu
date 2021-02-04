@@ -18,6 +18,7 @@ Other examples that show specific use cases of the menu are also provided:
 
 .. code-block:: bash
 
+    $> python -m pygame_menu.examples.other.calculator
     $> python -m pygame_menu.examples.other.dynamic_button_append
     $> python -m pygame_menu.examples.other.dynamic_widget_update
     $> python -m pygame_menu.examples.other.image_background
@@ -87,6 +88,17 @@ Timer clock example
     :width: 600
 
 Source: `examples/timer_clock.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/timer_clock.py>`_
+
+
+Other - Calculator (Decoration, Events, OOP)
+--------------------------------------------
+
+.. image:: ../_static/example_other_calculator.gif
+    :align: center
+    :alt: Calculator
+    :height: 470
+
+Source: `examples/other/calculator.py <https://github.com/ppizarror/pygame-menu/blob/master/pygame_menu/examples/other/calculator.py>`_
 
 
 Other - Dynamic button append
