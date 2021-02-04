@@ -140,7 +140,7 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
-        assert isinstance(overflow, (tuple, list))
+        assert isinstance(overflow, (tuple, list, bool))
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
@@ -208,6 +208,8 @@ class Menu(object):
                 width, height, window_width, window_height)
 
         # Assert overflow
+        if isinstance(overflow, bool):  # If single value
+            overflow = overflow, overflow
         assert len(overflow) == 2, 'overflow must be a 2-item tuple/list of booleans (x-axis,y-axis)'
         assert isinstance(overflow[0], bool), 'overflow in x axis must be a boolean object'
         assert isinstance(overflow[1], bool), 'overflow in y axis must be a boolean object'
@@ -2360,7 +2362,7 @@ class Menu(object):
         self._top._prev = [self._top._prev, current]
 
         # Select the first widget
-        self._select(0, 1)
+        self._current._select(0, 1)
 
     def reset(self, total):
         """
@@ -2404,51 +2406,49 @@ class Menu(object):
         :type dwidget: int
         :return: None
         """
-        current = self._top._current
-        if len(current._widgets) == 0:
+        if len(self._widgets) == 0:
             return
 
         # This stores +/-1 if the index increases or decreases
         # Used by non-selectable selection
         if dwidget == 0:
-            if new_index < current._index:
+            if new_index < self._index:
                 dwidget = -1
             else:
                 dwidget = 1
 
         # Limit the index to the length
-        total_current = len(current._widgets)
-        new_index %= total_current
-        if new_index == current._index:  # Index has not changed
+        new_index %= len(self._widgets)
+        if new_index == self._index:  # Index has not changed
             return
 
         # Get both widgets
-        if current._index >= total_current:  # The length of the menu changed during execution time
-            for i in range(total_current):  # Unselect all possible candidates
-                current._widgets[i].set_selected(False)
-            current._index = 0
+        if self._index >= len(self._widgets):  # The length of the menu changed during execution time
+            for i in range(len(self._widgets)):  # Unselect all possible candidates
+                self._widgets[i].set_selected(False)
+            self._index = 0
 
-        old_widget = current._widgets[current._index]  # type: _widgets.core.Widget
-        new_widget = current._widgets[new_index]  # type:_widgets.core.Widget
+        old_widget = self._widgets[self._index]  # type: _widgets.core.Widget
+        new_widget = self._widgets[new_index]  # type:_widgets.core.Widget
 
         # If new widget is not selectable or visible
         if not new_widget.is_selectable or not new_widget.visible:
-            if current._index >= 0:  # There's at least 1 selectable option (if only text this would be false)
-                current._select(new_index + dwidget, dwidget)
+            if self._index >= 0:  # There's at least 1 selectable option (if only text this would be false)
+                self._select(new_index + dwidget, dwidget)
                 return
             else:  # No selectable options, quit
                 return
 
         # Selecting widgets forces rendering
         old_widget.set_selected(False)
-        current._index = new_index  # Update selected index
+        self._index = new_index  # Update selected index
         new_widget.set_selected()
 
         # Scroll to rect
         rect = new_widget.get_rect()
-        if current._index == 0:  # Scroll to the top of the Menu
+        if self._index == 0:  # Scroll to the top of the Menu
             rect = pygame.Rect(int(rect.x), 0, int(rect.width), int(rect.height))
-        current._scroll.scroll_to_rect(rect)
+        self._scroll.scroll_to_rect(rect)
 
         # Play widget selection sound
         self._current._sounds.play_widget_selection()
