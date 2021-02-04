@@ -119,7 +119,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(test[0], color)
 
         # Image
-        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select)
+        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select, font_color=(2, 9))
         image.select()
         self.assertEqual(test[0], color)
         image.is_selectable = True
@@ -1615,7 +1615,7 @@ class WidgetsTest(unittest.TestCase):
             alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(0, 2))
         frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
                            alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255))
+        frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255), font_color=(2000, 0, 0))
         frame_content.pack(frame_numbers)
         for i in range(9):
             frame_numbers.pack(menu.add.button(i, None, font_color=(5 * i, 11 * i, 13 * i), font_size=30),
@@ -1654,7 +1654,7 @@ class WidgetsTest(unittest.TestCase):
         frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_RIGHT)
         frame_numbers.pack(menu.add.frame_v(10, 10))
 
-        frame_v = menu.add.frame_v(400, 100)
+        frame_v = menu.add.frame_v(400, 100, font_color=(2000, 0, 0))  # Clearly a invalid font color
         self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 400)))
         self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(500, 100)))
         frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)

@@ -635,7 +635,7 @@ class WidgetManager(object):
         assert isinstance(selectable, bool)
 
         # Remove invalid keys from kwargs
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
                            'border_width', 'cursor', 'margin', 'padding', 'selection_color', 'selection_effect']:
                 kwargs.pop(key, None)
@@ -1297,7 +1297,7 @@ class WidgetManager(object):
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         # Remove invalid keys from kwargs
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
                            'border_width', 'margin', 'padding']:
                 kwargs.pop(key, None)
@@ -1363,7 +1363,7 @@ class WidgetManager(object):
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         # Remove invalid keys from kwargs
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
                            'border_width', 'margin', 'padding']:
                 kwargs.pop(key, None)
