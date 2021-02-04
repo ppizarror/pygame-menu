@@ -191,6 +191,7 @@ class Menu(object):
                  touchscreen: bool = False,
                  touchscreen_motion_selection: bool = False
                  ) -> None:
+
         # Compatibility from (height, width, title) to (title, width, height)
         if not isinstance(title, str) and isinstance(height, str):
             _title = title
@@ -199,6 +200,12 @@ class Menu(object):
             msg = 'Menu constructor changed from Menu(height, width, title, ...) to ' \
                   'Menu(title, width, height, ...). This alert will be removed in v4.1'
             warnings.warn(msg)
+
+        # Check events compatibility
+        if onclose == _events.DISABLE_CLOSE:
+            msg = 'DISABLE_CLOSE event is deprecated and it will be removed in v4.1. Use events.NONE instead (or None)'
+            warnings.warn(msg)
+            onclose = None
 
         assert isinstance(width, (int, float))
         assert isinstance(height, (int, float))

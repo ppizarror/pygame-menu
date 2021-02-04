@@ -8,7 +8,7 @@ Migration Guide - v3 to v4
 - All locals inner value have changed. If you used the value as-is you'll get an error.
 - BaseImage applies ``smooth`` by default, also rotation applies on checkpointed surface.
 - Menu ``add_image`` method parameter ``scale_smooth`` is now ``True`` by default.
-- Menu ``clear`` method now receives ``reset`` argument.
+- Menu ``clear`` method now receives ``reset`` optional argument.
 - Menu ``mainloop``, ``update`` and ``draw`` now raises ``RuntimeError`` if it's disabled. This behaviour can be changed though Menu private property ``_runtime_errors``.
 - Menu Column/Row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``. Expect some minor changes to the global layout. Now is much more consistent.
 - Menu constructor changed from ``Menu(height, width, title, ...)`` to  ``Menu(title, width, height, ...)``.

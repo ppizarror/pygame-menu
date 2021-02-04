@@ -44,7 +44,10 @@ __all__ = [
 
     # Pygame events
     'PYGAME_QUIT',
-    'PYGAME_WINDOWCLOSE'
+    'PYGAME_WINDOWCLOSE',
+
+    # Compatibility
+    'DISABLE_CLOSE'
 
 ]
 
@@ -84,6 +87,7 @@ def is_event(event: Any) -> bool:
 # Events
 BACK = MenuAction(0)  # Menu back
 CLOSE = MenuAction(1)  # Close Menu
+DISABLE_CLOSE = MenuAction(2)  # Compatibility. This will be removed in v4.1. Shorthand for NONE
 EXIT = MenuAction(3)  # Menu exit program
 NONE = MenuAction(4)  # None action. It's the same as 'None'
 RESET = MenuAction(5)  # Menu reset
