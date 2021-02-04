@@ -140,7 +140,7 @@ class Menu(object):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
-        assert isinstance(overflow, (tuple, list))
+        assert isinstance(overflow, (tuple, list, bool))
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
@@ -208,6 +208,8 @@ class Menu(object):
                 width, height, window_width, window_height)
 
         # Assert overflow
+        if isinstance(overflow, bool):  # If single value
+            overflow = overflow, overflow
         assert len(overflow) == 2, 'overflow must be a 2-item tuple/list of booleans (x-axis,y-axis)'
         assert isinstance(overflow[0], bool), 'overflow in x axis must be a boolean object'
         assert isinstance(overflow[1], bool), 'overflow in y axis must be a boolean object'
