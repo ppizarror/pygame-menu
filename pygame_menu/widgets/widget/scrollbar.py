@@ -36,8 +36,10 @@ from pygame_menu._types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 import pygame_menu.locals as _locals
-from pygame_menu._types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, \
+from pygame_menu._types import Optional, List, Tuple, PaddingType, VectorIntType, ColorType, Literal, \
     CallbackType, Union
+
+ScrollBarOrientationType = Literal[_locals.ORIENTATION_HORIZONTAL, _locals.ORIENTATION_VERTICAL]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -88,7 +90,7 @@ class ScrollBar(Widget):
                  length: NumberType,
                  values_range: VectorIntType,
                  scrollbar_id: str = '',
-                 orientation: str = _locals.ORIENTATION_HORIZONTAL,
+                 orientation: ScrollBarOrientationType = _locals.ORIENTATION_HORIZONTAL,
                  slider_pad: NumberType = 0,
                  slider_color: ColorType = (200, 200, 200),
                  page_ctrl_thick: int = 20,
@@ -203,7 +205,7 @@ class ScrollBar(Widget):
         """
         return int(self._values_range[0])
 
-    def get_orientation(self) -> str:
+    def get_orientation(self) -> ScrollBarOrientationType:
         """
         Return the scrollbar orientation (pygame-menu locals).
 
@@ -332,7 +334,7 @@ class ScrollBar(Widget):
         assert 0 <= value < self._values_range[1], 'minimum value shall lower than {}'.format(self._values_range[1])
         self._values_range[0] = value
 
-    def set_orientation(self, orientation: str) -> None:
+    def set_orientation(self, orientation: ScrollBarOrientationType) -> None:
         """
         Set the scroll bar orientation to vertical or horizontal.
 

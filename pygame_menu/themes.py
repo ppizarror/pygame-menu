@@ -46,6 +46,7 @@ __all__ = [
 
 import pygame
 import copy
+import warnings
 
 import pygame_menu.font as _font
 import pygame_menu.locals as _locals
@@ -353,6 +354,12 @@ class Theme(object):
         self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
                                                 _locals.POSITION_NORTHWEST)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
+
+        # Compatibility check
+        if kwargs.get('menubar_close_button', None) is not None:
+            msg = 'menubar_close_button has been moved to title_close_button. This alert will be removed in v4.1'
+            warnings.warn(msg)
+            self.title_close_button = self._get(kwargs, 'menubar_close_button', bool)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():

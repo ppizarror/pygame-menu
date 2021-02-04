@@ -175,6 +175,8 @@ class WidgetManager(object):
         selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
         if selection_effect is None:
             selection_effect = pygame_menu.widgets.NoneSelection()
+        else:
+            selection_effect = selection_effect.copy()
         assert isinstance(selection_effect, pygame_menu.widgets.core.Selection)
         attributes['selection_effect'] = selection_effect
 
@@ -633,9 +635,10 @@ class WidgetManager(object):
         assert isinstance(selectable, bool)
 
         # Remove invalid keys from kwargs
-        for key in ['font_background_color', 'font_color', 'font_name', 'font_size', 'shadow', 'shadow_color',
-                    'shadow_position', 'shadow_offset']:
-            kwargs.pop(key, None)
+        for key in list(kwargs.keys()):
+            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
+                           'border_width', 'cursor', 'margin', 'padding', 'selection_color', 'selection_effect']:
+                kwargs.pop(key, None)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -1030,15 +1033,15 @@ class WidgetManager(object):
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
             - ``shadow_offset``             *(int)* - Text shadow offset
             - ``slider_color``              *(tuple, list)* - Color of the slider
-            - ``slider_thickness``          *(int)* - Slider thickness (px)
+            - ``slider_thickness``          *(int)* - Slider thickness (px). ``20`` px by default
             - ``state_color``               *(tuple)* - 2-item color tuple for each state
             - ``state_text_font_size``      *(str, None)* - Font size of the state text. If ``None`` uses the widget font size
             - ``state_text_font_color``     *(tuple)* - 2-item color tuple for each font state text color
-            - ``switch_border_color``       *(tuple, list)* - Switch border color
-            - ``switch_border_width``       *(int)* - Switch border width
-            - ``switch_height``             *(int, float)* - Height factor respect to the title font size height
-            - ``switch_margin``             *(tuple, list)* - *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title
-            - ``width``                     *(int, float)* - Width of the switch box (px)
+            - ``switch_border_color``       *(tuple, list)* - Switch border color. ``(40, 40, 40)`` by default
+            - ``switch_border_width``       *(int)* - Switch border width. ``1`` px by default
+            - ``switch_height``             *(int, float)* - Height factor respect to the title font size height. ``1.25`` by default
+            - ``switch_margin``             *(tuple, list)* - *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title. ``(25, 0)`` by default
+            - ``width``                     *(int, float)* - Width of the switch box (px). ``150`` px by default
 
         .. note::
 
@@ -1246,15 +1249,39 @@ class WidgetManager(object):
 
         return widget
 
-    def frame(self,
-              width: NumberType,
-              height: NumberType,
-              frame_id: str = ''
-              ) -> 'pygame_menu.widgets.Frame':
+    def frame_h(self,
+                width: NumberType,
+                height: NumberType,
+                frame_id: str = '',
+                **kwargs
+                ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a Frame. Frame is a widget container that packs many widgets within.
+        Adds a horizontal Frame. Frame is a widget container that packs many widgets within.
         All contained widgets have a floating position, and use only 1 position in
         column/row layout.
+
+        .. code-block:: python
+
+            frame.pack(W1, alignment=ALIGN_LEFT, vertical_position=POSITION_NORTH)
+            frame.pack(W2, alignment=ALIGN_LEFT, vertical_position=POSITION_CENTER)
+            frame.pack(W3, alignment=ALIGN_LEFT, vertical_position=POSITION_SOUTH)
+            ...
+
+            ----------------
+            |W1            |
+            |   W2     ... |
+            |      W3      |
+            ----------------
+
+        kwargs (Optional)
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
 
         .. note::
 
@@ -1265,13 +1292,21 @@ class WidgetManager(object):
         :param width: Frame width
         :param height: Frame height
         :param frame_id: ID of the frame
+        :param kwargs: Optional keyword arguments
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        attributes = self._filter_widget_attributes({})
+        # Remove invalid keys from kwargs
+        for key in list(kwargs.keys()):
+            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
+                           'border_width', 'margin', 'padding']:
+                kwargs.pop(key, None)
+
+        attributes = self._filter_widget_attributes(kwargs)
         widget = pygame_menu.widgets.Frame(
             width=width,
             height=height,
+            orientation=_locals.ORIENTATION_HORIZONTAL,
             frame_id=frame_id
         )
         self._configure_widget(widget=widget, **attributes)
@@ -1279,12 +1314,40 @@ class WidgetManager(object):
 
         return widget
 
-    def horizontal_margin(self,
-                          margin: NumberType,
-                          margin_id: str = ''
-                          ) -> 'pygame_menu.widgets.HMargin':
+    def frame_v(self,
+                width: NumberType,
+                height: NumberType,
+                frame_id: str = '',
+                **kwargs
+                ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a horizontal margin to the Menu. Useful in Frames.
+        Adds a vertical Frame. Frame is a widget container that packs many widgets within.
+        All contained widgets have a floating position, and use only 1 position in
+        column/row layout.
+
+        .. code-block:: python
+
+            frame.pack(W1, alignment=ALIGN_LEFT)
+            frame.pack(W2, alignment=ALIGN_CENTER)
+            frame.pack(W3, alignment=ALIGN_RIGHT)
+            ...
+
+            --------
+            |W1    |
+            |  W2  |
+            |    W3|
+            | ...  |
+            --------
+
+        kwargs (Optional)
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
+            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
+            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
 
         .. note::
 
@@ -1292,28 +1355,66 @@ class WidgetManager(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param margin: Horizontal margin in px
-        :param margin_id: ID of the margin
-        :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.HMargin`
+        :param width: Frame width
+        :param height: Frame height
+        :param frame_id: ID of the frame
+        :param kwargs: Optional keyword arguments
+        :return: Frame object
+        :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        assert isinstance(margin, (int, float))
-        assert margin > 0, \
-            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
+        # Remove invalid keys from kwargs
+        for key in list(kwargs.keys()):
+            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
+                           'border_width', 'margin', 'padding']:
+                kwargs.pop(key, None)
 
-        attributes = self._filter_widget_attributes({'margin': (margin, 0)})
-        widget = pygame_menu.widgets.HMargin(widget_id=margin_id)
+        attributes = self._filter_widget_attributes(kwargs)
+        widget = pygame_menu.widgets.Frame(
+            width=width,
+            height=height,
+            orientation=_locals.ORIENTATION_VERTICAL,
+            frame_id=frame_id
+        )
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
         return widget
+
+    # def horizontal_margin(self,
+    #                       margin: NumberType,
+    #                       margin_id: str = ''
+    #                       ) -> 'pygame_menu.widgets.HMargin':
+    #     """
+    #     Adds a horizontal margin to the Menu. Only useful in Frames.
+    #
+    #     .. note::
+    #
+    #         This is applied only to the base Menu (not the currently displayed,
+    #         stored in ``_current`` pointer); for such behaviour apply
+    #         to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+    #
+    #     :param margin: Horizontal margin in px
+    #     :param margin_id: ID of the margin
+    #     :return: Widget object
+    #     :rtype: :py:class:`pygame_menu.widgets.HMargin`
+    #     """
+    #     assert isinstance(margin, (int, float))
+    #     assert margin > 0, \
+    #         'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
+    #
+    #     attributes = self._filter_widget_attributes({})
+    #     widget = pygame_menu.widgets.HMargin(margin, widget_id=margin_id)
+    #     self._configure_widget(widget=widget, **attributes)
+    #     self._append_widget(widget)
+    #
+    #     return widget
 
     def vertical_margin(self,
                         margin: NumberType,
                         margin_id: str = ''
                         ) -> 'pygame_menu.widgets.VMargin':
         """
-        Adds a vertical margin to the Menu. Useful in Frames.
+        Adds a vertical margin to the Menu.
 
         .. note::
 
@@ -1330,8 +1431,8 @@ class WidgetManager(object):
         assert margin > 0, \
             'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
 
-        attributes = self._filter_widget_attributes({'margin': (0, margin)})
-        widget = pygame_menu.widgets.VMargin(widget_id=margin_id)
+        attributes = self._filter_widget_attributes({})
+        widget = pygame_menu.widgets.VMargin(margin, widget_id=margin_id)
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 

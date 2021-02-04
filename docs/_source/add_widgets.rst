@@ -1,5 +1,4 @@
 
-
 ==============
 Adding widgets
 ==============
@@ -35,7 +34,7 @@ three values:
 **Example:**
 
 .. image:: ../_static/widget_button.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -68,7 +67,7 @@ displayed, the others are the arguments passed to the callbacks
 **Example:**
 
 .. image:: ../_static/widget_selector.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -109,7 +108,7 @@ is a comma (``,``).
 **Example:**
 
 .. image:: ../_static/widget_colorinput.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -127,6 +126,50 @@ is a comma (``,``).
         default='#ffaa11', font_size=18)
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.color_input
+
+
+Add a frame
+-----------
+
+Frame is a widget container, it can pack many widgets both horizontally
+or vertically. All widgets within a same Frame count as one widget position,
+so using Frames is useful when designing column/row layout. Frames can contain
+widgets or even more frames.
+
+There is two types of frames, horizontal (h) and vertical (v) ones. These change
+the way the widgets are added to the frame (packed).
+
+**Example:**
+
+.. image:: ../_static/widget_frame.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
+    frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180))
+    frame_content = menu.add.frame_v(250, 120)
+    frame.pack(frame_title)
+    frame.pack(frame_content)
+
+    frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
+    frame_title.pack(menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
+                     alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
+    frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
+                       alignment=pygame_menu.locals.ALIGN_CENTER)
+    frame_numbers = menu.add.frame_h(250, 41)
+    frame_content.pack(frame_numbers)
+    for i in range(9):
+        frame_numbers.pack(menu.add.button(i, None, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
+                           alignment=pygame_menu.locals.ALIGN_CENTER)
+    frame_content.pack(menu.add.vertical_margin(15))
+    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
+                       alignment=pygame_menu.locals.ALIGN_CENTER)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.frame_h
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.frame_v
 
 
 Add a generic widget
@@ -163,7 +206,7 @@ can be wrapped in order to fit the menu size.
 **Example:**
 
 .. image:: ../_static/widget_label.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -203,7 +246,7 @@ on entered characters can be set using ``input_type``, ``maxchar``,
 **Example:**
 
 .. image:: ../_static/widget_textinput.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -229,7 +272,7 @@ you need more options, take a look at the ``ToggleSwitch`` widget class.
 **Example:**
 
 .. image:: ../_static/widget_toggleswitch.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -252,7 +295,7 @@ visual rendering of the menu.
 **Example:**
 
 .. image:: ../_static/widget_vmargin.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -267,14 +310,14 @@ visual rendering of the menu.
 
 
 Add a url link
----------------------
+--------------
 
 Adds a clickeable url link.
 
 **Example:**
 
 .. image:: ../_static/widget_url.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python
@@ -299,7 +342,7 @@ requires more CPU resources.
 **Example:**
 
 .. image:: ../_static/widget_image.png
-    :scale: 70%
+    :scale: 75%
     :align: center
 
 .. code-block:: python

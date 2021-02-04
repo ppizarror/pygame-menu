@@ -9,3 +9,4 @@ Button
     :members:
     :show-inheritance:
     :inherited-members:
+    :exclude-members: set_onchange, change

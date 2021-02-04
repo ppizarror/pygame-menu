@@ -266,7 +266,7 @@ class ToggleSwitch(Widget):
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         # Draw title
-        surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1]))
+        surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1))
 
         # Draw switch
         switchx = self._rect.x + self._switch_margin[0] + self._switch_pos[0]

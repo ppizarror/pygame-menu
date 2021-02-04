@@ -98,9 +98,6 @@ class NoneWidget(Widget):
     def _render(self) -> Optional[bool]:
         pass
 
-    def draw_selection(self, surface: pygame.Surface) -> 'Widget':
-        return self
-
     def set_margin(self, x: int, y: int) -> 'Widget':
         return self
 

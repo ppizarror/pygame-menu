@@ -9,4 +9,4 @@ Label
     :members:
     :show-inheritance:
     :inherited-members:
-    :exclude-members: update
+    :exclude-members: update, set_onchange, set_onreturn, change, apply
