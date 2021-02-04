@@ -55,8 +55,10 @@ class SelectionTest(unittest.TestCase):
         s = LeftArrowSelection()
         s1 = copy.copy(s)
         s2 = copy.deepcopy(s)
+        s3 = s.copy()
         self.assertNotEqual(s, s1)
         self.assertNotEqual(s, s2)
+        self.assertNotEqual(s, s3)
 
     def test_arrow(self) -> None:
         """

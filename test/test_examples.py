@@ -146,7 +146,7 @@ class ExamplesTest(unittest.TestCase):
         self.assertEqual(app.op, '')
         self.assertEqual(app.curr, '160500')
         self.assertEqual(app.prev, '')
-        app.process_events(PygameUtils.keydown([pygame.K_PERCENT, pygame.K_5, pygame.K_MINUS]))
+        app.process_events(PygameUtils.keydown([pygame.K_SLASH, pygame.K_5, pygame.K_MINUS]))
         self.assertEqual(app.op, '-')
         self.assertEqual(app.curr, '')
         self.assertEqual(app.prev, '32100')

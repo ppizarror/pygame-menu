@@ -1761,6 +1761,110 @@ class MenuTest(unittest.TestCase):
         menu.update([pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 0})])  # Enter
         self.assertEqual(test[0], False)
 
+    def test_frame(self) -> None:
+        """
+        Test frame menu support.
+        """
+        # Test frame movement
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme.widget_font_size = 20
+        menu = MenuUtils.generic_menu(columns=3, rows=2, theme=theme)
+
+        # btn0 | f1(btn2,btn3,btn4,btn5) | f2(btn7,
+        #      |                         |    btn8,
+        #      |                         |    f3(btn9,btn10))
+        # btn1 |             btn6        | f4(btn11,btn12,btn13)
+        btn0 = menu.add.button('btn0', None)
+        btn1 = menu.add.button('btn1', None)
+        f1 = menu.add.frame_h(200, 50, frame_id='f1')
+        btn2 = menu.add.button('btn2 ', None)
+        btn3 = menu.add.button('btn3 ', None)
+        btn4 = menu.add.button('btn4 ', None)
+        btn5 = menu.add.button('btn5 ', None)
+        btn6 = menu.add.button('btn6', None)
+        f2 = menu.add.frame_v(200, 132, background_color=(100, 0, 0), frame_id='f2')
+        f3 = menu.add.frame_h(200, 50, background_color=(0, 0, 100), frame_id='f3')
+        f4 = menu.add.frame_h(260, 50, frame_id='f4')
+        btn7 = menu.add.button('btn7', None)
+        btn8 = menu.add.button('btn8', None)
+        btn9 = menu.add.button('btn9 ', None)
+        btn10 = menu.add.button('btn10', None)
+        btn11 = menu.add.button('btn11 ', None)
+        btn12 = menu.add.button('btn12 ', None)
+        btn13 = menu.add.button('btn13', None)
+        f1.pack((btn2, btn3, btn4, btn5))
+        f3.pack((btn9, btn10))
+        f2.pack((btn7, btn8, f3), alignment=pygame_menu.locals.ALIGN_CENTER)
+        f4.pack((btn11, btn12, btn13))
+
+        # Test min max indices
+        self.assertEqual(f1.get_indices(), (2, 5))
+        self.assertEqual(f2.get_indices(), (8, 10))
+        self.assertEqual(f3.get_indices(), (12, 13))
+        self.assertEqual(f4.get_indices(), (14, 16))
+
+        # Check positioning
+        self.assertEqual(btn0.get_col_row_index(), (0, 0, 0))
+        self.assertEqual(btn1.get_col_row_index(), (0, 1, 1))
+        self.assertEqual(f1.get_col_row_index(), (1, 0, 6))
+        self.assertEqual(btn6.get_col_row_index(), (1, 1, 7))
+        self.assertEqual(f2.get_col_row_index(), (2, 0, 11))
+        self.assertEqual(f4.get_col_row_index(), (2, 1, 17))
+
+        self.assertEqual(menu._test_pos_widgets(), (
+            (0, 0, 0), (11, 77), (0, 1, 1), (11, 115), (1, 0, 2), (82, 77), (1, 0, 3), (129, 77), (1, 0, 4), (176, 77),
+            (1, 0, 5), (223, 77), (1, 0, 6), (82, 77), (1, 0, 2), (82, 77), (1, 0, 3), (129, 77), (1, 0, 4), (176, 77),
+            (1, 0, 5), (223, 77), (1, 1, 7), (161, 137), (2, 0, 8), (429, 77), (2, 0, 9), (429, 105), (2, 0, 10),
+            (350, 133), (2, 0, 12), (350, 133), (2, 0, 13), (397, 133), (2, 0, 11), (350, 77), (2, 0, 8), (429, 77),
+            (2, 0, 9), (429, 105), (2, 0, 12), (350, 133), (2, 0, 13), (397, 133), (2, 0, 12), (350, 133), (2, 0, 13),
+            (397, 133), (2, 1, 14), (320, 219), (2, 1, 15), (378, 219), (2, 1, 16), (436, 219), (2, 1, 17), (320, 219),
+            (2, 1, 14), (320, 219), (2, 1, 15), (378, 219), (2, 1, 16), (436, 219)
+        ))
+
+        # Arrow keys
+        self.assertEqual(menu.get_selected_widget(), btn0)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn2)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn3)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn4)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn5)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn7)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn0)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn10)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn9)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn5)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn4)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn3)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn2)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn0)
+        for bt in (btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn0, btn1):
+            menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+            self.assertEqual(menu.get_selected_widget(), bt)
+        for bt in (btn6, btn11, btn12, btn13, btn1):
+            menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
+            self.assertEqual(menu.get_selected_widget(), bt)
+        for bt in (btn0, btn13, btn12, btn11, btn10, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0):
+            menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+            self.assertEqual(menu.get_selected_widget(), bt)
+        menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        self.assertEqual(menu.get_selected_widget(), btn1)
+        for bt in (btn13, btn12, btn11, btn6, btn1):
+            menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+            self.assertEqual(menu.get_selected_widget(), bt)
+        # menu.mainloop(surface)
+
     def test_mouseover_widget(self) -> None:
         """
         Test mouseover + motion.

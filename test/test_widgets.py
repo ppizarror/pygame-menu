@@ -51,7 +51,6 @@ class WidgetsTest(unittest.TestCase):
         Setup sound engine.
         """
         test_reset_surface()
-        self.menu = MenuUtils.generic_menu()
 
     def test_kwargs(self) -> None:
         """
@@ -67,8 +66,9 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(kwargsk[0], 'test')
             self.assertEqual(kwargsk[1], 'widget')
 
-        self.assertRaises(ValueError, lambda: self.menu.add.button('btn', function_kwargs, test=True))
-        btn = self.menu.add.button('btn', function_kwargs, test=True, accept_kwargs=True, padding=10)
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(ValueError, lambda: menu.add.button('btn', function_kwargs, test=True))
+        btn = menu.add.button('btn', function_kwargs, test=True, accept_kwargs=True, padding=10)
         self.assertEqual(len(btn._kwargs), 1)
         self.assertRaises(KeyError, lambda: btn.add_self_to_kwargs('test'))
         self.assertEqual(len(btn._kwargs), 1)
@@ -152,29 +152,30 @@ class WidgetsTest(unittest.TestCase):
         vmargin.select()
         self.assertEqual(test[0], text)
 
-    def test_nonascii(self) -> None:
+    @staticmethod
+    def test_nonascii() -> None:
         """
         Test non-ascii.
         """
+        menu = MenuUtils.generic_menu()
         m = MenuUtils.generic_menu(title=u'Ménu')
         m.clear()
-        self.menu.add.button('0', pygame_menu.events.NONE)
-        self.menu.add.button('Test', pygame_menu.events.NONE)
-        self.menu.add.button(u'Menú', pygame_menu.events.NONE)
-        self.menu.add.color_input(u'Cólor', 'rgb')
-        self.menu.add.text_input(u'Téxt')
-        self.menu.add.label(u'Téxt')
-        self.menu.add.selector(u'Sélect'.encode('latin1'), [('a', 'a')])
-        self.menu.enable()
-        self.menu.draw(surface)
+        menu.add.button('0', pygame_menu.events.NONE)
+        menu.add.button('Test', pygame_menu.events.NONE)
+        menu.add.button(u'Menú', pygame_menu.events.NONE)
+        menu.add.color_input(u'Cólor', 'rgb')
+        menu.add.text_input(u'Téxt')
+        menu.add.label(u'Téxt')
+        menu.add.selector(u'Sélect'.encode('latin1'), [('a', 'a')])
+        menu.enable()
+        menu.draw(surface)
 
     def test_background(self) -> None:
         """
         Test widget background.
         """
-        self.menu.clear()
-        self.menu.enable()
-        w = self.menu.add.label('Text')
+        menu = MenuUtils.generic_menu()
+        w = menu.add.label('Text')
         w.set_background_color((255, 255, 255), (10, 10))
         w.draw(surface)
         self.assertEqual(w._background_inflate[0], 10)
@@ -186,9 +187,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Transform widgets.
         """
-        self.menu.clear()
-        self.menu.enable()
-        w = self.menu.add.label('Text')
+        menu = MenuUtils.generic_menu()
+        w = menu.add.label('Text')
         w.rotate(45)
         w.translate(10, 10)
         w.scale(1, 1)
@@ -206,15 +206,15 @@ class WidgetsTest(unittest.TestCase):
 
         # Test all widgets
         widgs = [
-            self.menu.add.button('e', None),
-            self.menu.add.selector('e', [('1', 2),
-                                         ('The second', 2),
-                                         ('The final mode', 3)]),
-            self.menu.add.color_input('color', 'rgb'),
-            self.menu.add.label('nice'),
-            self.menu.add.image(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
-            self.menu.add.vertical_margin(10),
-            self.menu.add.text_input('nice')
+            menu.add.button('e', None),
+            menu.add.selector('e', [('1', 2),
+                                    ('The second', 2),
+                                    ('The final mode', 3)]),
+            menu.add.color_input('color', 'rgb'),
+            menu.add.label('nice'),
+            menu.add.image(pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)),
+            menu.add.vertical_margin(10),
+            menu.add.text_input('nice')
         ]
         for w in widgs:
             w.rotate(45)
@@ -222,10 +222,10 @@ class WidgetsTest(unittest.TestCase):
             w.scale(1.5, 1.5)
             w.resize(10, 10)
             w.flip(True, True)
-        self.menu.draw(surface)
+        menu.draw(surface)
 
         # If widget max width is enabled, disable scaling
-        w = self.menu.add.label('Text')
+        w = menu.add.label('Text')
         self.assertFalse(w._scale[0])  # Scaling is disabled
         w.scale(1.5, 1)
         self.assertTrue(w._scale[0])  # Scaling is enabled
@@ -233,13 +233,13 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(w._scale[0])
 
         # Translate
-        w = self.menu.add.label('text')
+        w = menu.add.label('text')
         x, y = w.get_position()
         w.translate(10, 10)
         xt, yt = w.get_position()
         self.assertNotEqual(xt - x, 10)
         self.assertNotEqual(yt - y, 10)
-        self.menu.render()
+        menu.render()
         xt, yt = w.get_position()
         self.assertEqual(xt - x, 10)
         self.assertEqual(yt - y, 10)
@@ -317,8 +317,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget visibility.
         """
-        self.menu.clear()
-        w = self.menu.add.label('Text')
+        menu = MenuUtils.generic_menu()
+        w = menu.add.label('Text')
         lasthash = w._last_render_hash
         w.hide()
         self.assertFalse(w.is_visible())
@@ -329,15 +329,15 @@ class WidgetsTest(unittest.TestCase):
         self.assertNotEqual(w._last_render_hash, lasthash)
 
         w = Button('title')
-        self.menu.add.generic_widget(w)
+        menu.add.generic_widget(w)
         w.hide()
 
     def test_font(self) -> None:
         """
         Test widget font.
         """
-        self.menu.clear()
-        w = self.menu.add.label('Text')  # type: Label
+        menu = MenuUtils.generic_menu()
+        w = menu.add.label('Text')  # type: Label
         self.assertRaises(AssertionError, lambda: w.update_font({}))
         w.update_font({'color': (255, 0, 0)})
 
@@ -345,38 +345,38 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget padding.
         """
-        self.menu.clear()
-        self.assertRaises(Exception, lambda: self.menu.add.button(0, pygame_menu.events.NONE, padding=-1))
-        self.assertRaises(Exception, lambda: self.menu.add.button(0, pygame_menu.events.NONE, padding='a'))
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding=-1))
+        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding='a'))
         self.assertRaises(Exception,
-                          lambda: self.menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 0, 0, 0)))
+                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 0, 0, 0)))
         self.assertRaises(Exception,
-                          lambda: self.menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, -1, 0)))
+                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, -1, 0)))
         self.assertRaises(Exception,
-                          lambda: self.menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 'a', 0)))
+                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 'a', 0)))
 
-        w = self.menu.add.button(0, pygame_menu.events.NONE, padding=25)
+        w = menu.add.button(0, pygame_menu.events.NONE, padding=25)
         p = w.get_padding()
         self.assertEqual(p[0], 25)
         self.assertEqual(p[1], 25)
         self.assertEqual(p[2], 25)
         self.assertEqual(p[3], 25)
 
-        w = self.menu.add.button(0, pygame_menu.events.NONE, padding=(25, 50, 75, 100))
+        w = menu.add.button(0, pygame_menu.events.NONE, padding=(25, 50, 75, 100))
         p = w.get_padding()
         self.assertEqual(p[0], 25)
         self.assertEqual(p[1], 50)
         self.assertEqual(p[2], 75)
         self.assertEqual(p[3], 100)
 
-        w = self.menu.add.button(0, pygame_menu.events.NONE, padding=(25, 50))
+        w = menu.add.button(0, pygame_menu.events.NONE, padding=(25, 50))
         p = w.get_padding()
         self.assertEqual(p[0], 25)
         self.assertEqual(p[1], 50)
         self.assertEqual(p[2], 25)
         self.assertEqual(p[3], 50)
 
-        w = self.menu.add.button(0, pygame_menu.events.NONE, padding=(25, 75, 50))
+        w = menu.add.button(0, pygame_menu.events.NONE, padding=(25, 75, 50))
         p = w.get_padding()
         self.assertEqual(p[0], 25)
         self.assertEqual(p[1], 75)
@@ -388,35 +388,34 @@ class WidgetsTest(unittest.TestCase):
         """
         Test menubar widget.
         """
-        self.menu.clear()
-        self.menu.enable()
+        menu = MenuUtils.generic_menu()
         for mode in [MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, MENUBAR_STYLE_TITLE_ONLY,
                      MENUBAR_STYLE_TITLE_ONLY_DIAGONAL]:
             mb = MenuBar('Menu', 500, (0, 0, 0), True, mode=mode)
-            self.menu.add.generic_widget(mb)
+            menu.add.generic_widget(mb)
         mb = MenuBar('Menu', 500, (0, 0, 0), True)
         mb.set_backbox_border_width(2)
         self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(1.5))
         self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(0))
         self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(-1))
         self.assertEqual(mb._backbox_border_width, 2)
-        self.menu.draw(surface)
-        self.menu.disable()
+        menu.draw(surface)
+        menu.disable()
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
         """
         Test selector widget.
         """
-        self.menu.clear()
-        selector = self.menu.add.selector('selector',
-                                          [('1 - Easy', 'EASY'),
-                                           ('2 - Medium', 'MEDIUM'),
-                                           ('3 - Hard', 'HARD')],
-                                          default=1)
-        self.menu.enable()
-        self.menu.draw(surface)
+        menu = MenuUtils.generic_menu()
+        selector = menu.add.selector('selector',
+                                     [('1 - Easy', 'EASY'),
+                                      ('2 - Medium', 'MEDIUM'),
+                                      ('3 - Hard', 'HARD')],
+                                     default=1)
+        menu.enable()
+        menu.draw(surface)
 
         selector.draw(surface)
         selector._selected = False
@@ -481,10 +480,10 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(g, cg)
             self.assertEqual(b, cb)
 
-        self.menu.clear()
+        menu = MenuUtils.generic_menu()
 
         # Base rgb
-        widget = self.menu.add.color_input('title', color_type='rgb', input_separator=',')
+        widget = menu.add.color_input('title', color_type='rgb', input_separator=',')
         widget.set_value((123, 234, 55))
         self.assertRaises(AssertionError,
                           lambda: widget.set_value('0,0,0'))
@@ -495,21 +494,21 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 123, 234, 55)
 
         # Test separator
-        widget = self.menu.add.color_input('color', color_type='rgb', input_separator='+')
+        widget = menu.add.color_input('color', color_type='rgb', input_separator='+')
         widget.set_value((34, 12, 12))
         self.assertEqual(widget._input_string, '34+12+12')
         self.assertRaises(AssertionError,
-                          lambda: self.menu.add.color_input('title', color_type='rgb', input_separator=''))
+                          lambda: menu.add.color_input('title', color_type='rgb', input_separator=''))
         self.assertRaises(AssertionError,
-                          lambda: self.menu.add.color_input('title', color_type='rgb', input_separator='  '))
+                          lambda: menu.add.color_input('title', color_type='rgb', input_separator='  '))
         self.assertRaises(AssertionError,
-                          lambda: self.menu.add.color_input('title', color_type='unknown'))
+                          lambda: menu.add.color_input('title', color_type='unknown'))
         for i in range(10):
             self.assertRaises(AssertionError,
-                              lambda: self.menu.add.color_input('title', color_type='rgb', input_separator=str(i)))
+                              lambda: menu.add.color_input('title', color_type='rgb', input_separator=str(i)))
 
         # Empty rgb
-        widget = self.menu.add.color_input('color', color_type='rgb', input_separator=',')
+        widget = menu.add.color_input('color', color_type='rgb', input_separator=',')
 
         PygameUtils.test_widget_key_press(widget)
         self.assertEqual(widget._cursor_position, 0)
@@ -577,14 +576,14 @@ class WidgetsTest(unittest.TestCase):
 
         # Assert invalid defaults rgb
         self.assertRaises(AssertionError,
-                          lambda: self.menu.add.color_input('title', color_type='rgb', default=(255, 255,)))
+                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255,)))
         self.assertRaises(AssertionError,
-                          lambda: self.menu.add.color_input('title', color_type='rgb', default=(255, 255)))
+                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255)))
         self.assertRaises(AssertionError,
-                          lambda: self.menu.add.color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
+                          lambda: menu.add.color_input('title', color_type='rgb', default=(255, 255, 255, 255)))
 
         # Assert hex widget
-        widget = self.menu.add.color_input('title', color_type='hex')
+        widget = menu.add.color_input('title', color_type='hex')
         self.assertEqual(widget._input_string, '#')
         self.assertEqual(widget._cursor_position, 1)
         _assert_invalid_color(widget)
@@ -623,26 +622,26 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 255, 255, 255)
 
         # Test hex formats
-        widget = self.menu.add.color_input('title', color_type='hex', hex_format='none')
+        widget = menu.add.color_input('title', color_type='hex', hex_format='none')
         widget.set_value('#ff00ff')
         self.assertEqual(widget.get_value(as_string=True), '#ff00ff')
         widget.set_value('#FF00ff')
         self.assertEqual(widget.get_value(as_string=True), '#FF00ff')
 
-        widget = self.menu.add.color_input('title', color_type='hex', hex_format='lower')
+        widget = menu.add.color_input('title', color_type='hex', hex_format='lower')
         widget.set_value('#FF00ff')
         self.assertEqual(widget.get_value(as_string=True), '#ff00ff')
         widget.set_value('AABBcc')
         self.assertEqual(widget.get_value(as_string=True), '#aabbcc')
 
-        widget = self.menu.add.color_input('title', color_type='hex', hex_format='upper')
+        widget = menu.add.color_input('title', color_type='hex', hex_format='upper')
         widget.set_value('#FF00ff')
         self.assertEqual(widget.get_value(as_string=True), '#FF00FF')
         widget.set_value('AABBcc')
         self.assertEqual(widget.get_value(as_string=True), '#AABBCC')
 
         # Test dynamic sizing
-        widget = self.menu.add.color_input('title', color_type='hex', hex_format='upper', dynamic_width=True)
+        widget = menu.add.color_input('title', color_type='hex', hex_format='upper', dynamic_width=True)
         self.assertEqual(widget.get_width(), 200)
         widget.set_value('#ffffff')
         width = 342
@@ -659,7 +658,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
         self.assertEqual(widget.get_width(), 200)
 
-        widget = self.menu.add.color_input('title', color_type='hex', hex_format='upper', dynamic_width=False)
+        widget = menu.add.color_input('title', color_type='hex', hex_format='upper', dynamic_width=False)
         self.assertEqual(widget.get_width(), width)
         widget.set_value('#ffffff')
         self.assertEqual(widget.get_width(), width)
@@ -668,17 +667,17 @@ class WidgetsTest(unittest.TestCase):
         """
         Test label widget.
         """
-        self.menu.clear()
-        label = self.menu.add.label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
-                                    'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
-                                    'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
-                                    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
-                                    'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in '
-                                    'culpa qui officia deserunt mollit anim id est laborum.',
-                                    max_char=33,
-                                    margin=(3, 5),
-                                    align=_locals.ALIGN_LEFT,
-                                    font_size=3)
+        menu = MenuUtils.generic_menu()
+        label = menu.add.label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+                               'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
+                               'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+                               'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
+                               'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in '
+                               'culpa qui officia deserunt mollit anim id est laborum.',
+                               max_char=33,
+                               margin=(3, 5),
+                               align=_locals.ALIGN_LEFT,
+                               font_size=3)
         self.assertEqual(len(label), 15)
         w = label[0]
         self.assertFalse(w.is_selectable)
@@ -700,26 +699,26 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(label[i].get_title(), labeltext[i])
 
         # Split label
-        label = self.menu.add.label('This label should split.\nIn two lines')
+        label = menu.add.label('This label should split.\nIn two lines')
         self.assertEqual(label[0].get_title(), 'This label should split.')
         self.assertEqual(label[1].get_title(), 'In two lines')
 
         # Split label, but also with maxchar enabled
-        label = self.menu.add.label(
+        label = menu.add.label(
             'This label should split, this line is really long so it should split.\nThe second line', max_char=40)
         self.assertEqual(label[0].get_title(), 'This label should split, this line is')
         self.assertEqual(label[1].get_title(), 'really long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
 
         # Split label with -1 maxchar
-        label = self.menu.add.label(
+        label = menu.add.label(
             'This label should split, this line is really long so it should split.\nThe second line', max_char=-1)
         self.assertEqual(label[0].get_title(), 'This label should split, this line is really')
         self.assertEqual(label[1].get_title(), 'long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
 
         # Add underline
-        label = self.menu.add.label('nice')
+        label = menu.add.label('nice')
         self.assertEqual(label._decorator._total_decor(), 0)
         label.add_underline((0, 0, 0), 1, 1, force_render=True)
         self.assertEqual(label._decorator._total_decor(), 1)
@@ -728,20 +727,20 @@ class WidgetsTest(unittest.TestCase):
         """
         Test TextInput widget.
         """
-        self.menu.clear()
+        menu = MenuUtils.generic_menu()
 
         # Assert bad settings
         self.assertRaises(ValueError,
-                          lambda: self.menu.add.text_input('title',
-                                                           input_type=pygame_menu.locals.INPUT_FLOAT,
-                                                           default='bad'))
+                          lambda: menu.add.text_input('title',
+                                                      input_type=pygame_menu.locals.INPUT_FLOAT,
+                                                      default='bad'))
         self.assertRaises(ValueError,  # Default and password cannot coexist
-                          lambda: self.menu.add.text_input('title',
-                                                           password=True,
-                                                           default='bad'))
+                          lambda: menu.add.text_input('title',
+                                                      password=True,
+                                                      default='bad'))
 
         # Create text input widget
-        textinput = self.menu.add.text_input('title', input_underline='_')
+        textinput = menu.add.text_input('title', input_underline='_')
         textinput.set_value('new_value')  # No error
         textinput._selected = False
         textinput.draw(surface)
@@ -751,7 +750,7 @@ class WidgetsTest(unittest.TestCase):
         textinput.clear()
         self.assertEqual(textinput.get_value(), '')
 
-        passwordinput = self.menu.add.text_input('title', password=True, input_underline='_')
+        passwordinput = menu.add.text_input('title', password=True, input_underline='_')
         self.assertRaises(ValueError,  # Password cannot be set
                           lambda: passwordinput.set_value('new_value'))
         passwordinput.set_value('')  # No error
@@ -774,9 +773,9 @@ class WidgetsTest(unittest.TestCase):
         textinput.draw(surface)
 
         # Test maxchar and undo/redo
-        textinput = self.menu.add.text_input('title',
-                                             input_underline='_',
-                                             maxchar=20)
+        textinput = menu.add.text_input('title',
+                                        input_underline='_',
+                                        maxchar=20)
         textinput.set_value('the size of this textinput is way greater than the limit')
         self.assertEqual(textinput.get_value(), 'eater than the limit')  # same as maxchar
         self.assertEqual(textinput._cursor_position, 20)
@@ -793,10 +792,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), 'eater than the limit')
 
         # Test copy/paste
-        textinput_nocopy = self.menu.add.text_input('title',
-                                                    input_underline='_',
-                                                    maxwidth=20,
-                                                    copy_paste_enable=False)
+        textinput_nocopy = menu.add.text_input('title',
+                                               input_underline='_',
+                                               maxwidth=20,
+                                               copy_paste_enable=False)
         textinput_nocopy.set_value('this cannot be copied')
         textinput_nocopy._copy()
         textinput_nocopy._paste()
@@ -1075,7 +1074,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget attributes.
         """
-        widget = self.menu.add.label('epic')
+        menu = MenuUtils.generic_menu()
+        widget = menu.add.label('epic')
         self.assertFalse(widget.has_attribute('epic'))
         self.assertRaises(IndexError, lambda: widget.remove_attribute('epic'))
         widget.set_attribute('epic', True)
@@ -1091,8 +1091,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test drawing callback.
         """
-        self.menu.clear()
-        self.menu.enable()
+        menu = MenuUtils.generic_menu()
 
         def call(widget, _) -> None:
             """
@@ -1100,14 +1099,14 @@ class WidgetsTest(unittest.TestCase):
             """
             widget.set_attribute('attr', True)
 
-        btn = self.menu.add.button('btn', None)
+        btn = menu.add.button('btn', None)
         callid = btn.add_draw_callback(call)
         self.assertEqual(btn.get_attribute('attr', False), False)
-        self.menu.draw(surface)
+        menu.draw(surface)
         self.assertEqual(btn.get_attribute('attr', False), True)
         btn.remove_draw_callback(callid)
         self.assertRaises(IndexError, lambda: btn.remove_draw_callback(callid))  # Already removed
-        self.menu.disable()
+        menu.disable()
 
     def test_update_callback(self) -> None:
         """
@@ -1182,8 +1181,7 @@ class WidgetsTest(unittest.TestCase):
         """
         Test horizontal margin widget.
         """
-        menu = MenuUtils.generic_menu()
-        w = menu.add.horizontal_margin(999)
+        w = pygame_menu.widgets.HMargin(999)
         w._render()
         self.assertEqual(w.get_rect().width, 999)
         self.assertEqual(w.get_rect().height, 0)
@@ -1246,7 +1244,6 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(surf.get_height(), 0)
 
         wid._apply_transforms()
-        wid.draw_selection(surface)
 
         wid.hide()
         self.assertFalse(wid.is_visible())
@@ -1511,6 +1508,134 @@ class WidgetsTest(unittest.TestCase):
         Test frame widget containers.
         """
         menu = MenuUtils.generic_menu()
-        frame = menu.add.frame(600, 300)
-        self.assertEqual(frame.get_width(), 600)
-        self.assertEqual(frame.get_height(), 300)
+
+        menu.add.button('rr', None)
+        frame = menu.add.frame_h(250, 100, background_color=(200, 0, 0))
+        self.assertEqual(frame.get_width(), 250)
+        self.assertEqual(frame.get_height(), 100)
+        btn = menu.add.button('nice1', None)
+        menu.add.button('44', None)
+        frame2 = menu.add.frame_v(50, 250, background_color=(0, 0, 200))
+        btn2 = menu.add.button('nice2', None)
+        btn3 = menu.add.button('nice3', None)
+
+        frame11 = menu.add.frame_v(50, 90, background_color=(0, 200, 0))
+
+        btn11 = menu.add.button('11', None)
+        btn12 = menu.add.button('12', None)
+
+        frame11.pack(btn11)
+        frame11.pack(btn12)
+
+        frame.pack(btn)
+        frame.pack(btn2, pygame_menu.locals.ALIGN_CENTER, vertical_position=pygame_menu.locals.POSITION_CENTER)
+        frame.pack(frame11, pygame_menu.locals.ALIGN_RIGHT, vertical_position=pygame_menu.locals.POSITION_SOUTH)
+
+        frame2.pack(menu.add.button('1', None))
+        frame2.pack(menu.add.button('2', None), alignment=pygame_menu.locals.ALIGN_CENTER)
+        frame2.pack(menu.add.button('3', None), alignment=pygame_menu.locals.ALIGN_RIGHT)
+
+        for w in frame.get_widgets():
+            w.get_selection_effect().zero_margin()
+        for w in frame2.get_widgets():
+            w.get_selection_effect().zero_margin()
+
+        menu.render()
+        wid = menu.get_widgets()
+        self.assertEqual(wid[0].get_col_row_index(), (0, 0, 0))
+        self.assertEqual(wid[1].get_col_row_index(), (0, 1, 1))
+        self.assertEqual(wid[2].get_col_row_index(), (0, 1, 2))
+        self.assertEqual(wid[3].get_col_row_index(), (0, 1, 3))
+        self.assertEqual(wid[4].get_col_row_index(), (0, 1, 4))
+        self.assertEqual(wid[5].get_col_row_index(), (0, 2, 5))
+        self.assertEqual(wid[6].get_col_row_index(), (0, 3, 6))
+        self.assertEqual(wid[7].get_col_row_index(), (0, 3, 7))
+        self.assertEqual(wid[8].get_col_row_index(), (0, 3, 8))
+        self.assertEqual(wid[9].get_col_row_index(), (0, 3, 9))
+        self.assertEqual(wid[10].get_col_row_index(), (0, 4, 10))
+        self.assertEqual(wid[11].get_col_row_index(), (0, 1, 11))
+        self.assertEqual(wid[12].get_col_row_index(), (0, 1, 12))
+
+        self.assertEqual(btn3.get_frame(), None)
+        self.assertEqual(btn2.get_frame(), frame)
+        self.assertEqual(btn2._translate, (88, 29))
+        self.assertEqual(btn2.is_floating(), True)
+        menu.remove_widget(btn2)
+        self.assertEqual(btn2.get_frame(), None)
+        self.assertEqual(btn2._translate, (0, 0))
+        self.assertFalse(btn2.is_floating())
+
+        wid = menu.get_widgets()
+        if pygame.version.vernum[0] >= 2:
+            self.assertEqual(wid[0].get_position(), (288, 6))
+            self.assertEqual(wid[1].get_position(), (175, 57))
+            self.assertEqual(wid[2].get_position(), (375, 67))
+            self.assertEqual(wid[3].get_position(), (175, 57))
+            self.assertEqual(wid[4].get_position(), (283, 167))
+            self.assertEqual(wid[5].get_position(), (275, 218))
+            self.assertEqual(wid[6].get_position(), (291, 259))
+            self.assertEqual(wid[7].get_position(), (308, 300))
+            self.assertEqual(wid[8].get_position(), (275, 218))
+            self.assertEqual(wid[9].get_position(), (263, 478))
+            self.assertEqual(wid[10].get_position(), (375, 67))
+            self.assertEqual(wid[11].get_position(), (375, 108))
+        else:
+            self.assertEqual(wid[0].get_position(), (288, 6))
+            self.assertEqual(wid[1].get_position(), (175, 58))
+            self.assertEqual(wid[2].get_position(), (375, 68))
+            self.assertEqual(wid[3].get_position(), (175, 58))
+            self.assertEqual(wid[4].get_position(), (283, 168))
+            self.assertEqual(wid[5].get_position(), (275, 220))
+            self.assertEqual(wid[6].get_position(), (291, 262))
+            self.assertEqual(wid[7].get_position(), (308, 304))
+            self.assertEqual(wid[8].get_position(), (275, 220))
+            self.assertEqual(wid[9].get_position(), (263, 480))
+            self.assertEqual(wid[10].get_position(), (375, 68))
+            self.assertEqual(wid[11].get_position(), (375, 110))
+
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        menu = MenuUtils.generic_menu(theme=theme)
+        menu.get_theme().widget_selection_effect.zero_margin()
+        menu.get_theme().widget_font_size = 18
+
+        frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
+        frame_title = menu.add.frame_h(250, 30, background_color=(180, 180, 180))
+        frame_content = menu.add.frame_v(250, 120)
+        frame.pack(frame_title)
+        frame.pack(frame_content)
+
+        frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
+        closebtn = frame_title.pack(
+            menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(160, 160, 160)),
+            alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(0, 2))
+        frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
+                           alignment=pygame_menu.locals.ALIGN_CENTER)
+        frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255))
+        frame_content.pack(frame_numbers)
+        for i in range(9):
+            frame_numbers.pack(menu.add.button(i, None, font_color=(5 * i, 11 * i, 13 * i), font_size=30),
+                               alignment=pygame_menu.locals.ALIGN_CENTER)
+        self.assertRaises(AssertionError, lambda: frame_numbers.pack(closebtn))
+        frame_content.pack(menu.add.vertical_margin(15))
+        frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
+                           alignment=pygame_menu.locals.ALIGN_CENTER)
+        menu.render()
+
+        self.assertEqual(menu.get_width(widget=True), 250)
+        self.assertEqual(menu.get_height(widget=True), 150)
+        self.assertEqual(menu._widget_offset[1], 97)
+        self.assertEqual(frame_numbers.get_widgets()[0]._translate, (48, 0))
+        if pygame.version.vernum[0] >= 2:
+            self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 153))
+        else:
+            self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 154))
+        self.assertEqual(frame_numbers._recursive_render, 0)
+        previwdg = frame_numbers.get_widgets()
+        self.assertEqual(frame_numbers._control_widget, previwdg[0])
+        frame_numbers.unpack(frame_numbers._control_widget)
+        self.assertRaises(ValueError, lambda: frame_numbers.unpack(previwdg[0]))
+        self.assertEqual(frame_numbers._control_widget, previwdg[1])
+        for w in frame_numbers.get_widgets():
+            frame_numbers.unpack(w)
+        self.assertEqual(len(frame_numbers._widgets), 0)
+        self.assertRaises(AssertionError, lambda: frame_numbers.unpack(previwdg[0]))
