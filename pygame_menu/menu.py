@@ -1852,11 +1852,12 @@ class Menu(object):
         """
         return self._top._enabled
 
-    def _move_selected_left_right(self, pos: int) -> None:
+    def _move_selected_left_right(self, pos: int, apply_sound: bool = True) -> None:
         """
         Move selected to left/right position (column support).
 
         :param pos: If ``+1`` selects right column, ``-1`` left column
+        :param apply_sound: Apply sound on widget selection
         :return: None
         """
         if not (pos == 1 or pos == -1):
@@ -1864,9 +1865,9 @@ class Menu(object):
 
         def _default() -> None:
             if pos == -1:
-                self._select(0, 1)
+                self._select(0, 1, apply_sound)
             else:
-                self._select(-1, -1)
+                self._select(-1, -1, apply_sound)
 
         if self._used_columns > 1:
 
@@ -1887,7 +1888,7 @@ class Menu(object):
             for widget in self._widget_columns[col]:
                 c, r, i = widget.get_col_row_index()
                 if r == row:
-                    return self._select(i, pos)
+                    return self._select(i, pos, apply_sound)
 
             # If no widget is in that column
             if len(self._widget_columns[col]) == 0:
@@ -1896,7 +1897,7 @@ class Menu(object):
             # If the number of rows in that column is less than current, select the first one
             first_widget = self._widget_columns[col][0]
             _, _, i = first_widget.get_col_row_index()
-            self._select(i, pos)
+            self._select(i, pos, apply_sound)
 
         else:
             _default()
@@ -2005,29 +2006,29 @@ class Menu(object):
                         continue
 
                     if event.key == _controls.KEY_MOVE_DOWN:
-                        self._current._select(self._current._index - 1)
+                        self._current._select(self._current._index - 1, apply_sound=False)
                         self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_MOVE_UP:
-                        self._current._select(self._current._index + 1)
+                        self._current._select(self._current._index + 1, apply_sound=False)
                         self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_LEFT:
                         # If current selected in within a horizontal frame
                         if selected_widget_in_frame_horizontal and not selected_widget_first_in_frame:
-                            self._current._select(self._current._index - 1)
+                            self._current._select(self._current._index - 1, apply_sound=False)
                             self._current._sound.play_key_add()
                         elif self._current._used_columns > 1:
-                            self._current._move_selected_left_right(-1)
+                            self._current._move_selected_left_right(-1, apply_sound=False)
                             self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_RIGHT:
                         # If current selected in within a horizontal frame
                         if selected_widget_in_frame_horizontal and not selected_widget_last_in_frame:
-                            self._current._select(self._current._index + 1)
+                            self._current._select(self._current._index + 1, apply_sound=False)
                             self._current._sound.play_key_add()
                         elif self._current._used_columns > 1:
-                            self._current._move_selected_left_right(1)
+                            self._current._move_selected_left_right(1, apply_sound=False)
                             self._current._sound.play_key_add()
 
                     elif event.key == _controls.KEY_BACK and self._top._prev is not None:
@@ -2563,7 +2564,7 @@ class Menu(object):
             menu._onbeforeopen(current, menu)
 
         # Select the first widget
-        self._select(0, 1)
+        self._current._select(0, dwidget=1, apply_sound=False)
 
         # Re-render menu
         self._check_mouseleave(force=True)
@@ -2610,7 +2611,7 @@ class Menu(object):
         self._current._stats.reset += 1
         return self._current
 
-    def _select(self, new_index: int, dwidget: int = 0) -> None:
+    def _select(self, new_index: int, dwidget: int = 0, apply_sound: bool = True) -> None:
         """
         Select the widget at the given index and unselect others. Selection forces
         rendering of the widget. Also play widget selection sound. This is applied
@@ -2618,6 +2619,7 @@ class Menu(object):
 
         :param new_index: Widget index
         :param dwidget: Direction to search if ``new_index`` widget is non selectable
+        :param apply_sound: Apply widget sound if selected
         :return: None
         """
         if len(self._widgets) == 0:
@@ -2659,10 +2661,10 @@ class Menu(object):
 
                 # A selectable widget has been found within frame
                 if min_index != -1 and not same_frame and min_index != self._index:
-                    return self._select(min_index, dwidget)
+                    return self._select(min_index, dwidget, apply_sound)
 
             if self._index >= 0:  # There's at least 1 selectable option
-                return self._select(new_index + dwidget, dwidget)
+                return self._select(new_index + dwidget, dwidget, apply_sound)
             else:  # No selectable options, quit
                 return
 
@@ -2690,7 +2692,7 @@ class Menu(object):
             self._scroll.scroll_to_rect(rect)
 
         # Play widget selection sound
-        if old_widget != new_widget:
+        if old_widget != new_widget and apply_sound:
             self._sound.play_widget_selection()
         self._stats.select += 1
 
