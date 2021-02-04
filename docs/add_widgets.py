@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'URL'
+EXAMPLE = 'FRAME'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -100,21 +100,25 @@ if EXAMPLE == 'IMAGE':
     image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
     menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
     menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
+
 elif EXAMPLE == 'VERTICALMARGIN':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical spacer')
     menu.add.label('Text #1')
     menu.add.vertical_margin(100)
     menu.add.label('Text #2')
+
 elif EXAMPLE == 'TOGGLESWITCH':
     menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Switches')
     menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
     menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
                            state_text=('Apagado', 'Encencido'), state_text_font_size=18)
+
 elif EXAMPLE == 'TEXTINPUT':
     menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Text Entry')
     menu.add.text_input('First name: ', default='John')
     menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
     menu.add.text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
+
 elif EXAMPLE == 'LABEL':
     menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
     HELP = "Press ESC to enable/disable Menu " \
@@ -122,11 +126,13 @@ elif EXAMPLE == 'LABEL':
            "Press UP/DOWN to move through Menu " \
            "Press LEFT/RIGHT to move through Selectors."
     menu.add.label(HELP, max_char=-1, font_size=20)
+
 elif EXAMPLE == 'COLORINPUT':
     menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
     menu.add.color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), font_size=18)
     menu.add.color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
     menu.add.color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
+
 elif EXAMPLE == 'SELECTOR':
     menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')
     selector = menu.add.selector(
@@ -139,6 +145,7 @@ elif EXAMPLE == 'SELECTOR':
         onchange=change_background_color  # User changes value with left/right keys
     )
     selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
+
 elif EXAMPLE == 'BUTTON':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Button')
     about_menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'About')
@@ -149,11 +156,36 @@ elif EXAMPLE == 'BUTTON':
     menu.add.button('Exit', pygame_menu.events.EXIT,  # Link to exit action
                     align=pygame_menu.locals.ALIGN_RIGHT)
     btn.select(update_menu=True)
+
 elif EXAMPLE == 'URL':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Url', widget_font_size=18)
     menu.add.url('https://github.com/ppizarror/pygame-menu')
     menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
     menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
+
+elif EXAMPLE == 'FRAME':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Frames', widget_font_size=18)
+    menu.get_theme().widget_selection_effect.zero_margin()
+    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
+    frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180))
+    frame_content = menu.add.frame_v(250, 120)
+    frame.pack(frame_title)
+    frame.pack(frame_content)
+
+    frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
+    frame_title.pack(menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
+                     alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
+    frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
+                       alignment=pygame_menu.locals.ALIGN_CENTER)
+    frame_numbers = menu.add.frame_h(250, 41)
+    frame_content.pack(frame_numbers)
+    for i in range(9):
+        frame_numbers.pack(menu.add.button(i, None, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
+                           alignment=pygame_menu.locals.ALIGN_CENTER)
+    frame_content.pack(menu.add.vertical_margin(15))
+    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
+                       alignment=pygame_menu.locals.ALIGN_CENTER)
+
 else:
     raise ValueError('unknown example "{}"'.format(EXAMPLE))
 
