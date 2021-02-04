@@ -33,7 +33,8 @@ __all__ = ['Label']
 
 import pygame
 from pygame_menu.widgets.core import Widget
-from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional
+from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType
+from pygame_menu.utils import assert_color
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -43,8 +44,9 @@ class Label(Widget):
 
     :param title: Label title/text
     :param label_id: Label ID
-    :param onselect: Function when selecting the widget
+    :param onselect: Function when selecting the label widget
     """
+    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
 
     def __init__(self,
                  title: Any,
@@ -56,6 +58,36 @@ class Label(Widget):
             onselect=onselect,
             widget_id=label_id
         )
+        self._last_underline = ['', None]
+
+    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Widget':
+        """
+        Adds a underline to text. This is added if widget is rendered
+
+        :param color: Underline color
+        :param offset: Underline offset
+        :param width: Underline width
+        :param force_render: If ``True`` force widget render after addition
+        :return: Self reference
+        """
+        assert_color(color)
+        assert isinstance(offset, int)
+        assert isinstance(width, int) and width > 0
+        self._last_underline[1] = (color, offset, width)
+        if force_render:
+            self._force_render()
+        return self
+
+    def remove_underline(self) -> 'Widget':
+        """
+        Remove underline of the label.
+
+        :return: Self reference
+        """
+        if self._last_underline[0] != '':
+            self._decorator.remove(self._last_underline[0])
+            self._last_underline[0] = ''
+        return self
 
     def _apply_font(self) -> None:
         pass
@@ -66,11 +98,28 @@ class Label(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._title, self._font_color, self._visible):
+        if not self._render_hash_changed(self._title, self._font_color, self._visible, self._last_underline[1]):
             return True
+
+        # Render surface
         self._surface = self._render_string(self._title, self._font_color)
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
+
+        # Add underline if enabled
+        self.remove_underline()
+        if self._last_underline[1] is not None:
+            w = self._surface.get_width()
+            h = self._surface.get_height()
+            color, offset, width = self._last_underline[1]
+            if w > 0 and h > 0:
+                self._last_underline[0] = self._decorator.add_line(
+                    pos1=(-w / 2, h / 2 + offset),
+                    pos2=(w / 2, h / 2 + offset),
+                    color=color,
+                    width=width
+                )
+
         self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:

@@ -168,6 +168,8 @@ class ThemeTest(unittest.TestCase):
         t._get({}, '', 'color_image_none', [11, 1, 0, 55])
         t._get({}, '', 'color_image_none', None)
         t._get({}, '', 'color_image_none', img)
+        t._get({}, '', 'cursor', None)
+        t._get({}, '', 'cursor', 1)
 
         self.assertTrue(t._get({}, '', 'callable', dummy)())
 
@@ -189,3 +191,4 @@ class ThemeTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2.1', (1, 1)))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2', (1, 1, 1)))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple3', (1, 1, 1, 1)))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'cursor', 'hi'))

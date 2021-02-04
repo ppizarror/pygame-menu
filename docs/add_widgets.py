@@ -47,24 +47,26 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'TOGGLESWITCH'
+EXAMPLE = 'URL'
 
 # Create example
 menu: 'pygame_menu.Menu'
 widgets: List['pygame_menu.widgets.Widget']
 
 
-def make_menu(menu_theme: 'pygame_menu.themes.Theme', title: str) -> 'pygame_menu.Menu':
+def make_menu(menu_theme: 'pygame_menu.themes.Theme', title: str,
+              widget_font_size: int = 25) -> 'pygame_menu.Menu':
     """
     Make menu.
 
     :param menu_theme: Menu theme object
     :param title: Menu title
+    :param widget_font_size: Theme widget font size
     :return: Menu object
     """
     menu_theme = menu_theme.copy()
     menu_theme.title_font_size = 35
-    menu_theme.widget_font_size = 25
+    menu_theme.widget_font_size = widget_font_size
 
     return pygame_menu.Menu(
         column_min_width=400,
@@ -147,6 +149,11 @@ elif EXAMPLE == 'BUTTON':
     menu.add.button('Exit', pygame_menu.events.EXIT,  # Link to exit action
                     align=pygame_menu.locals.ALIGN_RIGHT)
     btn.select(update_menu=True)
+elif EXAMPLE == 'URL':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Url', widget_font_size=18)
+    menu.add.url('https://github.com/ppizarror/pygame-menu')
+    menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
+    menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
 else:
     raise ValueError('unknown example "{}"'.format(EXAMPLE))
 

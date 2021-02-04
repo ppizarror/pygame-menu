@@ -9,3 +9,4 @@ ToggleSwitch
     :members:
     :show-inheritance:
     :inherited-members:
+    :exclude-members: scale, resize, set_max_width, set_max_height, rotate, flip,

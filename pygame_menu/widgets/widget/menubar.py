@@ -107,6 +107,7 @@ class MenuBar(Widget):
     _background_color: ColorType
     _box_mode: int
     _modify_scrollarea: bool
+    _mouseoverback: bool
     _offsetx: NumberType
     _offsety: NumberType
     _polygon_pos: Any
@@ -146,6 +147,7 @@ class MenuBar(Widget):
         self._background_color = background_color
         self._box_mode = 0
         self._modify_scrollarea = modify_scrollarea
+        self._mouseoverback = False
         self._offsetx = 0
         self._offsety = 0
         self._polygon_pos = None
@@ -229,23 +231,28 @@ class MenuBar(Widget):
     def _draw_border(self, surface: 'pygame.Surface') -> None:
         pass
 
+    def _backbox_visible(self) -> bool:
+        """
+        Returns ``True`` if backbox is visible.
+
+        :return: Bool
+        """
+        # The following check belongs to the case if the Menu displays a "x" button to close
+        # the Menu, but onclose Menu method is None (Nothing is executed), then the button will
+        # not be displayed
+        # noinspection PyProtectedMember
+        return self._mouse_enabled and self._backbox and \
+               not (self._box_mode == _MODE_CLOSE and self.get_menu()._onclose is None)
+
     def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
             gfxdraw.filled_polygon(surface, self._polygon_pos, self._background_color)
 
         # Draw backbox if enabled
-        if self._mouse_enabled and self._backbox:
-
-            # The following check belongs to the case if the Menu displays a "x" button to close
-            # the Menu, but onclose Menu method is None (Nothing is executed), then the button will
-            # not be displayed
-            # noinspection PyProtectedMember
-            if self._box_mode == _MODE_CLOSE and self.get_menu()._onclose is None:
-                pass
-            else:
-                # noinspection PyArgumentList
-                pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, self._backbox_border_width)
-                pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
+        if self._backbox_visible():
+            # noinspection PyArgumentList
+            pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, self._backbox_border_width)
+            pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
 
         surface.blit(self._surface,
                      (self._rect.topleft[0] + self._offsetx,
@@ -470,17 +477,33 @@ class MenuBar(Widget):
 
         for event in events:
 
-            if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self._sound.play_click_mouse()
                     self.apply()
                     updated = True
+                    if self._backbox_visible() and self._mouseoverback:
+                        self._mouseoverback = False
+                        self.mouseleave(event)
 
             elif self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
                 if event.button == _controls.JOY_BUTTON_BACK:
                     self._sound.play_key_del()
                     self.apply()
                     updated = True
+
+            # Check mouse over backrect and visible
+            elif self._backbox_visible() and \
+                    (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION):
+                if self._backbox_rect.collidepoint(*event.pos):
+                    if not self._mouseoverback:
+                        self._mouseoverback = True
+                        self.mouseover(event)
+                else:
+                    if self._mouseoverback:
+                        self._mouseoverback = False
+                        self.mouseleave(event)
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()

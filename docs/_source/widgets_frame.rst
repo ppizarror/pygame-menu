@@ -1,11 +1,11 @@
 
-.. module:: pygame_menu.widgets.widget.none
+.. module:: pygame_menu.widgets.widget.frame
 
-==========
-NoneWidget
-==========
+=====
+Frame
+=====
 
-.. autoclass:: pygame_menu.widgets.NoneWidget
+.. autoclass:: pygame_menu.widgets.Frame
     :members:
     :show-inheritance:
     :inherited-members:

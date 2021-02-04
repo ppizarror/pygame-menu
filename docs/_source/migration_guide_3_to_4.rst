@@ -25,7 +25,7 @@ Migration Guide - v3 to v4
 - Renamed Widget ``_force_menu_surface_update```method to ``force_menu_surface_update``.
 - Renamed Widget ``expand_background_inflate_to_selection_effect`` method to ``background_inflate_to_selection_effect``.
 - Widget ``selected`` property is now private. Use ``is_selected()`` to check selection status, and ``select(...)`` to modify it.
-- Widget ``shadow_offset`` now cannot be ``None``, only ``int`` or ``float`` allowed.
+- Widget ``shadow_offset`` now cannot be ``None`` or ``float``, only ``int`` allowed.
 - Widget ``sound`` property is now private. Use ``.get_sound()`` or ``.set_sound()``.
 - Widget ``visible`` property is now private. Use ``.is_visible()`` to check visibility status, and ``.show()`` or ``.hide()`` to modify it.
 - Widget ``VMargin`` now inherits from ``NoneWidget``.

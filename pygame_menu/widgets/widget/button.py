@@ -33,10 +33,10 @@ __all__ = ['Button']
 
 import pygame
 import pygame_menu
-from pygame_menu.utils import is_callable
+from pygame_menu.utils import is_callable, assert_color
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
-from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional
+from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional, ColorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -57,6 +57,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
+    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
     to_menu: bool
 
     def __init__(self,
@@ -74,6 +75,7 @@ class Button(Widget):
             widget_id=button_id
         )
         self.to_menu = False  # True if the button opens a new Menu
+        self._last_underline = ['', None]
 
     def _apply_font(self) -> None:
         pass
@@ -92,7 +94,7 @@ class Button(Widget):
         """
         if callback is not None:
             assert is_callable(callback), 'callback must be callable (function-type) or None'
-        self._on_select = callback
+        self._onselect = callback
 
     def update_callback(self, callback: Callable, *args) -> None:
         """
@@ -111,7 +113,7 @@ class Button(Widget):
         assert is_callable(callback), 'only callable (function-type) are allowed'
 
         # If return is a Menu object, remove it from submenus list
-        if self._menu is not None and self._on_return is not None and self.to_menu:
+        if self._menu is not None and self._onreturn is not None and self.to_menu:
             assert len(self._args) == 1
             submenu = self._args[0]  # Menu
             assert self._menu.in_submenu(submenu), \
@@ -121,17 +123,64 @@ class Button(Widget):
             self.to_menu = False
 
         self._args = args or []
-        self._on_return = callback
+        self._onreturn = callback
+
+    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Widget':
+        """
+        Adds a underline to text. This is added if widget is rendered
+
+        :param color: Underline color
+        :param offset: Underline offset
+        :param width: Underline width
+        :param force_render: If ``True`` force widget render after addition
+        :return: Self reference
+        """
+        assert_color(color)
+        assert isinstance(offset, int)
+        assert isinstance(width, int) and width > 0
+        self._last_underline[1] = (color, offset, width)
+        if force_render:
+            self._force_render()
+        return self
+
+    def remove_underline(self) -> 'Widget':
+        """
+        Remove underline of the button.
+
+        :return: Self reference
+        """
+        if self._last_underline[0] != '':
+            self._decorator.remove(self._last_underline[0])
+            self._last_underline[0] = ''
+        return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly):
+        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
+                                         self._last_underline[1]):
             return True
+
+        # Render surface
         self._surface = self._render_string(self._title, self.get_font_color_status())
         self._apply_transforms()
         self._rect.width, self._rect.height = self._surface.get_size()
+
+        # Add underline if enabled
+        self.remove_underline()
+        if self._last_underline[1] is not None:
+            w = self._surface.get_width()
+            h = self._surface.get_height()
+            color, offset, width = self._last_underline[1]
+            if w > 0 and h > 0:
+                self._last_underline[0] = self._decorator.add_line(
+                    pos1=(-w / 2, h / 2 + offset),
+                    pos2=(w / 2, h / 2 + offset),
+                    color=color,
+                    width=width
+                )
+
         self.force_menu_surface_update()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
@@ -142,14 +191,15 @@ class Button(Widget):
 
         for event in events:
 
-            if event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
+            if self._keyboard_enabled and event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
                     self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
                     event.button == _controls.JOY_BUTTON_SELECT:
                 self._sound.play_open_menu()
                 self.apply()
                 updated = True
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 self._sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()

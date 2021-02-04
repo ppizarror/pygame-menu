@@ -401,7 +401,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         key = ''  # Pressed key
         if self._color_type == COLORINPUT_TYPE_RGB:
             for event in events:
-                if event.type == pygame.KEYDOWN:
+                if self._keyboard_enabled and event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
                     if not check_key_pressed_valid(event):
@@ -478,7 +478,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._format_hex()
 
             for event in events:
-                if event.type == pygame.KEYDOWN:
+                if self._keyboard_enabled and event.type == pygame.KEYDOWN:
 
                     # Check if any key is pressed, if True the event is invalid
                     if not check_key_pressed_valid(event):

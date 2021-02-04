@@ -42,7 +42,8 @@ from pygame_menu._types import PaddingType, ColorType, Tuple2IntType, Optional, 
 # noinspection PyMissingOrEmptyDocstring
 class NoneWidget(Widget):
     """
-    None widget. Useful if used for filling column/row layout.
+    None widget. Useful if used for filling column/row layout. None widget
+    don't accept padding, margin, cannot be selected or updated.
 
     .. note::
 
@@ -61,6 +62,9 @@ class NoneWidget(Widget):
 
     def set_padding(self, padding: PaddingType) -> 'Widget':
         return self
+
+    def get_selected_time(self) -> NumberType:
+        return 0
 
     def set_title(self, title: str) -> 'Widget':
         return self
@@ -156,7 +160,11 @@ class NoneWidget(Widget):
     def set_sound(self, sound: 'pygame_menu.Sound') -> 'Widget':
         return self
 
-    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True) -> 'Widget':
+    def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
+        return self
+
+    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True,
+                     keyboard: bool = True) -> 'Widget':
         return self
 
     def set_value(self, value: Any) -> None:

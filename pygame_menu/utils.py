@@ -36,6 +36,7 @@ __all__ = [
     'assert_list_vector',
     'assert_orientation',
     'assert_position',
+    'assert_cursor',
     'assert_vector',
     'check_key_pressed_valid',
     'is_callable',
@@ -86,6 +87,19 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
         assert 0 <= color[3] <= 255, \
             'opacity of color {0} must be an integer between 0 and 255; where ' \
             '0 is fully-transparent and 255 is fully-opaque'.format(color)
+
+
+def assert_cursor(cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> None:
+    """
+    Assert a given cursor is valid.
+
+    :param cursor: Cursor object
+    :return: None
+    """
+    if hasattr(pygame.cursors, 'Cursor'):
+        assert isinstance(cursor, (int, type(pygame.cursors.Cursor), type(None)))
+    else:
+        assert isinstance(cursor, (int, type(None)))
 
 
 def assert_orientation(orientation: str) -> None:

@@ -203,15 +203,16 @@ class App(object):
         self.menu.mainloop(self.surface, disable_loop=test)
 
 
-def main(test: bool = False) -> None:
+def main(test: bool = False) -> 'App':
     """
     Main function.
 
     :param test: Indicate function is being tested
-    :return: None
+    :return: App object
     """
     app = App()
     app.mainloop(test)
+    return app
 
 
 if __name__ == '__main__':

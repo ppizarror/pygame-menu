@@ -70,6 +70,7 @@ def generate_fonts_doc() -> None:
     save_font_image(pygame_menu.font.FONT_8BIT, text, '_static/font_8bit.png')
     save_font_image(pygame_menu.font.FONT_BEBAS, text, '_static/font_bebas.png')
     save_font_image(pygame_menu.font.FONT_COMIC_NEUE, text, '_static/font_comic_neue.png')
+    save_font_image(pygame_menu.font.FONT_DIGITAL, text, '_static/font_digital.png')
     save_font_image(pygame_menu.font.FONT_FRANCHISE, text, '_static/font_franchise.png')
     save_font_image(pygame_menu.font.FONT_HELVETICA, text, '_static/font_helvetica.png')
     save_font_image(pygame_menu.font.FONT_MUNRO, text, '_static/font_munro.png')

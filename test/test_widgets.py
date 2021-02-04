@@ -431,7 +431,7 @@ class WidgetsTest(unittest.TestCase):
         selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
         selector.update(PygameUtils.joy_motion(1, 0))
         selector.update(PygameUtils.joy_motion(-1, 0))
-        click_pos = PygameUtils.get_middle_rect(selector.get_rect())
+        click_pos = selector.get_rect().center
         selector.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
 
         # Update elements
@@ -717,6 +717,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label[0].get_title(), 'This label should split, this line is really')
         self.assertEqual(label[1].get_title(), 'long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
+
+        # Add underline
+        label = self.menu.add.label('nice')
+        self.assertEqual(label._decorator._total_decor(), 0)
+        label.add_underline((0, 0, 0), 1, 1, force_render=True)
+        self.assertEqual(label._decorator._total_decor(), 1)
 
     def test_textinput(self) -> None:
         """
@@ -1029,15 +1035,15 @@ class WidgetsTest(unittest.TestCase):
 
         # Test pygame events
         btn = menu.add.button('epic', pygame_menu.events.PYGAME_QUIT)
-        self.assertEqual(btn._on_return, menu._exit)
+        self.assertEqual(btn._onreturn, menu._exit)
         btn = menu.add.button('epic', pygame_menu.events.PYGAME_WINDOWCLOSE)
-        self.assertEqual(btn._on_return, menu._exit)
+        self.assertEqual(btn._onreturn, menu._exit)
 
         # Test None
         btn = menu.add.button('epic', pygame_menu.events.NONE)
-        self.assertEqual(btn._on_return, None)
+        self.assertEqual(btn._onreturn, None)
         btn = menu.add.button('epic', None)
-        self.assertEqual(btn._on_return, None)
+        self.assertEqual(btn._onreturn, None)
 
         # Test invalid kwarg
         self.assertRaises(ValueError, lambda: menu.add.button('epic', callback, key=True))
@@ -1045,6 +1051,13 @@ class WidgetsTest(unittest.TestCase):
         # Remove button
         menu.remove_widget(btn)
         self.assertRaises(ValueError, lambda: menu.remove_widget(btn))
+
+        # Test underline
+        # Add underline
+        btn = menu.add.button('epic', pygame_menu.events.NONE)
+        self.assertEqual(btn._decorator._total_decor(), 0)
+        btn.add_underline((0, 0, 0), 1, 1, force_render=True)
+        self.assertEqual(btn._decorator._total_decor(), 1)
 
         # Test return fun
         def fun() -> str:
@@ -1111,7 +1124,7 @@ class WidgetsTest(unittest.TestCase):
         btn = menu.add.button('button', None)
         callid = btn.add_update_callback(update)
         self.assertEqual(btn.get_attribute('attr', False), False)
-        click_pos = PygameUtils.get_middle_rect(btn.get_rect())
+        click_pos = btn.get_rect().center
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertEqual(btn.get_attribute('attr', False), True)
         btn.set_attribute('attr', False)
@@ -1159,6 +1172,21 @@ class WidgetsTest(unittest.TestCase):
         w._render()
         self.assertEqual(w.get_rect().width, 0)
         self.assertEqual(w.get_rect().height, 999)
+        self.assertEqual(w.update([]), False)
+        self.assertEqual(w._font_size, 0)
+        self.assertEqual(w.get_margin()[0], 0)
+        self.assertEqual(w.get_margin()[1], 0)
+        w.draw(surface)
+
+    def test_hmargin(self) -> None:
+        """
+        Test horizontal margin widget.
+        """
+        menu = MenuUtils.generic_menu()
+        w = menu.add.horizontal_margin(999)
+        w._render()
+        self.assertEqual(w.get_rect().width, 999)
+        self.assertEqual(w.get_rect().height, 0)
         self.assertEqual(w.update([]), False)
         self.assertEqual(w._font_size, 0)
         self.assertEqual(w.get_margin()[0], 0)
@@ -1288,6 +1316,7 @@ class WidgetsTest(unittest.TestCase):
 
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)
+        self.assertEqual(wid.get_selected_time(), 0)
 
     def test_border(self) -> None:
         """
@@ -1296,7 +1325,6 @@ class WidgetsTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=-1))
         self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1.5))
-        self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1, border_color=None))
         self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1,
                                                                   border_color=(0, 0, 0), border_inflate=(-1, - 1)))
         btn = menu.add.button('', None, border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
@@ -1358,7 +1386,7 @@ class WidgetsTest(unittest.TestCase):
                        orientation,
                        onreturn=-1
                        )
-        self.assertEqual(sb._on_return, None)
+        self.assertEqual(sb._onreturn, None)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
         # Scrollbar ignores scaling
@@ -1477,3 +1505,12 @@ class WidgetsTest(unittest.TestCase):
         # Assert switch values
         self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
                                                                      onchange=onchange, infinite=False))
+
+    def test_frame(self) -> None:
+        """
+        Test frame widget containers.
+        """
+        menu = MenuUtils.generic_menu()
+        frame = menu.add.frame(600, 300)
+        self.assertEqual(frame.get_width(), 600)
+        self.assertEqual(frame.get_height(), 300)

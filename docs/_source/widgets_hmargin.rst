@@ -1,11 +1,11 @@
 
-.. module:: pygame_menu.widgets.widget.vmargin
+.. module:: pygame_menu.widgets.widget.hmargin
 
 =======
-VMargin
+HMargin
 =======
 
-.. autoclass:: pygame_menu.widgets.VMargin
+.. autoclass:: pygame_menu.widgets.HMargin
     :members:
     :show-inheritance:
     :inherited-members:

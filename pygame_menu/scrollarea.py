@@ -72,6 +72,10 @@ def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], T
         raise ValueError('unknown ScrollArea position')
 
 
+SCROLL_VERTICAL = _locals.ORIENTATION_VERTICAL
+SCROLL_HORIZONTAL = _locals.ORIENTATION_HORIZONTAL
+
+
 class ScrollArea(object):
     """
     The ScrollArea class provides a scrolling view managing up to 4 scroll bars.
@@ -92,6 +96,7 @@ class ScrollArea(object):
     :param area_width: Width of scrollable area (px)
     :param area_height: Height of scrollable area (px)
     :param area_color: Background color, it can be a color or an image
+    :param cursor: Scrollbar cursors
     :param menubar: Menubar for style compatibility
     :param extend_x: Px to extend the surface in x axis (px) from left
     :param extend_y: Px to extend the surface in y axis (px) from top
@@ -123,6 +128,7 @@ class ScrollArea(object):
                  area_width: int,
                  area_height: int,
                  area_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']] = None,
+                 cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
                  extend_x: int = 0,
                  extend_y: int = 0,
                  menubar: Optional['MenuBar'] = None,
@@ -182,7 +188,7 @@ class ScrollArea(object):
                 sbar = ScrollBar(
                     length=self._view_rect.height,
                     values_range=(0, max(1, self.get_hidden_height())),
-                    orientation=_locals.ORIENTATION_VERTICAL,
+                    orientation=SCROLL_VERTICAL,
                     slider_pad=scrollbar_slider_pad,
                     slider_color=scrollbar_slider_color,
                     page_ctrl_thick=scrollbar_thick,
@@ -206,6 +212,7 @@ class ScrollArea(object):
                 offset=shadow_offset
             )
             sbar.set_controls(joystick=False)
+            sbar.set_cursor(cursor=cursor)
 
             self._scrollbars.append(sbar)
 
@@ -321,23 +328,22 @@ class ScrollArea(object):
         if self._bg_surface:
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
-        offsets = self.get_offsets()
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
+            if sbar.get_orientation() == SCROLL_HORIZONTAL:
                 if self.get_hidden_width():
-                    sbar.draw(surface)  # Display scrollbar
+                    sbar.draw(surface)
             else:
                 if self.get_hidden_height():
-                    sbar.draw(surface)  # Display scrollbar
+                    sbar.draw(surface)
 
         # noinspection PyTypeChecker
-        surface.blit(self._world, self._view_rect.topleft, (offsets, self._view_rect.size))
+        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
         self._decorator.draw_post(surface)
         return self
 
     def get_hidden_width(self) -> int:
         """
-        Return the total width out of the bounds of the the viewable area.
+        Return the total width out of the bounds of the viewable area.
         Zero is returned if the world width is lower than the viewable area.
 
         :return: Hidden width (px)
@@ -348,7 +354,7 @@ class ScrollArea(object):
 
     def get_hidden_height(self) -> int:
         """
-        Return the total height out of the bounds of the the viewable area.
+        Return the total height out of the bounds of the viewable area.
         Zero is returned if the world height is lower than the viewable area.
 
         :return: Hidden height (px)
@@ -365,7 +371,7 @@ class ScrollArea(object):
         """
         offsets = [0, 0]
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL:
+            if sbar.get_orientation() == SCROLL_HORIZONTAL:
                 if self.get_hidden_width():
                     offsets[0] = sbar.get_value()
             else:
@@ -375,7 +381,7 @@ class ScrollArea(object):
 
     def get_rect(self) -> 'pygame.Rect':
         """
-        Return the Rect object.
+        Return the :py:class:`pygame.Rect` object of the ScrollArea.
 
         :return: Pygame.Rect object
         """
@@ -394,9 +400,9 @@ class ScrollArea(object):
             for sbar in self._scrollbars:
                 if sbar.get_orientation() == orientation:
                     return sbar.get_thickness()
-        if orientation == _locals.ORIENTATION_HORIZONTAL:
+        if orientation == SCROLL_HORIZONTAL:
             return int(self._rect.height - self._view_rect.height)
-        elif orientation == _locals.ORIENTATION_VERTICAL:
+        elif orientation == SCROLL_VERTICAL:
             return int(self._rect.width - self._view_rect.width)
         return 0
 
@@ -491,7 +497,7 @@ class ScrollArea(object):
         :return: None
         """
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL \
+            if sbar.get_orientation() == SCROLL_HORIZONTAL \
                     and self.get_hidden_width() != 0 \
                     and sbar.get_value() != value:
                 sbar.set_value(value)
@@ -505,7 +511,7 @@ class ScrollArea(object):
         :return: None
         """
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL \
+            if sbar.get_orientation() == SCROLL_VERTICAL \
                     and self.get_hidden_height() != 0 \
                     and sbar.get_value() != value:
                 sbar.set_value(value)
@@ -523,8 +529,8 @@ class ScrollArea(object):
         real_rect = self.to_real_position(rect)
 
         # Check rect is in viewable area
-        sx = self.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
-        sy = self.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL)
+        sx = self.get_scrollbar_thickness(SCROLL_VERTICAL)
+        sy = self.get_scrollbar_thickness(SCROLL_HORIZONTAL)
         if self._view_rect.topleft[0] <= real_rect.topleft[0] + sx \
                 and self._view_rect.topleft[1] <= real_rect.topleft[1] + sy \
                 and self._view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
@@ -532,13 +538,13 @@ class ScrollArea(object):
             return False
 
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and self.get_hidden_width():
+            if sbar.get_orientation() == SCROLL_HORIZONTAL and self.get_hidden_width():
                 shortest_move = min(real_rect.left - margin - self._view_rect.left,
                                     real_rect.right + margin - self._view_rect.right, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
-            if sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and self.get_hidden_height():
+            if sbar.get_orientation() == SCROLL_VERTICAL and self.get_hidden_height():
                 shortest_move = min(real_rect.bottom + margin - self._view_rect.bottom,
                                     real_rect.top - margin - self._view_rect.top, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
@@ -637,9 +643,9 @@ class ScrollArea(object):
         """
         updated = [0, 0]
         for sbar in self._scrollbars:
-            if sbar.get_orientation() == _locals.ORIENTATION_HORIZONTAL and not updated[0]:
+            if self.get_hidden_width() and sbar.get_orientation() == SCROLL_HORIZONTAL and not updated[0]:
                 updated[0] = sbar.update(events)
-            elif sbar.get_orientation() == _locals.ORIENTATION_VERTICAL and not updated[1]:
+            elif self.get_hidden_height() and sbar.get_orientation() == SCROLL_VERTICAL and not updated[1]:
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
@@ -684,6 +690,16 @@ class ScrollArea(object):
     def get_decorator(self) -> 'Decorator':
         """
         Return the ScrollArea decorator API.
+
+        .. note:: Menu drawing order:
+
+            1. Menu background color/image
+            2. Menu ``prev`` decorator
+            3. **Menu ScrollArea ``prev`` decorator**
+            4. **Menu ScrollArea widgets**
+            5. **Menu ScrollArea ``post`` decorator**
+            6. Menu title
+            7. Menu ``post`` decorator
 
         :return: Decorator API
         """

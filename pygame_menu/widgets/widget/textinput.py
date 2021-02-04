@@ -425,7 +425,6 @@ class TextInput(Widget):
         return super(TextInput, self).flip(False, y)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
-
         # Draw selection surface
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
@@ -1479,10 +1478,11 @@ class TextInput(Widget):
 
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
+        rect = self.get_rect()
 
         for event in events:
 
-            if event.type == pygame.KEYDOWN:
+            if self._keyboard_enabled and event.type == pygame.KEYDOWN:
 
                 # Check if any key is pressed, if True the event is invalid
                 if not check_key_pressed_valid(event):
@@ -1723,7 +1723,7 @@ class TextInput(Widget):
                     self.active = True
                     updated = True
 
-            elif event.type == pygame.KEYUP:
+            elif self._keyboard_enabled and event.type == pygame.KEYUP:
                 # Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
@@ -1736,15 +1736,17 @@ class TextInput(Widget):
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
-                if self._rect.collidepoint(*event.pos) and \
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
+                if rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
+            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN and \
+                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
@@ -1757,7 +1759,7 @@ class TextInput(Widget):
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 window_size = self.get_menu().get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
-                if self._rect.collidepoint(*finger_pos) and \
+                if rect.collidepoint(*finger_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
                     self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False

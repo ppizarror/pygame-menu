@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-VERTICAL MARGIN
-Vertical box margin.
+FRAME
+Widget container.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,32 +29,55 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['VMargin']
+__all__ = ['Frame']
 
 import pygame
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu._types import Optional, Tuple2IntType
+from pygame_menu._types import Optional, Tuple2IntType, NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
-class VMargin(NoneWidget):
+class Frame(NoneWidget):
     """
-    Vertical margin widget. VMargin only accepts margin, not padding.
+    Frame is a widget container, it can pack many widgets.
+
+    All widgets inside have a floating position. Widgets inside are placed using its
+    margin + width/height. ``(0, 0)`` coordinate is the top-left position in frame.
 
     .. note::
 
-        This widget does not implement any transformation.
+        Frame does not implement any transformation.
 
-    :param widget_id: ID of the widget
+    .. note::
+
+        Frame does not accept padding.
+
+    :param width: Frame width
+    :param height: Frame height
+    :param frame_id: ID of the frame
     """
+    _width: int
+    _height: int
 
-    def __init__(self, widget_id: str = '') -> None:
-        super(VMargin, self).__init__(widget_id=widget_id)
+    def __init__(self,
+                 width: NumberType,
+                 height: NumberType,
+                 frame_id: str = ''
+                 ) -> None:
+        super(Frame, self).__init__(widget_id=frame_id)
+        assert isinstance(width, (int, float)) and width > 0
+        assert isinstance(height, (int, float)) and height > 0
+        self._width = int(width)
+        self._height = int(height)
+        self._rect.width = self._width
+        self._rect.height = self._height
 
-    def set_margin(self, x: int, y: int) -> 'Widget':
-        self._rect.width = 0
-        self._rect.height = y
+    def set_margin(self, x: NumberType, y: NumberType) -> 'Widget':
+        assert isinstance(x, (int, float))
+        assert isinstance(y, (int, float))
+        self._margin = (x, y)
+        self._force_render()
         return self
 
     def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
