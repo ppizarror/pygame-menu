@@ -833,7 +833,7 @@ class Decorator(object):
         :return: Self reference
         """
         if decorid not in self._decor_enabled.keys():
-            raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+            raise IndexError('decoration<"{0}"> was not found'.format(decorid))
         self._decor_enabled[decorid] = False
         return self
 
@@ -846,7 +846,7 @@ class Decorator(object):
         :return: Self reference
         """
         if decorid not in self._decor_enabled.keys():
-            raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+            raise IndexError('decoration<"{0}"> was not found'.format(decorid))
         self._decor_enabled[decorid] = True
         return self
 
@@ -868,7 +868,7 @@ class Decorator(object):
                     self._cache_needs_update[p] = True
                     del self._decor_enabled[decorid]
                     return self
-        raise IndexError('decoration ID "{0}" was not found'.format(decorid))
+        raise IndexError('decoration<"{0}"> was not found'.format(decorid))
 
     def remove_all(self, prev: Optional[bool] = None) -> 'Decorator':
         """
