@@ -1178,6 +1178,21 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_margin()[1], 0)
         w.draw(surface)
 
+    def test_hmargin(self) -> None:
+        """
+        Test horizontal margin widget.
+        """
+        menu = MenuUtils.generic_menu()
+        w = menu.add.horizontal_margin(999)
+        w._render()
+        self.assertEqual(w.get_rect().width, 999)
+        self.assertEqual(w.get_rect().height, 0)
+        self.assertEqual(w.update([]), False)
+        self.assertEqual(w._font_size, 0)
+        self.assertEqual(w.get_margin()[0], 0)
+        self.assertEqual(w.get_margin()[1], 0)
+        w.draw(surface)
+
     def test_none(self) -> None:
         """
         Test none widget.
@@ -1301,6 +1316,7 @@ class WidgetsTest(unittest.TestCase):
 
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)
+        self.assertEqual(wid.get_selected_time(), 0)
 
     def test_border(self) -> None:
         """
@@ -1489,3 +1505,12 @@ class WidgetsTest(unittest.TestCase):
         # Assert switch values
         self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
                                                                      onchange=onchange, infinite=False))
+
+    def test_frame(self) -> None:
+        """
+        Test frame widget containers.
+        """
+        menu = MenuUtils.generic_menu()
+        frame = menu.add.frame(600, 300)
+        self.assertEqual(frame.get_width(), 600)
+        self.assertEqual(frame.get_height(), 300)

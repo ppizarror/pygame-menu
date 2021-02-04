@@ -1246,12 +1246,74 @@ class WidgetManager(object):
 
         return widget
 
+    def frame(self,
+              width: NumberType,
+              height: NumberType,
+              frame_id: str = ''
+              ) -> 'pygame_menu.widgets.Frame':
+        """
+        Adds a Frame. Frame is a widget container that packs many widgets within.
+        All contained widgets have a floating position, and use only 1 position in
+        column/row layout.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param width: Frame width
+        :param height: Frame height
+        :param frame_id: ID of the frame
+        :return: Frame object
+        :rtype: :py:class:`pygame_menu.widgets.Frame`
+        """
+        attributes = self._filter_widget_attributes({})
+        widget = pygame_menu.widgets.Frame(
+            width=width,
+            height=height,
+            frame_id=frame_id
+        )
+        self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
+
+        return widget
+
+    def horizontal_margin(self,
+                          margin: NumberType,
+                          margin_id: str = ''
+                          ) -> 'pygame_menu.widgets.HMargin':
+        """
+        Adds a horizontal margin to the Menu. Useful in Frames.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param margin: Horizontal margin in px
+        :param margin_id: ID of the margin
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.HMargin`
+        """
+        assert isinstance(margin, (int, float))
+        assert margin > 0, \
+            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
+
+        attributes = self._filter_widget_attributes({'margin': (margin, 0)})
+        widget = pygame_menu.widgets.HMargin(widget_id=margin_id)
+        self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
+
+        return widget
+
     def vertical_margin(self,
                         margin: NumberType,
                         margin_id: str = ''
                         ) -> 'pygame_menu.widgets.VMargin':
         """
-        Adds a vertical margin to the Menu.
+        Adds a vertical margin to the Menu. Useful in Frames.
 
         .. note::
 

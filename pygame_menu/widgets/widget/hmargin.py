@@ -2,8 +2,8 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGET
-This module contains the widgets of pygame-menu.
+HORIZONTAL MARGIN
+Horizontal box margin.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,21 +29,34 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Widgets
-from pygame_menu.widgets.widget.button import Button
-from pygame_menu.widgets.widget.colorinput import ColorInput
-from pygame_menu.widgets.widget.frame import Frame
-from pygame_menu.widgets.widget.hmargin import HMargin
-from pygame_menu.widgets.widget.image import Image
-from pygame_menu.widgets.widget.label import Label
-from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu.widgets.widget.scrollbar import ScrollBar
-from pygame_menu.widgets.widget.selector import Selector
-from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
-from pygame_menu.widgets.widget.vmargin import VMargin
+__all__ = ['HMargin']
 
-# Menubar and positions
-from pygame_menu.widgets.widget.menubar import MenuBar, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
-    MENUBAR_STYLE_UNDERLINE_TITLE
+import pygame
+from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.widget.none import NoneWidget
+from pygame_menu._types import Optional, Tuple2IntType
+
+
+# noinspection PyMissingOrEmptyDocstring
+class HMargin(NoneWidget):
+    """
+    Horizontal margin widget. HMargin only accepts margin, not padding.
+
+    .. note::
+
+        This widget does not implement any transformation.
+
+    :param widget_id: ID of the widget
+    """
+
+    def __init__(self, widget_id: str = '') -> None:
+        super(HMargin, self).__init__(widget_id=widget_id)
+
+    def set_margin(self, x: int, y: int) -> 'Widget':
+        self._rect.width = x
+        self._rect.height = 0
+        return self
+
+    def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
+                 use_transformed_padding: bool = True) -> 'pygame.Rect':
+        return self._rect.copy()
