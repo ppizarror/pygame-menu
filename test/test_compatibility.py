@@ -98,7 +98,7 @@ class CompatibilityTest(unittest.TestCase):
         settings_menu_theme.widget_font_size = 20
 
         settings_menu = pygame_menu.Menu(
-            height=600,
+            height=400,
             theme=settings_menu_theme,
             title='Settings',
             width=600
@@ -168,7 +168,7 @@ class CompatibilityTest(unittest.TestCase):
         # Create menus: More settings
         # -------------------------------------------------------------------------
         more_settings_menu = pygame_menu.Menu(
-            height=600,
+            height=400,
             theme=settings_menu_theme,
             title='More Settings',
             width=600
@@ -221,7 +221,7 @@ class CompatibilityTest(unittest.TestCase):
 
         button_column_menu = pygame_menu.Menu(
             columns=2,
-            height=600,
+            height=400,
             onclose=pygame_menu.events.DISABLE_CLOSE,
             rows=3,
             theme=button_column_menu_theme,
@@ -246,7 +246,7 @@ class CompatibilityTest(unittest.TestCase):
         main_menu_theme.widget_font_size = 30
 
         main_menu = pygame_menu.Menu(
-            height=600,
+            height=400,
             onclose=pygame_menu.events.EXIT,  # User press ESC button
             theme=main_menu_theme,
             title='Main menu',
