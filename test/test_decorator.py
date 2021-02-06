@@ -91,19 +91,19 @@ class DecoratorTest(unittest.TestCase):
         deco.cache = True
 
         # Prev
-        self.assertEqual(deco._cache_surface['prev'], None)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['prev'])
+        self.assertIsNone(deco._cache_surface['post'])
         deco.add_circle(1, 1, 1, (0, 0, 0), True)
-        self.assertEqual(deco._cache_surface['prev'], None)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['prev'])
+        self.assertIsNone(deco._cache_surface['post'])
         deco.draw_prev(surface)
-        self.assertNotEqual(deco._cache_surface['prev'], None)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNotNone(deco._cache_surface['prev'])
+        self.assertIsNone(deco._cache_surface['post'])
         p = deco._cache_surface['prev']
         deco.add_circle(1, 1, 1, (0, 0, 0), True)
         deco.draw_prev(surface)
         self.assertNotEqual(deco._cache_surface['prev'], p)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['post'])
         self.assertFalse(deco._cache_needs_update['prev'])
         self.assertFalse(deco._cache_needs_update['post'])
         deco.add_circle(1, 1, 1, (0, 0, 0), True)
@@ -124,11 +124,11 @@ class DecoratorTest(unittest.TestCase):
         # Post
         deco.add_circle(1, 1, 1, (0, 0, 0), False, prev=False)
         self.assertTrue(deco._cache_needs_update['post'])
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['post'])
         deco.draw_post(surface)
         self.assertEqual(deco._total_decor(), 1)
         self.assertFalse(deco._cache_needs_update['post'])
-        self.assertNotEqual(deco._cache_surface['post'], None)
+        self.assertIsNotNone(deco._cache_surface['post'])
         deco.remove_all()
         self.assertEqual(deco._total_decor(), 0)
 

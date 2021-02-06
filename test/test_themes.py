@@ -113,7 +113,7 @@ class ThemeTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: t._format_opacity([1, 2]))
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertEqual(img, t._format_opacity(img))
-        self.assertEqual(t._format_opacity(None), None)
+        self.assertIsNone(t._format_opacity(None))
         self.assertRaises(ValueError, lambda: t._format_opacity('1,2,3'))
         self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, -1)))
         self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, 1.1)))

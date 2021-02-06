@@ -531,7 +531,7 @@ class MenuTest(unittest.TestCase):
         deep_widget = prev_menu.add.text_input('title', textinput_id='deep_id')
         deep_selector = prev_menu.add.selector('selector', [('0', 0), ('1', 1)], selector_id='deep_selector', default=1)
 
-        self.assertEqual(self.menu.get_widget('deep_id', recursive=False), None)
+        self.assertIsNone(self.menu.get_widget('deep_id', recursive=False))
         self.assertEqual(self.menu.get_widget('deep_id', recursive=True), deep_widget)
         self.assertEqual(self.menu.get_widget('deep_selector', recursive=True), deep_selector)
 
@@ -559,7 +559,7 @@ class MenuTest(unittest.TestCase):
         widget = self.menu.add.text_input('test', default='some_id')
         self.assertEqual(widget, self.menu.get_selected_widget())
         self.menu.remove_widget(widget)
-        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertIsNone(self.menu.get_selected_widget())
         self.assertEqual(self.menu.get_index(), -1)
 
         # Add two widgets, first widget will be selected first, but if removed the second should be selected
@@ -569,10 +569,10 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(widget1.get_menu(), self.menu)
         self.assertEqual(widget1, self.menu.get_selected_widget())
         self.menu.remove_widget(widget1)
-        self.assertEqual(widget1.get_menu(), None)
+        self.assertIsNone(widget1.get_menu())
         self.assertEqual(widget2, self.menu.get_selected_widget())
         self.menu.remove_widget(widget2)
-        self.assertEqual(widget2.get_menu(), None)
+        self.assertIsNone(widget2.get_menu())
         self.assertEqual(len(self.menu.get_widgets()), 0)
 
         # Add 3 widgets, select the last one and remove it, then the selected widget must be the first
@@ -598,7 +598,7 @@ class MenuTest(unittest.TestCase):
         # Mark w1 as unselectable and remove w2, then no widget should be selected
         w1.is_selectable = False
         self.menu.remove_widget(w2)
-        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertIsNone(self.menu.get_selected_widget())
         self.assertRaises(ValueError, lambda: self.menu.select_widget(w1))
 
         # Mark w1 as selectable
@@ -632,7 +632,7 @@ class MenuTest(unittest.TestCase):
 
         # Hide wlast, then nothing is selected
         wlast.hide()
-        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertIsNone(self.menu.get_selected_widget())
 
         # Unhide w2, then it should be selected
         w2.show()
@@ -640,16 +640,16 @@ class MenuTest(unittest.TestCase):
 
         # Remove w2, then nothing should be selected
         self.menu.remove_widget(w2)
-        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertIsNone(self.menu.get_selected_widget())
 
         # Clear all widgets and get index
         self.menu._widgets = []
         self._index = 100
-        self.assertEqual(self.menu.get_selected_widget(), None)
+        self.assertIsNone(self.menu.get_selected_widget())
 
         # Destroy index
         self.menu._index = '0'
-        self.assertEqual(None, self.menu.get_selected_widget())
+        self.assertIsNone(self.menu.get_selected_widget())
         self.assertEqual(self.menu._index, 0)
 
     def test_submenu(self) -> None:
@@ -1440,7 +1440,7 @@ class MenuTest(unittest.TestCase):
         btn.is_selectable = True
         btn.select()
         self.assertEqual(menu._index, -1)  # Menu still don't considers widget as selected
-        self.assertEqual(menu.get_selected_widget(), None)
+        self.assertIsNone(menu.get_selected_widget())
         btn.select(update_menu=True)
         self.assertEqual(menu.get_selected_widget(), btn)
 
@@ -1595,9 +1595,9 @@ class MenuTest(unittest.TestCase):
         menu.set_onmouseover(onover)
         menu.set_onmouseleave(onleave)
 
-        self.assertEqual(test[0], None)
+        self.assertIsNone(test[0])
         ev = PygameUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION)
-        self.assertEqual(menu._mouseover, False)
+        self.assertFalse(menu._mouseover)
         menu.update(ev)
         self.assertFalse(test[0])
 
@@ -1605,11 +1605,11 @@ class MenuTest(unittest.TestCase):
         ev = PygameUtils.mouse_click(rect.centerx, rect.centery, inlist=True, evtype=pygame.MOUSEMOTION)
         menu.update(ev)
         self.assertTrue(test[0])
-        self.assertEqual(menu._mouseover, True)
+        self.assertTrue(menu._mouseover)
 
         ev = PygameUtils.mouse_click(50, 50, inlist=True, evtype=pygame.MOUSEMOTION)
         menu.update(ev)
-        self.assertEqual(menu._mouseover, False)
+        self.assertFalse(menu._mouseover)
         self.assertFalse(test[0])
 
         # Test window mouseover and mouseleave
@@ -1632,11 +1632,11 @@ class MenuTest(unittest.TestCase):
         menu.set_onwindowmouseover(onover)
         menu.set_onwindowmouseleave(onleave)
 
-        self.assertEqual(test[0], None)
+        self.assertIsNone(test[0])
         menu.update([pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 1})])  # Enter
-        self.assertEqual(test[0], True)
+        self.assertTrue(test[0])
         menu.update([pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 0})])  # Enter
-        self.assertEqual(test[0], False)
+        self.assertFalse(test[0])
 
     def test_frame(self) -> None:
         """
@@ -1833,7 +1833,7 @@ class MenuTest(unittest.TestCase):
         # Setup
         self.assertTrue(btn1.is_selected())
         self.assertFalse(menu._mouse_motion_selection)
-        self.assertEqual(menu._widget_mouseover, None)
+        self.assertIsNone(menu._widget_mouseover)
 
         test = [False, False, False, False]  # btn1over, btn1leave, btn2over, btn2leave
 
@@ -1876,7 +1876,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(test, [False, False, False, False])
         if pygame_menu.widgets.core.widget._CURSOR_PREV[0] is not None:
             pygame_menu.widgets.core.widget._CURSOR_PREV[0] = None
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)  # None cursor should be the start
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])  # None cursor should be the start
 
         # Place mouse over widget 1, it should set as mouseover and trigger the events
         menu.update([PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION)])
@@ -1884,27 +1884,27 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
         if pygame.version.vernum[0] < 2:
-            self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+            self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         else:
-            self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+            self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
 
         # Place mouse away. This should force widget 1 mouseleave
         menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(test, [True, True, False, False])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        self.assertEqual(menu._widget_mouseover, None)
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
+        self.assertIsNone(menu._widget_mouseover)
 
         # Place over widget 2
         menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(test, [True, True, True, False])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)  # button 2 don't have any cursor
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])  # button 2 don't have any cursor
 
         # Place mouse away. This should force widget 1 mouseleave
         menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(test, [True, True, True, True])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        self.assertEqual(menu._widget_mouseover, None)
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
+        self.assertIsNone(menu._widget_mouseover)
 
         # Test immediate switch, from 1 to 2, then from 2 to 1, then off
         test = [False, False, False, False]
@@ -1913,18 +1913,18 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
         if pygame.version.vernum[0] < 2:
-            self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+            self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         else:
-            self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+            self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, True, True, False])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(test, [True, True, True, True])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        self.assertEqual(menu._widget_mouseover, None)
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
+        self.assertIsNone(menu._widget_mouseover)
 
         # Same switch test, but now with widget selection by mouse motion
         menu._mouse_motion_selection = True
@@ -1936,18 +1936,18 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
         if pygame.version.vernum[0] < 2:
-            self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+            self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         else:
-            self.assertNotEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+            self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(menu.get_selected_widget(), btn2)
         self.assertEqual(test, [True, True, True, False])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(test, [True, True, True, True])
-        self.assertEqual(pygame_menu.widgets.core.widget._CURSOR_PREV[0], None)
-        self.assertEqual(menu._widget_mouseover, None)
+        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
+        self.assertIsNone(menu._widget_mouseover)
 
     def test_floating_pos(self) -> None:
         """

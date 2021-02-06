@@ -100,7 +100,7 @@ class WidgetsTest(unittest.TestCase):
                 test[0] = widget
 
         # Button
-        self.assertEqual(test[0], None)
+        self.assertIsNone(test[0])
         btn = menu.add.button('nice', None, onselect=on_select)  # The first to be selected
         self.assertEqual(test[0], btn)
 
@@ -296,16 +296,16 @@ class WidgetsTest(unittest.TestCase):
 
         # Set max height, this will disabled max width
         label.set_max_height(100)
-        self.assertEqual(label._max_width[0], None)
+        self.assertIsNone(label._max_width[0])
         self.assertEqual(label.get_height(), 99)
 
         # Scale, disable both max width and max height
         label.set_max_width(100)
         label.set_max_height(100)
         label.scale(1.5, 1.5)
-        self.assertEqual(label._max_width[0], None)
-        self.assertEqual(label._max_height[0], None)
-        self.assertEqual(label._scale[0], True)
+        self.assertIsNone(label._max_width[0])
+        self.assertIsNone(label._max_height[0])
+        self.assertTrue(label._scale[0])
 
         # Set scale back
         label.scale(1, 1)
@@ -1068,9 +1068,9 @@ class WidgetsTest(unittest.TestCase):
 
         # Test None
         btn = menu.add.button('epic', pygame_menu.events.NONE)
-        self.assertEqual(btn._onreturn, None)
+        self.assertIsNone(btn._onreturn)
         btn = menu.add.button('epic', None)
-        self.assertEqual(btn._onreturn, None)
+        self.assertIsNone(btn._onreturn)
 
         # Test invalid kwarg
         self.assertRaises(ValueError, lambda: menu.add.button('epic', callback, key=True))
@@ -1096,7 +1096,7 @@ class WidgetsTest(unittest.TestCase):
         btn = menu.add.button('', fun)
         self.assertEqual(btn.apply(), 'nice')
         btn.readonly = True
-        self.assertEqual(btn.apply(), None)
+        self.assertIsNone(btn.apply())
 
     def test_attributes(self) -> None:
         """
@@ -1129,9 +1129,9 @@ class WidgetsTest(unittest.TestCase):
 
         btn = menu.add.button('btn', None)
         callid = btn.add_draw_callback(call)
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
         menu.draw(surface)
-        self.assertEqual(btn.get_attribute('attr', False), True)
+        self.assertTrue(btn.get_attribute('attr', False))
         btn.remove_draw_callback(callid)
         self.assertRaises(IndexError, lambda: btn.remove_draw_callback(callid))  # Already removed
         menu.disable()
@@ -1150,16 +1150,16 @@ class WidgetsTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         btn = menu.add.button('button', None)
         callid = btn.add_update_callback(update)
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
         click_pos = btn.get_rect().center
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
-        self.assertEqual(btn.get_attribute('attr', False), True)
+        self.assertTrue(btn.get_attribute('attr', False))
         btn.set_attribute('attr', False)
         btn.remove_update_callback(callid)
         self.assertRaises(IndexError, lambda: btn.remove_update_callback(callid))
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
 
         def update2(widget, _) -> None:
             """
@@ -1199,7 +1199,7 @@ class WidgetsTest(unittest.TestCase):
         w._render()
         self.assertEqual(w.get_rect().width, 0)
         self.assertEqual(w.get_rect().height, 999)
-        self.assertEqual(w.update([]), False)
+        self.assertFalse(w.update([]))
         self.assertEqual(w._font_size, 0)
         self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
@@ -1212,7 +1212,7 @@ class WidgetsTest(unittest.TestCase):
         w._render()
         self.assertEqual(w.get_rect().width, 999)
         self.assertEqual(w.get_rect().height, 0)
-        self.assertEqual(w.update([]), False)
+        self.assertFalse(w.update([]))
         self.assertEqual(w._font_size, 0)
         self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
@@ -1233,7 +1233,7 @@ class WidgetsTest(unittest.TestCase):
 
         wid.set_background_color((1, 1, 1))
         wid._draw_background_color(surface)
-        self.assertEqual(wid._background_color, None)
+        self.assertIsNone(wid._background_color)
 
         nosel = NoneSelection()
         wid.set_selection_effect(nosel)
@@ -1257,7 +1257,7 @@ class WidgetsTest(unittest.TestCase):
         wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1), (0, 0, 0), (0, 0, 0))
         wid.update_font({'name': ''})
         wid._apply_font()
-        self.assertEqual(wid._font, None)
+        self.assertIsNone(wid._font)
 
         # Test font rendering
         surf = wid._render_string('nice', (1, 1, 1))
@@ -1298,12 +1298,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid._angle, 0)
 
         wid.resize(10, 10)
-        self.assertEqual(wid._scale[0], False)
+        self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
         wid.scale(100, 100)
-        self.assertEqual(wid._scale[0], False)
+        self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
@@ -1312,10 +1312,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(wid._flip[1])
 
         wid.set_max_width(100)
-        self.assertEqual(wid._max_width[0], None)
+        self.assertIsNone(wid._max_width[0])
 
         wid.set_max_height(100)
-        self.assertEqual(wid._max_height[0], None)
+        self.assertIsNone(wid._max_height[0])
 
         # Selection
         wid.select()
@@ -1336,7 +1336,7 @@ class WidgetsTest(unittest.TestCase):
 
         # noinspection PyTypeChecker
         wid.set_sound(None)
-        self.assertNotEqual(wid._sound, None)
+        self.assertIsNotNone(wid._sound)
 
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)
@@ -1410,7 +1410,7 @@ class WidgetsTest(unittest.TestCase):
                        orientation,
                        onreturn=-1
                        )
-        self.assertEqual(sb._onreturn, None)
+        self.assertIsNone(sb._onreturn)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
         # Scrollbar ignores scaling
@@ -1419,9 +1419,9 @@ class WidgetsTest(unittest.TestCase):
         sb.resize(2, 2)
         self.assertFalse(sb._scale[0])
         sb.set_max_width(10)
-        self.assertEqual(sb._max_width[0], None)
+        self.assertIsNone(sb._max_width[0])
         sb.set_max_height(10)
-        self.assertEqual(sb._max_height[0], None)
+        self.assertIsNone(sb._max_height[0])
         sb._apply_font()
         sb.set_padding(10)
         self.assertEqual(sb._padding[0], 0)
@@ -1450,8 +1450,8 @@ class WidgetsTest(unittest.TestCase):
             value[0] = val
 
         switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False)
-        self.assertEqual(switch.get_value(), False)
-        self.assertEqual(value[0], None)
+        self.assertFalse(switch.get_value())
+        self.assertIsNone(value[0])
         switch.apply()
         self.assertFalse(value[0])
 
@@ -1507,12 +1507,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(switch._angle, 0)
 
         switch.scale(100, 100)
-        self.assertEqual(switch._scale[0], False)
+        self.assertFalse(switch._scale[0])
         self.assertEqual(switch._scale[1], 1)
         self.assertEqual(switch._scale[2], 1)
 
         switch.resize(100, 100)
-        self.assertEqual(switch._scale[0], False)
+        self.assertFalse(switch._scale[0])
         self.assertEqual(switch._scale[1], 1)
         self.assertEqual(switch._scale[2], 1)
 
@@ -1521,10 +1521,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(switch._flip[1])
 
         switch.set_max_width(100)
-        self.assertEqual(switch._max_width[0], None)
+        self.assertIsNone(switch._max_width[0])
 
         switch.set_max_height(100)
-        self.assertEqual(switch._max_height[0], None)
+        self.assertIsNone(switch._max_height[0])
 
         # Assert switch values
         self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
@@ -1583,12 +1583,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid[11].get_col_row_index(), (0, 1, 11))
         self.assertEqual(wid[12].get_col_row_index(), (0, 1, 12))
 
-        self.assertEqual(btn3.get_frame(), None)
+        self.assertIsNone(btn3.get_frame())
         self.assertEqual(btn2.get_frame(), frame)
         self.assertEqual(btn2._translate, (88, 29))
-        self.assertEqual(btn2.is_floating(), True)
+        self.assertTrue(btn2.is_floating())
         menu.remove_widget(btn2)
-        self.assertEqual(btn2.get_frame(), None)
+        self.assertIsNone(btn2.get_frame())
         self.assertEqual(btn2._translate, (0, 0))
         self.assertTrue(btn2.is_floating())
 
@@ -1703,12 +1703,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid._angle, 0)
 
         wid.scale(100, 100)
-        self.assertEqual(wid._scale[0], False)
+        self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
         wid.resize(10, 10)
-        self.assertEqual(wid._scale[0], False)
+        self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
@@ -1717,10 +1717,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(wid._flip[1])
 
         wid.set_max_width(100)
-        self.assertEqual(wid._max_width[0], None)
+        self.assertIsNone(wid._max_width[0])
 
         wid.set_max_height(100)
-        self.assertEqual(wid._max_height[0], None)
+        self.assertIsNone(wid._max_height[0])
 
         # Selection
         wid.select()
