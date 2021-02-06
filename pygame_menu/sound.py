@@ -192,9 +192,11 @@ class Sound(object):
                                allowedchanges=allowedchanges)
 
             except Exception as e:
-                print('sound error: ' + str(e))
+                msg = 'sound error: ' + str(e)
+                warnings.warn(msg)
             except pygame_error as e:
-                print('sound engine could not be initialized, pygame error: ' + str(e))
+                msg = 'sound engine could not be initialized, pygame error: ' + str(e)
+                warnings.warn(msg)
 
         # Store mixer configs
         self._mixer_configs = {

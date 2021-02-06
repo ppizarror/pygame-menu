@@ -213,6 +213,7 @@ class ScrollArea(object):
             )
             sbar.set_controls(joystick=False)
             sbar.set_cursor(cursor=cursor)
+            sbar.configured = True
 
             self._scrollbars.append(sbar)
 

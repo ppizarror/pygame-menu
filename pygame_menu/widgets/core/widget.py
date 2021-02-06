@@ -144,6 +144,7 @@ class Widget(object):
     _update_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
     _visible: bool
     active: bool
+    configured: bool
     is_selectable: bool
     lock_position: bool
     readonly: bool
@@ -263,6 +264,7 @@ class Widget(object):
 
         # Public statutes. These values can be changed without calling for methods (safe to update)
         self.active = False  # Widget requests focus
+        self.configured = False  # Widget has been configured
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input
@@ -1004,8 +1006,7 @@ class Widget(object):
 
         :return: Widget data value
         """
-        raise ValueError('{}<"{}"> does not accept value'.format(self.__class__.__name__,
-                                                                 self.get_id()))
+        raise ValueError('{0} does not accept value'.format(self.get_class_id()))
 
     def get_id(self) -> str:
         """
@@ -1927,8 +1928,7 @@ class Widget(object):
         :param value: Value to be set on the widget
         :return: None
         """
-        raise ValueError('{}<"{}"> does not accept value'.format(self.__class__.__name__,
-                                                                 self.get_id()))
+        raise ValueError('{0} does not accept value'.format(self.get_class_id()))
 
     def set_default_value(self, value: Any) -> 'Widget':
         """
@@ -2239,6 +2239,36 @@ class Widget(object):
         assert isinstance(frame, Widget)
         self._frame = frame
         return self
+
+    def _get_status(self) -> Tuple[Any, ...]:
+        """
+        Get the status of the Widget as a tuple (position, indices, values, etc).
+
+        :return: Data
+        """
+        clsname = self.__class__.__name__
+        if self.get_title() is not '':
+            clsname += '-' + self.get_title()
+        data = [clsname, self.get_col_row_index(), self.get_position()]
+        if isinstance(self, pygame_menu.widgets.Frame):
+            for ww in self.get_widgets():
+                data.append(ww._get_status())
+            data.append(self.get_indices())
+        data.append((int(self.is_selectable), int(self.is_floating()), int(self.is_selected()),
+                     int(self.is_visible()), self.get_size()))
+        try:
+            data.append(self.get_value())
+        except ValueError:
+            pass
+        return tuple(data)
+
+    def get_class_id(self) -> str:
+        """
+        Return the Widget Class+ID as a string.
+
+        :return: Class+ID format
+        """
+        return '{0}<"{1}">'.format(self.__class__.__name__, self._id)
 
 
 class _WidgetNullSelection(Selection):
