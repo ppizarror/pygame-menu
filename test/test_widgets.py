@@ -931,6 +931,34 @@ class WidgetsTest(unittest.TestCase):
         textinput = menu.add.text_input('title: ', input_underline='_', input_underline_len=10)
         self.assertEqual(textinput._current_underline_string, '_' * 10)
 
+        # Text underline with different column widths
+        menu = pygame_menu.Menu(
+            column_max_width=200,
+            height=300,
+            theme=theme,
+            title='Label',
+            onclose=pygame_menu.events.CLOSE,
+            width=400
+        )
+        self.assertRaises(pygame_menu.menu._MenuSizingException, lambda: menu.add.frame_v(300, 100))
+        self.assertRaises(pygame_menu.menu._MenuSizingException, lambda: menu.add.frame_v(201, 100))
+        self.assertEqual(len(menu._widgets), 0)
+        textinput = menu.add.text_input('title', input_underline='_')
+        if pygame.version.vernum[0] < 2:
+            self.assertEqual(menu._widget_offset[1], 106)
+        else:
+            self.assertEqual(menu._widget_offset[1], 107)
+        self.assertEqual(textinput.get_width(), 178)
+        self.assertEqual(textinput._current_underline_string, '____________')
+        vframe = menu.add.frame_v(150, 100, background_color=(20, 20, 20))
+        vframe.pack(textinput)
+        if pygame.version.vernum[0] < 2:
+            self.assertEqual(menu._widget_offset[1], 75)
+        else:
+            self.assertEqual(menu._widget_offset[1], 76)
+        self.assertEqual(textinput.get_width(), 134)
+        self.assertEqual(textinput._current_underline_string, '________')
+
     def test_button(self) -> None:
         """
         Test button widget.
@@ -1173,8 +1201,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_rect().height, 999)
         self.assertEqual(w.update([]), False)
         self.assertEqual(w._font_size, 0)
-        self.assertEqual(w.get_margin()[0], 0)
-        self.assertEqual(w.get_margin()[1], 0)
+        self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
 
     def test_hmargin(self) -> None:
@@ -1187,8 +1214,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_rect().height, 0)
         self.assertEqual(w.update([]), False)
         self.assertEqual(w._font_size, 0)
-        self.assertEqual(w.get_margin()[0], 0)
-        self.assertEqual(w.get_margin()[1], 0)
+        self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
 
     def test_none(self) -> None:
@@ -1200,15 +1226,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid.get_id(), 'none')
 
         wid.set_margin(9, 9)
-        self.assertEqual(wid.get_margin()[0], 0)
-        self.assertEqual(wid.get_margin()[1], 0)
+        self.assertEqual(wid.get_margin(), (0, 0))
 
         wid.set_padding(9)
-        t, l, b, r = wid.get_padding()
-        self.assertEqual(r, 0)
-        self.assertEqual(t, 0)
-        self.assertEqual(b, 0)
-        self.assertEqual(l, 0)
+        self.assertEqual(wid.get_padding(), (0, 0, 0, 0))
 
         wid.set_background_color((1, 1, 1))
         wid._draw_background_color(surface)
@@ -1569,7 +1590,7 @@ class WidgetsTest(unittest.TestCase):
         menu.remove_widget(btn2)
         self.assertEqual(btn2.get_frame(), None)
         self.assertEqual(btn2._translate, (0, 0))
-        self.assertFalse(btn2.is_floating())
+        self.assertTrue(btn2.is_floating())
 
         wid = menu.get_widgets()
         if pygame.version.vernum[0] >= 2:
@@ -1613,7 +1634,7 @@ class WidgetsTest(unittest.TestCase):
         frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
         closebtn = frame_title.pack(
             menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(160, 160, 160)),
-            alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(0, 2))
+            alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
         frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
                            alignment=pygame_menu.locals.ALIGN_CENTER)
         frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255), font_color=(2000, 0, 0))
@@ -1637,8 +1658,11 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 154))
         self.assertEqual(frame_numbers._recursive_render, 0)
         previwdg = frame_numbers.get_widgets()
-        self.assertEqual(frame_numbers._control_widget, previwdg[0])
-        frame_numbers.unpack(frame_numbers._control_widget)
+        cwidget = frame_numbers._control_widget
+        self.assertEqual(cwidget, previwdg[0])
+        frame_numbers.unpack(cwidget)
+        self.assertTrue(cwidget.is_floating())
+        self.assertTrue(cwidget in menu.get_widgets())
         self.assertRaises(ValueError, lambda: frame_numbers.unpack(previwdg[0]))
         self.assertEqual(frame_numbers._control_widget, previwdg[1])
         for w in frame_numbers.get_widgets():
@@ -1650,7 +1674,7 @@ class WidgetsTest(unittest.TestCase):
         size_exception = pygame_menu.widgets.widget.frame._FrameSizeException
         self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(100, 400)))
         self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(400, 10)))
-        self.assertEqual(len(frame_numbers.get_widgets()), 0)
+        self.assertEqual(len(frame_numbers.get_widgets(unpack_subframes_include_frame=True)), 0)
         frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_CENTER)
         frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_RIGHT)
         frame_numbers.pack(menu.add.frame_v(10, 10))
@@ -1719,3 +1743,13 @@ class WidgetsTest(unittest.TestCase):
 
         wid._draw(surface)
         wid.update([])
+
+        # Test frame with Widgets not included in same menu
+        menu.remove_widget(frame_v)
+        h = menu.add.frame_h(400, 300, background_color=(0, 60, 80))
+        btn = pygame_menu.widgets.Button('button')
+        self.assertRaises(AssertionError, lambda: h.pack(btn))  # Not configured
+        menu.add._configure_defaults_widget(btn)
+        h.pack(btn)
+        h.pack(menu.add.button('button legit', None))
+        self.assertTrue(h.contains_widget(btn))
