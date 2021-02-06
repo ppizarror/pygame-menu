@@ -29,9 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Frame']
+__all__ = ['Frame', 'FrameOrientationType']
 
 import pygame
+import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Literal, Union, List, Vector2NumberType
@@ -72,6 +73,7 @@ class Frame(Widget):
     _control_widget: Optional['Widget']
     _control_widget_last_pos: Optional[Vector2NumberType]
     _height: int
+    _scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']
     _orientation: FrameOrientationType
     _pos: Dict[str, Tuple[int, int]]  # Widget positioning
     _recursive_render: int
@@ -99,6 +101,7 @@ class Frame(Widget):
         self._orientation = orientation
         self._pos = {}
         self._recursive_render = 0
+        self._scrollarea = None
         self._widgets = {}
         self._width = int(width)
 
@@ -112,6 +115,16 @@ class Frame(Widget):
         self._rect.height = self._height
         self._rect.width = self._width
         self._surface = make_surface(width, height, alpha=True)
+
+    def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> 'Frame':
+        """
+        Set the scrollarea of the frame.
+
+        :param scrollarea: Scrollarea object
+        :return: Self reference
+        """
+        self._scrollarea = scrollarea
+        return self
 
     def get_indices(self) -> Tuple[int, int]:
         """
@@ -156,8 +169,10 @@ class Frame(Widget):
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         self._draw_background_color(surface)
         self._decorator.draw_prev(surface)
-        for widget in self._widgets.values():
-            widget[0].draw(surface)
+        for w in self._widgets.values():
+            widget = w[0]
+            if widget.is_visible():
+                widget.draw(surface)
         self._draw_border(surface)
         self._decorator.draw_post(surface)
         self.apply_draw_callbacks()
@@ -173,8 +188,8 @@ class Frame(Widget):
         """
         w = widget.get_width()
         if w > self._width:
-            raise _FrameSizeException('widget<"{0}"> ({1}) is greater than Frame<"{3}"> widget ({2})'.format(
-                widget.get_id(), w, self._width, self.get_id()
+            raise _FrameSizeException('{0} width ({1}) is greater than {3} width ({2})'.format(
+                widget.get_class_id(), w, self._width, self.get_class_id()
             ))
         if a == _locals.ALIGN_CENTER:
             return int((self._width - w) / 2)
@@ -193,8 +208,8 @@ class Frame(Widget):
         """
         h = widget.get_height()
         if h > self._height:
-            raise _FrameSizeException('widget<"{0}"> height ({1}) is greater than Frame<"{3}"> height ({2})'.format(
-                widget.get_id(), h, self._height, self.get_id()
+            raise _FrameSizeException('{0} height ({1}) is greater than {3} height ({2})'.format(
+                widget.get_class_id(), h, self._height, self.get_class_id()
             ))
         if v == _locals.POSITION_CENTER:
             return int((self._height - h) / 2)
@@ -228,8 +243,8 @@ class Frame(Widget):
                 xright += w.get_margin()[0]
             dw = xleft - xright
             if dw > self._width:
-                msg = 'widget<"{3}"> sizing ({0}) exceeds frame<"{2}"> ' \
-                      'width ({1})'.format(dw, self._width, self.get_id(), w.get_id())
+                msg = '{3} sizing ({0}) exceeds {2} width ({1})' \
+                      ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
                 raise _FrameSizeException(msg)
 
         # Now center widgets
@@ -245,9 +260,6 @@ class Frame(Widget):
                 xcenter += w.get_margin()[0]
                 self._pos[w.get_id()] = (xcenter, self._get_vt(w, vpos) + w.get_margin()[1])
                 xcenter += w.get_width()
-
-        for w in self._widgets.keys():
-            self._widgets[w][0]._translate = self._pos[w]
 
     def _update_position_vertical(self) -> None:
         """
@@ -272,15 +284,15 @@ class Frame(Widget):
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + ybottom)
             dh = ytop - ybottom
             if dh > self._height:
-                msg = 'widget<"{3}"> sizing ({0}) exceeds frame<"{2}"> ' \
-                      'height ({1})'.format(dh, self._height, self.get_id(), w.get_id())
+                msg = '{3} sizing ({0}) exceeds {2} height ({1})' \
+                      ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
                 raise _FrameSizeException(msg)
 
         # Now center widgets
         available = self._height - (ytop - ybottom)
         if wcenter > available:
             msg = 'cannot place center widgets as required height ({0}) ' \
-                  'is greater than available ({1}) in frame<"{2}">'.format(wcenter, available, self.get_id())
+                  'is greater than available ({1}) in {2}'.format(wcenter, available, self.get_class_id())
             raise _FrameSizeException(msg)
         ycenter = int(self._height / 2 - wcenter / 2)
         for w in self._widgets.values():
@@ -289,9 +301,6 @@ class Frame(Widget):
                 ycenter += w.get_margin()[1]
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], ycenter)
                 ycenter += w.get_height()
-
-        for w in self._widgets.keys():
-            self._widgets[w][0]._translate = self._pos[w]
 
     def update_position(self) -> 'Frame':
         """
@@ -308,23 +317,37 @@ class Frame(Widget):
         elif self._orientation == _locals.ORIENTATION_VERTICAL:
             self._update_position_vertical()
 
+        # Apply position to each widget
+        for w in self._widgets.keys():
+            tx, ty = self._pos[w]
+            widget = self._widgets[w][0]
+            if widget.get_menu() is None:  # Widget is only appended to Frame
+                widget.set_position(*self.get_position())
+                continue
+            widget._translate = (tx, ty)
+
         # Check if control widget has changed positioning. This fixes centering issues
-        cpos = self._control_widget.get_position()
-        if self._control_widget_last_pos != cpos:
-            self._control_widget_last_pos = cpos
-            if self._recursive_render <= 100:
-                self._menu.render()
-            self._recursive_render += 1
-        else:
-            self._recursive_render = 0
+        if self._control_widget is not None:
+            cpos = self._control_widget.get_position()
+            if self._control_widget_last_pos != cpos:
+                self._control_widget_last_pos = cpos
+                if self._recursive_render <= 100:
+                    self._menu.render()
+                self._recursive_render += 1
+            else:
+                self._recursive_render = 0
 
         return self
 
-    def get_widgets(self, unpack_subframes: bool = True) -> Tuple['Widget', ...]:
+    def get_widgets(self,
+                    unpack_subframes: bool = True,
+                    unpack_subframes_include_frame: bool = False
+                    ) -> Tuple['Widget', ...]:
         """
         Get widgets as a tuple.
 
         :param unpack_subframes: If ``True`` add frame widgets instead of frame
+        :param unpack_subframes_include_frame: If ``True`` the unpacked frame is also added to the widget list
         :return: Widget tuple
         """
         wtp = []
@@ -334,6 +357,8 @@ class Frame(Widget):
                 ww = widget.get_widgets(unpack_subframes=unpack_subframes)
                 for i in ww:
                     wtp.append(i)
+                if unpack_subframes_include_frame:
+                    wtp.append(widget)
                 continue
             wtp.append(widget)
         return tuple(wtp)
@@ -341,6 +366,7 @@ class Frame(Widget):
     def unpack(self, widget: 'Widget') -> 'Frame':
         """
         Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
+        Unpacked widgets have a floating position and are moved to the last position of the widget list of Menu
 
         :param widget: Widget to unpack
         :return: Self reference
@@ -348,25 +374,34 @@ class Frame(Widget):
         assert len(self._widgets) > 0, 'frame is empty'
         wid = widget.get_id()
         if wid not in self._widgets.keys():
-            msg = 'widget<"{0}"> does not exist in frame'.format(wid)
+            msg = '{0} does not exist in frame'.format(widget.get_class_id())
             raise ValueError(msg)
         assert widget._frame == self, 'widget frame differs from current'
         widget._frame = None
         widget._translate = (0, 0)
-        widget.set_float(False)
         del self._widgets[wid]
         try:
             del self._pos[wid]
         except KeyError:
             pass
+
+        # Move widget to the last position of widget list
+        if widget.get_menu() == self.get_menu():
+            try:
+                self.get_menu().move_widget_index(widget)
+            except ValueError:
+                pass
+
         self.force_menu_surface_update()
         if self._control_widget == widget:
-            if len(self._widgets) == 0:
-                self._control_widget = None
-                self._control_widget_last_pos = None
-            else:
-                self._control_widget = self.get_widgets()[0]
-                self._control_widget_last_pos = self._control_widget.get_position()
+            self._control_widget = None
+            self._control_widget_last_pos = None
+            for widget in self.get_widgets():
+                if widget.get_menu() is not None:
+                    self._control_widget = widget
+                    self._control_widget_last_pos = self._control_widget.get_position()
+                    break
+
         self.update_indices()
         return self
 
@@ -440,8 +475,8 @@ class Frame(Widget):
         assert isinstance(widget, Widget)
         assert widget.get_id() not in self._widgets.keys(), \
             'widget already in frame'
-        assert widget.get_menu() == menu, \
-            'widget menu to be added to frame must be in same menu as frame'
+        assert widget.get_menu() == menu or widget.get_menu() is None, \
+            'widget menu to be added to frame must be in same menu as frame, or it can have any Menu instance'
         assert widget.get_frame() is None, \
             'widget already is in another frame'
         assert_alignment(alignment)
@@ -450,26 +485,25 @@ class Frame(Widget):
         assert widget._translate[0] == 0 and widget._translate[1] == 0, \
             'widget cannot have a previous translation if appended. Frame overrides translation'
         assert_vector(margin, 2)
+        assert widget.configured, 'widget must be configured before packing'
+
+        # Check the widget margin can be set
+        # translation_test = (-5, 7)  # primes are nice
+        # widget.translate(*translation_test)
+        # assert widget._translate == translation_test, 'widget must me able to translate'
 
         widget.set_frame(self)
         widget.set_float()
         widget.set_margin(*margin)
         self._widgets[widget.get_id()] = (widget, alignment, vertical_position)
 
-        # Notify menu and sort widgets to keep selection order
-        # noinspection PyProtectedMember
-        menu_widgets = menu._widgets
-
-        frame_index = menu_widgets.index(self)
-        widgt_index = menu_widgets.index(widget)
-        assert widgt_index > frame_index, 'widget cannot be appended before frame'
-        menu_widgets.pop(widgt_index)
-        menu_widgets.insert(frame_index, widget)
-        if widget.is_selected():
-            widget.select(False)
-            menu.select_widget(widget)
-
-        if self._control_widget is None:
+        # Sort widgets to keep selection order
+        if widget.get_menu() is not None:
+            try:
+                widget.get_menu().move_widget_index(widget, self, render=False)
+            except AssertionError:
+                pass
+        if self._control_widget is None and widget.get_menu() is not None:
             self._control_widget = widget
             self._control_widget_last_pos = self._control_widget.get_position()
 
@@ -479,9 +513,18 @@ class Frame(Widget):
         except _FrameSizeException:
             self.unpack(widget)
             raise
-        self.update_indices()
 
+        self.update_indices()
         return widget
+
+    def contains_widget(self, widget: 'Widget') -> bool:
+        """
+        Returns true if the frame contains the given widget.
+
+        :param widget: Widget to check
+        :return: ``True`` if widget within frame
+        """
+        return widget.get_frame() == self and widget.get_id() in self._widgets.keys()
 
     def update_indices(self) -> None:
         """
@@ -493,7 +536,9 @@ class Frame(Widget):
         self.first_index = -1
         self.last_index = -1
         for widget in widgs:
-            if widget.is_selectable or isinstance(widget, Frame):
+            if (widget.is_selectable or isinstance(widget, Frame)) and widget.get_menu() is not None:
+                if isinstance(widget, Frame) and widget.get_indices() == (-1, -1):
+                    continue  # Frames with not selectable indices are not counted
                 windex = widget.get_col_row_index()[2]
                 if self.first_index == -1:
                     self.first_index = windex
