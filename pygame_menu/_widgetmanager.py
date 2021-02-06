@@ -232,7 +232,7 @@ class WidgetManager(object):
         self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
         try:
             self._menu._render()
-        except pygame_menu.menu._MenuSizingException:
+        except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
             self._menu.remove_widget(widget)
             raise
 

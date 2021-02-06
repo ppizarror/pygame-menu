@@ -1067,8 +1067,8 @@ class Menu(object):
 
             # Check if the maximum number of elements was reached, if so raise an exception
             # If menu has frames, this check is disabled
-            if not has_frame:
-                assert i_index < self._max_row_column_elements, max_elements_msg.replace('[widg]', str(i_index))
+            if not has_frame and not i_index < self._max_row_column_elements:
+                raise _MenuWidgetOverflow(max_elements_msg.replace('[widg]', str(i_index)))
 
             # Set the widget column/row position
             row = i_index
@@ -3224,6 +3224,13 @@ class _MenuRuntimeErrorConfig(object):
 
 class _MenuSizingException(Exception):
     """
-    Error thrown if widget exceeds maximum size of column/row layout.
+    Exception thrown if widget exceeds maximum size of column/row layout.
+    """
+    pass
+
+
+class _MenuWidgetOverflow(Exception):
+    """
+    Exception thrown if adding more widgets than menu can contain on row/column layout.
     """
     pass

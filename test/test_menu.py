@@ -885,9 +885,12 @@ class MenuTest(unittest.TestCase):
         column_menu.enable()
         column_menu.draw(surface)
         column_menu.disable()
+        self.assertEqual(len(column_menu._widgets), 8)
         self.assertRaises(RuntimeError, lambda: column_menu.draw(surface))
-        self.assertRaises(AssertionError, lambda: column_menu.add.button('test', pygame_menu.events.BACK))
-        self.assertRaises(AssertionError, lambda: column_menu._update_widget_position())  # 9th item
+        self.assertRaises(pygame_menu.menu._MenuWidgetOverflow,
+                          lambda: column_menu.add.button('test', pygame_menu.events.BACK))
+        column_menu._update_widget_position()
+        self.assertEqual(len(column_menu._widgets), 8)  # Widget not added
 
         # Test max width
         self.assertRaises(AssertionError,
