@@ -543,6 +543,7 @@ class Menu(object):
         self._menubar.set_controls(self._joystick, self._mouse, self._touchscreen)
         if self._theme.title_floating:
             self._menubar.set_float()
+        self._menubar.configured = True
 
         # Scrolling area
         menubar_height = self._menubar.get_height()
@@ -927,7 +928,7 @@ class Menu(object):
         except ValueError:
             raise ValueError('widget is not in Menu, check if exists on the current '
                              'with menu.get_current().remove_widget(widget)')
-        self._select(index)
+        self._select(index, dwidget=1)
         return self
 
     def remove_widget(self, widget: 'pygame_menu.widgets.Widget') -> 'Menu':
@@ -1036,11 +1037,6 @@ class Menu(object):
 
         :return: None
         """
-        # Store widget rects
-        widget_rects = {}
-        for widget in self._widgets:
-            widget_rects[widget.get_id()] = widget.get_rect()
-
         # Column widgets
         self._widget_columns = {}
         for i in range(self._columns):
@@ -1084,6 +1080,8 @@ class Menu(object):
                     break
                 row -= self._rows[col]  # Subtract the number of rows of such column
 
+            # Important before getting widget width as some widgets require the
+            # column max width
             widget.set_col_row_index(col, row, index)
             self._widget_columns[col].append(widget)
 
@@ -1209,22 +1207,41 @@ class Menu(object):
         max_x, max_y = -1e8, -1e8
         min_x, min_y = 1e8, 1e8
 
+        # Cache rects
+        rects_cache = {}
+
+        def get_rect(wid: 'pygame_menu.widgets.Widget') -> 'pygame.Rect':
+            """
+            Get rect cache from widget.
+
+            :param wid: Widget
+            :return: Rect cache
+            """
+            try:
+                return rects_cache[wid.get_id]
+            except KeyError:
+                rects_cache[wid.get_id] = wid.get_rect()
+            return rects_cache[wid.get_id]
+
         # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]
-            rect = widget_rects[widget.get_id()]
+
+            align = widget.get_alignment()
+            frame = widget.get_frame()
+            margin = widget.get_margin()
+            padding = widget.get_padding()
             selection_effect = widget.get_selection_effect()
+            width = get_rect(widget).width
 
             if not widget.is_visible():
                 widget.set_position(0, 0)
                 continue
 
             # If widget within frame update col/row position
-            frame = widget.get_frame()
             if frame is not None:
                 fx, fy = frame.get_position()
-                widget.set_position(fx + widget.get_margin()[0] + widget.get_padding()[3],
-                                    fy + widget.get_padding()[0])
+                widget.set_position(fx + margin[0] + padding[3], fy + padding[0])
                 c, r, _ = frame.get_col_row_index()
                 widget.set_col_row_index(c, r, index)
                 frame.update_indices()
@@ -1236,29 +1253,35 @@ class Menu(object):
             # Calculate X position
             column_width = self._column_widths[col]
             selection_margin = 0
-            align = widget.get_alignment()
             if align == _locals.ALIGN_CENTER:
-                dx = -widget.get_width() / 2
+                dx = -width / 2
             elif align == _locals.ALIGN_LEFT:
                 selection_margin = selection_effect.get_margin()[1]  # left
                 dx = -column_width / 2 + selection_margin
             elif align == _locals.ALIGN_RIGHT:
                 selection_margin = selection_effect.get_margin()[3]  # right
-                dx = column_width / 2 - rect.width - selection_margin
+                dx = column_width / 2 - width - selection_margin
             else:
                 dx = 0
-            x_coord = self._column_pos_x[col] + dx + widget.get_margin()[0] + widget.get_padding()[3]
+            x_coord = self._column_pos_x[col] + dx + margin[0] + padding[3]
             x_coord = max(selection_margin, x_coord)
             x_coord += max(0, self._widget_offset[0])
 
-            # Calculate Y position
+            # Check if widget width exceeds column max width
+            max_column_width = self._column_max_width[col]
+            if max_column_width is not None and width > max_column_width:
+                msg = '{0} widget width ({1}) exceeds column {2} max width ({3})' \
+                      ''.format(widget.get_class_id(), width, col + 1, max_column_width)
+                raise _MenuSizingException(msg)
+
+                # Calculate Y position
             ysum = 1  # Compute the total height from the current row position to the top of the column
             for rwidget in self._widget_columns[col]:
                 _, r, _ = rwidget.get_col_row_index()
                 if r >= row:
                     break
                 if rwidget.is_visible() and not rwidget.is_floating():
-                    ysum += widget_rects[rwidget.get_id()].height  # Height
+                    ysum += get_rect(rwidget).height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
 
                     # If no widget is before add the selection effect
@@ -1274,17 +1297,17 @@ class Menu(object):
                 if widget.is_selectable:  # Add top margin
                     ysum += yselh - self._widget_offset[1]
 
-            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
+            y_coord = max(0, self._widget_offset[1]) + ysum + padding[0]
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
 
             # Update max/min position, minus padding
             min_max_updated = True
-            max_x = max(max_x, x_coord + rect.width - widget.get_padding()[1])  # minus right padding
-            max_y = max(max_y, y_coord + rect.height - widget.get_padding()[2])  # minus bottom padding
-            min_x = min(min_x, x_coord - widget.get_padding()[3])
-            min_y = min(min_y, y_coord - widget.get_padding()[0])
+            max_x = max(max_x, x_coord + width - padding[1])  # minus right padding
+            max_y = max(max_y, y_coord + get_rect(widget).height - padding[2])  # minus bottom padding
+            min_x = min(min_x, x_coord - padding[3])
+            min_y = min(min_y, y_coord - padding[0])
 
         # Update position
         if min_max_updated:
@@ -1295,6 +1318,7 @@ class Menu(object):
             self._widget_min_position = (0, 0)
 
         self._stats.position_update += 1
+        del rects_cache
 
     def _build_widget_surface(self) -> None:
         """
@@ -1379,7 +1403,8 @@ class Menu(object):
         assert isinstance(widget_id, str)
         for widget in self._widgets:
             if widget.get_id() == widget_id:
-                raise IndexError('widget<"{0}"> already exists on the current menu'.format(widget_id))
+                msg = '{0} already exists on the current menu'.format(widget.get_class_id())
+                raise IndexError(msg)
 
     def _close(self) -> bool:
         """
@@ -2644,7 +2669,7 @@ class Menu(object):
 
         old_widget = self._widgets[self._index]
         new_widget = self._widgets[new_index]
-        if old_widget == new_widget and self._index != -1:
+        if old_widget == new_widget and self._index != -1 and old_widget.is_selected():
             return
 
         # If new widget is not selectable or visible
@@ -2661,7 +2686,12 @@ class Menu(object):
 
                 # A selectable widget has been found within frame
                 if min_index != -1 and not same_frame and min_index != self._index:
-                    return self._select(min_index, dwidget, apply_sound)
+
+                    # Check if the target index is not looping
+                    upper_bound = min_index if min_index != 0 else len(self._widgets)
+                    lower_bound = min_index if self._index != 0 else -1
+                    if dwidget == 1 and upper_bound > self._index or dwidget == -1 and lower_bound < self._index:
+                        return self._select(min_index, dwidget, apply_sound)
 
             if self._index >= 0:  # There's at least 1 selectable option
                 return self._select(new_index + dwidget, dwidget, apply_sound)
@@ -3039,21 +3069,93 @@ class Menu(object):
         """
         return self._decorator
 
-    def _test_pos_widgets(self) -> Tuple[Tuple[Any, ...], ...]:
+    def _test_widgets_status(self) -> Tuple[Tuple[Any, ...], ...]:
         """
-        Return position tuple for testing purposes.
+        Get the status of each widget as a tuple (position, indices, values, etc).
 
-        :return: Position of all widgets (coodinates, col, row, index)
+        :return: Widget status
         """
+        self.render()
         data = []
         for w in self._widgets:
-            data.append(w.get_col_row_index())
-            data.append(w.get_position())
-            if isinstance(w, pygame_menu.widgets.Frame):
-                for ww in w.get_widgets():
-                    data.append(ww.get_col_row_index())
-                    data.append(ww.get_position())
+            # noinspection PyProtectedMember
+            data.append(w._get_status())
         return tuple(data)
+
+    def move_widget_index(self,
+                          widget: Optional['pygame_menu.widgets.Widget'],
+                          index: Optional[Union['pygame_menu.widgets.Widget', int]] = None,
+                          append: bool = True,
+                          render: bool = True
+                          ) -> Optional[Tuple2IntType]:
+        """
+        Move a given widget to a certain index. ``index`` can be another widget,
+        a numerical position, or ``None``; if ``None`` the widget is pushed to the
+        last widget list position.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param widget: Widget to move. If ``None`` the widgets are flipped or reversed and returns ``None``
+        :param index: Target index. It can be a widget, a numerical index, or ``None``; if ``None`` the widget is pushed to the last position
+        :param append: If ``True`` the widget is added after the given index, if ``False`` it is added before the given index
+        :param render: Force menu rendering after update
+        :return: The new indices of the widget and the previous index element
+        """
+        assert len(self._widgets) >= 2, 'menu must contain at least 2 widgets to perform this task'
+        selected_widget = self.get_selected_widget()
+
+        # Reverse widgets
+        if widget is None:
+            self._widgets.reverse()
+            if selected_widget is not None and selected_widget.is_selectable:
+                selected_widget.select(False)
+                self._select(self._widgets.index(selected_widget), 1, apply_sound=False)
+            if render:
+                self._widgets_surface = None
+                self._render()
+            return
+
+        # Asserts
+        widget_index = self._widgets.index(widget)
+        assert widget in self._widgets, \
+            '{0} does not exist on current menu widgets list'.format(widget.get_class_id())
+        assert isinstance(index, (pygame_menu.widgets.Widget, int, type(None)))
+        if isinstance(index, pygame_menu.widgets.Widget):
+            assert index in self._widgets, \
+                '{0} does not exist on current menu widgets list'.format(index.get_class_id())
+            index = self._widgets.index(index)
+        elif isinstance(index, int):
+            assert 0 <= index < len(self._widgets), \
+                'index {0} must be between 0 and the number of widgets ({1})'.format(index, len(self._widgets))
+        elif index is None:
+            index = len(self._widgets) - 1
+        else:
+            raise ValueError('index must be a widget, int, or None')
+        assert widget_index != index, 'target index must be different than widget index'
+        target_index = index
+        target_widget = self._widgets[target_index]
+        self._widgets.pop(widget_index)
+        if not append:
+            target_index += 1
+        self._widgets.insert(target_index, widget)
+
+        new_widget_index = self._widgets.index(widget)
+        assert new_widget_index != widget_index, 'widget index has not changed'
+        assert widget != target_widget, 'widget must be different than target'
+
+        # Update previous selected widget
+        if selected_widget is not None and selected_widget.is_selectable:
+            selected_widget.select(False)
+            self._select(self._widgets.index(selected_widget), 1, apply_sound=False)
+        if render:
+            self._widgets_surface = None
+            self._render()
+
+        return new_widget_index, target_index
 
 
 class _MenuStats(object):
@@ -3119,3 +3221,10 @@ class _MenuRuntimeErrorConfig(object):
         if throw_runtime:
             raise RuntimeError(msg)
         warnings.warn(msg)
+
+
+class _MenuSizingException(Exception):
+    """
+    Error thrown if widget exceeds maximum size of column/row layout.
+    """
+    pass
