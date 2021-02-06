@@ -447,9 +447,10 @@ class TextInput(Widget):
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
 
-        if not self._render_hash_changed(self._menu.get_id(), string, self._selected, self._cursor_render,
+        assert self._menu is not None, 'menu must be defined to render a textinput'
+        if not self._render_hash_changed(string, self._selected, self._cursor_render,
                                          self._selection_enabled, self.active, self._visible, self.readonly,
-                                         self._menu.get_width(inner=True)):
+                                         self._get_max_container_width()):
             return True
 
         # Apply underline if exists
@@ -533,6 +534,32 @@ class TextInput(Widget):
             if self._cursor_surface:
                 self._cursor_surface.fill(self._cursor_color)
 
+    def _get_max_container_width(self) -> int:
+        """
+        Return the maximum textarea container width. It can be the column width, menu width
+        or frame width if horizontal
+
+        :return: Container width
+        """
+        menu = self._menu
+        frame = self.get_frame()
+        if menu is None:
+            return 0
+        try:
+            # noinspection PyProtectedMember
+            max_width = menu._column_widths[self.get_col_row_index()[0]]
+        except IndexError:
+            max_width = menu.get_width(inner=True)
+
+        # Textarea within frame
+        if frame is not None:
+            if frame.horizontal:
+                msg = 'horizontal frame cannot contain variable width sizing textinputs (requested by input ' \
+                      'underline). Set input_underline_len variable to avoid this Exception'
+                raise RuntimeError(msg)
+            max_width = frame.get_width()
+        return max_width
+
     def _render_string_underline(self, string: str, color: ColorType) -> 'pygame.Surface':
         """
         Render underline string surface.
@@ -548,7 +575,6 @@ class TextInput(Widget):
         if self._input_underline_size == 0:
             return surface
 
-        menu = self.get_menu()
         current_rect = surface.get_rect()
 
         # Compute initial char guess
@@ -565,7 +591,8 @@ class TextInput(Widget):
             #  | self._rect.x   title                       posx2  |
             #  |                                                   |
             #  |---------------------------------------------------|
-            posx2 = max(menu.get_width(inner=True) - self._input_underline_size * 1.5 -
+
+            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.5 -
                         self._padding[1] - self._padding[3],
                         current_rect.width)
             delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
