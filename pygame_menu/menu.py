@@ -1318,7 +1318,6 @@ class Menu(object):
             self._widget_min_position = (0, 0)
 
         self._stats.position_update += 1
-        del rects_cache
 
     def _build_widget_surface(self) -> None:
         """
