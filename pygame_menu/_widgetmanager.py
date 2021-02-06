@@ -48,6 +48,7 @@ import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.frame import FrameOrientationType
 from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     NumberType, Vector2NumberType, List, Tuple
@@ -218,29 +219,37 @@ class WidgetManager(object):
         :return: None
         """
         assert isinstance(widget, pygame_menu.widgets.Widget)
-        assert widget.get_menu() == self._menu, 'widget cannot have a different instance of menu'
+        if widget.get_menu() is None:
+            widget.set_menu(self._menu)
+            self._menu._check_id_duplicated(widget.get_id())
+        assert widget.get_menu() == self._menu, \
+            'widget cannot have a different instance of menu'
         self._menu._widgets.append(widget)
         if self._menu._index < 0 and widget.is_selectable:
             widget.select()
             self._menu._index = len(self._menu._widgets) - 1
         self._menu._stats.added_widgets += 1
         self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
-        self._menu._render()
+        try:
+            self._menu._render()
+        except pygame_menu.menu._MenuSizingException:
+            self._menu.remove_widget(widget)
+            raise
 
     def _configure_widget(self, widget: 'pygame_menu.widgets.Widget', **kwargs) -> None:
         """
-        Update the given widget with the parameters defined at
-        the Menu level.
+        Update the given widget with the parameters defined at the Menu level.
+        This method does not add widget to Menu.
 
         :param widget: Widget object
         :param kwargs: Optional keywords arguments
         :return: None
         """
         assert isinstance(widget, pygame_menu.widgets.Widget)
-        assert widget.get_menu() is None, 'widget cannot have an instance of menu'
 
+        # Some widgets need the menu to configure
+        prev_menu = widget.get_menu()
         widget.set_menu(self._menu)
-        self._menu._check_id_duplicated(widget.get_id())
 
         widget.set_alignment(
             align=kwargs['align']
@@ -292,6 +301,17 @@ class WidgetManager(object):
         # Finals
         if self._theme.widget_background_inflate_to_selection:
             widget.background_inflate_to_selection_effect()
+        widget.set_menu(prev_menu)
+        widget.configured = True
+
+    def _configure_defaults_widget(self, widget: 'pygame_menu.widgets.Widget') -> None:
+        """
+        Apply default menu settings to widget. This method does not add widget to Menu.
+
+        :param widget: Widget to be configured
+        :return: None
+        """
+        self._configure_widget(widget, **self._filter_widget_attributes({}))
 
     def button(self,
                title: Any,
@@ -574,8 +594,8 @@ class WidgetManager(object):
         )
 
         self._configure_widget(widget=widget, **attributes)
-        widget.set_default_value(default)
         self._append_widget(widget)
+        widget.set_default_value(default)
 
         return widget
 
@@ -1113,8 +1133,8 @@ class WidgetManager(object):
             **kwargs
         )
         self._configure_widget(widget=widget, **attributes)
-        widget.set_default_value(default)
         self._append_widget(widget)
+        widget.set_default_value(default)
 
         return widget
 
@@ -1244,7 +1264,42 @@ class WidgetManager(object):
         )
 
         self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
         widget.set_default_value(default)
+
+        return widget
+
+    def _frame(self,
+               width: NumberType,
+               height: NumberType,
+               orientation: FrameOrientationType,
+               frame_id: str = '',
+               **kwargs
+               ) -> 'pygame_menu.widgets.Frame':
+        """
+        Adds a frame.
+
+        :param width: Frame width
+        :param height: Frame height
+        :param frame_id: ID of the frame
+        :param kwargs: Optional keyword arguments
+        :return: Frame object
+        :rtype: :py:class:`pygame_menu.widgets.Frame`
+        """
+        # Remove invalid keys from kwargs
+        for key in list(kwargs.keys()):
+            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
+                           'border_width', 'margin', 'padding']:
+                kwargs.pop(key, None)
+
+        attributes = self._filter_widget_attributes(kwargs)
+        widget = pygame_menu.widgets.Frame(
+            width=width,
+            height=height,
+            orientation=orientation,
+            frame_id=frame_id
+        )
+        self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
 
         return widget
@@ -1296,23 +1351,7 @@ class WidgetManager(object):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        # Remove invalid keys from kwargs
-        for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'margin', 'padding']:
-                kwargs.pop(key, None)
-
-        attributes = self._filter_widget_attributes(kwargs)
-        widget = pygame_menu.widgets.Frame(
-            width=width,
-            height=height,
-            orientation=_locals.ORIENTATION_HORIZONTAL,
-            frame_id=frame_id
-        )
-        self._configure_widget(widget=widget, **attributes)
-        self._append_widget(widget)
-
-        return widget
+        return self._frame(width, height, _locals.ORIENTATION_HORIZONTAL, frame_id, **kwargs)
 
     def frame_v(self,
                 width: NumberType,
@@ -1362,23 +1401,7 @@ class WidgetManager(object):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        # Remove invalid keys from kwargs
-        for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'margin', 'padding']:
-                kwargs.pop(key, None)
-
-        attributes = self._filter_widget_attributes(kwargs)
-        widget = pygame_menu.widgets.Frame(
-            width=width,
-            height=height,
-            orientation=_locals.ORIENTATION_VERTICAL,
-            frame_id=frame_id
-        )
-        self._configure_widget(widget=widget, **attributes)
-        self._append_widget(widget)
-
-        return widget
+        return self._frame(width, height, _locals.ORIENTATION_VERTICAL, frame_id, **kwargs)
 
     # def horizontal_margin(self,
     #                       margin: NumberType,
@@ -1506,7 +1529,7 @@ class WidgetManager(object):
 
         # Configure widget
         if configure_defaults:
-            self._configure_widget(widget, **self._filter_widget_attributes({}))
+            self._configure_defaults_widget(widget)
 
         widget.set_menu(self._menu)
         self._menu._check_id_duplicated(widget.get_id())
