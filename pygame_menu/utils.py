@@ -50,7 +50,7 @@ import functools
 import pygame
 import pygame_menu.locals as _locals
 from pygame_menu._types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional, Tuple
+    Optional, Tuple, NumberInstance, VectorInstance
 
 
 def assert_alignment(align: str) -> None:
@@ -72,7 +72,7 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
     :param color: Object color
     :return: None
     """
-    assert isinstance(color, (tuple, list)), \
+    assert isinstance(color, VectorInstance), \
         'color must be a tuple or list, not type "{0}"'.format(type(color))
     assert 4 >= len(color) >= 3, \
         'color must be a tuple or list of 3 or 4 numbers'
@@ -139,7 +139,7 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(list_vector, (list, tuple))
+    assert isinstance(list_vector, (tuple, list))
     for v in list_vector:
         assert_vector(v, length=length)
 
@@ -152,14 +152,14 @@ def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(num_vector, (tuple, list)), \
+    assert isinstance(num_vector, VectorInstance), \
         'vector "{0}" must be a list or tuple of {1} items'.format(num_vector, length)
     if length != 0:
         msg = 'vector "{0}" must contain {1} numbers only, ' \
               'but {2} were given'.format(num_vector, length, len(num_vector))
         assert len(num_vector) == length, msg
     for i in range(len(num_vector)):
-        assert isinstance(num_vector[i], (int, float)), \
+        assert isinstance(num_vector[i], NumberInstance), \
             'item {0} of vector must be integer or float, not type "{1}"'.format(num_vector[i], type(num_vector[i]))
 
 
@@ -205,8 +205,8 @@ def make_surface(width: NumberType, height: NumberType,
     :param fill_color: Fill surface with a certain color
     :return: Pygame surface
     """
-    assert isinstance(width, (int, float))
-    assert isinstance(height, (int, float))
+    assert isinstance(width, NumberInstance)
+    assert isinstance(height, NumberInstance)
     assert isinstance(alpha, bool)
     assert isinstance(fill_color, (type(None), tuple))
     assert width >= 0 and height >= 0, \

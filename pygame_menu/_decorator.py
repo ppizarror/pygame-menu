@@ -46,7 +46,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from pygame_menu._types import List, Tuple2NumberType, ColorType, Tuple, \
-    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable
+    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector
 
 # Decoration constants
@@ -307,7 +307,7 @@ class Decorator(object):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert_color(color)
-        assert isinstance(radius, (int, float)) and radius > 0
+        assert isinstance(radius, NumberInstance) and radius > 0
         assert isinstance(filled, bool)
         assert isinstance(width, int) and width >= 0
         if filled:
@@ -355,9 +355,9 @@ class Decorator(object):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert_color(color)
-        assert isinstance(radius, (int, float)) and radius > 0
-        assert isinstance(init_angle, (int, float))
-        assert isinstance(final_angle, (int, float))
+        assert isinstance(radius, NumberInstance) and radius > 0
+        assert isinstance(init_angle, NumberInstance)
+        assert isinstance(final_angle, NumberInstance)
         assert isinstance(width, int) and width >= 0
         assert init_angle != final_angle
         return self._add_decor(DECORATION_ARC, prev,
@@ -396,9 +396,9 @@ class Decorator(object):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert_color(color)
-        assert isinstance(radius, (int, float)) and radius > 0
-        assert isinstance(init_angle, (int, float))
-        assert isinstance(final_angle, (int, float))
+        assert isinstance(radius, NumberInstance) and radius > 0
+        assert isinstance(init_angle, NumberInstance)
+        assert isinstance(final_angle, NumberInstance)
         assert init_angle != final_angle
         return self._add_decor(DECORATION_PIE, prev,
                                (tuple(coords), int(radius), init_angle, final_angle, color, kwargs))
@@ -535,8 +535,8 @@ class Decorator(object):
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
-        assert isinstance(width, (int, float)) and width > 0
-        assert isinstance(height, (int, float)) and height > 0
+        assert isinstance(width, NumberInstance) and width > 0
+        assert isinstance(height, NumberInstance) and height > 0
         rect = pygame.Rect(0, 0, width, height)
         return self.add_rect(x, y, rect, color, border, prev, **kwargs)
 
@@ -620,8 +620,8 @@ class Decorator(object):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert_color(color)
-        assert isinstance(rx, (int, float)) and rx > 0
-        assert isinstance(ry, (int, float)) and ry > 0
+        assert isinstance(rx, NumberInstance) and rx > 0
+        assert isinstance(ry, NumberInstance) and ry > 0
         assert isinstance(filled, bool)
         return self._add_decor(DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs))
 

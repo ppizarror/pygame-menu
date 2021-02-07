@@ -3,7 +3,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 EXAMPLE - SCROLL AREA
-Shows scroll area widget usage.
+Shows ScrollArea widget usage.
 
 License:
 -------------------------------------------------------------------------------

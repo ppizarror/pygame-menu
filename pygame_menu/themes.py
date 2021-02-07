@@ -55,8 +55,8 @@ import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
-from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, \
-    Tuple2NumberType, NumberType, PaddingType, Optional, Type
+from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, VectorInstance, \
+    Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, PaddingInstance
 
 
 def _check_menubar_style(style: int) -> bool:
@@ -277,7 +277,7 @@ class Theme(object):
         # Menu general
         self.background_color = self._get(kwargs, 'background_color', 'color_image', (220, 220, 220))
         self.focus_background_color = self._get(kwargs, 'focus_background_color', 'color', (0, 0, 0, 180))
-        self.fps = self._get(kwargs, 'fps', (int, float), 30)
+        self.fps = self._get(kwargs, 'fps', NumberInstance, 30)
         self.readonly_color = self._get(kwargs, 'readonly_color', 'color', (120, 120, 120))
         self.readonly_selected_color = self._get(kwargs, 'readonly_selected_color', 'color', (190, 190, 190))
         self.selection_color = self._get(kwargs, 'selection_color', 'color', (255, 255, 255))
@@ -286,7 +286,7 @@ class Theme(object):
         # Cursor/Text gathering
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
-        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', (int, float), 1000)
+        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', NumberInstance, 1000)
 
         # Menubar/Title
         self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
@@ -302,7 +302,7 @@ class Theme(object):
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
         self.title_shadow = self._get(kwargs, 'title_shadow', bool, False)
         self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color', (0, 0, 0))
-        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', (int, float), 2)
+        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', NumberInstance, 2)
         self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
                                                _locals.POSITION_NORTHWEST)
         self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
@@ -320,7 +320,7 @@ class Theme(object):
         self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
                                                    _locals.POSITION_NORTHWEST)
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
-        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float), 0)
+        self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', NumberInstance, 0)
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', int, 20)
 
         # Generic widget themes
@@ -346,7 +346,7 @@ class Theme(object):
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 10))
-        self.widget_padding = self._get(kwargs, 'widget_padding', (int, float, tuple, list), 0)
+        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, 0)
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
@@ -407,21 +407,21 @@ class Theme(object):
         if self.widget_selection_effect is None:
             self.widget_selection_effect = _widgets.NoneSelection()
 
-        assert isinstance(self.cursor_switch_ms, (int, float))
-        assert isinstance(self.fps, (int, float))
+        assert isinstance(self.cursor_switch_ms, NumberInstance)
+        assert isinstance(self.fps, NumberInstance)
         assert isinstance(self.scrollbar_shadow_offset, int)
-        assert isinstance(self.scrollbar_slider_pad, (int, float))
+        assert isinstance(self.scrollbar_slider_pad, NumberInstance)
         assert isinstance(self.scrollbar_thick, int)
         assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font, str)
         assert isinstance(self.title_font_size, int)
-        assert isinstance(self.title_shadow_offset, (int, float))
+        assert isinstance(self.title_shadow_offset, NumberInstance)
         assert isinstance(self.title_updates_pygame_display, bool)
         assert isinstance(self.widget_background_inflate_to_selection, bool)
         assert isinstance(self.widget_border_width, int)
         assert isinstance(self.widget_font, str)
         assert isinstance(self.widget_font_size, int)
-        assert isinstance(self.widget_padding, (int, float, tuple, list))
+        assert isinstance(self.widget_padding, PaddingInstance)
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
         assert isinstance(self.widget_shadow_offset, int)
 
@@ -452,7 +452,7 @@ class Theme(object):
         self.widget_background_inflate = self._vec_to_tuple(self.widget_background_inflate, 2)
         self.widget_border_inflate = self._vec_to_tuple(self.widget_border_inflate, 2)
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2)
-        if isinstance(self.widget_padding, (tuple, list)):
+        if isinstance(self.widget_padding, VectorInstance):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
             assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
             for p in self.widget_padding:
@@ -492,10 +492,10 @@ class Theme(object):
         :return: Self reference
         """
         _utils.assert_color(self.background_color)
-        assert isinstance(opacity, float)
+        assert isinstance(opacity, NumberInstance)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
-                                 self.background_color[2], int(opacity * 255))
+                                 self.background_color[2], int(float(opacity) * 255))
         return self
 
     @staticmethod

@@ -35,7 +35,7 @@ import pygame
 import pygame_menu
 from pygame_menu.widgets.core import Selection
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
-from pygame_menu._types import Tuple2IntType, NumberType
+from pygame_menu._types import Tuple2IntType, NumberType, NumberInstance
 
 
 class LeftArrowSelection(ArrowSelection):
@@ -56,7 +56,7 @@ class LeftArrowSelection(ArrowSelection):
                  arrow_vertical_offset: int = 0,
                  blink_ms: NumberType = 0
                  ) -> None:
-        assert isinstance(arrow_right_margin, (int, float))
+        assert isinstance(arrow_right_margin, NumberInstance)
         assert arrow_right_margin >= 0, 'margin cannot be negative'
         super(LeftArrowSelection, self).__init__(
             margin_left=arrow_size[0] + arrow_right_margin,

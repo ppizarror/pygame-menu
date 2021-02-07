@@ -35,7 +35,7 @@ import copy
 import pygame
 import pygame_menu
 from pygame_menu.utils import assert_color
-from pygame_menu._types import NumberType, ColorType, Tuple2IntType, Tuple4IntType
+from pygame_menu._types import NumberType, ColorType, Tuple2IntType, Tuple4IntType, NumberInstance
 
 
 class Selection(object):
@@ -59,10 +59,10 @@ class Selection(object):
 
     def __init__(self, margin_left: NumberType, margin_right: NumberType,
                  margin_top: NumberType, margin_bottom: NumberType) -> None:
-        assert isinstance(margin_left, (int, float))
-        assert isinstance(margin_right, (int, float))
-        assert isinstance(margin_top, (int, float))
-        assert isinstance(margin_bottom, (int, float))
+        assert isinstance(margin_left, NumberInstance)
+        assert isinstance(margin_right, NumberInstance)
+        assert isinstance(margin_top, NumberInstance)
+        assert isinstance(margin_bottom, NumberInstance)
         assert margin_left >= 0, 'left margin of widget selection cannot be negative'
         assert margin_right >= 0, 'right margin of widget selection cannot be negative'
         assert margin_top >= 0, 'top margin of widget selection cannot be negative'

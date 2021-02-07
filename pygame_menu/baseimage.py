@@ -63,7 +63,8 @@ import pygame
 import pygame_menu.locals as _locals
 from pygame_menu.utils import assert_vector, assert_position
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType, Tuple3IntType, Any
+    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorType, Tuple3IntType, Any, \
+    NumberInstance
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -647,8 +648,8 @@ class BaseImage(object):
         :param smooth: Smooth scaling
         :return: Self reference
         """
-        assert isinstance(width, (int, float))
-        assert isinstance(height, (int, float))
+        assert isinstance(width, NumberInstance)
+        assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
@@ -684,8 +685,8 @@ class BaseImage(object):
         :param smooth: Smooth scaling
         :return: Self reference
         """
-        assert isinstance(width, (int, float))
-        assert isinstance(height, (int, float))
+        assert isinstance(width, NumberInstance)
+        assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
         w, h = self.get_size()
@@ -731,7 +732,7 @@ class BaseImage(object):
         :param auto_checkpoint: Checkpoint after first rotation to avoid rotating the same image. If multiple rotations are applied to the same surface it will increase its size very fast because of innacuracies
         :return: Self reference
         """
-        assert isinstance(angle, (int, float))
+        assert isinstance(angle, NumberInstance)
         if angle == self._angle:
             return self
         if not self._rotated and auto_checkpoint:

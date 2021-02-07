@@ -35,7 +35,7 @@ import pygame
 import pygame_menu
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets.core import Selection
-from pygame_menu._types import NumberType, Tuple2IntType, Optional
+from pygame_menu._types import NumberType, Tuple2IntType, Optional, NumberInstance
 
 SELECTOR_CLOCK = pygame.time.Clock()
 
@@ -70,7 +70,7 @@ class ArrowSelection(Selection):
             margin_bottom=margin_bottom
         )
         assert_vector(arrow_size, 2)
-        assert isinstance(arrow_vertical_offset, (int, float))
+        assert isinstance(arrow_vertical_offset, NumberInstance)
         assert isinstance(blink_ms, int)
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
         assert blink_ms >= 0, 'blinking milliseconds must be greater than or equal to zero'

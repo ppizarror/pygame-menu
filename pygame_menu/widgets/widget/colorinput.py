@@ -53,7 +53,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
 from pygame_menu._types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
-    Literal, Tuple3IntType
+    Literal, Tuple3IntType, NumberInstance
 
 import math
 
@@ -154,7 +154,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         assert isinstance(input_separator, str)
         assert isinstance(input_underline, str)
         assert isinstance(prev_margin, int)
-        assert isinstance(prev_width_factor, (int, float))
+        assert isinstance(prev_width_factor, NumberInstance)
 
         assert len(input_separator) == 1, 'input_separator must be a single char'
         assert len(input_separator) != 0, 'input_separator cannot be empty'
