@@ -43,7 +43,7 @@ class ScrollAreaTest(unittest.TestCase):
 
     def test_scrollarea_position(self) -> None:
         """
-        Test scroll area position.
+        Test position.
         """
         self.assertEqual(len(get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_FULL)), 4)
         for i in (_locals.POSITION_EAST, _locals.POSITION_EAST, _locals.POSITION_WEST, _locals.POSITION_NORTH):
@@ -88,7 +88,7 @@ class ScrollAreaTest(unittest.TestCase):
 
     def test_copy(self) -> None:
         """
-        Test scroll area copy.
+        Test copy.
         """
         sa = MenuUtils.generic_menu().get_scrollarea()
         self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
@@ -96,11 +96,39 @@ class ScrollAreaTest(unittest.TestCase):
 
     def test_decorator(self) -> None:
         """
-        Test scroll area decorator.
+        Test decorator.
         """
         sa = MenuUtils.generic_menu().get_scrollarea()
         dec = sa.get_decorator()
         self.assertEqual(sa, dec._obj)
+
+    def test_show_hide_scrollbars(self) -> None:
+        """
+        Test show hide scrollbars.
+        """
+        menu = MenuUtils.generic_menu()
+        sa = menu.get_scrollarea()
+        menu.render()
+        menu.draw(surface)
+        for s in sa._scrollbars:
+            s.show()
+        if sa._scrollbars[1].get_orientation() == _locals.ORIENTATION_VERTICAL:
+            s1 = sa._scrollbars[1]
+            s2 = sa._scrollbars[0]
+        else:
+            s1 = sa._scrollbars[0]
+            s2 = sa._scrollbars[1]
+        self.assertTrue(s1.is_visible())
+        sa.hide_scrollbars(_locals.ORIENTATION_VERTICAL)
+        self.assertFalse(s1.is_visible())
+        self.assertTrue(s2.is_visible())
+        sa.hide_scrollbars(_locals.ORIENTATION_HORIZONTAL)
+        self.assertFalse(s1.is_visible())
+        self.assertFalse(s2.is_visible())
+        sa.show_scrollbars(_locals.ORIENTATION_HORIZONTAL)
+        sa.show_scrollbars(_locals.ORIENTATION_VERTICAL)
+        self.assertTrue(s1.is_visible())
+        self.assertTrue(s2.is_visible())
 
     def test_size(self) -> None:
         """

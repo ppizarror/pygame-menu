@@ -1148,11 +1148,36 @@ class WidgetsTest(unittest.TestCase):
             widget.set_attribute('attr', True)
 
         menu = MenuUtils.generic_menu()
-        btn = menu.add.button('button', None)
+        btn = menu.add.button('button', lambda: print('Clicked'))
         callid = btn.add_update_callback(update)
         self.assertFalse(btn.get_attribute('attr', False))
-        click_pos = btn.get_rect().center
-        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        click_pos = btn.get_rect(to_real_position=True).center
+        deco = menu.get_decorator()
+        test_draw_rects = True
+
+        def drawrect() -> None:
+            """
+            Draw absolute rect on surface for testing purposes.
+            """
+            if not test_draw_rects:
+                return
+            surface.fill((0, 255, 0), btn.get_rect(to_real_position=True))
+
+        deco.add_callable(drawrect, prev=False, pass_args=False)
+        # menu.mainloop(surface)
+        click_pos_absolute = btn.get_rect(to_absolute_position=True).center
+        self.assertFalse(click_pos == click_pos_absolute)
+        self.assertTrue(menu.get_scrollarea()._view_rect == menu.get_scrollarea().get_absolute_view_rect())
+        self.assertEqual(btn.get_scrollarea(), menu.get_current().get_scrollarea())
+        if pygame.version.vernum[0] >= 2:
+            self.assertEqual(btn.get_rect(), pygame.Rect(253, 153, 94, 41))
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 308, 94, 41))
+        else:
+            self.assertEqual(btn.get_rect(), pygame.Rect(253, 152, 94, 42))
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 307, 94, 42))
+        self.assertEqual(len(menu._widgets_scrollable), 0)
+        self.assertEqual(len(menu.get_current()._widgets_scrollable), 0)
+        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
         self.assertTrue(btn.get_attribute('attr', False))
         btn.set_attribute('attr', False)
         btn.remove_update_callback(callid)
@@ -1538,8 +1563,6 @@ class WidgetsTest(unittest.TestCase):
 
         menu.add.button('rr', None)
         frame = menu.add.frame_h(250, 100, background_color=(200, 0, 0))
-        self.assertEqual(frame.get_width(), 250)
-        self.assertEqual(frame.get_height(), 100)
         btn = menu.add.button('nice1', None)
         menu.add.button('44', None)
         frame2 = menu.add.frame_v(50, 250, background_color=(0, 0, 200))
@@ -1727,6 +1750,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(wid.is_selected())
         self.assertFalse(wid.is_selectable)
 
+        weff = wid.get_selection_effect()
+        wid.set_selection_effect(menu.get_theme().widget_selection_effect)
+        self.assertEqual(wid.get_selection_effect(), weff)
+
         draw = [False]
 
         # noinspection PyUnusedLocal
@@ -1753,3 +1780,66 @@ class WidgetsTest(unittest.TestCase):
         h.pack(btn)
         h.pack(menu.add.button('button legit', None))
         self.assertTrue(h.contains_widget(btn))
+
+    def test_scrollarea_frame(self) -> None:
+        """
+        Test scrollarea frame.
+        """
+        menu = MenuUtils.generic_menu()
+        self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_width=400))
+        self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_height=500))
+        self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_height=-1))
+        img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+        frame_sc = menu.add.frame_v(300, 400, max_height=200, background_color=img, margin=(0, 0))
+        frame_scroll = frame_sc._frame_scrollarea
+        self.assertTrue(frame_sc.is_scrollable)
+        frame2 = menu.add.frame_v(300, 200, background_color=(30, 30, 30), margin=(0, 0))
+        menu.add.frame_v(300, 200, background_color=(255, 255, 0), margin=(0, 0))
+        self.assertFalse(frame2.is_scrollable)
+        btn = frame_sc.pack(menu.add.button('Nice', lambda: print('Clicked')))
+        deco = menu.get_decorator()
+        btn_real = menu.add.button('Click me 2', lambda: print('Clicked'), background_color=(255, 0, 255),
+                                   margin=(0, 0))
+        test_draw_rects = True
+
+        def drawrect() -> None:
+            """
+            Draw absolute rect on surface for testing purposes.
+            """
+            if not test_draw_rects:
+                return
+            # surface.fill((160, 0, 0), frame_scroll.get_absolute_view_rect())
+            # surface.fill((60, 0, 60), btn.get_scrollarea().to_real_position(btn.get_rect(), visible=True))
+            # surface.fill((255, 255, 255), btn.get_rect(to_real_position=True))
+            surface.fill((0, 255, 0), btn_real.get_rect(to_real_position=True))
+
+        deco.add_callable(drawrect, prev=False, pass_args=False)
+        menu.mainloop(surface)
+
+        if pygame.version.vernum[0] >= 2:
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 156, 62, 41))
+        else:
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 156, 62, 42))
+        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 156, 300, 200))
+
+        # Move inner scroll by 10%
+        frame_scroll.scroll_to(pygame_menu.locals.ORIENTATION_VERTICAL, 0.1)
+        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 156, 300, 200))
+        if pygame.version.vernum[0] >= 2:
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 156, 62, 21))
+        else:
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 156, 62, 22))
+
+        # Move menu scroll by 10%
+        menu.get_scrollarea().scroll_to(pygame_menu.locals.ORIENTATION_VERTICAL, 0.1)
+        if pygame.version.vernum[0] >= 2:
+            self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 172))
+        else:
+            self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 171))
+        self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 0, 0))
+
+        # Move menu scroll by 100%
+        menu.get_scrollarea().scroll_to(pygame_menu.locals.ORIENTATION_VERTICAL, 0.5)
+        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 50))
+        self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 0, 0))
+        menu.get_scrollarea().scroll_to(pygame_menu.locals.ORIENTATION_VERTICAL, 0)

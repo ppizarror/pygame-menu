@@ -92,7 +92,7 @@ class ExamplesTest(unittest.TestCase):
     @staticmethod
     def test_example_simple() -> None:
         """
-        Test scroll area example.
+        Test example simple.
         """
         # noinspection PyUnresolvedReferences
         import pygame_menu.examples.simple
@@ -101,7 +101,7 @@ class ExamplesTest(unittest.TestCase):
     @staticmethod
     def test_example_other_area_menu() -> None:
         """
-        Test scroll area example.
+        Test scrollarea example.
         """
         scroll_area.main(test=True)
         test_reset_surface()
@@ -109,7 +109,7 @@ class ExamplesTest(unittest.TestCase):
     @staticmethod
     def test_example_other_scroll_bar() -> None:
         """
-        Test scroll bar example.
+        Test scrollbar example.
         """
         scroll_bar.main(test=True)
         test_reset_surface()
