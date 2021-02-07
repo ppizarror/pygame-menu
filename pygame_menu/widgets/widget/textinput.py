@@ -39,7 +39,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance
 
 try:
 
@@ -213,7 +213,7 @@ class TextInput(Widget):
         assert isinstance(copy_paste_enable, bool)
         assert isinstance(cursor_color, tuple)
         assert isinstance(cursor_selection_enable, bool)
-        assert isinstance(cursor_switch_ms, (int, float))
+        assert isinstance(cursor_switch_ms, NumberInstance)
         assert isinstance(history, int)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
@@ -223,10 +223,10 @@ class TextInput(Widget):
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
-        assert isinstance(repeat_keys_initial_ms, (int, float))
-        assert isinstance(repeat_keys_interval_ms, (int, float))
-        assert isinstance(repeat_mouse_interval_ms, (int, float))
-        assert isinstance(repeat_touch_interval_ms, (int, float))
+        assert isinstance(repeat_keys_initial_ms, NumberInstance)
+        assert isinstance(repeat_keys_interval_ms, NumberInstance)
+        assert isinstance(repeat_mouse_interval_ms, NumberInstance)
+        assert isinstance(repeat_touch_interval_ms, NumberInstance)
         assert isinstance(tab_size, int)
         assert isinstance(text_ellipsis, str)
         assert isinstance(textinput_id, str)
@@ -412,10 +412,10 @@ class TextInput(Widget):
                 value = 0
         return value
 
-    def rotate(self, angle: NumberType) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'Widget':
         return self
 
     def flip(self, x: bool, y: bool) -> 'Widget':  # Actually flip on x axis is disabled
@@ -983,7 +983,7 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True)
         if rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
             mousex, _ = pos
@@ -1002,7 +1002,7 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True)
         if rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
             touchx, _ = pos
@@ -1502,7 +1502,7 @@ class TextInput(Widget):
 
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True)
 
         for event in events:
 

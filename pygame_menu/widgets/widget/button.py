@@ -187,7 +187,7 @@ class Button(Widget):
         if self.readonly:
             return False
         updated = False
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True)
 
         for event in events:
 

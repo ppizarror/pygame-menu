@@ -40,7 +40,8 @@ from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
-    List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType
+    List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
+    NumberInstance, PaddingInstance
 
 from pathlib import Path
 from uuid import uuid4
@@ -128,6 +129,7 @@ class Widget(object):
     _padding_transform: Tuple4IntType
     _rect: 'pygame.Rect'
     _scale: List[Union[bool, NumberType]]
+    _scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']  # Parent scrollarea
     _selected: bool
     _selection_effect: 'Selection'
     _selection_time: NumberType
@@ -145,7 +147,9 @@ class Widget(object):
     _visible: bool
     active: bool
     configured: bool
+    is_scrollable: bool
     is_selectable: bool
+    last_surface: Optional['pygame.Surface']
     lock_position: bool
     readonly: bool
     selection_expand_background: bool
@@ -184,6 +188,7 @@ class Widget(object):
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
+        self._scrollarea = None  # Widget scrollarea container
         self._selected = False  # Use select() to modify this status
         self._selection_time = 0
         self._sound = Sound()
@@ -265,7 +270,9 @@ class Widget(object):
         # Public statutes. These values can be changed without calling for methods (safe to update)
         self.active = False  # Widget requests focus
         self.configured = False  # Widget has been configured
+        self.is_scrollable = False  # Some widgets can be scrolled, such as the Frame
         self.is_selectable = True  # Some widgets cannot be selected like labels
+        self.last_surface = None  # Stores the last surface the widget has been drawn
         self.lock_position = False  # If True, the widget don't updates the position if .set_position() is executed
         self.readonly = False  # If True, widget ignores all input
         self.selection_expand_background = False  # If True, the widget background will inflate to match selection margin if selected
@@ -721,11 +728,12 @@ class Widget(object):
         self._background_inflate = self._selection_effect.get_xy_margin()
         return self
 
-    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
+    def _draw_background_color(self, surface: 'pygame.Surface', rect: Optional['pygame.Rect'] = None) -> None:
         """
         Fill a surface with the widget background color.
 
         :param surface: Surface to fill
+        :param rect: If given, use that rect instead of widget rect
         :return: None
         """
         if self._background_color is None:
@@ -734,7 +742,8 @@ class Widget(object):
             inflate = self._background_inflate
         else:
             inflate = self._selection_effect.get_xy_margin()
-        rect = self.get_rect(inflate=inflate)
+        if rect is None:
+            rect = self.get_rect(inflate=inflate)
         if isinstance(self._background_color, pygame_menu.BaseImage):
             self._background_color.draw(
                 surface=surface,
@@ -769,6 +778,10 @@ class Widget(object):
 
             If no selection has been provided, ``_WidgetNullSelection`` class
             will be returned.
+
+        .. note::
+
+            For drawing, use :py:meth:`pygame_menu.widgets.core.widget.Widget.draw_selection_effect`
 
         .. warning::
 
@@ -861,6 +874,18 @@ class Widget(object):
                 pass
             return self._onchange(*args, **self._kwargs)
 
+    def draw_selection_effect(self, surface: Optional['pygame.Surface'] = None) -> 'Widget':
+        """
+        Draws the widget selection effect on the given surface.
+
+        :param surface: Surface to draw from. If ``None`` uses the last drawn surface
+        :return: Self reference
+        """
+        if surface is None:
+            surface = self.last_surface
+        self._selection_effect.draw(surface, self)
+        return self
+
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         """
         Draw the Widget on a given surface.
@@ -883,6 +908,7 @@ class Widget(object):
         self._draw_border(surface)
         self._decorator.draw_post(surface)
         self.apply_draw_callbacks()
+        self.last_surface = surface
         return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
@@ -911,8 +937,8 @@ class Widget(object):
         :param y: Margin on y axis (bottom)
         :return: Self reference
         """
-        assert isinstance(x, (int, float))
-        assert isinstance(y, (int, float))
+        assert isinstance(x, NumberInstance)
+        assert isinstance(y, NumberInstance)
         self._margin = (int(x), int(y))
         self._force_render()
         return self
@@ -944,15 +970,15 @@ class Widget(object):
         :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
         :return: Self reference
         """
-        assert isinstance(padding, (int, float, tuple, list))
+        assert isinstance(padding, PaddingInstance)
 
-        if isinstance(padding, (int, float)):
+        if isinstance(padding, NumberInstance):
             assert padding >= 0, 'padding cannot be a negative number'
             self._padding = (padding, padding, padding, padding)
         else:
             assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
             for i in range(len(padding)):
-                assert isinstance(padding[i], (int, float)), 'all padding elements must be integers or floats'
+                assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
                 assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
             if len(padding) == 1:
                 self._padding = (padding[0], padding[0], padding[0], padding[0])
@@ -967,8 +993,30 @@ class Widget(object):
         self._force_render()
         return self
 
-    def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
-                 use_transformed_padding: bool = True) -> 'pygame.Rect':
+    def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
+        """
+        Set scrollarea reference. Mostly used for events.
+
+        :param scrollarea: Scrollarea object
+        :return: None
+        """
+        self._scrollarea = scrollarea
+
+    def get_scrollarea(self) -> 'pygame_menu.scrollarea.ScrollArea':
+        """
+        Return the scrollarea object.
+
+        :return: ScrollArea object
+        """
+        return self._scrollarea
+
+    def get_rect(self,
+                 inflate: Optional[Tuple2IntType] = None,
+                 apply_padding: bool = True,
+                 use_transformed_padding: bool = True,
+                 to_real_position: bool = False,
+                 to_absolute_position: bool = False
+                 ) -> 'pygame.Rect':
         """
         Return the :py:class:`pygame.Rect` object of the Widget.
         This method forces rendering.
@@ -976,6 +1024,8 @@ class Widget(object):
         :param inflate: Inflate rect *(x, y)* in px
         :param apply_padding: Apply widget padding
         :param use_transformed_padding: Use scaled padding if the widget is scaled
+        :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
+        :param to_absolute_position: Transform the widget rect to absolute coordinates (if the Widget does not change the position if scrollbars move offsets). Used by events
         :return: Widget rect object
         """
         self._render()
@@ -990,10 +1040,16 @@ class Widget(object):
         pad_bottom = padding[2] * apply_padding + inflate[1] / 2
         pad_left = padding[3] * apply_padding + inflate[0] / 2
 
-        return pygame.Rect(int(self._rect.x - pad_left),
+        rect = pygame.Rect(int(self._rect.x - pad_left),
                            int(self._rect.y - pad_top),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
+        if self._scrollarea is not None:
+            if to_real_position:
+                return self._scrollarea.to_real_position(rect, visible=True)
+            elif to_absolute_position:
+                return self._scrollarea.to_absolute_position(rect)
+        return rect
 
     def get_value(self) -> Any:
         """
@@ -1389,8 +1445,8 @@ class Widget(object):
         :param posy: Y position in px
         :return: Self reference
         """
-        assert isinstance(posx, (int, float))
-        assert isinstance(posy, (int, float))
+        assert isinstance(posx, NumberInstance)
+        assert isinstance(posy, NumberInstance)
         if self.lock_position:
             return self
         self._rect.x = int(posx) + self._translate[0]
@@ -1472,7 +1528,7 @@ class Widget(object):
         if width is None:
             self._max_width[0] = None
         else:
-            assert isinstance(width, (int, float)), 'width must be numeric'
+            assert isinstance(width, NumberInstance), 'width must be numeric'
             assert width >= 0, 'width must be equal or greater than zero'
             self._max_width = [width, scale_height, smooth]
             if self._scale[0]:
@@ -1525,7 +1581,7 @@ class Widget(object):
         if height is None:
             self._max_height[0] = None
         else:
-            assert isinstance(height, (int, float)), 'height must be numeric'
+            assert isinstance(height, NumberInstance), 'height must be numeric'
             assert height > 0, 'height must be greater than zero'
             self._max_height = [height, scale_width, smooth]
             if self._scale[0]:
@@ -1586,8 +1642,8 @@ class Widget(object):
         :param smooth: Smooth scaling
         :return: Self reference
         """
-        assert isinstance(width, (int, float))
-        assert isinstance(height, (int, float))
+        assert isinstance(width, NumberInstance)
+        assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
         assert width > 0 and height > 0, 'width and height must be greater than zero'
 
@@ -1675,8 +1731,8 @@ class Widget(object):
         :param y: +Y in px
         :return: None
         """
-        assert isinstance(x, (int, float))
-        assert isinstance(y, (int, float))
+        assert isinstance(x, NumberInstance)
+        assert isinstance(y, NumberInstance)
         self._translate = (int(x), int(y))
         self._force_render()
         return self
@@ -1704,7 +1760,7 @@ class Widget(object):
         :param angle: Rotation angle (degrees ``0-360``)
         :return: Self reference
         """
-        assert isinstance(angle, (int, float))
+        assert isinstance(angle, NumberInstance)
         self._angle = angle
         self._force_render()
         return self
