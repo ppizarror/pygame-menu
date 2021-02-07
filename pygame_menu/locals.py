@@ -83,7 +83,7 @@ POSITION_SOUTHEAST = 'position-southeast'
 POSITION_SOUTHWEST = 'position-southwest'
 POSITION_WEST = 'position-west'
 
-# Menu scroll area position
+# Menu ScrollArea position
 SCROLLAREA_POSITION_BOTH_HORIZONTAL = 'scrollarea-position-both-horizontal'
 SCROLLAREA_POSITION_BOTH_VERTICAL = 'scrollarea_position-both-vertical'
 SCROLLAREA_POSITION_FULL = 'scrollarea-position-full'

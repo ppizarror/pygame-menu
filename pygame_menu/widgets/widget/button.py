@@ -187,7 +187,7 @@ class Button(Widget):
         if self.readonly:
             return False
         updated = False
-        rect = self.get_rect()  # Padding increases the extents of the button
+        rect = self.get_rect()
 
         for event in events:
 

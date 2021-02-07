@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['TextInput', 'TextInputModeType']
+__all__ = ['TextInput']
 
 import math
 
@@ -39,7 +39,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType, Literal
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType
 
 try:
 
@@ -73,9 +73,6 @@ except (ModuleNotFoundError, ImportError):
         """
         pass
 
-# Custom types
-TextInputModeType = Literal[_locals.INPUT_TEXT, _locals.INPUT_INT, _locals.INPUT_FLOAT]
-
 
 # noinspection PyMissingOrEmptyDocstring
 class TextInput(Widget):
@@ -102,7 +99,7 @@ class TextInput(Widget):
     :param cursor_selection_enable: Enables selection of text
     :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
     :param history: Maximum number of editions stored
-    :param input_type: Type of data
+    :param input_type: Type of the input data. See :py:mod:`pygame_menu.locals`
     :param input_underline: Character string drawn under the input
     :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
     :param input_underline_vmargin: Vertical margin of underline (px)
@@ -191,7 +188,7 @@ class TextInput(Widget):
                  cursor_selection_enable: bool = True,
                  cursor_switch_ms: NumberType = 500,
                  history: int = 50,
-                 input_type: TextInputModeType = _locals.INPUT_TEXT,
+                 input_type: str = _locals.INPUT_TEXT,
                  input_underline: str = '',
                  input_underline_len: int = 0,
                  input_underline_vmargin: int = 0,

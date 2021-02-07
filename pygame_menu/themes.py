@@ -108,9 +108,9 @@ class Theme(object):
     :type readonly_color: tuple, list
     :param readonly_selected_color: Color of the selected widget in readonly mode
     :type readonly_selected_color: tuple, list
-    :param scrollarea_outer_margin: Outer scroll area margin (px); the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :param scrollarea_outer_margin: Outer ScrollArea margin (px); the tuple is added to computed ScrollArea width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
-    :param scrollarea_position: Position of scroll area scrollbars. See :py:mod:`pygame_menu.locals`
+    :param scrollarea_position: Position of ScrollArea scrollbars. See :py:mod:`pygame_menu.locals`
     :type scrollarea_position: str
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -128,8 +128,8 @@ class Theme(object):
     :type scrollbar_slider_color: tuple, list
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
     :type scrollbar_slider_pad: int, float
-    :param scrollbar_thick: Scrollbar thickness in px
-    :type scrollbar_thick: int, float
+    :param scrollbar_thick: Scrollbar thickness (px)
+    :type scrollbar_thick: int
     :param selection_color: Color of the selected widget; it affects font color and the selection effect
     :type selection_color: tuple, list
     :param surface_clear_color: Surface clear color before applying background function
@@ -157,8 +157,8 @@ class Theme(object):
     :type title_shadow: bool
     :param title_shadow_color: Title shadow color
     :type title_shadow_color: tuple, list
-    :param title_shadow_offset: Offset of shadow on title
-    :type title_shadow_offset: int, float
+    :param title_shadow_offset: Offset of shadow on title (px)
+    :type title_shadow_offset: int
     :param title_shadow_position: Position of the shadow on title. See :py:mod:`pygame_menu.locals`
     :type title_shadow_position: str
     :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
@@ -203,8 +203,8 @@ class Theme(object):
     :type widget_shadow: bool
     :param widget_shadow_color: Color of the widget shadow
     :type widget_shadow_color: tuple, list
-    :param widget_shadow_offset: Offset of the widget shadow
-    :type widget_shadow_offset: int, float
+    :param widget_shadow_offset: Offset of the widget shadow (px)
+    :type widget_shadow_offset: int
     :param widget_shadow_position: Position of the widget shadow. See :py:mod:`pygame_menu.locals`
     :type widget_shadow_position: str
     :param widget_url_color: Color of url text links
@@ -229,7 +229,7 @@ class Theme(object):
     scrollbar_shadow_position: str
     scrollbar_slider_color: ColorType
     scrollbar_slider_pad: NumberType
-    scrollbar_thick: NumberType
+    scrollbar_thick: int
     selection_color: ColorType
     surface_clear_color: ColorType
     title_background_color: ColorType
@@ -312,16 +312,16 @@ class Theme(object):
         self.scrollarea_position = self._get(kwargs, 'scrollarea_position', str, _locals.POSITION_SOUTHEAST)
 
         # ScrollBar
-        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (220, 220, 220))
+        self.scrollbar_color = self._get(kwargs, 'scrollbar_color', 'color', (235, 235, 235))
         self.scrollbar_cursor = self._get(kwargs, 'scrollbar_cursor', 'cursor')
         self.scrollbar_shadow = self._get(kwargs, 'scrollbar_shadow', bool, False)
         self.scrollbar_shadow_color = self._get(kwargs, 'scrollbar_shadow_color', 'color', (0, 0, 0))
-        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', (int, float), 2)
+        self.scrollbar_shadow_offset = self._get(kwargs, 'scrollbar_shadow_offset', int, 2)
         self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
                                                    _locals.POSITION_NORTHWEST)
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', (int, float), 0)
-        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', (int, float), 20)
+        self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', int, 20)
 
         # Generic widget themes
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
@@ -409,9 +409,9 @@ class Theme(object):
 
         assert isinstance(self.cursor_switch_ms, (int, float))
         assert isinstance(self.fps, (int, float))
-        assert isinstance(self.scrollbar_shadow_offset, (int, float))
+        assert isinstance(self.scrollbar_shadow_offset, int)
         assert isinstance(self.scrollbar_slider_pad, (int, float))
-        assert isinstance(self.scrollbar_thick, (int, float))
+        assert isinstance(self.scrollbar_thick, int)
         assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font, str)
         assert isinstance(self.title_font_size, int)
