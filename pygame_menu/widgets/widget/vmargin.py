@@ -33,7 +33,7 @@ __all__ = ['VMargin']
 
 import pygame
 from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu._types import Optional, Tuple2IntType, NumberType
+from pygame_menu._types import NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -54,6 +54,5 @@ class VMargin(NoneWidget):
         self._rect.width = 0
         self._rect.height = int(margin)
 
-    def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
-                 use_transformed_padding: bool = True) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
         return self._rect.copy()

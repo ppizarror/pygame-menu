@@ -122,5 +122,5 @@ class Label(Widget):
 
         self.force_menu_surface_update()
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, *args, **kwargs) -> bool:
         return False

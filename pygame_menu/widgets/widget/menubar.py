@@ -50,14 +50,13 @@ __all__ = [
 ]
 
 import pygame
-import pygame_menu
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
 from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
-from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, \
-    NumberType, ColorType, Any, Optional, PaddingType
+from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
+    ColorType, Any, Optional, NumberInstance
 import warnings
 
 # Menubar styles
@@ -127,7 +126,7 @@ class MenuBar(Widget):
                  *args,
                  **kwargs
                  ) -> None:
-        assert isinstance(width, (int, float))
+        assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
 
         assert_color(background_color)
@@ -161,25 +160,25 @@ class MenuBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding: PaddingType) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_max_height(self, height: NumberType, scale_width: NumberType = False, smooth: bool = True) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_max_width(self, width: NumberType, scale_height: NumberType = False, smooth: bool = True) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_selection_effect(self, selection: 'pygame_menu.widgets.core.Selection') -> 'Widget':
+    def set_selection_effect(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> 'Widget':
+    def set_border(self, *args, **kwargs) -> 'Widget':
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:
@@ -225,10 +224,10 @@ class MenuBar(Widget):
         assert width > 0
         self._backbox_border_width = width
 
-    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
+    def _draw_background_color(self, *args, **kwargs) -> None:
         pass
 
-    def _draw_border(self, surface: 'pygame.Surface') -> None:
+    def _draw_border(self, *args, **kwargs) -> None:
         pass
 
     def _backbox_visible(self) -> bool:
@@ -458,8 +457,8 @@ class MenuBar(Widget):
         :param offsety: Offset y-position of title (px)
         :return: Self reference
         """
-        assert isinstance(offsetx, (int, float))
-        assert isinstance(offsety, (int, float))
+        assert isinstance(offsetx, NumberInstance)
+        assert isinstance(offsety, NumberInstance)
         self._title = str(title)
         self._offsety = offsety
         self._offsetx = offsetx
