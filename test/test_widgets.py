@@ -1814,7 +1814,7 @@ class WidgetsTest(unittest.TestCase):
             surface.fill((0, 255, 0), btn_real.get_rect(to_real_position=True))
 
         deco.add_callable(drawrect, prev=False, pass_args=False)
-        menu.mainloop(surface)
+        # menu.mainloop(surface)
 
         if pygame.version.vernum[0] >= 2:
             self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 156, 62, 41))
