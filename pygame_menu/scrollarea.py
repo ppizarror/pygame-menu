@@ -560,7 +560,7 @@ class ScrollArea(object):
         :return: ``True`` if the mouse is over the object
         """
         mousex, mousey = pygame.mouse.get_pos()
-        return bool(self.to_absolute_position(self._view_rect).collidepoint(mousex, mousey))
+        return bool(self.to_absolute_position(self._view_rect).collidepoint(mousex, mousey))  # _rect do not work
 
     def _on_horizontal_scroll(self, value: NumberType) -> None:
         """
@@ -630,22 +630,25 @@ class ScrollArea(object):
         # Check rect is in viewable area
         sx = self.get_scrollbar_thickness(SCROLL_VERTICAL)
         sy = self.get_scrollbar_thickness(SCROLL_HORIZONTAL)
-        if self._view_rect.topleft[0] <= real_rect.topleft[0] + sx \
-                and self._view_rect.topleft[1] <= real_rect.topleft[1] + sy \
-                and self._view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
-                and self._view_rect.bottomright[1] + sy >= real_rect.bottomright[1]:
+        view_rect = self.get_absolute_view_rect()
+        if view_rect.topleft[0] <= real_rect.topleft[0] + sx \
+                and view_rect.topleft[1] <= real_rect.topleft[1] + sy \
+                and view_rect.bottomright[0] + sx >= real_rect.bottomright[0] \
+                and view_rect.bottomright[1] + sy >= real_rect.bottomright[1]:
             return False
 
         for sbar in self._scrollbars:
+            if not sbar.is_visible():
+                continue
             if sbar.get_orientation() == SCROLL_HORIZONTAL and self.get_hidden_width():
-                shortest_move = min(real_rect.left - margin - self._view_rect.left,
-                                    real_rect.right + margin - self._view_rect.right, key=abs)
+                shortest_move = min(real_rect.left - margin - view_rect.left,
+                                    real_rect.right + margin - view_rect.right, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
             if sbar.get_orientation() == SCROLL_VERTICAL and self.get_hidden_height():
-                shortest_move = min(real_rect.bottom + margin - self._view_rect.bottom,
-                                    real_rect.top - margin - self._view_rect.top, key=abs)
+                shortest_move = min(real_rect.bottom + margin - view_rect.bottom,
+                                    real_rect.top - margin - view_rect.top, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)

@@ -322,14 +322,14 @@ class SolarSystemApp(object):
 
         :return: None
         """
-        dx = random.randrange(-25, 25)
-        dy = random.randrange(-25, 25)
+        dx = random.randrange(-25, 25) * random.random()
+        dy = random.randrange(-25, 25) * random.random()
         angle = math.atan2(dy, dx)
         self.shooting_stars.append([
             random.randrange(1, self.menu.get_width()),  # x position
             random.randrange(1, self.menu.get_height()),  # y position
-            dx,
-            dy,
+            int(dx),
+            int(dy),
             angle,
             random.randrange(1, 5),  # speed
             2 * math.pi * random.random()  # initial flickering

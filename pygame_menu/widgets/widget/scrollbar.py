@@ -141,6 +141,9 @@ class ScrollBar(Widget):
         self.is_scrollable = True
         self.is_selectable = False
 
+    def scroll_to_widget(self) -> 'Widget':
+        pass
+
     def _apply_font(self) -> None:
         pass
 

@@ -832,6 +832,7 @@ class Widget(object):
         :param args: Extra arguments passed to the callback
         :return: Callback return value
         """
+        self.scroll_to_widget()
         if self.readonly:
             return
         if self._onreturn:
@@ -864,6 +865,7 @@ class Widget(object):
         :param args: Extra arguments passed to the callback
         :return: Callback return value
         """
+        self.scroll_to_widget()
         if self.readonly:
             return
         if self._onchange:
@@ -1010,6 +1012,16 @@ class Widget(object):
         """
         return self._scrollarea
 
+    def scroll_to_widget(self) -> 'Widget':
+        """
+        Scroll to widget.
+
+        :return: Self reference
+        """
+        if self._scrollarea is not None:
+            self._scrollarea.scroll_to_rect(self.get_rect())
+        return self
+
     def get_rect(self,
                  inflate: Optional[Tuple2IntType] = None,
                  apply_padding: bool = True,
@@ -1044,11 +1056,13 @@ class Widget(object):
                            int(self._rect.y - pad_top),
                            int(self._rect.width + pad_left + pad_right),
                            int(self._rect.height + pad_bottom + pad_top))
+
         if self._scrollarea is not None:
             if to_real_position:
                 return self._scrollarea.to_real_position(rect, visible=True)
             elif to_absolute_position:
                 return self._scrollarea.to_absolute_position(rect)
+
         return rect
 
     def get_value(self) -> Any:
