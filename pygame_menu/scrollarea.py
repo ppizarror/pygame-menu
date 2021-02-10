@@ -241,6 +241,14 @@ class ScrollArea(object):
         assert parent != self
         self._parent_scrollarea = parent
 
+    def get_parent(self) -> Optional['ScrollArea']:
+        """
+        Return the parent scrollarea.
+
+        :return: Parent scrollarea object
+        """
+        return self._parent_scrollarea
+
     def __copy__(self) -> 'ScrollArea':
         """
         Copy method.
@@ -594,6 +602,27 @@ class ScrollArea(object):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
+    def get_scroll_value(self, orientation: str) -> float:
+        """
+        Get the scroll value in percentage, if ``0`` the scroll is at top, ``1`` bottom.
+
+        .. note::
+
+            If scrollarea does not contain such orientation scroll, ``-1`` is returned.
+
+        :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
+        :return: Value from 0 to 1
+        """
+        assert_orientation(orientation)
+        for sbar in self._scrollbars:
+            if not sbar.is_visible():
+                continue
+            if sbar.get_orientation() == orientation:
+                vmin, vmax = sbar.get_minmax()
+                value = sbar.get_value()
+                return round((value - vmin) / (vmax - vmin), 3)
+        return -1
+
     def scroll_to(self, orientation: str, value: NumberType) -> 'ScrollArea':
         """
         Scroll to position in terms of the percentage.
@@ -652,6 +681,9 @@ class ScrollArea(object):
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
+
+        if self._parent_scrollarea is not None:
+            self._parent_scrollarea.scroll_to_rect(rect, margin=margin)
         return True
 
     def set_position(self, posx: int, posy: int) -> 'ScrollArea':
