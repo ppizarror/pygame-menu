@@ -1388,6 +1388,11 @@ class WidgetManager(object):
 
         .. note::
 
+            If horizontal frame contains a scrollarea (setting ``max_height`` or ``max_width``
+            less than size) padding will be set at zero.
+
+        .. note::
+
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
@@ -1451,6 +1456,11 @@ class WidgetManager(object):
         .. note::
 
             All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            If vertical frame contains a scrollarea (setting ``max_height`` or ``max_width``
+            less than size) padding will be set at zero.
 
         .. note::
 
