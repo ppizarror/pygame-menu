@@ -762,7 +762,8 @@ class Widget(object):
         """
         if self._border_width == 0 or self._border_color is None:
             return
-        rect = self.get_rect(inflate=self._border_inflate)
+        rect = self.get_rect(inflate=(self._border_inflate[0] + self._background_inflate[0],
+                                      self._border_inflate[1] + self._background_inflate[1]))
         pygame.draw.rect(
             surface,
             self._border_color,
@@ -1018,6 +1019,8 @@ class Widget(object):
 
         :return: Self reference
         """
+        if self.get_frame() is not None and self.get_frame().is_scrollable:
+            self.get_frame().get_scrollarea().scroll_to_rect(self.get_frame().get_rect())
         if self._scrollarea is not None:
             self._scrollarea.scroll_to_rect(self.get_rect())
         return self
@@ -1424,6 +1427,8 @@ class Widget(object):
         self._menu = menu
         if menu is None:
             self._col_row_index = (-1, -1, -1)
+            self.active = False
+            self._selected = False
         return self
 
     def get_menu(self) -> Optional['pygame_menu.Menu']:
@@ -2267,6 +2272,10 @@ class Widget(object):
     def set_border(self, width: int, color: Optional[ColorType], inflate: Tuple2IntType) -> 'Widget':
         """
         Set the Widget border.
+
+        .. note::
+
+            Inflate is added to the background inflate in drawing time.
 
         :param width: Border width (px)
         :param color: Border color
