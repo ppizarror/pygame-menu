@@ -43,7 +43,6 @@ from typing import Tuple, Any, Optional, List
 # -----------------------------------------------------------------------------
 ABOUT = ['pygame-menu {0}'.format(pygame_menu.__version__),
          'Author: @{0}'.format(pygame_menu.__author__),
-         '',  # new line
          'Email: {0}'.format(pygame_menu.__email__)]
 DIFFICULTY = ['EASY']
 FPS = 60
@@ -225,7 +224,7 @@ def main(test: bool = False) -> None:
 
     for m in ABOUT:
         about_menu.add.label(m, align=pygame_menu.locals.ALIGN_LEFT, font_size=20)
-    about_menu.add.label('')
+    about_menu.add.vertical_margin(30)
     about_menu.add.button('Return to menu', pygame_menu.events.BACK)
 
     # -------------------------------------------------------------------------

@@ -296,7 +296,7 @@ def main(test: bool = False) -> None:
         width=WINDOW_SIZE[0] * 0.8
     )
 
-    main_menu.add.button('Settings', settings_menu, padding=(0, 0, 0, 0))
+    main_menu.add.button('Settings', settings_menu)
     main_menu.add.button('More Settings', more_settings_menu)
     main_menu.add.button('Menu in textures and columns', button_column_menu)
     main_menu.add.selector('Menu sounds ',
