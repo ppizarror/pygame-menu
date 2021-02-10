@@ -185,6 +185,7 @@ class Frame(Widget):
 
         if self._width > max_width or self._height > max_height:
             self.is_scrollable = True
+            self.set_padding(0)
         else:
             # Configure rect
             self._rect.height = self._height
@@ -302,6 +303,17 @@ class Frame(Widget):
         if self.is_scrollable:
             self._frame_scrollarea.set_position(posx, posy)
         return self
+
+    def get_scrollarea(self, inner: bool = False) -> Optional['pygame_menu.scrollarea.ScrollArea']:
+        """
+        Return the scrollarea object.
+
+        :param inner: If ``True`` return the inner scrollarea
+        :return: ScrollArea object
+        """
+        if inner:
+            return self._frame_scrollarea
+        return self._scrollarea
 
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         # Simple case, no scrollarea
