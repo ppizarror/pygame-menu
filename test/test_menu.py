@@ -32,14 +32,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['MenuTest']
 
 import copy
-import unittest
+import math
 import timeit
-from test._utils import surface, test_reset_surface, MenuUtils, PygameUtils
+import unittest
+
+from test._utils import surface, test_reset_surface, MenuUtils, PygameUtils, TEST_THEME
 from typing import Any, Tuple
 
 import pygame
 import pygame_menu
 from pygame_menu import events
+from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, \
+    JOY_DOWN, JOY_UP, JOY_LEFT, JOY_RIGHT
 from pygame_menu.widgets import Label, Button
 
 # Configure the tests
@@ -130,7 +134,9 @@ class MenuTest(unittest.TestCase):
         Test position.
         """
         # Test centering
-        menu = MenuUtils.generic_menu()
+        theme_src = TEST_THEME.copy()
+
+        menu = MenuUtils.generic_menu(theme=theme_src)
         btn = menu.add.button('button', None)
         menu.center_content()
         self.assertEqual(menu.get_height(), 400)
@@ -163,7 +169,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(h * 21 + theme.widget_margin[1] * 20, menu.get_height(widget=True))
 
         # Test menu not centered
-        menu = MenuUtils.generic_menu(center_content=False)
+        menu = MenuUtils.generic_menu(center_content=False, theme=theme_src)
         btn = menu.add.button('button', None)
         btneff = btn.get_selection_effect().get_margin()[0]
         self.assertEqual(btn.get_position()[1], btneff + 1)
@@ -176,7 +182,7 @@ class MenuTest(unittest.TestCase):
         menu = MenuUtils.generic_menu(position_x=0, position_y=0)
         menu.set_relative_position(20, 40)
 
-        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme = theme_src.copy()
         theme.widget_font_size = 20
 
         menu = pygame_menu.Menu(
@@ -201,40 +207,20 @@ class MenuTest(unittest.TestCase):
         quit2 = menu.add.button('Quit', pygame_menu.events.EXIT)
         label = menu.add.label('This label is really epic')
         label.rotate(90)
-
         menu.render()
-        # menu.mainloop(surface)
 
-        x, y = quit1.get_position()
-        self.assertEqual(x, 170)
-        self.assertEqual(y, 6)
-        x, y = name1.get_position()
-        self.assertEqual(x, 115)
-        self.assertEqual(y, 74)
-        x, y = sel1.get_position()
-        self.assertEqual(x, 104)
-        self.assertEqual(y, 142)
-        x, y = sel2.get_position()
-        self.assertEqual(x, 104)
-        self.assertEqual(y, 180)
-        x, y = play1.get_position()
-        self.assertEqual(x, 389)
-        self.assertEqual(y, 6)
-        x, y = play2.get_position()
-        self.assertEqual(x, 697)
-        self.assertEqual(y, 6)
-        x, y = hidden.get_position()
-        self.assertEqual(x, 0)
-        self.assertEqual(y, 0)
-        x, y = quit2.get_position()
-        self.assertEqual(x, 550)
-        self.assertEqual(y, 44)
-        x, y = label.get_position()
-        self.assertEqual(x, 556)
-        self.assertEqual(y, 82)
+        self.assertEqual(quit1.get_position(), (170, 5))
+        self.assertEqual(name1.get_position(), (115, 73))
+        self.assertEqual(sel1.get_position(), (104, 141))
+        self.assertEqual(sel2.get_position(), (104, 179))
+        self.assertEqual(play1.get_position(), (388, 5))
+        self.assertEqual(play2.get_position(), (698, 5))
+        self.assertEqual(hidden.get_position(), (0, 0))
+        self.assertEqual(quit2.get_position(), (550, 43))
+        self.assertEqual(label.get_position(), (556, 81))
 
         # Test no selectable position
-        menu = MenuUtils.generic_menu(center_content=False)
+        menu = MenuUtils.generic_menu(center_content=False, theme=theme_src)
         btn = menu.add.button('button', None)
         btn.is_selectable = False
         menu.render()
@@ -618,12 +604,12 @@ class MenuTest(unittest.TestCase):
         # Mark w1 as unselectable, then w1 is not selectable, nor w2, and labels are unselectable too
         # so the selected should be the same
         w1.is_selectable = False
-        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        self.menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_selected_widget(), wlast)
 
         # Show w2, then if DOWN is pressed again, the selected status should be 2
         w2.show()
-        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        self.menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
         # Hide w2, pass again to wlast
@@ -713,9 +699,9 @@ class MenuTest(unittest.TestCase):
         menu.add.label('Text #1')
         menu.add.vertical_margin(100)
         menu.add.label('Text #2')
-        v = 36
+        v = 33
         if pygame.version.vernum[0] < 2:
-            v = 35
+            v = 32
 
         self.assertEqual(menu._widget_offset[1], v)
 
@@ -756,14 +742,14 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(len(self.menu.get_widgets()), 5)
 
         # Create a event in pygame
-        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        self.menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu.get_index(), 1)
 
         # Move down twice
         for i in range(2):
-            self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+            self.menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        self.menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(self.menu.get_index(), 0)
 
         # Press enter, button should trigger and call function
@@ -778,9 +764,9 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu.get_index(), 0)
 
         # Check joy
-        self.menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_UP))
+        self.menu.update(PygameUtils.joy_key(JOY_UP))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_DOWN))
+        self.menu.update(PygameUtils.joy_key(JOY_DOWN))
         self.assertEqual(self.menu.get_index(), 0)
         self.menu.update(PygameUtils.joy_motion(1, 1))
         self.assertEqual(self.menu.get_index(), 1)
@@ -1039,7 +1025,7 @@ class MenuTest(unittest.TestCase):
         btn5.set_float()
         menu.render()
 
-        self.assertEqual(btn3.get_width(apply_selection=True), 65)
+        self.assertEqual(btn3.get_width(apply_selection=True), 63)
         for colw in menu._column_widths:
             self.assertEqual(colw, width / 2)
 
@@ -1054,9 +1040,10 @@ class MenuTest(unittest.TestCase):
         btn3_sz = btn3.get_width(apply_selection=True)
         btn6_sz = btn6.get_width(apply_selection=True)
         menu.render()
-        col_width1 = width * btn3_sz / (btn3_sz + btn6_sz)
+        col_width1 = (width * btn3_sz) / (btn3_sz + btn6_sz)
         col_width2 = width - col_width1
-        self.assertAlmostEqual(menu._column_widths, [col_width1, col_width2])
+        self.assertAlmostEqual(menu._column_widths[0], math.ceil(col_width1))
+        self.assertAlmostEqual(menu._column_widths[1], math.ceil(col_width2))
 
         # Test different rows per column
         menu = MenuUtils.generic_menu(columns=3, rows=[2, 1, 2], width=width, column_max_width=[300, None, 100])
@@ -1088,8 +1075,8 @@ class MenuTest(unittest.TestCase):
         # col2 should keep its current width
         menu._column_max_width = [300, None, 300]
         menu.render()
-        self.assertEqual(menu._column_widths, [300, 65, 235])
-        self.assertEqual(menu._column_pos_x, [150, 332.5, 482.5])
+        self.assertEqual(menu._column_widths, [300, 63, 238])
+        self.assertEqual(menu._column_pos_x, [150, 331, 482])
 
         # Chance maximum width of third column and enlarge button 4, then
         # middle column 3 will take 600-300-100 = 200
@@ -1136,8 +1123,7 @@ class MenuTest(unittest.TestCase):
         # The menu is 600x400, so using a lower screen throws an error
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', screen_dimension=(1, 1)))
         menu = MenuUtils.generic_menu(title='mainmenu', screen_dimension=(888, 999))
-        self.assertEqual(menu.get_window_size()[0], 888)
-        self.assertEqual(menu.get_window_size()[1], 999)
+        self.assertEqual(menu.get_window_size(), (888, 999))
 
     def test_touchscreen(self) -> None:
         """
@@ -1323,18 +1309,17 @@ class MenuTest(unittest.TestCase):
         # Test focus
         btn.active = True
         focus = menu._draw_focus_widget(surface, btn)
-        # menu.mainloop(surface)
         self.assertEqual(len(focus), 4)
         if pygame.version.vernum[0] < 2:
-            self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 301), (0, 301)))
-            self.assertEqual(focus[2], ((0, 302), (261, 302), (261, 353), (0, 353)))
-            self.assertEqual(focus[3], ((337, 302), (600, 302), (600, 353), (337, 353)))
-            self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
-        else:
             self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 302), (0, 302)))
-            self.assertEqual(focus[2], ((0, 303), (261, 303), (261, 353), (0, 353)))
-            self.assertEqual(focus[3], ((337, 303), (600, 303), (600, 353), (337, 353)))
-            self.assertEqual(focus[4], ((0, 354), (600, 354), (600, 600), (0, 600)))
+            self.assertEqual(focus[2], ((0, 303), (262, 303), (262, 352), (0, 352)))
+            self.assertEqual(focus[3], ((336, 303), (600, 303), (600, 352), (336, 352)))
+            self.assertEqual(focus[4], ((0, 353), (600, 353), (600, 600), (0, 600)))
+        else:
+            self.assertEqual(focus[1], ((0, 0), (600, 0), (600, 303), (0, 303)))
+            self.assertEqual(focus[2], ((0, 304), (262, 304), (262, 352), (0, 352)))
+            self.assertEqual(focus[3], ((336, 304), (600, 304), (600, 352), (336, 352)))
+            self.assertEqual(focus[4], ((0, 353), (600, 353), (600, 600), (0, 600)))
 
         # Test cases where the focus must fail
         btn._selected = False
@@ -1385,34 +1370,16 @@ class MenuTest(unittest.TestCase):
         self.assertFalse(btn1.is_selected())
         self.assertFalse(btn2.is_selected())
 
-        c1, r1, i1 = btn1.get_col_row_index()
-        c2, r2, i2 = btn2.get_col_row_index()
-        self.assertEqual(c1, -1)
-        self.assertEqual(c2, -1)
-        self.assertEqual(i1, 0)
-        self.assertEqual(c2, -1)
-        self.assertEqual(r2, -1)
-        self.assertEqual(i2, 1)
+        self.assertEqual(btn1.get_col_row_index(), (-1, -1, 0))
+        self.assertEqual(btn2.get_col_row_index(), (-1, -1, 1))
 
         menu.remove_widget(btn1)
-        c1, r1, i1 = btn1.get_col_row_index()
-        c2, r2, i2 = btn2.get_col_row_index()
-        self.assertEqual(c1, -1)
-        self.assertEqual(c2, -1)
-        self.assertEqual(i1, -1)
-        self.assertEqual(c2, -1)
-        self.assertEqual(r2, -1)
-        self.assertEqual(i2, 0)
+        self.assertEqual(btn1.get_col_row_index(), (-1, -1, -1))
+        self.assertEqual(btn2.get_col_row_index(), (-1, -1, 0))
 
         menu.remove_widget(btn2)
-        c1, r1, i1 = btn1.get_col_row_index()
-        c2, r2, i2 = btn2.get_col_row_index()
-        self.assertEqual(c1, -1)
-        self.assertEqual(c2, -1)
-        self.assertEqual(i1, -1)
-        self.assertEqual(c2, -1)
-        self.assertEqual(r2, -1)
-        self.assertEqual(i2, -1)
+        self.assertEqual(btn1.get_col_row_index(), (-1, -1, -1))
+        self.assertEqual(btn2.get_col_row_index(), (-1, -1, -1))
 
         menu = MenuUtils.generic_menu(title='menu')
         btn = menu.add.button('button', None)
@@ -1471,30 +1438,30 @@ class MenuTest(unittest.TestCase):
         for i in range(8):
             b = menu.add.button('test' + str(i), None)
             widg.append(b)
+
         # btn0 | btn2 | btn4 | btn6
         # btn1 | btn3 | btn5 | btn7
-
         self.assertEqual(menu_top.get_current(), menu)
 
         # Arrow keys
         self.assertEqual(menu.get_selected_widget(), widg[0])
-        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu_top.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), widg[6])
-        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        menu_top.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), widg[7])
-        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu_top.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), widg[1])
-        menu_top.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+        menu_top.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(menu.get_selected_widget(), widg[0])
 
         # Joy key
-        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+        menu_top.update(PygameUtils.joy_key(JOY_LEFT))
         self.assertEqual(menu.get_selected_widget(), widg[6])
-        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_DOWN))
+        menu_top.update(PygameUtils.joy_key(JOY_DOWN))
         self.assertEqual(menu.get_selected_widget(), widg[7])
-        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
+        menu_top.update(PygameUtils.joy_key(JOY_RIGHT))
         self.assertEqual(menu.get_selected_widget(), widg[1])
-        menu_top.update(PygameUtils.joy_key(pygame_menu.controls.JOY_UP))
+        menu_top.update(PygameUtils.joy_key(JOY_UP))
         self.assertEqual(menu.get_selected_widget(), widg[0])
 
         # Joy hat
@@ -1645,7 +1612,7 @@ class MenuTest(unittest.TestCase):
         Test frame menu support.
         """
         # Test frame movement
-        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme = TEST_THEME.copy()
         theme.widget_font_size = 20
         menu = MenuUtils.generic_menu(columns=3, rows=2, theme=theme)
 
@@ -1710,80 +1677,80 @@ class MenuTest(unittest.TestCase):
               (2, 5),
               (0, 0, 0, 1, (200, 50))),
              ('Button-btn6', (1, 1, 7), (163, 137), (1, 0, 0, 1, (42, 28))),
-             ('Button-btn7', (2, 0, 8), (429, 77), (1, 1, 0, 1, (42, 28))),
-             ('Button-btn8', (2, 0, 9), (429, 105), (1, 1, 0, 1, (42, 28))),
+             ('Button-btn7', (2, 0, 8), (430, 77), (1, 1, 0, 1, (42, 28))),
+             ('Button-btn8', (2, 0, 9), (430, 105), (1, 1, 0, 1, (42, 28))),
              ('Frame',
               (2, 0, 10),
-              (350, 133),
-              ('Button-btn9 ', (2, 0, 12), (350, 133), (1, 1, 0, 1, (47, 28))),
-              ('Button-btn10', (2, 0, 13), (397, 133), (1, 1, 0, 1, (53, 28))),
+              (351, 133),
+              ('Button-btn9 ', (2, 0, 12), (351, 133), (1, 1, 0, 1, (47, 28))),
+              ('Button-btn10', (2, 0, 13), (398, 133), (1, 1, 0, 1, (53, 28))),
               (12, 13),
               (0, 1, 0, 1, (200, 50))),
              ('Frame',
               (2, 0, 11),
-              (350, 77),
-              ('Button-btn7', (2, 0, 8), (429, 77), (1, 1, 0, 1, (42, 28))),
-              ('Button-btn8', (2, 0, 9), (429, 105), (1, 1, 0, 1, (42, 28))),
-              ('Button-btn9 ', (2, 0, 12), (350, 133), (1, 1, 0, 1, (47, 28))),
-              ('Button-btn10', (2, 0, 13), (397, 133), (1, 1, 0, 1, (53, 28))),
+              (351, 77),
+              ('Button-btn7', (2, 0, 8), (430, 77), (1, 1, 0, 1, (42, 28))),
+              ('Button-btn8', (2, 0, 9), (430, 105), (1, 1, 0, 1, (42, 28))),
+              ('Button-btn9 ', (2, 0, 12), (351, 133), (1, 1, 0, 1, (47, 28))),
+              ('Button-btn10', (2, 0, 13), (398, 133), (1, 1, 0, 1, (53, 28))),
               (8, 10),
               (0, 0, 0, 1, (200, 132))),
-             ('Button-btn9 ', (2, 0, 12), (350, 133), (1, 1, 0, 1, (47, 28))),
-             ('Button-btn10', (2, 0, 13), (397, 133), (1, 1, 0, 1, (53, 28))),
-             ('Button-btn11 ', (2, 1, 14), (320, 219), (1, 1, 0, 1, (58, 28))),
-             ('Button-btn12 ', (2, 1, 15), (378, 219), (1, 1, 0, 1, (58, 28))),
-             ('Button-btn13', (2, 1, 16), (436, 219), (1, 1, 0, 1, (53, 28))),
+             ('Button-btn9 ', (2, 0, 12), (351, 133), (1, 1, 0, 1, (47, 28))),
+             ('Button-btn10', (2, 0, 13), (398, 133), (1, 1, 0, 1, (53, 28))),
+             ('Button-btn11 ', (2, 1, 14), (321, 219), (1, 1, 0, 1, (58, 28))),
+             ('Button-btn12 ', (2, 1, 15), (379, 219), (1, 1, 0, 1, (58, 28))),
+             ('Button-btn13', (2, 1, 16), (437, 219), (1, 1, 0, 1, (53, 28))),
              ('Frame',
               (2, 1, 17),
-              (320, 219),
-              ('Button-btn11 ', (2, 1, 14), (320, 219), (1, 1, 0, 1, (58, 28))),
-              ('Button-btn12 ', (2, 1, 15), (378, 219), (1, 1, 0, 1, (58, 28))),
-              ('Button-btn13', (2, 1, 16), (436, 219), (1, 1, 0, 1, (53, 28))),
+              (321, 219),
+              ('Button-btn11 ', (2, 1, 14), (321, 219), (1, 1, 0, 1, (58, 28))),
+              ('Button-btn12 ', (2, 1, 15), (379, 219), (1, 1, 0, 1, (58, 28))),
+              ('Button-btn13', (2, 1, 16), (437, 219), (1, 1, 0, 1, (53, 28))),
               (14, 16),
               (0, 0, 0, 1, (260, 50))))
         ))
 
         # Arrow keys
         self.assertEqual(menu.get_selected_widget(), btn0)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn7)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn10)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn9)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
         for bt in (btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn0, btn1):
-            menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
             self.assertEqual(menu.get_selected_widget(), bt)
         for bt in (btn6, btn11, btn12, btn13, btn1):
-            menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
+            menu.update(PygameUtils.joy_key(JOY_RIGHT))
             self.assertEqual(menu.get_selected_widget(), bt)
         for bt in (btn0, btn13, btn12, btn11, btn10, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0):
-            menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_selected_widget(), bt)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+        menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn1)
         for bt in (btn13, btn12, btn11, btn6, btn1):
-            menu.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
+            menu.update(PygameUtils.joy_key(JOY_LEFT))
             self.assertEqual(menu.get_selected_widget(), bt)
 
         # Test removing frame
@@ -1793,40 +1760,40 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(len(f2._widgets), 2)
         self.assertEqual(len(f3._widgets), 0)
         self.assertEqual(menu._test_widgets_status(), (
-            (('Button-btn0', (0, 0, 0), (18, 77), (1, 0, 0, 1, (42, 28))),
-             ('Button-btn1', (0, 1, 1), (18, 115), (1, 0, 1, 1, (42, 28))),
-             ('Button-btn2 ', (1, 0, 2), (108, 77), (1, 1, 0, 1, (47, 28))),
-             ('Button-btn3 ', (1, 0, 3), (155, 77), (1, 1, 0, 1, (47, 28))),
-             ('Button-btn4 ', (1, 0, 4), (202, 77), (1, 1, 0, 1, (47, 28))),
-             ('Button-btn5 ', (1, 0, 5), (249, 77), (1, 1, 0, 1, (47, 28))),
+            (('Button-btn0', (0, 0, 0), (17, 77), (1, 0, 0, 1, (42, 28))),
+             ('Button-btn1', (0, 1, 1), (17, 115), (1, 0, 1, 1, (42, 28))),
+             ('Button-btn2 ', (1, 0, 2), (107, 77), (1, 1, 0, 1, (47, 28))),
+             ('Button-btn3 ', (1, 0, 3), (154, 77), (1, 1, 0, 1, (47, 28))),
+             ('Button-btn4 ', (1, 0, 4), (201, 77), (1, 1, 0, 1, (47, 28))),
+             ('Button-btn5 ', (1, 0, 5), (248, 77), (1, 1, 0, 1, (47, 28))),
              ('Frame',
               (1, 0, 6),
-              (108, 77),
-              ('Button-btn2 ', (1, 0, 2), (108, 77), (1, 1, 0, 1, (47, 28))),
-              ('Button-btn3 ', (1, 0, 3), (155, 77), (1, 1, 0, 1, (47, 28))),
-              ('Button-btn4 ', (1, 0, 4), (202, 77), (1, 1, 0, 1, (47, 28))),
-              ('Button-btn5 ', (1, 0, 5), (249, 77), (1, 1, 0, 1, (47, 28))),
+              (107, 77),
+              ('Button-btn2 ', (1, 0, 2), (107, 77), (1, 1, 0, 1, (47, 28))),
+              ('Button-btn3 ', (1, 0, 3), (154, 77), (1, 1, 0, 1, (47, 28))),
+              ('Button-btn4 ', (1, 0, 4), (201, 77), (1, 1, 0, 1, (47, 28))),
+              ('Button-btn5 ', (1, 0, 5), (248, 77), (1, 1, 0, 1, (47, 28))),
               (2, 5),
               (0, 0, 0, 1, (200, 50))),
-             ('Button-btn6', (1, 1, 7), (187, 137), (1, 0, 0, 1, (42, 28))),
-             ('Button-btn7', (2, 0, 8), (448, 77), (1, 1, 0, 1, (42, 28))),
-             ('Button-btn8', (2, 0, 9), (448, 105), (1, 1, 0, 1, (42, 28))),
+             ('Button-btn6', (1, 1, 7), (186, 137), (1, 0, 0, 1, (42, 28))),
+             ('Button-btn7', (2, 0, 8), (449, 77), (1, 1, 0, 1, (42, 28))),
+             ('Button-btn8', (2, 0, 9), (449, 105), (1, 1, 0, 1, (42, 28))),
              ('Frame',
               (2, 0, 10),
-              (369, 77),
-              ('Button-btn7', (2, 0, 8), (448, 77), (1, 1, 0, 1, (42, 28))),
-              ('Button-btn8', (2, 0, 9), (448, 105), (1, 1, 0, 1, (42, 28))),
+              (370, 77),
+              ('Button-btn7', (2, 0, 8), (449, 77), (1, 1, 0, 1, (42, 28))),
+              ('Button-btn8', (2, 0, 9), (449, 105), (1, 1, 0, 1, (42, 28))),
               (8, 9),
               (0, 0, 0, 1, (200, 132))),
-             ('Button-btn11 ', (2, 1, 11), (339, 219), (1, 1, 0, 1, (58, 28))),
-             ('Button-btn12 ', (2, 1, 12), (397, 219), (1, 1, 0, 1, (58, 28))),
-             ('Button-btn13', (2, 1, 13), (455, 219), (1, 1, 0, 1, (53, 28))),
+             ('Button-btn11 ', (2, 1, 11), (340, 219), (1, 1, 0, 1, (58, 28))),
+             ('Button-btn12 ', (2, 1, 12), (398, 219), (1, 1, 0, 1, (58, 28))),
+             ('Button-btn13', (2, 1, 13), (456, 219), (1, 1, 0, 1, (53, 28))),
              ('Frame',
               (2, 1, 14),
-              (339, 219),
-              ('Button-btn11 ', (2, 1, 11), (339, 219), (1, 1, 0, 1, (58, 28))),
-              ('Button-btn12 ', (2, 1, 12), (397, 219), (1, 1, 0, 1, (58, 28))),
-              ('Button-btn13', (2, 1, 13), (455, 219), (1, 1, 0, 1, (53, 28))),
+              (340, 219),
+              ('Button-btn11 ', (2, 1, 11), (340, 219), (1, 1, 0, 1, (58, 28))),
+              ('Button-btn12 ', (2, 1, 12), (398, 219), (1, 1, 0, 1, (58, 28))),
+              ('Button-btn13', (2, 1, 13), (456, 219), (1, 1, 0, 1, (53, 28))),
               (11, 13),
               (0, 0, 0, 1, (260, 50))),
              ('Button-btn9 ', (2, 1, 15), (446, 219), (1, 1, 0, 1, (47, 28))),
@@ -1838,10 +1805,10 @@ class MenuTest(unittest.TestCase):
         # btn1 |            btn6         | f4(btn11,btn12,btn13)+(floating9,10)
         menu.select_widget(btn0)
         for i in range(14):
-            menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_UP, keydown=True))
+            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
         for i in range(14):
-            menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
 
     # noinspection PyTypeChecker
@@ -1849,7 +1816,7 @@ class MenuTest(unittest.TestCase):
         """
         Test widget index moving.
         """
-        menu = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
         btn1 = menu.add.button('1', None)
         btn2 = menu.add.button('2', None)
         btn3 = menu.add.button('3', None)
@@ -1967,8 +1934,6 @@ class MenuTest(unittest.TestCase):
             surface.fill((255, 255, 255), btn1.get_rect(to_real_position=True))
 
         deco.add_callable(drawrect, prev=False, pass_args=False)
-        # menu.mainloop(surface)
-
         menu.update([PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION)])
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)

@@ -36,7 +36,7 @@ import timeit
 import unittest
 import pygame
 import pygame_menu
-from test._utils import MenuUtils, surface
+from test._utils import MenuUtils, surface, TEST_THEME
 
 # Configure the tests
 TEST_TIME_DRAW = False
@@ -209,7 +209,7 @@ class DecoratorTest(unittest.TestCase):
         """
         Test all decorators.
         """
-        menu = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
         btn = menu.add.button('Button', None)
 
         deco = btn.get_decorator()
@@ -260,7 +260,6 @@ class DecoratorTest(unittest.TestCase):
         self.assertEqual(btn.get_rect().center, (int(x + w / 2), int(y + h / 2)))
 
         # If widget changes padding, the center does not change if pad is equal, so the coord cache must be the same
-        # menu.mainloop(surface)
         btn.set_padding(100)
         menu.draw(surface)
 
@@ -281,7 +280,6 @@ class DecoratorTest(unittest.TestCase):
         self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
         btn.set_padding((100, 0, 100, 0))
         menu.draw(surface)
-        # menu.mainloop(surface)
         self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
 
         # Text
@@ -351,5 +349,4 @@ class DecoratorTest(unittest.TestCase):
         deco.add_vline(1, 2, 3, color)
 
         menu.draw(surface)
-        # menu.mainloop(surface)
         deco.remove_all()

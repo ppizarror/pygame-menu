@@ -88,8 +88,8 @@ class SelectionTest(unittest.TestCase):
         self.menu.draw(surface)
 
         sel = w.get_selection_effect()
-        self.assertEqual(sel.get_height(), margin_y + 2 * border_width)
-        self.assertEqual(sel.get_width(), margin_x + 2 * border_width)
+        self.assertEqual(sel.get_height(), margin_y)
+        self.assertEqual(sel.get_width(), margin_x)
 
         # Test inflate
         rect = w.get_rect()

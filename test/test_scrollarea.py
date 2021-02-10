@@ -33,7 +33,8 @@ __all__ = ['ScrollAreaTest']
 
 import copy
 import unittest
-from test._utils import MenuUtils, PygameUtils, surface
+from test._utils import MenuUtils, PygameUtils, surface, TEST_THEME
+
 import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu.scrollarea import get_scrollbars_from_position
@@ -48,24 +49,18 @@ class ScrollAreaTest(unittest.TestCase):
         self.assertEqual(len(get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_FULL)), 4)
         for i in (_locals.POSITION_EAST, _locals.POSITION_EAST, _locals.POSITION_WEST, _locals.POSITION_NORTH):
             self.assertIsInstance(get_scrollbars_from_position(i), str)
-        w = get_scrollbars_from_position(_locals.POSITION_NORTHWEST)
-        self.assertEqual(w[0], _locals.POSITION_NORTH)
-        self.assertEqual(w[1], _locals.POSITION_WEST)
-        w = get_scrollbars_from_position(_locals.POSITION_NORTHEAST)
-        self.assertEqual(w[0], _locals.POSITION_NORTH)
-        self.assertEqual(w[1], _locals.POSITION_EAST)
-        w = get_scrollbars_from_position(_locals.POSITION_SOUTHEAST)
-        self.assertEqual(w[0], _locals.POSITION_SOUTH)
-        self.assertEqual(w[1], _locals.POSITION_EAST)
-        w = get_scrollbars_from_position(_locals.POSITION_SOUTHWEST)
-        self.assertEqual(w[0], _locals.POSITION_SOUTH)
-        self.assertEqual(w[1], _locals.POSITION_WEST)
-        w = get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_BOTH_HORIZONTAL)
-        self.assertEqual(w[0], _locals.POSITION_SOUTH)
-        self.assertEqual(w[1], _locals.POSITION_NORTH)
-        w = get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_BOTH_VERTICAL)
-        self.assertEqual(w[0], _locals.POSITION_EAST)
-        self.assertEqual(w[1], _locals.POSITION_WEST)
+        self.assertEqual(get_scrollbars_from_position(_locals.POSITION_NORTHWEST),
+                         (_locals.POSITION_NORTH, _locals.POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(_locals.POSITION_NORTHEAST),
+                         (_locals.POSITION_NORTH, _locals.POSITION_EAST))
+        self.assertEqual(get_scrollbars_from_position(_locals.POSITION_SOUTHEAST),
+                         (_locals.POSITION_SOUTH, _locals.POSITION_EAST))
+        self.assertEqual(get_scrollbars_from_position(_locals.POSITION_SOUTHWEST),
+                         (_locals.POSITION_SOUTH, _locals.POSITION_WEST))
+        self.assertEqual(get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_BOTH_HORIZONTAL),
+                         (_locals.POSITION_SOUTH, _locals.POSITION_NORTH))
+        self.assertEqual(get_scrollbars_from_position(_locals.SCROLLAREA_POSITION_BOTH_VERTICAL),
+                         (_locals.POSITION_EAST, _locals.POSITION_WEST))
 
         # Invalid
         self.assertRaises(ValueError, lambda: get_scrollbars_from_position(_locals.INPUT_TEXT))
@@ -134,7 +129,7 @@ class ScrollAreaTest(unittest.TestCase):
         """
         Test size.
         """
-        menu = MenuUtils.generic_menu(title='menu')
+        menu = MenuUtils.generic_menu(title='menu', theme=TEST_THEME.copy())
         menu.render()
         self.assertEqual(menu.get_height(widget=True), 0)
 
@@ -165,8 +160,7 @@ class ScrollAreaTest(unittest.TestCase):
         self.assertEqual(rect.height, btn.get_height())
 
         posrect = sa.to_world_position((10, 10))
-        self.assertEqual(posrect[0], 10)
-        self.assertEqual(posrect[1], -145)
+        self.assertEqual(posrect, (10, -145))
 
         self.assertFalse(sa.is_scrolling())
         self.assertEqual(sa.get_menu(), menu)
@@ -177,8 +171,7 @@ class ScrollAreaTest(unittest.TestCase):
         # Remove the world of surface
         world = sa._world
         sa._world = None
-        self.assertEqual(sa.get_world_size()[0], 0)
-        self.assertEqual(sa.get_world_size()[0], 0)
+        self.assertEqual(sa.get_world_size(), (0, 0))
         sa._world = world
 
         # Test collide

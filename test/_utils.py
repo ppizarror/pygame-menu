@@ -29,7 +29,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['test_reset_surface', 'surface', 'PygameUtils', 'MenuUtils']
+__all__ = [
+
+    # Globals
+    'test_reset_surface',
+    'surface',
+    'TEST_THEME',
+
+    # Utils
+    'PygameUtils',
+    'MenuUtils'
+
+]
 
 import pygame
 import pygame_menu
@@ -64,6 +75,11 @@ if hasattr(pygame, 'FINGERUP'):
 FINGERMOTION = -1
 if hasattr(pygame, 'FINGERMOTION'):
     FINGERMOTION = pygame.FINGERMOTION
+
+TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
+TEST_THEME.widget_margin = (0, 10)
+TEST_THEME.widget_padding = 0
+TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
 
 
 def test_reset_surface() -> None:
