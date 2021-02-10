@@ -274,7 +274,6 @@ class TextInput(Widget):
         )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
-        self._absolute_origin = (0, 0)  # To calculate mouse collide point
         self._block_copy_paste = False  # Blocks event
         self._key_is_pressed = False
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -589,7 +588,7 @@ class TextInput(Widget):
             #  |                                                   |
             #  |---------------------------------------------------|
 
-            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.5 -
+            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.75 -
                         self._padding[1] - self._padding[3],
                         current_rect.width)
             delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
@@ -983,7 +982,7 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        rect = self.get_rect(to_real_position=True)
+        rect = self.get_rect(to_real_position=True, apply_padding=False)
         if rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
             mousex, _ = pos
@@ -1002,7 +1001,7 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        rect = self.get_rect(to_real_position=True)
+        rect = self.get_rect(to_real_position=True, apply_padding=False)
         if rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
             touchx, _ = pos
@@ -1764,7 +1763,6 @@ class TextInput(Widget):
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
@@ -1772,7 +1770,6 @@ class TextInput(Widget):
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
@@ -1785,14 +1782,12 @@ class TextInput(Widget):
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False
                     self._check_touch_collide_input(finger_pos)
                     self._cursor_ms_counter = 0
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERDOWN:
                 if self.get_selected_time() > self._keyrepeat_touch_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
@@ -1805,8 +1800,7 @@ class TextInput(Widget):
             # self._keyrepeat_mouse_ms = 0
             if mouse_left:
                 pos = pygame.mouse.get_pos()
-                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
-                                                 pos[1] - self._absolute_origin[1]))
+                self._check_mouse_collide_input((pos[0], pos[1]))
 
         # Update key counters:
         for key in self._keyrepeat_counters:

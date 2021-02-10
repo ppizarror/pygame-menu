@@ -294,7 +294,7 @@ class Selector(Widget):
                     event_pos = event.pos
 
                 # If collides
-                rect = self.get_rect(to_real_position=True)
+                rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos
