@@ -32,8 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = [
 
     # Globals
-    'test_reset_surface',
+    'PYGAME_V2',
     'surface',
+    'test_reset_surface',
     'TEST_THEME',
 
     # Utils
@@ -80,6 +81,8 @@ TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
 TEST_THEME.widget_margin = (0, 10)
 TEST_THEME.widget_padding = 0
 TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+
+PYGAME_V2 = pygame.version.vernum[0] >= 2
 
 
 def test_reset_surface() -> None:
@@ -286,8 +289,7 @@ class PygameUtils(object):
         :param menu: Menu reference
         :return: Event
         """
-        vmajor, _, _ = pygame.version.vernum
-        assert vmajor >= 2, 'function only available in pygame v2+'
+        assert PYGAME_V2, 'function only available in pygame v2+'
         if normalize:
             assert menu is not None, 'menu reference must be provided if normalize is used'
             display_size = menu.get_window_size()

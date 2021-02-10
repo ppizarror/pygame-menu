@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['BaseImageTest']
 
 import unittest
-from test._utils import surface
+from test._utils import surface, PYGAME_V2
 
 import io
 import base64
@@ -111,7 +111,7 @@ class BaseImageTest(unittest.TestCase):
 
         # Clone base64
         image3 = image2.copy()
-        if pygame.version.vernum[0] >= 2:
+        if PYGAME_V2:
             self.assertTrue(image2.equals(image3))
 
     def test_rotation(self) -> None:

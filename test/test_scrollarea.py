@@ -134,7 +134,7 @@ class ScrollAreaTest(unittest.TestCase):
         self.assertEqual(menu.get_height(widget=True), 0)
 
         # Adds a button, hide it, then the height should be 0 as well
-        btn = menu.add.button('hidden', None)
+        btn = menu.add.button('hidden')
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 

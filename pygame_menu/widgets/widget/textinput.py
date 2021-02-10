@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['TextInput']
 
 import math
+import warnings
 
 import pygame
 import pygame_menu.controls as _controls
@@ -1741,6 +1742,11 @@ class TextInput(Widget):
 
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys:
+                    if event.unicode == ' ' and event.key != 32:
+                        msg = '{0} received "{1}" unicode but key is different than 32 ({2}), ' \
+                              'check if event has defined the proper unicode char' \
+                              ''.format(self.get_class_id(), event.unicode, event.key)
+                        warnings.warn(msg)
                     if not self._push_key_input(event.unicode):  # Error in char, not valid or string limit exceeds
                         break
                     self.active = True

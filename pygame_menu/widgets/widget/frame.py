@@ -360,9 +360,12 @@ class Frame(Widget):
         """
         w = widget.get_width()
         if w > self._width:
-            raise _FrameSizeException('{0} width ({1}) is greater than {3} width ({2})'.format(
-                widget.get_class_id(), w, self._width, self.get_class_id()
-            ))
+            raise _FrameSizeException(
+                '{0} width ({1}) is greater than {3} width ({2}), try using '
+                'widget.set_max_width(...) for avoiding this issue, or set '
+                'the widget as floating'.format(
+                    widget.get_class_id(), w, self._width, self.get_class_id()
+                ))
         if a == _locals.ALIGN_CENTER:
             return int((self._width - w) / 2)
         elif a == _locals.ALIGN_RIGHT:
@@ -380,9 +383,12 @@ class Frame(Widget):
         """
         h = widget.get_height()
         if h > self._height:
-            raise _FrameSizeException('{0} height ({1}) is greater than {3} height ({2})'.format(
-                widget.get_class_id(), h, self._height, self.get_class_id()
-            ))
+            raise _FrameSizeException(
+                '{0} height ({1}) is greater than {3} height ({2}), try using '
+                'widget.set_max_height(...) for avoiding this issue, or set '
+                'the widget as floating'.format(
+                    widget.get_class_id(), h, self._height, self.get_class_id()
+                ))
         if v == _locals.POSITION_CENTER:
             return int((self._height - h) / 2)
         elif v == _locals.POSITION_SOUTH:
@@ -402,6 +408,8 @@ class Frame(Widget):
 
         for w in self._widgets.values():
             w, align, vpos = w
+            if not w.is_visible():
+                continue
             if align == _locals.ALIGN_CENTER:
                 wcenter += w.get_width() + w.get_margin()[0]
                 continue
@@ -428,6 +436,8 @@ class Frame(Widget):
         xcenter = int(self._width / 2 - wcenter / 2)
         for w in self._widgets.values():
             w, align, vpos = w
+            if not w.is_visible():
+                continue
             if align == _locals.ALIGN_CENTER:
                 xcenter += w.get_margin()[0]
                 self._pos[w.get_id()] = (xcenter, self._get_vt(w, vpos) + w.get_margin()[1])
@@ -444,6 +454,8 @@ class Frame(Widget):
         wcenter = 0
         for w in self._widgets.values():
             w, align, vpos = w
+            if not w.is_visible():
+                continue
             if vpos == _locals.POSITION_CENTER:
                 wcenter += w.get_width() + w.get_margin()[1]
                 continue
@@ -469,6 +481,8 @@ class Frame(Widget):
         ycenter = int(self._height / 2 - wcenter / 2)
         for w in self._widgets.values():
             w, align, vpos = w
+            if not w.is_visible():
+                continue
             if vpos == _locals.POSITION_CENTER:
                 ycenter += w.get_margin()[1]
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], ycenter)
@@ -493,16 +507,18 @@ class Frame(Widget):
         for w in self._widgets.keys():
             tx, ty = self._pos[w]
             widget = self._widgets[w][0]
+            if not widget.is_visible():
+                widget.set_position(0, 0)
+                continue
             if widget.get_menu() is None:  # Widget is only appended to Frame
                 widget.set_position(*self.get_position())
                 continue
             if self._frame_scrollarea is not None:
                 sx, sy = self._frame_scrollarea.get_position()
-                # widget._translate_virtual = (tx, ty)  # Store virtual original translation
                 tx -= sx
                 ty -= sy
 
-            widget._translate = (tx, ty)  # Translate to scrollarea
+            widget._translate_virtual = (tx, ty)  # Translate to scrollarea
 
         # Check if control widget has changed positioning. This fixes centering issues
         if self._control_widget is not None:
@@ -541,6 +557,16 @@ class Frame(Widget):
             wtp.append(widget)
         return tuple(wtp)
 
+    def empty(self) -> 'Frame':
+        """
+        Unpack all widgets within frame.
+
+        :return: Self reference
+        """
+        for w in self.get_widgets(unpack_subframes=False):
+            self.unpack(w)
+        return self
+
     def unpack(self, widget: 'Widget') -> 'Frame':
         """
         Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
@@ -555,8 +581,9 @@ class Frame(Widget):
             msg = '{0} does not exist in frame'.format(widget.get_class_id())
             raise ValueError(msg)
         assert widget._frame == self, 'widget frame differs from current'
+        widget.set_float()
         widget._frame = None
-        widget._translate = (0, 0)
+        widget._translate_virtual = (0, 0)
         del self._widgets[wid]
         try:
             del self._pos[wid]
@@ -637,6 +664,16 @@ class Frame(Widget):
 
             It is recommended to force menu rendering after packing all widgets.
 
+        .. note::
+
+            Packing applies a virtual translation to the widget, previous translation
+            is not modified.
+
+        .. note::
+
+            Widget floating is also considered within frames. If a widget is floating,
+            it does not add any size to the respective positioning.
+
         :param widget: Widget to be packed
         :param alignment: Widget alignment
         :param vertical_position: Vertical position of the widget within frame. See :py:mod:`pygame_menu.locals`
@@ -645,7 +682,7 @@ class Frame(Widget):
         """
         menu = self.get_menu()
         assert menu is not None, \
-            'menu must be set before packing widgets'
+            'frame menu must be set before packing widgets'
         if isinstance(widget, (tuple, list)):
             for w in widget:
                 self.pack(widget=w, alignment=alignment, vertical_position=vertical_position)
@@ -660,13 +697,10 @@ class Frame(Widget):
         assert_alignment(alignment)
         assert vertical_position in (_locals.POSITION_NORTH, _locals.POSITION_CENTER, _locals.POSITION_SOUTH), \
             'vertical position must be NORTH, CENTER, or SOUTH'
-        assert widget._translate[0] == 0 and widget._translate[1] == 0, \
-            'widget cannot have a previous translation if appended. Frame overrides translation'
         assert_vector(margin, 2)
         assert widget.configured, 'widget must be configured before packing'
 
         widget.set_frame(self)
-        widget.set_float()
         widget.set_margin(*margin)
         if self._frame_scrollarea is not None:
             widget.set_scrollarea(self._frame_scrollarea)

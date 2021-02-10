@@ -142,7 +142,8 @@ class Widget(object):
     _surface: Optional['pygame.Surface']
     _title: str
     _touchscreen_enabled: bool
-    _translate: Tuple2IntType
+    _translate: Tuple2IntType  # Translation made by user
+    _translate_virtual: Tuple2IntType  # Virtual translation applied by api
     _update_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
     _visible: bool
     active: bool
@@ -200,6 +201,7 @@ class Widget(object):
         self._flip = (False, False)  # x, y
         self._scale = [False, 1, 1, False]  # do_scale, x, y, smooth
         self._translate = (0, 0)
+        self._translate_virtual = (0, 0)
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
         # use .get_rect() widget method instead. Widget subclass should ONLY modify width/height,
@@ -1468,8 +1470,8 @@ class Widget(object):
         assert isinstance(posy, NumberInstance)
         if self.lock_position:
             return self
-        self._rect.x = int(posx) + self._translate[0]
-        self._rect.y = int(posy) + self._translate[1]
+        self._rect.x = int(posx) + self._translate[0] + self._translate_virtual[0]
+        self._rect.y = int(posy) + self._translate[1] + self._translate_virtual[1]
         return self
 
     def get_position(self) -> Tuple2IntType:
@@ -1755,6 +1757,17 @@ class Widget(object):
         self._translate = (int(x), int(y))
         self._force_render()
         return self
+
+    def get_translate(self, virtual: bool = False) -> Tuple2IntType:
+        """
+        Get Widget translate in *(x, y)*.
+
+        :param virtual: If ``True`` get virtual translation, usually applied within frame scrollarea
+        :return: Translation in both axis
+        """
+        if virtual:
+            return self._translate_virtual
+        return self._translate
 
     def rotate(self, angle: NumberType) -> 'Widget':
         """
@@ -2334,7 +2347,8 @@ class Widget(object):
                 data.append(ww._get_status())
             data.append(self.get_indices())
         data.append((int(self.is_selectable), int(self.is_floating()), int(self.is_selected()),
-                     int(self.is_visible()), self.get_size()))
+                     int(self.is_visible()), int(self.get_frame() is not None), int(self.is_scrollable),
+                     self.get_size()))
         try:
             data.append(self.get_value())
         except ValueError:

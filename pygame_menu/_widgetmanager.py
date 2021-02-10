@@ -326,7 +326,7 @@ class WidgetManager(object):
 
     def button(self,
                title: Any,
-               action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]],
+               action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
                *args,
                **kwargs
                ) -> 'pygame_menu.widgets.Button':
@@ -1393,6 +1393,16 @@ class WidgetManager(object):
 
         .. note::
 
+            Packing applies a virtual translation to the widget, previous translation
+            is not modified.
+
+        .. note::
+
+            Widget floating is also considered within frames. If a widget is floating,
+            it does not add any size to the respective positioning.
+
+        .. note::
+
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
@@ -1461,6 +1471,16 @@ class WidgetManager(object):
 
             If vertical frame contains a scrollarea (setting ``max_height`` or ``max_width``
             less than size) padding will be set at zero.
+
+        .. note::
+
+            Packing applies a virtual translation to the widget, previous translation
+            is not modified.
+
+        .. note::
+
+            Widget floating is also considered within frames. If a widget is floating,
+            it does not add any size to the respective positioning.
 
         .. note::
 

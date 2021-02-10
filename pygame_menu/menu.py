@@ -1310,13 +1310,13 @@ class Menu(object):
                       ''.format(widget.get_class_id(), width, col + 1, max_column_width)
                 raise _MenuSizingException(msg)
 
-                # Calculate Y position
+            # Calculate Y position
             ysum = 1  # Compute the total height from the current row position to the top of the column
             for rwidget in self._widget_columns[col]:
                 _, r, _ = rwidget.get_col_row_index()
                 if r >= row:
                     break
-                if rwidget.is_visible() and not rwidget.is_floating():
+                if rwidget.is_visible() and not rwidget.is_floating() and not rwidget.get_frame() is not None:
                     ysum += get_rect(rwidget).height  # Height
                     ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
 
