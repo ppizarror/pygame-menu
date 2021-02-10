@@ -325,9 +325,8 @@ class Theme(object):
 
         # Generic widget themes
         self.widget_selection_effect = self._get(kwargs, 'widget_selection_effect', _widgets.core.Selection,
-                                                 _widgets.HighlightSelection())
+                                                 _widgets.HighlightSelection(margin_x=0, margin_y=0))
         self.widget_selection_effect.set_color(self.selection_color)
-        widget_selection_margin = self.widget_selection_effect.get_xy_margin()
 
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', _locals.ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
@@ -335,7 +334,7 @@ class Theme(object):
         self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection',
                                                                 bool, False)
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color_none', (0, 0, 0))
-        self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2', widget_selection_margin)
+        self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2', (0, 0))
         self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
         self.widget_cursor = self._get(kwargs, 'widget_cursor', 'cursor')
         self.widget_font = self._get(kwargs, 'widget_font', str, _font.FONT_OPEN_SANS)
@@ -345,8 +344,8 @@ class Theme(object):
                                                                 bool, False)
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
-        self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 10))
-        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, 0)
+        self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
+        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
         self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
@@ -512,10 +511,12 @@ class Theme(object):
         elif isinstance(obj, list):
             v = tuple(obj)
         else:
-            raise ValueError('object is not a vector')
+            if check_length == 0:
+                raise ValueError('object is not a vector')
+            raise ValueError('object is not a vector of length {0}'.format(check_length))
         if check_length > 0:
             if len(v) != check_length:
-                raise ValueError('object is not a {0}-length vector'.format(check_length))
+                raise ValueError('object is not a vector of length {0}'.format(check_length))
         return v
 
     def copy(self) -> 'Theme':
@@ -710,4 +711,11 @@ THEME_SOLARIZED = Theme(
     title_background_color=(4, 47, 58),
     title_font_color=(38, 158, 151),
     widget_font_color=(102, 122, 130)
+)
+
+THEME_WINDOWS = Theme(
+    background_color=(240, 240, 240),
+    widget_background_color=(240, 240, 240),
+    widget_border_color=(168, 168, 168),
+    widget_border_width=0
 )
