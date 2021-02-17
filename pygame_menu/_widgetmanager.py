@@ -242,6 +242,7 @@ class WidgetManager(object):
         self._menu._widgets.append(widget)
         if widget.is_scrollable:
             self._menu._widgets_scrollable.append(widget)
+            self._menu._sort_scrollable_widgets()
 
         # Update selection index
         if self._menu._index < 0 and widget.is_selectable:
