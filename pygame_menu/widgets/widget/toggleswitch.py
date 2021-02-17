@@ -36,7 +36,7 @@ import pygame_menu
 from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
-    Tuple2NumberType, Tuple2IntType
+    Tuple2NumberType, Tuple2IntType, NumberInstance
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 
 
@@ -161,9 +161,9 @@ class ToggleSwitch(Widget):
         assert_color(slider_color)
         assert slider_height_factor > 0, 'slider height factor cannot be negative'
         assert slider_thickness >= 0, 'slider thickness cannot be negative'
-        assert isinstance(slider_vmargin, (int, float))
+        assert isinstance(slider_vmargin, NumberInstance)
         assert_vector(switch_margin, 2)
-        assert isinstance(switch_height, (int, float)) and switch_height > 0, \
+        assert isinstance(switch_height, NumberInstance) and switch_height > 0, \
             'switch height factor cannot be zero or negative'
 
         assert isinstance(state_color, tuple) and len(state_color) == self._total_states
@@ -176,7 +176,7 @@ class ToggleSwitch(Widget):
         for c in state_text_font_color:
             assert_color(c)
         self._switch_width = 0
-        if isinstance(state_width, (int, float)):
+        if isinstance(state_width, NumberInstance):
             state_width = [state_width]
         assert_vector(state_width, self._total_states - 1)
         for i in range(len(state_width)):
@@ -224,24 +224,22 @@ class ToggleSwitch(Widget):
         assert 0 <= value < self._total_states, 'state value exceeds the total states'
         self._state = value
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def rotate(self, angle: NumberType) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def flip(self, x: bool, y: bool) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'Widget':
         return self
 
     def get_value(self) -> Any:
@@ -338,6 +336,7 @@ class ToggleSwitch(Widget):
             self._state = max(0, self._state - 1)
         if previous != self._state:
             self.change()
+            self._sound.play_key_add()
 
     def _right(self) -> None:
         """
@@ -354,6 +353,7 @@ class ToggleSwitch(Widget):
             self._state = min(self._state + 1, self._total_states - 1)
         if previous != self._state:
             self.change()
+            self._sound.play_key_add()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         if self.readonly:
@@ -375,7 +375,6 @@ class ToggleSwitch(Widget):
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                self._sound.play_key_add()
                 self._left()
                 updated = True
 
@@ -383,7 +382,6 @@ class ToggleSwitch(Widget):
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                self._sound.play_key_add()
                 self._right()
                 updated = True
 
@@ -401,13 +399,13 @@ class ToggleSwitch(Widget):
 
                 # Get event position based on input type
                 if self._touchscreen_enabled and event.type == pygame.FINGERUP:
-                    window_size = self.get_menu().get_window_size()
+                    window_size = self._menu.get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:
                     event_pos = event.pos
 
                 # If collides
-                rect = self.get_rect()
+                rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos

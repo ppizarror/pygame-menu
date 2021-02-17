@@ -62,10 +62,10 @@ class HighlightSelection(Selection):
         margin_x = float(margin_x)
         margin_y = float(margin_y)
         super(HighlightSelection, self).__init__(
-            margin_left=margin_x / 2 + border_width,
-            margin_right=margin_x / 2 + border_width,
-            margin_top=margin_y / 2 + border_width,
-            margin_bottom=margin_y / 2 + border_width
+            margin_left=margin_x / 2,
+            margin_right=margin_x / 2,
+            margin_top=margin_y / 2,
+            margin_bottom=margin_y / 2
         )
         self._border_width = border_width
 

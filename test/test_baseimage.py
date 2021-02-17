@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['BaseImageTest']
 
 import unittest
-from test._utils import surface
+from test._utils import surface, PYGAME_V2
 
 import io
 import base64
@@ -111,7 +111,7 @@ class BaseImageTest(unittest.TestCase):
 
         # Clone base64
         image3 = image2.copy()
-        if pygame.version.vernum[0] >= 2:
+        if PYGAME_V2:
             self.assertTrue(image2.equals(image3))
 
     def test_rotation(self) -> None:
@@ -216,8 +216,7 @@ class BaseImageTest(unittest.TestCase):
             drawing_mode=IMAGE_MODE_CENTER
         )
         image.set_drawing_offset((50, 150))
-        self.assertEqual(image.get_drawing_offset()[0], 50)
-        self.assertEqual(image.get_drawing_offset()[1], 150)
+        self.assertEqual(image.get_drawing_offset(), (50, 150))
 
     def test_image_path(self) -> None:
         """
@@ -292,23 +291,17 @@ class BaseImageTest(unittest.TestCase):
 
         # Scale
         image.scale(0.5, 0.5)
-        w, h = image.get_size()
-        self.assertEqual(w, 128)
-        self.assertEqual(h, 128)
+        self.assertEqual(image.get_size(), (128, 128))
         self.assertRaises(AssertionError, lambda: image.scale(0, 1))
         image.scale(2, 1)
-        w, h = image.get_size()
-        self.assertEqual(w, 256)
-        self.assertEqual(h, 128)
+        self.assertEqual(image.get_size(), (256, 128))
         self.assertFalse(image.equals(image_original))
 
         # Set size
         image.restore()
         image.resize(100, 50)
         image.resize(100, 50)  # This should do nothing
-        w, h = image.get_size()
-        self.assertEqual(w, 100)
-        self.assertEqual(h, 50)
+        self.assertEqual(image.get_size(), (100, 50))
         image.restore()
         self.assertTrue(image.equals(image_original))
 
@@ -322,16 +315,12 @@ class BaseImageTest(unittest.TestCase):
 
         # Rotate
         image.rotate(45)
-        w, h = image.get_size()
-        self.assertEqual(w, 362)
-        self.assertEqual(h, 362)
+        self.assertEqual(image.get_size(), (362, 362))
         image.restore()
 
         # Scale 2x
         image.scale2x()
-        w, h = image.get_size()
-        self.assertEqual(w, 512)
-        self.assertEqual(h, 512)
+        self.assertEqual(image.get_size(), (512, 512))
         image.restore()
 
         # Scale should not change
@@ -404,13 +393,13 @@ class BaseImageTest(unittest.TestCase):
         Cache draw test.
         """
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        self.assertEqual(image._last_transform[2], None)
+        self.assertIsNone(image._last_transform[2])
 
         image.set_drawing_mode(pygame_menu.baseimage.IMAGE_MODE_FILL)
 
         # Draw, this should force cache
         image.draw(surface)
-        self.assertNotEqual(image._last_transform[2], None)
+        self.assertIsNotNone(image._last_transform[2])
         s = image._last_transform[2]
         image.draw(surface)  # Draw again, then the image should be the same
         self.assertEqual(image._last_transform[2], s)

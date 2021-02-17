@@ -29,9 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['TextInput', 'TextInputModeType']
+__all__ = ['TextInput']
 
 import math
+import warnings
 
 import pygame
 import pygame_menu.controls as _controls
@@ -39,7 +40,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType, Literal
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance
 
 try:
 
@@ -73,9 +74,6 @@ except (ModuleNotFoundError, ImportError):
         """
         pass
 
-# Custom types
-TextInputModeType = Literal[_locals.INPUT_TEXT, _locals.INPUT_INT, _locals.INPUT_FLOAT]
-
 
 # noinspection PyMissingOrEmptyDocstring
 class TextInput(Widget):
@@ -102,7 +100,7 @@ class TextInput(Widget):
     :param cursor_selection_enable: Enables selection of text
     :param cursor_switch_ms: Interval of cursor switch between off and on status. First status is ``off``
     :param history: Maximum number of editions stored
-    :param input_type: Type of data
+    :param input_type: Type of the input data. See :py:mod:`pygame_menu.locals`
     :param input_underline: Character string drawn under the input
     :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
     :param input_underline_vmargin: Vertical margin of underline (px)
@@ -191,7 +189,7 @@ class TextInput(Widget):
                  cursor_selection_enable: bool = True,
                  cursor_switch_ms: NumberType = 500,
                  history: int = 50,
-                 input_type: TextInputModeType = _locals.INPUT_TEXT,
+                 input_type: str = _locals.INPUT_TEXT,
                  input_underline: str = '',
                  input_underline_len: int = 0,
                  input_underline_vmargin: int = 0,
@@ -216,7 +214,7 @@ class TextInput(Widget):
         assert isinstance(copy_paste_enable, bool)
         assert isinstance(cursor_color, tuple)
         assert isinstance(cursor_selection_enable, bool)
-        assert isinstance(cursor_switch_ms, (int, float))
+        assert isinstance(cursor_switch_ms, NumberInstance)
         assert isinstance(history, int)
         assert isinstance(input_type, str)
         assert isinstance(input_underline, str)
@@ -226,10 +224,10 @@ class TextInput(Widget):
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
         assert isinstance(password_char, str)
-        assert isinstance(repeat_keys_initial_ms, (int, float))
-        assert isinstance(repeat_keys_interval_ms, (int, float))
-        assert isinstance(repeat_mouse_interval_ms, (int, float))
-        assert isinstance(repeat_touch_interval_ms, (int, float))
+        assert isinstance(repeat_keys_initial_ms, NumberInstance)
+        assert isinstance(repeat_keys_interval_ms, NumberInstance)
+        assert isinstance(repeat_mouse_interval_ms, NumberInstance)
+        assert isinstance(repeat_touch_interval_ms, NumberInstance)
         assert isinstance(tab_size, int)
         assert isinstance(text_ellipsis, str)
         assert isinstance(textinput_id, str)
@@ -277,7 +275,6 @@ class TextInput(Widget):
         )
 
         # Vars to make keydowns repeat after user pressed a key for some time:
-        self._absolute_origin = (0, 0)  # To calculate mouse collide point
         self._block_copy_paste = False  # Blocks event
         self._key_is_pressed = False
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -415,10 +412,10 @@ class TextInput(Widget):
                 value = 0
         return value
 
-    def rotate(self, angle: NumberType) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'Widget':
         return self
 
     def flip(self, x: bool, y: bool) -> 'Widget':  # Actually flip on x axis is disabled
@@ -447,9 +444,10 @@ class TextInput(Widget):
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
 
-        if not self._render_hash_changed(self._menu.get_id(), string, self._selected, self._cursor_render,
+        assert self._menu is not None, 'menu must be defined to render a textinput'
+        if not self._render_hash_changed(string, self._selected, self._cursor_render,
                                          self._selection_enabled, self.active, self._visible, self.readonly,
-                                         self._menu.get_width(inner=True)):
+                                         self._get_max_container_width()):
             return True
 
         # Apply underline if exists
@@ -533,6 +531,32 @@ class TextInput(Widget):
             if self._cursor_surface:
                 self._cursor_surface.fill(self._cursor_color)
 
+    def _get_max_container_width(self) -> int:
+        """
+        Return the maximum textarea container width. It can be the column width, menu width
+        or frame width if horizontal
+
+        :return: Container width
+        """
+        menu = self._menu
+        frame = self.get_frame()
+        if menu is None:
+            return 0
+        try:
+            # noinspection PyProtectedMember
+            max_width = menu._column_widths[self.get_col_row_index()[0]]
+        except IndexError:
+            max_width = menu.get_width(inner=True)
+
+        # Textarea within frame
+        if frame is not None:
+            if frame.horizontal:
+                msg = 'horizontal frame cannot contain variable width sizing textinputs (requested by input ' \
+                      'underline). Set input_underline_len variable to avoid this Exception'
+                raise RuntimeError(msg)
+            max_width = frame.get_width()
+        return max_width
+
     def _render_string_underline(self, string: str, color: ColorType) -> 'pygame.Surface':
         """
         Render underline string surface.
@@ -548,7 +572,6 @@ class TextInput(Widget):
         if self._input_underline_size == 0:
             return surface
 
-        menu = self.get_menu()
         current_rect = surface.get_rect()
 
         # Compute initial char guess
@@ -565,7 +588,8 @@ class TextInput(Widget):
             #  | self._rect.x   title                       posx2  |
             #  |                                                   |
             #  |---------------------------------------------------|
-            posx2 = max(menu.get_width(inner=True) - self._input_underline_size * 1.5 -
+
+            posx2 = max(self._get_max_container_width() - self._input_underline_size * 1.75 -
                         self._padding[1] - self._padding[3],
                         current_rect.width)
             delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
@@ -959,7 +983,7 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True, apply_padding=False)
         if rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
             mousex, _ = pos
@@ -978,7 +1002,7 @@ class TextInput(Widget):
         :param pos: Position
         :return: Cursor update status
         """
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True, apply_padding=False)
         if rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
             touchx, _ = pos
@@ -1478,7 +1502,7 @@ class TextInput(Widget):
 
         updated = False
         events = self._merge_events(events)  # Extend events with custom events
-        rect = self.get_rect()
+        rect = self.get_rect(to_real_position=True)
 
         for event in events:
 
@@ -1718,6 +1742,11 @@ class TextInput(Widget):
 
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys:
+                    if event.unicode == ' ' and event.key != 32:
+                        msg = '{0} received "{1}" unicode but key is different than 32 ({2}), ' \
+                              'check if event has defined the proper unicode char' \
+                              ''.format(self.get_class_id(), event.unicode, event.key)
+                        warnings.warn(msg)
                     if not self._push_key_input(event.unicode):  # Error in char, not valid or string limit exceeds
                         break
                     self.active = True
@@ -1740,7 +1769,6 @@ class TextInput(Widget):
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
@@ -1748,7 +1776,6 @@ class TextInput(Widget):
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
@@ -1757,18 +1784,16 @@ class TextInput(Widget):
                     self.active = True
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
-                window_size = self.get_menu().get_window_size()
+                window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     self._selection_active = False
                     self._check_touch_collide_input(finger_pos)
                     self._cursor_ms_counter = 0
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERDOWN:
                 if self.get_selected_time() > self._keyrepeat_touch_interval_ms:
-                    self._absolute_origin = getattr(event, 'origin', self._absolute_origin)
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
@@ -1781,8 +1806,7 @@ class TextInput(Widget):
             # self._keyrepeat_mouse_ms = 0
             if mouse_left:
                 pos = pygame.mouse.get_pos()
-                self._check_mouse_collide_input((pos[0] - self._absolute_origin[0],
-                                                 pos[1] - self._absolute_origin[1]))
+                self._check_mouse_collide_input((pos[0], pos[1]))
 
         # Update key counters:
         for key in self._keyrepeat_counters:

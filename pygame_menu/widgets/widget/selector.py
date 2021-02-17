@@ -182,6 +182,7 @@ class Selector(Widget):
             return
         self._index = (self._index - 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
+        self._sound.play_key_add()
 
     def _right(self) -> None:
         """
@@ -193,6 +194,7 @@ class Selector(Widget):
             return
         self._index = (self._index + 1) % len(self._elements)
         self.change(*self._elements[self._index][1:])
+        self._sound.play_key_add()
 
     def set_value(self, item: Union[str, int]) -> None:
         """
@@ -263,7 +265,6 @@ class Selector(Widget):
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                self._sound.play_key_add()
                 self._left()
                 updated = True
 
@@ -271,7 +272,6 @@ class Selector(Widget):
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                self._sound.play_key_add()
                 self._right()
                 updated = True
 
@@ -288,13 +288,13 @@ class Selector(Widget):
 
                 # Get event position based on input type
                 if self._touchscreen_enabled and event.type == pygame.FINGERUP:
-                    window_size = self.get_menu().get_window_size()
+                    window_size = self._menu.get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:
                     event_pos = event.pos
 
                 # If collides
-                rect = self.get_rect()
+                rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
                     mousex, _ = event.pos

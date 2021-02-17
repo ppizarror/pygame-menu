@@ -37,7 +37,7 @@ from pathlib import Path
 import pygame
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets import Widget
-from pygame_menu._types import Union, List, NumberType, CallbackType, Tuple2NumberType, Tuple, Optional
+from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, Optional, NumberInstance
 from pygame_menu.utils import assert_vector
 
 
@@ -69,7 +69,7 @@ class Image(Widget):
                  ) -> None:
         assert isinstance(image_path, (str, Path, BaseImage, BytesIO))
         assert isinstance(image_id, str)
-        assert isinstance(angle, (int, float))
+        assert isinstance(angle, NumberInstance)
         assert isinstance(scale_smooth, bool)
         assert_vector(scale, 2)
 
@@ -143,5 +143,5 @@ class Image(Widget):
             return True
         self.force_menu_surface_update()
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, *args, **kwargs) -> bool:
         return False

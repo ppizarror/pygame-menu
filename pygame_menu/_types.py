@@ -75,3 +75,8 @@ PaddingType = Union[NumberType, List[NumberType],
                     Tuple[NumberType, NumberType],
                     Tuple[NumberType, NumberType, NumberType, NumberType],
                     Tuple[NumberType, NumberType, NumberType, NumberType]]
+
+# Instances
+NumberInstance = (int, float)
+PaddingInstance = (int, float, tuple, list)
+VectorInstance = (tuple, list)

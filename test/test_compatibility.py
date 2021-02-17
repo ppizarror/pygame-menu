@@ -44,7 +44,7 @@ class CompatibilityTest(unittest.TestCase):
         Test themes deprecation.
         """
         theme = pygame_menu.themes.Theme(menubar_close_button=False)
-        self.assertEqual(theme.title_close_button, False)
+        self.assertFalse(theme.title_close_button)
 
     @staticmethod
     def test_general_use() -> None:

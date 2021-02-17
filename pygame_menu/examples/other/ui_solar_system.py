@@ -260,7 +260,7 @@ class SolarSystemApp(object):
                               font_name=pygame_menu.font.FONT_OPEN_SANS_BOLD, margin=(5, 10))
             labl = submenu.add.label(planet.info, max_char=70, align=pygame_menu.locals.ALIGN_LEFT,
                                      margin=(20, 1), font_size=20, font_name=pygame_menu.font.FONT_PT_SERIF,
-                                     font_color=(255, 255, 255))
+                                     font_color=(255, 255, 255), padding=0)
             for line in labl:
                 line.set_max_width(580)
             submenu.add.url(planet.url, align=pygame_menu.locals.ALIGN_LEFT, margin=(20, 1), font_size=20,
@@ -272,7 +272,7 @@ class SolarSystemApp(object):
             button = self.menu.add.button(planet.name, submenu, font_size=planet.fontsize)
             button.set_cursor(pygame_menu.locals.CURSOR_HAND)
             button.set_float()
-            button.get_decorator().add_baseimage(0, 0, planet.image, centered=True)
+            button.get_decorator().add_baseimage(0, 2, planet.image, centered=True)
             button.set_attribute('planet', planet)
             button.add_draw_callback(self.rotate_planet)
             button_selection = pygame_menu.widgets.LeftArrowSelection(arrow_size=(20, 30), blink_ms=1000)
@@ -322,14 +322,14 @@ class SolarSystemApp(object):
 
         :return: None
         """
-        dx = random.randrange(-25, 25)
-        dy = random.randrange(-25, 25)
+        dx = random.randrange(-25, 25) * random.random()
+        dy = random.randrange(-25, 25) * random.random()
         angle = math.atan2(dy, dx)
         self.shooting_stars.append([
             random.randrange(1, self.menu.get_width()),  # x position
             random.randrange(1, self.menu.get_height()),  # y position
-            dx,
-            dy,
+            int(dx),
+            int(dy),
             angle,
             random.randrange(1, 5),  # speed
             2 * math.pi * random.random()  # initial flickering

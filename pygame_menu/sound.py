@@ -68,7 +68,7 @@ from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
-from pygame_menu._types import NumberType, Dict, Any, Optional, Union
+from pygame_menu._types import NumberType, Dict, Any, Optional, Union, NumberInstance
 
 try:  # pygame<2.0.0 compatibility
     from pygame import AUDIO_ALLOW_CHANNELS_CHANGE
@@ -192,9 +192,11 @@ class Sound(object):
                                allowedchanges=allowedchanges)
 
             except Exception as e:
-                print('sound error: ' + str(e))
+                msg = 'sound error: ' + str(e)
+                warnings.warn(msg)
             except pygame_error as e:
-                print('sound engine could not be initialized, pygame error: ' + str(e))
+                msg = 'sound engine could not be initialized, pygame error: ' + str(e)
+                warnings.warn(msg)
 
         # Store mixer configs
         self._mixer_configs = {
@@ -289,10 +291,10 @@ class Sound(object):
         """
         assert isinstance(sound_type, str)
         assert isinstance(sound_file, (str, type(None), Path))
-        assert isinstance(volume, float)
+        assert isinstance(volume, NumberInstance)
         assert isinstance(loops, int)
-        assert isinstance(maxtime, (int, float))
-        assert isinstance(fade_ms, (int, float))
+        assert isinstance(maxtime, NumberInstance)
+        assert isinstance(fade_ms, NumberInstance)
         assert loops >= 0, 'loops count must be equal or greater than zero'
         assert maxtime >= 0, 'maxtime must be equal or greater than zero'
         assert fade_ms >= 0, 'fade_ms must be equal or greater than zero'
@@ -323,7 +325,7 @@ class Sound(object):
             return False
 
         # Configure the sound
-        sound_data.set_volume(volume)
+        sound_data.set_volume(float(volume))
 
         # Store the sound
         self._sound[sound_type] = {
@@ -345,9 +347,9 @@ class Sound(object):
         :param volume: Volume of the sound, ``(0-1)``
         :return: Self reference
         """
-        assert isinstance(volume, float)
+        assert isinstance(volume, NumberInstance) and 0 <= volume <= 1
         for sound in range(len(SOUND_TYPES)):
-            self.set_sound(SOUND_TYPES[sound], SOUND_EXAMPLES[sound], volume=volume)
+            self.set_sound(SOUND_TYPES[sound], SOUND_EXAMPLES[sound], volume=float(volume))
         return self
 
     def _play_sound(self, sound: Optional[Dict[str, Any]]) -> bool:

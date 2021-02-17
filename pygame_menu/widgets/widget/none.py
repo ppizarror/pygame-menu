@@ -32,11 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['NoneWidget']
 
 import pygame
-import pygame_menu
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
-from pygame_menu._types import PaddingType, ColorType, Tuple2IntType, Optional, NumberType, Union, List, \
-    Dict, Any, Tuple, CallbackType
+from pygame_menu._types import Optional, NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -60,30 +58,28 @@ class NoneWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, padding: PaddingType) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'Widget':
         return self
 
     def get_selected_time(self) -> NumberType:
         return 0
 
-    def set_title(self, title: str) -> 'Widget':
+    def set_title(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def get_rect(self, inflate: Optional[Tuple2IntType] = None, apply_padding: bool = True,
-                 use_transformed_padding: bool = True) -> 'pygame.Rect':
+    def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
         return pygame.Rect(0, 0, 0, 0)
 
-    def set_background_color(self, color: Optional[Union[ColorType, 'pygame_menu.BaseImage']],
-                             inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
+    def set_background_color(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def _draw_background_color(self, surface: 'pygame.Surface') -> None:
+    def _draw_background_color(self, *args, **kwargs) -> None:
         pass
 
-    def _draw_border(self, surface: 'pygame.Surface') -> None:
+    def _draw_border(self, *args, **kwargs) -> None:
         pass
 
-    def set_selection_effect(self, selection: 'pygame_menu.widgets.core.Selection') -> 'Widget':
+    def set_selection_effect(self, *args, **kwargs) -> 'Widget':
         return self
 
     def apply(self, *args) -> None:
@@ -92,92 +88,80 @@ class NoneWidget(Widget):
     def change(self, *args) -> None:
         pass
 
-    def _draw(self, surface: 'pygame.Surface') -> None:
+    def _draw(self, *args, **kwargs) -> None:
         pass
 
     def _render(self) -> Optional[bool]:
         pass
 
-    def set_margin(self, x: int, y: int) -> 'Widget':
+    def set_margin(self, *args, **kwargs) -> 'Widget':
         return self
 
     def _apply_transforms(self) -> None:
         pass
 
-    def set_font(self,
-                 font: str,
-                 font_size: int,
-                 color: ColorType,
-                 selected_color: ColorType,
-                 readonly_color: ColorType,
-                 readonly_selected_color: ColorType,
-                 background_color: Optional[ColorType],
-                 antialias: bool = True
-                 ) -> 'Widget':
+    def set_font(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def update_font(self, style: Dict[str, Any]) -> 'Widget':
+    def update_font(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_position(self, posx: int, posy: int) -> 'Widget':
+    def set_position(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def flip(self, x: bool, y: bool) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
-                      smooth: bool = True) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_max_height(self, height: Optional[NumberType], scale_width: NumberType = False,
-                       smooth: bool = True) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def translate(self, x: int, y: int) -> 'Widget':
+    def translate(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def rotate(self, angle: NumberType) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_alignment(self, align: str) -> 'Widget':
+    def set_alignment(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def select(self, select: bool = True, update_menu: bool = False) -> 'Widget':
+    def select(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_shadow(self, enabled: bool = True, color: bool = None, position=None, offset=None) -> 'Widget':
+    def set_shadow(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_sound(self, sound: 'pygame_menu.Sound') -> 'Widget':
+    def set_sound(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
+    def set_cursor(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_controls(self, joystick: bool = True, mouse: bool = True, touchscreen: bool = True,
-                     keyboard: bool = True) -> 'Widget':
+    def set_controls(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_value(self, value: Any) -> None:
+    def set_value(self, *args, **kwargs) -> None:
         pass
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, *args, **kwargs) -> bool:
         return False
 
-    def add_update_callback(self, update_callback: CallbackType) -> None:
+    def add_update_callback(self, *args, **kwargs) -> None:
         pass
 
-    def remove_update_callback(self, callback_id: str) -> 'Widget':
+    def remove_update_callback(self, *args, **kwargs) -> 'Widget':
         return self
 
     def apply_update_callbacks(self) -> 'Widget':
         return self
 
-    def set_border(self, width: int, color: ColorType, inflate: Tuple2IntType) -> 'Widget':
+    def set_border(self, *args, **kwargs) -> 'Widget':
         return self

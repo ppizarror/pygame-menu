@@ -69,6 +69,7 @@ class CalculatorApp(object):
         theme.widget_font = pygame_menu.font.FONT_DIGITAL
         theme.widget_font_color = (255, 255, 255)
         theme.widget_font_size = 40
+        theme.widget_padding = 0
         theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection(1, 0, 0).set_color((120, 120, 120))
 
         self.menu = pygame_menu.Menu('', 320, 480,
@@ -85,7 +86,7 @@ class CalculatorApp(object):
         menu_deco.add_rectangle(10, 40, 300, 55, (60, 63, 65), use_center_positioning=False)
         self.screen = self.menu.add.label('0', background_color=None, margin=(10, 0),
                                           selectable=True, selection_effect=None)
-        self.menu.add.vertical_margin(15)
+        self.menu.add.vertical_margin(20)
 
         cursor = pygame_menu.locals.CURSOR_HAND
 

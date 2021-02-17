@@ -29,7 +29,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['test_reset_surface', 'surface', 'PygameUtils', 'MenuUtils']
+__all__ = [
+
+    # Globals
+    'PYGAME_V2',
+    'surface',
+    'test_reset_surface',
+    'TEST_THEME',
+
+    # Utils
+    'PygameUtils',
+    'MenuUtils'
+
+]
 
 import pygame
 import pygame_menu
@@ -65,6 +77,13 @@ FINGERMOTION = -1
 if hasattr(pygame, 'FINGERMOTION'):
     FINGERMOTION = pygame.FINGERMOTION
 
+TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
+TEST_THEME.widget_margin = (0, 10)
+TEST_THEME.widget_padding = 0
+TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+
+PYGAME_V2 = pygame.version.vernum[0] >= 2
+
 
 def test_reset_surface() -> None:
     """
@@ -87,8 +106,8 @@ class PygameUtils(object):
         """
         Create a pygame joy controller motion event.
 
-        :param x: X axis movement
-        :param y: Y axis movement
+        :param x: X-axis movement
+        :param y: Y-axis movement
         :param inlist: Return event in a list
         :param testmode: Key event is in test mode
         :return: Event
@@ -248,9 +267,10 @@ class PygameUtils(object):
         """
         event_obj = pygame.event.Event(evtype,
                                        {
-                                           'pos': (float(x), float(y)),
-                                           'test': True,
-                                           'button': 3
+                                           'button': 3,
+                                           'pos': (x, y),
+                                           'rel': (1, 1),
+                                           'test': True
                                        })
         if inlist:
             event_obj = [event_obj]
@@ -270,38 +290,40 @@ class PygameUtils(object):
         :param menu: Menu reference
         :return: Event
         """
-        vmajor, _, _ = pygame.version.vernum
-        assert vmajor >= 2, 'function only available in pygame v2+'
+        assert PYGAME_V2, 'function only available in pygame v2+'
         if normalize:
             assert menu is not None, 'menu reference must be provided if normalize is used'
             display_size = menu.get_window_size()
-            x /= float(display_size[0])
-            y /= float(display_size[1])
+            x /= display_size[0]
+            y /= display_size[1]
         event_obj = pygame.event.Event(evtype,
                                        {
                                            'test': True,
-                                           'x': float(x),
-                                           'y': float(y)
+                                           'x': x,
+                                           'y': y
                                        })
         if inlist:
             event_obj = [event_obj]
         return event_obj
 
     @staticmethod
-    def middle_rect_click(rect: Union['pygame.Rect', 'pygame_menu.widgets.Widget', Tuple2NumberType],
+    def middle_rect_click(rect: Union['pygame_menu.widgets.Widget', Tuple2NumberType],
                           menu: Optional['pygame_menu.Menu'] = None,
-                          evtype: int = pygame.MOUSEBUTTONUP
-                          ) -> 'pygame.event.Event':
+                          evtype: int = pygame.MOUSEBUTTONUP,
+                          inlist: bool = True
+                          ) -> EventListType:
         """
         Return event clicking the middle of a given rect.
 
         :param rect: Rect object
         :param menu: Menu object
         :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, FINGERUP, FINGERDOWN
+        :param inlist: If ``True`` return the event within a list
         :return: Event
         """
         if isinstance(rect, pygame_menu.widgets.Widget):
-            x, y = rect.get_rect().center
+            x, y = rect.get_rect(to_real_position=True, apply_padding=False).center
+            menu = rect.get_menu()
         elif isinstance(rect, pygame.Rect):
             x, y = rect.center
         elif isinstance(rect, tuple):
@@ -310,23 +332,21 @@ class PygameUtils(object):
             x, y = rect[0], rect[1]
         else:
             raise ValueError('unknown rect type')
-        offx, offy = (0, 0)
-        if menu is not None:
-            sar = menu.get_scrollarea().get_rect()
-            offx, offy = menu.get_scrollarea().get_offsets()
-        else:
-            sar = pygame.Rect(0, 0, 0, 0)
         if evtype == FINGERDOWN or evtype == FINGERUP or evtype == FINGERMOTION:
             assert menu is not None, 'menu cannot be none if FINGER'
             display = menu.get_window_size()
-            return pygame.event.Event(evtype,
-                                      {
-                                          'x': (x + sar.x - offx) / display[0],
-                                          'y': (y + sar.y - offy) / display[1],
-                                          'test': True,
-                                          'button': 3
-                                      })
-        return PygameUtils.mouse_click(x + sar.x - offx, y + sar.y - offy, inlist=False, evtype=evtype)
+            evt = pygame.event.Event(evtype,
+                                     {
+                                         'button': 3,
+                                         'rel': (1, 1),
+                                         'test': True,
+                                         'x': x / display[0],
+                                         'y': y / display[1],
+                                     })
+            if inlist:
+                evt = [evt]
+            return evt
+        return PygameUtils.mouse_click(x, y, inlist=inlist, evtype=evtype)
 
 
 class MenuUtils(object):

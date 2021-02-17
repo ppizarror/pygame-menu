@@ -187,7 +187,7 @@ class Button(Widget):
         if self.readonly:
             return False
         updated = False
-        rect = self.get_rect()  # Padding increases the extents of the button
+        rect = self.get_rect(to_real_position=True)
 
         for event in events:
 
@@ -207,7 +207,7 @@ class Button(Widget):
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
                 self._sound.play_click_mouse()
-                window_size = self.get_menu().get_window_size()
+                window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos):
                     self.apply()

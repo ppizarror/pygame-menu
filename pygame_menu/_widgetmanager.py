@@ -33,7 +33,6 @@ __all__ = ['WidgetManager']
 
 from io import BytesIO
 from pathlib import Path
-from uuid import uuid4
 import re
 import textwrap
 import warnings
@@ -41,16 +40,17 @@ import webbrowser
 
 import pygame
 import pygame_menu
-import pygame_menu.widgets
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
+from pygame_menu.widgets import Widget
+from pygame_menu.scrollarea import get_scrollbars_from_position
+
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
-from pygame_menu.widgets.widget.textinput import TextInputModeType
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
-    NumberType, Vector2NumberType, List, Tuple
+    NumberType, Vector2NumberType, List, Tuple, NumberInstance
 
 try:
     PygameCursorType = (int, pygame.cursors.Cursor, type(None))
@@ -103,6 +103,8 @@ class WidgetManager(object):
         attributes['background_color'] = background_color
 
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
+        if background_inflate == 0:
+            background_inflate = (0, 0)
         _utils.assert_vector(background_inflate, 2)
         assert background_inflate[0] >= 0 and background_inflate[1] >= 0, \
             'both background inflate components must be equal or greater than zero'
@@ -114,6 +116,8 @@ class WidgetManager(object):
         attributes['border_color'] = border_color
 
         border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
+        if border_inflate == 0:
+            border_inflate = (0, 0)
         _utils.assert_vector(border_inflate, 2)
         assert isinstance(border_inflate[0], int) and border_inflate[0] >= 0
         assert isinstance(border_inflate[1], int) and border_inflate[1] >= 0
@@ -152,8 +156,10 @@ class WidgetManager(object):
         attributes['font_size'] = font_size
 
         margin = kwargs.pop('margin', self._theme.widget_margin)
+        if margin == 0:
+            margin = (0, 0)
         assert isinstance(margin, tuple)
-        assert len(margin) == 2, 'margin must be a tuple or list of 2 numbers'
+        _utils.assert_vector(margin, 2)
         attributes['margin'] = margin
 
         padding = kwargs.pop('padding', self._theme.widget_padding)
@@ -210,37 +216,60 @@ class WidgetManager(object):
             msg = 'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
             raise ValueError(msg)
 
-    def _append_widget(self, widget: 'pygame_menu.widgets.Widget') -> None:
+    def _append_widget(self, widget: 'Widget') -> None:
         """
         Add a widget to the list of widgets.
 
         :param widget: Widget object
         :return: None
         """
-        assert isinstance(widget, pygame_menu.widgets.Widget)
-        assert widget.get_menu() == self._menu, 'widget cannot have a different instance of menu'
+        assert isinstance(widget, Widget)
+        if widget.get_menu() is None:
+            widget.set_menu(self._menu)
+        if widget.get_menu() == self._menu:
+            self._menu._check_id_duplicated(widget.get_id())
+        assert widget.get_menu() == self._menu, \
+            'widget cannot have a different instance of menu'
+
+        if widget.get_scrollarea() is None:
+            widget.set_scrollarea(self._menu.get_scrollarea())
+
+        # Unselect
+        widget.select(False)
+
+        # Append to lists
         self._menu._widgets.append(widget)
+        if widget.is_scrollable:
+            self._menu._widgets_scrollable.append(widget)
+            self._menu._sort_scrollable_widgets()
+
+        # Update selection index
         if self._menu._index < 0 and widget.is_selectable:
             widget.select()
             self._menu._index = len(self._menu._widgets) - 1
-        self._menu._stats.added_widgets += 1
-        self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
-        self._menu._render()
 
-    def _configure_widget(self, widget: 'pygame_menu.widgets.Widget', **kwargs) -> None:
+        # Force menu rendering, this checks if the menu overflows or has sizing errors
+        self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
+        try:
+            self._menu._render()
+        except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
+            self._menu.remove_widget(widget)
+            raise
+
+    def _configure_widget(self, widget: 'Widget', **kwargs) -> None:
         """
-        Update the given widget with the parameters defined at
-        the Menu level.
+        Update the given widget with the parameters defined at the Menu level.
+        This method does not add widget to Menu.
 
         :param widget: Widget object
         :param kwargs: Optional keywords arguments
         :return: None
         """
-        assert isinstance(widget, pygame_menu.widgets.Widget)
-        assert widget.get_menu() is None, 'widget cannot have an instance of menu'
+        assert isinstance(widget, Widget)
 
+        # Some widgets need the menu to configure
+        prev_menu = widget.get_menu()
         widget.set_menu(self._menu)
-        self._menu._check_id_duplicated(widget.get_id())
 
         widget.set_alignment(
             align=kwargs['align']
@@ -288,14 +317,26 @@ class WidgetManager(object):
             offset=kwargs['shadow_offset'],
             position=kwargs['shadow_position']
         )
+        widget.set_scrollarea(self._menu.get_scrollarea())
 
         # Finals
         if self._theme.widget_background_inflate_to_selection:
             widget.background_inflate_to_selection_effect()
+        widget.set_menu(prev_menu)
+        widget.configured = True
+
+    def configure_defaults_widget(self, widget: 'Widget') -> None:
+        """
+        Apply default menu settings to widget. This method does not add widget to Menu.
+
+        :param widget: Widget to be configured
+        :return: None
+        """
+        self._configure_widget(widget, **self._filter_widget_attributes({}))
 
     def button(self,
                title: Any,
-               action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]],
+               action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
                *args,
                **kwargs
                ) -> 'pygame_menu.widgets.Button':
@@ -346,7 +387,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
             - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``False`` by default
             - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
@@ -472,7 +513,7 @@ class WidgetManager(object):
                     input_underline: str = '_',
                     onchange: CallbackType = None,
                     onreturn: CallbackType = None,
-                    onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
+                    onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
                     **kwargs
                     ) -> 'pygame_menu.widgets.ColorInput':
         """
@@ -513,7 +554,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
 
         .. note::
 
@@ -574,8 +615,8 @@ class WidgetManager(object):
         )
 
         self._configure_widget(widget=widget, **attributes)
-        widget.set_default_value(default)
         self._append_widget(widget)
+        widget.set_default_value(default)
 
         return widget
 
@@ -583,7 +624,7 @@ class WidgetManager(object):
               image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
               angle: NumberType = 0,
               image_id: str = '',
-              onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
+              onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
               scale: Vector2NumberType = (1, 1),
               scale_smooth: bool = True,
               selectable: bool = False,
@@ -663,7 +704,7 @@ class WidgetManager(object):
               title: Any,
               label_id: str = '',
               max_char: int = 0,
-              onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
+              onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
               selectable: bool = False,
               **kwargs
               ) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
@@ -698,7 +739,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
             - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``False`` by default
             - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
@@ -730,7 +771,7 @@ class WidgetManager(object):
 
         title = str(title)
         if len(label_id) == 0:
-            label_id = str(uuid4())
+            label_id = _utils.uuid4()
 
         # If newline detected, split in two new lines
         if '\n' in title:
@@ -835,7 +876,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
             - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``True`` by default
             - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
@@ -896,7 +937,7 @@ class WidgetManager(object):
                  default: int = 0,
                  onchange: CallbackType = None,
                  onreturn: CallbackType = None,
-                 onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
+                 onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
                  selector_id: str = '',
                  **kwargs
                  ) -> 'pygame_menu.widgets.Selector':
@@ -944,7 +985,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
 
         .. note::
 
@@ -1031,7 +1072,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
             - ``slider_color``              *(tuple, list)* - Color of the slider
             - ``slider_thickness``          *(int)* - Slider thickness (px). ``20`` px by default
             - ``state_color``               *(tuple)* - 2-item color tuple for each state
@@ -1113,8 +1154,8 @@ class WidgetManager(object):
             **kwargs
         )
         self._configure_widget(widget=widget, **attributes)
-        widget.set_default_value(default)
         self._append_widget(widget)
+        widget.set_default_value(default)
 
         return widget
 
@@ -1123,14 +1164,14 @@ class WidgetManager(object):
                    default: Union[str, int, float] = '',
                    copy_paste_enable: bool = True,
                    cursor_selection_enable: bool = True,
-                   input_type: TextInputModeType = _locals.INPUT_TEXT,
+                   input_type: str = _locals.INPUT_TEXT,
                    input_underline: str = '',
                    input_underline_len: int = 0,
                    maxchar: int = 0,
                    maxwidth: int = 0,
                    onchange: CallbackType = None,
                    onreturn: CallbackType = None,
-                   onselect: Optional[Callable[[bool, 'pygame_menu.widgets.Widget', 'pygame_menu.Menu'], Any]] = None,
+                   onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
                    password: bool = False,
                    tab_size: int = 4,
                    textinput_id: str = '',
@@ -1173,7 +1214,7 @@ class WidgetManager(object):
             - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
             - ``shadow_color``              *(tuple, list)* - Text shadow color
             - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset
+            - ``shadow_offset``             *(int)* - Text shadow offset (px)
 
         .. note::
 
@@ -1194,7 +1235,7 @@ class WidgetManager(object):
         :param default: Default value to display
         :param copy_paste_enable: Enable text copy, paste and cut
         :param cursor_selection_enable: Enable text selection on input
-        :param input_type: Data type of the input
+        :param input_type: Data type of the input. See :py:mod:`pygame_menu.locals`
         :param input_underline: Underline character
         :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
         :param maxchar: Maximum length of string, if 0 there's no limit
@@ -1210,7 +1251,7 @@ class WidgetManager(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
-        assert isinstance(default, (str, int, float))
+        assert isinstance(default, (str, NumberInstance))
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -1244,7 +1285,72 @@ class WidgetManager(object):
         )
 
         self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
         widget.set_default_value(default)
+
+        return widget
+
+    def _frame(self,
+               width: NumberType,
+               height: NumberType,
+               orientation: str,
+               frame_id: str = '',
+               **kwargs
+               ) -> 'pygame_menu.widgets.Frame':
+        """
+        Adds a frame.
+
+        :param width: Frame width
+        :param height: Frame height
+        :param orientation: Frame orientation, horizontal or vertical. See :py:mod:`pygame_menu.locals`
+        :param frame_id: ID of the frame
+        :param kwargs: Optional keyword arguments
+        :return: Frame object
+        :rtype: :py:class:`pygame_menu.widgets.Frame`
+        """
+        # Remove invalid keys from kwargs
+        for key in list(kwargs.keys()):
+            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
+                           'border_width', 'margin', 'padding', 'max_height', 'max_width', 'scrollbar_color',
+                           'scrollbar_cursor', 'scrollbar_shadow_color', 'scrollbar_shadow_offset',
+                           'scrollbar_shadow_position', 'scrollbar_shadow', 'scrollbar_slider_color',
+                           'scrollbar_slider_pad', 'scrollbar_thick', 'scrollbars']:
+                kwargs.pop(key, None)
+
+        attributes = self._filter_widget_attributes(kwargs)
+        pad = _utils.parse_padding(attributes['padding'])  # top, right, bottom, left
+        padh = pad[1] + pad[3]
+        padv = pad[0] + pad[2]
+
+        assert width > padh, \
+            'frame width ({0}) cannot be lower than horizontal padding size ({1})'.format(width, padh)
+        assert height > padv, \
+            'frame height ({0}) cannot be lower than vertical padding size ({1})'.format(height, padv)
+
+        widget = pygame_menu.widgets.Frame(
+            width=width - padh,
+            height=height - padv,
+            orientation=orientation,
+            frame_id=frame_id
+        )
+        self._configure_widget(widget=widget, **attributes)
+
+        widget.set_menu(self._menu)
+        widget.make_scrollarea(
+            max_width=kwargs.get('max_width', width) - padh,
+            max_height=kwargs.get('max_height', height) - padv,
+            scrollbar_color=kwargs.get('scrollbar_color', self._theme.scrollbar_color),
+            scrollbar_cursor=kwargs.get('scrollbar_cursor', self._theme.scrollbar_cursor),
+            scrollbar_shadow_color=kwargs.get('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
+            scrollbar_shadow_offset=kwargs.get('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
+            scrollbar_shadow_position=kwargs.get('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
+            scrollbar_shadow=kwargs.get('scrollbar_shadow', self._theme.scrollbar_shadow),
+            scrollbar_slider_color=kwargs.get('scrollbar_slider_color', self._theme.scrollbar_slider_color),
+            scrollbar_slider_pad=kwargs.get('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
+            scrollbar_thick=kwargs.get('scrollbar_thick', self._theme.scrollbar_thick),
+            scrollbars=get_scrollbars_from_position(kwargs.get('scrollbars', self._theme.scrollarea_position))
+        )
+
         self._append_widget(widget)
 
         return widget
@@ -1281,7 +1387,38 @@ class WidgetManager(object):
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
+            - ``max_height``                *(int, float)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                 *(int, float)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``scrollbar_color``           *(tuple, list)* - Scrollbar color
+            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``    *(tuple, list)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
+            - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``    *(tuple, list)* - Color of the sliders
+            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders (px)
+            - ``scrollbar_thick``           *(int)* - Scrollbar thickness (px)
+            - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            If horizontal frame contains a scrollarea (setting ``max_height`` or ``max_width``
+            less than size) padding will be set at zero.
+
+        .. note::
+
+            Packing applies a virtual translation to the widget, previous translation
+            is not modified.
+
+        .. note::
+
+            Widget floating is also considered within frames. If a widget is floating,
+            it does not add any size to the respective positioning.
 
         .. note::
 
@@ -1296,23 +1433,7 @@ class WidgetManager(object):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        # Remove invalid keys from kwargs
-        for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'margin', 'padding']:
-                kwargs.pop(key, None)
-
-        attributes = self._filter_widget_attributes(kwargs)
-        widget = pygame_menu.widgets.Frame(
-            width=width,
-            height=height,
-            orientation=_locals.ORIENTATION_HORIZONTAL,
-            frame_id=frame_id
-        )
-        self._configure_widget(widget=widget, **attributes)
-        self._append_widget(widget)
-
-        return widget
+        return self._frame(width, height, _locals.ORIENTATION_HORIZONTAL, frame_id, **kwargs)
 
     def frame_v(self,
                 width: NumberType,
@@ -1347,7 +1468,38 @@ class WidgetManager(object):
             - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
+            - ``max_height``                *(int, float)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                 *(int, float)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``scrollbar_color``           *(tuple, list)* - Scrollbar color
+            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``    *(tuple, list)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
+            - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``    *(tuple, list)* - Color of the sliders
+            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders (px)
+            - ``scrollbar_thick``           *(int)* - Scrollbar thickness (px)
+            - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            If vertical frame contains a scrollarea (setting ``max_height`` or ``max_width``
+            less than size) padding will be set at zero.
+
+        .. note::
+
+            Packing applies a virtual translation to the widget, previous translation
+            is not modified.
+
+        .. note::
+
+            Widget floating is also considered within frames. If a widget is floating,
+            it does not add any size to the respective positioning.
 
         .. note::
 
@@ -1362,23 +1514,7 @@ class WidgetManager(object):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        # Remove invalid keys from kwargs
-        for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'margin', 'padding']:
-                kwargs.pop(key, None)
-
-        attributes = self._filter_widget_attributes(kwargs)
-        widget = pygame_menu.widgets.Frame(
-            width=width,
-            height=height,
-            orientation=_locals.ORIENTATION_VERTICAL,
-            frame_id=frame_id
-        )
-        self._configure_widget(widget=widget, **attributes)
-        self._append_widget(widget)
-
-        return widget
+        return self._frame(width, height, _locals.ORIENTATION_VERTICAL, frame_id, **kwargs)
 
     # def horizontal_margin(self,
     #                       margin: NumberType,
@@ -1398,7 +1534,7 @@ class WidgetManager(object):
     #     :return: Widget object
     #     :rtype: :py:class:`pygame_menu.widgets.HMargin`
     #     """
-    #     assert isinstance(margin, (int, float))
+    #     assert isinstance(margin, NumberInstance))
     #     assert margin > 0, \
     #         'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
     #
@@ -1427,7 +1563,7 @@ class WidgetManager(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
-        assert isinstance(margin, (int, float))
+        assert isinstance(margin, NumberInstance)
         assert margin > 0, \
             'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
 
@@ -1470,9 +1606,9 @@ class WidgetManager(object):
         return widget
 
     def generic_widget(self,
-                       widget: 'pygame_menu.widgets.Widget',
+                       widget: 'Widget',
                        configure_defaults: bool = False
-                       ) -> 'pygame_menu.widgets.Widget':
+                       ) -> 'Widget':
         """
         Add generic widget to the Menu.
 
@@ -1495,7 +1631,7 @@ class WidgetManager(object):
         :param configure_defaults: Apply defaults widget configuration (for example, theme)
         :return: The added widget
         """
-        assert isinstance(widget, pygame_menu.widgets.Widget)
+        assert isinstance(widget, Widget)
         if widget.get_menu() is not None:
             raise ValueError('widget to be added is already appended to another Menu')
 
@@ -1506,9 +1642,10 @@ class WidgetManager(object):
 
         # Configure widget
         if configure_defaults:
-            self._configure_widget(widget, **self._filter_widget_attributes({}))
+            self.configure_defaults_widget(widget)
 
         widget.set_menu(self._menu)
+        widget.set_scrollarea(self._menu.get_scrollarea())
         self._menu._check_id_duplicated(widget.get_id())
 
         widget.set_controls(self._menu._joystick, self._menu._mouse, self._menu._touchscreen)

@@ -36,7 +36,7 @@ import timeit
 import unittest
 import pygame
 import pygame_menu
-from test._utils import MenuUtils, surface
+from test._utils import MenuUtils, surface, TEST_THEME
 
 # Configure the tests
 TEST_TIME_DRAW = False
@@ -91,19 +91,19 @@ class DecoratorTest(unittest.TestCase):
         deco.cache = True
 
         # Prev
-        self.assertEqual(deco._cache_surface['prev'], None)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['prev'])
+        self.assertIsNone(deco._cache_surface['post'])
         deco.add_circle(1, 1, 1, (0, 0, 0), True)
-        self.assertEqual(deco._cache_surface['prev'], None)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['prev'])
+        self.assertIsNone(deco._cache_surface['post'])
         deco.draw_prev(surface)
-        self.assertNotEqual(deco._cache_surface['prev'], None)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNotNone(deco._cache_surface['prev'])
+        self.assertIsNone(deco._cache_surface['post'])
         p = deco._cache_surface['prev']
         deco.add_circle(1, 1, 1, (0, 0, 0), True)
         deco.draw_prev(surface)
         self.assertNotEqual(deco._cache_surface['prev'], p)
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['post'])
         self.assertFalse(deco._cache_needs_update['prev'])
         self.assertFalse(deco._cache_needs_update['post'])
         deco.add_circle(1, 1, 1, (0, 0, 0), True)
@@ -124,11 +124,11 @@ class DecoratorTest(unittest.TestCase):
         # Post
         deco.add_circle(1, 1, 1, (0, 0, 0), False, prev=False)
         self.assertTrue(deco._cache_needs_update['post'])
-        self.assertEqual(deco._cache_surface['post'], None)
+        self.assertIsNone(deco._cache_surface['post'])
         deco.draw_post(surface)
         self.assertEqual(deco._total_decor(), 1)
         self.assertFalse(deco._cache_needs_update['post'])
-        self.assertNotEqual(deco._cache_surface['post'], None)
+        self.assertIsNotNone(deco._cache_surface['post'])
         deco.remove_all()
         self.assertEqual(deco._total_decor(), 0)
 
@@ -171,7 +171,7 @@ class DecoratorTest(unittest.TestCase):
         Test enable disable decoration.
         """
         menu = MenuUtils.generic_menu()
-        btn = menu.add.button('Button', None)
+        btn = menu.add.button('Button')
         deco = btn.get_decorator()
 
         # Callable
@@ -209,8 +209,8 @@ class DecoratorTest(unittest.TestCase):
         """
         Test all decorators.
         """
-        menu = MenuUtils.generic_menu()
-        btn = menu.add.button('Button', None)
+        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
+        btn = menu.add.button('Button')
 
         deco = btn.get_decorator()
         poly = [(50, 50), (50, 100), (100, 50)]
@@ -260,7 +260,6 @@ class DecoratorTest(unittest.TestCase):
         self.assertEqual(btn.get_rect().center, (int(x + w / 2), int(y + h / 2)))
 
         # If widget changes padding, the center does not change if pad is equal, so the coord cache must be the same
-        # menu.mainloop(surface)
         btn.set_padding(100)
         menu.draw(surface)
 
@@ -281,7 +280,6 @@ class DecoratorTest(unittest.TestCase):
         self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
         btn.set_padding((100, 0, 100, 0))
         menu.draw(surface)
-        # menu.mainloop(surface)
         self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
 
         # Text
@@ -351,5 +349,4 @@ class DecoratorTest(unittest.TestCase):
         deco.add_vline(1, 2, 3, color)
 
         menu.draw(surface)
-        # menu.mainloop(surface)
         deco.remove_all()

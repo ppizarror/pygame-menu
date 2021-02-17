@@ -210,9 +210,9 @@ Special positions used by Menu :py:class:`pygame_menu.scrollarea.ScrollArea` (al
 =====================================================================  ===========================
 Position                                                               Description
 =====================================================================  ===========================
-:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_HORIZONTAL`      Scroll in both X axis
-:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_VERTICAL`        Scroll in both Y axis
-:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_FULL`                 Scroll in both X and Y axis
+:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_HORIZONTAL`      Scroll on both X axis
+:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_VERTICAL`        Scroll on both Y axis
+:py:data:`pygame_menu.locals.SCROLLAREA_POSITION_FULL`                 Scroll on both X and Y axis
 =====================================================================  ===========================
 
 

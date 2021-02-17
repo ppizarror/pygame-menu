@@ -31,26 +31,35 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Methods
     'assert_alignment',
     'assert_color',
+    'assert_cursor',
     'assert_list_vector',
     'assert_orientation',
     'assert_position',
-    'assert_cursor',
     'assert_vector',
     'check_key_pressed_valid',
     'is_callable',
-    'make_surface'
+    'make_surface',
+    'parse_padding',
+    'uuid4',
+    'widget_terminal_title',
+
+    # Classes
+    'TerminalColors'
 
 ]
 
-import types
 import functools
+import types
+import uuid
 
 import pygame
+import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu._types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional, Tuple
+    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType
 
 
 def assert_alignment(align: str) -> None:
@@ -72,7 +81,7 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
     :param color: Object color
     :return: None
     """
-    assert isinstance(color, (tuple, list)), \
+    assert isinstance(color, VectorInstance), \
         'color must be a tuple or list, not type "{0}"'.format(type(color))
     assert 4 >= len(color) >= 3, \
         'color must be a tuple or list of 3 or 4 numbers'
@@ -100,6 +109,20 @@ def assert_cursor(cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> None
         assert isinstance(cursor, (int, type(pygame.cursors.Cursor), type(None)))
     else:
         assert isinstance(cursor, (int, type(None)))
+
+
+def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
+                       length: int) -> None:
+    """
+    Assert that a list fixed length vector is numeric.
+
+    :param list_vector: Numeric list vector
+    :param length: Length of the required vector. If ``0`` don't check the length
+    :return: None
+    """
+    assert isinstance(list_vector, (tuple, list))
+    for v in list_vector:
+        assert_vector(v, length=length)
 
 
 def assert_orientation(orientation: str) -> None:
@@ -130,20 +153,6 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
-def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
-                       length: int) -> None:
-    """
-    Assert that a list fixed length vector is numeric.
-
-    :param list_vector: Numeric list vector
-    :param length: Length of the required vector. If ``0`` don't check the length
-    :return: None
-    """
-    assert isinstance(list_vector, (list, tuple))
-    for v in list_vector:
-        assert_vector(v, length=length)
-
-
 def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
     """
     Assert that a fixed length vector is numeric.
@@ -152,14 +161,14 @@ def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(num_vector, (tuple, list)), \
+    assert isinstance(num_vector, VectorInstance), \
         'vector "{0}" must be a list or tuple of {1} items'.format(num_vector, length)
     if length != 0:
         msg = 'vector "{0}" must contain {1} numbers only, ' \
               'but {2} were given'.format(num_vector, length, len(num_vector))
         assert len(num_vector) == length, msg
     for i in range(len(num_vector)):
-        assert isinstance(num_vector[i], (int, float)), \
+        assert isinstance(num_vector[i], NumberInstance), \
             'item {0} of vector must be integer or float, not type "{1}"'.format(num_vector[i], type(num_vector[i]))
 
 
@@ -205,8 +214,8 @@ def make_surface(width: NumberType, height: NumberType,
     :param fill_color: Fill surface with a certain color
     :return: Pygame surface
     """
-    assert isinstance(width, (int, float))
-    assert isinstance(height, (int, float))
+    assert isinstance(width, NumberInstance)
+    assert isinstance(height, NumberInstance)
     assert isinstance(alpha, bool)
     assert isinstance(fill_color, (type(None), tuple))
     assert width >= 0 and height >= 0, \
@@ -219,3 +228,132 @@ def make_surface(width: NumberType, height: NumberType,
         assert_color(fill_color)
         surface.fill(fill_color)
     return surface
+
+
+def parse_padding(padding: PaddingType) -> Tuple4IntType:
+    """
+    Get the padding value from tuple.
+
+    - If an integer or float is provided: top, right, bottom and left values will be the same
+    - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
+    - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
+    - If 4-item tuple is provided: padding will be *(top, right, bottom, left)*
+
+    .. note::
+
+        See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
+
+    :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
+    :return: Padding value, *(top, right, bottom, left)*, in px
+    """
+    assert isinstance(padding, PaddingInstance)
+
+    if isinstance(padding, NumberInstance):
+        assert padding >= 0, 'padding cannot be a negative number'
+        return padding, padding, padding, padding
+    else:
+        assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
+        for i in range(len(padding)):
+            assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
+            assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
+        if len(padding) == 1:
+            return padding[0], padding[0], padding[0], padding[0]
+        elif len(padding) == 2:
+            return padding[0], padding[1], padding[0], padding[1]
+        elif len(padding) == 3:
+            return padding[0], padding[1], padding[2], padding[1]
+        else:
+            return padding[0], padding[1], padding[2], padding[3]
+
+
+def uuid4() -> str:
+    """
+    Create custom version of uuid4.
+
+    :return: UUID of 18 chars
+    """
+    return str(uuid.uuid4())[:18]
+
+
+def widget_terminal_title(
+        widget: 'pygame_menu.widgets.Widget',
+        widget_indx: int = -1,
+        current_index: int = -1
+) -> str:
+    """
+    Return widget title to be printed on terminals.
+
+    :param widget: Widget to get title from
+    :param widget_indx: Widget index
+    :param current_index: Menu index
+    :return: Widget title
+    """
+    wclassid = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
+    if isinstance(widget, pygame_menu.widgets.Frame):
+        wtitle = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
+        wtitle += '{0} - {3}[{1},{2},'.format(wclassid, *widget.get_indices(), TerminalColors.LGREEN)
+        if widget.horizontal:
+            wtitle += 'H] '
+        else:
+            wtitle += 'V] '
+        if widget.is_scrollable:
+            wsz = widget.get_inner_size()
+            wsm = widget.get_max_size()
+            wsh = wsm[0] if wsm[0] == wsz[0] else '{0}→{1}'.format(wsm[0], wsz[0])
+            wsv = wsm[1] if wsm[1] == wsz[1] else '{0}→{1}'.format(wsm[1], wsz[1])
+            wtitle += '∑ [{0},{1}] '.format(wsh, wsv)
+        wtitle += TerminalColors.ENDC
+    else:
+        if widget.get_title() != '':
+            wtitle = '{0} - {1} - '.format(wclassid,
+                                           TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
+        else:
+            wtitle = wclassid
+
+    # Column/Row position
+    wtitle += TerminalColors.INDIGO
+    cr = widget.get_col_row_index()
+    wtitle += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
+    wtitle += TerminalColors.ENDC
+
+    # Add position
+    wtitle += TerminalColors.MAGENTA
+    wtitle += ' ({0},{1})'.format(*widget.get_position())
+    wtitle += TerminalColors.ENDC
+
+    # Add mods
+    wtitle += TerminalColors.CYAN
+    if widget.is_floating():
+        wtitle += ' Φ'
+    if not widget.is_visible():
+        wtitle += ' ╳'
+    if not widget.is_selectable:
+        wtitle += ' β'
+    if widget.is_selected():
+        wtitle += TerminalColors.BOLD + ' ⟵'
+        if current_index != -1 and current_index != widget_indx:
+            wtitle += '! [{0}->{1}]'.format(widget_indx, current_index)
+    if widget.get_menu() is None:
+        wtitle += ' !▲'
+    wtitle += TerminalColors.ENDC
+
+    return wtitle
+
+
+class TerminalColors(object):
+    """
+    Terminal colors.
+
+    See https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html.
+    """
+    BOLD = '\033[1m'
+    BRIGHT_MAGENTA = '\u001b[35;1m'
+    BRIGHT_WHITE = '\u001b[37;1m'
+    CYAN = '\u001b[36m'
+    ENDC = '\u001b[0m'
+    GRAY = '\u001b[30;1m'
+    INDIGO = '\u001b[38;5;129m'
+    LGREEN = '\u001b[38;5;150m'
+    MAGENTA = '\u001b[35m'
+    RED = '\u001b[31m'
+    UNDERLINE = '\033[4m'

@@ -33,11 +33,14 @@ __all__ = ['WidgetsTest']
 
 import copy
 import unittest
-from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface
+
+from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface, TEST_THEME, PYGAME_V2
 
 import pygame
 import pygame_menu
 from pygame_menu import locals as _locals
+from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT
+from pygame_menu.locals import ORIENTATION_VERTICAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
@@ -48,7 +51,7 @@ class WidgetsTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """
-        Setup sound engine.
+        Setup widgets test.
         """
         test_reset_surface()
 
@@ -100,56 +103,56 @@ class WidgetsTest(unittest.TestCase):
                 test[0] = widget
 
         # Button
-        self.assertEqual(test[0], None)
-        btn = menu.add.button('nice', None, onselect=on_select)  # The first to be selected
+        self.assertIsNone(test[0])
+        btn = menu.add.button('nice', onselect=on_select)  # The first to be selected
         self.assertEqual(test[0], btn)
 
-        btn2 = menu.add.button('nice', None, onselect=on_select)
+        btn2 = menu.add.button('nice', onselect=on_select)
         self.assertEqual(test[0], btn)
         btn2.is_selectable = False
-        btn2.select()
+        btn2.select(update_menu=True)
         self.assertEqual(test[0], btn)
         btn2.is_selectable = True
-        btn2.select()
+        btn2.select(update_menu=True)
         self.assertEqual(test[0], btn2)
 
         # Color
         color = menu.add.color_input('nice', 'rgb', onselect=on_select)
-        color.select()
+        color.select(update_menu=True)
         self.assertEqual(test[0], color)
 
         # Image
         image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select, font_color=(2, 9))
-        image.select()
+        image.select(update_menu=True)
         self.assertEqual(test[0], color)
         image.is_selectable = True
-        image.select()
+        image.select(update_menu=True)
         self.assertEqual(test[0], image)
 
         # Label
         label = menu.add.label('label', onselect=on_select)
         label.is_selectable = True
-        label.select()
+        label.select(update_menu=True)
         self.assertEqual(test[0], label)
 
         # None, it cannot be selected
         none = menu.add.none_widget()
-        none.select()
+        none.select(update_menu=True)
         self.assertEqual(test[0], label)
 
         # Selector
         selector = menu.add.selector('nice', ['nice', 'epic'], onselect=on_select)
-        selector.select()
+        selector.select(update_menu=True)
         self.assertEqual(test[0], selector)
 
         # Textinput
         text = menu.add.text_input('nice', onselect=on_select)
-        text.select()
+        text.select(update_menu=True)
         self.assertEqual(test[0], text)
 
         # Vmargin
         vmargin = menu.add.vertical_margin(10)
-        vmargin.select()
+        vmargin.select(update_menu=True)
         self.assertEqual(test[0], text)
 
     @staticmethod
@@ -206,7 +209,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Test all widgets
         widgs = [
-            menu.add.button('e', None),
+            menu.add.button('e'),
             menu.add.selector('e', [('1', 2),
                                     ('The second', 2),
                                     ('The final mode', 3)]),
@@ -296,16 +299,16 @@ class WidgetsTest(unittest.TestCase):
 
         # Set max height, this will disabled max width
         label.set_max_height(100)
-        self.assertEqual(label._max_width[0], None)
+        self.assertIsNone(label._max_width[0])
         self.assertEqual(label.get_height(), 99)
 
         # Scale, disable both max width and max height
         label.set_max_width(100)
         label.set_max_height(100)
         label.scale(1.5, 1.5)
-        self.assertEqual(label._max_width[0], None)
-        self.assertEqual(label._max_height[0], None)
-        self.assertEqual(label._scale[0], True)
+        self.assertIsNone(label._max_width[0])
+        self.assertIsNone(label._max_height[0])
+        self.assertTrue(label._scale[0])
 
         # Set scale back
         label.scale(1, 1)
@@ -356,32 +359,16 @@ class WidgetsTest(unittest.TestCase):
                           lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 'a', 0)))
 
         w = menu.add.button(0, pygame_menu.events.NONE, padding=25)
-        p = w.get_padding()
-        self.assertEqual(p[0], 25)
-        self.assertEqual(p[1], 25)
-        self.assertEqual(p[2], 25)
-        self.assertEqual(p[3], 25)
+        self.assertEqual(w.get_padding(), (25, 25, 25, 25))
 
         w = menu.add.button(0, pygame_menu.events.NONE, padding=(25, 50, 75, 100))
-        p = w.get_padding()
-        self.assertEqual(p[0], 25)
-        self.assertEqual(p[1], 50)
-        self.assertEqual(p[2], 75)
-        self.assertEqual(p[3], 100)
+        self.assertEqual(w.get_padding(), (25, 50, 75, 100))
 
         w = menu.add.button(0, pygame_menu.events.NONE, padding=(25, 50))
-        p = w.get_padding()
-        self.assertEqual(p[0], 25)
-        self.assertEqual(p[1], 50)
-        self.assertEqual(p[2], 25)
-        self.assertEqual(p[3], 50)
+        self.assertEqual(w.get_padding(), (25, 50, 25, 50))
 
         w = menu.add.button(0, pygame_menu.events.NONE, padding=(25, 75, 50))
-        p = w.get_padding()
-        self.assertEqual(p[0], 25)
-        self.assertEqual(p[1], 75)
-        self.assertEqual(p[2], 50)
-        self.assertEqual(p[3], 75)
+        self.assertEqual(w.get_padding(), (25, 75, 50, 75))
 
     # noinspection PyTypeChecker
     def test_menubar(self) -> None:
@@ -423,15 +410,31 @@ class WidgetsTest(unittest.TestCase):
 
         # Test events
         selector.update(PygameUtils.key(0, keydown=True, testmode=False))
-        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
-        selector.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
-        selector.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
-        selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_LEFT))
-        selector.update(PygameUtils.joy_key(pygame_menu.controls.JOY_RIGHT))
+        selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        selector.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        selector.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        selector.update(PygameUtils.joy_key(JOY_LEFT))
+        selector.update(PygameUtils.joy_key(JOY_RIGHT))
         selector.update(PygameUtils.joy_motion(1, 0))
         selector.update(PygameUtils.joy_motion(-1, 0))
-        click_pos = selector.get_rect().center
+        click_pos = selector.get_rect(to_real_position=True, apply_padding=False).center
         selector.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+
+        # Check left/right clicks
+        self.assertEqual(selector.get_index(), 0)
+        click_pos = selector.get_rect(to_real_position=True, apply_padding=False).midleft
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertEqual(selector.get_index(), 2)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertEqual(selector.get_index(), 1)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertEqual(selector.get_index(), 0)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertEqual(selector.get_index(), 1)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertEqual(selector.get_index(), 2)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertEqual(selector.get_index(), 0)
 
         # Update elements
         new_elements = [('4 - Easy', 'EASY'),
@@ -445,10 +448,10 @@ class WidgetsTest(unittest.TestCase):
         selector.set_value(1)
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
-        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
         selector.readonly = True
-        selector.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
@@ -480,7 +483,7 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(g, cg)
             self.assertEqual(b, cb)
 
-        menu = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
 
         # Base rgb
         widget = menu.add.color_input('title', color_type='rgb', input_separator=',')
@@ -645,7 +648,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget.get_width(), 200)
         widget.set_value('#ffffff')
         width = 342
-        if pygame.version.vernum[0] < 2:
+        if not PYGAME_V2:
             width = 345
         self.assertEqual(widget.get_width(), width)
         widget.set_value(None)
@@ -744,7 +747,7 @@ class WidgetsTest(unittest.TestCase):
         textinput.set_value('new_value')  # No error
         textinput._selected = False
         textinput.draw(surface)
-        textinput._selected = True
+        textinput.select(update_menu=True)
         textinput.draw(surface)
         self.assertEqual(textinput.get_value(), 'new_value')
         textinput.clear()
@@ -756,7 +759,7 @@ class WidgetsTest(unittest.TestCase):
         passwordinput.set_value('')  # No error
         passwordinput._selected = False
         passwordinput.draw(surface)
-        passwordinput._selected = True
+        passwordinput.select(update_menu=True)
         passwordinput.draw(surface)
         self.assertEqual(passwordinput.get_value(), '')
         passwordinput.clear()
@@ -804,7 +807,7 @@ class WidgetsTest(unittest.TestCase):
         # Assert events
         textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
         PygameUtils.test_widget_key_press(textinput)
-        textinput.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        textinput.update(PygameUtils.key(KEY_APPLY, keydown=True))
         textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()
 
@@ -868,7 +871,7 @@ class WidgetsTest(unittest.TestCase):
         textinput._render_cursor()
 
         # Test underline edge cases
-        theme = pygame_menu.themes.THEME_BLUE.copy()
+        theme = TEST_THEME.copy()
         theme.title_font_size = 35
         theme.widget_font_size = 25
 
@@ -882,7 +885,7 @@ class WidgetsTest(unittest.TestCase):
         )
         textinput = menu.add.text_input('title', input_underline='_')
         width = 107
-        if pygame.version.vernum[0] < 2:
+        if not PYGAME_V2:
             width = 106
         self.assertEqual(menu._widget_offset[1], width)
         self.assertEqual(textinput.get_width(), 376)
@@ -925,11 +928,39 @@ class WidgetsTest(unittest.TestCase):
         menu.clear()
         textinput = menu.add.text_input('title: ', input_underline='.-')
         textinput.set_value('QQQQQQQQQQQQQQQ')
-        self.assertEqual(textinput.get_width(), 388)
-        self.assertEqual(textinput._current_underline_string, '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
+        self.assertEqual(textinput.get_width(), 373)
+        self.assertEqual(textinput._current_underline_string, '.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-')
 
         textinput = menu.add.text_input('title: ', input_underline='_', input_underline_len=10)
         self.assertEqual(textinput._current_underline_string, '_' * 10)
+
+        # Text underline with different column widths
+        menu = pygame_menu.Menu(
+            column_max_width=200,
+            height=300,
+            theme=theme,
+            title='Label',
+            onclose=pygame_menu.events.CLOSE,
+            width=400
+        )
+        self.assertRaises(pygame_menu.menu._MenuSizingException, lambda: menu.add.frame_v(300, 100))
+        self.assertRaises(pygame_menu.menu._MenuSizingException, lambda: menu.add.frame_v(201, 100))
+        self.assertEqual(len(menu._widgets), 0)
+        textinput = menu.add.text_input('title', input_underline='_')
+        if not PYGAME_V2:
+            self.assertEqual(menu._widget_offset[1], 106)
+        else:
+            self.assertEqual(menu._widget_offset[1], 107)
+        self.assertEqual(textinput.get_width(), 178)
+        self.assertEqual(textinput._current_underline_string, '____________')
+        vframe = menu.add.frame_v(150, 100, background_color=(20, 20, 20))
+        vframe.pack(textinput)
+        if not PYGAME_V2:
+            self.assertEqual(menu._widget_offset[1], 75)
+        else:
+            self.assertEqual(menu._widget_offset[1], 76)
+        self.assertEqual(textinput.get_width(), 134)
+        self.assertEqual(textinput._current_underline_string, '________')
 
     def test_button(self) -> None:
         """
@@ -955,7 +986,7 @@ class WidgetsTest(unittest.TestCase):
             _locals,  # module
             surface,  # pygame
             1.1,  # float
-            menu.add.button('eee', None),  # widget
+            menu.add.button('eee'),  # widget
             [1, 2, 3],  # list
             (1, 2, 3),  # tuple
             pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)  # baseimage
@@ -1040,9 +1071,9 @@ class WidgetsTest(unittest.TestCase):
 
         # Test None
         btn = menu.add.button('epic', pygame_menu.events.NONE)
-        self.assertEqual(btn._onreturn, None)
-        btn = menu.add.button('epic', None)
-        self.assertEqual(btn._onreturn, None)
+        self.assertIsNone(btn._onreturn)
+        btn = menu.add.button('epic')
+        self.assertIsNone(btn._onreturn)
 
         # Test invalid kwarg
         self.assertRaises(ValueError, lambda: menu.add.button('epic', callback, key=True))
@@ -1068,7 +1099,7 @@ class WidgetsTest(unittest.TestCase):
         btn = menu.add.button('', fun)
         self.assertEqual(btn.apply(), 'nice')
         btn.readonly = True
-        self.assertEqual(btn.apply(), None)
+        self.assertIsNone(btn.apply())
 
     def test_attributes(self) -> None:
         """
@@ -1099,11 +1130,11 @@ class WidgetsTest(unittest.TestCase):
             """
             widget.set_attribute('attr', True)
 
-        btn = menu.add.button('btn', None)
+        btn = menu.add.button('btn')
         callid = btn.add_draw_callback(call)
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
         menu.draw(surface)
-        self.assertEqual(btn.get_attribute('attr', False), True)
+        self.assertTrue(btn.get_attribute('attr', False))
         btn.remove_draw_callback(callid)
         self.assertRaises(IndexError, lambda: btn.remove_draw_callback(callid))  # Already removed
         menu.disable()
@@ -1119,19 +1150,43 @@ class WidgetsTest(unittest.TestCase):
             """
             widget.set_attribute('attr', True)
 
-        menu = MenuUtils.generic_menu()
-        btn = menu.add.button('button', None)
+        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
+        btn = menu.add.button('button', lambda: print('Clicked'))
         callid = btn.add_update_callback(update)
-        self.assertEqual(btn.get_attribute('attr', False), False)
-        click_pos = btn.get_rect().center
-        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
-        self.assertEqual(btn.get_attribute('attr', False), True)
+        self.assertFalse(btn.get_attribute('attr', False))
+        click_pos = btn.get_rect(to_real_position=True).center
+        deco = menu.get_decorator()
+        test_draw_rects = True
+
+        def drawrect() -> None:
+            """
+            Draw absolute rect on surface for testing purposes.
+            """
+            if not test_draw_rects:
+                return
+            surface.fill((0, 255, 0), btn.get_rect(to_real_position=True))
+
+        deco.add_callable(drawrect, prev=False, pass_args=False)
+        click_pos_absolute = btn.get_rect(to_absolute_position=True).center
+        self.assertNotEqual(click_pos, click_pos_absolute)
+        self.assertEqual(menu.get_scrollarea()._view_rect, menu.get_scrollarea().get_absolute_view_rect())
+        self.assertEqual(btn.get_scrollarea(), menu.get_current().get_scrollarea())
+        if PYGAME_V2:
+            self.assertEqual(btn.get_rect(), pygame.Rect(253, 153, 94, 41))
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 308, 94, 41))
+        else:
+            self.assertEqual(btn.get_rect(), pygame.Rect(253, 152, 94, 42))
+            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 307, 94, 42))
+        self.assertEqual(len(menu._widgets_scrollable), 0)
+        self.assertEqual(len(menu.get_current()._widgets_scrollable), 0)
+        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
+        self.assertTrue(btn.get_attribute('attr', False))
         btn.set_attribute('attr', False)
         btn.remove_update_callback(callid)
         self.assertRaises(IndexError, lambda: btn.remove_update_callback(callid))
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
-        self.assertEqual(btn.get_attribute('attr', False), False)
+        self.assertFalse(btn.get_attribute('attr', False))
 
         def update2(widget, _) -> None:
             """
@@ -1154,8 +1209,8 @@ class WidgetsTest(unittest.TestCase):
         Test widget id change.
         """
         menu = MenuUtils.generic_menu()
-        menu.add.button('b1', None, button_id='id')
-        w = menu.add.button('b1', None, button_id='other')
+        menu.add.button('b1', button_id='id')
+        w = menu.add.button('b1', button_id='other')
         self.assertRaises(IndexError, lambda: w.change_id('id'))
         w.change_id('id2')
         v = menu.add.vertical_margin(10, 'margin')
@@ -1171,10 +1226,9 @@ class WidgetsTest(unittest.TestCase):
         w._render()
         self.assertEqual(w.get_rect().width, 0)
         self.assertEqual(w.get_rect().height, 999)
-        self.assertEqual(w.update([]), False)
+        self.assertFalse(w.update([]))
         self.assertEqual(w._font_size, 0)
-        self.assertEqual(w.get_margin()[0], 0)
-        self.assertEqual(w.get_margin()[1], 0)
+        self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
 
     def test_hmargin(self) -> None:
@@ -1185,10 +1239,9 @@ class WidgetsTest(unittest.TestCase):
         w._render()
         self.assertEqual(w.get_rect().width, 999)
         self.assertEqual(w.get_rect().height, 0)
-        self.assertEqual(w.update([]), False)
+        self.assertFalse(w.update([]))
         self.assertEqual(w._font_size, 0)
-        self.assertEqual(w.get_margin()[0], 0)
-        self.assertEqual(w.get_margin()[1], 0)
+        self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
 
     def test_none(self) -> None:
@@ -1200,19 +1253,14 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(wid.get_id(), 'none')
 
         wid.set_margin(9, 9)
-        self.assertEqual(wid.get_margin()[0], 0)
-        self.assertEqual(wid.get_margin()[1], 0)
+        self.assertEqual(wid.get_margin(), (0, 0))
 
         wid.set_padding(9)
-        t, l, b, r = wid.get_padding()
-        self.assertEqual(r, 0)
-        self.assertEqual(t, 0)
-        self.assertEqual(b, 0)
-        self.assertEqual(l, 0)
+        self.assertEqual(wid.get_padding(), (0, 0, 0, 0))
 
         wid.set_background_color((1, 1, 1))
         wid._draw_background_color(surface)
-        self.assertEqual(wid._background_color, None)
+        self.assertIsNone(wid._background_color)
 
         nosel = NoneSelection()
         wid.set_selection_effect(nosel)
@@ -1236,7 +1284,7 @@ class WidgetsTest(unittest.TestCase):
         wid.set_font('myfont', 0, (1, 1, 1), (1, 1, 1), (1, 1, 1), (0, 0, 0), (0, 0, 0))
         wid.update_font({'name': ''})
         wid._apply_font()
-        self.assertEqual(wid._font, None)
+        self.assertIsNone(wid._font)
 
         # Test font rendering
         surf = wid._render_string('nice', (1, 1, 1))
@@ -1265,24 +1313,21 @@ class WidgetsTest(unittest.TestCase):
 
         # Apply transforms
         wid.set_position(1, 1)
-        pos = wid.get_position()
-        self.assertEqual(pos[0], 0)
-        self.assertEqual(pos[1], 0)
+        self.assertEqual(wid.get_position(), (0, 0))
 
         wid.translate(1, 1)
-        self.assertEqual(wid._translate[0], 0)
-        self.assertEqual(wid._translate[1], 0)
+        self.assertEqual(wid.get_translate(), (0, 0))
 
         wid.rotate(10)
         self.assertEqual(wid._angle, 0)
 
         wid.resize(10, 10)
-        self.assertEqual(wid._scale[0], False)
+        self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
         wid.scale(100, 100)
-        self.assertEqual(wid._scale[0], False)
+        self.assertFalse(wid._scale[0])
         self.assertEqual(wid._scale[1], 1)
         self.assertEqual(wid._scale[2], 1)
 
@@ -1291,10 +1336,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(wid._flip[1])
 
         wid.set_max_width(100)
-        self.assertEqual(wid._max_width[0], None)
+        self.assertIsNone(wid._max_width[0])
 
         wid.set_max_height(100)
-        self.assertEqual(wid._max_height[0], None)
+        self.assertIsNone(wid._max_height[0])
 
         # Selection
         wid.select()
@@ -1315,7 +1360,7 @@ class WidgetsTest(unittest.TestCase):
 
         # noinspection PyTypeChecker
         wid.set_sound(None)
-        self.assertNotEqual(wid._sound, None)
+        self.assertIsNotNone(wid._sound)
 
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)
@@ -1326,11 +1371,11 @@ class WidgetsTest(unittest.TestCase):
         Test widget border.
         """
         menu = MenuUtils.generic_menu()
-        self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=-1))
-        self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1.5))
-        self.assertRaises(AssertionError, lambda: menu.add.button('', None, border_width=1,
-                                                                  border_color=(0, 0, 0), border_inflate=(-1, - 1)))
-        btn = menu.add.button('', None, border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
+        self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=-1))
+        self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=1.5))
+        self.assertRaises(AssertionError, lambda: menu.add.button('', border_width=1, border_color=(0, 0, 0),
+                                                                  border_inflate=(-1, - 1)))
+        btn = menu.add.button('', border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
         self.assertEqual(btn._border_width, 1)
         self.assertEqual(btn._border_color, (0, 0, 0))
         self.assertEqual(btn._border_inflate, (1, 1))
@@ -1346,7 +1391,6 @@ class WidgetsTest(unittest.TestCase):
         thick = 80
         length = screen_size[1]
         world_range = (50, world.get_height())
-        orientation = _locals.ORIENTATION_VERTICAL
         x, y = screen_size[0] - thick, 0
 
         # noinspection PyArgumentEqualDefault
@@ -1354,7 +1398,7 @@ class WidgetsTest(unittest.TestCase):
             length,
             world_range,
             '',
-            orientation,
+            ORIENTATION_VERTICAL,
             slider_pad=2,
             slider_color=(210, 120, 200),
             page_ctrl_thick=thick,
@@ -1366,7 +1410,7 @@ class WidgetsTest(unittest.TestCase):
 
         sb.set_position(x, y)
 
-        self.assertEqual(sb.get_orientation(), _locals.ORIENTATION_VERTICAL)
+        self.assertEqual(sb.get_orientation(), ORIENTATION_VERTICAL)
         self.assertEqual(sb.get_minimum(), world_range[0])
         self.assertEqual(sb.get_maximum(), world_range[1])
 
@@ -1386,10 +1430,10 @@ class WidgetsTest(unittest.TestCase):
         sb = ScrollBar(length,
                        world_range,
                        '',
-                       orientation,
+                       ORIENTATION_VERTICAL,
                        onreturn=-1
                        )
-        self.assertEqual(sb._onreturn, None)
+        self.assertIsNone(sb._onreturn)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
         # Scrollbar ignores scaling
@@ -1398,9 +1442,9 @@ class WidgetsTest(unittest.TestCase):
         sb.resize(2, 2)
         self.assertFalse(sb._scale[0])
         sb.set_max_width(10)
-        self.assertEqual(sb._max_width[0], None)
+        self.assertIsNone(sb._max_width[0])
         sb.set_max_height(10)
-        self.assertEqual(sb._max_height[0], None)
+        self.assertIsNone(sb._max_height[0])
         sb._apply_font()
         sb.set_padding(10)
         self.assertEqual(sb._padding[0], 0)
@@ -1429,69 +1473,75 @@ class WidgetsTest(unittest.TestCase):
             value[0] = val
 
         switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=False)
-        self.assertEqual(switch.get_value(), False)
-        self.assertEqual(value[0], None)
+        self.assertFalse(switch.get_value())
+        self.assertIsNone(value[0])
         switch.apply()
         self.assertFalse(value[0])
 
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))  # not infinite
+        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))  # not infinite
         self.assertFalse(value[0])  # as this is false, dont change
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        switch.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
         switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True)
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_LEFT, keydown=True))
+        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
         # As there's only 2 states, return should change too
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        self.assertFalse(value[0])
+
+        # Check left/right clicks
+        click_pos = switch.get_rect(to_real_position=True, apply_padding=False).midleft
+        switch.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertFalse(value[0])
+        switch.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertTrue(value[0])
+        switch.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertFalse(value[0])
 
         # Test readonly
         switch.readonly = True
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
 
         switch.readonly = False
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        switch.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(pygame_menu.controls.KEY_RIGHT, keydown=True))
+        switch.update(PygameUtils.key(KEY_RIGHT, keydown=True))
         self.assertFalse(value[0])
 
         switch.draw(surface)
 
         # Test transforms
         switch.set_position(1, 1)
-        pos = switch.get_position()
-        self.assertEqual(pos[0], 1)
-        self.assertEqual(pos[1], 1)
+        self.assertEqual(switch.get_position(), (1, 1))
 
         switch.translate(1, 1)
-        self.assertEqual(switch._translate[0], 1)
-        self.assertEqual(switch._translate[1], 1)
+        self.assertEqual(switch.get_translate(), (1, 1))
 
         switch.rotate(10)
         self.assertEqual(switch._angle, 0)
 
         switch.scale(100, 100)
-        self.assertEqual(switch._scale[0], False)
+        self.assertFalse(switch._scale[0])
         self.assertEqual(switch._scale[1], 1)
         self.assertEqual(switch._scale[2], 1)
 
         switch.resize(100, 100)
-        self.assertEqual(switch._scale[0], False)
+        self.assertFalse(switch._scale[0])
         self.assertEqual(switch._scale[1], 1)
         self.assertEqual(switch._scale[2], 1)
 
@@ -1500,222 +1550,11 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(switch._flip[1])
 
         switch.set_max_width(100)
-        self.assertEqual(switch._max_width[0], None)
+        self.assertIsNone(switch._max_width[0])
 
         switch.set_max_height(100)
-        self.assertEqual(switch._max_height[0], None)
+        self.assertIsNone(switch._max_height[0])
 
         # Assert switch values
         self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
                                                                      onchange=onchange, infinite=False))
-
-    def test_frame(self) -> None:
-        """
-        Test frame widget containers.
-        """
-        menu = MenuUtils.generic_menu()
-
-        menu.add.button('rr', None)
-        frame = menu.add.frame_h(250, 100, background_color=(200, 0, 0))
-        self.assertEqual(frame.get_width(), 250)
-        self.assertEqual(frame.get_height(), 100)
-        btn = menu.add.button('nice1', None)
-        menu.add.button('44', None)
-        frame2 = menu.add.frame_v(50, 250, background_color=(0, 0, 200))
-        btn2 = menu.add.button('nice2', None)
-        btn3 = menu.add.button('nice3', None)
-
-        frame11 = menu.add.frame_v(50, 90, background_color=(0, 200, 0))
-
-        btn11 = menu.add.button('11', None)
-        btn12 = menu.add.button('12', None)
-
-        frame11.pack(btn11)
-        frame11.pack(btn12)
-
-        frame.pack(btn)
-        frame.pack(btn2, pygame_menu.locals.ALIGN_CENTER, vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame.pack(frame11, pygame_menu.locals.ALIGN_RIGHT, vertical_position=pygame_menu.locals.POSITION_SOUTH)
-
-        frame2.pack(menu.add.button('1', None))
-        frame2.pack(menu.add.button('2', None), alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame2.pack(menu.add.button('3', None), alignment=pygame_menu.locals.ALIGN_RIGHT)
-
-        for w in frame.get_widgets():
-            w.get_selection_effect().zero_margin()
-        for w in frame2.get_widgets():
-            w.get_selection_effect().zero_margin()
-
-        menu.render()
-        wid = menu.get_widgets()
-        self.assertEqual(wid[0].get_col_row_index(), (0, 0, 0))
-        self.assertEqual(wid[1].get_col_row_index(), (0, 1, 1))
-        self.assertEqual(wid[2].get_col_row_index(), (0, 1, 2))
-        self.assertEqual(wid[3].get_col_row_index(), (0, 1, 3))
-        self.assertEqual(wid[4].get_col_row_index(), (0, 1, 4))
-        self.assertEqual(wid[5].get_col_row_index(), (0, 2, 5))
-        self.assertEqual(wid[6].get_col_row_index(), (0, 3, 6))
-        self.assertEqual(wid[7].get_col_row_index(), (0, 3, 7))
-        self.assertEqual(wid[8].get_col_row_index(), (0, 3, 8))
-        self.assertEqual(wid[9].get_col_row_index(), (0, 3, 9))
-        self.assertEqual(wid[10].get_col_row_index(), (0, 4, 10))
-        self.assertEqual(wid[11].get_col_row_index(), (0, 1, 11))
-        self.assertEqual(wid[12].get_col_row_index(), (0, 1, 12))
-
-        self.assertEqual(btn3.get_frame(), None)
-        self.assertEqual(btn2.get_frame(), frame)
-        self.assertEqual(btn2._translate, (88, 29))
-        self.assertEqual(btn2.is_floating(), True)
-        menu.remove_widget(btn2)
-        self.assertEqual(btn2.get_frame(), None)
-        self.assertEqual(btn2._translate, (0, 0))
-        self.assertFalse(btn2.is_floating())
-
-        wid = menu.get_widgets()
-        if pygame.version.vernum[0] >= 2:
-            self.assertEqual(wid[0].get_position(), (288, 6))
-            self.assertEqual(wid[1].get_position(), (175, 57))
-            self.assertEqual(wid[2].get_position(), (375, 67))
-            self.assertEqual(wid[3].get_position(), (175, 57))
-            self.assertEqual(wid[4].get_position(), (283, 167))
-            self.assertEqual(wid[5].get_position(), (275, 218))
-            self.assertEqual(wid[6].get_position(), (291, 259))
-            self.assertEqual(wid[7].get_position(), (308, 300))
-            self.assertEqual(wid[8].get_position(), (275, 218))
-            self.assertEqual(wid[9].get_position(), (263, 478))
-            self.assertEqual(wid[10].get_position(), (375, 67))
-            self.assertEqual(wid[11].get_position(), (375, 108))
-        else:
-            self.assertEqual(wid[0].get_position(), (288, 6))
-            self.assertEqual(wid[1].get_position(), (175, 58))
-            self.assertEqual(wid[2].get_position(), (375, 68))
-            self.assertEqual(wid[3].get_position(), (175, 58))
-            self.assertEqual(wid[4].get_position(), (283, 168))
-            self.assertEqual(wid[5].get_position(), (275, 220))
-            self.assertEqual(wid[6].get_position(), (291, 262))
-            self.assertEqual(wid[7].get_position(), (308, 304))
-            self.assertEqual(wid[8].get_position(), (275, 220))
-            self.assertEqual(wid[9].get_position(), (263, 480))
-            self.assertEqual(wid[10].get_position(), (375, 68))
-            self.assertEqual(wid[11].get_position(), (375, 110))
-
-        theme = pygame_menu.themes.THEME_DEFAULT.copy()
-        menu = MenuUtils.generic_menu(theme=theme)
-        menu.get_theme().widget_selection_effect.zero_margin()
-        menu.get_theme().widget_font_size = 18
-
-        frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
-        frame_title = menu.add.frame_h(250, 30, background_color=(180, 180, 180))
-        frame_content = menu.add.frame_v(250, 120)
-        frame.pack(frame_title)
-        frame.pack(frame_content)
-
-        frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
-        closebtn = frame_title.pack(
-            menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(160, 160, 160)),
-            alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(0, 2))
-        frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255), font_color=(2000, 0, 0))
-        frame_content.pack(frame_numbers)
-        for i in range(9):
-            frame_numbers.pack(menu.add.button(i, None, font_color=(5 * i, 11 * i, 13 * i), font_size=30),
-                               alignment=pygame_menu.locals.ALIGN_CENTER)
-        self.assertRaises(AssertionError, lambda: frame_numbers.pack(closebtn))
-        frame_content.pack(menu.add.vertical_margin(15))
-        frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
-        menu.render()
-
-        self.assertEqual(menu.get_width(widget=True), 250)
-        self.assertEqual(menu.get_height(widget=True), 150)
-        self.assertEqual(menu._widget_offset[1], 97)
-        self.assertEqual(frame_numbers.get_widgets()[0]._translate, (48, 0))
-        if pygame.version.vernum[0] >= 2:
-            self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 153))
-        else:
-            self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 154))
-        self.assertEqual(frame_numbers._recursive_render, 0)
-        previwdg = frame_numbers.get_widgets()
-        self.assertEqual(frame_numbers._control_widget, previwdg[0])
-        frame_numbers.unpack(frame_numbers._control_widget)
-        self.assertRaises(ValueError, lambda: frame_numbers.unpack(previwdg[0]))
-        self.assertEqual(frame_numbers._control_widget, previwdg[1])
-        for w in frame_numbers.get_widgets():
-            frame_numbers.unpack(w)
-        self.assertEqual(len(frame_numbers._widgets), 0)
-        self.assertRaises(AssertionError, lambda: frame_numbers.unpack(previwdg[0]))
-
-        # Test sizes
-        size_exception = pygame_menu.widgets.widget.frame._FrameSizeException
-        self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(100, 400)))
-        self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(400, 10)))
-        self.assertEqual(len(frame_numbers.get_widgets()), 0)
-        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_RIGHT)
-        frame_numbers.pack(menu.add.frame_v(10, 10))
-
-        frame_v = menu.add.frame_v(400, 100, font_color=(2000, 0, 0))  # Clearly a invalid font color
-        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 400)))
-        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(500, 100)))
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_SOUTH)
-        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 1)))
-
-        # Apply transforms
-        wid = frame_v
-        wid.set_position(1, 1)
-        pos = wid.get_position()
-        self.assertEqual(pos[0], 1)
-        self.assertEqual(pos[1], 1)
-
-        wid.translate(1, 1)
-        self.assertEqual(wid._translate[0], 1)
-        self.assertEqual(wid._translate[1], 1)
-
-        wid.rotate(10)
-        self.assertEqual(wid._angle, 0)
-
-        wid.scale(100, 100)
-        self.assertEqual(wid._scale[0], False)
-        self.assertEqual(wid._scale[1], 1)
-        self.assertEqual(wid._scale[2], 1)
-
-        wid.resize(10, 10)
-        self.assertEqual(wid._scale[0], False)
-        self.assertEqual(wid._scale[1], 1)
-        self.assertEqual(wid._scale[2], 1)
-
-        wid.flip(True, True)
-        self.assertFalse(wid._flip[0])
-        self.assertFalse(wid._flip[1])
-
-        wid.set_max_width(100)
-        self.assertEqual(wid._max_width[0], None)
-
-        wid.set_max_height(100)
-        self.assertEqual(wid._max_height[0], None)
-
-        # Selection
-        wid.select()
-        self.assertFalse(wid.is_selected())
-        self.assertFalse(wid.is_selectable)
-
-        draw = [False]
-
-        # noinspection PyUnusedLocal
-        def _draw(*args) -> None:
-            draw[0] = True
-
-        drawid = wid.add_draw_callback(_draw)
-        wid.draw(surface)
-        self.assertTrue(draw[0])
-        draw[0] = False
-        wid.remove_draw_callback(drawid)
-        wid.draw(surface)
-        self.assertFalse(draw[0])
-
-        wid._draw(surface)
-        wid.update([])
