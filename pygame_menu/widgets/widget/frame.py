@@ -74,8 +74,10 @@ class Frame(Widget):
     _control_widget: Optional['Widget']
     _control_widget_last_pos: Optional[Vector2NumberType]
     _frame_scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']
+    _has_frames: bool  # True if frame has packed other frames
     _height: int
     _orientation: str
+    _pack_margin_warning: bool
     _pos: Dict[str, Tuple[int, int]]  # Widget positioning
     _real_rect: 'pygame.Rect'
     _recursive_render: int
@@ -93,19 +95,24 @@ class Frame(Widget):
                  frame_id: str = ''
                  ) -> None:
         super(Frame, self).__init__(widget_id=frame_id)
-        assert isinstance(width, NumberInstance) and width > 0
-        assert isinstance(height, NumberInstance) and height > 0
+        assert isinstance(width, NumberInstance)
+        assert isinstance(height, NumberInstance)
+        assert width > 0, 'width must be greater than zero ({0} received)'.format(width)
+        assert height > 0, 'height must be greater than zero ({0} received)'.format(height)
         assert_orientation(orientation)
 
         # Internals
         self._control_widget = None
         self._control_widget_last_pos = None  # This checks if menu has updated widget position
         self._frame_scrollarea = None
+        self._has_frames = False
         self._height = int(height)
         self._orientation = orientation
+        self._pack_margin_warning = True  # Set to False for hiding the pack margin warning
         self._pos = {}
         self._real_rect = pygame.Rect(0, 0, width, height)
         self._recursive_render = 0
+        self._relax = False  # If True ignore sizing
         self._widgets = {}
         self._widgets_props = {}
         self._width = int(width)
@@ -113,18 +120,37 @@ class Frame(Widget):
         # Configure widget publics
         self.first_index = -1
         self.horizontal = orientation == _locals.ORIENTATION_HORIZONTAL
-        self.is_selectable = False
         self.is_scrollable = False
+        self.is_selectable = False
         self.last_index = -1
+
+    def get_inner_size(self) -> Tuple2IntType:
+        """
+        Return Frame inner size *(width, height)*.
+
+        :return: Size tuple in px
+        """
+        return self._width, self._height
+
+    def relax(self, relax: bool = True) -> 'Frame':
+        """
+        Set relax status. If ``True`` Frame ignores sizing checks.
+
+        :param relax: Relax status
+        :return: Self reference
+        """
+        assert isinstance(relax, bool)
+        self._relax = relax
+        return self
 
     def get_max_size(self) -> Tuple2IntType:
         """
         Returns the max size of the frame.
 
-        :return: Max width, height
+        :return: Max *(width, height)* in px
         """
         if self._frame_scrollarea is not None:
-            return self._frame_scrollarea.get_size()
+            return self._frame_scrollarea.get_size(inner=True)
         return self.get_size()
 
     def make_scrollarea(self,
@@ -160,7 +186,7 @@ class Frame(Widget):
         """
         assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
-        assert self.get_menu() is not None, 'menu must be defined before creating the scrollarea'
+        assert self._menu is not None, 'menu must be defined before creating the scrollarea'
         if max_width is None:
             max_width = self._width
         if max_height is None:
@@ -235,7 +261,7 @@ class Frame(Widget):
 
     def get_indices(self) -> Tuple[int, int]:
         """
-        Return first and last indices tuple.
+        Return first and last selectable indices tuple.
 
         :return: First, Last widget selectable indices
         """
@@ -358,7 +384,7 @@ class Frame(Widget):
         :return: Px
         """
         w = widget.get_width()
-        if w > self._width:
+        if w > self._width and not self._relax:
             raise _FrameSizeException(
                 '{0} width ({1}) is greater than {3} width ({2}), try using '
                 'widget.set_max_width(...) for avoiding this issue, or set '
@@ -381,7 +407,7 @@ class Frame(Widget):
         :return: Px
         """
         h = widget.get_height()
-        if h > self._height:
+        if h > self._height and not self._relax:
             raise _FrameSizeException(
                 '{0} height ({1}) is greater than {3} height ({2}), try using '
                 'widget.set_max_height(...) for avoiding this issue, or set '
@@ -421,14 +447,14 @@ class Frame(Widget):
                 self._pos[w.get_id()] = (self._width + xright, self._get_vt(w, vpos) + w.get_margin()[1])
                 xright += w.get_margin()[0]
             dw = xleft - xright
-            if dw > self._width:
+            if dw > self._width and not self._relax:
                 msg = '{3} width ({0}) exceeds {2} width ({1})' \
                       ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
                 raise _FrameSizeException(msg)
 
         # Now center widgets
         available = self._width - (xleft - xright)
-        if wcenter > available:
+        if wcenter > available and not self._relax:
             msg = 'cannot place center widgets as required width ({0}) ' \
                   'is greater than available ({1}) in {2}'.format(wcenter, available, self.get_class_id())
             raise _FrameSizeException(msg)
@@ -466,14 +492,14 @@ class Frame(Widget):
                 ybottom -= (w.get_margin()[1] + w.get_height())
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + ybottom)
             dh = ytop - ybottom
-            if dh > self._height:
+            if dh > self._height and not self._relax:
                 msg = '{3} height ({0}) exceeds {2} height ({1})' \
                       ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
                 raise _FrameSizeException(msg)
 
         # Now center widgets
         available = self._height - (ytop - ybottom)
-        if wcenter > available:
+        if wcenter > available and not self._relax:
             msg = 'cannot place center widgets as required height ({0}) ' \
                   'is greater than available ({1}) in {2}'.format(wcenter, available, self.get_class_id())
             raise _FrameSizeException(msg)
@@ -581,60 +607,6 @@ class Frame(Widget):
             unpackd.append(w)
         return tuple(unpackd)
 
-    def unpack(self, widget: 'Widget') -> 'Widget':
-        """
-        Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
-        Unpacked widgets adopt a floating position and are moved to the last position of the widget list of Menu
-
-        :param widget: Widget to unpack
-        :return: Unpacked widget
-        """
-        assert len(self._widgets) > 0, 'frame is empty'
-        wid = widget.get_id()
-        if wid not in self._widgets.keys():
-            msg = '{0} does not exist in {1}'.format(widget.get_class_id(), self.get_class_id())
-            raise ValueError(msg)
-        assert widget._frame == self, 'widget frame differs from current'
-        widget.set_float()
-        widget.set_scrollarea(self.get_menu().get_scrollarea())
-        widget._frame = None
-        widget._translate_virtual = (0, 0)
-        del self._widgets[wid]
-        try:
-            del self._pos[wid]
-        except KeyError:
-            pass
-
-        # Move widget to the last position of widget list
-        menu = self.get_menu()
-        if widget.get_menu() == menu:
-            menu._validate_frame_widgetmove = False
-            try:
-                menu.move_widget_index(widget, render=False)
-            except (ValueError, AssertionError):  # Assertion error if moving widget (last) to same position (last)
-                pass
-            if isinstance(widget, Frame):
-                widgets = widget.get_widgets(unpack_subframes_include_frame=True)
-                for w in widgets:
-                    if w.get_menu() is None:
-                        continue
-                    menu.move_widget_index(w, render=False)
-            menu._validate_frame_widgetmove = True
-
-        # noinspection PyProtectedMember
-        menu._render()
-
-        if self._control_widget == widget:
-            self._control_widget = None
-            self._control_widget_last_pos = None
-            for w in self.get_widgets():
-                if w.get_menu() is not None:
-                    self._control_widget = w
-                    self._control_widget_last_pos = self._control_widget.get_position()
-                    break
-
-        return widget
-
     def unfloat(self) -> 'Frame':
         """
         Disable float status for each subwidget.
@@ -643,6 +615,9 @@ class Frame(Widget):
         """
         for w in self.get_widgets(unpack_subframes_include_frame=True):
             w.set_float(False)
+        if self._menu is not None:
+            self._menu.render()
+            self._menu.scroll_to_widget(None)
         return self
 
     def get_scrollarea(self, inner: bool = False) -> Optional['pygame_menu.scrollarea.ScrollArea']:
@@ -663,6 +638,111 @@ class Frame(Widget):
         else:
             for w in self.get_widgets(unpack_subframes=False):
                 w.set_scrollarea(scrollarea)
+
+    def scrollh(self, value: NumberType) -> 'Frame':
+        """
+        Scroll to horizontal value if frame is scrollable.
+
+        :param value: Horizontal scroll value, if ``0`` scroll to left; ``1`` scroll to right
+        :return: Self reference
+        """
+        if self._frame_scrollarea is not None:
+            self._frame_scrollarea.scroll_to(_locals.ORIENTATION_HORIZONTAL, value)
+        return self
+
+    def scrollv(self, value: NumberType) -> 'Frame':
+        """
+        Scroll to vertical value if frame is scrollable.
+
+        :param value: Vertical scroll value, if ``0`` scroll to top; ``1`` scroll to bottom
+        :return: Self reference
+        """
+        if self._frame_scrollarea is not None:
+            self._frame_scrollarea.scroll_to(_locals.ORIENTATION_VERTICAL, value)
+        return self
+
+    def get_scroll_value(self, orientation: str) -> float:
+        """
+        Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
+
+        .. note::
+
+            If ScrollArea does not contain such orientation scroll, or frame is not scrollable,
+            ``-1`` is returned.
+
+        :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
+        :return: Value from ``0`` to ``1``
+        """
+        if self._frame_scrollarea is not None:
+            return self._frame_scrollarea.get_scroll_value(orientation)
+        return -1
+
+    def unpack(self, widget: 'Widget') -> 'Widget':
+        """
+        Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
+        Unpacked widgets adopt a floating position and are moved to the last position of the widget list of Menu
+
+        :param widget: Widget to unpack
+        :return: Unpacked widget
+        """
+        assert widget != self, 'frame cannot unpack itself'
+        assert len(self._widgets) > 0, 'frame is empty'
+        wid = widget.get_id()
+        if wid not in self._widgets.keys():
+            msg = '{0} does not exist in {1}'.format(widget.get_class_id(), self.get_class_id())
+            raise ValueError(msg)
+        assert widget._frame == self, 'widget frame differs from current'
+        widget.set_float()
+        widget.set_scrollarea(self._menu.get_scrollarea())
+        widget._frame = None
+        widget._translate_virtual = (0, 0)
+        del self._widgets[wid]
+        try:
+            del self._pos[wid]
+        except KeyError:
+            pass
+
+        # Move widget to the last position of widget list
+        if widget.get_menu() == self._menu:
+            self._menu._validate_frame_widgetmove = False
+            try:
+                self._menu.move_widget_index(widget, render=False)
+            except (ValueError, AssertionError):  # Assertion error if moving widget (last) to same position (last)
+                pass
+            if isinstance(widget, Frame):
+                widgets = widget.get_widgets(unpack_subframes_include_frame=True)
+                for w in widgets:
+                    if w.get_menu() is None:
+                        continue
+                    self._menu.move_widget_index(w, render=False)
+            self._menu._validate_frame_widgetmove = True
+
+        # Check if frame contains more frames
+        self._has_frames = False
+        for k in self.get_widgets(unpack_subframes=False):
+            if isinstance(k, Frame):
+                self._has_frames = True
+                break
+
+        # Update selected
+        self._menu.move_widget_index(None, update_selected_index=True)
+
+        # Update indices
+        self.update_indices()
+
+        # noinspection PyProtectedMember
+        self._menu._render()
+
+        if self._control_widget == widget:
+            self._control_widget = None
+            self._control_widget_last_pos = None
+            for w in self.get_widgets():
+                if w.get_menu() is not None:
+                    self._control_widget = w
+                    self._control_widget_last_pos = self._control_widget.get_position()
+                    break
+
+        return widget
 
     def pack(self,
              widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
@@ -739,8 +819,7 @@ class Frame(Widget):
         :param margin: *(left, top)* margin of added widget in px. It overrides the previous widget margin
         :return: Added widget references
         """
-        menu = self.get_menu()
-        assert menu is not None, \
+        assert self._menu is not None, \
             'frame menu must be set before packing widgets'
         if isinstance(widget, (tuple, list)):
             for w in widget:
@@ -752,7 +831,7 @@ class Frame(Widget):
                 '{0} menu cannot be None'.format(widget.get_class_id())
         assert widget.get_id() not in self._widgets.keys(), \
             '{0} already exists in {1}'.format(widget.get_class_id(), self.get_class_id())
-        assert widget.get_menu() == menu or widget.get_menu() is None, \
+        assert widget.get_menu() == self._menu or widget.get_menu() is None, \
             'widget menu to be added to frame must be in same menu as frame, or it can have any Menu instance'
         assert widget.get_frame() is None, \
             '{0} is already packed in {1}'.format(widget.get_class_id(), widget.get_frame().get_class_id())
@@ -762,9 +841,10 @@ class Frame(Widget):
         assert_vector(margin, 2)
         assert widget.configured, 'widget must be configured before packing'
 
-        if widget.get_margin() != (0, 0):
-            msg = '{0} margin should be (0, 0) if packed, but received {1}; Frame.pack() does not consider ' \
-                  'previous widget margin'.format(widget.get_class_id(), widget.get_margin())
+        if widget.get_margin() != (0, 0) and self._pack_margin_warning:
+            msg = '{0} margin should be (0, 0) if packed, but received {1}; {2}.pack() does not consider ' \
+                  'previous widget margin. Set frame._pack_margin_warning=False to hide this warning' \
+                  ''.format(widget.get_class_id(), widget.get_margin(), self.get_class_id())
             warnings.warn(msg)
 
         if isinstance(widget, Frame):
@@ -775,33 +855,47 @@ class Frame(Widget):
         if self._frame_scrollarea is not None:
             widget.set_scrollarea(self._frame_scrollarea)
             # noinspection PyProtectedMember
-            menu._sort_scrollable_widgets()
+            self._menu._sort_scrollable_widgets()
         else:
             widget.set_scrollarea(self._scrollarea)
         self._widgets[widget.get_id()] = widget
         self._widgets_props[widget.get_id()] = (alignment, vertical_position)
 
         # noinspection PyProtectedMember
-        menu_widgets = menu._widgets
+        menu_widgets = self._menu._widgets
 
         # Sort widgets to keep selection order
         if widget.get_menu() is not None:
-            menu._validate_frame_widgetmove = False
+            self._menu._validate_frame_widgetmove = False
             widgets_list = list(self._widgets.values())
 
             # Move frame to last
             if len(self._widgets) > 1:
-                menu.move_widget_index(self, self.get_last_widget(), render=False)
+                wlast = widgets_list[-2]  # -1 is the last added
+                for i in range(2, len(self._widgets)):
+                    if wlast.get_menu() is None and len(self._widgets) > 2:
+                        wlast = widgets_list[-(i + 1)]
+                    else:
+                        break
+
+                # Check for last if wlast is frame
+                while True:
+                    if not (isinstance(wlast, Frame) and wlast.get_indices() != (-1, -1)) or wlast.get_menu() is None:
+                        break
+                    wlast = menu_widgets[wlast.last_index]
+
+                if wlast.get_menu() == self._menu:
+                    self._menu.move_widget_index(self, wlast, render=False)
 
             # Swap
-            menu.move_widget_index(widget, self, render=False)
+            self._menu.move_widget_index(widget, self, render=False)
             if isinstance(widget, Frame):
                 reverse = menu_widgets.index(widget) == len(menu_widgets) - 1
                 widgs = widget.get_widgets(unpack_subframes_include_frame=True, reverse=reverse)
                 for w in widgs:
                     if w.get_menu() is None:
                         continue
-                    menu.move_widget_index(w, self, render=False)
+                    self._menu.move_widget_index(w, self, render=False)
                 if len(widgs) >= 1:
                     swap_target = widgs[-1]
                     if not reverse:
@@ -811,46 +905,32 @@ class Frame(Widget):
 
             # Move widget to first
             menu_widgets.remove(self)
-            menu_widgets.insert(menu_widgets.index(widgets_list[0]), self)
-            menu._validate_frame_widgetmove = True
+            for k in range(len(widgets_list)):
+                if widgets_list[k].get_menu() == self._menu:
+                    menu_widgets.insert(menu_widgets.index(widgets_list[k]), self)
+                    break
+            self._menu._validate_frame_widgetmove = True
 
         if self._control_widget is None and widget.get_menu() is not None:
             self._control_widget = widget
             self._control_widget_last_pos = self._control_widget.get_position()
 
+        if isinstance(widget, Frame):
+            self._has_frames = True
+
+        # Update menu selected widget
+        self._menu.move_widget_index(None, update_selected_index=True)
+
         # Render is mandatory as it modifies row/column layout
         try:
+            self.update_position()
             # noinspection PyProtectedMember
-            menu._render()
+            self._menu._render()
         except _FrameSizeException:
             self.unpack(widget)
             raise
 
         return widget
-
-    def get_last_widget(self, recursive: bool = True) -> 'Widget':
-        """
-        Return the last widget.
-
-        :param recursive: If ``True`` return the last widget if Frame is the last one
-        :return: Widget
-        """
-        # noinspection PyProtectedMember
-        menu_widgets = self.get_menu()._widgets
-        widgets_list = list(self._widgets.values())
-        wlast = widgets_list[-2]
-        for i in range(2, len(self._widgets)):
-            if wlast.get_menu() is None:
-                wlast = widgets_list[-(i + 1)]
-
-        # Check for last if wlast is frame
-        if recursive:
-            while True:
-                if not (isinstance(wlast, Frame) and wlast.get_indices() != (-1, -1)) or wlast.get_menu() is None:
-                    break
-                wlast = menu_widgets[wlast.last_index]
-
-        return wlast
 
     def contains_widget(self, widget: 'Widget') -> bool:
         """
@@ -861,16 +941,25 @@ class Frame(Widget):
         """
         return widget.get_frame() == self and widget.get_id() in self._widgets.keys()
 
-    def update_indices(self) -> None:
+    def update_indices(self) -> 'Frame':
         """
         Update first and last selectable widget index.
 
+        :return: Self reference
+        """
+        if not self._has_frames:  # Public index update only triggered if frame does not contain subframes
+            self._update_indices()
+        return self
+
+    def _update_indices(self) -> None:
+        """
+        Private update indices method.
+
         :return: None
         """
-        widgs = self.get_widgets(unpack_subframes=False)
         self.first_index = -1
         self.last_index = -1
-        for widget in widgs:
+        for widget in self.get_widgets(unpack_subframes=False):
             if (widget.is_selectable or isinstance(widget, Frame)) and widget.get_menu() is not None:
                 if isinstance(widget, Frame) and widget.get_indices() == (-1, -1):
                     continue  # Frames with not selectable indices are not counted
@@ -881,6 +970,8 @@ class Frame(Widget):
                 else:
                     self.first_index = min(self.first_index, windex)
                     self.last_index = max(self.last_index, windex)
+        if self.get_frame() is not None:
+            self.get_frame()._update_indices()
 
 
 class _FrameSizeException(Exception):
