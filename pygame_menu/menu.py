@@ -40,7 +40,6 @@ import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.widgets
 import pygame_menu.controls as _controls
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
@@ -3424,7 +3423,6 @@ class Menu(object):
             target_widget = self._widgets[target_index]
             if both_frames and self._validate_frame_widgetmove and not kwargs.get('swap_search', False):
                 return self.move_widget_index(target_widget, widget, render=render, swap_search=True, depth=depth + 1)
-            pass
 
         # Check both widgets are within frame if widget to move is frame
         if self._validate_frame_widgetmove and not to_last_position and not both_frames:

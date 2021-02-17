@@ -40,7 +40,6 @@ import webbrowser
 
 import pygame
 import pygame_menu
-import pygame_menu.widgets
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
