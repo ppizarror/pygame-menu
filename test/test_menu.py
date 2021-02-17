@@ -1484,35 +1484,35 @@ class MenuTest(unittest.TestCase):
 
         # Click widget
         menu_top.enable()
-        menu_top.update([PygameUtils.middle_rect_click(widg[1], evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update(PygameUtils.middle_rect_click(widg[1], evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(menu.get_selected_widget(), widg[1])
-        menu_top.update([PygameUtils.middle_rect_click(widg[0], evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update(PygameUtils.middle_rect_click(widg[0], evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(menu.get_selected_widget(), widg[0])
-        menu_top.update([PygameUtils.middle_rect_click(widg[1], evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update(PygameUtils.middle_rect_click(widg[1], evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(menu.get_selected_widget(), widg[1])
 
         # It should not change the menu selection (button up)
         self.assertTrue(
-            menu_top.update([PygameUtils.middle_rect_click(widg[1], evtype=pygame.MOUSEBUTTONUP)]))
+            menu_top.update(PygameUtils.middle_rect_click(widg[1], evtype=pygame.MOUSEBUTTONUP)))
         self.assertEqual(menu.get_selected_widget(), widg[1])
 
         # Applying button up in a non-selected widget must return false
         self.assertFalse(
-            menu.update([PygameUtils.middle_rect_click(widg[0], evtype=pygame.MOUSEBUTTONUP)]))
+            menu.update(PygameUtils.middle_rect_click(widg[0], evtype=pygame.MOUSEBUTTONUP)))
 
         # Fingerdown don't change selected widget if _touchscreen_motion_selection is enabled
         self.assertTrue(menu._touchscreen_motion_selection)
-        menu.update([PygameUtils.middle_rect_click(widg[0], evtype=pygame.FINGERDOWN)])
+        menu.update(PygameUtils.middle_rect_click(widg[0], evtype=pygame.FINGERDOWN))
         # self.assertNotEqual(menu.get_selected_widget(), widg[0])
 
         # If touchscreen motion is disabled, then fingerdown should select the widget
         menu._touchscreen_motion_selection = False
-        menu.update([PygameUtils.middle_rect_click(widg[1], evtype=pygame.FINGERDOWN)])
+        menu.update(PygameUtils.middle_rect_click(widg[1], evtype=pygame.FINGERDOWN))
         self.assertEqual(menu.get_selected_widget(), widg[1])
         menu._touchscreen_motion_selection = True
 
         # Fingermoution should select widgets as touchscreen is active
-        menu.update([PygameUtils.middle_rect_click(widg[0], evtype=pygame.FINGERMOTION)])
+        menu.update(PygameUtils.middle_rect_click(widg[0], evtype=pygame.FINGERMOTION))
         self.assertEqual(menu.get_selected_widget(), widg[0])
 
         # Infinite joy
@@ -1531,13 +1531,13 @@ class MenuTest(unittest.TestCase):
         widg.active = True
 
         # Clicking the same rect should not fire the callback
-        menu_top.update([PygameUtils.middle_rect_click(widg, evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update(PygameUtils.middle_rect_click(widg, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertTrue(widg.active)
         self.assertTrue(widg.is_selected())
 
         widg._rect.x += 500
         menu._mouse_motion_selection = True
-        menu_top.update([PygameUtils.middle_rect_click(widg, evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update(PygameUtils.middle_rect_click(widg, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertFalse(widg.active)
 
         # Test mouseover and mouseleave
@@ -1606,209 +1606,6 @@ class MenuTest(unittest.TestCase):
         menu.update([pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 0})])  # Enter
         self.assertFalse(test[0])
 
-    def test_frame(self) -> None:
-        """
-        Test frame menu support.
-        """
-        # Test frame movement
-        theme = TEST_THEME.copy()
-        theme.widget_font_size = 20
-        menu = MenuUtils.generic_menu(columns=3, rows=2, theme=theme)
-
-        # btn0 | f1(btn2,btn3,btn4,btn5) | f2(btn7,
-        #      |                         |    btn8,
-        #      |                         |    f3(btn9,btn10))
-        # btn1 |           btn6          | f4(btn11,btn12,btn13)
-        btn0 = menu.add.button('btn0')
-        btn1 = menu.add.button('btn1')
-        f1 = menu.add.frame_h(200, 50, frame_id='f1')
-        btn2 = menu.add.button('btn2 ')
-        btn3 = menu.add.button('btn3 ')
-        btn4 = menu.add.button('btn4 ')
-        btn5 = menu.add.button('btn5 ')
-        btn6 = menu.add.button('btn6')
-        f2 = menu.add.frame_v(200, 132, background_color=(100, 0, 0), frame_id='f2')
-        f3 = menu.add.frame_h(200, 50, background_color=(0, 0, 100), frame_id='f3')
-        f4 = menu.add.frame_h(260, 50, frame_id='f4')
-        btn7 = menu.add.button('btn7')
-        btn8 = menu.add.button('btn8')
-        btn9 = menu.add.button('btn9 ')
-        btn10 = menu.add.button('btn10')
-        btn11 = menu.add.button('btn11 ')
-        btn12 = menu.add.button('btn12 ')
-        btn13 = menu.add.button('btn13')
-        f1.pack((btn2, btn3, btn4, btn5))
-        f3.pack((btn9, btn10))
-        f2.pack((btn7, btn8, f3), alignment=pygame_menu.locals.ALIGN_CENTER)
-        f4.pack((btn11, btn12, btn13))
-
-        # Test min max indices
-        self.assertEqual(f1.get_indices(), (2, 5))
-        self.assertEqual(f2.get_indices(), (8, 10))
-        self.assertEqual(f3.get_indices(), (12, 13))
-        self.assertEqual(f4.get_indices(), (14, 16))
-
-        # Check positioning
-        self.assertEqual(btn0.get_col_row_index(), (0, 0, 0))
-        self.assertEqual(btn1.get_col_row_index(), (0, 1, 1))
-        self.assertEqual(f1.get_col_row_index(), (1, 0, 6))
-        self.assertEqual(btn6.get_col_row_index(), (1, 1, 7))
-        self.assertEqual(f2.get_col_row_index(), (2, 0, 11))
-        self.assertEqual(f4.get_col_row_index(), (2, 1, 17))
-
-        self.assertFalse(f1.is_scrollable)
-        self.assertFalse(f2.is_scrollable)
-        self.assertFalse(f3.is_scrollable)
-        self.assertEqual(menu._test_widgets_status(), (
-            (('Button-btn0', (0, 0, 0), (13, 77), (1, 0, 1, 1, 0, 0, (42, 28))),
-             ('Button-btn1', (0, 1, 1), (13, 115), (1, 0, 0, 1, 0, 0, (42, 28))),
-             ('Button-btn2 ', (1, 0, 2), (84, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn3 ', (1, 0, 3), (131, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn4 ', (1, 0, 4), (178, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn5 ', (1, 0, 5), (225, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Frame',
-              (1, 0, 6),
-              (84, 77),
-              ('Button-btn2 ', (1, 0, 2), (84, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn3 ', (1, 0, 3), (131, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn4 ', (1, 0, 4), (178, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn5 ', (1, 0, 5), (225, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              (2, 5),
-              (0, 0, 0, 1, 0, 0, (200, 50))),
-             ('Button-btn6', (1, 1, 7), (163, 137), (1, 0, 0, 1, 0, 0, (42, 28))),
-             ('Button-btn7', (2, 0, 8), (430, 77), (1, 0, 0, 1, 1, 0, (42, 28))),
-             ('Button-btn8', (2, 0, 9), (430, 105), (1, 0, 0, 1, 1, 0, (42, 28))),
-             ('Frame',
-              (2, 0, 10),
-              (351, 133),
-              ('Button-btn9 ', (2, 0, 12), (351, 133), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn10', (2, 0, 13), (398, 133), (1, 0, 0, 1, 1, 0, (53, 28))),
-              (12, 13),
-              (0, 0, 0, 1, 1, 0, (200, 50))),
-             ('Frame',
-              (2, 0, 11),
-              (351, 77),
-              ('Button-btn7', (2, 0, 8), (430, 77), (1, 0, 0, 1, 1, 0, (42, 28))),
-              ('Button-btn8', (2, 0, 9), (430, 105), (1, 0, 0, 1, 1, 0, (42, 28))),
-              ('Button-btn9 ', (2, 0, 12), (351, 133), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn10', (2, 0, 13), (398, 133), (1, 0, 0, 1, 1, 0, (53, 28))),
-              (8, 10),
-              (0, 0, 0, 1, 0, 0, (200, 132))),
-             ('Button-btn9 ', (2, 0, 12), (351, 133), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn10', (2, 0, 13), (398, 133), (1, 0, 0, 1, 1, 0, (53, 28))),
-             ('Button-btn11 ', (2, 1, 14), (321, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-             ('Button-btn12 ', (2, 1, 15), (379, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-             ('Button-btn13', (2, 1, 16), (437, 219), (1, 0, 0, 1, 1, 0, (53, 28))),
-             ('Frame',
-              (2, 1, 17),
-              (321, 219),
-              ('Button-btn11 ', (2, 1, 14), (321, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-              ('Button-btn12 ', (2, 1, 15), (379, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-              ('Button-btn13', (2, 1, 16), (437, 219), (1, 0, 0, 1, 1, 0, (53, 28))),
-              (14, 16),
-              (0, 0, 0, 1, 0, 0, (260, 50))))
-        ))
-
-        # Arrow keys
-        self.assertEqual(menu.get_selected_widget(), btn0)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn7)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn0)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn10)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn9)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn0)
-        for bt in (btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn0, btn1):
-            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
-            self.assertEqual(menu.get_selected_widget(), bt)
-        for bt in (btn6, btn11, btn12, btn13, btn1):
-            menu.update(PygameUtils.joy_key(JOY_RIGHT))
-            self.assertEqual(menu.get_selected_widget(), bt)
-        for bt in (btn0, btn13, btn12, btn11, btn10, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0):
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-            self.assertEqual(menu.get_selected_widget(), bt)
-        menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn1)
-        for bt in (btn13, btn12, btn11, btn6, btn1):
-            menu.update(PygameUtils.joy_key(JOY_LEFT))
-            self.assertEqual(menu.get_selected_widget(), bt)
-
-        # btn0 | f1(btn2,btn3,btn4,btn5) | f2(btn7,
-        #      |                         |    btn8)
-        # btn1 |            btn6         | f4(btn11,btn12,btn13)+(floating9,10)
-        self.assertEqual(len(f2._widgets), 3)
-        self.assertEqual(len(f3._widgets), 2)
-        menu.remove_widget(f3)
-        self.assertEqual(len(f2._widgets), 2)
-        self.assertEqual(len(f3._widgets), 0)
-        self.assertEqual(menu._test_widgets_status(), (
-            (('Button-btn0', (0, 0, 0), (17, 77), (1, 0, 0, 1, 0, 0, (42, 28))),
-             ('Button-btn1', (0, 1, 1), (17, 115), (1, 0, 1, 1, 0, 0, (42, 28))),
-             ('Button-btn2 ', (1, 0, 2), (107, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn3 ', (1, 0, 3), (154, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn4 ', (1, 0, 4), (201, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Button-btn5 ', (1, 0, 5), (248, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-             ('Frame',
-              (1, 0, 6),
-              (107, 77),
-              ('Button-btn2 ', (1, 0, 2), (107, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn3 ', (1, 0, 3), (154, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn4 ', (1, 0, 4), (201, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              ('Button-btn5 ', (1, 0, 5), (248, 77), (1, 0, 0, 1, 1, 0, (47, 28))),
-              (2, 5),
-              (0, 0, 0, 1, 0, 0, (200, 50))),
-             ('Button-btn6', (1, 1, 7), (186, 137), (1, 0, 0, 1, 0, 0, (42, 28))),
-             ('Button-btn7', (2, 0, 8), (449, 77), (1, 0, 0, 1, 1, 0, (42, 28))),
-             ('Button-btn8', (2, 0, 9), (449, 105), (1, 0, 0, 1, 1, 0, (42, 28))),
-             ('Frame',
-              (2, 0, 10),
-              (370, 77),
-              ('Button-btn7', (2, 0, 8), (449, 77), (1, 0, 0, 1, 1, 0, (42, 28))),
-              ('Button-btn8', (2, 0, 9), (449, 105), (1, 0, 0, 1, 1, 0, (42, 28))),
-              (8, 9),
-              (0, 0, 0, 1, 0, 0, (200, 132))),
-             ('Button-btn11 ', (2, 1, 11), (340, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-             ('Button-btn12 ', (2, 1, 12), (398, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-             ('Button-btn13', (2, 1, 13), (456, 219), (1, 0, 0, 1, 1, 0, (53, 28))),
-             ('Frame',
-              (2, 1, 14),
-              (340, 219),
-              ('Button-btn11 ', (2, 1, 11), (340, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-              ('Button-btn12 ', (2, 1, 12), (398, 219), (1, 0, 0, 1, 1, 0, (58, 28))),
-              ('Button-btn13', (2, 1, 13), (456, 219), (1, 0, 0, 1, 1, 0, (53, 28))),
-              (11, 13),
-              (0, 0, 0, 1, 0, 0, (260, 50))),
-             ('Button-btn9 ', (2, 1, 15), (446, 219), (1, 1, 0, 1, 0, 0, (47, 28))),
-             ('Button-btn10', (2, 1, 16), (443, 219), (1, 1, 0, 1, 0, 0, (53, 28))))
-        ))
-
-        menu.select_widget(btn0)
-        for i in range(14):
-            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn0)
-        for i in range(14):
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn0)
-
     # noinspection PyTypeChecker
     def test_widget_move_index(self) -> None:
         """
@@ -1830,15 +1627,27 @@ class MenuTest(unittest.TestCase):
                 sel.append(int(w == selected))
             if PYGAME_V2:
                 self.assertEqual(menu._test_widgets_status(), (
-                    ('Button-' + button[0].get_title(), (0, 0, 0), (291, 102), (1, 0, sel[0], 1, 0, 0, (17, 41))),
-                    ('Button-' + button[1].get_title(), (0, 1, 1), (291, 153), (1, 0, sel[1], 1, 0, 0, (17, 41))),
-                    ('Button-' + button[2].get_title(), (0, 2, 2), (291, 204), (1, 0, sel[2], 1, 0, 0, (17, 41)))
+                    (('Button-' + button[0].get_title(),
+                      (0, 0, 0, 291, 102, 17, 41, 291, 257, 291, 102),
+                      (1, 0, sel[0], 1, 0, 0, 0)),
+                     ('Button-' + button[1].get_title(),
+                      (0, 1, 1, 291, 153, 17, 41, 291, 308, 291, 153),
+                      (1, 0, sel[1], 1, 0, 0, 0)),
+                     ('Button-' + button[2].get_title(),
+                      (0, 2, 2, 291, 204, 17, 41, 291, 359, 291, 204),
+                      (1, 0, sel[2], 1, 0, 0, 0)))
                 ))
             else:
                 self.assertEqual(menu._test_widgets_status(), (
-                    ('Button-' + button[0].get_title(), (0, 0, 0), (291, 100), (1, 0, sel[0], 1, 0, 0, (17, 42))),
-                    ('Button-' + button[1].get_title(), (0, 1, 1), (291, 152), (1, 0, sel[1], 1, 0, 0, (17, 42))),
-                    ('Button-' + button[2].get_title(), (0, 2, 2), (291, 204), (1, 0, sel[2], 1, 0, 0, (17, 42)))
+                    (('Button-' + button[0].get_title(),
+                      (0, 0, 0, 291, 100, 17, 42, 291, 255, 291, 100),
+                      (1, 0, sel[0], 1, 0, 0, 0)),
+                     ('Button-' + button[1].get_title(),
+                      (0, 1, 1, 291, 152, 17, 42, 291, 307, 291, 152),
+                      (1, 0, sel[1], 1, 0, 0, 0)),
+                     ('Button-' + button[2].get_title(),
+                      (0, 2, 2, 291, 204, 17, 42, 291, 359, 291, 204),
+                      (1, 0, sel[2], 1, 0, 0, 0)))
                 ))
 
         test_order((btn1, btn2, btn3), btn1)
@@ -1848,9 +1657,8 @@ class MenuTest(unittest.TestCase):
         test_order((btn3, btn2, btn1), btn1)
         menu.move_widget_index(btn2, btn1)  # 2 after 1
         test_order((btn3, btn1, btn2), btn1)
-        self.assertRaises(AssertionError, lambda: menu.move_widget_index(btn2, btn1, append=False))
         self.assertRaises(AssertionError, lambda: menu.move_widget_index(btn2, btn2))
-        menu.move_widget_index(btn1, btn2, append=False)  # 2 after 1
+        menu.move_widget_index(btn1, btn2)  # 2 after 1
         test_order((btn3, btn2, btn1), btn1)
 
         # Reverse
@@ -1932,7 +1740,7 @@ class MenuTest(unittest.TestCase):
             surface.fill((255, 255, 255), btn1.get_rect(to_real_position=True))
 
         deco.add_callable(drawrect, prev=False, pass_args=False)
-        menu.update([PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
@@ -1942,26 +1750,26 @@ class MenuTest(unittest.TestCase):
             self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
 
         # Place mouse away. This should force widget 1 mouseleave
-        menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(test, [True, True, False, False])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         self.assertIsNone(menu._widget_mouseover)
 
         # Place over widget 2
-        menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(test, [True, True, True, False])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])  # button 2 don't have any cursor
 
         # Place mouse away. This should force widget 1 mouseleave
-        menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(test, [True, True, True, True])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         self.assertIsNone(menu._widget_mouseover)
 
         # Test immediate switch, from 1 to 2, then from 2 to 1, then off
         test = [False, False, False, False]
-        menu.update([PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
@@ -1969,12 +1777,12 @@ class MenuTest(unittest.TestCase):
             self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         else:
             self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, True, True, False])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(test, [True, True, True, True])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         self.assertIsNone(menu._widget_mouseover)
@@ -1984,7 +1792,7 @@ class MenuTest(unittest.TestCase):
         test = [False, False, False, False]
         menu.select_widget(btn2)
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update([PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(menu._widget_mouseover, btn1)
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
@@ -1992,12 +1800,12 @@ class MenuTest(unittest.TestCase):
             self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         else:
             self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update([PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(menu._widget_mouseover, btn2)
         self.assertEqual(menu.get_selected_widget(), btn2)
         self.assertEqual(test, [True, True, True, False])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update([PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION)])
+        menu.update(PygameUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
         self.assertEqual(test, [True, True, True, True])
         self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
         self.assertIsNone(menu._widget_mouseover)

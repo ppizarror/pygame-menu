@@ -39,8 +39,8 @@ from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface, TES
 import pygame
 import pygame_menu
 from pygame_menu import locals as _locals
-from pygame_menu.controls import KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, KEY_MOVE_DOWN
-from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT
+from pygame_menu.locals import ORIENTATION_VERTICAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
@@ -51,7 +51,7 @@ class WidgetsTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """
-        Setup sound engine.
+        Setup widgets test.
         """
         test_reset_surface()
 
@@ -110,49 +110,49 @@ class WidgetsTest(unittest.TestCase):
         btn2 = menu.add.button('nice', onselect=on_select)
         self.assertEqual(test[0], btn)
         btn2.is_selectable = False
-        btn2.select()
+        btn2.select(update_menu=True)
         self.assertEqual(test[0], btn)
         btn2.is_selectable = True
-        btn2.select()
+        btn2.select(update_menu=True)
         self.assertEqual(test[0], btn2)
 
         # Color
         color = menu.add.color_input('nice', 'rgb', onselect=on_select)
-        color.select()
+        color.select(update_menu=True)
         self.assertEqual(test[0], color)
 
         # Image
         image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select, font_color=(2, 9))
-        image.select()
+        image.select(update_menu=True)
         self.assertEqual(test[0], color)
         image.is_selectable = True
-        image.select()
+        image.select(update_menu=True)
         self.assertEqual(test[0], image)
 
         # Label
         label = menu.add.label('label', onselect=on_select)
         label.is_selectable = True
-        label.select()
+        label.select(update_menu=True)
         self.assertEqual(test[0], label)
 
         # None, it cannot be selected
         none = menu.add.none_widget()
-        none.select()
+        none.select(update_menu=True)
         self.assertEqual(test[0], label)
 
         # Selector
         selector = menu.add.selector('nice', ['nice', 'epic'], onselect=on_select)
-        selector.select()
+        selector.select(update_menu=True)
         self.assertEqual(test[0], selector)
 
         # Textinput
         text = menu.add.text_input('nice', onselect=on_select)
-        text.select()
+        text.select(update_menu=True)
         self.assertEqual(test[0], text)
 
         # Vmargin
         vmargin = menu.add.vertical_margin(10)
-        vmargin.select()
+        vmargin.select(update_menu=True)
         self.assertEqual(test[0], text)
 
     @staticmethod
@@ -731,7 +731,7 @@ class WidgetsTest(unittest.TestCase):
         textinput.set_value('new_value')  # No error
         textinput._selected = False
         textinput.draw(surface)
-        textinput._selected = True
+        textinput.select(update_menu=True)
         textinput.draw(surface)
         self.assertEqual(textinput.get_value(), 'new_value')
         textinput.clear()
@@ -743,7 +743,7 @@ class WidgetsTest(unittest.TestCase):
         passwordinput.set_value('')  # No error
         passwordinput._selected = False
         passwordinput.draw(surface)
-        passwordinput._selected = True
+        passwordinput.select(update_menu=True)
         passwordinput.draw(surface)
         self.assertEqual(passwordinput.get_value(), '')
         passwordinput.clear()
@@ -1533,483 +1533,3 @@ class WidgetsTest(unittest.TestCase):
         # Assert switch values
         self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
                                                                      onchange=onchange, infinite=False))
-
-    def test_frame(self) -> None:
-        """
-        Test frame widget containers.
-        """
-        menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
-
-        menu.add.button('rr')
-        frame = menu.add.frame_h(250, 100, background_color=(200, 0, 0))
-        btn = menu.add.button('nice1')
-        menu.add.button('44')
-        frame2 = menu.add.frame_v(50, 250, background_color=(0, 0, 200))
-        btn2 = menu.add.button('nice2')
-        btn3 = menu.add.button('nice3')
-
-        frame11 = menu.add.frame_v(50, 90, background_color=(0, 200, 0))
-
-        btn11 = menu.add.button('11')
-        btn12 = menu.add.button('12')
-
-        frame11.pack(btn11)
-        frame11.pack(btn12)
-
-        frame.pack(btn)
-        frame.pack(btn2, pygame_menu.locals.ALIGN_CENTER, vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame.pack(frame11, pygame_menu.locals.ALIGN_RIGHT, vertical_position=pygame_menu.locals.POSITION_SOUTH)
-
-        frame2.pack(menu.add.button('1'))
-        frame2.pack(menu.add.button('2'), alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame2.pack(menu.add.button('3'), alignment=pygame_menu.locals.ALIGN_RIGHT)
-
-        for w in frame.get_widgets():
-            w.get_selection_effect().zero_margin()
-        for w in frame2.get_widgets():
-            w.get_selection_effect().zero_margin()
-
-        menu.render()
-        wid = menu.get_widgets()
-        self.assertEqual(wid[0].get_col_row_index(), (0, 0, 0))
-        self.assertEqual(wid[1].get_col_row_index(), (0, 1, 1))
-        self.assertEqual(wid[2].get_col_row_index(), (0, 1, 2))
-        self.assertEqual(wid[3].get_col_row_index(), (0, 1, 3))
-        self.assertEqual(wid[4].get_col_row_index(), (0, 1, 4))
-        self.assertEqual(wid[5].get_col_row_index(), (0, 2, 5))
-        self.assertEqual(wid[6].get_col_row_index(), (0, 3, 6))
-        self.assertEqual(wid[7].get_col_row_index(), (0, 3, 7))
-        self.assertEqual(wid[8].get_col_row_index(), (0, 3, 8))
-        self.assertEqual(wid[9].get_col_row_index(), (0, 3, 9))
-        self.assertEqual(wid[10].get_col_row_index(), (0, 4, 10))
-        self.assertEqual(wid[11].get_col_row_index(), (0, 1, 11))
-        self.assertEqual(wid[12].get_col_row_index(), (0, 1, 12))
-
-        self.assertIsNone(btn3.get_frame())
-        self.assertEqual(btn2.get_frame(), frame)
-        self.assertEqual(btn2.get_translate(), (0, 0))
-        self.assertEqual(btn2.get_translate(virtual=True), (88, 29))
-        self.assertFalse(btn2.is_floating())
-        menu.remove_widget(btn2)
-        self.assertIsNone(btn2.get_frame())
-        self.assertEqual(btn2.get_translate(), (0, 0))
-        self.assertEqual(btn2.get_translate(virtual=True), (0, 0))
-        self.assertTrue(btn2.is_floating())
-
-        wid = menu.get_widgets()
-        if PYGAME_V2:
-            self.assertEqual(wid[0].get_position(), (288, 5))
-            self.assertEqual(wid[1].get_position(), (175, 56))
-            self.assertEqual(wid[2].get_position(), (375, 66))
-            self.assertEqual(wid[3].get_position(), (175, 56))
-            self.assertEqual(wid[4].get_position(), (283, 166))
-            self.assertEqual(wid[5].get_position(), (275, 217))
-            self.assertEqual(wid[6].get_position(), (291, 258))
-            self.assertEqual(wid[7].get_position(), (308, 299))
-            self.assertEqual(wid[8].get_position(), (275, 217))
-            self.assertEqual(wid[9].get_position(), (263, 477))
-            self.assertEqual(wid[10].get_position(), (375, 66))
-            self.assertEqual(wid[11].get_position(), (375, 107))
-        else:
-            self.assertEqual(wid[0].get_position(), (288, 5))
-            self.assertEqual(wid[1].get_position(), (175, 57))
-            self.assertEqual(wid[2].get_position(), (375, 67))
-            self.assertEqual(wid[3].get_position(), (175, 57))
-            self.assertEqual(wid[4].get_position(), (283, 167))
-            self.assertEqual(wid[5].get_position(), (275, 219))
-            self.assertEqual(wid[6].get_position(), (291, 261))
-            self.assertEqual(wid[7].get_position(), (308, 303))
-            self.assertEqual(wid[8].get_position(), (275, 219))
-            self.assertEqual(wid[9].get_position(), (263, 479))
-            self.assertEqual(wid[10].get_position(), (375, 67))
-            self.assertEqual(wid[11].get_position(), (375, 109))
-
-        theme = TEST_THEME.copy()
-        menu = MenuUtils.generic_menu(theme=theme)
-        menu.get_theme().widget_selection_effect.zero_margin()
-        menu.get_theme().widget_font_size = 18
-
-        frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
-        frame_title = menu.add.frame_h(250, 30, background_color=(180, 180, 180))
-        frame_content = menu.add.frame_v(250, 120)
-        frame.pack(frame_title)
-        frame.pack(frame_content)
-
-        frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
-        closebtn = frame_title.pack(
-            menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(160, 160, 160)),
-            alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
-        frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255), font_color=(2000, 0, 0))
-        frame_content.pack(frame_numbers)
-        for i in range(9):
-            frame_numbers.pack(menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), font_size=30),
-                               alignment=pygame_menu.locals.ALIGN_CENTER)
-        self.assertRaises(AssertionError, lambda: frame_numbers.pack(closebtn))
-        frame_content.pack(menu.add.vertical_margin(15))
-        frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
-        menu.render()
-
-        self.assertEqual(menu.get_width(widget=True), 250)
-        self.assertEqual(menu.get_height(widget=True), 150)
-        self.assertEqual(menu._widget_offset[1], 97)
-        self.assertEqual(frame_numbers.get_widgets()[0].get_translate(), (0, 0))
-        self.assertEqual(frame_numbers.get_widgets()[0].get_translate(virtual=True), (48, 0))
-        if PYGAME_V2:
-            self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 153))
-        else:
-            self.assertEqual(frame_numbers.get_widgets()[0].get_position(), (223, 154))
-        self.assertEqual(frame_numbers._recursive_render, 0)
-        previwdg = frame_numbers.get_widgets()
-        cwidget = frame_numbers._control_widget
-        self.assertEqual(cwidget, previwdg[0])
-        frame_numbers.unpack(cwidget)
-        self.assertTrue(cwidget.is_floating())
-        self.assertIn(cwidget, menu.get_widgets())
-        self.assertRaises(ValueError, lambda: frame_numbers.unpack(previwdg[0]))
-        self.assertEqual(frame_numbers._control_widget, previwdg[1])
-        for w in frame_numbers.get_widgets():
-            frame_numbers.unpack(w)
-        self.assertEqual(len(frame_numbers._widgets), 0)
-        self.assertRaises(AssertionError, lambda: frame_numbers.unpack(previwdg[0]))
-
-        # Test sizes
-        size_exception = pygame_menu.widgets.widget.frame._FrameSizeException
-        self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(100, 400)))
-        self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(400, 10)))
-        self.assertEqual(len(frame_numbers.get_widgets(unpack_subframes_include_frame=True)), 0)
-        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_RIGHT)
-        frame_numbers.pack(menu.add.frame_v(10, 10))
-
-        frame_v = menu.add.frame_v(400, 100, font_color=(2000, 0, 0))  # Clearly a invalid font color
-        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 400)))
-        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(500, 100)))
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_CENTER)
-        frame_v.pack(menu.add.frame_v(25, 25), vertical_position=pygame_menu.locals.POSITION_SOUTH)
-        self.assertRaises(size_exception, lambda: frame_v.pack(menu.add.frame_v(100, 1)))
-
-        # Apply transforms
-        wid = frame_v
-        wid.set_position(1, 1)
-        self.assertEqual(wid.get_position(), (1, 1))
-
-        wid.translate(1, 1)
-        self.assertEqual(wid.get_translate(), (1, 1))
-
-        wid.rotate(10)
-        self.assertEqual(wid._angle, 0)
-
-        wid.scale(100, 100)
-        self.assertFalse(wid._scale[0])
-        self.assertEqual(wid._scale[1], 1)
-        self.assertEqual(wid._scale[2], 1)
-
-        wid.resize(10, 10)
-        self.assertFalse(wid._scale[0])
-        self.assertEqual(wid._scale[1], 1)
-        self.assertEqual(wid._scale[2], 1)
-
-        wid.flip(True, True)
-        self.assertFalse(wid._flip[0])
-        self.assertFalse(wid._flip[1])
-
-        wid.set_max_width(100)
-        self.assertIsNone(wid._max_width[0])
-
-        wid.set_max_height(100)
-        self.assertIsNone(wid._max_height[0])
-
-        # Selection
-        wid.select()
-        self.assertFalse(wid.is_selected())
-        self.assertFalse(wid.is_selectable)
-
-        weff = wid.get_selection_effect()
-        wid.set_selection_effect(menu.get_theme().widget_selection_effect)
-        self.assertEqual(wid.get_selection_effect(), weff)
-
-        draw = [False]
-
-        # noinspection PyUnusedLocal
-        def _draw(*args) -> None:
-            draw[0] = True
-
-        drawid = wid.add_draw_callback(_draw)
-        wid.draw(surface)
-        self.assertTrue(draw[0])
-        draw[0] = False
-        wid.remove_draw_callback(drawid)
-        wid.draw(surface)
-        self.assertFalse(draw[0])
-
-        wid._draw(surface)
-        wid.update([])
-
-        # Test frame with Widgets not included in same menu
-        frame_v.empty()
-        self.assertEqual(frame_v.get_widgets(), ())
-        b1 = frame_v.pack(menu.add.button('v1'))
-        b2 = frame_v.pack(menu.add.button('v1'))
-        self.assertFalse(b1.is_floating())
-        self.assertFalse(b2.is_floating())
-        self.assertEqual(b1.get_frame(), frame_v)
-        self.assertEqual(b2.get_frame(), frame_v)
-        self.assertEqual(b1.get_translate(virtual=True), (0, 0))
-        if PYGAME_V2:
-            self.assertEqual(b2.get_translate(virtual=True), (0, 25))
-        else:
-            self.assertEqual(b2.get_translate(virtual=True), (0, 26))
-        menu.remove_widget(frame_v)
-        self.assertTrue(b1.is_floating())
-        self.assertTrue(b2.is_floating())
-        self.assertEqual(b1.get_frame(), None)
-        self.assertEqual(b2.get_frame(), None)
-        self.assertEqual(frame_v.get_menu(), None)
-        self.assertEqual(b1.get_translate(virtual=True), (0, 0))
-        self.assertEqual(b2.get_translate(virtual=True), (0, 0))
-
-        # Test widget addition on frame which is not inserted in a menu
-        self.assertRaises(AssertionError, lambda: frame_v.pack(menu.add.button('invalid')))
-
-        h = menu.add.frame_h(400, 300, background_color=(0, 60, 80))
-        btn = pygame_menu.widgets.Button('button')
-        self.assertRaises(AssertionError, lambda: h.pack(btn))  # Not configured
-        menu.add._configure_defaults_widget(btn)
-        h.pack(btn)
-        h.pack(menu.add.button('button legit'))
-        self.assertTrue(h.contains_widget(btn))
-
-    def test_scrollarea_frame(self) -> None:
-        """
-        Test scrollarea frame.
-        """
-        menu = MenuUtils.generic_menu()
-        self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_width=400))
-        self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_height=500))
-        self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_height=-1))
-        img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
-        frame_sc = menu.add.frame_v(300, 400, max_height=200, background_color=img)
-        frame_scroll = frame_sc.get_scrollarea(inner=True)
-        frame2 = menu.add.frame_v(300, 200, background_color=(30, 30, 30), padding=25)
-        menu.add.frame_v(300, 200, background_color=(255, 255, 0))
-        btn_frame21 = frame2.pack(menu.add.button('Button frame nosc'))
-        btn_frame22 = frame2.pack(menu.add.button('Button frame nosc 2'))
-        btn = frame_sc.pack(menu.add.button('Nice', lambda: print('Clicked'), padding=10))
-        btn2 = frame_sc.pack(menu.add.button('Nice2', lambda: print('Clicked'), padding=10))
-        btn3 = frame_sc.pack(menu.add.button('Nice3', lambda: print('Clicked'), padding=10))
-        btn4 = frame_sc.pack(menu.add.button('Nice4', lambda: print('Clicked'), padding=10))
-        btn5 = frame_sc.pack(menu.add.button('Nice5', lambda: print('Clicked'), padding=10))
-        deco = menu.get_decorator()
-        btn_real = menu.add.button('Normal button', lambda: print('Clicked'), background_color=(255, 0, 255))
-        test_draw_rects = False
-
-        def drawrect() -> None:
-            """
-            Draw absolute rect on surface for testing purposes.
-            """
-            if not test_draw_rects:
-                return
-            # surface.fill((160, 0, 0), frame_scroll.get_absolute_view_rect())
-            # surface.fill((60, 0, 60), btn.get_scrollarea().to_real_position(btn.get_rect(), visible=True))
-            # surface.fill((255, 255, 255), btn.get_rect(to_real_position=True))
-            surface.fill((0, 255, 0), btn_real.get_rect(to_real_position=True))
-
-        deco.add_callable(drawrect, prev=False, pass_args=False)
-
-        # First, test structure
-        #   btn    \
-        #   btn2   |
-        #   btn3   | frame_sc scrollarea enabled
-        #   btn4   |
-        #   btn5   /
-        #   btn_frame21 (x) \ frame2 no scrollarea <-- selected by default
-        #   btn_frame22 /
-        #   btn_real
-        self.assertTrue(frame_sc.is_scrollable)
-        self.assertFalse(frame2.is_scrollable)
-        self.assertEqual(btn.get_frame(), frame_sc)
-        self.assertEqual(btn2.get_frame(), frame_sc)
-        self.assertEqual(btn.get_scrollarea(), frame_sc.get_scrollarea(inner=True))
-        self.assertEqual(btn_real.get_frame(), None)
-        self.assertEqual(btn_real.get_scrollarea(), menu.get_scrollarea())
-        self.assertEqual(btn_frame21.get_frame(), frame2)
-        self.assertEqual(btn_frame22.get_frame(), frame2)
-        self.assertTrue(btn_frame21.is_selected())
-
-        btn_frame21.active = True
-        menu._mouse_motion_selection = True
-        if PYGAME_V2:
-            self.assertEqual(menu._draw_focus_widget(surface, btn_frame21),
-                             {1: ((0, 0), (600, 0), (600, 165), (0, 165)),
-                              2: ((0, 166), (149, 166), (149, 214), (0, 214)),
-                              3: ((425, 166), (600, 166), (600, 214), (425, 214)),
-                              4: ((0, 215), (600, 215), (600, 600), (0, 600))}
-                             )
-        else:
-            self.assertEqual(menu._draw_focus_widget(surface, btn_frame21),
-                             {1: ((0, 0), (600, 0), (600, 164), (0, 164)),
-                              2: ((0, 165), (149, 165), (149, 214), (0, 214)),
-                              3: ((425, 165), (600, 165), (600, 214), (425, 214)),
-                              4: ((0, 215), (600, 215), (600, 600), (0, 600))}
-                             )
-        btn_frame21.active = False
-
-        # Test scrollareas position
-        vpos = 0.592
-        vpos2 = 0.58
-        vpos3 = 0.997
-        vpos4 = 0.003
-        if not PYGAME_V2:
-            vpos = 0.593
-            vpos2 = 0.6
-            vpos3 = 1
-        self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos)
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_HORIZONTAL), 0)
-        self.assertEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
-        menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
-        self.assertEqual(menu.get_selected_widget(), btn_frame22)
-        self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos)
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_HORIZONTAL), 0)
-        self.assertEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
-        self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
-        self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
-        self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0.26)
-        self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
-        self.assertEqual(menu.get_selected_widget(), btn)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos3)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
-        self.assertEqual(menu.get_selected_widget(), btn_real)
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
-        self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
-        self.assertEqual(menu.get_selected_widget(), btn5)
-
-        # Test active within scroll
-        btn5.active = True
-        if PYGAME_V2:
-            self.assertEqual(menu._draw_focus_widget(surface, btn5),
-                             {1: ((0, 0), (600, 0), (600, 282), (0, 282)),
-                              2: ((0, 283), (139, 283), (139, 343), (0, 343)),
-                              3: ((239, 283), (600, 283), (600, 343), (239, 343)),
-                              4: ((0, 344), (600, 344), (600, 600), (0, 600))}
-                             )
-        else:
-            self.assertEqual(menu._draw_focus_widget(surface, btn5),
-                             {1: ((0, 0), (600, 0), (600, 282), (0, 282)),
-                              2: ((0, 283), (139, 283), (139, 344), (0, 344)),
-                              3: ((239, 283), (600, 283), (600, 344), (239, 344)),
-                              4: ((0, 345), (600, 345), (600, 600), (0, 600))}
-                             )
-        btn5.active = False
-        btn.select(update_menu=True)
-
-        if PYGAME_V2:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 61))
-        else:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 62))
-        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 200))
-
-        # Move inner scroll by 10%
-        frame_scroll.scroll_to(ORIENTATION_VERTICAL, 0.1)
-        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 200))
-        if PYGAME_V2:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 41))
-        else:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 42))
-
-        # Move menu scroll by 10%
-        menu.get_scrollarea().scroll_to(ORIENTATION_VERTICAL, 0.1)
-        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 165))
-        if PYGAME_V2:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 6))
-        else:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 7))
-
-        # Move menu scroll by 50%
-        menu.get_scrollarea().scroll_to(ORIENTATION_VERTICAL, 0.5)
-        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 20))
-        self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 0, 0))
-
-        menu.get_scrollarea().scroll_to(ORIENTATION_VERTICAL, 1)
-        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(0, 155, 0, 0))
-        self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(0, 155, 0, 0))
-
-        menu.get_scrollarea().scroll_to(ORIENTATION_VERTICAL, 0)
-        frame_scroll.scroll_to(ORIENTATION_VERTICAL, 0)
-        if PYGAME_V2:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 61))
-        else:
-            self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(140, 155, 82, 62))
-        self.assertEqual(frame_scroll.get_absolute_view_rect(), pygame.Rect(140, 155, 300, 200))
-
-        # Remove btn
-        menu.remove_widget(btn)
-        self.assertFalse(btn.is_selected())
-        self.assertIsNone(btn.get_menu())
-
-        # Hide button 5
-        btn5.hide()
-
-        # Add textinput to frame
-        # First, test structure
-        #   btn2   \  <-- selected by default
-        #   btn3   | frame_sc scrollarea enabled
-        #   btn4   |
-        #   btn5   |
-        #   text   /
-        #   btn_frame21 (x) \ frame2 no scrollarea
-        #   btn_frame22 /
-        #   btn_real
-        text = frame_sc.pack(menu.add.text_input('text: '))
-        if PYGAME_V2:
-            self.assertEqual(text.get_position(), (8, 187))
-            self.assertEqual(text.get_translate(virtual=True), (-140, 182))
-        else:
-            self.assertEqual(text.get_position(), (8, 190))
-            self.assertEqual(text.get_translate(virtual=True), (-140, 185))
-        self.assertEqual(text.get_translate(), (0, 0))
-
-        # Test text events within frame
-        self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.select_widget(text)
-        self.assertFalse(text.active)
-        self.assertEqual(text.get_value(), '')
-        menu.update(PygameUtils.key(pygame.K_a, char='a', keydown=True))
-        self.assertTrue(text.active)
-        self.assertEqual(text.get_value(), 'a')
-        for i in range(11):
-            menu.update(PygameUtils.key(pygame.K_a, char='a', keydown=True))
-        menu.draw(surface)
-        menu.update(PygameUtils.key(pygame.K_a, char='a', keydown=True))  # the last one to be added
-        self.assertRaises(pygame_menu.widgets.widget.frame._FrameSizeException, lambda: menu.mainloop(surface))
-        text.set_value('')
-        self.assertTrue(text.active)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
-        self.assertFalse(text.active)
-
-        # Set widgets as floating
-        # menu.mainloop(surface)
