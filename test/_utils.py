@@ -322,7 +322,7 @@ class PygameUtils(object):
         :return: Event
         """
         if isinstance(rect, pygame_menu.widgets.Widget):
-            x, y = rect.get_rect(to_real_position=True).center
+            x, y = rect.get_rect(to_real_position=True, apply_padding=False).center
             menu = rect.get_menu()
         elif isinstance(rect, pygame.Rect):
             x, y = rect.center

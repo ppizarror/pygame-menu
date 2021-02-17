@@ -417,8 +417,24 @@ class WidgetsTest(unittest.TestCase):
         selector.update(PygameUtils.joy_key(JOY_RIGHT))
         selector.update(PygameUtils.joy_motion(1, 0))
         selector.update(PygameUtils.joy_motion(-1, 0))
-        click_pos = selector.get_rect().center
+        click_pos = selector.get_rect(to_real_position=True, apply_padding=False).center
         selector.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+
+        # Check left/right clicks
+        self.assertEqual(selector.get_index(), 0)
+        click_pos = selector.get_rect(to_real_position=True, apply_padding=False).midleft
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertEqual(selector.get_index(), 2)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertEqual(selector.get_index(), 1)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertEqual(selector.get_index(), 0)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertEqual(selector.get_index(), 1)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertEqual(selector.get_index(), 2)
+        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertEqual(selector.get_index(), 0)
 
         # Update elements
         new_elements = [('4 - Easy', 'EASY'),
@@ -1481,6 +1497,15 @@ class WidgetsTest(unittest.TestCase):
         switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
         self.assertTrue(value[0])
         switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        self.assertFalse(value[0])
+
+        # Check left/right clicks
+        click_pos = switch.get_rect(to_real_position=True, apply_padding=False).midleft
+        switch.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        self.assertFalse(value[0])
+        switch.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        self.assertTrue(value[0])
+        switch.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertFalse(value[0])
 
         # Test readonly

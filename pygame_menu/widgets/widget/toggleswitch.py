@@ -336,6 +336,7 @@ class ToggleSwitch(Widget):
             self._state = max(0, self._state - 1)
         if previous != self._state:
             self.change()
+            self._sound.play_key_add()
 
     def _right(self) -> None:
         """
@@ -352,6 +353,7 @@ class ToggleSwitch(Widget):
             self._state = min(self._state + 1, self._total_states - 1)
         if previous != self._state:
             self.change()
+            self._sound.play_key_add()
 
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         if self.readonly:
@@ -373,7 +375,6 @@ class ToggleSwitch(Widget):
             if keydown and event.key == _controls.KEY_LEFT or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                self._sound.play_key_add()
                 self._left()
                 updated = True
 
@@ -381,7 +382,6 @@ class ToggleSwitch(Widget):
             elif keydown and event.key == _controls.KEY_RIGHT or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                self._sound.play_key_add()
                 self._right()
                 updated = True
 
