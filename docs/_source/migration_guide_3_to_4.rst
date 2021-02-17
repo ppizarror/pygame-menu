@@ -1,3 +1,4 @@
+
 ==========================
 Migration Guide - v3 to v4
 ==========================
@@ -7,10 +8,11 @@ Migration Guide - v3 to v4
 - Added ``__all__`` to module, then some usage cases importing with * may fail.
 - All locals inner value have changed. If you used the value as-is you'll get an error.
 - BaseImage applies ``smooth`` by default, also rotation applies on checkpointed surface.
+- Menu ``add_button``, ``add_color_input``, ``add_image``, ``add_label``, ``add_selector``, ``add_text_input``, ``add_vertical_margin`` and ``add_generic_widget`` were moved to ``WidgetManager`` class.
 - Menu ``add_image`` method parameter ``scale_smooth`` is now ``True`` by default.
 - Menu ``clear`` method now receives ``reset`` optional argument.
 - Menu ``mainloop``, ``update`` and ``draw`` now raises ``RuntimeError`` if it's disabled. This behaviour can be changed though Menu private property ``_runtime_errors``.
-- Menu Column/Row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``. Expect some minor changes to the global layout. Now is much more consistent.
+- Menu column/row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``. Expect some minor changes to the global layout. Now is much more consistent.
 - Menu constructor changed from ``Menu(height, width, title, ...)`` to  ``Menu(title, width, height, ...)``.
 - Menu method ``get_width()`` changes to``get_width(inner=False, widget=False)``.
 - Moved ``previsualization_width`` colorinput method to ``kwargs``.
@@ -30,4 +32,5 @@ Migration Guide - v3 to v4
 - Widget ``visible`` property is now private. Use ``.is_visible()`` to check visibility status, and ``.show()`` or ``.hide()`` to modify it.
 - Widget ``VMargin`` now inherits from ``NoneWidget``.
 - Widget properties ``joystick_enabled``, ``mouse_enabled``, ``touchscreen_enabled`` and ``sound`` are now private.
+- WidgetManager methods renamed ``shadow`` to ``font_shadow`` for each shadow-related optional arguments.
 - Widgets now must define only ``_draw``, ``draw()`` is reserved to Widget core class only.
