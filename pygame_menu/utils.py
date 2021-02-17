@@ -33,24 +33,27 @@ __all__ = [
 
     'assert_alignment',
     'assert_color',
+    'assert_cursor',
     'assert_list_vector',
     'assert_orientation',
     'assert_position',
-    'assert_cursor',
     'assert_vector',
     'check_key_pressed_valid',
     'is_callable',
-    'make_surface'
+    'make_surface',
+    'parse_padding',
+    'uuid4'
 
 ]
 
-import types
 import functools
+import types
+import uuid
 
 import pygame
 import pygame_menu.locals as _locals
 from pygame_menu._types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional, Tuple, NumberInstance, VectorInstance
+    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType
 
 
 def assert_alignment(align: str) -> None:
@@ -102,6 +105,20 @@ def assert_cursor(cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> None
         assert isinstance(cursor, (int, type(None)))
 
 
+def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
+                       length: int) -> None:
+    """
+    Assert that a list fixed length vector is numeric.
+
+    :param list_vector: Numeric list vector
+    :param length: Length of the required vector. If ``0`` don't check the length
+    :return: None
+    """
+    assert isinstance(list_vector, (tuple, list))
+    for v in list_vector:
+        assert_vector(v, length=length)
+
+
 def assert_orientation(orientation: str) -> None:
     """
     Assert that a certain widget orientation is valid.
@@ -128,20 +145,6 @@ def assert_position(position: str) -> None:
                         _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST,
                         _locals.POSITION_CENTER], \
         'invalid position value "{0}"'.format(position)
-
-
-def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
-                       length: int) -> None:
-    """
-    Assert that a list fixed length vector is numeric.
-
-    :param list_vector: Numeric list vector
-    :param length: Length of the required vector. If ``0`` don't check the length
-    :return: None
-    """
-    assert isinstance(list_vector, (tuple, list))
-    for v in list_vector:
-        assert_vector(v, length=length)
 
 
 def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
@@ -219,3 +222,48 @@ def make_surface(width: NumberType, height: NumberType,
         assert_color(fill_color)
         surface.fill(fill_color)
     return surface
+
+
+def parse_padding(padding: PaddingType) -> Tuple4IntType:
+    """
+    Get the padding value from tuple.
+
+    - If an integer or float is provided: top, right, bottom and left values will be the same
+    - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
+    - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
+    - If 4-item tuple is provided: padding will be *(top, right, bottom, left)*
+
+    .. note::
+
+        See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
+
+    :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
+    :return: Padding value, *(top, right, bottom, left)*, in px
+    """
+    assert isinstance(padding, PaddingInstance)
+
+    if isinstance(padding, NumberInstance):
+        assert padding >= 0, 'padding cannot be a negative number'
+        return padding, padding, padding, padding
+    else:
+        assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
+        for i in range(len(padding)):
+            assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
+            assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
+        if len(padding) == 1:
+            return padding[0], padding[0], padding[0], padding[0]
+        elif len(padding) == 2:
+            return padding[0], padding[1], padding[0], padding[1]
+        elif len(padding) == 3:
+            return padding[0], padding[1], padding[2], padding[1]
+        else:
+            return padding[0], padding[1], padding[2], padding[3]
+
+
+def uuid4() -> str:
+    """
+    Create custom version of uuid4.
+
+    :return: UUID of 18 chars
+    """
+    return str(uuid.uuid4())[:18]

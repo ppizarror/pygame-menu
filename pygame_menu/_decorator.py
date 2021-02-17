@@ -43,11 +43,11 @@ import math
 import warnings
 from math import pi
 from pathlib import Path
-from uuid import uuid4
 
 from pygame_menu._types import List, Tuple2NumberType, ColorType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
-from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector
+from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
+    uuid4
 
 # Decoration constants
 DECORATION_ARC = 2000
@@ -145,7 +145,7 @@ class Decorator(object):
         :param data: Data of the decoration
         :return: ID of the decoration
         """
-        decor_id = str(uuid4())
+        decor_id = uuid4()
 
         if prev:
             assert self._prev_enabled, 'prev decorators are not enabled'
