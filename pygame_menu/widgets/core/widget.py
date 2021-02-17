@@ -38,13 +38,12 @@ from pygame_menu.widgets.core.selection import Selection
 from pygame_menu._decorator import Decorator
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
-    is_callable
+    is_callable, parse_padding, uuid4
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
-    NumberInstance, PaddingInstance
+    NumberInstance
 
 from pathlib import Path
-from uuid import uuid4
 import random
 import time
 import warnings
@@ -201,7 +200,7 @@ class Widget(object):
         self._flip = (False, False)  # x, y
         self._scale = [False, 1, 1, False]  # do_scale, x, y, smooth
         self._translate = (0, 0)
-        self._translate_virtual = (0, 0)
+        self._translate_virtual = (0, 0)  # Translation virtual used by scrollareas
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
         # use .get_rect() widget method instead. Widget subclass should ONLY modify width/height,
@@ -938,8 +937,8 @@ class Widget(object):
         """
         Set the Widget margin *(left, bottom)*.
 
-        :param x: Margin on x axis (left)
-        :param y: Margin on y axis (bottom)
+        :param x: Margin on x-axis (left)
+        :param y: Margin on y-axis (bottom)
         :return: Self reference
         """
         assert isinstance(x, NumberInstance)
@@ -975,25 +974,7 @@ class Widget(object):
         :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
         :return: Self reference
         """
-        assert isinstance(padding, PaddingInstance)
-
-        if isinstance(padding, NumberInstance):
-            assert padding >= 0, 'padding cannot be a negative number'
-            self._padding = (padding, padding, padding, padding)
-        else:
-            assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
-            for i in range(len(padding)):
-                assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
-                assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
-            if len(padding) == 1:
-                self._padding = (padding[0], padding[0], padding[0], padding[0])
-            elif len(padding) == 2:
-                self._padding = (padding[0], padding[1], padding[0], padding[1])
-            elif len(padding) == 3:
-                self._padding = (padding[0], padding[1], padding[2], padding[1])
-            else:
-                self._padding = (padding[0], padding[1], padding[2], padding[3])
-
+        self._padding = parse_padding(padding)
         self._padding_transform = self._padding
         self._force_render()
         return self
@@ -1064,9 +1045,9 @@ class Widget(object):
 
         if self._scrollarea is not None:
             if to_real_position:
-                return self._scrollarea.to_real_position(rect, visible=True)
+                rect = self._scrollarea.to_real_position(rect, visible=True)
             elif to_absolute_position:
-                return self._scrollarea.to_absolute_position(rect)
+                rect = self._scrollarea.to_absolute_position(rect)
 
         return rect
 
@@ -1497,8 +1478,8 @@ class Widget(object):
             Use :py:meth:`pygame_menu.widgets.core.widget.Widget.render` method to force
             Widget rendering after calling this method.
 
-        :param x: Flip in x axis
-        :param y: Flip on y axis
+        :param x: Flip on x-axis
+        :param y: Flip on y-axis
         :return: Self reference
         """
         assert isinstance(x, bool)
@@ -1763,7 +1744,7 @@ class Widget(object):
         Get Widget translate in *(x, y)*.
 
         :param virtual: If ``True`` get virtual translation, usually applied within frame scrollarea
-        :return: Translation in both axis
+        :return: Translation on both axis
         """
         if virtual:
             return self._translate_virtual
@@ -2093,7 +2074,7 @@ class Widget(object):
         :return: Callback ID
         """
         assert is_callable(draw_callback), 'draw callback must be callable (function-type)'
-        callback_id = str(uuid4())
+        callback_id = uuid4()
         self._draw_callbacks[callback_id] = draw_callback
         return callback_id
 
@@ -2141,7 +2122,7 @@ class Widget(object):
         :return: Callback ID
         """
         assert is_callable(update_callback), 'update callback must be callable (function-type)'
-        callback_id = str(uuid4())
+        callback_id = uuid4()
         self._update_callbacks[callback_id] = update_callback
         return callback_id
 
@@ -2221,6 +2202,10 @@ class Widget(object):
                 | wid2,wid3  |             |
                 ----------------------------
 
+        If Widget within a frame, it does not contribute to the width/height of
+        the layout. Also, it is been set to the *(0, 0)* position, thus, the only
+        way to move the Widget to a desired position is by translating it.
+
         :param float_status: Float status
         :param menu_render: If ``True`` forces the Menu to render instantly
         :return: None
@@ -2292,7 +2277,7 @@ class Widget(object):
 
         :param width: Border width (px)
         :param color: Border color
-        :param inflate: Inflate in *(x, y)* axis in px
+        :param inflate: Inflate on *(x, y)* axis in px
         :return: Self reference
         """
         assert isinstance(width, int) and width >= 0
@@ -2332,28 +2317,20 @@ class Widget(object):
         self._frame = frame
         return self
 
-    def _get_status(self) -> Tuple[Any, ...]:
+    def get_frame_depth(self) -> int:
         """
-        Get the status of the Widget as a tuple (position, indices, values, etc).
+        Get frame depth (If frame is packed within another frame).
 
-        :return: Data
+        :return: Frame depth
         """
-        clsname = self.__class__.__name__
-        if self.get_title() is not '':
-            clsname += '-' + self.get_title()
-        data = [clsname, self.get_col_row_index(), self.get_position()]
-        if isinstance(self, pygame_menu.widgets.Frame):
-            for ww in self.get_widgets():
-                data.append(ww._get_status())
-            data.append(self.get_indices())
-        data.append((int(self.is_selectable), int(self.is_floating()), int(self.is_selected()),
-                     int(self.is_visible()), int(self.get_frame() is not None), int(self.is_scrollable),
-                     self.get_size()))
-        try:
-            data.append(self.get_value())
-        except ValueError:
-            pass
-        return tuple(data)
+        frame = self._frame
+        depth = 0
+        while True:
+            if frame is None:
+                break
+            depth += 1
+            frame = frame._frame
+        return depth
 
     def get_class_id(self) -> str:
         """
@@ -2362,6 +2339,56 @@ class Widget(object):
         :return: Class+ID format
         """
         return '{0}<"{1}">'.format(self.__class__.__name__, self._id)
+
+    def _get_status(self) -> Tuple[Any, ...]:
+        """
+        Get the status of the Widget as a tuple (position, indices, values, etc).
+
+        :return: Data
+        """
+        # Assemble class name
+        clsname = self.__class__.__name__
+        if self.get_title() is not '':
+            clsname += '-' + self.get_title()
+
+        # Assemble geometric data
+        rect = self.get_rect()
+        rect_real = self.get_rect(to_real_position=True)
+        rect_abs = self.get_rect(to_absolute_position=True)
+        cri = self.get_col_row_index()
+        geom = (
+            cri[0], cri[1], cri[2],  # Column/row layout
+            rect.x, rect.y, rect.width, rect.height,  # Drawing rect
+            rect_real.x, rect_real.y,  # Real rect positioning
+            rect_abs.x, rect_abs.y  # Absolute rect positioning
+        )
+
+        # Bool info
+        bool_status = (
+            int(self.is_selectable),
+            int(self.is_floating()),
+            int(self.is_selected()),
+            int(self.is_visible()),
+            int(self.is_scrollable),
+            int(self.get_frame() is not None),
+            self.get_frame_depth()
+        )
+
+        # Starting data
+        data = [clsname, geom, bool_status]
+
+        # Append inner widgets if frame
+        if isinstance(self, pygame_menu.widgets.Frame):
+            data.append(self.get_indices())
+            for ww in self.get_widgets():
+                data.append(ww._get_status())
+
+        try:
+            data.append(self.get_value())
+        except ValueError:
+            pass
+
+        return tuple(data)
 
 
 class _WidgetNullSelection(Selection):
