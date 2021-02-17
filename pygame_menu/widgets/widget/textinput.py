@@ -1784,7 +1784,7 @@ class TextInput(Widget):
                     self.active = True
 
             elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
-                window_size = self.get_menu().get_window_size()
+                window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:

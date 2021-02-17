@@ -288,7 +288,7 @@ class Selector(Widget):
 
                 # Get event position based on input type
                 if self._touchscreen_enabled and event.type == pygame.FINGERUP:
-                    window_size = self.get_menu().get_window_size()
+                    window_size = self._menu.get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:
                     event_pos = event.pos
