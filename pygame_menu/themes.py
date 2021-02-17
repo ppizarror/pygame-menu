@@ -462,11 +462,11 @@ class Theme(object):
 
         # Check sizes
         assert self.scrollarea_outer_margin[0] >= 0 and self.scrollarea_outer_margin[1] >= 0, \
-            'scroll area outer margin must be equal or greater than zero in both axis'
+            'scroll area outer margin must be equal or greater than zero on both axis'
         assert self.widget_offset[0] >= 0 and self.widget_offset[1] >= 0, \
             'widget offset must be equal or greater than zero'
         assert self.widget_border_inflate[0] >= 0 and self.widget_border_inflate[1] >= 0, \
-            'widget border inflate must be equal or greater than zero in both axis'
+            'widget border inflate must be equal or greater than zero on both axis'
 
         assert self.cursor_switch_ms > 0, 'cursor switch ms must be greater than zero'
         assert self.fps >= 0, 'fps must be equal or greater than zero'

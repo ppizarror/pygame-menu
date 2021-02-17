@@ -629,8 +629,8 @@ class BaseImage(object):
         This method can flip the image either vertically, horizontally, or both.
         Flipping a image is non-destructive and does not change the dimensions.
 
-        :param x: Flip in x axis
-        :param y: Flip on y axis
+        :param x: Flip on x-axis
+        :param y: Flip on y-axis
         :return: Self reference
         """
         assert isinstance(x, bool)
