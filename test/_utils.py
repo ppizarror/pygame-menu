@@ -106,8 +106,8 @@ class PygameUtils(object):
         """
         Create a pygame joy controller motion event.
 
-        :param x: X axis movement
-        :param y: Y axis movement
+        :param x: X-axis movement
+        :param y: Y-axis movement
         :param inlist: Return event in a list
         :param testmode: Key event is in test mode
         :return: Event
@@ -267,9 +267,10 @@ class PygameUtils(object):
         """
         event_obj = pygame.event.Event(evtype,
                                        {
+                                           'button': 3,
                                            'pos': (x, y),
-                                           'test': True,
-                                           'button': 3
+                                           'rel': (1, 1),
+                                           'test': True
                                        })
         if inlist:
             event_obj = [event_obj]
@@ -308,14 +309,16 @@ class PygameUtils(object):
     @staticmethod
     def middle_rect_click(rect: Union['pygame_menu.widgets.Widget', Tuple2NumberType],
                           menu: Optional['pygame_menu.Menu'] = None,
-                          evtype: int = pygame.MOUSEBUTTONUP
-                          ) -> 'pygame.event.Event':
+                          evtype: int = pygame.MOUSEBUTTONUP,
+                          inlist: bool = True
+                          ) -> EventListType:
         """
         Return event clicking the middle of a given rect.
 
         :param rect: Rect object
         :param menu: Menu object
         :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, FINGERUP, FINGERDOWN
+        :param inlist: If ``True`` return the event within a list
         :return: Event
         """
         if isinstance(rect, pygame_menu.widgets.Widget):
@@ -332,14 +335,18 @@ class PygameUtils(object):
         if evtype == FINGERDOWN or evtype == FINGERUP or evtype == FINGERMOTION:
             assert menu is not None, 'menu cannot be none if FINGER'
             display = menu.get_window_size()
-            return pygame.event.Event(evtype,
-                                      {
-                                          'x': x / display[0],
-                                          'y': y / display[1],
-                                          'test': True,
-                                          'button': 3
-                                      })
-        return PygameUtils.mouse_click(x, y, inlist=False, evtype=evtype)
+            evt = pygame.event.Event(evtype,
+                                     {
+                                         'button': 3,
+                                         'rel': (1, 1),
+                                         'test': True,
+                                         'x': x / display[0],
+                                         'y': y / display[1],
+                                     })
+            if inlist:
+                evt = [evt]
+            return evt
+        return PygameUtils.mouse_click(x, y, inlist=inlist, evtype=evtype)
 
 
 class MenuUtils(object):
