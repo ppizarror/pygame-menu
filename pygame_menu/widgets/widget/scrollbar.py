@@ -426,7 +426,7 @@ class ScrollBar(Widget):
                         self.change()
                         updated = True
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEMOTION:
+            elif self._mouse_enabled and event.type == pygame.MOUSEMOTION and hasattr(event, 'rel'):
                 # Check scrolling
                 if self.scrolling and self._scroll(rect, event.rel[self._orientation]):
                     self.change()
@@ -441,6 +441,11 @@ class ScrollBar(Widget):
                     if self._mouseover:
                         self._mouseover = False
                         self.mouseleave(event)
+
+            # Mouse enters or leaves the window
+            elif event.type == pygame.ACTIVEEVENT:
+                if event.gain != 1:  # Enter
+                    pass
 
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
 
