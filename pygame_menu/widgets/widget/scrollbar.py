@@ -234,6 +234,16 @@ class ScrollBar(Widget):
         pstep = self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
         return int(pstep)
 
+    def get_value_percentual(self) -> float:
+        """
+        Return the value but in percentage between ``0`` (minimum value) and ``1`` (maximum value).
+
+        :return: Value as percentage
+        """
+        vmin, vmax = self.get_minmax()
+        value = self.get_value()
+        return round((value - vmin) / (vmax - vmin), 3)
+
     def get_value(self) -> int:
         """
         Return the value according to the slider position.
@@ -397,7 +407,7 @@ class ScrollBar(Widget):
             '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
 
         pixels = (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step)
-        pixels /= self._values_range[1] - self._values_range[0]
+        pixels /= (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
         pixels = max(0, pixels)

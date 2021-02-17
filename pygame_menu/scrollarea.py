@@ -590,12 +590,15 @@ class ScrollArea(object):
             return 0, 0
         return self._world.get_width(), self._world.get_height()
 
-    def get_size(self) -> Tuple2IntType:
+    def get_size(self, inner: bool = False) -> Tuple2IntType:
         """
         Return the area size.
 
+        :param inner: If ``True`` returns the rect view area
         :return: Width, height in pixels
         """
+        if inner:
+            return self._view_rect.width, self._view_rect.height
         return self._rect.width, self._rect.height
 
     def mouse_is_over(self) -> bool:
@@ -641,23 +644,21 @@ class ScrollArea(object):
 
     def get_scroll_value(self, orientation: str) -> float:
         """
-        Get the scroll value in percentage, if ``0`` the scroll is at top, ``1`` bottom.
+        Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
         .. note::
 
             If ScrollArea does not contain such orientation scroll, ``-1`` is returned.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
-        :return: Value from 0 to 1
+        :return: Value from ``0`` to ``1``
         """
         assert_orientation(orientation)
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == orientation:
-                vmin, vmax = sbar.get_minmax()
-                value = sbar.get_value()
-                return round((value - vmin) / (vmax - vmin), 3)
+                return sbar.get_value_percentual()
         return -1
 
     def scroll_to(self, orientation: str, value: NumberType) -> 'ScrollArea':
@@ -726,6 +727,15 @@ class ScrollArea(object):
 
         if self._parent_scrollarea is not None:
             self._parent_scrollarea.scroll_to_rect(rect, margin=margin)
+
+        # Adjust scrollbars, if value is similar to 0 or 1
+        # for sbar in self._scrollbars:
+        #     if not sbar.is_visible():
+        #         continue
+        #     if sbar.get_value_percentual() < 0.025:
+        #         sbar.set_value(sbar.get_minimum())
+        #     if sbar.get_value_percentual() > 0.975:
+        #         sbar.set_value(sbar.get_maximum())
 
         return True
 
