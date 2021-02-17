@@ -1850,9 +1850,10 @@ class Widget(object):
             self._events = []  # Remove events
         self._force_render()
         if self._onselect is not None:
-            self._onselect(self._selected, self, self.get_menu())
+            self._onselect(self._selected, self, self._menu)
         if update_menu:
             assert self._menu is not None
+            self._menu.select_widget(None)  # Unselect previous one
             self._menu.select_widget(self)
         return self
 
