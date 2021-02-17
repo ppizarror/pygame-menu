@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Methods
     'assert_alignment',
     'assert_color',
     'assert_cursor',
@@ -42,7 +43,11 @@ __all__ = [
     'is_callable',
     'make_surface',
     'parse_padding',
-    'uuid4'
+    'uuid4',
+    'widget_terminal_title',
+
+    # Classes
+    'TerminalColors'
 
 ]
 
@@ -51,6 +56,7 @@ import types
 import uuid
 
 import pygame
+import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu._types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType
@@ -267,3 +273,87 @@ def uuid4() -> str:
     :return: UUID of 18 chars
     """
     return str(uuid.uuid4())[:18]
+
+
+def widget_terminal_title(
+        widget: 'pygame_menu.widgets.Widget',
+        widget_indx: int = -1,
+        current_index: int = -1
+) -> str:
+    """
+    Return widget title to be printed on terminals.
+
+    :param widget: Widget to get title from
+    :param widget_indx: Widget index
+    :param current_index: Menu index
+    :return: Widget title
+    """
+    wclassid = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
+    if isinstance(widget, pygame_menu.widgets.Frame):
+        wtitle = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
+        wtitle += '{0} - {3}[{1},{2},'.format(wclassid, *widget.get_indices(), TerminalColors.LGREEN)
+        if widget.horizontal:
+            wtitle += 'H] '
+        else:
+            wtitle += 'V] '
+        if widget.is_scrollable:
+            wsz = widget.get_inner_size()
+            wsm = widget.get_max_size()
+            wsh = wsm[0] if wsm[0] == wsz[0] else '{0}→{1}'.format(wsm[0], wsz[0])
+            wsv = wsm[1] if wsm[1] == wsz[1] else '{0}→{1}'.format(wsm[1], wsz[1])
+            wtitle += '∑ [{0},{1}] '.format(wsh, wsv)
+        wtitle += TerminalColors.ENDC
+    else:
+        if widget.get_title() != '':
+            wtitle = '{0} - {1} - '.format(wclassid,
+                                           TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
+        else:
+            wtitle = wclassid
+
+    # Column/Row position
+    wtitle += TerminalColors.INDIGO
+    cr = widget.get_col_row_index()
+    wtitle += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
+    wtitle += TerminalColors.ENDC
+
+    # Add position
+    wtitle += TerminalColors.MAGENTA
+    wtitle += ' ({0},{1})'.format(*widget.get_position())
+    wtitle += TerminalColors.ENDC
+
+    # Add mods
+    wtitle += TerminalColors.CYAN
+    if widget.is_floating():
+        wtitle += ' Φ'
+    if not widget.is_visible():
+        wtitle += ' ╳'
+    if not widget.is_selectable:
+        wtitle += ' β'
+    if widget.is_selected():
+        wtitle += TerminalColors.BOLD + ' ⟵'
+        if current_index != -1 and current_index != widget_indx:
+            wtitle += '! [{0}->{1}]'.format(widget_indx, current_index)
+    if widget.get_menu() is None:
+        wtitle += ' !▲'
+    wtitle += TerminalColors.ENDC
+
+    return wtitle
+
+
+class TerminalColors(object):
+    """
+    Terminal colors.
+
+    See https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html.
+    """
+    BOLD = '\033[1m'
+    BRIGHT_MAGENTA = '\u001b[35;1m'
+    BRIGHT_WHITE = '\u001b[37;1m'
+    CYAN = '\u001b[36m'
+    ENDC = '\u001b[0m'
+    GRAY = '\u001b[30;1m'
+    INDIGO = '\u001b[38;5;129m'
+    LGREEN = '\u001b[38;5;150m'
+    MAGENTA = '\u001b[35m'
+    RED = '\u001b[31m'
+    UNDERLINE = '\033[4m'
