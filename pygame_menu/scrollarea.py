@@ -35,11 +35,10 @@ import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
 from pygame_menu._decorator import Decorator
-from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation
-from pygame_menu.widgets import ScrollBar, MenuBar
-
 from pygame_menu._types import ColorType, Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
     Optional, Tuple2IntType, NumberInstance
+from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, uuid4
+from pygame_menu.widgets import ScrollBar, MenuBar
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -96,10 +95,10 @@ class ScrollArea(object):
     :param area_width: Width of scrollable area (px)
     :param area_height: Height of scrollable area (px)
     :param area_color: Background color, it can be a color or an image
-    :param extend_x: Px to extend the surface in x axis (px) from left. Recommended use only within Menus
-    :param extend_y: Px to extend the surface in y axis (px) from top. Recommended use only within Menus
-    :param menubar: Menubar for style compatibility. ``None`` if scrollarea is not used within a Menu (for example, in Frames)
-    :param parent_scrollarea: Parent scrollarea if ``ScrollArea`` is added within another area
+    :param extend_x: Px to extend the surface on x axis (px) from left. Recommended use only within Menus
+    :param extend_y: Px to extend the surface on y axis (px) from top. Recommended use only within Menus
+    :param menubar: Menubar for style compatibility. ``None`` if ScrollArea is not used within a Menu (for example, in Frames)
+    :param parent_scrollarea: Parent ScrollArea if the new one is added within another area
     :param scrollbar_color: Scrollbars color
     :param scrollbar_cursor: Scrollbar cursor
     :param scrollbar_slider_color: Color of the sliders
@@ -114,15 +113,17 @@ class ScrollArea(object):
     """
     _bg_surface: Optional['pygame.Surface']
     _decorator: 'Decorator'
-    _parent_scrollarea: 'ScrollArea'
     _extend_x: int
     _extend_y: int
+    _id: str
     _menu: Optional['pygame_menu.Menu']
     _menubar: 'pygame_menu.widgets.MenuBar'
+    _parent_scrollarea: 'ScrollArea'
     _rect: 'pygame.Rect'
     _scrollbar_positions: Tuple[str, ...]
     _scrollbar_thick: int
     _scrollbars: List['ScrollBar']
+    _translate: Tuple2IntType
     _view_rect: 'pygame.Rect'
     _world: 'pygame.Surface'
 
@@ -166,10 +167,12 @@ class ScrollArea(object):
 
         self._bg_surface = None
         self._decorator = Decorator(self)
+        self._id = uuid4()
         self._rect = pygame.Rect(0, 0, int(area_width), int(area_height))
         self._scrollbar_positions = tuple(set(scrollbars))  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
         self._scrollbars = []
+        self._translate = (0, 0)
         self._world = world
 
         self._extend_x = extend_x
@@ -230,11 +233,30 @@ class ScrollArea(object):
         # Menu reference
         self._menu = None
 
+    def set_id(self, scrollarea_id: str) -> 'ScrollArea':
+        """
+        Set ScrollArea id.
+
+        :param scrollarea_id: New area ID
+        :return: Self reference
+        """
+        assert isinstance(scrollarea_id, str)
+        self._id = scrollarea_id
+        return self
+
+    def get_id(self) -> str:
+        """
+        Return the ScrollArea id.
+
+        :return: Self reference
+        """
+        return self._id
+
     def set_parent_scrollarea(self, parent: Optional['ScrollArea']) -> None:
         """
-        Set parent scrollarea.
+        Set parent ScrollArea.
 
-        :param parent: Parent Scrollarea
+        :param parent: Parent ScrollArea
         :return: None
         """
         assert isinstance(parent, (ScrollArea, type(None)))
@@ -243,11 +265,26 @@ class ScrollArea(object):
 
     def get_parent(self) -> Optional['ScrollArea']:
         """
-        Return the parent scrollarea.
+        Return the parent ScrollArea.
 
-        :return: Parent scrollarea object
+        :return: Parent ScrollArea object
         """
         return self._parent_scrollarea
+
+    def get_depth(self) -> int:
+        """
+        Return the depth of the ScrollArea (how many parents do it has recursively).
+
+        :return: Depth's number
+        """
+        parent = self._parent_scrollarea
+        count = 0
+        while True:
+            if parent is None:
+                break
+            count += 1
+            parent = parent._parent_scrollarea
+        return count
 
     def __copy__(self) -> 'ScrollArea':
         """
@@ -344,7 +381,7 @@ class ScrollArea(object):
 
     def draw(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
-        Draw the scrollarea.
+        Draw the ScrollArea.
 
         :param surface: Surface to render the area
         :return: Self reference
@@ -563,7 +600,7 @@ class ScrollArea(object):
 
     def mouse_is_over(self) -> bool:
         """
-        Return ``True`` if the mouse is placed over the scrollarea.
+        Return ``True`` if the mouse is placed over the ScrollArea.
 
         :return: ``True`` if the mouse is over the object
         """
@@ -608,7 +645,7 @@ class ScrollArea(object):
 
         .. note::
 
-            If scrollarea does not contain such orientation scroll, ``-1`` is returned.
+            If ScrollArea does not contain such orientation scroll, ``-1`` is returned.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
         :return: Value from 0 to 1
@@ -653,6 +690,11 @@ class ScrollArea(object):
         :param margin: Extra margin around the rect (px)
         :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
+        # Check if visible
+        if self.to_real_position(rect, visible=True).height == 0 and self._parent_scrollarea is not None:
+            self._parent_scrollarea.scroll_to_rect(self._parent_scrollarea.get_rect())
+            self._parent_scrollarea.scroll_to_rect(self.get_rect())
+
         assert isinstance(margin, NumberInstance)
         real_rect = self.to_real_position(rect)
 
@@ -684,6 +726,7 @@ class ScrollArea(object):
 
         if self._parent_scrollarea is not None:
             self._parent_scrollarea.scroll_to_rect(rect, margin=margin)
+
         return True
 
     def set_position(self, posx: int, posy: int) -> 'ScrollArea':
@@ -694,18 +737,44 @@ class ScrollArea(object):
         :param posy: Y position
         :return: Self reference
         """
-        self._rect.x = posx + self._extend_x
-        self._rect.y = posy + self._extend_y
+        self._rect.x = posx + self._extend_x + self._translate[0]
+        self._rect.y = posy + self._extend_y + self._translate[1]
         self._apply_size_changes()
         return self
 
     def get_position(self) -> Tuple2IntType:
         """
-        Return the scrollarea position.
+        Return the ScrollArea position.
 
         :return: X, Y position in px
         """
         return self._rect.x, self._rect.y
+
+    def translate(self, x: NumberType, y: NumberType) -> 'ScrollArea':
+        """
+        Translate by *(x, y)* px.
+
+        :param x: X translation in px
+        :param y: Y translation in px
+        :return: Self reference
+        """
+        assert isinstance(x, NumberInstance)
+        assert isinstance(y, NumberInstance)
+        self._rect.x -= self._translate[0]
+        self._rect.y -= self._translate[1]
+        self._translate = (x, y)
+        self._rect.x += x
+        self._rect.y += y
+        self._apply_size_changes()
+        return self
+
+    def get_translate(self) -> Tuple2IntType:
+        """
+        Get object translation on both axis.
+
+        :return: Translation in x-axis and y-axis (px)
+        """
+        return self._translate
 
     def set_world(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
@@ -722,12 +791,15 @@ class ScrollArea(object):
         """
         Return parent ScrollArea position.
 
-        :return: Position in x, y axis (px)
+        :return: Position on x, y axis (px)
         """
         if self._parent_scrollarea is not None:
             px, py = self._parent_scrollarea.get_position()
             ox, oy = self._parent_scrollarea.get_offsets()
-            return px - ox, py - oy
+            parx, pary = 0, 0
+            if self._parent_scrollarea.get_parent() is not None:
+                parx, pary = self._parent_scrollarea.get_parent_position()
+            return px - ox + parx, py - oy + pary
         return 0, 0
 
     def to_absolute_position(self, virtual: 'pygame.Rect') -> 'pygame.Rect':
@@ -751,15 +823,19 @@ class ScrollArea(object):
 
     def get_absolute_view_rect(self) -> 'pygame.Rect':
         """
-        Return the scrollarea absolute view rect clipped if it is not visible by
-        it's parent scrollarea.
+        Return the ScrollArea absolute view rect clipped if it is not visible by
+        it's parent ScrollArea.
 
         :return: Clipped absolute view rect
         """
         view_rect_absolute = self.to_absolute_position(self._view_rect)
         if self._parent_scrollarea is not None:
-            parent_view_rect = self._parent_scrollarea.get_absolute_view_rect()
-            view_rect_absolute = parent_view_rect.clip(view_rect_absolute)
+            parent = self._parent_scrollarea
+            while True:  # Recursive
+                if parent is None:
+                    break
+                view_rect_absolute = parent.get_absolute_view_rect().clip(view_rect_absolute)
+                parent = parent._parent_scrollarea
         return view_rect_absolute
 
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
