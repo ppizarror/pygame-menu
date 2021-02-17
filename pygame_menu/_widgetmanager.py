@@ -33,7 +33,6 @@ __all__ = ['WidgetManager']
 
 from io import BytesIO
 from pathlib import Path
-from uuid import uuid4
 import re
 import textwrap
 import warnings
@@ -221,6 +220,7 @@ class WidgetManager(object):
         assert isinstance(widget, pygame_menu.widgets.Widget)
         if widget.get_menu() is None:
             widget.set_menu(self._menu)
+        if widget.get_menu() == self._menu:
             self._menu._check_id_duplicated(widget.get_id())
         assert widget.get_menu() == self._menu, \
             'widget cannot have a different instance of menu'
@@ -315,7 +315,7 @@ class WidgetManager(object):
         widget.set_menu(prev_menu)
         widget.configured = True
 
-    def _configure_defaults_widget(self, widget: 'pygame_menu.widgets.Widget') -> None:
+    def configure_defaults_widget(self, widget: 'pygame_menu.widgets.Widget') -> None:
         """
         Apply default menu settings to widget. This method does not add widget to Menu.
 
@@ -761,7 +761,7 @@ class WidgetManager(object):
 
         title = str(title)
         if len(label_id) == 0:
-            label_id = str(uuid4())
+            label_id = _utils.uuid4()
 
         # If newline detected, split in two new lines
         if '\n' in title:
@@ -1308,9 +1308,10 @@ class WidgetManager(object):
                 kwargs.pop(key, None)
 
         attributes = self._filter_widget_attributes(kwargs)
+        pad = _utils.parse_padding(attributes['padding'])  # top, right, bottom, left
         widget = pygame_menu.widgets.Frame(
-            width=width,
-            height=height,
+            width=width - (pad[1] + pad[3]),
+            height=height - (pad[0] + pad[2]),
             orientation=orientation,
             frame_id=frame_id
         )
@@ -1318,8 +1319,8 @@ class WidgetManager(object):
 
         widget.set_menu(self._menu)
         widget.make_scrollarea(
-            max_width=kwargs.get('max_width', width),
-            max_height=kwargs.get('max_height', height),
+            max_width=kwargs.get('max_width', width) - (pad[1] + pad[3]),
+            max_height=kwargs.get('max_height', height) - (pad[0] + pad[2]),
             scrollbar_color=kwargs.get('scrollbar_color', self._theme.scrollbar_color),
             scrollbar_cursor=kwargs.get('scrollbar_cursor', self._theme.scrollbar_cursor),
             scrollbar_shadow_color=kwargs.get('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
@@ -1623,7 +1624,7 @@ class WidgetManager(object):
 
         # Configure widget
         if configure_defaults:
-            self._configure_defaults_widget(widget)
+            self.configure_defaults_widget(widget)
 
         widget.set_menu(self._menu)
         widget.set_scrollarea(self._menu.get_scrollarea())
