@@ -110,7 +110,7 @@ def main(test: bool = False) -> None:
                      slider_pad=2,
                      page_ctrl_thick=thick_h,
                      onchange=h_changed)
-    sb_h.set_shadow(color=(0, 0, 0), position=_locals.POSITION_SOUTHEAST)
+    sb_h.set_font_shadow(color=(0, 0, 0), position=_locals.POSITION_SOUTHEAST)
     sb_h.set_controls(False)
     sb_h.set_position(0, scr_size[1] - thick_h)
     sb_h.set_page_step(scr_size[0] - thick_v)
@@ -126,9 +126,9 @@ def main(test: bool = False) -> None:
                      thick_v,
                      (253, 246, 220),
                      onchange=v_changed)
-    sb_v.set_shadow(color=(52, 54, 56),
-                    position=_locals.POSITION_NORTHWEST,
-                    offset=4)
+    sb_v.set_font_shadow(color=(52, 54, 56),
+                         position=_locals.POSITION_NORTHWEST,
+                         offset=4)
     sb_v.set_controls(False)
     sb_v.set_position(scr_size[0] - thick_v, 0)
     sb_v.set_page_step(scr_size[1] - thick_h)

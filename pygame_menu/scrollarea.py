@@ -215,7 +215,7 @@ class ScrollArea(object):
                     page_ctrl_color=scrollbar_color,
                     onchange=self._on_horizontal_scroll
                 )
-            sbar.set_shadow(
+            sbar.set_font_shadow(
                 enabled=shadow,
                 color=shadow_color,
                 position=shadow_position,

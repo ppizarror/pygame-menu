@@ -551,7 +551,7 @@ class Menu(object):
             selected_color=self._theme.title_font_color
         )
         self._menubar.set_cursor(self._theme.title_close_button_cursor)
-        self._menubar.set_shadow(
+        self._menubar.set_font_shadow(
             color=self._theme.title_shadow_color,
             enabled=self._theme.title_shadow,
             offset=self._theme.title_shadow_offset,

@@ -189,6 +189,14 @@ class Theme(object):
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
     :type widget_font_color: tuple, list
+    :param widget_font_shadow: Indicate if the widget font shadow is enabled
+    :type widget_font_shadow: bool
+    :param widget_font_shadow_color: Color of the widget font shadow
+    :type widget_font_shadow_color: tuple, list
+    :param widget_font_shadow_offset: Offset of the widget font shadow (px)
+    :type widget_font_shadow_offset: int
+    :param widget_font_shadow_position: Position of the widget font shadow. See :py:mod:`pygame_menu.locals`
+    :type widget_font_shadow_position: str
     :param widget_font_size: Font size
     :type widget_font_size: int
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px)
@@ -199,14 +207,6 @@ class Theme(object):
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
-    :param widget_shadow: Indicate if the widget text shadow is enabled
-    :type widget_shadow: bool
-    :param widget_shadow_color: Color of the widget shadow
-    :type widget_shadow_color: tuple, list
-    :param widget_shadow_offset: Offset of the widget shadow (px)
-    :type widget_shadow_offset: int
-    :param widget_shadow_position: Position of the widget shadow. See :py:mod:`pygame_menu.locals`
-    :type widget_shadow_position: str
     :param widget_url_color: Color of url text links
     :type widget_url_color: tuple, list
     """
@@ -261,15 +261,15 @@ class Theme(object):
     widget_font_background_color: Optional[ColorType]
     widget_font_background_color_from_menu: bool
     widget_font_color: ColorType
+    widget_font_shadow: bool
+    widget_font_shadow_color: ColorType
+    widget_font_shadow_offset: NumberType
+    widget_font_shadow_position: str
     widget_font_size: int
     widget_margin: Tuple2NumberType
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
     widget_selection_effect: 'pygame_menu.widgets.core.Selection'
-    widget_shadow: bool
-    widget_shadow_color: ColorType
-    widget_shadow_offset: NumberType
-    widget_shadow_position: str
     widget_url_color: ColorType
 
     def __init__(self, **kwargs) -> None:
@@ -343,15 +343,15 @@ class Theme(object):
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
                                                                 bool, False)
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
+        self.widget_font_shadow = self._get(kwargs, 'widget_font_shadow', bool, False)
+        self.widget_font_shadow_color = self._get(kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
+        self.widget_font_shadow_offset = self._get(kwargs, 'widget_font_shadow_offset', int, 2)
+        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position',
+                                                     _locals.POSITION_NORTHWEST)
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
         self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
-        self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
-        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
-        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', int, 2)
-        self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
-                                                _locals.POSITION_NORTHWEST)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
         # Compatibility check
@@ -382,14 +382,14 @@ class Theme(object):
             return self
 
         # Boolean asserts
-        assert isinstance(self.title_close_button, bool)
+        assert isinstance(self.scrollbar_shadow, bool)
         assert isinstance(self.title_bar_modify_scrollarea, bool)
+        assert isinstance(self.title_close_button, bool)
         assert isinstance(self.title_font_antialias, bool)
         assert isinstance(self.title_shadow, bool)
-        assert isinstance(self.scrollbar_shadow, bool)
         assert isinstance(self.widget_font_antialias, bool)
         assert isinstance(self.widget_font_background_color_from_menu, bool)
-        assert isinstance(self.widget_shadow, bool)
+        assert isinstance(self.widget_font_shadow, bool)
 
         # Value type checks
         _utils.assert_alignment(self.widget_alignment)
@@ -398,7 +398,7 @@ class Theme(object):
         _utils.assert_cursor(self.widget_cursor)
         _utils.assert_position(self.scrollbar_shadow_position)
         _utils.assert_position(self.title_shadow_position)
-        _utils.assert_position(self.widget_shadow_position)
+        _utils.assert_position(self.widget_font_shadow_position)
         assert _check_menubar_style(self.title_bar_style)
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
 
@@ -419,10 +419,10 @@ class Theme(object):
         assert isinstance(self.widget_background_inflate_to_selection, bool)
         assert isinstance(self.widget_border_width, int)
         assert isinstance(self.widget_font, str)
+        assert isinstance(self.widget_font_shadow_offset, int)
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, PaddingInstance)
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
-        assert isinstance(self.widget_shadow_offset, int)
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
@@ -437,10 +437,10 @@ class Theme(object):
         self.selection_color = self._format_opacity(self.selection_color)
         self.surface_clear_color = self._format_opacity(self.surface_clear_color)
         self.title_background_color = self._format_opacity(self.title_background_color)
-        self.widget_border_color = self._format_opacity(self.widget_border_color)
         self.title_font_color = self._format_opacity(self.title_font_color)
         self.title_shadow_color = self._format_opacity(self.title_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
+        self.widget_border_color = self._format_opacity(self.widget_border_color)
         self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)
         self.widget_font_color = self._format_opacity(self.widget_font_color)
         self.widget_url_color = self._format_opacity(self.widget_url_color)
@@ -474,8 +474,8 @@ class Theme(object):
         assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
+        assert self.widget_font_shadow_offset > 0, 'widget shadow offset must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
-        assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
 
         # Color asserts
         assert self.focus_background_color[3] != 0, \

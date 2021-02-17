@@ -52,7 +52,7 @@ def add_dynamic_button() -> None:
     :return: None
     """
     print('Adding a button dynamically')
-    btn = menu.add.button(randrange(0, 10), None)
+    btn = menu.add.button(randrange(0, 10))
 
     def _update_button() -> None:
         count = btn.get_attribute('count', int(btn.get_title())) + 1

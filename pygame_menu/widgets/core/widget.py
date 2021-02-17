@@ -108,6 +108,11 @@ class Widget(object):
     _font_readonly_color: ColorType
     _font_readonly_selected_color: ColorType
     _font_selected_color: ColorType
+    _font_shadow: bool
+    _font_shadow_color: ColorType
+    _font_shadow_offset: NumberType
+    _font_shadow_position: str
+    _font_shadow_tuple: Tuple2IntType
     _font_size: int
     _frame: Optional['Widget']
     _id: str
@@ -132,11 +137,6 @@ class Widget(object):
     _selected: bool
     _selection_effect: 'Selection'
     _selection_time: NumberType
-    _shadow: bool
-    _shadow_color: ColorType
-    _shadow_offset: NumberType
-    _shadow_position: str
-    _shadow_tuple: Tuple2IntType
     _sound: 'Sound'
     _surface: Optional['pygame.Surface']
     _title: str
@@ -240,12 +240,12 @@ class Widget(object):
         self._font_selected_color = (255, 255, 255)
         self._font_size = 0
 
-        # Text shadow
-        self._shadow = False
-        self._shadow_color = (0, 0, 0)
-        self._shadow_offset = 2.0
-        self._shadow_position = _locals.POSITION_NORTHWEST
-        self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
+        # Font shadow
+        self._font_shadow = False
+        self._font_shadow_color = (0, 0, 0)
+        self._font_shadow_offset = 2.0
+        self._font_shadow_position = _locals.POSITION_NORTHWEST
+        self._font_shadow_tuple = (0, 0)  # (x px offset, y px offset)
 
         # Border
         self._border_color = (0, 0, 0)
@@ -1100,116 +1100,6 @@ class Widget(object):
         self._kwargs[key] = self
         return self
 
-    def _font_render_string(self, text: str, color: ColorType = (0, 0, 0),
-                            use_background_color: bool = True) -> 'pygame.Surface':
-        """
-        Render text. If the font is not defined returns a zero-width surface.
-
-        :param text: Text to render
-        :param color: Text color
-        :param use_background_color: Use default background color
-        :return: Text surface
-        """
-        assert isinstance(text, str)
-        assert isinstance(color, tuple), 'invalid color'
-        assert isinstance(use_background_color, bool), 'use_background_color must be boolean'
-        bgcolor = self._font_background_color
-
-        # Disable
-        if not use_background_color:
-            bgcolor = None
-
-        if self._font is None:
-            return make_surface(0, 0)
-
-        surface = self._font.render(text, self._font_antialias, color, bgcolor)
-        return surface
-
-    def _render_string(self, string: str, color: ColorType) -> 'pygame.Surface':
-        """
-        Render text and turn it into a surface.
-
-        :param string: Text to render
-        :param color: Text color
-        :return: Text surface
-        """
-        text = self._font_render_string(string, color)
-
-        # Create surface
-        surface = make_surface(
-            width=text.get_width(),
-            height=text.get_height(),
-            alpha=True
-        )
-
-        # Draw shadow first
-        if self._shadow:
-            text_bg = self._font_render_string(string, self._shadow_color)
-            surface.blit(text_bg, self._shadow_tuple)
-
-        surface.blit(text, (0, 0))
-        return surface
-
-    def set_shadow(self,
-                   enabled: bool = True,
-                   color: Optional[ColorType] = None,
-                   position: Optional[str] = None,
-                   offset: int = 2
-                   ) -> 'Widget':
-        """
-        Set the Widget text shadow.
-
-        .. note::
-
-            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
-
-        :param enabled: Shadow is enabled or not
-        :param color: Shadow color
-        :param position: Shadow position
-        :param offset: Shadow offset
-        :return: Self reference
-        """
-        self._shadow = enabled
-        if color is not None:
-            assert_color(color)
-            self._shadow_color = color
-        if position is not None:
-            assert_position(position)
-            self._shadow_position = position
-        assert isinstance(offset, int)
-        assert offset > 0, 'shadow offset must be greater than zero'
-        self._shadow_offset = offset
-
-        # Set position
-        x = 0
-        y = 0
-        if self._shadow_position == _locals.POSITION_NORTHWEST:
-            x = -1
-            y = -1
-        elif self._shadow_position == _locals.POSITION_NORTH:
-            y = -1
-        elif self._shadow_position == _locals.POSITION_NORTHEAST:
-            x = 1
-            y = -1
-        elif self._shadow_position == _locals.POSITION_EAST:
-            x = 1
-        elif self._shadow_position == _locals.POSITION_SOUTHEAST:
-            x = 1
-            y = 1
-        elif self._shadow_position == _locals.POSITION_SOUTH:
-            y = 1
-        elif self._shadow_position == _locals.POSITION_SOUTHWEST:
-            x = -1
-            y = 1
-        elif self._shadow_position == _locals.POSITION_WEST:
-            x = -1
-        elif self._shadow_position == _locals.POSITION_CENTER:
-            pass  # (0, 0)
-
-        self._shadow_tuple = (x * self._shadow_offset, y * self._shadow_offset)
-        self._force_render()
-        return self
-
     def _apply_transforms(self) -> None:
         """
         Apply surface transforms: angle, flip and scaling.
@@ -1272,6 +1162,56 @@ class Widget(object):
                                        int(self._padding[1] * pad_width),
                                        int(self._padding[2] * pad_height),
                                        int(self._padding[3] * pad_width))
+
+    def _font_render_string(self, text: str, color: ColorType = (0, 0, 0),
+                            use_background_color: bool = True) -> 'pygame.Surface':
+        """
+        Render text. If the font is not defined returns a zero-width surface.
+
+        :param text: Text to render
+        :param color: Text color
+        :param use_background_color: Use default background color
+        :return: Text surface
+        """
+        assert isinstance(text, str)
+        assert isinstance(color, tuple), 'invalid color'
+        assert isinstance(use_background_color, bool), 'use_background_color must be boolean'
+        bgcolor = self._font_background_color
+
+        # Disable
+        if not use_background_color:
+            bgcolor = None
+
+        if self._font is None:
+            return make_surface(0, 0)
+
+        surface = self._font.render(text, self._font_antialias, color, bgcolor)
+        return surface
+
+    def _render_string(self, string: str, color: ColorType) -> 'pygame.Surface':
+        """
+        Render text and turn it into a surface.
+
+        :param string: Text to render
+        :param color: Text color
+        :return: Text surface
+        """
+        text = self._font_render_string(string, color)
+
+        # Create surface
+        surface = make_surface(
+            width=text.get_width(),
+            height=text.get_height(),
+            alpha=True
+        )
+
+        # Draw shadow first
+        if self._font_shadow:
+            text_bg = self._font_render_string(string, self._font_shadow_color)
+            surface.blit(text_bg, self._font_shadow_tuple)
+
+        surface.blit(text, (0, 0))
+        return surface
 
     def get_font_color_status(self) -> ColorType:
         """
@@ -1341,6 +1281,66 @@ class Widget(object):
         self._font_size = font_size
 
         self._apply_font()
+        self._force_render()
+        return self
+
+    def set_font_shadow(self,
+                        enabled: bool = True,
+                        color: Optional[ColorType] = None,
+                        position: Optional[str] = None,
+                        offset: int = 2
+                        ) -> 'Widget':
+        """
+        Set the Widget font shadow.
+
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
+
+        :param enabled: Shadow is enabled or not
+        :param color: Shadow color
+        :param position: Shadow position
+        :param offset: Shadow offset
+        :return: Self reference
+        """
+        self._font_shadow = enabled
+        if color is not None:
+            assert_color(color)
+            self._font_shadow_color = color
+        if position is not None:
+            assert_position(position)
+            self._font_shadow_position = position
+        assert isinstance(offset, int)
+        assert offset > 0, 'shadow offset must be greater than zero'
+        self._font_shadow_offset = offset
+
+        # Set position
+        x = 0
+        y = 0
+        if self._font_shadow_position == _locals.POSITION_NORTHWEST:
+            x = -1
+            y = -1
+        elif self._font_shadow_position == _locals.POSITION_NORTH:
+            y = -1
+        elif self._font_shadow_position == _locals.POSITION_NORTHEAST:
+            x = 1
+            y = -1
+        elif self._font_shadow_position == _locals.POSITION_EAST:
+            x = 1
+        elif self._font_shadow_position == _locals.POSITION_SOUTHEAST:
+            x = 1
+            y = 1
+        elif self._font_shadow_position == _locals.POSITION_SOUTH:
+            y = 1
+        elif self._font_shadow_position == _locals.POSITION_SOUTHWEST:
+            x = -1
+            y = 1
+        elif self._font_shadow_position == _locals.POSITION_WEST:
+            x = -1
+        elif self._font_shadow_position == _locals.POSITION_CENTER:
+            pass  # (0, 0)
+
+        self._font_shadow_tuple = (x * self._font_shadow_offset, y * self._font_shadow_offset)
         self._force_render()
         return self
 

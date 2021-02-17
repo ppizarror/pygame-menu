@@ -136,7 +136,7 @@ class NoneWidget(Widget):
     def select(self, *args, **kwargs) -> 'Widget':
         return self
 
-    def set_shadow(self, *args, **kwargs) -> 'Widget':
+    def set_font_shadow(self, *args, **kwargs) -> 'Widget':
         return self
 
     def set_sound(self, *args, **kwargs) -> 'Widget':
