@@ -37,10 +37,11 @@ import warnings
 import pygame
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
+
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType
 
 try:
 
@@ -184,8 +185,8 @@ class TextInput(Widget):
                  title: Any = '',
                  textinput_id: str = '',
                  copy_paste_enable: bool = True,
-                 cursor_color: ColorType = (0, 0, 0),
-                 cursor_selection_color: ColorType = (30, 30, 30, 100),
+                 cursor_color: ColorInputType = (0, 0, 0),
+                 cursor_selection_color: ColorInputType = (30, 30, 30, 100),
                  cursor_selection_enable: bool = True,
                  cursor_switch_ms: NumberType = 500,
                  history: int = 50,
@@ -212,7 +213,6 @@ class TextInput(Widget):
                  **kwargs
                  ) -> None:
         assert isinstance(copy_paste_enable, bool)
-        assert isinstance(cursor_color, tuple)
         assert isinstance(cursor_selection_enable, bool)
         assert isinstance(cursor_switch_ms, NumberInstance)
         assert isinstance(history, int)
@@ -241,8 +241,8 @@ class TextInput(Widget):
         assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
         assert cursor_switch_ms > 0, 'cursor switch in milliseconds must be greater than zero'
 
-        assert_color(cursor_color)
-        assert_color(cursor_selection_color)
+        cursor_color = assert_color(cursor_color)
+        cursor_selection_color = assert_color(cursor_selection_color)
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
             assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
@@ -558,7 +558,7 @@ class TextInput(Widget):
             max_width = frame.get_width()
         return max_width
 
-    def _render_string_underline(self, string: str, color: ColorType) -> 'pygame.Surface':
+    def _render_string_underline(self, string: str, color: ColorInputType) -> 'pygame.Surface':
         """
         Render underline string surface.
 
@@ -566,6 +566,8 @@ class TextInput(Widget):
         :param color: Color of the string to render
         :return: New surface
         """
+        color = assert_color(color)
+
         # Create surface with no underline (just text)
         surface = self._render_string(string, color)
 

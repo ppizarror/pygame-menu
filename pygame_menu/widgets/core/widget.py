@@ -34,6 +34,7 @@ __all__ = ['Widget']
 import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
+
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu._decorator import Decorator
 from pygame_menu.sound import Sound
@@ -41,7 +42,7 @@ from pygame_menu.utils import make_surface, assert_alignment, assert_color, asse
     is_callable, parse_padding, uuid4
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
-    NumberInstance
+    NumberInstance, ColorInputType
 
 from pathlib import Path
 import random
@@ -61,6 +62,7 @@ def _restore_cursor() -> None:
     """
     if not isinstance(_CURSOR_PREV[0], _WidgetUnknownCursor):
         if _CURSOR_PREV[0] is not None:
+            # noinspection PyArgumentList
             pygame.mouse.set_cursor(_CURSOR_PREV[0])
             _CURSOR_PREV[0] = None
     else:
@@ -391,6 +393,7 @@ class Widget(object):
         if self._cursor is not None:
             try:
                 cursor = pygame.mouse.get_cursor()  # Previous cursor
+                # noinspection PyArgumentList
                 pygame.mouse.set_cursor(self._cursor)
             except (pygame.error, TypeError):
                 msg = 'could not stablish widget cursor, invalid value {0}'.format(self._cursor)
@@ -686,13 +689,13 @@ class Widget(object):
         """
         return self._title
 
-    def set_background_color(self, color: Optional[Union[ColorType, 'pygame_menu.BaseImage']],
+    def set_background_color(self, color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
                              inflate: Optional[Tuple2IntType] = (0, 0)) -> 'Widget':
         """
         Set the Widget background color.
 
         :param color: Widget background color
-        :param inflate: Inflate background in *(x, y)*. If ``None``, the widget value is not updated
+        :param inflate: Inflate background on x-axis and y-axis (x, y). If ``None``, the widget value is not updated
         :return: Self reference
         """
         if color is not None:
@@ -700,7 +703,7 @@ class Widget(object):
                 assert color.get_drawing_mode() == pygame_menu.baseimage.IMAGE_MODE_FILL, \
                     'currently widget only supports IMAGE_MODE_FILL drawing mode'
             else:
-                assert_color(color)
+                color = assert_color(color)
         if inflate is None:
             inflate = self._background_inflate
         assert_vector(inflate, 2)
@@ -929,13 +932,13 @@ class Widget(object):
         """
         Return the Widget margin.
 
-        :return: Widget margin *(left, bottom)*
+        :return: Widget margin (left, bottom)
         """
         return self._margin
 
     def set_margin(self, x: NumberType, y: NumberType) -> 'Widget':
         """
-        Set the Widget margin *(left, bottom)*.
+        Set the Widget margin (left, bottom).
 
         :param x: Margin on x-axis (left)
         :param y: Margin on y-axis (bottom)
@@ -952,7 +955,7 @@ class Widget(object):
         Return the Widget padding.
 
         :param transformed: If ``True``, returns the scaled padding if widget is transformed (flip, scale)
-        :return: Widget padding *(top, right, bottom, left)*
+        :return: Widget padding (top, right, bottom, left)
         """
         if transformed:
             return self._padding_transform
@@ -965,7 +968,7 @@ class Widget(object):
         - If an integer or float is provided: top, right, bottom and left values will be the same
         - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
         - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
-        - If 4-item tuple is provided: padding will be *(top, right, bottom, left)*
+        - If 4-item tuple is provided: padding will be (top, right, bottom, left)
 
         .. note::
 
@@ -1019,7 +1022,7 @@ class Widget(object):
         Return the :py:class:`pygame.Rect` object of the Widget.
         This method forces rendering.
 
-        :param inflate: Inflate rect *(x, y)* in px
+        :param inflate: Inflate rect (x, y) in px
         :param apply_padding: Apply widget padding
         :param use_transformed_padding: Use scaled padding if the widget is scaled
         :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
@@ -1163,7 +1166,7 @@ class Widget(object):
                                        int(self._padding[2] * pad_height),
                                        int(self._padding[3] * pad_width))
 
-    def _font_render_string(self, text: str, color: ColorType = (0, 0, 0),
+    def _font_render_string(self, text: str, color: ColorInputType = (0, 0, 0),
                             use_background_color: bool = True) -> 'pygame.Surface':
         """
         Render text. If the font is not defined returns a zero-width surface.
@@ -1174,8 +1177,8 @@ class Widget(object):
         :return: Text surface
         """
         assert isinstance(text, str)
-        assert isinstance(color, tuple), 'invalid color'
         assert isinstance(use_background_color, bool), 'use_background_color must be boolean'
+        color = assert_color(color)
         bgcolor = self._font_background_color
 
         # Disable
@@ -1188,7 +1191,7 @@ class Widget(object):
         surface = self._font.render(text, self._font_antialias, color, bgcolor)
         return surface
 
-    def _render_string(self, string: str, color: ColorType) -> 'pygame.Surface':
+    def _render_string(self, string: str, color: ColorInputType) -> 'pygame.Surface':
         """
         Render text and turn it into a surface.
 
@@ -1230,11 +1233,11 @@ class Widget(object):
     def set_font(self,
                  font: Union[str, 'Path'],
                  font_size: int,
-                 color: ColorType,
-                 selected_color: ColorType,
-                 readonly_color: ColorType,
-                 readonly_selected_color: ColorType,
-                 background_color: Optional[ColorType],
+                 color: ColorInputType,
+                 selected_color: ColorInputType,
+                 readonly_color: ColorInputType,
+                 readonly_selected_color: ColorInputType,
+                 background_color: Optional[ColorInputType],
                  antialias: bool = True
                  ) -> 'Widget':
         """
@@ -1253,13 +1256,13 @@ class Widget(object):
         assert isinstance(font, (str, Path))
         assert isinstance(font_size, int)
         assert isinstance(antialias, bool)
-        assert_color(color)
-        assert_color(selected_color)
-        assert_color(readonly_color)
-        assert_color(readonly_selected_color)
+        color = assert_color(color)
+        selected_color = assert_color(selected_color)
+        readonly_color = assert_color(readonly_color)
+        readonly_selected_color = assert_color(readonly_selected_color)
 
         if background_color is not None:
-            assert_color(background_color)
+            background_color = assert_color(background_color)
 
             # If background is a color and it's transparent raise a warning
             # Font background color must be opaque, otherwise the results are quite bad
@@ -1286,7 +1289,7 @@ class Widget(object):
 
     def set_font_shadow(self,
                         enabled: bool = True,
-                        color: Optional[ColorType] = None,
+                        color: Optional[ColorInputType] = None,
                         position: Optional[str] = None,
                         offset: int = 2
                         ) -> 'Widget':
@@ -1305,7 +1308,7 @@ class Widget(object):
         """
         self._font_shadow = enabled
         if color is not None:
-            assert_color(color)
+            color = assert_color(color)
             self._font_shadow_color = color
         if position is not None:
             assert_position(position)
@@ -1457,7 +1460,7 @@ class Widget(object):
 
     def get_position(self) -> Tuple2IntType:
         """
-        Return the widget position tuple *(x, y)*.
+        Return the widget position tuple (x, y).
 
         :return: Widget position
         """
@@ -1515,7 +1518,7 @@ class Widget(object):
 
         .. warning::
 
-            Final Widget size may not be exactly the same as the desired *(width, height)*
+            Final Widget size may not be exactly the same as the desired (width, height)
             tuple due to rounding errors, expect +-2 px average.
 
         :param width: Width in px, ``None`` if max width is disabled
@@ -1568,7 +1571,7 @@ class Widget(object):
 
         .. warning::
 
-            Final Widget size may not be exactly the same as the desired *(width, height)*
+            Final Widget size may not be exactly the same as the desired (width, height)
             tuple due to rounding errors, expect +-2 px average.
 
         :param height: Height in px, ``None`` if max height is disabled
@@ -1694,7 +1697,7 @@ class Widget(object):
 
         .. warning::
 
-            Final Widget size may not be exactly the same as the desired *(width, height)*
+            Final Widget size may not be exactly the same as the desired (width, height)
             tuple due to rounding errors, expect +-2 px average.
 
         :param width: New width of the widget in px
@@ -1711,7 +1714,7 @@ class Widget(object):
 
     def translate(self, x: NumberType, y: NumberType) -> 'Widget':
         """
-        Transformation: Translate to *(+x, +y)* according to the default position.
+        Transformation: Translate to (+x, +y) according to the default position.
 
         .. note::
 
@@ -1722,7 +1725,7 @@ class Widget(object):
 
         .. note::
 
-            To revert changes, only set to ``(0,0)``.
+            To revert changes, only set to ``(0, 0)``.
 
         .. note::
 
@@ -1741,7 +1744,7 @@ class Widget(object):
 
     def get_translate(self, virtual: bool = False) -> Tuple2IntType:
         """
-        Get Widget translate in *(x, y)*.
+        Get Widget translate on x-axis and y-axis (x, y).
 
         :param virtual: If ``True`` get virtual translation, usually applied within frame scrollarea
         :return: Translation on both axis
@@ -1926,11 +1929,11 @@ class Widget(object):
 
         .. warning::
 
-            If the widget is not rendered this method might return ``(0,0)``.
+            If the widget is not rendered this method might return ``(0, 0)``.
 
         :param apply_padding: Apply padding
         :param apply_selection: Apply selection
-        :return: Widget *(width, height)*
+        :return: Widget width and height in px
         """
         return self.get_width(apply_padding=apply_padding, apply_selection=apply_selection), \
                self.get_height(apply_padding=apply_padding, apply_selection=apply_selection)
@@ -2246,7 +2249,7 @@ class Widget(object):
 
     def set_col_row_index(self, col: int, row: int, index: int) -> 'Widget':
         """
-        Set the *(column,row,index)* position. If the column or row is ``-1`` then the
+        Set the (column, row, index) position. If the column or row is ``-1`` then the
         widget is not assigned to a certain column/row (for example, if it's hidden).
 
         :param col: Column
@@ -2264,11 +2267,11 @@ class Widget(object):
         """
         Get the Widget column/row position.
 
-        :return: *(column, row, index)* tuple
+        :return: (column, row, index) tuple
         """
         return self._col_row_index
 
-    def set_border(self, width: int, color: Optional[ColorType], inflate: Tuple2IntType) -> 'Widget':
+    def set_border(self, width: int, color: Optional[ColorInputType], inflate: Tuple2IntType) -> 'Widget':
         """
         Set the Widget border.
 
@@ -2278,12 +2281,12 @@ class Widget(object):
 
         :param width: Border width (px)
         :param color: Border color
-        :param inflate: Inflate on *(x, y)* axis in px
+        :param inflate: Inflate on (x, y) axis in px
         :return: Self reference
         """
         assert isinstance(width, int) and width >= 0
         if color is not None:
-            assert_color(color)
+            color = assert_color(color)
         assert isinstance(inflate, tuple) and inflate[0] >= 0 and inflate[1] >= 0
         self._border_width = width
         self._border_color = color

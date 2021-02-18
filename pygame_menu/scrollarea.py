@@ -34,9 +34,10 @@ __all__ = ['ScrollArea', 'get_scrollbars_from_position']
 import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
+
 from pygame_menu._decorator import Decorator
-from pygame_menu._types import ColorType, Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
-    Optional, Tuple2IntType, NumberInstance
+from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
+    Optional, Tuple2IntType, NumberInstance, ColorInputType
 from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, uuid4
 from pygame_menu.widgets import ScrollBar, MenuBar
 
@@ -130,19 +131,19 @@ class ScrollArea(object):
     def __init__(self,
                  area_width: int,
                  area_height: int,
-                 area_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']] = None,
+                 area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
                  extend_x: int = 0,
                  extend_y: int = 0,
                  menubar: Optional['MenuBar'] = None,
                  parent_scrollarea: Optional['ScrollArea'] = None,
-                 scrollbar_color: ColorType = (235, 235, 235),
+                 scrollbar_color: ColorInputType = (235, 235, 235),
                  scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
-                 scrollbar_slider_color: ColorType = (200, 200, 200),
+                 scrollbar_slider_color: ColorInputType = (200, 200, 200),
                  scrollbar_slider_pad: NumberType = 0,
                  scrollbar_thick: int = 20,
                  scrollbars: Union[str, Tuple[str, ...]] = get_scrollbars_from_position(_locals.POSITION_SOUTHEAST),
                  shadow: bool = False,
-                 shadow_color: ColorType = (0, 0, 0),
+                 shadow_color: ColorInputType = (0, 0, 0),
                  shadow_offset: int = 2,
                  shadow_position: str = _locals.POSITION_SOUTHEAST,
                  world: Optional['pygame.Surface'] = None
@@ -157,9 +158,10 @@ class ScrollArea(object):
         assert isinstance(shadow_offset, int)
         assert isinstance(world, (pygame.Surface, type(None)))
 
-        assert_color(scrollbar_color)
-        assert_color(scrollbar_slider_color)
-        assert_color(shadow_color)
+        scrollbar_color = assert_color(scrollbar_color)
+        scrollbar_slider_color = assert_color(scrollbar_slider_color)
+        shadow_color = assert_color(shadow_color)
+
         assert_position(shadow_position)
 
         assert area_width > 0 and area_height > 0, \
@@ -181,13 +183,13 @@ class ScrollArea(object):
 
         self.set_parent_scrollarea(parent_scrollarea)
 
-        if area_color:
+        if area_color is not None:
             self._bg_surface = make_surface(width=area_width + self._extend_x,
                                             height=area_height + self._extend_y)
             if isinstance(area_color, pygame_menu.BaseImage):
                 area_color.draw(surface=self._bg_surface, area=self._bg_surface.get_rect())
             else:
-                self._bg_surface.fill(area_color)
+                self._bg_surface.fill(assert_color(area_color))
 
         self._view_rect = self.get_view_rect()
 
@@ -434,7 +436,7 @@ class ScrollArea(object):
         """
         Return the offset introduced by the scrollbars in the world.
 
-        :return: ScrollArea offset *(x, y)*
+        :return: ScrollArea offset on x-axis and y-axis
         """
         offsets = [0, 0]
         for sbar in self._scrollbars:
@@ -762,10 +764,10 @@ class ScrollArea(object):
 
     def translate(self, x: NumberType, y: NumberType) -> 'ScrollArea':
         """
-        Translate by *(x, y)* px.
+        Translate on x-axis and y-axis
 
-        :param x: X translation in px
-        :param y: Y translation in px
+        :param x: X translation (px)
+        :param y: Y translation (px)
         :return: Self reference
         """
         assert isinstance(x, NumberInstance)
@@ -782,7 +784,7 @@ class ScrollArea(object):
         """
         Get object translation on both axis.
 
-        :return: Translation in x-axis and y-axis (px)
+        :return: Translation on x-axis and y-axis (px)
         """
         return self._translate
 

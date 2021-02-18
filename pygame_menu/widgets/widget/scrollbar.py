@@ -32,12 +32,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ScrollBar']
 
 import pygame
+import pygame_menu.locals as _locals
+
 from pygame_menu._types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
-import pygame_menu.locals as _locals
 from pygame_menu._types import Optional, List, Tuple, VectorIntType, ColorType, Tuple2IntType, \
-    CallbackType, Union, NumberInstance
+    CallbackType, Union, NumberInstance, ColorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -95,9 +96,9 @@ class ScrollBar(Widget):
                  scrollbar_id: str = '',
                  orientation: str = _locals.ORIENTATION_HORIZONTAL,
                  slider_pad: NumberType = 0,
-                 slider_color: ColorType = (200, 200, 200),
+                 slider_color: ColorInputType = (200, 200, 200),
                  page_ctrl_thick: int = 20,
-                 page_ctrl_color: ColorType = (235, 235, 235),
+                 page_ctrl_color: ColorInputType = (235, 235, 235),
                  onchange: CallbackType = None,
                  *args,
                  **kwargs
@@ -109,8 +110,8 @@ class ScrollBar(Widget):
         assert isinstance(page_ctrl_thick, int)
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
-        assert_color(slider_color)
-        assert_color(page_ctrl_color)
+        slider_color = assert_color(slider_color)
+        page_ctrl_color = assert_color(page_ctrl_color)
 
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
@@ -200,7 +201,7 @@ class ScrollBar(Widget):
 
     def set_shadow(self,
                    enabled: bool = True,
-                   color: Optional[ColorType] = None,
+                   color: Optional[ColorInputType] = None,
                    position: Optional[str] = None,
                    offset: int = 2
                    ) -> 'ScrollBar':

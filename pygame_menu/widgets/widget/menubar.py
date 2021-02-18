@@ -49,15 +49,17 @@ __all__ = [
 
 ]
 
+import warnings
+
 import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
+
 from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
 from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
-    ColorType, Any, Optional, NumberInstance
-import warnings
+    ColorType, Any, Optional, NumberInstance, ColorInputType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -116,7 +118,7 @@ class MenuBar(Widget):
     def __init__(self,
                  title: Any,
                  width: NumberType,
-                 background_color: ColorType,
+                 background_color: ColorInputType,
                  back_box: bool = False,
                  mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
                  modify_scrollarea: bool = True,
@@ -129,7 +131,7 @@ class MenuBar(Widget):
         assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
 
-        assert_color(background_color)
+        background_color = assert_color(background_color)
 
         # MenuBar has no ID
         super(MenuBar, self).__init__(
@@ -207,7 +209,7 @@ class MenuBar(Widget):
 
     def get_title_offset(self) -> Tuple2IntType:
         """
-        Return the title offset in *(x, y)*.
+        Return the title offset on x-axis and y-axis (x, y).
 
         :return: Title offset
         """

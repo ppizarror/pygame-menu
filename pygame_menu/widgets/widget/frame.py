@@ -36,10 +36,11 @@ import warnings
 import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
+
 from pygame_menu._decorator import Decorator
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, \
-    ColorType, Tuple2IntType, NumberInstance, Any
+    Tuple2IntType, NumberInstance, Any, ColorInputType
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation
 
 
@@ -126,7 +127,7 @@ class Frame(Widget):
 
     def get_inner_size(self) -> Tuple2IntType:
         """
-        Return Frame inner size *(width, height)*.
+        Return Frame inner size (width, height).
 
         :return: Size tuple in px
         """
@@ -147,7 +148,7 @@ class Frame(Widget):
         """
         Returns the max size of the frame.
 
-        :return: Max *(width, height)* in px
+        :return: Max (width, height) in px
         """
         if self._frame_scrollarea is not None:
             return self._frame_scrollarea.get_size(inner=True)
@@ -156,13 +157,13 @@ class Frame(Widget):
     def make_scrollarea(self,
                         max_width: Optional[NumberType],
                         max_height: Optional[NumberType],
-                        scrollbar_color: ColorType,
+                        scrollbar_color: ColorInputType,
                         scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
                         scrollbar_shadow: bool,
-                        scrollbar_shadow_color: ColorType,
+                        scrollbar_shadow_color: ColorInputType,
                         scrollbar_shadow_offset: int,
                         scrollbar_shadow_position: str,
-                        scrollbar_slider_color: ColorType,
+                        scrollbar_slider_color: ColorInputType,
                         scrollbar_slider_pad: NumberType,
                         scrollbar_thick: NumberType,
                         scrollbars: Union[str, Tuple[str, ...]],
@@ -816,7 +817,7 @@ class Frame(Widget):
         :param widget: Widget to be packed
         :param alignment: Widget alignment
         :param vertical_position: Vertical position of the widget within frame. See :py:mod:`pygame_menu.locals`
-        :param margin: *(left, top)* margin of added widget in px. It overrides the previous widget margin
+        :param margin: (left, top) margin of added widget in px. It overrides the previous widget margin
         :return: Added widget references
         """
         assert self._menu is not None, \

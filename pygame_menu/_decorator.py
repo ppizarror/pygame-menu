@@ -32,19 +32,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Decorator']
 
+from math import pi
+from pathlib import Path
+import math
+import warnings
+
 import pygame
 import pygame_menu
 import pygame_menu.menu
+
 from pygame.font import Font
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
-import math
-import warnings
-from math import pi
-from pathlib import Path
-
-from pygame_menu._types import List, Tuple2NumberType, ColorType, Tuple, \
+from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
     uuid4
@@ -203,7 +204,7 @@ class Decorator(object):
 
     def add_polygon(self,
                     coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                    color: ColorType,
+                    color: ColorInputType,
                     filled: bool,
                     width: int = 0,
                     prev: bool = True,
@@ -230,7 +231,7 @@ class Decorator(object):
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert len(coords) >= 3
         assert isinstance(filled, bool)
         assert isinstance(width, int) and width >= 0
@@ -244,7 +245,7 @@ class Decorator(object):
 
     def add_bezier(self,
                    coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                   color: ColorType,
+                   color: ColorInputType,
                    steps: int = 5,
                    prev: bool = True,
                    **kwargs
@@ -267,7 +268,7 @@ class Decorator(object):
         :return: ID of the decoration
         """
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert len(coords) >= 3
         assert isinstance(steps, int) and steps >= 1
         return self._add_decor(DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs))
@@ -276,7 +277,7 @@ class Decorator(object):
                    x: NumberType,
                    y: NumberType,
                    radius: NumberType,
-                   color: ColorType,
+                   color: ColorInputType,
                    filled: bool,
                    width: int = 0,
                    prev: bool = True,
@@ -306,7 +307,7 @@ class Decorator(object):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(radius, NumberInstance) and radius > 0
         assert isinstance(filled, bool)
         assert isinstance(width, int) and width >= 0
@@ -324,7 +325,7 @@ class Decorator(object):
                 radius: NumberType,
                 init_angle: NumberType,
                 final_angle: NumberType,
-                color: ColorType,
+                color: ColorInputType,
                 width: int = 0,
                 prev: bool = True,
                 gfx: bool = True,
@@ -343,8 +344,8 @@ class Decorator(object):
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param radius: Circle radius (px)
-        :param init_angle: Initial angle in degrees ``(0-360)``
-        :param final_angle: Final angle in degrees ``(0-360)``
+        :param init_angle: Initial angle in degrees, from ``0`` to ``360``
+        :param final_angle: Final angle in degrees, from ``0`` to ``360``
         :param color: Color of the polygon
         :param width: Line border width. Only valid if ``filled=False``
         :param prev: If ``True`` draw previous the object, else draws post
@@ -354,7 +355,7 @@ class Decorator(object):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(radius, NumberInstance) and radius > 0
         assert isinstance(init_angle, NumberInstance)
         assert isinstance(final_angle, NumberInstance)
@@ -369,7 +370,7 @@ class Decorator(object):
                 radius: NumberType,
                 init_angle: NumberType,
                 final_angle: NumberType,
-                color: ColorType,
+                color: ColorInputType,
                 prev: bool = True,
                 **kwargs
                 ) -> str:
@@ -386,8 +387,8 @@ class Decorator(object):
         :param x: X position (px), being ``0`` the center of the object
         :param y: Y position (px), being ``0`` the center of the object
         :param radius: Circle radius (px)
-        :param init_angle: Initial angle in degrees ``(0-360)``
-        :param final_angle: Final angle in degrees ``(0-360)``
+        :param init_angle: Initial angle in degrees, from ``0`` to ``360``
+        :param final_angle: Final angle in degrees, from ``0`` to ``360``
         :param color: Color of the polygon
         :param prev: If ``True`` draw previous the object, else draws post
         :param kwargs: Optional keyword arguments
@@ -395,7 +396,7 @@ class Decorator(object):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(radius, NumberInstance) and radius > 0
         assert isinstance(init_angle, NumberInstance)
         assert isinstance(final_angle, NumberInstance)
@@ -475,7 +476,7 @@ class Decorator(object):
                  x: NumberType,
                  y: NumberType,
                  rect: 'pygame.Rect',
-                 color: ColorType,
+                 color: ColorInputType,
                  width: int = 0,
                  prev: bool = True,
                  **kwargs
@@ -502,6 +503,7 @@ class Decorator(object):
         assert isinstance(width, int) and width >= 0
         coords = [(x, y)]
         assert_list_vector(coords, 2)
+        color = assert_color(color)
         assert isinstance(rect, pygame.Rect)
         return self._add_decor(DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs))
 
@@ -510,7 +512,7 @@ class Decorator(object):
                       y: NumberType,
                       width: NumberType,
                       height: NumberType,
-                      color: ColorType,
+                      color: ColorInputType,
                       border: int = 0,
                       prev: bool = True,
                       **kwargs
@@ -546,7 +548,7 @@ class Decorator(object):
                  text: str,
                  font: Union[str, 'Font', 'Path'],
                  size: int,
-                 color: ColorType,
+                 color: ColorInputType,
                  prev: bool = True,
                  antialias=True,
                  centered=False,
@@ -578,6 +580,7 @@ class Decorator(object):
         assert_list_vector(coords, 2)
         text = str(text)
         font_obj = pygame_menu.font.get_font(font, size)
+        color = assert_color(color)
         surface_font = font_obj.render(text, antialias, color)
         surface = make_surface(
             width=surface_font.get_width(),
@@ -592,7 +595,7 @@ class Decorator(object):
                     y: NumberType,
                     rx: NumberType,
                     ry: NumberType,
-                    color: ColorType,
+                    color: ColorInputType,
                     filled: bool,
                     prev: bool = True,
                     **kwargs
@@ -619,7 +622,7 @@ class Decorator(object):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(rx, NumberInstance) and rx > 0
         assert isinstance(ry, NumberInstance) and ry > 0
         assert isinstance(filled, bool)
@@ -628,7 +631,7 @@ class Decorator(object):
     def add_pixel(self,
                   x: NumberType,
                   y: NumberType,
-                  color: ColorType,
+                  color: ColorInputType,
                   prev: bool = True,
                   **kwargs
                   ) -> str:
@@ -651,7 +654,7 @@ class Decorator(object):
         """
         coords = [(x, y)]
         assert_list_vector(coords, 2)
-        assert_color(color)
+        color = assert_color(color)
         return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color, kwargs))
 
     def add_callable(self,
@@ -731,7 +734,7 @@ class Decorator(object):
     def add_line(self,
                  pos1: Tuple2NumberType,
                  pos2: Tuple2NumberType,
-                 color: ColorType,
+                 color: ColorInputType,
                  width: int = 1,
                  prev: bool = True,
                  **kwargs
@@ -746,8 +749,8 @@ class Decorator(object):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param pos1: Position 1 *(x1, y1)*
-        :param pos2: Position 2 *(x2, y2)*
+        :param pos1: Position 1 (x1, y1)
+        :param pos2: Position 2 (x2, y2)
         :param color: Line color
         :param width: Line width in px
         :param prev: If ``True`` draw previous the object, else draws post
@@ -756,7 +759,7 @@ class Decorator(object):
         """
         assert_vector(pos1, 2)
         assert_vector(pos2, 2)
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(width, int) and width >= 1
         length = math.sqrt(math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
         assert length > 0, 'line cannot be zero-length'
@@ -766,7 +769,7 @@ class Decorator(object):
                   x1: NumberType,
                   x2: NumberType,
                   y: NumberType,
-                  color: ColorType,
+                  color: ColorInputType,
                   width: int = 1,
                   prev: bool = True,
                   **kwargs
@@ -797,7 +800,7 @@ class Decorator(object):
                   x: NumberType,
                   y1: NumberType,
                   y2: NumberType,
-                  color: ColorType,
+                  color: ColorInputType,
                   width: int = 1,
                   prev: bool = True,
                   **kwargs

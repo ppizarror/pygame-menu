@@ -32,8 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Label']
 
 import pygame
+
 from pygame_menu.widgets.core import Widget
-from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType
+from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, ColorInputType
 from pygame_menu.utils import assert_color
 
 
@@ -60,7 +61,12 @@ class Label(Widget):
         )
         self._last_underline = ['', None]
 
-    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Label':
+    def add_underline(self,
+                      color: ColorInputType,
+                      offset: int,
+                      width: int,
+                      force_render: bool = False
+                      ) -> 'Label':
         """
         Adds a underline to text. This is added if widget is rendered
 
@@ -70,7 +76,7 @@ class Label(Widget):
         :param force_render: If ``True`` force widget render after addition
         :return: Self reference
         """
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(offset, int)
         assert isinstance(width, int) and width > 0
         self._last_underline[1] = (color, offset, width)
