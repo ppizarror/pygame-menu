@@ -172,15 +172,15 @@ class WidgetManager(object):
         _utils.assert_color(font_shadow_color)
         attributes['font_shadow_color'] = font_shadow_color
 
-        # font_shadow_position
-        font_shadow_position = kwargs.pop('font_shadow_position', self._theme.widget_font_shadow_position)
-        assert isinstance(font_shadow_position, str)
-        attributes['font_shadow_position'] = font_shadow_position
-
         # font_shadow_offset
         font_shadow_offset = kwargs.pop('font_shadow_offset', self._theme.widget_font_shadow_offset)
         assert isinstance(font_shadow_offset, int)
         attributes['font_shadow_offset'] = font_shadow_offset
+
+        # font_shadow_position
+        font_shadow_position = kwargs.pop('font_shadow_position', self._theme.widget_font_shadow_position)
+        assert isinstance(font_shadow_position, str)
+        attributes['font_shadow_position'] = font_shadow_position
 
         # font_size
         font_size = kwargs.pop('font_size', self._theme.widget_font_size)

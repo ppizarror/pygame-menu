@@ -153,13 +153,13 @@ class Theme(object):
     :type title_font_size: int
     :param title_offset: Offset *(x-position, y-position)* of title (px)
     :type title_offset: tuple, list
-    :param title_shadow: Enable shadow on title
+    :param title_shadow: Enable title font shadow
     :type title_shadow: bool
-    :param title_shadow_color: Title shadow color
+    :param title_shadow_color: Title font shadow color
     :type title_shadow_color: tuple, list
-    :param title_shadow_offset: Offset of shadow on title (px)
+    :param title_shadow_offset: Offset of title font shadow (px)
     :type title_shadow_offset: int
-    :param title_shadow_position: Position of the shadow on title. See :py:mod:`pygame_menu.locals`
+    :param title_shadow_position: Position of the title font shadow. See :py:mod:`pygame_menu.locals`
     :type title_shadow_position: str
     :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
     :type title_updates_pygame_display: bool
@@ -350,8 +350,8 @@ class Theme(object):
                                                      _locals.POSITION_NORTHWEST)
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
-        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
+        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
         # Compatibility check
@@ -541,7 +541,7 @@ class Theme(object):
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
         has not an alpha channel. Also updates the opacity to a number between
-        0 and 255.
+        ``0`` and ``255``.
 
         Color may be an Image, so if this is the case return the same object.
 
