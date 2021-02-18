@@ -157,6 +157,7 @@ class Menu(object):
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scroll: 'ScrollArea'
+    _scrollable_frames: List['Frame']  # Stores the reference of scrollable frames to check inputs
     _scrollarea_margin: List[int]
     _sound: 'Sound'
     _stats: '_MenuStats'
@@ -175,7 +176,6 @@ class Menu(object):
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
     _widgets: List['Widget']
-    _widgets_scrollable: List['Widget']
     _widgets_surface: Optional['pygame.Surface']
     _widgets_surface_last: Tuple[int, int, Optional['pygame.Surface']]
     _widgets_surface_need_update: bool
@@ -428,7 +428,7 @@ class Menu(object):
         self.add = WidgetManager(self)
         self._widget_mouseover = None  # Current mouse that has the mouse over
         self._widgets = []
-        self._widgets_scrollable = []  # Stores the scrollable widgets
+        self._scrollable_frames = []  # Stores the scrollable widgets, updated by Frame widget
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
 
         if abs(self._widget_offset[0]) < 1:
@@ -994,10 +994,6 @@ class Menu(object):
 
         widget.set_menu(None)  # Removes Menu reference from widget
 
-        # If widget is scrolalble, remove from the list
-        if widget.is_scrollable and widget in self._widgets_scrollable:
-            self._widgets_scrollable.remove(widget)
-
         return self
 
     def get_sound(self) -> 'Sound':
@@ -1116,7 +1112,8 @@ class Menu(object):
                 try:
                     widget.update_position()
                 except:
-                    print('{0} failed to update'.format(widget.get_class_id()))
+                    msg = '{0} failed to update'.format(widget.get_class_id())
+                    warnings.warn(msg)
                     raise
                 has_frame = True
 
@@ -2081,27 +2078,6 @@ class Menu(object):
             return self._current._move_selected_left_right(1)
         return False
 
-    def _sort_scrollable_widgets(self) -> None:
-        """
-        Sort scrollable widgets of base Menu. The sort index is based on
-        the depth of each scroll.
-
-        :return: None
-        """
-        if len(self._widgets_scrollable) == 0:
-            return
-        widgets: List[Tuple[int, 'Widget']] = []
-        for w in self._widgets_scrollable:
-            if isinstance(w, Frame):
-                sa = w.get_scrollarea(inner=True)
-            else:
-                sa = w.get_scrollarea()
-            widgets.append((-sa.get_depth(), w))
-        widgets.sort(key=lambda x: x[0])
-        self._widgets_scrollable = []
-        for w in widgets:
-            self._widgets_scrollable.append(w[1])
-
     def update(self, events: List['pygame.event.Event']) -> bool:
         """
         Update the status of the Menu using external events.
@@ -2151,12 +2127,12 @@ class Menu(object):
         selected_widget_scrollarea = None if selected_widget is None else selected_widget.get_scrollarea()
 
         # First, check scrollable widgets (if any)
-        widgets_scrollable_update = False
-        for scrollable_widget in self._current._widgets_scrollable:
-            widgets_scrollable_update = widgets_scrollable_update or scrollable_widget.update(events)
+        scrollable_frames_update = False
+        for scrollable_frame in self._current._scrollable_frames:
+            scrollable_frames_update = scrollable_frames_update or scrollable_frame.update(events)
 
         # Scrollable widgets have changed
-        if widgets_scrollable_update:
+        if scrollable_frames_update:
             updated = True
 
         # Update scroll bars

@@ -133,6 +133,47 @@ class Frame(Widget):
         """
         return self._width, self._height
 
+    # noinspection PyProtectedMember
+    def _sort_menu_scrollable_frames(self) -> None:
+        """
+        Sort the menu scrollable frames.
+
+        :return: None
+        """
+        if self._menu is not None and self.is_scrollable:
+            if len(self._menu._scrollable_frames) == 0:
+                return
+            widgets: List[Tuple[int, 'Widget']] = []
+            for w in self._menu._scrollable_frames:
+                if isinstance(w, Frame):
+                    sa = w.get_scrollarea(inner=True)
+                else:
+                    sa = w.get_scrollarea()
+                widgets.append((-sa.get_depth(), w))
+            widgets.sort(key=lambda x: x[0])
+            self._menu._scrollable_frames = []
+            for w in widgets:
+                self._menu._scrollable_frames.append(w[1])
+
+    # noinspection PyProtectedMember
+    def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
+        # If menu is set, remove from previous scrollable if enabled
+        if self._menu is not None and self.is_scrollable:
+            scrollable_widgets = self._menu._scrollable_frames
+            if self in scrollable_widgets:
+                scrollable_widgets.remove(self)
+                self._sort_menu_scrollable_frames()
+
+        # Update menu
+        super(Frame, self).set_menu(menu)
+
+        # Add self to scrollable
+        if self.is_scrollable and self._menu is not None:
+            self._menu._scrollable_frames.append(self)
+            self._sort_menu_scrollable_frames()
+
+        return self
+
     def relax(self, relax: bool = True) -> 'Frame':
         """
         Set relax status. If ``True`` Frame ignores sizing checks.
@@ -187,7 +228,6 @@ class Frame(Widget):
         """
         assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
-        assert self._menu is not None, 'menu must be defined before creating the scrollarea'
         if max_width is None:
             max_width = self._width
         if max_height is None:
@@ -558,7 +598,7 @@ class Frame(Widget):
             cpos = self._control_widget.get_position()
             if self._control_widget_last_pos != cpos:
                 self._control_widget_last_pos = cpos
-                if self._recursive_render <= 100:
+                if self._recursive_render <= 100 and self._menu is not None:
                     self._menu.render()
                 self._recursive_render += 1
             else:
@@ -678,6 +718,7 @@ class Frame(Widget):
             return self._frame_scrollarea.get_scroll_value(orientation)
         return -1
 
+    # noinspection PyProtectedMember
     def unpack(self, widget: 'Widget') -> 'Frame':
         """
         Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
@@ -694,7 +735,8 @@ class Frame(Widget):
             raise ValueError(msg)
         assert widget._frame == self, 'widget frame differs from current'
         widget.set_float()
-        widget.set_scrollarea(self._menu.get_scrollarea())
+        if self._menu is not None:
+            widget.set_scrollarea(self._menu.get_scrollarea())
         widget._frame = None
         widget._translate_virtual = (0, 0)
         del self._widgets[wid]
@@ -704,7 +746,7 @@ class Frame(Widget):
             pass
 
         # Move widget to the last position of widget list
-        if widget.get_menu() == self._menu:
+        if widget.get_menu() == self._menu and self._menu is not None:
             self._menu._validate_frame_widgetmove = False
             try:
                 self._menu.move_widget_index(widget, render=False)
@@ -726,13 +768,15 @@ class Frame(Widget):
                 break
 
         # Update selected
-        self._menu.move_widget_index(None, update_selected_index=True)
+        if self._menu is not None:
+            self._menu.move_widget_index(None, update_selected_index=True)
 
         # Update indices
         self.update_indices()
 
-        # noinspection PyProtectedMember
-        self._menu._render()
+        # Render menu
+        if self._menu is not None:
+            self._menu._render()
 
         if self._control_widget == widget:
             self._control_widget = None
@@ -745,6 +789,7 @@ class Frame(Widget):
 
         return widget
 
+    # noinspection PyProtectedMember
     def pack(self,
              widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
              alignment: str = _locals.ALIGN_LEFT,
@@ -855,18 +900,15 @@ class Frame(Widget):
         widget.set_margin(*margin)
         if self._frame_scrollarea is not None:
             widget.set_scrollarea(self._frame_scrollarea)
-            # noinspection PyProtectedMember
-            self._menu._sort_scrollable_widgets()
+            self._sort_menu_scrollable_frames()
         else:
             widget.set_scrollarea(self._scrollarea)
         self._widgets[widget.get_id()] = widget
         self._widgets_props[widget.get_id()] = (alignment, vertical_position)
 
-        # noinspection PyProtectedMember
-        menu_widgets = self._menu._widgets
-
         # Sort widgets to keep selection order
         if widget.get_menu() is not None:
+            menu_widgets = self._menu._widgets
             self._menu._validate_frame_widgetmove = False
             widgets_list = list(self._widgets.values())
 
@@ -912,9 +954,10 @@ class Frame(Widget):
                     break
             self._menu._validate_frame_widgetmove = True
 
-        if self._control_widget is None and widget.get_menu() is not None:
-            self._control_widget = widget
-            self._control_widget_last_pos = self._control_widget.get_position()
+            # Update control widget
+            if self._control_widget is None:
+                self._control_widget = widget
+                self._control_widget_last_pos = self._control_widget.get_position()
 
         if isinstance(widget, Frame):
             self._has_frames = True
@@ -925,7 +968,6 @@ class Frame(Widget):
         # Render is mandatory as it modifies row/column layout
         try:
             self.update_position()
-            # noinspection PyProtectedMember
             self._menu._render()
         except _FrameSizeException:
             self.unpack(widget)
