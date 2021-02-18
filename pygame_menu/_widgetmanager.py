@@ -45,9 +45,10 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
-from pygame_menu.widgets import Widget
 from pygame_menu.scrollarea import get_scrollbars_from_position
+from pygame_menu.widgets import Widget
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     NumberType, Vector2NumberType, List, Tuple, NumberInstance
 
@@ -955,6 +956,7 @@ class WidgetManager(object):
                  onreturn: CallbackType = None,
                  onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
                  selector_id: str = '',
+                 style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
                  **kwargs
                  ) -> 'pygame_menu.widgets.Selector':
         """
@@ -1002,6 +1004,12 @@ class WidgetManager(object):
             - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``style_fancy_arrow_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Arrow color of fancy style
+            - ``style_fancy_arrow_margin``  *(tuple, list)* - Margin of arrows on x-axis and y-axis in px; format: (left, right, vertical)
+            - ``style_fancy_bgcolor``       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Background color of fancy style
+            - ``style_fancy_bordercolor``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Border color of fancy style
+            - ``style_fancy_borderwidth``   *(int)* - Border width of fancy style; ``1`` by default
+            - ``style_fancy_box_inflate``   *(tuple, list)* - Box inflate of fancy style (x, y) in px
 
         .. note::
 
@@ -1025,12 +1033,21 @@ class WidgetManager(object):
         :param onreturn: Callback executed when pressing return button
         :param onselect: Callback executed when selecting the widget
         :param selector_id: ID of the selector
+        :param style: Selector style (visual)
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+
+        # Get fancy style attributes
+        style_fancy_arrow_color = kwargs.get('style_fancy_arrow_color', (160, 160, 160))
+        style_fancy_arrow_margin = kwargs.get('style_fancy_arrow_margin', (5, 5, 0))
+        style_fancy_bgcolor = kwargs.get('style_fancy_bgcolor', (180, 180, 180))
+        style_fancy_bordercolor = kwargs.get('style_fancy_bordercolor', (0, 0, 0))
+        style_fancy_borderwidth = kwargs.get('style_fancy_borderwidth', 1)
+        style_fancy_box_inflate = kwargs.get('style_fancy_box_inflate', (0, 8))
 
         widget = pygame_menu.widgets.Selector(
             default=default,
@@ -1039,6 +1056,13 @@ class WidgetManager(object):
             onreturn=onreturn,
             onselect=onselect,
             selector_id=selector_id,
+            style=style,
+            style_fancy_arrow_color=style_fancy_arrow_color,
+            style_fancy_arrow_margin=style_fancy_arrow_margin,
+            style_fancy_bgcolor=style_fancy_bgcolor,
+            style_fancy_bordercolor=style_fancy_bordercolor,
+            style_fancy_borderwidth=style_fancy_borderwidth,
+            style_fancy_box_inflate=style_fancy_box_inflate,
             title=title,
             **kwargs
         )

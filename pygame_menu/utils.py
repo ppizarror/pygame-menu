@@ -62,7 +62,8 @@ import pygame_menu
 import pygame_menu.locals as _locals
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, ColorInputInstance
+    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
+    ColorInputInstance, VectorType
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 
@@ -160,7 +161,7 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
-def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
+def assert_vector(num_vector: VectorType, length: int) -> None:
     """
     Assert that a fixed length vector is numeric.
 
