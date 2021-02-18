@@ -364,7 +364,8 @@ class WidgetManager(object):
 
             action(*args, **kwargs)
 
-        If ``onselect`` is defined, the callback is executed as follows:
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -528,13 +529,19 @@ class WidgetManager(object):
         Add a color widget with RGB or Hex format to the Menu.
         Includes a preview box that renders the given color.
 
-        The callbacks receive the current value and all unknown keyword
-        arguments, where ``current_color=widget.get_value()``:
+        The callbacks (if defined) receive the current value and all unknown keyword arguments,
+        where ``current_color=widget.get_value()``:
 
         .. code-block:: python
 
             onchange(current_color, **kwargs)
             onreturn(current_color, **kwargs)
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
             onselect(selected, widget, menu)
 
         kwargs (Optional)
@@ -641,7 +648,8 @@ class WidgetManager(object):
         """
         Add a simple image to the Menu.
 
-        If ``onselect`` is defined, the callback is executed as follows:
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -673,7 +681,7 @@ class WidgetManager(object):
         :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
         :param angle: Angle of the image in degrees (clockwise)
         :param image_id: ID of the label
-        :param onselect: Callback executed when selecting the widget
+        :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
         :param scale: Scale of the image on x-axis and y-axis (x, y)
         :param scale_smooth: Scale is smoothed
         :param selectable: Image accepts user selection
@@ -719,10 +727,8 @@ class WidgetManager(object):
         """
         Add a simple text to the Menu.
 
-        If ``onreturn`` is enabled and the widget is selectable, the callback will
-        be executed if the user clicks the widget or presses return on it:
-
-        If ``onselect`` is defined, the callback is executed as follows:
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -766,8 +772,8 @@ class WidgetManager(object):
         :param title: Text to be displayed
         :param label_id: ID of the label
         :param max_char: Split the title in several labels if the string length exceeds ``max_char``; ``0``: don't split, ``-1``: split to Menu width
-        :param onselect: Callback executed when selecting the widget
-        :param selectable: Label accepts user selection, if ``False`` long paragraphs cannot be scrolled through keyboard
+        :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
+        :param selectable: Label accepts user selection; useful to move along the Menu using label selection
         :param kwargs: Optional keyword arguments
         :return: Widget object, or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
@@ -859,7 +865,8 @@ class WidgetManager(object):
         not be written. For example: ``href='google.com', title=''`` will write the link, but
         ``href='google.com', title='Google'`` will write 'Google' and opens 'google.com' if clicked.
 
-        If ``onselect`` is defined, the callback is executed as follows:
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -951,27 +958,33 @@ class WidgetManager(object):
                  **kwargs
                  ) -> 'pygame_menu.widgets.Selector':
         """
-        Add a selector to the Menu: several items with values and
-        two functions that are executed when changing the selector (left/right)
-        and pressing return button on the selected item.
+        Add a selector to the Menu: several items and two functions that are executed
+        when changing the selector (left/right) and pressing return button on the selected
+        item.
 
-        The values of the selector are like:
+        The items of the selector are like:
 
         .. code-block:: python
 
-            values = [('Item1', a, b, c...), ('Item2', d, e, f...)]
+            items = [('Item1', a, b, c...), ('Item2', d, e, f...)]
 
-        The callbacks receive the current text, its index in the list,
+        The callbacks receive the current selected item, its index in the list,
         the associated arguments, and all unknown keyword arguments, where
-        ``selected_value=widget.get_value()`` and ``selected_index=widget.get_index()``:
+        ``selected_item=widget.get_value()`` and ``selected_index=widget.get_index()``:
 
         .. code-block:: python
 
-            onchange((selected_value, selected_index), a, b, c..., **kwargs)
-            onreturn((selected_value, selected_index), a, b, c..., **kwargs)
-            onselect(selected, widget, menu)
+            onchange((selected_item, selected_index), a, b, c..., **kwargs)
+            onreturn((selected_item, selected_index), a, b, c..., **kwargs)
 
-        For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
+        For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
@@ -1018,8 +1031,8 @@ class WidgetManager(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the selector
-        :param items: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
-        :param default: Index of default value to display
+        :param items: Item list of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :param default: Index of default item to display
         :param onchange: Callback executed when when changing the selector
         :param onreturn: Callback executed when pressing return button
         :param onselect: Callback executed when selecting the widget
@@ -1042,7 +1055,7 @@ class WidgetManager(object):
 
         widget = pygame_menu.widgets.Selector(
             default=default,
-            elements=items,
+            items=items,
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
@@ -1067,6 +1080,7 @@ class WidgetManager(object):
                       title: Any,
                       default: Union[int, bool] = 0,
                       onchange: CallbackType = None,
+                      onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
                       toggleswitch_id: str = '',
                       state_text: Tuple[str, ...] = ('Off', 'On'),
                       state_values: Tuple[Any, ...] = (False, True),
@@ -1080,6 +1094,13 @@ class WidgetManager(object):
         .. code-block:: python
 
             onchange(current_state_value, **kwargs)
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
@@ -1138,7 +1159,8 @@ class WidgetManager(object):
 
         :param title: Title of the toggle switch
         :param default: Default state index of the switch; it can be ``0 (False)`` or ``1 (True)``
-        :param onchange: Callback executed when when changing the STATE
+        :param onchange: Callback executed when when changing the state of the toggle switch
+        :param onselect: Callback executed when selecting the widget
         :param toggleswitch_id: Widget ID
         :param state_text: Text of each state
         :param state_values: Value of each state of the switch
@@ -1168,6 +1190,7 @@ class WidgetManager(object):
             default_state=default,
             infinite=infinite,
             onchange=onchange,
+            onselect=onselect,
             slider_color=slider_color,
             slider_thickness=slider_thickness,
             state_color=state_color,
@@ -1221,6 +1244,12 @@ class WidgetManager(object):
 
             onchange(current_text, **kwargs)
             onreturn(current_text, **kwargs)
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
             onselect(selected, widget, menu)
 
         kwargs (Optional)
@@ -1546,34 +1575,34 @@ class WidgetManager(object):
         """
         return self._frame(width, height, _locals.ORIENTATION_VERTICAL, frame_id, **kwargs)
 
-    # def horizontal_margin(self,
-    #                       margin: NumberType,
-    #                       margin_id: str = ''
-    #                       ) -> 'pygame_menu.widgets.HMargin':
-    #     """
-    #     Adds a horizontal margin to the Menu. Only useful in Frames.
-    #
-    #     .. note::
-    #
-    #         This is applied only to the base Menu (not the currently displayed,
-    #         stored in ``_current`` pointer); for such behaviour apply
-    #         to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-    #
-    #     :param margin: Horizontal margin in px
-    #     :param margin_id: ID of the margin
-    #     :return: Widget object
-    #     :rtype: :py:class:`pygame_menu.widgets.HMargin`
-    #     """
-    #     assert isinstance(margin, NumberInstance))
-    #     assert margin > 0, \
-    #         'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
-    #
-    #     attributes = self._filter_widget_attributes({})
-    #     widget = pygame_menu.widgets.HMargin(margin, widget_id=margin_id)
-    #     self._configure_widget(widget=widget, **attributes)
-    #     self._append_widget(widget)
-    #
-    #     return widget
+    def _horizontal_margin(self,
+                           margin: NumberType,
+                           margin_id: str = ''
+                           ) -> 'pygame_menu.widgets.HMargin':
+        """
+        Adds a horizontal margin to the Menu. Only useful in Frames.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param margin: Horizontal margin in px
+        :param margin_id: ID of the margin
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.HMargin`
+        """
+        assert isinstance(margin, NumberInstance)
+        assert margin > 0, \
+            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
+
+        attributes = self._filter_widget_attributes({})
+        widget = pygame_menu.widgets.HMargin(margin, widget_id=margin_id)
+        self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
+
+        return widget
 
     def vertical_margin(self,
                         margin: NumberType,
@@ -1673,6 +1702,6 @@ class WidgetManager(object):
         # Configure widget
         if configure_defaults:
             self.configure_defaults_widget(widget)
-
         self._append_widget(widget)
+
         return widget
