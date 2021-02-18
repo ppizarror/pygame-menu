@@ -63,6 +63,7 @@ class ToggleSwitch(Widget):
     :param default_state: Default state index of the switch
     :param infinite: The state can rotate
     :param onchange: Callback when changing the state of the switch
+    :param onselect: Function when selecting the widget
     :param slider_color: Slider color
     :param slider_height_factor: Height of the slider (factor of the switch height)
     :param slider_thickness: Slider thickness (px)
@@ -117,6 +118,7 @@ class ToggleSwitch(Widget):
                  default_state: int = 0,
                  infinite: bool = False,
                  onchange: CallbackType = None,
+                 onselect: CallbackType = None,
                  slider_color: ColorInputType = (255, 255, 255),
                  slider_height_factor: NumberType = 1,
                  slider_thickness: int = 25,
@@ -140,6 +142,7 @@ class ToggleSwitch(Widget):
             args=args,
             kwargs=kwargs,
             onchange=onchange,
+            onselect=onselect,
             title=title,
             widget_id=toggleswitch_id
         )
