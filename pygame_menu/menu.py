@@ -45,6 +45,7 @@ import pygame_menu.events as _events
 import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
+
 from pygame_menu.widgets import Frame, Widget, MenuBar
 from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu._decorator import Decorator
@@ -102,13 +103,13 @@ class Menu(object):
     :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn or updated
     :param joystick_enabled: Enable/disable joystick on the Menu
     :param menu_id: ID of the Menu
-    :param menu_position: Position on *(x, y)* axis (%) respect to the window size
+    :param menu_position: Position on x-axis and y-axis (%) respect to the window size
     :param mouse_enabled: Enable/disable mouse click inside the Menu
     :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
     :param mouse_visible: Set mouse visible on Menu
     :param onclose: Event or function executed when closing the Menu. If not ``None`` the menu disables and executes the event or function it points to. If a function (callable) is provided it can be both non-argument or single argument (Menu instance)
     :param onreset: Function executed when resetting the Menu. The function must be non-argument or single argument (Menu instance)
-    :param overflow: Enables overflow in x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: *(overflow_x, overflow_y)*. If ``False`` or ``True`` the value will be set on both axis
+    :param overflow: Enables overflow on x/y axes. If ``False`` then scrollbars will not work and the maximum width/height of the scrollarea is the same as the Menu container. Style: (overflow_x, overflow_y). If ``False`` or ``True`` the value will be set on both axis
     :param rows: Number of rows of each column, if there's only 1 column ``None`` can be used for no-limit. Also a tuple can be provided for defining different number of rows for each column, for example ``rows=10`` (each column can have a maximum 10 widgets), or ``rows=[2, 3, 5]`` (first column has 2 widgets, second 3, and third 5)
     :param screen_dimension: List/Tuple representing the dimensions the Menu should reference for sizing/positioning, if ``None`` pygame is queried for the display mode. This value defines the ``window_size`` of the Menu
     :param theme: Menu theme
@@ -1681,7 +1682,7 @@ class Menu(object):
 
     def get_size(self, inner: bool = False, widget: bool = False) -> Vector2IntType:
         """
-        Return the Menu size (px) as a tuple of *(width, height)*.
+        Return the Menu size (px) as a tuple of (width, height).
 
         .. note::
 
@@ -1689,9 +1690,9 @@ class Menu(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param inner: If ``True`` returns the available *(width, height)* (menu height minus scroll and menubar)
-        :param widget: If ``True`` returns the total *(width, height)* used by the widgets
-        :return: Tuple of *(width, height)* in px
+        :param inner: If ``True`` returns the available (width, height) (menu height minus scroll and menubar)
+        :param widget: If ``True`` returns the total (width, height) used by the widgets
+        :return: Tuple of (width, height) in px
         """
         return self.get_width(inner=inner, widget=widget), self.get_height(inner=inner, widget=widget)
 
@@ -2696,7 +2697,7 @@ class Menu(object):
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param title: New menu title
-        :param offset: If ``None`` uses theme offset, else it defines the title offset in *(x, y)*
+        :param offset: If ``None`` uses theme offset, else it defines the title offset on x-axis and y-axis (x, y)
         :return: Self reference
         """
         if offset is None:
@@ -2968,7 +2969,7 @@ class Menu(object):
 
     def get_window_size(self) -> Tuple2IntType:
         """
-        Return the window size (px) as a tuple of *(width, height)*.
+        Return the window size (px) as a tuple of (width, height).
 
         .. note::
 
@@ -3514,7 +3515,7 @@ class Menu(object):
             - ∑       Scrollable frame sizing
             - β       Widget is not selectable
             - {x,y}   Widget *column, row* position
-            - <x,y>   Frame indices *(min, max)*
+            - <x,y>   Frame indices (min, max)
 
         :return: None
         """

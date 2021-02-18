@@ -33,6 +33,7 @@ __all__ = ['Selector']
 
 import pygame
 import pygame_menu.controls as _controls
+
 from pygame_menu.utils import check_key_pressed_valid
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType

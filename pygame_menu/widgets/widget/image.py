@@ -35,6 +35,7 @@ from io import BytesIO
 from pathlib import Path
 
 import pygame
+
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets import Widget
 from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, Optional, NumberInstance
@@ -54,7 +55,7 @@ class Image(Widget):
     :param image_id: Image ID
     :param angle: Angle of the image in degrees (clockwise)
     :param onselect: Function when selecting the widget
-    :param scale: Scale of the image *(x, y)*
+    :param scale: Scale of the image on x-axis and y-axis (px)
     :param scale_smooth: Scale is smoothed
     """
     _image: 'BaseImage'

@@ -48,14 +48,15 @@ __all__ = [
 
 ]
 
+import math
+
 import pygame
 import pygame_menu.locals as _locals
+
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
 from pygame_menu._types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
     Literal, Tuple3IntType, NumberInstance
-
-import math
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'
@@ -308,7 +309,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             If the data is invalid the widget returns ``(-1, -1, -1)``.
 
         :param as_string: If ``True`` returns the widget value as plain text
-        :return: Color tuple as *(R, G, B)* or color string
+        :return: Color tuple as (R, G, B) or color string
         """
         assert isinstance(as_string, bool)
         if as_string:

@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['HMargin']
 
 import pygame
+
 from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu._types import NumberType
 

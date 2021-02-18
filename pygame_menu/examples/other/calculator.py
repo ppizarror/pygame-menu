@@ -169,6 +169,7 @@ class CalculatorApp(object):
         """
         for event in events:
             if event.type == pygame.KEYDOWN:
+                # noinspection PyUnresolvedReferences
                 if event.key == pygame.K_0:
                     self._press(0)
                 elif event.key == pygame.K_1:
@@ -193,7 +194,7 @@ class CalculatorApp(object):
                     self._press('+')
                 elif event.key == pygame.K_MINUS:
                     self._press('-')
-                elif event.key == pygame.K_SLASH or hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT:
+                elif event.key == pygame.K_SLASH or (hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT):
                     self._press('/')
                 elif event.key == pygame.K_ASTERISK or event.key == pygame.K_x:
                     self._press('x')
