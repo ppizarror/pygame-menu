@@ -23,6 +23,7 @@ Migration Guide - v3 to v4
 - Renamed ``ColorInput`` constants ``TYPE_HEX``, ``TYPE_RGB``, ``HEX_FORMAT_LOWER``, ``HEX_FORMAT_NONE``, and ``HEX_FORMAT_UPPER``, to ``COLORINPUT_*``.
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
 - Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
+- Renamed Selector ``elements`` to ``items``.
 - Renamed Theme ``menubar_close_button`` to ``title_close_button``.
 - Renamed Theme ``title_shadow_color`` to ``title_font_shadow_color``.
 - Renamed Theme ``title_shadow_offset`` to ``title_font_shadow_offset``.

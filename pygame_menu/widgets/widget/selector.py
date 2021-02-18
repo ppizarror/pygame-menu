@@ -3,7 +3,8 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 SELECTOR
-Selector class, manage elements and adds entries to Menu.
+Selector class, contains several items that can be changed in a horizontal way
+(left/right). Items are solely displayed.
 
 License:
 -------------------------------------------------------------------------------
@@ -57,15 +58,15 @@ SELECTOR_STYLE_FANCY = 'fancy'
 SelectorStyleType = Literal[SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY]
 
 
-def check_selector_elements(elements: Union[Tuple, List]) -> None:
+def check_selector_items(items: Union[Tuple, List]) -> None:
     """
-    Check the element list.
+    Check the items list.
 
-    :param elements: Element list
+    :param items: Items list
     :return: None
     """
-    assert len(elements) > 0, 'item list (elements) cannot be empty'
-    for e in elements:
+    assert len(items) > 0, 'item list cannot be empty'
+    for e in items:
         assert len(e) >= 1, \
             'length of each element on item list must be equal or greater than 1'
         assert isinstance(e[0], (str, bytes)), \
@@ -75,28 +76,28 @@ def check_selector_elements(elements: Union[Tuple, List]) -> None:
 # noinspection PyMissingOrEmptyDocstring
 class Selector(Widget):
     """
-    Selector widget: several items with values and two functions that are executed
-    when changing the selector (left/right) and pressing return button on the selected item.
+    Selector widget: several items and two functions that are executed when changing
+    the selector (left/right) and pressing return button on the selected item.
 
-    The values of the selector are like:
+    The items of the selector are like:
 
     .. code-block:: python
 
-        values = [('Item1', a, b, c...), ('Item2', d, e, f...)]
+        items = [('Item1', a, b, c...), ('Item2', d, e, f...)]
 
-    The callbacks receive the current value, its index in the list,
+    The callbacks receive the current selected item, its index in the list,
     the associated arguments, and all unknown keyword arguments, where
-    ``selected_value=widget.get_value()`` and ``selected_index=widget.get_index()``:
+    ``selected_item=widget.get_value()`` and ``selected_index=widget.get_index()``:
 
     .. code-block:: python
 
-        onchange((selected_value, index), a, b, c..., **kwargs)
-        onreturn((selected_value, index), a, b, c..., **kwargs)
+        onchange((selected_item, index), a, b, c..., **kwargs)
+        onreturn((selected_item, index), a, b, c..., **kwargs)
 
-    For example, if ``selected_index=0`` then ``selected_value=('Item1', a, b, c...)``.
+    For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
     :param title: Selector title
-    :param elements: Elements of the selector
+    :param items: Items of the selector
     :param selector_id: ID of the selector
     :param default: Index of default element to display
     :param onchange: Callback when changing the selector
@@ -111,8 +112,8 @@ class Selector(Widget):
     :param style_fancy_box_inflate: Box inflate of fancy style (x, y) in px
     :param kwargs: Optional keyword arguments
     """
-    _elements: Union[List[Tuple[Any, ...]], List[str]]
     _index: int
+    _items: Union[List[Tuple[Any, ...]], List[str]]
     _sformat: str
     _style: SelectorStyleType
     _style_fancy_arrow_color: ColorType
@@ -126,7 +127,7 @@ class Selector(Widget):
 
     def __init__(self,
                  title: Any,
-                 elements: Union[List[Tuple[Any, ...]], List[str]],
+                 items: Union[List[Tuple[Any, ...]], List[str]],
                  selector_id: str = '',
                  default: int = 0,
                  onchange: CallbackType = None,
@@ -143,15 +144,15 @@ class Selector(Widget):
                  *args,
                  **kwargs
                  ) -> None:
-        assert isinstance(elements, list)
+        assert isinstance(items, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
         assert style in (SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY), 'invalid selector style'
 
         # Check element list
-        check_selector_elements(elements)
+        check_selector_items(items)
         assert default >= 0, 'default position must be equal or greater than zero'
-        assert default < len(elements), 'default position should be lower than number of values'
+        assert default < len(items), 'default position should be lower than number of values'
         assert isinstance(selector_id, str), 'id must be a string'
         assert isinstance(default, int), 'default must be an integer'
 
@@ -176,8 +177,8 @@ class Selector(Widget):
             kwargs=kwargs
         )
 
-        self._elements = elements
         self._index = 0
+        self._items = items
         self._sformat = '{0}< {1} >'
         self._style = style
         self._title_size = 0
@@ -192,10 +193,24 @@ class Selector(Widget):
         self._style_fancy_box_margin = style_fancy_box_margin
 
         # Apply default item
-        default %= len(self._elements)
+        default %= len(self._items)
         for k in range(0, default):
             self._right()
         self.set_default_value(default)
+
+    def set_sformat(self, sformat: str) -> 'Selector':
+        """
+        Set sformat for classic style. This receives an string which is later
+        formatted with {0}: title and {1}: the current selected item.
+
+        :param sformat: String. Must contain {0} and {1}
+        :return: Self reference
+        """
+        assert isinstance(sformat, str)
+        assert '{0}' in sformat and '{1}' in sformat and '{2}' not in sformat, \
+            'sformat must contain {0} and {1}'
+        self._sformat = sformat
+        return self
 
     def set_default_value(self, index: int) -> 'Selector':
         self._default_value = index
@@ -217,9 +232,12 @@ class Selector(Widget):
             return True
 
         color = self.get_font_color_status()
+
+        # Render from different styles
         if self._style == SELECTOR_STYLE_CLASSIC:
             string = self._sformat.format(self._title, current_selected)
             self._surface = self._render_string(string, color)
+
         else:
             title = self._render_string(self._title, color)
             current = self._render_string(current_selected, color)
@@ -299,7 +317,7 @@ class Selector(Widget):
 
         :return: Value and index as a tuple, (value, index)
         """
-        return self._elements[self._index], self._index
+        return self._items[self._index], self._index
 
     def _left(self) -> None:
         """
@@ -309,8 +327,8 @@ class Selector(Widget):
         """
         if self.readonly:
             return
-        self._index = (self._index - 1) % len(self._elements)
-        self.change(*self._elements[self._index][1:])
+        self._index = (self._index - 1) % len(self._items)
+        self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
 
     def _right(self) -> None:
@@ -321,8 +339,8 @@ class Selector(Widget):
         """
         if self.readonly:
             return
-        self._index = (self._index + 1) % len(self._elements)
-        self.change(*self._elements[self._index][1:])
+        self._index = (self._index + 1) % len(self._items)
+        self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
 
     def set_value(self, item: Union[str, int]) -> None:
@@ -341,13 +359,13 @@ class Selector(Widget):
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
         if isinstance(item, str):
-            for element in self._elements:
+            for element in self._items:
                 if element[0] == item:
-                    self._index = self._elements.index(element)
+                    self._index = self._items.index(element)
                     return
             raise ValueError('no value "{}" found in selector'.format(item))
         elif isinstance(item, int):
-            assert 0 <= item < len(self._elements), \
+            assert 0 <= item < len(self._items), \
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
 
@@ -363,13 +381,13 @@ class Selector(Widget):
         :param elements: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None
         """
-        check_selector_elements(elements)
-        selected_element = self._elements[self._index]
-        self._elements = elements
+        check_selector_items(elements)
+        selected_element = self._items[self._index]
+        self._items = elements
         try:
-            self._index = self._elements.index(selected_element)
+            self._index = self._items.index(selected_element)
         except ValueError:
-            if self._index >= len(self._elements):
+            if self._index >= len(self._items):
                 self._index = 0
                 self._default_value = 0
 
@@ -408,7 +426,7 @@ class Selector(Widget):
             elif keydown and event.key == _controls.KEY_APPLY or \
                     joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
                 self._sound.play_open_menu()
-                self.apply(*self._elements[self._index][1:])
+                self.apply(*self._items[self._index][1:])
                 updated = True
 
             # Click on selector
