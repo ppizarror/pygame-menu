@@ -192,7 +192,7 @@ class MenuBar(Widget):
 
         :return: None
         """
-        if background_menu:
+        if background_menu and self._menu is not None:
             cback = self._menu.get_theme().background_color
         else:
             cback = self._background_color
@@ -246,7 +246,7 @@ class MenuBar(Widget):
         # not be displayed
         # noinspection PyProtectedMember
         return self._mouse_enabled and self._backbox and \
-               not (self._box_mode == _MODE_CLOSE and self._menu._onclose is None)
+               not (self._box_mode == _MODE_CLOSE and self._menu is not None and self._menu._onclose is None)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
@@ -279,6 +279,9 @@ class MenuBar(Widget):
         return 0, (0, 0)
 
     def _render(self) -> Optional[bool]:
+        if self._menu is None:
+            return
+
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
@@ -417,7 +420,7 @@ class MenuBar(Widget):
 
             # Subtract the scrollarea thickness if float and enabled
             scroll_delta = 0
-            if self._floating:
+            if self._floating and self._menu is not None:
                 scroll_delta = self._menu.get_width() - self._menu.get_width(inner=True)
 
             self._backbox_rect = pygame.Rect(
@@ -509,7 +512,7 @@ class MenuBar(Widget):
                         self._mouseoverback = False
                         self.mouseleave(event)
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
                 window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):

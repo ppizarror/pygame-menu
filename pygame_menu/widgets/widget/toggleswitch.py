@@ -411,7 +411,7 @@ class ToggleSwitch(Widget):
                     self._touchscreen_enabled and event.type == pygame.FINGERUP:  # Don't consider the mouse wheel (button 4 & 5)
 
                 # Get event position based on input type
-                if self._touchscreen_enabled and event.type == pygame.FINGERUP:
+                if self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
                     window_size = self._menu.get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:
