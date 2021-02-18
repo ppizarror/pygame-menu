@@ -48,8 +48,9 @@ give the opportunity to create custom themes.
 .. code-block:: python
 
     mytheme = Theme(background_color=(0, 0, 0, 0), # transparent background
-                    title_shadow=True,
                     title_background_color=(4, 47, 126),
+                    title_font_shadow=True,
+                    widget_padding=25,
                     ...)
 
     menu = Menu(..., theme=mytheme)

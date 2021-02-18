@@ -24,6 +24,15 @@ Migration Guide - v3 to v4
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
 - Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
 - Renamed Theme ``menubar_close_button`` to ``title_close_button``.
+- Renamed Theme ``title_shadow_color`` to ``title_font_shadow_color``.
+- Renamed Theme ``title_shadow_offset`` to ``title_font_shadow_offset``.
+- Renamed Theme ``title_shadow_position` to ``title_font_shadow_position``.
+- Renamed Theme ``title_shadow`` to ``title_font_shadow``.
+- Renamed Theme ``widget_shadow_color`` to ``widget_font_shadow_color``.
+- Renamed Theme ``widget_shadow_offset`` to ``widget_font_shadow_offset``.
+- Renamed Theme ``widget_shadow_position` to ``widget_font_shadow_position``.
+- Renamed Theme ``widget_shadow`` to ``widget_font_shadow``.
+- Renamed Widget ``_force_menu_surface_update```method to ``force_menu_surface_update``.
 - Renamed Widget ``_force_menu_surface_update```method to ``force_menu_surface_update``.
 - Renamed Widget ``expand_background_inflate_to_selection_effect`` method to ``background_inflate_to_selection_effect``.
 - Widget ``selected`` property is now private. Use ``is_selected()`` to check selection status, and ``select(...)`` to modify it.

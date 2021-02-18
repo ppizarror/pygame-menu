@@ -149,18 +149,18 @@ class Theme(object):
     :type title_font_antialias: bool
     :param title_font_color: Title font color. If ``None`` use the widget font color
     :type title_font_color: tuple, list, None
+    :param title_font_shadow: Enable title font shadow
+    :type title_font_shadow: bool
+    :param title_font_shadow_color: Title font shadow color
+    :type title_font_shadow_color: tuple, list
+    :param title_font_shadow_offset: Offset of title font shadow (px)
+    :type title_font_shadow_offset: int
+    :param title_font_shadow_position: Position of the title font shadow. See :py:mod:`pygame_menu.locals`
+    :type title_font_shadow_position: str
     :param title_font_size: Font size of the title
     :type title_font_size: int
     :param title_offset: Offset *(x-position, y-position)* of title (px)
     :type title_offset: tuple, list
-    :param title_shadow: Enable title font shadow
-    :type title_shadow: bool
-    :param title_shadow_color: Title font shadow color
-    :type title_shadow_color: tuple, list
-    :param title_shadow_offset: Offset of title font shadow (px)
-    :type title_shadow_offset: int
-    :param title_shadow_position: Position of the title font shadow. See :py:mod:`pygame_menu.locals`
-    :type title_shadow_position: str
     :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
     :type title_updates_pygame_display: bool
     :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_. See :py:mod:`pygame_menu.locals`
@@ -241,12 +241,12 @@ class Theme(object):
     title_font: str
     title_font_antialias: bool
     title_font_color: ColorType
+    title_font_shadow: bool
+    title_font_shadow_color: ColorType
+    title_font_shadow_offset: NumberType
+    title_font_shadow_position: str
     title_font_size: int
     title_offset: Tuple2NumberType
-    title_shadow: bool
-    title_shadow_color: ColorType
-    title_shadow_offset: NumberType
-    title_shadow_position: str
     title_updates_pygame_display: bool
     widget_alignment: str
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
@@ -298,13 +298,13 @@ class Theme(object):
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
+        self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
+        self.title_font_shadow_color = self._get(kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
+        self.title_font_shadow_offset = self._get(kwargs, 'title_font_shadow_offset', NumberInstance, 2)
+        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position',
+                                                    _locals.POSITION_NORTHWEST)
         self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
-        self.title_shadow = self._get(kwargs, 'title_shadow', bool, False)
-        self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color', (0, 0, 0))
-        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', NumberInstance, 2)
-        self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
-                                               _locals.POSITION_NORTHWEST)
         self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
 
         # ScrollArea
@@ -386,7 +386,7 @@ class Theme(object):
         assert isinstance(self.title_bar_modify_scrollarea, bool)
         assert isinstance(self.title_close_button, bool)
         assert isinstance(self.title_font_antialias, bool)
-        assert isinstance(self.title_shadow, bool)
+        assert isinstance(self.title_font_shadow, bool)
         assert isinstance(self.widget_font_antialias, bool)
         assert isinstance(self.widget_font_background_color_from_menu, bool)
         assert isinstance(self.widget_font_shadow, bool)
@@ -397,7 +397,7 @@ class Theme(object):
         _utils.assert_cursor(self.title_close_button_cursor)
         _utils.assert_cursor(self.widget_cursor)
         _utils.assert_position(self.scrollbar_shadow_position)
-        _utils.assert_position(self.title_shadow_position)
+        _utils.assert_position(self.title_font_shadow_position)
         _utils.assert_position(self.widget_font_shadow_position)
         assert _check_menubar_style(self.title_bar_style)
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
@@ -413,8 +413,8 @@ class Theme(object):
         assert isinstance(self.scrollbar_thick, int)
         assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font, str)
+        assert isinstance(self.title_font_shadow_offset, NumberInstance)
         assert isinstance(self.title_font_size, int)
-        assert isinstance(self.title_shadow_offset, NumberInstance)
         assert isinstance(self.title_updates_pygame_display, bool)
         assert isinstance(self.widget_background_inflate_to_selection, bool)
         assert isinstance(self.widget_border_width, int)
@@ -438,7 +438,7 @@ class Theme(object):
         self.surface_clear_color = self._format_opacity(self.surface_clear_color)
         self.title_background_color = self._format_opacity(self.title_background_color)
         self.title_font_color = self._format_opacity(self.title_font_color)
-        self.title_shadow_color = self._format_opacity(self.title_shadow_color)
+        self.title_font_shadow_color = self._format_opacity(self.title_font_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
         self.widget_border_color = self._format_opacity(self.widget_border_color)
         self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)
@@ -681,7 +681,7 @@ THEME_BLUE = Theme(
     selection_color=(100, 62, 132),
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),
-    title_shadow=True,
+    title_font_shadow=True,
     widget_font_color=(61, 170, 220)
 )
 

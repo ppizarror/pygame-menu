@@ -1406,7 +1406,8 @@ class WidgetsTest(unittest.TestCase):
         )
         self.assertEqual(sb.get_thickness(), 80)
 
-        sb.set_font_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)
+        sb.set_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)
+        self.assertFalse(sb._font_shadow)
 
         sb.set_position(x, y)
 

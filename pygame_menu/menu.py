@@ -552,10 +552,10 @@ class Menu(object):
         )
         self._menubar.set_cursor(self._theme.title_close_button_cursor)
         self._menubar.set_font_shadow(
-            color=self._theme.title_shadow_color,
-            enabled=self._theme.title_shadow,
-            offset=self._theme.title_shadow_offset,
-            position=self._theme.title_shadow_position
+            color=self._theme.title_font_shadow_color,
+            enabled=self._theme.title_font_shadow,
+            offset=self._theme.title_font_shadow_offset,
+            position=self._theme.title_font_shadow_position
         )
         self._menubar.set_controls(self._joystick, self._mouse, self._touchscreen)
         if self._theme.title_floating:
