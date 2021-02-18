@@ -133,11 +133,11 @@ class Selector(Widget):
             self._right()
         self.set_default_value(default)
 
-    def set_default_value(self, index: int) -> 'Widget':
+    def set_default_value(self, index: int) -> 'Selector':
         self._default_value = index
         return self
 
-    def reset_value(self) -> 'Widget':
+    def reset_value(self) -> 'Selector':
         self._index = self._default_value
         return self
 

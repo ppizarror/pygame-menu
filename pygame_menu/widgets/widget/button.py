@@ -125,7 +125,7 @@ class Button(Widget):
         self._args = args or []
         self._onreturn = callback
 
-    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Widget':
+    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Button':
         """
         Adds a underline to text. This is added if widget is rendered
 
@@ -143,7 +143,7 @@ class Button(Widget):
             self._force_render()
         return self
 
-    def remove_underline(self) -> 'Widget':
+    def remove_underline(self) -> 'Button':
         """
         Remove underline of the button.
 

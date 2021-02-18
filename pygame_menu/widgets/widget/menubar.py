@@ -160,25 +160,25 @@ class MenuBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_selection_effect(self, *args, **kwargs) -> 'Widget':
+    def set_selection_effect(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_border(self, *args, **kwargs) -> 'Widget':
+    def set_border(self, *args, **kwargs) -> 'MenuBar':
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:
@@ -448,7 +448,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
 
-    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'Widget':
+    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'MenuBar':
         """
         Set the menubar title.
 

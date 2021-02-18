@@ -60,7 +60,7 @@ class Label(Widget):
         )
         self._last_underline = ['', None]
 
-    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Widget':
+    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Label':
         """
         Adds a underline to text. This is added if widget is rendered
 
@@ -78,7 +78,7 @@ class Label(Widget):
             self._force_render()
         return self
 
-    def remove_underline(self) -> 'Widget':
+    def remove_underline(self) -> 'Label':
         """
         Remove underline of the label.
 

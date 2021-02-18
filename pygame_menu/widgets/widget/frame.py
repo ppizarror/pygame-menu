@@ -272,10 +272,10 @@ class Frame(Widget):
             return False
         return self._frame_scrollarea.update(events)
 
-    def select(self, *args, **kwargs) -> 'Widget':
+    def select(self, *args, **kwargs) -> 'Frame':
         return self
 
-    def set_selection_effect(self, *args, **kwargs) -> 'Widget':
+    def set_selection_effect(self, *args, **kwargs) -> 'Frame':
         pass
 
     def _apply_font(self) -> None:
@@ -287,22 +287,22 @@ class Frame(Widget):
     def _draw(self, *args, **kwargs) -> None:
         pass
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'Frame':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'Frame':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'Frame':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'Frame':
         return self
 
-    def rotate(self, *args, **kwargs) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'Frame':
         return self
 
-    def flip(self, *args, **kwargs) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'Frame':
         return self
 
     def get_decorator(self) -> 'Decorator':
@@ -337,7 +337,7 @@ class Frame(Widget):
             self._frame_scrollarea.set_position(posx + tx + txs, posy + ty + tys)
         return self
 
-    def draw(self, surface: 'pygame.Surface') -> 'Widget':
+    def draw(self, surface: 'pygame.Surface') -> 'Frame':
         # Simple case, no scrollarea
         if not self.is_scrollable:
             self.last_surface = surface
@@ -677,7 +677,7 @@ class Frame(Widget):
             return self._frame_scrollarea.get_scroll_value(orientation)
         return -1
 
-    def unpack(self, widget: 'Widget') -> 'Widget':
+    def unpack(self, widget: 'Widget') -> 'Frame':
         """
         Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
         Unpacked widgets adopt a floating position and are moved to the last position of the widget list of Menu
