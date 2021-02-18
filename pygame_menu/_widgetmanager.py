@@ -256,9 +256,6 @@ class WidgetManager(object):
 
         # Append to lists
         self._menu._widgets.append(widget)
-        if widget.is_scrollable:
-            self._menu._widgets_scrollable.append(widget)
-            self._menu._sort_scrollable_widgets()
 
         # Update selection index
         if self._menu._index < 0 and widget.is_selectable:
@@ -283,10 +280,6 @@ class WidgetManager(object):
         :return: None
         """
         assert isinstance(widget, Widget)
-
-        # Some widgets need the menu to configure
-        prev_menu = widget.get_menu()
-        widget.set_menu(self._menu)
 
         widget.set_alignment(
             align=kwargs['align']
@@ -334,12 +327,10 @@ class WidgetManager(object):
         widget.set_selection_effect(
             selection=kwargs['selection_effect']
         )
-        widget.set_scrollarea(self._menu.get_scrollarea())
 
         # Finals
         if self._theme.widget_background_inflate_to_selection:
             widget.background_inflate_to_selection_effect()
-        widget.set_menu(prev_menu)
         widget.configured = True
 
     def configure_defaults_widget(self, widget: 'Widget') -> None:
@@ -1375,7 +1366,6 @@ class WidgetManager(object):
         )
         self._configure_widget(widget=widget, **attributes)
 
-        widget.set_menu(self._menu)
         widget.make_scrollarea(
             max_width=kwargs.get('max_width', width) - padh,
             max_height=kwargs.get('max_height', height) - padv,
@@ -1684,10 +1674,5 @@ class WidgetManager(object):
         if configure_defaults:
             self.configure_defaults_widget(widget)
 
-        widget.set_menu(self._menu)
-        widget.set_scrollarea(self._menu.get_scrollarea())
-        self._menu._check_id_duplicated(widget.get_id())
-
-        widget.set_controls(self._menu._joystick, self._menu._mouse, self._menu._touchscreen)
         self._append_widget(widget)
         return widget
