@@ -1377,7 +1377,7 @@ class WidgetsTest(unittest.TestCase):
                                                                   border_inflate=(-1, - 1)))
         btn = menu.add.button('', border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
         self.assertEqual(btn._border_width, 1)
-        self.assertEqual(btn._border_color, (0, 0, 0))
+        self.assertEqual(btn._border_color, (0, 0, 0, 255))
         self.assertEqual(btn._border_inflate, (1, 1))
 
     def test_scrollbar(self) -> None:

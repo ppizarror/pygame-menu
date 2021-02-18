@@ -116,7 +116,26 @@ class ThemeTest(unittest.TestCase):
         self.assertIsNone(t._format_opacity(None))
         self.assertRaises(ValueError, lambda: t._format_opacity('1,2,3'))
         self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, -1)))
-        self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, 1.1)))
+        self.assertRaises(AssertionError, lambda: self.assertEqual(t._format_opacity((1, 1, 1.1)), (1, 1, 1, 255)))
+
+    def test_str_int_color(self) -> None:
+        """
+        Test string colors.
+        """
+        t = pygame_menu.themes.THEME_DEFAULT.copy()
+        t.cursor_color = '#ffffff'
+        t.validate()
+        self.assertEqual(t.cursor_color, (255, 255, 255, 255))
+
+        t2 = pygame_menu.themes.Theme(
+            cursor_color='#ffffff',
+            selection_color='0xFFFFFF',
+            surface_clear_color=0X00,
+            title_font_color='chocolate3')
+        self.assertEqual(t2.cursor_color, (255, 255, 255, 255))
+        self.assertEqual(t2.selection_color, (255, 255, 255, 255))
+        self.assertEqual(t2.surface_clear_color, (0, 0, 0, 0))
+        self.assertEqual(t2.title_font_color, (205, 102, 29, 255))
 
     def test_get(self) -> None:
         """
