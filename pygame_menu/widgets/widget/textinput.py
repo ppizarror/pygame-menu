@@ -182,7 +182,7 @@ class TextInput(Widget):
     _valid_chars: Optional[List[str]]
 
     def __init__(self,
-                 title: Any = '',
+                 title: Any,
                  textinput_id: str = '',
                  copy_paste_enable: bool = True,
                  cursor_color: ColorInputType = (0, 0, 0),

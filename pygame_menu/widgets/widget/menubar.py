@@ -92,6 +92,7 @@ class MenuBar(Widget):
     :param title: Title of the menubar
     :param width: Width of the widget, generally width of the Menu
     :param background_color: Background color
+    :param menubar_id: ID of the MenuBar
     :param back_box: Draw a back-box button on header
     :param mode: Mode of drawing the bar
     :param modify_scrollarea: If ``True`` it modifies the scrollbars of the scrollarea depending on the bar mode
@@ -119,6 +120,7 @@ class MenuBar(Widget):
                  title: Any,
                  width: NumberType,
                  background_color: ColorInputType,
+                 menubar_id: str = '',
                  back_box: bool = False,
                  mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
                  modify_scrollarea: bool = True,
@@ -135,10 +137,11 @@ class MenuBar(Widget):
 
         # MenuBar has no ID
         super(MenuBar, self).__init__(
-            title=title,
-            onreturn=onreturn,
             args=args,
-            kwargs=kwargs
+            kwargs=kwargs,
+            onreturn=onreturn,
+            title=title,
+            widget_id=menubar_id
         )
 
         self._backbox = back_box

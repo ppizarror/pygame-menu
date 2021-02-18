@@ -62,8 +62,8 @@ class Image(Widget):
 
     def __init__(self,
                  image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
-                 image_id: str = '',
                  angle: NumberType = 0,
+                 image_id: str = '',
                  onselect: CallbackType = None,
                  scale: Tuple2NumberType = (1, 1),
                  scale_smooth: bool = True

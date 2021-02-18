@@ -126,7 +126,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     _valid_chars: List[str]
 
     def __init__(self,
-                 title: Any = '',
+                 title: Any,
                  colorinput_id: str = '',
                  color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
                  cursor_color: Tuple3IntType = (0, 0, 0),
