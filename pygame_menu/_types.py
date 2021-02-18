@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
+from pygame.color import Color as _Color
+
 from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optional
 
 # noinspection PyUnresolvedReferences
@@ -41,6 +43,7 @@ from typing_extensions import Literal  # lgtm [py/unused-import]
 ArgsType = Optional[Sequence[Any]]
 CallbackType = Optional[Callable]
 ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
+ColorInputType = Union[ColorType, str, int, _Color]
 KwargsType = Optional[Mapping[Any, Any]]
 NumberType = Union[int, float]
 
@@ -77,6 +80,7 @@ PaddingType = Union[NumberType, List[NumberType],
                     Tuple[NumberType, NumberType, NumberType, NumberType]]
 
 # Instances
+ColorInputInstance = (int, str, tuple, list, _Color)
 NumberInstance = (int, float)
 PaddingInstance = (int, float, tuple, list)
 VectorInstance = (tuple, list)

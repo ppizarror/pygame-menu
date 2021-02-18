@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['NoneWidget']
 
 import pygame
+
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Optional, NumberType
@@ -50,7 +51,9 @@ class NoneWidget(Widget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(self, widget_id: str = '') -> None:
+    def __init__(self,
+                 widget_id: str = ''
+                 ) -> None:
         super(NoneWidget, self).__init__(widget_id=widget_id)
         self.is_selectable = False
         self._surface = make_surface(0, 0, alpha=True)
@@ -58,19 +61,19 @@ class NoneWidget(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def get_selected_time(self) -> NumberType:
         return 0
 
-    def set_title(self, *args, **kwargs) -> 'Widget':
+    def set_title(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def get_rect(self, *args, **kwargs) -> 'pygame.Rect':
         return pygame.Rect(0, 0, 0, 0)
 
-    def set_background_color(self, *args, **kwargs) -> 'Widget':
+    def set_background_color(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def _draw_background_color(self, *args, **kwargs) -> None:
@@ -79,7 +82,7 @@ class NoneWidget(Widget):
     def _draw_border(self, *args, **kwargs) -> None:
         pass
 
-    def set_selection_effect(self, *args, **kwargs) -> 'Widget':
+    def set_selection_effect(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def apply(self, *args) -> None:
@@ -94,58 +97,58 @@ class NoneWidget(Widget):
     def _render(self) -> Optional[bool]:
         pass
 
-    def set_margin(self, *args, **kwargs) -> 'Widget':
+    def set_margin(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def _apply_transforms(self) -> None:
         pass
 
-    def set_font(self, *args, **kwargs) -> 'Widget':
+    def set_font(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def update_font(self, *args, **kwargs) -> 'Widget':
+    def update_font(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_position(self, *args, **kwargs) -> 'Widget':
+    def set_position(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def flip(self, *args, **kwargs) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def translate(self, *args, **kwargs) -> 'Widget':
+    def translate(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def rotate(self, *args, **kwargs) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_alignment(self, *args, **kwargs) -> 'Widget':
+    def set_alignment(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def select(self, *args, **kwargs) -> 'Widget':
+    def select(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_shadow(self, *args, **kwargs) -> 'Widget':
+    def set_font_shadow(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_sound(self, *args, **kwargs) -> 'Widget':
+    def set_sound(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_cursor(self, *args, **kwargs) -> 'Widget':
+    def set_cursor(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def set_controls(self, *args, **kwargs) -> 'Widget':
+    def set_controls(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def set_value(self, *args, **kwargs) -> None:
@@ -157,11 +160,11 @@ class NoneWidget(Widget):
     def add_update_callback(self, *args, **kwargs) -> None:
         pass
 
-    def remove_update_callback(self, *args, **kwargs) -> 'Widget':
+    def remove_update_callback(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def apply_update_callbacks(self) -> 'Widget':
+    def apply_update_callbacks(self) -> 'NoneWidget':
         return self
 
-    def set_border(self, *args, **kwargs) -> 'Widget':
+    def set_border(self, *args, **kwargs) -> 'NoneWidget':
         return self

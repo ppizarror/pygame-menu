@@ -49,15 +49,17 @@ __all__ = [
 
 ]
 
+import warnings
+
 import pygame
 import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
+
 from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
 from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
-    ColorType, Any, Optional, NumberInstance
-import warnings
+    ColorType, Any, Optional, NumberInstance, ColorInputType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -90,6 +92,7 @@ class MenuBar(Widget):
     :param title: Title of the menubar
     :param width: Width of the widget, generally width of the Menu
     :param background_color: Background color
+    :param menubar_id: ID of the MenuBar
     :param back_box: Draw a back-box button on header
     :param mode: Mode of drawing the bar
     :param modify_scrollarea: If ``True`` it modifies the scrollbars of the scrollarea depending on the bar mode
@@ -116,7 +119,8 @@ class MenuBar(Widget):
     def __init__(self,
                  title: Any,
                  width: NumberType,
-                 background_color: ColorType,
+                 background_color: ColorInputType,
+                 menubar_id: str = '',
                  back_box: bool = False,
                  mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
                  modify_scrollarea: bool = True,
@@ -129,14 +133,15 @@ class MenuBar(Widget):
         assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
 
-        assert_color(background_color)
+        background_color = assert_color(background_color)
 
         # MenuBar has no ID
         super(MenuBar, self).__init__(
-            title=title,
-            onreturn=onreturn,
             args=args,
-            kwargs=kwargs
+            kwargs=kwargs,
+            onreturn=onreturn,
+            title=title,
+            widget_id=menubar_id
         )
 
         self._backbox = back_box
@@ -160,25 +165,25 @@ class MenuBar(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_selection_effect(self, *args, **kwargs) -> 'Widget':
+    def set_selection_effect(self, *args, **kwargs) -> 'MenuBar':
         return self
 
-    def set_border(self, *args, **kwargs) -> 'Widget':
+    def set_border(self, *args, **kwargs) -> 'MenuBar':
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:
@@ -207,7 +212,7 @@ class MenuBar(Widget):
 
     def get_title_offset(self) -> Tuple2IntType:
         """
-        Return the title offset in *(x, y)*.
+        Return the title offset on x-axis and y-axis (x, y).
 
         :return: Title offset
         """
@@ -448,7 +453,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.left + 5, self._backbox_rect.centery)
                 )
 
-    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'Widget':
+    def set_title(self, title: Any, offsetx: NumberType = 0, offsety: NumberType = 0) -> 'MenuBar':
         """
         Set the menubar title.
 

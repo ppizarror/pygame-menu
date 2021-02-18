@@ -33,10 +33,11 @@ __all__ = ['Button']
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as _controls
+
 from pygame_menu.utils import is_callable, assert_color
 from pygame_menu.widgets.core import Widget
-import pygame_menu.controls as _controls
-from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional, ColorType
+from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional, ColorType, ColorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -125,7 +126,12 @@ class Button(Widget):
         self._args = args or []
         self._onreturn = callback
 
-    def add_underline(self, color: ColorType, offset: int, width: int, force_render: bool = False) -> 'Widget':
+    def add_underline(self,
+                      color: ColorInputType,
+                      offset: int,
+                      width: int,
+                      force_render: bool = False
+                      ) -> 'Button':
         """
         Adds a underline to text. This is added if widget is rendered
 
@@ -135,7 +141,7 @@ class Button(Widget):
         :param force_render: If ``True`` force widget render after addition
         :return: Self reference
         """
-        assert_color(color)
+        color = assert_color(color)
         assert isinstance(offset, int)
         assert isinstance(width, int) and width > 0
         self._last_underline[1] = (color, offset, width)
@@ -143,7 +149,7 @@ class Button(Widget):
             self._force_render()
         return self
 
-    def remove_underline(self) -> 'Widget':
+    def remove_underline(self) -> 'Button':
         """
         Remove underline of the button.
 

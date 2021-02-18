@@ -32,12 +32,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['ScrollBar']
 
 import pygame
+import pygame_menu.locals as _locals
+
 from pygame_menu._types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
-import pygame_menu.locals as _locals
 from pygame_menu._types import Optional, List, Tuple, VectorIntType, ColorType, Tuple2IntType, \
-    CallbackType, Union, NumberInstance
+    CallbackType, Union, NumberInstance, ColorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -76,6 +77,11 @@ class ScrollBar(Widget):
     _page_ctrl_length: NumberType
     _page_ctrl_thick: int
     _page_step: NumberType
+    _shadow: bool
+    _shadow_color: ColorType
+    _shadow_offset: NumberType
+    _shadow_position: str
+    _shadow_tuple: Tuple2IntType
     _single_step: NumberType
     _slider_color: ColorType
     _slider_pad: int
@@ -90,9 +96,9 @@ class ScrollBar(Widget):
                  scrollbar_id: str = '',
                  orientation: str = _locals.ORIENTATION_HORIZONTAL,
                  slider_pad: NumberType = 0,
-                 slider_color: ColorType = (200, 200, 200),
+                 slider_color: ColorInputType = (200, 200, 200),
                  page_ctrl_thick: int = 20,
-                 page_ctrl_color: ColorType = (235, 235, 235),
+                 page_ctrl_color: ColorInputType = (235, 235, 235),
                  onchange: CallbackType = None,
                  *args,
                  **kwargs
@@ -104,8 +110,8 @@ class ScrollBar(Widget):
         assert isinstance(page_ctrl_thick, int)
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
-        assert_color(slider_color)
-        assert_color(page_ctrl_color)
+        slider_color = assert_color(slider_color)
+        page_ctrl_color = assert_color(page_ctrl_color)
 
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
@@ -130,6 +136,13 @@ class ScrollBar(Widget):
         self._slider_color = slider_color
         self._slider_position = 0
 
+        # Shadow
+        self._shadow = False
+        self._shadow_color = (0, 0, 0)
+        self._shadow_offset = 2.0
+        self._shadow_position = _locals.POSITION_NORTHWEST
+        self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
+
         self._single_step = 20
         self._page_step = 0
 
@@ -141,31 +154,31 @@ class ScrollBar(Widget):
         self.is_scrollable = True
         self.is_selectable = False
 
-    def scroll_to_widget(self) -> 'Widget':
+    def scroll_to_widget(self) -> 'ScrollBar':
         pass
 
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def rotate(self, *args, **kwargs) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def flip(self, *args, **kwargs) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
     def _apply_size_changes(self) -> None:
@@ -185,6 +198,38 @@ class ScrollBar(Widget):
         pos = ('x', 'y')
         setattr(self._slider_rect, pos[self._orientation], self._slider_position)
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
+
+    def set_shadow(self,
+                   enabled: bool = True,
+                   color: Optional[ColorInputType] = None,
+                   position: Optional[str] = None,
+                   offset: int = 2
+                   ) -> 'ScrollBar':
+        """
+        Set the scrollbars shadow.
+
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
+
+        :param enabled: Shadow is enabled or not
+        :param color: Shadow color
+        :param position: Shadow position
+        :param offset: Shadow offset
+        :return: Self reference
+        """
+        super(ScrollBar, self).set_font_shadow(enabled, color, position, offset)
+
+        # Store shadow from font
+        self._shadow = self._font_shadow
+        self._shadow_color = self._font_shadow_color
+        self._shadow_offset = self._font_shadow_offset
+        self._shadow_position = self._font_shadow_position
+        self._shadow_tuple = self._font_shadow_tuple
+
+        # Disable font
+        self._font_shadow = False
+        return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)

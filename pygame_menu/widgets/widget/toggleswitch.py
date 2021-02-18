@@ -33,10 +33,11 @@ __all__ = ['ToggleSwitch']
 
 import pygame
 import pygame_menu
-from pygame_menu.widgets.core import Widget
 import pygame_menu.controls as _controls
+
+from pygame_menu.widgets.core import Widget
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
-    Tuple2NumberType, Tuple2IntType, NumberInstance
+    Tuple2NumberType, Tuple2IntType, NumberInstance, ColorInputType
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 
 
@@ -77,7 +78,7 @@ class ToggleSwitch(Widget):
     :param switch_border_color: Border color of the switch
     :param switch_border_width: Border width of the switch (px)
     :param switch_height: Height factor respect to the title font size height
-    :param switch_margin: *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title
+    :param switch_margin: (x, y) margin respect to the title of the widget. X is in px, Y is relative to the height of the title
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
@@ -116,19 +117,19 @@ class ToggleSwitch(Widget):
                  default_state: int = 0,
                  infinite: bool = False,
                  onchange: CallbackType = None,
-                 slider_color: ColorType = (255, 255, 255),
+                 slider_color: ColorInputType = (255, 255, 255),
                  slider_height_factor: NumberType = 1,
                  slider_thickness: int = 25,
                  slider_vmargin: NumberType = 0,
-                 state_color: Tuple[ColorType, ...] = ((178, 178, 178), (117, 185, 54)),
+                 state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
                  state_text: Tuple[str, ...] = ('Off', 'On'),
                  state_text_font: Optional[str] = None,
-                 state_text_font_color: Tuple[ColorType, ...] = ((255, 255, 255), (255, 255, 255)),
+                 state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
                  state_text_font_size: Optional[int] = None,
                  state_text_position: Tuple2NumberType = (0.5, 0.5),
                  state_values: Tuple[Any, ...] = (False, True),
                  state_width: Union[Tuple[int, ...], int] = 150,
-                 switch_border_color: ColorType = (40, 40, 40),
+                 switch_border_color: ColorInputType = (40, 40, 40),
                  switch_border_width: int = 1,
                  switch_height: NumberType = 1.25,
                  switch_margin: Tuple2NumberType = (25, 0),
@@ -147,38 +148,50 @@ class ToggleSwitch(Widget):
         assert isinstance(default_state, int)
         assert isinstance(state_values, tuple)
         assert isinstance(infinite, bool)
+
         self._total_states = len(state_values)
         assert 2 <= self._total_states, 'the minimum number of states is 2'
         assert 0 <= default_state < self._total_states, 'invalid default state value'
+
         assert isinstance(state_text_font, (str, type(None)))
         assert isinstance(state_text_font_size, (int, type(None)))
         if state_text_font_size is not None:
             assert state_text_font_size > 0, 'state text font size must be equal or greater than zero'
+
         assert_vector(state_text_position, 2)
-        assert_color(switch_border_color)
+        switch_border_color = assert_color(switch_border_color)
         assert isinstance(switch_border_width, int) and switch_border_width >= 0, \
             'border width must be equal or greater than zero'
-        assert_color(slider_color)
+        slider_color = assert_color(slider_color)
+
         assert slider_height_factor > 0, 'slider height factor cannot be negative'
         assert slider_thickness >= 0, 'slider thickness cannot be negative'
         assert isinstance(slider_vmargin, NumberInstance)
         assert_vector(switch_margin, 2)
         assert isinstance(switch_height, NumberInstance) and switch_height > 0, \
             'switch height factor cannot be zero or negative'
-
         assert isinstance(state_color, tuple) and len(state_color) == self._total_states
+
+        new_state_color = []
         for c in state_color:
-            assert_color(c)
+            new_state_color.append(assert_color(c))
+        state_color = tuple(new_state_color)
+
         assert isinstance(state_text, tuple) and len(state_text) == self._total_states
         for c in state_text:
             assert isinstance(c, str), 'all states text must be string-type'
         assert isinstance(state_text_font_color, tuple) and len(state_text_font_color) == self._total_states
+
+        new_state_text_font_color = []
         for c in state_text_font_color:
-            assert_color(c)
+            new_state_text_font_color.append(assert_color(c))
+        state_text_font_color = tuple(new_state_text_font_color)
+
         self._switch_width = 0
         if isinstance(state_width, NumberInstance):
             state_width = [state_width]
         assert_vector(state_width, self._total_states - 1)
+
         for i in range(len(state_width)):
             assert isinstance(state_width[i], int), 'each state width must be an integer'
             assert state_width[i] > 0, 'each state width must be greater than zero'
@@ -224,22 +237,22 @@ class ToggleSwitch(Widget):
         assert 0 <= value < self._total_states, 'state value exceeds the total states'
         self._state = value
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'ToggleSwitch':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'ToggleSwitch':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'ToggleSwitch':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'ToggleSwitch':
         return self
 
-    def rotate(self, *args, **kwargs) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'ToggleSwitch':
         return self
 
-    def flip(self, *args, **kwargs) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'ToggleSwitch':
         return self
 
     def get_value(self) -> Any:

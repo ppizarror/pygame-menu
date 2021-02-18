@@ -108,7 +108,7 @@ def change_color_bg(value: Tuple, c: Optional[Tuple] = None, **kwargs) -> None:
     if c == (-1, -1, -1):  # If random color
         c = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
     if kwargs['write_on_console']:
-        print('New background color: {0} ({1},{2},{3})'.format(color, *c))
+        print('New background color: {0} ({1},{2},{3})'.format(color[0], *c))
     COLOR_BACKGROUND[0] = c[0]
     COLOR_BACKGROUND[1] = c[1]
     COLOR_BACKGROUND[2] = c[2]
@@ -170,7 +170,7 @@ def main(test: bool = False) -> None:
         default=1,  # Optional parameter that sets default item of selector
         onchange=change_color_bg,  # Action when changing element with left/right
         onreturn=change_color_bg,  # Action when pressing return on an element
-        # Optional parameters to change_color_bg function
+        # All the following kwargs are passed to change_color_bg function
         write_on_console=True
     )
     timer_menu.add.button('Update game object', TestCallClassMethod().update_game_settings)
@@ -187,9 +187,9 @@ def main(test: bool = False) -> None:
         title_font_size=60,
         widget_font=pygame_menu.font.FONT_FRANCHISE,
         widget_font_color=(170, 170, 170),
-        widget_font_size=45,
-        widget_shadow=False,
-        widget_shadow_position=pygame_menu.locals.POSITION_SOUTHEAST
+        widget_font_shadow=True,
+        widget_font_shadow_position=pygame_menu.locals.POSITION_SOUTHEAST,
+        widget_font_size=45
     )
 
     help_menu = pygame_menu.Menu(

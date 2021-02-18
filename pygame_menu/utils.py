@@ -40,6 +40,7 @@ __all__ = [
     'assert_position',
     'assert_vector',
     'check_key_pressed_valid',
+    'format_color',
     'is_callable',
     'make_surface',
     'parse_padding',
@@ -47,19 +48,24 @@ __all__ = [
     'widget_terminal_title',
 
     # Classes
-    'TerminalColors'
+    'TerminalColors',
 
 ]
 
 import functools
 import types
 import uuid
+import warnings
 
 import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
-from pygame_menu._types import ColorType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType
+
+from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
+    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
+    ColorInputInstance, VectorType
+
+PYGAME_V2 = pygame.version.vernum[0] >= 2
 
 
 def assert_alignment(align: str) -> None:
@@ -74,13 +80,14 @@ def assert_alignment(align: str) -> None:
         'incorrect alignment value "{0}"'.format(align)
 
 
-def assert_color(color: Union[ColorType, List[int]]) -> None:
+def assert_color(color: Union[ColorInputType, List[int]]) -> ColorType:
     """
     Assert that a certain color is valid.
 
     :param color: Object color
-    :return: None
+    :return: Formatted color if valid, else, throws an ``AssertionError`` exception
     """
+    color = format_color(color)
     assert isinstance(color, VectorInstance), \
         'color must be a tuple or list, not type "{0}"'.format(type(color))
     assert 4 >= len(color) >= 3, \
@@ -96,6 +103,7 @@ def assert_color(color: Union[ColorType, List[int]]) -> None:
         assert 0 <= color[3] <= 255, \
             'opacity of color {0} must be an integer between 0 and 255; where ' \
             '0 is fully-transparent and 255 is fully-opaque'.format(color)
+    return color
 
 
 def assert_cursor(cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> None:
@@ -153,7 +161,7 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
-def assert_vector(num_vector: Vector2NumberType, length: int) -> None:
+def assert_vector(num_vector: VectorType, length: int) -> None:
     """
     Assert that a fixed length vector is numeric.
 
@@ -191,6 +199,40 @@ def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
     return not bad_event
 
 
+def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
+    """
+    Format color from string, int, or tuple to tuple type.
+
+    Available formats:
+    - Color name str: name of the color to use, e.g. ``"red"`` (all the supported name strings can be found in the colordict module, see https://github.com/pygame/pygame/blob/main/src_py/colordict.py)
+    - HTML color format str: ``"#rrggbbaa"`` or ``"#rrggbb"``, where rr, gg, bb, and aa are 2-digit hex numbers in the range of ``0`` to ``0xFF`` inclusive, the aa (alpha) value defaults to ``0xFF`` if not provided
+    - Hex number str: ``"0xrrggbbaa"`` or ``"0xrrggbb"``, where rr, gg, bb, and aa are 2-digit hex numbers in the range of ``0x00`` to ``0xFF`` inclusive, the aa (alpha) value defaults to ``0xFF`` if not provided
+    - int: int value of the color to use, using hex numbers can make this parameter more readable, e.g. ``0xrrggbbaa``, where rr, gg, bb, and aa are 2-digit hex numbers in the range of ``0x00`` to ``0xFF`` inclusive, note that the aa (alpha) value is not optional for the int format and must be provided
+    - tuple/list of int color values: ``(R, G, B, A)`` or ``(R, G, B)``, where R, G, B, and A are int values in the range of ``0`` to ``255`` inclusive, the A (alpha) value defaults to ``255`` (opaque) if not provided
+
+    :param color: Color to format. If format is valid returns the same input value
+    :return: Color in (r, g, b, a) format
+    """
+    if not isinstance(color, ColorInputInstance):
+        return color
+    if not isinstance(color, pygame.Color):
+        try:
+            if isinstance(color, (tuple, list)) and 3 <= len(color) <= 4:
+                if PYGAME_V2:
+                    for j in color:
+                        if not isinstance(j, int):
+                            raise ValueError('color cannot contain floating point values')
+                c = pygame.Color(*color)
+            else:
+                c = pygame.Color(color)
+        except ValueError:
+            warnings.warn('invalid color value "{0}"'.format(color))
+            return color
+    else:
+        c = color
+    return c.r, c.g, c.b, c.a
+
+
 def is_callable(func: Any) -> bool:
     """
     Return ``True`` if ``func`` is callable.
@@ -204,7 +246,7 @@ def is_callable(func: Any) -> bool:
 
 
 def make_surface(width: NumberType, height: NumberType,
-                 alpha: bool = False, fill_color: Optional[ColorType] = None) -> 'pygame.Surface':
+                 alpha: bool = False, fill_color: Optional[ColorInputType] = None) -> 'pygame.Surface':
     """
     Creates a pygame surface object.
 
@@ -217,7 +259,6 @@ def make_surface(width: NumberType, height: NumberType,
     assert isinstance(width, NumberInstance)
     assert isinstance(height, NumberInstance)
     assert isinstance(alpha, bool)
-    assert isinstance(fill_color, (type(None), tuple))
     assert width >= 0 and height >= 0, \
         'surface width and height must be equal or greater than zero'
     surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA, 32)  # lgtm [py/call/wrong-arguments]
@@ -225,7 +266,7 @@ def make_surface(width: NumberType, height: NumberType,
         # noinspection PyArgumentList
         surface = pygame.Surface.convert_alpha(surface)
     if fill_color is not None:
-        assert_color(fill_color)
+        fill_color = assert_color(fill_color)
         surface.fill(fill_color)
     return surface
 
@@ -237,14 +278,14 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
     - If an integer or float is provided: top, right, bottom and left values will be the same
     - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
     - If 3-item tuple is provided: top will take the first value, left and right the second, and bottom the third
-    - If 4-item tuple is provided: padding will be *(top, right, bottom, left)*
+    - If 4-item tuple is provided: padding will be (top, right, bottom, left)
 
     .. note::
 
         See `CSS W3Schools <https://www.w3schools.com/css/css_padding.asp>`_ for more info about padding.
 
     :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
-    :return: Padding value, *(top, right, bottom, left)*, in px
+    :return: Padding value, (top, right, bottom, left), in px
     """
     assert isinstance(padding, PaddingInstance)
 

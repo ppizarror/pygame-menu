@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['HMargin']
 
 import pygame
+
 from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu._types import NumberType
 
@@ -49,7 +50,10 @@ class HMargin(NoneWidget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(self, margin: NumberType, widget_id: str = '') -> None:
+    def __init__(self,
+                 margin: NumberType,
+                 widget_id: str = ''
+                 ) -> None:
         super(HMargin, self).__init__(widget_id=widget_id)
         self._rect.width = int(margin)
         self._rect.height = 0

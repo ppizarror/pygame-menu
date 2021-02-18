@@ -35,7 +35,7 @@ import copy
 import pygame
 import pygame_menu
 from pygame_menu.utils import assert_color
-from pygame_menu._types import NumberType, ColorType, Tuple2IntType, Tuple4IntType, NumberInstance
+from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, Tuple4IntType, NumberInstance
 
 
 class Selection(object):
@@ -101,22 +101,21 @@ class Selection(object):
         """
         return self.copy()
 
-    def set_color(self, color: ColorType) -> 'Selection':
+    def set_color(self, color: ColorInputType) -> 'Selection':
         """
         Set the selection effect color.
 
         :param color: Selection color
         :return: Self reference
         """
-        assert_color(color)
-        self.color = color
+        self.color = assert_color(color)
         return self
 
     def get_margin(self) -> Tuple4IntType:
         """
         Return the top, left, bottom and right margins of the selection.
 
-        :return: Tuple of *(top, left, bottom, right)* margins in px
+        :return: Tuple of (top, left, bottom, right) margins in px
         """
         return int(self.margin_top), int(self.margin_left), int(self.margin_bottom), int(self.margin_right)
 
@@ -124,7 +123,7 @@ class Selection(object):
         """
         Return the x/y margins of the selection.
 
-        :return: Tuple of *(x, y)* margins
+        :return: Tuple of (x, y) margins
         """
         return int(self.margin_left + self.margin_right), int(self.margin_top + self.margin_bottom)
 

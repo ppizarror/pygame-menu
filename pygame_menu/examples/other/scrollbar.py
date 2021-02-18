@@ -127,8 +127,8 @@ def main(test: bool = False) -> None:
                      (253, 246, 220),
                      onchange=v_changed)
     sb_v.set_shadow(color=(52, 54, 56),
-                    position=_locals.POSITION_NORTHWEST,
-                    offset=4)
+                         position=_locals.POSITION_NORTHWEST,
+                         offset=4)
     sb_v.set_controls(False)
     sb_v.set_position(scr_size[0] - thick_v, 0)
     sb_v.set_page_step(scr_size[1] - thick_h)

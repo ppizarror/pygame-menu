@@ -35,6 +35,7 @@ from io import BytesIO
 from pathlib import Path
 
 import pygame
+
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.widgets import Widget
 from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, Optional, NumberInstance
@@ -54,15 +55,15 @@ class Image(Widget):
     :param image_id: Image ID
     :param angle: Angle of the image in degrees (clockwise)
     :param onselect: Function when selecting the widget
-    :param scale: Scale of the image *(x, y)*
+    :param scale: Scale of the image on x-axis and y-axis (px)
     :param scale_smooth: Scale is smoothed
     """
     _image: 'BaseImage'
 
     def __init__(self,
                  image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
-                 image_id: str = '',
                  angle: NumberType = 0,
+                 image_id: str = '',
                  onselect: CallbackType = None,
                  scale: Tuple2NumberType = (1, 1),
                  scale_smooth: bool = True
@@ -85,7 +86,7 @@ class Image(Widget):
             self._image.rotate(angle)
             self._image.scale(scale[0], scale[1], smooth=scale_smooth)
 
-    def set_title(self, title: str) -> 'Widget':
+    def set_title(self, title: str) -> 'Image':
         return self
 
     def get_image(self) -> 'BaseImage':
@@ -110,23 +111,23 @@ class Image(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def rotate(self, angle: NumberType) -> 'Widget':
+    def rotate(self, angle: NumberType) -> 'Image':
         self._image.rotate(angle)
         self._surface = None
         return self
 
-    def flip(self, x: bool, y: bool) -> 'Widget':
+    def flip(self, x: bool, y: bool) -> 'Image':
         if x or y:
             self._image.flip(x, y)
             self._surface = None
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def scale(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
         self._image.scale(width, height, smooth)
         self._surface = None
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Widget':
+    def resize(self, width: NumberType, height: NumberType, smooth: bool = False) -> 'Image':
         self._image.resize(width, height, smooth)
         self._surface = None
         return self

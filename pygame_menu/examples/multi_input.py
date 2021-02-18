@@ -175,12 +175,13 @@ def main(test: bool = False) -> None:
 
     # Create selector with 3 difficulty options
     settings_menu.add.selector(
-        'Select difficulty ',
+        'Select difficulty',
         [('Easy', 'EASY'),
          ('Medium', 'MEDIUM'),
          ('Hard', 'HARD')],
         selector_id='difficulty',
-        default=1
+        default=1,
+        style='fancy'
     )
 
     # Create switch

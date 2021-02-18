@@ -45,10 +45,10 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
-from pygame_menu.widgets import Widget
 from pygame_menu.scrollarea import get_scrollbars_from_position
-
+from pygame_menu.widgets import Widget
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
+from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     NumberType, Vector2NumberType, List, Tuple, NumberInstance
 
@@ -88,20 +88,24 @@ class WidgetManager(object):
         :return: Dictionary of valid attributes
         """
         attributes = {}
+
+        # align
         align = kwargs.pop('align', self._theme.widget_alignment)
         assert isinstance(align, str)
         attributes['align'] = align
 
+        # background_color
         background_is_color = False
         background_color = kwargs.pop('background_color', self._theme.widget_background_color)
         if background_color is not None:
             if isinstance(background_color, pygame_menu.BaseImage):
                 pass
             else:
-                _utils.assert_color(background_color)
+                background_color = _utils.assert_color(background_color)
                 background_is_color = True
         attributes['background_color'] = background_color
 
+        # background_inflate
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         if background_inflate == 0:
             background_inflate = (0, 0)
@@ -110,11 +114,13 @@ class WidgetManager(object):
             'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
 
+        # border_color
         border_color = kwargs.pop('border_color', self._theme.widget_border_color)
         if border_color is not None:
-            _utils.assert_color(border_color)
+            border_color = _utils.assert_color(border_color)
         attributes['border_color'] = border_color
 
+        # border_inflate
         border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
         if border_inflate == 0:
             border_inflate = (0, 0)
@@ -123,38 +129,63 @@ class WidgetManager(object):
         assert isinstance(border_inflate[1], int) and border_inflate[1] >= 0
         attributes['border_inflate'] = border_inflate
 
+        # border_width
         border_width = kwargs.pop('border_width', self._theme.widget_border_width)
         assert isinstance(border_width, int) and border_width >= 0
         attributes['border_width'] = border_width
 
+        # cursor
         cursor = kwargs.pop('cursor', self._theme.widget_cursor)
         assert isinstance(cursor, PygameCursorType)
         attributes['cursor'] = cursor
 
+        # font_antialias
         attributes['font_antialias'] = self._theme.widget_font_antialias
 
+        # font_background_color
         font_background_color = kwargs.pop('font_background_color', self._theme.widget_font_background_color)
         if font_background_color is None and \
                 self._theme.widget_font_background_color_from_menu and \
                 not background_is_color:
             if isinstance(self._theme.background_color, tuple):  # Is color
-                _utils.assert_color(self._theme.background_color)
-                font_background_color = self._theme.background_color
+                font_background_color = _utils.assert_color(self._theme.background_color)
         attributes['font_background_color'] = font_background_color
 
+        # font_color
         font_color = kwargs.pop('font_color', self._theme.widget_font_color)
-        _utils.assert_color(font_color)
-        attributes['font_color'] = font_color
+        attributes['font_color'] = _utils.assert_color(font_color)
 
+        # font_name
         font_name = kwargs.pop('font_name', self._theme.widget_font)
         assert isinstance(font_name, (str, Path))
         attributes['font_name'] = str(font_name)
 
+        # font_shadow
+        font_shadow = kwargs.pop('font_shadow', self._theme.widget_font_shadow)
+        assert isinstance(font_shadow, bool)
+        attributes['font_shadow'] = font_shadow
+
+        # font_shadow_color
+        font_shadow_color = kwargs.pop('font_shadow_color', self._theme.widget_font_shadow_color)
+        attributes['font_shadow_color'] = _utils.assert_color(font_shadow_color)
+
+        # font_shadow_offset
+        font_shadow_offset = kwargs.pop('font_shadow_offset', self._theme.widget_font_shadow_offset)
+        assert isinstance(font_shadow_offset, int)
+        attributes['font_shadow_offset'] = font_shadow_offset
+
+        # font_shadow_position
+        font_shadow_position = kwargs.pop('font_shadow_position', self._theme.widget_font_shadow_position)
+        assert isinstance(font_shadow_position, str)
+        attributes['font_shadow_position'] = font_shadow_position
+
+        # font_size
         font_size = kwargs.pop('font_size', self._theme.widget_font_size)
         assert isinstance(font_size, int)
         assert font_size > 0, 'font size must be greater than zero'
         attributes['font_size'] = font_size
 
+        # margin
         margin = kwargs.pop('margin', self._theme.widget_margin)
         if margin == 0:
             margin = (0, 0)
@@ -162,22 +193,24 @@ class WidgetManager(object):
         _utils.assert_vector(margin, 2)
         attributes['margin'] = margin
 
+        # padding
         padding = kwargs.pop('padding', self._theme.widget_padding)
         assert isinstance(padding, (int, float, tuple))
         attributes['padding'] = padding
 
+        # readonly_color
         readonly_color = kwargs.pop('readonly_color', self._theme.readonly_color)
-        _utils.assert_color(readonly_color)
-        attributes['readonly_color'] = readonly_color
+        attributes['readonly_color'] = _utils.assert_color(readonly_color)
 
+        # readonly_selected_color
         readonly_selected_color = kwargs.pop('readonly_selected_color', self._theme.readonly_selected_color)
-        _utils.assert_color(readonly_selected_color)
-        attributes['readonly_selected_color'] = readonly_selected_color
+        attributes['readonly_selected_color'] = _utils.assert_color(readonly_selected_color)
 
+        # selection_color
         selection_color = kwargs.pop('selection_color', self._theme.selection_color)
-        _utils.assert_color(selection_color)
-        attributes['selection_color'] = selection_color
+        attributes['selection_color'] = _utils.assert_color(selection_color)
 
+        # selection_effect
         selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
         if selection_effect is None:
             selection_effect = pygame_menu.widgets.NoneSelection()
@@ -185,22 +218,6 @@ class WidgetManager(object):
             selection_effect = selection_effect.copy()
         assert isinstance(selection_effect, pygame_menu.widgets.core.Selection)
         attributes['selection_effect'] = selection_effect
-
-        shadow = kwargs.pop('shadow', self._theme.widget_shadow)
-        assert isinstance(shadow, bool)
-        attributes['shadow'] = shadow
-
-        shadow_color = kwargs.pop('shadow_color', self._theme.widget_shadow_color)
-        _utils.assert_color(shadow_color)
-        attributes['shadow_color'] = shadow_color
-
-        shadow_position = kwargs.pop('shadow_position', self._theme.widget_shadow_position)
-        assert isinstance(shadow_position, str)
-        attributes['shadow_position'] = shadow_position
-
-        shadow_offset = kwargs.pop('shadow_offset', self._theme.widget_shadow_offset)
-        assert isinstance(shadow_offset, int)
-        attributes['shadow_offset'] = shadow_offset
 
         return attributes
 
@@ -301,6 +318,12 @@ class WidgetManager(object):
             readonly_selected_color=kwargs['readonly_selected_color'],
             selected_color=kwargs['selection_color']
         )
+        widget.set_font_shadow(
+            color=kwargs['font_shadow_color'],
+            enabled=kwargs['font_shadow'],
+            offset=kwargs['font_shadow_offset'],
+            position=kwargs['font_shadow_position']
+        )
         widget.set_margin(
             x=kwargs['margin'][0],
             y=kwargs['margin'][1]
@@ -310,12 +333,6 @@ class WidgetManager(object):
         )
         widget.set_selection_effect(
             selection=kwargs['selection_effect']
-        )
-        widget.set_shadow(
-            color=kwargs['shadow_color'],
-            enabled=kwargs['shadow'],
-            offset=kwargs['shadow_offset'],
-            position=kwargs['shadow_position']
         )
         widget.set_scrollarea(self._menu.get_scrollarea())
 
@@ -366,32 +383,32 @@ class WidgetManager(object):
             - ``accept_kwargs``             *(bool)* – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
             - ``back_count``                *(int)* - Number of menus to go back if action is :py:data:`pygame_menu.events.BACK` event, default is ``1``
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``button_id``                 *(str)* - Widget ID
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
             - ``onselect``                  *(callable, None)* - Callback executed when selecting the widget
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
-            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
-            - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``False`` by default
-            - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``underline_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
+            - ``underline``                 *(bool)* - Enables text underline, using a properly placed decoration. ``False`` by default
 
         .. note::
 
@@ -531,30 +548,30 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``dynamic_width``             *(int, float)* - If ``True`` the widget width changes if the previsualization color box is active or not
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``dynamic_width``             *(bool)* - If ``True`` the widget width changes if the previsualization color box is active or not
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``previsualization_margin``   *(int)* - Previsualization left margin from text input in px. Default is ``0``
             - ``previsualization_width``    *(int, float)* - Previsualization width as a factor of the height. Default is ``3``
-            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
-            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
 
         .. note::
 
@@ -574,7 +591,7 @@ class WidgetManager(object):
         :param title: Title of the color input
         :param color_type: Type of the color input
         :param color_id: ID of the color input
-        :param default: Default value to display, if RGB type it must be a tuple ``(r,g,b)``, if HEX must be a string ``"#XXXXXX"``
+        :param default: Default value to display, if RGB type it must be a tuple ``(r, g, b)``, if HEX must be a string ``"#XXXXXX"``
         :param hex_format: Hex format string mode
         :param input_separator: Divisor between RGB channels, not valid in HEX format
         :param input_underline: Underline character
@@ -641,16 +658,16 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
 
         .. note::
 
@@ -666,7 +683,7 @@ class WidgetManager(object):
         :param angle: Angle of the image in degrees (clockwise)
         :param image_id: ID of the label
         :param onselect: Callback executed when selecting the widget
-        :param scale: Scale of the image *(x, y)*
+        :param scale: Scale of the image on x-axis and y-axis (x, y)
         :param scale_smooth: Scale is smoothed
         :param selectable: Image accepts user selection
         :param kwargs: Optional keyword arguments
@@ -722,28 +739,28 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
-            - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``False`` by default
-            - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``underline_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
+            - ``underline``                 *(bool)* - Enables text underline, using a properly placed decoration. ``False`` by default
 
         .. note::
 
@@ -859,28 +876,28 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``HAND``
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color. If not defined, uses ``theme.widget_url_color``
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``HAND``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color. If not defined, uses ``theme.widget_url_color``
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
-            - ``underline``                 *(bool)* - Enables text underline. This uses a decoration properly placed. ``True`` by default
-            - ``underline_color``           *(tuple, list, None)** - Color of the underline. If ``None`` use the same color of the text
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``underline_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
+            - ``underline``                 *(bool)* - Enables text underline, using a properly placed decoration. ``True`` by default
 
         .. note::
 
@@ -939,6 +956,7 @@ class WidgetManager(object):
                  onreturn: CallbackType = None,
                  onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
                  selector_id: str = '',
+                 style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
                  **kwargs
                  ) -> 'pygame_menu.widgets.Selector':
         """
@@ -966,26 +984,32 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
-            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``style_fancy_arrow_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Arrow color of fancy style
+            - ``style_fancy_arrow_margin``  *(tuple, list)* - Margin of arrows on x-axis and y-axis in px; format: (left, right, vertical)
+            - ``style_fancy_bgcolor``       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Background color of fancy style
+            - ``style_fancy_bordercolor``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Border color of fancy style
+            - ``style_fancy_borderwidth``   *(int)* - Border width of fancy style; ``1`` by default
+            - ``style_fancy_box_inflate``   *(tuple, list)* - Box inflate of fancy style (x, y) in px
 
         .. note::
 
@@ -1009,12 +1033,21 @@ class WidgetManager(object):
         :param onreturn: Callback executed when pressing return button
         :param onselect: Callback executed when selecting the widget
         :param selector_id: ID of the selector
+        :param style: Selector style (visual)
         :param kwargs: Optional keyword arguments
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Selector`
         """
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
+
+        # Get fancy style attributes
+        style_fancy_arrow_color = kwargs.get('style_fancy_arrow_color', (160, 160, 160))
+        style_fancy_arrow_margin = kwargs.get('style_fancy_arrow_margin', (5, 5, 0))
+        style_fancy_bgcolor = kwargs.get('style_fancy_bgcolor', (180, 180, 180))
+        style_fancy_bordercolor = kwargs.get('style_fancy_bordercolor', (0, 0, 0))
+        style_fancy_borderwidth = kwargs.get('style_fancy_borderwidth', 1)
+        style_fancy_box_inflate = kwargs.get('style_fancy_box_inflate', (0, 8))
 
         widget = pygame_menu.widgets.Selector(
             default=default,
@@ -1023,6 +1056,13 @@ class WidgetManager(object):
             onreturn=onreturn,
             onselect=onselect,
             selector_id=selector_id,
+            style=style,
+            style_fancy_arrow_color=style_fancy_arrow_color,
+            style_fancy_arrow_margin=style_fancy_arrow_margin,
+            style_fancy_bgcolor=style_fancy_bgcolor,
+            style_fancy_bordercolor=style_fancy_bordercolor,
+            style_fancy_borderwidth=style_fancy_borderwidth,
+            style_fancy_box_inflate=style_fancy_box_inflate,
             title=title,
             **kwargs
         )
@@ -1052,37 +1092,37 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
             - ``infinite``                  *(bool)* - The state can rotate. ``False`` by default
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
-            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
-            - ``slider_color``              *(tuple, list)* - Color of the slider
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``slider_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the slider
             - ``slider_thickness``          *(int)* - Slider thickness (px). ``20`` px by default
             - ``state_color``               *(tuple)* - 2-item color tuple for each state
-            - ``state_text_font_size``      *(str, None)* - Font size of the state text. If ``None`` uses the widget font size
             - ``state_text_font_color``     *(tuple)* - 2-item color tuple for each font state text color
-            - ``switch_border_color``       *(tuple, list)* - Switch border color. ``(40, 40, 40)`` by default
+            - ``state_text_font_size``      *(str, None)* - Font size of the state text. If ``None`` uses the widget font size
+            - ``switch_border_color``       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Switch border color. ``(40, 40, 40)`` by default
             - ``switch_border_width``       *(int)* - Switch border width. ``1`` px by default
             - ``switch_height``             *(int, float)* - Height factor respect to the title font size height. ``1.25`` by default
             - ``switch_margin``             *(tuple, list)* - *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title. ``(25, 0)`` by default
-            - ``width``                     *(int, float)* - Width of the switch box (px). ``150`` px by default
+            - ``width``                     *(int)* - Width of the switch box (px). ``150`` px by default
 
         .. note::
 
@@ -1194,27 +1234,27 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``cursor``                    *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
-            - ``font_background_color``     *(tuple, list, None)* - Widget font background color
-            - ``font_color``                *(tuple, list)* - Widget font color
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
             - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
             - ``font_size``                 *(int)* - Font size of the widget
             - ``input_underline_vmargin``   *(int)* - Vertical margin of underline (px)
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: *(top, right, bottom, left)*
-            - ``readonly_color``            *(tuple, list)* - Color of the widget if readonly mode
-            - ``readonly_selected_color``   *(tuple, list)* - Color of the widget if readonly mode and is selected
-            - ``selection_color``           *(tuple, list)* - Color of the selected widget; only affects the font color
-            - ``selection_effect``          *(:py:class:`pygame_menu.widgets.core.Selection`)* - Widget selection effect
-            - ``shadow``                    *(bool)* - Text shadow is enabled or disabled
-            - ``shadow_color``              *(tuple, list)* - Text shadow color
-            - ``shadow_position``           *(str)* - Text shadow position, see locals for position
-            - ``shadow_offset``             *(int)* - Text shadow offset (px)
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
 
         .. note::
 
@@ -1381,22 +1421,22 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``max_height``                *(int, float)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
-            - ``max_width``                 *(int, float)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``max_height``                *(int)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
-            - ``scrollbar_color``           *(tuple, list)* - Scrollbar color
-            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
-            - ``scrollbar_shadow_color``    *(tuple, list)* - Color of the shadow of each scrollbar
+            - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
             - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
             - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
             - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
-            - ``scrollbar_slider_color``    *(tuple, list)* - Color of the sliders
+            - ``scrollbar_slider_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
             - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders (px)
             - ``scrollbar_thick``           *(int)* - Scrollbar thickness (px)
             - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
@@ -1462,22 +1502,22 @@ class WidgetManager(object):
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
-            - ``background_color``          *(tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`)* - Color of the background. ``None`` for no-color
-            - ``background_inflate``        *(tuple, list)* - Inflate background in *(x, y)* in px
-            - ``border_color``              *(tuple, list)* - Widget border color. ``None`` for no-color
-            - ``border_inflate``            *(tuple, list)* - Widget border inflate in *(x, y)* in px
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
-            - ``margin``                    *(tuple, list)* - Widget *(left, bottom)* margin in px
-            - ``max_height``                *(int, float)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
-            - ``max_width``                 *(int, float)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``max_height``                *(int)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
-            - ``scrollbar_color``           *(tuple, list)* - Scrollbar color
-            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursor.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
-            - ``scrollbar_shadow_color``    *(tuple, list)* - Color of the shadow of each scrollbar
+            - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
             - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
             - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
             - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
-            - ``scrollbar_slider_color``    *(tuple, list)* - Color of the sliders
+            - ``scrollbar_slider_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
             - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders (px)
             - ``scrollbar_thick``           *(int)* - Scrollbar thickness (px)
             - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`

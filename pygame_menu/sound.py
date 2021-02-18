@@ -344,7 +344,7 @@ class Sound(object):
         """
         Load the example sounds provided by the package.
 
-        :param volume: Volume of the sound, ``(0-1)``
+        :param volume: Volume of the sound, from ``0`` to ``1``
         :return: Self reference
         """
         assert isinstance(volume, NumberInstance) and 0 <= volume <= 1

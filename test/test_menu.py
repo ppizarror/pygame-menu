@@ -1517,11 +1517,13 @@ class MenuTest(unittest.TestCase):
 
         # Infinite joy
         menu_top.update(PygameUtils.joy_motion(0, 10))
+        # noinspection PyArgumentList
         menu.update([pygame.event.Event(menu._joy_event_repeat)])
         self.assertNotEqual(menu._joy_event, 0)
 
         # Now disable joy event, then event repeat should not continue
         menu._joy_event = 0
+        # noinspection PyArgumentList
         menu.update([pygame.event.Event(menu._joy_event_repeat)])
         menu_top.update(PygameUtils.center_joy())  # center !!
         self.assertEqual(menu.get_current()._joy_event, 0)

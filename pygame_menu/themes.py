@@ -55,8 +55,8 @@ import pygame_menu.widgets as _widgets
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
-from pygame_menu._types import ColorType, Tuple, List, Union, VectorType, Dict, Any, VectorInstance, \
-    Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, PaddingInstance
+from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, \
+    VectorInstance, Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, PaddingInstance
 
 
 def _check_menubar_style(style: int) -> bool:
@@ -80,8 +80,8 @@ class Theme(object):
 
         All colors must be defined with a tuple of 3 or 4 numbers in the formats:
 
-            - *(R, G, B)*
-            - *(R, G, B, A)*
+            - (R, G, B)
+            - (R, G, B, A)
 
         Red (R), Green (G), and Blue (B) must be numbers between ``0`` and ``255``.
         A means the alpha channel (opacity), if ``0`` the color is transparent, ``100`` means opaque.
@@ -95,47 +95,47 @@ class Theme(object):
     :param background_color: Menu background color
     :type background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`
     :param cursor_color: Cursor color (used in some text-gathering widgets like ``TextInput``)
-    :type cursor_color: tuple, list
+    :type cursor_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param cursor_selection_color: Color of the text selection if the cursor is enabled on certain widgets
-    :type cursor_selection_color: tuple, list
+    :type cursor_selection_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param cursor_switch_ms: Interval of cursor switch between off and on status
     :type cursor_switch_ms: int, float
-    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements *(R, G, B, A)*
-    :type focus_background_color: tuple, list
+    :param focus_background_color: Color of the widget focus, this must be a tuple of 4 elements (R, G, B, A)
+    :type focus_background_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param fps: Menu max fps (frames per second). If ``0`` there's no limit
     :type fps: int, float
     :param readonly_color: Color of the widget in readonly mode
-    :type readonly_color: tuple, list
+    :type readonly_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param readonly_selected_color: Color of the selected widget in readonly mode
-    :type readonly_selected_color: tuple, list
+    :type readonly_selected_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollarea_outer_margin: Outer ScrollArea margin (px); the tuple is added to computed ScrollArea width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
-    :type scrollarea_outer_margin: tuple, list
+    :type scrollarea_outer_margin: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollarea_position: Position of ScrollArea scrollbars. See :py:mod:`pygame_menu.locals`
     :type scrollarea_position: str
     :param scrollbar_color: Scrollbars color
-    :type scrollbar_color: tuple, list
+    :type scrollbar_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollbar_cursor: Scrollbar cursor if mouse is placed over. If ``None`` the scrollbar don't changes the cursor
     :type scrollbar_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
     :type scrollbar_shadow: bool
     :param scrollbar_shadow_color: Color of the scrollbar shadow
-    :type scrollbar_shadow_color: tuple, list
+    :type scrollbar_shadow_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollbar_shadow_offset: Offset of the scrollbar shadow
     :type scrollbar_shadow_offset: int, float
     :param scrollbar_shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
     :type scrollbar_shadow_position: str
     :param scrollbar_slider_color: Color of the sliders
-    :type scrollbar_slider_color: tuple, list
+    :type scrollbar_slider_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbar thickness (px)
     :type scrollbar_thick: int
     :param selection_color: Color of the selected widget; it affects font color and the selection effect
-    :type selection_color: tuple, list
+    :type selection_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param surface_clear_color: Surface clear color before applying background function
-    :type surface_clear_color: tuple, list
+    :type surface_clear_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param title_background_color: Title background color
-    :type title_background_color: tuple, list
+    :type title_background_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param title_bar_modify_scrollarea: If ``True`` title bar modifies the scrollbars of the scrollarea depending on the style
     :param title_bar_style: Style of the title, use :py:class:`pygame_menu.widgets.MenuBar` widget styles
     :type title_bar_style: int
@@ -148,33 +148,33 @@ class Theme(object):
     :param title_font_antialias: Title font renders with antialiasing
     :type title_font_antialias: bool
     :param title_font_color: Title font color. If ``None`` use the widget font color
-    :type title_font_color: tuple, list, None
+    :type title_font_color: tuple, list, str, int, :py:class:`pygame.Color`, None
+    :param title_font_shadow: Enable title font shadow
+    :type title_font_shadow: bool
+    :param title_font_shadow_color: Title font shadow color
+    :type title_font_shadow_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param title_font_shadow_offset: Offset of title font shadow (px)
+    :type title_font_shadow_offset: int
+    :param title_font_shadow_position: Position of the title font shadow. See :py:mod:`pygame_menu.locals`
+    :type title_font_shadow_position: str
     :param title_font_size: Font size of the title
     :type title_font_size: int
-    :param title_offset: Offset *(x-position, y-position)* of title (px)
-    :type title_offset: tuple, list
-    :param title_shadow: Enable shadow on title
-    :type title_shadow: bool
-    :param title_shadow_color: Title shadow color
-    :type title_shadow_color: tuple, list
-    :param title_shadow_offset: Offset of shadow on title (px)
-    :type title_shadow_offset: int
-    :param title_shadow_position: Position of the shadow on title. See :py:mod:`pygame_menu.locals`
-    :type title_shadow_position: str
+    :param title_offset: Offset (x-position, y-position) of title (px)
+    :type title_offset: tuple, list, str, int, :py:class:`pygame.Color`
     :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
     :type title_updates_pygame_display: bool
     :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_. See :py:mod:`pygame_menu.locals`
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget, it can be a color or a BaseImage object. Background fills the entire widget + the padding
-    :type widget_background_color: tuple, list, :py:class:`pygame_menu.baseimage.BaseImage`, None
-    :param widget_background_inflate: Inflate background in *(x, y)* in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
-    :type widget_background_inflate: tuple, list
+    :type widget_background_color: tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, None
+    :param widget_background_inflate: Inflate background on x-axis and y-axis (x, y) in px. By default it uses the highlight margin. This parameter is visual only. For modifying widget size use padding instead
+    :type widget_background_inflate: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_background_inflate_to_selection: If ``True`` widget will inflate to match selection effect margin and overrides ``widget_background_inflate``
     :type widget_background_inflate_to_selection: bool
     :param widget_border_color: Widget border color
-    :type widget_border_color: tuple, list
-    :param widget_border_inflate: Widget inflate size in *(x, y)* in px. These values cannot be negative
-    :type widget_border_inflate: tuple, list
+    :type widget_border_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param widget_border_inflate: Widget inflate size on x-axis and y-axis (x, y) in px. These values cannot be negative
+    :type widget_border_inflate: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_border_width: Widget border width (px). If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
     :type widget_border_width: int
     :param widget_cursor: Widget cursor if mouse is placed over. If ``None`` the widget don't changes the cursor
@@ -184,31 +184,31 @@ class Theme(object):
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
     :param widget_font_background_color: Widget font background color. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
-    :type widget_font_background_color: tuple, list, None
+    :type widget_font_background_color: tuple, list, str, int, :py:class:`pygame.Color`, None
     :param widget_font_background_color_from_menu: Use Menu background color as font background color. Disabled by default
     :type widget_font_background_color_from_menu: bool
     :param widget_font_color: Color of the font
-    :type widget_font_color: tuple, list
+    :type widget_font_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param widget_font_shadow: Indicate if the widget font shadow is enabled
+    :type widget_font_shadow: bool
+    :param widget_font_shadow_color: Color of the widget font shadow
+    :type widget_font_shadow_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param widget_font_shadow_offset: Offset of the widget font shadow (px)
+    :type widget_font_shadow_offset: int
+    :param widget_font_shadow_position: Position of the widget font shadow. See :py:mod:`pygame_menu.locals`
+    :type widget_font_shadow_position: str
     :param widget_font_size: Font size
     :type widget_font_size: int
     :param widget_margin: Horizontal and vertical margin of each element in Menu (px)
-    :type widget_margin: tuple, list
+    :type widget_margin: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3, or 4 elements. Padding modifies widget width/height
-    :type widget_padding: int, float, tuple, list
-    :param widget_offset: *(x, y)* axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
-    :type widget_offset: tuple, list
+    :type widget_padding: int, float, tuple, list, str, int, :py:class:`pygame.Color`
+    :param widget_offset: (x, y) axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :type widget_offset: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
-    :param widget_shadow: Indicate if the widget text shadow is enabled
-    :type widget_shadow: bool
-    :param widget_shadow_color: Color of the widget shadow
-    :type widget_shadow_color: tuple, list
-    :param widget_shadow_offset: Offset of the widget shadow (px)
-    :type widget_shadow_offset: int
-    :param widget_shadow_position: Position of the widget shadow. See :py:mod:`pygame_menu.locals`
-    :type widget_shadow_position: str
     :param widget_url_color: Color of url text links
-    :type widget_url_color: tuple, list
+    :type widget_url_color: tuple, list, str, int, :py:class:`pygame.Color`
     """
     _disable_validation: bool
     background_color: Union[ColorType, 'BaseImage']
@@ -241,12 +241,12 @@ class Theme(object):
     title_font: str
     title_font_antialias: bool
     title_font_color: ColorType
+    title_font_shadow: bool
+    title_font_shadow_color: ColorType
+    title_font_shadow_offset: NumberType
+    title_font_shadow_position: str
     title_font_size: int
     title_offset: Tuple2NumberType
-    title_shadow: bool
-    title_shadow_color: ColorType
-    title_shadow_offset: NumberType
-    title_shadow_position: str
     title_updates_pygame_display: bool
     widget_alignment: str
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
@@ -261,15 +261,15 @@ class Theme(object):
     widget_font_background_color: Optional[ColorType]
     widget_font_background_color_from_menu: bool
     widget_font_color: ColorType
+    widget_font_shadow: bool
+    widget_font_shadow_color: ColorType
+    widget_font_shadow_offset: NumberType
+    widget_font_shadow_position: str
     widget_font_size: int
     widget_margin: Tuple2NumberType
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
     widget_selection_effect: 'pygame_menu.widgets.core.Selection'
-    widget_shadow: bool
-    widget_shadow_color: ColorType
-    widget_shadow_offset: NumberType
-    widget_shadow_position: str
     widget_url_color: ColorType
 
     def __init__(self, **kwargs) -> None:
@@ -298,13 +298,13 @@ class Theme(object):
         self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
+        self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
+        self.title_font_shadow_color = self._get(kwargs, 'title_font_shadow_color', 'color', (0, 0, 0))
+        self.title_font_shadow_offset = self._get(kwargs, 'title_font_shadow_offset', NumberInstance, 2)
+        self.title_font_shadow_position = self._get(kwargs, 'title_font_shadow_position', 'position',
+                                                    _locals.POSITION_NORTHWEST)
         self.title_font_size = self._get(kwargs, 'title_font_size', int, 40)
         self.title_offset = self._get(kwargs, 'title_offset', 'tuple2', (5, -1))
-        self.title_shadow = self._get(kwargs, 'title_shadow', bool, False)
-        self.title_shadow_color = self._get(kwargs, 'title_shadow_color', 'color', (0, 0, 0))
-        self.title_shadow_offset = self._get(kwargs, 'title_shadow_offset', NumberInstance, 2)
-        self.title_shadow_position = self._get(kwargs, 'title_shadow_position', 'position',
-                                               _locals.POSITION_NORTHWEST)
         self.title_updates_pygame_display = self._get(kwargs, 'title_updates_pygame_display', bool, False)
 
         # ScrollArea
@@ -343,15 +343,15 @@ class Theme(object):
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
                                                                 bool, False)
         self.widget_font_color = self._get(kwargs, 'widget_font_color', 'color', (70, 70, 70))
+        self.widget_font_shadow = self._get(kwargs, 'widget_font_shadow', bool, False)
+        self.widget_font_shadow_color = self._get(kwargs, 'widget_font_shadow_color', 'color', (0, 0, 0))
+        self.widget_font_shadow_offset = self._get(kwargs, 'widget_font_shadow_offset', int, 2)
+        self.widget_font_shadow_position = self._get(kwargs, 'widget_font_shadow_position', 'position',
+                                                     _locals.POSITION_NORTHWEST)
         self.widget_font_size = self._get(kwargs, 'widget_font_size', int, 30)
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
-        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
-        self.widget_shadow = self._get(kwargs, 'widget_shadow', bool, False)
-        self.widget_shadow_color = self._get(kwargs, 'widget_shadow_color', 'color', (0, 0, 0))
-        self.widget_shadow_offset = self._get(kwargs, 'widget_shadow_offset', int, 2)
-        self.widget_shadow_position = self._get(kwargs, 'widget_shadow_position', 'position',
-                                                _locals.POSITION_NORTHWEST)
+        self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
         # Compatibility check
@@ -382,14 +382,14 @@ class Theme(object):
             return self
 
         # Boolean asserts
-        assert isinstance(self.title_close_button, bool)
-        assert isinstance(self.title_bar_modify_scrollarea, bool)
-        assert isinstance(self.title_font_antialias, bool)
-        assert isinstance(self.title_shadow, bool)
         assert isinstance(self.scrollbar_shadow, bool)
+        assert isinstance(self.title_bar_modify_scrollarea, bool)
+        assert isinstance(self.title_close_button, bool)
+        assert isinstance(self.title_font_antialias, bool)
+        assert isinstance(self.title_font_shadow, bool)
         assert isinstance(self.widget_font_antialias, bool)
         assert isinstance(self.widget_font_background_color_from_menu, bool)
-        assert isinstance(self.widget_shadow, bool)
+        assert isinstance(self.widget_font_shadow, bool)
 
         # Value type checks
         _utils.assert_alignment(self.widget_alignment)
@@ -397,8 +397,8 @@ class Theme(object):
         _utils.assert_cursor(self.title_close_button_cursor)
         _utils.assert_cursor(self.widget_cursor)
         _utils.assert_position(self.scrollbar_shadow_position)
-        _utils.assert_position(self.title_shadow_position)
-        _utils.assert_position(self.widget_shadow_position)
+        _utils.assert_position(self.title_font_shadow_position)
+        _utils.assert_position(self.widget_font_shadow_position)
         assert _check_menubar_style(self.title_bar_style)
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
 
@@ -413,16 +413,16 @@ class Theme(object):
         assert isinstance(self.scrollbar_thick, int)
         assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font, str)
+        assert isinstance(self.title_font_shadow_offset, NumberInstance)
         assert isinstance(self.title_font_size, int)
-        assert isinstance(self.title_shadow_offset, NumberInstance)
         assert isinstance(self.title_updates_pygame_display, bool)
         assert isinstance(self.widget_background_inflate_to_selection, bool)
         assert isinstance(self.widget_border_width, int)
         assert isinstance(self.widget_font, str)
+        assert isinstance(self.widget_font_shadow_offset, int)
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, PaddingInstance)
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
-        assert isinstance(self.widget_shadow_offset, int)
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
@@ -437,10 +437,10 @@ class Theme(object):
         self.selection_color = self._format_opacity(self.selection_color)
         self.surface_clear_color = self._format_opacity(self.surface_clear_color)
         self.title_background_color = self._format_opacity(self.title_background_color)
-        self.widget_border_color = self._format_opacity(self.widget_border_color)
         self.title_font_color = self._format_opacity(self.title_font_color)
-        self.title_shadow_color = self._format_opacity(self.title_shadow_color)
+        self.title_font_shadow_color = self._format_opacity(self.title_font_shadow_color)
         self.widget_background_color = self._format_opacity(self.widget_background_color)
+        self.widget_border_color = self._format_opacity(self.widget_border_color)
         self.widget_font_background_color = self._format_opacity(self.widget_font_background_color)
         self.widget_font_color = self._format_opacity(self.widget_font_color)
         self.widget_url_color = self._format_opacity(self.widget_url_color)
@@ -474,8 +474,8 @@ class Theme(object):
         assert self.scrollbar_slider_pad >= 0, 'slider pad must be equal or greater than zero'
         assert self.scrollbar_thick > 0, 'scrollbar thickness must be greater than zero'
         assert self.title_font_size > 0, 'title font size must be greater than zero'
+        assert self.widget_font_shadow_offset > 0, 'widget shadow offset must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
-        assert self.widget_shadow_offset > 0, 'widget shadow offset must be greater than zero'
 
         # Color asserts
         assert self.focus_background_color[3] != 0, \
@@ -490,7 +490,7 @@ class Theme(object):
         :param opacity: Opacity value, from ``0`` (transparent) to ``1`` (opaque)
         :return: Self reference
         """
-        _utils.assert_color(self.background_color)
+        self.background_color = _utils.assert_color(self.background_color)
         assert isinstance(opacity, NumberInstance)
         assert 0 <= opacity <= 1, 'opacity must be a number between 0 (transparent) and 1 (opaque)'
         self.background_color = (self.background_color[0], self.background_color[1],
@@ -536,12 +536,12 @@ class Theme(object):
         return self.copy()
 
     @staticmethod
-    def _format_opacity(color: Optional[Union[VectorType, 'BaseImage']]
+    def _format_opacity(color: Optional[Union[ColorInputType, 'BaseImage']]
                         ) -> Optional[Union[ColorType, 'BaseImage']]:
         """
         Adds opacity to a 3 channel color. (R,G,B) -> (R,G,B,A) if the color
         has not an alpha channel. Also updates the opacity to a number between
-        0 and 255.
+        ``0`` (transparent) and ``255`` (opaque).
 
         Color may be an Image, so if this is the case return the same object.
 
@@ -555,6 +555,7 @@ class Theme(object):
             return color
         if color is None:
             return color
+        color = _utils.format_color(color)
         if isinstance(color, (tuple, list)):
             _utils.assert_color(color)
             if len(color) == 4:
@@ -577,7 +578,7 @@ class Theme(object):
 
         Custom types (str)
             -   alignment           pygame-menu alignment (locals)
-            -   callable            Is callable type, same as ``'function'``
+            -   callable            Is callable type, same as ``"function"``
             -   color               Check color
             -   color_image         Color or :py:class:`pygame_menu.baseimage.BaseImage`
             -   color_image_none    Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
@@ -587,8 +588,8 @@ class Theme(object):
             -   none                None only
             -   position            pygame-menu position (locals)}
             -   type                Type-class (bool, str, etc...)
-            -   tuple2              Only valid numeric tuples ``(x,y)`` or ``[x,y]``
-            -   tuple3              Only valid numeric tuples ``(x,y,z)`` or ``[x,y,z]``
+            -   tuple2              Only valid numeric tuples ``(x, y)`` or ``[x, y]``
+            -   tuple3              Only valid numeric tuples ``(x, y, z)`` or ``[x, y, z]``
 
         :param params: Parameters dictionary
         :param key: Key to look for
@@ -610,19 +611,19 @@ class Theme(object):
                     assert _utils.is_callable(value), 'value must be callable type'
 
                 elif valtype == 'color':
-                    _utils.assert_color(value)
+                    value = _utils.assert_color(value)
 
                 elif valtype == 'color_image':
                     if not isinstance(value, BaseImage):
-                        _utils.assert_color(value)
+                        value = _utils.assert_color(value)
 
                 elif valtype == 'color_image_none':
                     if not (value is None or isinstance(value, BaseImage)):
-                        _utils.assert_color(value)
+                        value = _utils.assert_color(value)
 
                 elif valtype == 'color_none':
                     if value is not None:
-                        _utils.assert_color(value)
+                        value = _utils.assert_color(value)
 
                 elif valtype == 'cursor':
                     _utils.assert_cursor(value)
@@ -681,7 +682,7 @@ THEME_BLUE = Theme(
     selection_color=(100, 62, 132),
     title_background_color=(62, 149, 195),
     title_font_color=(228, 230, 246),
-    title_shadow=True,
+    title_font_shadow=True,
     widget_font_color=(61, 170, 220)
 )
 

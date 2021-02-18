@@ -379,9 +379,9 @@ class WidgetsTest(unittest.TestCase):
         for mode in [MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, MENUBAR_STYLE_TITLE_ONLY,
                      MENUBAR_STYLE_TITLE_ONLY_DIAGONAL]:
-            mb = MenuBar('Menu', 500, (0, 0, 0), True, mode=mode)
+            mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode=mode)
             menu.add.generic_widget(mb)
-        mb = MenuBar('Menu', 500, (0, 0, 0), True)
+        mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True)
         mb.set_backbox_border_width(2)
         self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(1.5))
         self.assertRaises(AssertionError, lambda: mb.set_backbox_border_width(0))
@@ -453,6 +453,14 @@ class WidgetsTest(unittest.TestCase):
         selector.readonly = True
         selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
+
+        # Test fancy selector
+        menu.add.selector('Fancy ',
+                          [('1 - Easy', 'EASY'),
+                           ('2 - Medium', 'MEDIUM'),
+                           ('3 - Hard', 'HARD')],
+                          default=1,
+                          style=pygame_menu.widgets.widget.selector.SELECTOR_STYLE_FANCY)
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_colorinput(self) -> None:
@@ -1377,7 +1385,7 @@ class WidgetsTest(unittest.TestCase):
                                                                   border_inflate=(-1, - 1)))
         btn = menu.add.button('', border_width=1, border_color=(0, 0, 0), border_inflate=(1, 1))
         self.assertEqual(btn._border_width, 1)
-        self.assertEqual(btn._border_color, (0, 0, 0))
+        self.assertEqual(btn._border_color, (0, 0, 0, 255))
         self.assertEqual(btn._border_inflate, (1, 1))
 
     def test_scrollbar(self) -> None:
@@ -1407,6 +1415,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb.get_thickness(), 80)
 
         sb.set_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)
+        self.assertFalse(sb._font_shadow)
 
         sb.set_position(x, y)
 
