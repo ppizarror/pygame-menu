@@ -76,6 +76,11 @@ class ScrollBar(Widget):
     _page_ctrl_length: NumberType
     _page_ctrl_thick: int
     _page_step: NumberType
+    _shadow: bool
+    _shadow_color: ColorType
+    _shadow_offset: NumberType
+    _shadow_position: str
+    _shadow_tuple: Tuple2IntType
     _single_step: NumberType
     _slider_color: ColorType
     _slider_pad: int
@@ -130,6 +135,13 @@ class ScrollBar(Widget):
         self._slider_color = slider_color
         self._slider_position = 0
 
+        # Shadow
+        self._shadow = False
+        self._shadow_color = (0, 0, 0)
+        self._shadow_offset = 2.0
+        self._shadow_position = _locals.POSITION_NORTHWEST
+        self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
+
         self._single_step = 20
         self._page_step = 0
 
@@ -141,31 +153,31 @@ class ScrollBar(Widget):
         self.is_scrollable = True
         self.is_selectable = False
 
-    def scroll_to_widget(self) -> 'Widget':
+    def scroll_to_widget(self) -> 'ScrollBar':
         pass
 
     def _apply_font(self) -> None:
         pass
 
-    def set_padding(self, *args, **kwargs) -> 'Widget':
+    def set_padding(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def scale(self, *args, **kwargs) -> 'Widget':
+    def scale(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def resize(self, *args, **kwargs) -> 'Widget':
+    def resize(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def set_max_width(self, *args, **kwargs) -> 'Widget':
+    def set_max_width(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def set_max_height(self, *args, **kwargs) -> 'Widget':
+    def set_max_height(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def rotate(self, *args, **kwargs) -> 'Widget':
+    def rotate(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
-    def flip(self, *args, **kwargs) -> 'Widget':
+    def flip(self, *args, **kwargs) -> 'ScrollBar':
         return self
 
     def _apply_size_changes(self) -> None:
@@ -185,6 +197,38 @@ class ScrollBar(Widget):
         pos = ('x', 'y')
         setattr(self._slider_rect, pos[self._orientation], self._slider_position)
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
+
+    def set_shadow(self,
+                   enabled: bool = True,
+                   color: Optional[ColorType] = None,
+                   position: Optional[str] = None,
+                   offset: int = 2
+                   ) -> 'ScrollBar':
+        """
+        Set the scrollbars shadow.
+
+        .. note::
+
+            See :py:mod:`pygame_menu.locals` for valid ``position`` values.
+
+        :param enabled: Shadow is enabled or not
+        :param color: Shadow color
+        :param position: Shadow position
+        :param offset: Shadow offset
+        :return: Self reference
+        """
+        super(ScrollBar, self).set_font_shadow(enabled, color, position, offset)
+
+        # Store shadow from font
+        self._shadow = self._font_shadow
+        self._shadow_color = self._font_shadow_color
+        self._shadow_offset = self._font_shadow_offset
+        self._shadow_position = self._font_shadow_position
+        self._shadow_tuple = self._font_shadow_tuple
+
+        # Disable font
+        self._font_shadow = False
+        return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
@@ -267,14 +311,14 @@ class ScrollBar(Widget):
         self._surface.fill(self._page_ctrl_color)
 
         # Render slider
-        if self._font_shadow:
+        if self._shadow:
             lit_rect = pygame.Rect(self._slider_rect)
-            slider_rect = lit_rect.inflate(-self._font_shadow_offset * 2, -self._font_shadow_offset * 2)
-            shadow_rect = lit_rect.inflate(-self._font_shadow_offset, -self._font_shadow_offset)
-            shadow_rect = shadow_rect.move(self._font_shadow_tuple[0] / 2, self._font_shadow_tuple[1] / 2)
+            slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
+            shadow_rect = lit_rect.inflate(-self._shadow_offset, -self._shadow_offset)
+            shadow_rect = shadow_rect.move(self._shadow_tuple[0] / 2, self._shadow_tuple[1] / 2)
 
             pygame.draw.rect(self._surface, self._font_selected_color, lit_rect)
-            pygame.draw.rect(self._surface, self._font_shadow_color, shadow_rect)
+            pygame.draw.rect(self._surface, self._shadow_color, shadow_rect)
             pygame.draw.rect(self._surface, self._slider_color, slider_rect)
         else:
             pygame.draw.rect(self._surface, self._slider_color, self._slider_rect)
