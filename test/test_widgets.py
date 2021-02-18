@@ -1185,8 +1185,8 @@ class WidgetsTest(unittest.TestCase):
         else:
             self.assertEqual(btn.get_rect(), pygame.Rect(253, 152, 94, 42))
             self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 307, 94, 42))
-        self.assertEqual(len(menu._widgets_scrollable), 0)
-        self.assertEqual(len(menu.get_current()._widgets_scrollable), 0)
+        self.assertEqual(len(menu._scrollable_frames), 0)
+        self.assertEqual(len(menu.get_current()._scrollable_frames), 0)
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
         self.assertTrue(btn.get_attribute('attr', False))
         btn.set_attribute('attr', False)

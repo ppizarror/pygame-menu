@@ -1021,6 +1021,8 @@ class FrameWidgetTest(unittest.TestCase):
         f3 = menu.add.frame_v(350, 400, max_height=200, background_color=(0, 255, 0), frame_id='f3')
         f4 = menu.add.frame_v(300, 400, max_height=100, background_color=(0, 255, 255), frame_id='f4')
 
+        f4._pack_margin_warning = False
+
         # Get scrollareas
         s0 = menu.get_scrollarea().set_id('s0')
         s1 = f2.get_scrollarea(inner=True).set_id('s1')
@@ -1064,6 +1066,8 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(b4.get_frame_depth(), 4)
         self.assertEqual(b5.get_frame_depth(), 0)
 
+        self.assertEqual(menu._scrollable_frames, [f4, f3, f2])
+
         self.assertFalse(f1.is_scrollable)
         self.assertTrue(f2.is_scrollable)
         self.assertTrue(f3.is_scrollable)
@@ -1099,7 +1103,6 @@ class FrameWidgetTest(unittest.TestCase):
             return
 
         menu.get_decorator().add_callable(drawrect, prev=False, pass_args=False)
-        menu._test_print_widgets()
 
         self.assertEqual(menu.get_selected_widget(), b1)
         self.assertEqual(f1.get_indices(), (1, 2))
@@ -1253,6 +1256,10 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertEqual(menu.get_selected_widget(), w)
 
         menu._test_print_widgets()
+
+        # Remove f4 from menu
+        menu.remove_widget(f4)
+        self.assertEqual(menu._scrollable_frames, [f3, f2])
 
     def test_menu_support(self) -> None:
         """
