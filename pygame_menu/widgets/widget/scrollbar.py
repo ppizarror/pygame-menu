@@ -38,7 +38,7 @@ from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, List, Tuple, VectorIntType, ColorType, Tuple2IntType, \
-    CallbackType, Union, NumberInstance, ColorInputType, NumberType
+    CallbackType, Union, NumberInstance, ColorInputType, NumberType, Literal
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -70,9 +70,9 @@ class ScrollBar(Widget):
     :param page_ctrl_color: Page control color
     :param onchange: Callback when pressing and moving the scroll
     """
+    _last_mouse_pos: Tuple2IntType
     _mouseover: bool
-    _opp_orientation: int
-    _orientation: int
+    _orientation: Literal[0, 1]  # 0: horizontal, 1: vertical
     _page_ctrl_color: ColorType
     _page_ctrl_length: NumberType
     _page_ctrl_thick: int
@@ -120,12 +120,10 @@ class ScrollBar(Widget):
             kwargs=kwargs
         )
 
-        self._values_range = list(values_range)
-        self.scrolling = False
+        self._last_mouse_pos = (-1, -1)
         self._mouseover = False
-
         self._orientation = 0
-        self._opp_orientation = int(not self._orientation)
+        self._values_range = list(values_range)
 
         self._page_ctrl_length = length
         self._page_ctrl_thick = page_ctrl_thick
@@ -150,9 +148,13 @@ class ScrollBar(Widget):
             self.set_page_step(length)
         else:
             self.set_page_step((values_range[1] - values_range[0]) / 5.0)  # Arbitrary
+
         self.set_orientation(orientation)
+
+        # Configure publics
         self.is_scrollable = True
         self.is_selectable = False
+        self.scrolling = False
 
     def scroll_to_widget(self, *args, **kwargs) -> 'ScrollBar':
         pass
@@ -187,12 +189,13 @@ class ScrollBar(Widget):
 
         :return: None
         """
+        opp_orientation = 1 if self._orientation == 0 else 0  # Opposite of orientation
         dims = ('width', 'height')
         setattr(self._rect, dims[self._orientation], self._page_ctrl_length)
-        setattr(self._rect, dims[self._opp_orientation], self._page_ctrl_thick)
+        setattr(self._rect, dims[opp_orientation], self._page_ctrl_thick)
         self._slider_rect = pygame.Rect(0, 0, int(self._rect.width), int(self._rect.height))
         setattr(self._slider_rect, dims[self._orientation], self._page_step)
-        setattr(self._slider_rect, dims[self._opp_orientation], self._page_ctrl_thick)
+        setattr(self._slider_rect, dims[opp_orientation], self._page_ctrl_thick)
 
         # Update slider position according to the current one
         pos = ('x', 'y')
@@ -413,7 +416,6 @@ class ScrollBar(Widget):
             self._orientation = 0
         elif orientation == _locals.ORIENTATION_VERTICAL:
             self._orientation = 1
-        self._opp_orientation = int(not self._orientation)
         self._apply_size_changes()
 
     def set_page_step(self, value: NumberType) -> None:
@@ -482,6 +484,18 @@ class ScrollBar(Widget):
                         updated = True
 
             elif self._mouse_enabled and event.type == pygame.MOUSEMOTION and hasattr(event, 'rel'):
+                # If mouse outside region and scroll is on limits, ignore
+                mx, my = pygame.mouse.get_pos()
+                if self.scrolling and self.get_value_percentual() in (0, 1):
+                    if self._orientation == 1:  # Vertical
+                        h = self._slider_rect.height / 2
+                        if my > (rect.bottom - h) or my < (rect.top + h):
+                            continue
+                    elif self._orientation == 0:  # Horizontal
+                        w = self._slider_rect.width / 2
+                        if mx > (rect.right - w) or mx < (rect.left + w):
+                            continue
+
                 # Check scrolling
                 if self.scrolling and self._scroll(rect, event.rel[self._orientation]):
                     self.change()
@@ -499,8 +513,19 @@ class ScrollBar(Widget):
 
             # Mouse enters or leaves the window
             elif event.type == pygame.ACTIVEEVENT:
-                if event.gain != 1:  # Enter
-                    pass
+                mx, my = pygame.mouse.get_pos()
+                if event.gain != 1:  # Leave
+                    self._last_mouse_pos = (mx, my)
+                else:
+                    lmx, lmy = self._last_mouse_pos
+                    self._last_mouse_pos = (-1, -1)
+                    if lmx == -1 or lmy == -1:
+                        continue
+                    if self.scrolling:
+                        if self._orientation == 0:  # Horizontal
+                            self._scroll(rect, mx - lmx)
+                        else:
+                            self._scroll(rect, my - lmy)
 
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN:
 
@@ -512,7 +537,7 @@ class ScrollBar(Widget):
                         self.change()
                         updated = True
 
-                else:
+                elif event.button in (1, 2, 3):
                     # The _slider_rect origin is related to the widget surface
                     if self._slider_rect.move(*rect.topleft).collidepoint(*event.pos):
                         # Initialize scrolling
