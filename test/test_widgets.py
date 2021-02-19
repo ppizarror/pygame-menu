@@ -34,7 +34,7 @@ __all__ = ['WidgetsTest']
 import copy
 import unittest
 
-from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface, TEST_THEME, PYGAME_V2
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2
 
 import pygame
 import pygame_menu
@@ -409,31 +409,31 @@ class WidgetsTest(unittest.TestCase):
         selector.draw(surface)
 
         # Test events
-        selector.update(PygameUtils.key(0, keydown=True, testmode=False))
-        selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
-        selector.update(PygameUtils.key(KEY_RIGHT, keydown=True))
-        selector.update(PygameUtils.key(KEY_APPLY, keydown=True))
-        selector.update(PygameUtils.joy_key(JOY_LEFT))
-        selector.update(PygameUtils.joy_key(JOY_RIGHT))
-        selector.update(PygameUtils.joy_motion(1, 0))
-        selector.update(PygameUtils.joy_motion(-1, 0))
+        selector.update(PygameEventUtils.key(0, keydown=True, testmode=False))
+        selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        selector.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
+        selector.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        selector.update(PygameEventUtils.joy_key(JOY_LEFT))
+        selector.update(PygameEventUtils.joy_key(JOY_RIGHT))
+        selector.update(PygameEventUtils.joy_motion(1, 0))
+        selector.update(PygameEventUtils.joy_motion(-1, 0))
         click_pos = selector.get_rect(to_real_position=True, apply_padding=False).center
-        selector.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))
 
         # Check left/right clicks
         self.assertEqual(selector.get_index(), 0)
         click_pos = selector.get_rect(to_real_position=True, apply_padding=False).midleft
-        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertEqual(selector.get_index(), 2)
-        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertEqual(selector.get_index(), 1)
-        selector.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertEqual(selector.get_index(), 0)
-        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertEqual(selector.get_index(), 1)
-        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertEqual(selector.get_index(), 2)
-        selector.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        selector.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertEqual(selector.get_index(), 0)
 
         # Update elements
@@ -448,10 +448,10 @@ class WidgetsTest(unittest.TestCase):
         selector.set_value(1)
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
-        selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
         selector.readonly = True
-        selector.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
         # Test fancy selector
@@ -521,64 +521,64 @@ class WidgetsTest(unittest.TestCase):
         # Empty rgb
         widget = menu.add.color_input('color', color_type='rgb', input_separator=',')
 
-        PygameUtils.test_widget_key_press(widget)
+        PygameEventUtils.test_widget_key_press(widget)
         self.assertEqual(widget._cursor_position, 0)
-        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
         self.assertEqual(widget._cursor_position, 0)
         _assert_invalid_color(widget)
 
         # Write sequence: 2 -> 25 -> 25, -> 25,0,
         # The comma after the zero must be automatically set
-        widget.update(PygameUtils.key(pygame.K_2, keydown=True, char='2'))
-        widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
-        widget.update(PygameUtils.key(pygame.K_COMMA, keydown=True, char=','))
+        widget.update(PygameEventUtils.key(pygame.K_2, keydown=True, char='2'))
+        widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char='5'))
+        widget.update(PygameEventUtils.key(pygame.K_COMMA, keydown=True, char=','))
         self.assertEqual(widget._input_string, '25,')
-        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '25,0,')
         _assert_invalid_color(widget)
 
         # Now, sequence: 25,0,c -> 25c,0, with cursor c
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
         self.assertEqual(widget._cursor_position, 2)
 
         # Sequence. 25,0, -> 255,0, -> 255,0, trying to write another 5 in the same position
         # That should be cancelled because 2555 > 255
-        widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
+        widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char='5'))
         self.assertEqual(widget._input_string, '255,0,')
-        widget.update(PygameUtils.key(pygame.K_5, keydown=True, char='5'))
+        widget.update(PygameEventUtils.key(pygame.K_5, keydown=True, char='5'))
         self.assertEqual(widget._input_string, '255,0,')
 
         # Invalid left zeros, try to write 255,0, -> 255,00, but that should be disabled
-        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,')
 
         # Second comma cannot be deleted because there's a number between ,0,
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
         self.assertEqual(widget._input_string, '255,0,')
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True))
         self.assertEqual(widget._input_string, '255,0,')
 
         # Current cursor is at 255c,0,
         # Now right comma and 0 can be deleted
-        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
         self.assertEqual(widget._input_string, '255,')
 
         # Fill with zeros, then number with 2 consecutive 0 types must be 255,0,0
         # Commas should be inserted automatically
-        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
-        widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+        widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
+        widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
         _assert_color(widget, 255, 0, 0)
 
         # At this state, user cannot add more zeros at right
         for i in range(5):
-            widget.update(PygameUtils.key(pygame.K_0, keydown=True, char='0'))
+            widget.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
         self.assertEqual(widget._input_string, '255,0,0')
         widget.get_rect()
 
@@ -621,14 +621,14 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(widget._cursor_position, 1)
 
         # In hex widget # cannot be deleted
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
         self.assertEqual(widget._cursor_position, 1)
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True))
         self.assertEqual(widget._input_string, '#')
-        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_END, keydown=True))
         for i in range(10):
-            widget.update(PygameUtils.key(pygame.K_f, keydown=True, char='f'))
+            widget.update(PygameEventUtils.key(pygame.K_f, keydown=True, char='f'))
         self.assertEqual(widget._input_string, '#ffffff')
         _assert_color(widget, 255, 255, 255)
 
@@ -665,7 +665,7 @@ class WidgetsTest(unittest.TestCase):
         widget.set_value('#ffffff')
         self.assertEqual(widget.get_width(), width)
         widget.update(
-            PygameUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
+            PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))  # remove the last character, now color is invalid
         self.assertEqual(widget.get_value(as_string=True), '#FFFFF')  # is upper
         self.assertEqual(widget.get_width(), 200)
 
@@ -813,38 +813,38 @@ class WidgetsTest(unittest.TestCase):
         textinput_nocopy._cut()
 
         # Assert events
-        textinput.update(PygameUtils.key(0, keydown=True, testmode=False))
-        PygameUtils.test_widget_key_press(textinput)
-        textinput.update(PygameUtils.key(KEY_APPLY, keydown=True))
-        textinput.update(PygameUtils.key(pygame.K_LSHIFT, keydown=True))
+        textinput.update(PygameEventUtils.key(0, keydown=True, testmode=False))
+        PygameEventUtils.test_widget_key_press(textinput)
+        textinput.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        textinput.update(PygameEventUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()
 
         # Type
-        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
-        textinput.update(PygameUtils.key(pygame.K_e, keydown=True, char='e'))
-        textinput.update(PygameUtils.key(pygame.K_s, keydown=True, char='s'))
-        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput.update(PygameEventUtils.key(pygame.K_e, keydown=True, char='e'))
+        textinput.update(PygameEventUtils.key(pygame.K_s, keydown=True, char='s'))
+        textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
 
         # Keyup
-        textinput.update(PygameUtils.key(pygame.K_a, keyup=True, char='a'))
+        textinput.update(PygameEventUtils.key(pygame.K_a, keyup=True, char='a'))
         self.assertEqual(textinput.get_value(), 'test')  # The text we typed
 
         # Ctrl events
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_c))  # copy
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_v))  # paste
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_c))  # copy
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_v))  # paste
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
         self.assertEqual(textinput.get_value(), 'tes')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_y))  # redo
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_y))  # redo
         self.assertEqual(textinput.get_value(), 'test')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_x))  # cut
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_x))  # cut
         self.assertEqual(textinput.get_value(), '')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
         self.assertEqual(textinput.get_value(), 'test')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_y))  # redo
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_y))  # redo
         self.assertEqual(textinput.get_value(), '')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_z))  # undo
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
         self.assertEqual(textinput.get_value(), 'test')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_a))  # select all
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))  # select all
 
         # Test selection, if user selects all and types anything the selected
         # text must be destroyed
@@ -854,26 +854,26 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput._get_selected_text(), 'test')
         textinput._unselect_text()
         self.assertEqual(textinput._get_selected_text(), '')
-        textinput.update(PygameUtils.keydown_mod_ctrl(pygame.K_a))
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))
         self.assertEqual(textinput._get_selected_text(), 'test')
-        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
-        textinput.update(PygameUtils.key(pygame.K_ESCAPE, keydown=True))
+        textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
+        textinput.update(PygameEventUtils.key(pygame.K_ESCAPE, keydown=True))
 
         # Now the value must be t
         self.assertEqual(textinput._get_selected_text(), '')
         self.assertEqual(textinput.get_value(), 't')
 
         # Test readonly
-        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='k'))
+        textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='k'))
         self.assertEqual(textinput.get_value(), 'tk')
         textinput.readonly = True
-        textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='k'))
+        textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='k'))
         self.assertEqual(textinput.get_value(), 'tk')
         textinput.readonly = False
 
         # Update mouse
         for i in range(50):
-            textinput.update(PygameUtils.key(pygame.K_t, keydown=True, char='t'))
+            textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
         textinput._update_cursor_mouse(50)
         textinput._cursor_render = True
         textinput._render_cursor()
@@ -1178,13 +1178,13 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 307, 94, 42))
         self.assertEqual(len(menu._scrollable_frames), 0)
         self.assertEqual(len(menu.get_current()._scrollable_frames), 0)
-        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
+        btn.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
         self.assertTrue(btn.get_attribute('attr', False))
         btn.set_attribute('attr', False)
         btn.remove_update_callback(callid)
         self.assertRaises(IndexError, lambda: btn.remove_update_callback(callid))
         self.assertFalse(btn.get_attribute('attr', False))
-        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        btn.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertFalse(btn.get_attribute('attr', False))
 
         def update2(widget, _) -> None:
@@ -1197,7 +1197,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(btn.has_attribute('epic'))
         btn.draw(surface)
         self.assertFalse(btn.has_attribute('epic'))
-        btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
+        btn.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertTrue(btn.has_attribute('epic'))
         btn.remove_attribute('epic')
         self.assertRaises(IndexError, lambda: btn.remove_attribute('epic'))
@@ -1497,12 +1497,8 @@ class WidgetsTest(unittest.TestCase):
         world_range = (50, world.get_height())
         x, y = screen_size[0] - thick, 0
 
-        # noinspection PyArgumentEqualDefault
         sb = ScrollBar(
-            length,
-            world_range,
-            '',
-            ORIENTATION_VERTICAL,
+            length, world_range, 'sb2', ORIENTATION_VERTICAL,
             slider_pad=2,
             slider_color=(210, 120, 200),
             page_ctrl_thick=thick,
@@ -1522,22 +1518,33 @@ class WidgetsTest(unittest.TestCase):
         sb.set_value(80)
         self.assertAlmostEqual(sb.get_value(), 80, delta=2)  # Scaling delta
 
-        sb.update(PygameUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
+        sb.update(PygameEventUtils.mouse_click(x + thick / 2, y + 2, evtype=pygame.MOUSEBUTTONDOWN))
         self.assertEqual(sb.get_value(), 50)
+        self.assertEqual(sb.get_value_percentual(), 0)
 
         sb.set_page_step(length)
         self.assertAlmostEqual(sb.get_page_step(), length, delta=2)  # Scaling delta
 
         sb.draw(surface)
 
+        # Test events
+        sb.update(PygameEventUtils.key(pygame.K_PAGEDOWN, keydown=True))
+        self.assertEqual(sb.get_value(), 964)
+        sb.update(PygameEventUtils.key(pygame.K_PAGEUP, keydown=True))
+        self.assertEqual(sb.get_value(), 50)
+        self.assertEqual(sb._last_mouse_pos, (-1, -1))
+        sb.update(PygameEventUtils.enter_window())
+        self.assertEqual(sb._last_mouse_pos, (-1, -1))
+        sb.update(PygameEventUtils.leave_window())
+        self.assertEqual(sb._last_mouse_pos, pygame.mouse.get_pos())
+        self.assertFalse(sb.scrolling)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertTrue(sb.scrolling)
+        sb.update(PygameEventUtils.mouse_click(1, 1))
+        self.assertFalse(sb.scrolling)
+
         # Test remove onreturn
-        # noinspection PyArgumentEqualDefault
-        sb = ScrollBar(length,
-                       world_range,
-                       '',
-                       ORIENTATION_VERTICAL,
-                       onreturn=-1
-                       )
+        sb = ScrollBar(length, world_range, 'sb', ORIENTATION_VERTICAL, onreturn=-1)
         self.assertIsNone(sb._onreturn)
         self.assertTrue(sb._kwargs.get('onreturn', 0))
 
@@ -1562,6 +1569,8 @@ class WidgetsTest(unittest.TestCase):
         # Set minimum
         sb.set_minimum(0.5 * sb._values_range[1])
 
+        # noinspection PyTypeChecker
+
     # noinspection PyTypeChecker
     def test_toggleswitch(self) -> None:
         """
@@ -1583,49 +1592,49 @@ class WidgetsTest(unittest.TestCase):
         switch.apply()
         self.assertFalse(value[0])
 
-        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))  # not infinite
+        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))  # not infinite
         self.assertFalse(value[0])  # as this is false, dont change
-        switch.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
         switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True)
-        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
         # As there's only 2 states, return should change too
-        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
 
         # Check left/right clicks
         click_pos = switch.get_rect(to_real_position=True, apply_padding=False).midleft
-        switch.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        switch.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
+        switch.update(PygameEventUtils.mouse_click(click_pos[0] + 250, click_pos[1]))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
+        switch.update(PygameEventUtils.mouse_click(click_pos[0] + 150, click_pos[1]))
         self.assertFalse(value[0])
 
         # Test readonly
         switch.readonly = True
-        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
 
         switch.readonly = False
-        switch.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        switch.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertFalse(value[0])
 
         switch.draw(surface)

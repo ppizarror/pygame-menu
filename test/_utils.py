@@ -38,19 +38,21 @@ __all__ = [
     'TEST_THEME',
 
     # Utils
-    'PygameUtils',
+    'PygameEventUtils',
     'MenuUtils'
 
 ]
 
-import pygame
-import pygame_menu
 import random
 
+import pygame
+import pygame_menu
+
 from pygame_menu.font import FONT_EXAMPLES
+from pygame_menu.utils import assert_vector
 
 # noinspection PyProtectedMember
-from pygame_menu._types import NumberType, Union, List, Tuple, Optional, \
+from pygame_menu._types import NumberType, Union, List, Tuple, Optional, Tuple2IntType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType, VectorIntType
 
 EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
@@ -95,14 +97,18 @@ def test_reset_surface() -> None:
     surface = pygame.display.set_mode((W_SIZE, H_SIZE))
 
 
-class PygameUtils(object):
+class PygameEventUtils(object):
     """
-    Static class for pygame testing.
+    Event utils.
     """
 
     @staticmethod
-    def joy_motion(x: NumberType = 0, y: NumberType = 0, inlist: bool = True, testmode: bool = True
-                   ) -> EventListType:
+    def joy_motion(
+            x: NumberType = 0,
+            y: NumberType = 0,
+            inlist: bool = True,
+            testmode: bool = True
+    ) -> EventListType:
         """
         Create a pygame joy controller motion event.
 
@@ -113,9 +119,10 @@ class PygameUtils(object):
         :return: Event
         """
         if x != 0 and y != 0:
-            return [PygameUtils.joy_motion(x=x, inlist=False, testmode=testmode),
-                    PygameUtils.joy_motion(y=y, inlist=False, testmode=testmode)]
+            return [PygameEventUtils.joy_motion(x=x, inlist=False, testmode=testmode),
+                    PygameEventUtils.joy_motion(y=y, inlist=False, testmode=testmode)]
         event_obj = None
+
         if x != 0:
             event_obj = pygame.event.Event(pygame.JOYAXISMOTION,
                                            {
@@ -130,6 +137,7 @@ class PygameUtils(object):
                                                'axis': pygame_menu.controls.JOY_AXIS_Y,
                                                'test': testmode
                                            })
+
         if inlist:
             event_obj = [event_obj]
         return event_obj
@@ -156,15 +164,19 @@ class PygameUtils(object):
         :param widget: Widget object
         :return: None
         """
-        widget.update(PygameUtils.key(pygame.K_BACKSPACE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_DELETE, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_LEFT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_RIGHT, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_END, keydown=True))
-        widget.update(PygameUtils.key(pygame.K_HOME, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_END, keydown=True))
+        widget.update(PygameEventUtils.key(pygame.K_HOME, keydown=True))
 
     @staticmethod
-    def joy_key(key: Tuple[int, int], inlist: bool = True, testmode: bool = True) -> EventListType:
+    def joy_key(
+            key: Tuple[int, int],
+            inlist: bool = True,
+            testmode: bool = True
+    ) -> EventListType:
         """
         Create a pygame joy controller key event.
 
@@ -215,13 +227,18 @@ class PygameUtils(object):
         ev = []
         for k in key:
             assert isinstance(k, int)
-            ev.append(PygameUtils.key(k, keydown=True, inlist=False))
+            ev.append(PygameEventUtils.key(k, keydown=True, inlist=False))
         return ev
 
     @staticmethod
-    def key(key: int, char: str = ' ', inlist: bool = True,
-            keydown: bool = False, keyup: bool = False, testmode: bool = True
-            ) -> EventListType:
+    def key(
+            key: int,
+            char: str = ' ',
+            inlist: bool = True,
+            keydown: bool = False,
+            keyup: bool = False,
+            testmode: bool = True
+    ) -> EventListType:
         """
         Create a keyboard event.
 
@@ -254,8 +271,38 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def mouse_click(x: NumberType, y: NumberType, inlist: bool = True, evtype: int = pygame.MOUSEBUTTONUP
-                    ) -> EventListType:
+    def enter_window(inlist: bool = True) -> EventListType:
+        """
+        Enter window event.
+
+        :param inlist: Return event in a list
+        :return: Event
+        """
+        ev = pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 1, 'test': True})
+        if inlist:
+            ev = [ev]
+        return ev
+
+    @staticmethod
+    def leave_window(inlist: bool = True) -> EventListType:
+        """
+        Leave window event.
+
+        :param inlist: Return event in a list
+        :return: Event
+        """
+        ev = pygame.event.Event(pygame.ACTIVEEVENT, {'gain': 0, 'test': True})
+        if inlist:
+            ev = [ev]
+        return ev
+
+    @staticmethod
+    def mouse_click(
+            x: NumberType,
+            y: NumberType,
+            inlist: bool = True,
+            evtype: int = pygame.MOUSEBUTTONUP
+    ) -> EventListType:
         """
         Generate a mouse click event.
 
@@ -277,8 +324,14 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def touch_click(x: NumberType, y: NumberType, inlist: bool = True, evtype: int = FINGERUP,
-                    normalize: bool = True, menu: Union['pygame_menu.Menu', None] = None) -> EventListType:
+    def touch_click(
+            x: NumberType,
+            y: NumberType,
+            inlist: bool = True,
+            evtype: int = FINGERUP,
+            normalize: bool = True,
+            menu: Union['pygame_menu.Menu', None] = None
+    ) -> EventListType:
         """
         Generate a mouse click event.
 
@@ -307,20 +360,27 @@ class PygameUtils(object):
         return event_obj
 
     @staticmethod
-    def middle_rect_click(rect: Union['pygame_menu.widgets.Widget', Tuple2NumberType],
-                          menu: Optional['pygame_menu.Menu'] = None,
-                          evtype: int = pygame.MOUSEBUTTONUP,
-                          inlist: bool = True
-                          ) -> EventListType:
+    def middle_rect_click(
+            rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+            menu: Optional['pygame_menu.Menu'] = None,
+            evtype: int = pygame.MOUSEBUTTONUP,
+            inlist: bool = True,
+            rel: Tuple2IntType = (0, 0),
+            button: int = 3
+    ) -> EventListType:
         """
         Return event clicking the middle of a given rect.
 
         :param rect: Rect object
         :param menu: Menu object
-        :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, FINGERUP, FINGERDOWN
+        :param evtype: event type, it can be MOUSEBUTTONUP,  MOUSEBUTTONDOWN, MOUSEMOTION, FINGERUP, FINGERDOWN, FINGERMOTION
         :param inlist: If ``True`` return the event within a list
+        :param rel: Rel position
+        :param button: Which button presses, ``1`` to ``3`` are the main buttons; ``4`` and ``5`` is the wheel
         :return: Event
         """
+        assert isinstance(button, int)
+        assert_vector(rel, 2, int)
         if isinstance(rect, pygame_menu.widgets.Widget):
             x, y = rect.get_rect(to_real_position=True, apply_padding=False).center
             menu = rect.get_menu()
@@ -337,8 +397,8 @@ class PygameUtils(object):
             display = menu.get_window_size()
             evt = pygame.event.Event(evtype,
                                      {
-                                         'button': 3,
-                                         'rel': (1, 1),
+                                         'button': button,
+                                         'rel': rel,
                                          'test': True,
                                          'x': x / display[0],
                                          'y': y / display[1],
@@ -346,7 +406,7 @@ class PygameUtils(object):
             if inlist:
                 evt = [evt]
             return evt
-        return PygameUtils.mouse_click(x, y, inlist=inlist, evtype=evtype)
+        return PygameEventUtils.mouse_click(x, y, inlist=inlist, evtype=evtype)
 
 
 class MenuUtils(object):

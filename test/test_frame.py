@@ -34,7 +34,7 @@ __all__ = ['FrameWidgetTest']
 
 import unittest
 
-from test._utils import MenuUtils, surface, PygameUtils, test_reset_surface, TEST_THEME, PYGAME_V2
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2
 
 import pygame
 import pygame_menu
@@ -630,39 +630,39 @@ class FrameWidgetTest(unittest.TestCase):
             self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos)
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_HORIZONTAL), 0)
             self.assertEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
-            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
             self.assertEqual(menu.get_selected_widget(), btn_frame22)
             self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos)
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_HORIZONTAL), 0)
             self.assertEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
             self.assertEqual(menu.get_selected_widget(), btn5)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
             self.assertEqual(menu.get_selected_widget(), btn4)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
             self.assertEqual(menu.get_selected_widget(), btn3)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0.255)
             self.assertEqual(menu.get_selected_widget(), btn2)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
             self.assertEqual(menu.get_selected_widget(), btn)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertAlmostEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos3)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), 0)
             self.assertEqual(menu.get_selected_widget(), btn_real)
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_scrollarea().get_scroll_value(ORIENTATION_VERTICAL), vpos4)
             self.assertAlmostEqual(frame_scroll.get_scroll_value(ORIENTATION_VERTICAL), vpos2)
             self.assertEqual(menu.get_selected_widget(), btn5)
@@ -743,17 +743,17 @@ class FrameWidgetTest(unittest.TestCase):
         menu.select_widget(text)
         self.assertFalse(text.active)
         self.assertEqual(text.get_value(), '')
-        menu.update(PygameUtils.key(pygame.K_a, char='a', keydown=True))
+        menu.update(PygameEventUtils.key(pygame.K_a, char='a', keydown=True))
         self.assertTrue(text.active)
         self.assertEqual(text.get_value(), 'a')
         for i in range(10):
-            menu.update(PygameUtils.key(pygame.K_a, char='a', keydown=True))
+            menu.update(PygameEventUtils.key(pygame.K_a, char='a', keydown=True))
         menu.draw(surface)
-        menu.update(PygameUtils.key(pygame.K_a, char='a', keydown=True))  # the last one to be added
+        menu.update(PygameEventUtils.key(pygame.K_a, char='a', keydown=True))  # the last one to be added
         self.assertRaises(pygame_menu.widgets.widget.frame._FrameSizeException, lambda: menu.mainloop(surface))
         text.set_value('')
         self.assertTrue(text.active)
-        menu.update(PygameUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
+        menu.update(PygameEventUtils.key(pygame_menu.controls.KEY_APPLY, keydown=True))
         self.assertFalse(text.active)
 
         # Set widgets as floating
@@ -1393,50 +1393,50 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Arrow keys
         self.assertEqual(menu.get_selected_widget(), btn0)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn7)
-        menu.update(PygameUtils.key(KEY_RIGHT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn10)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn9)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn5)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn4)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn3)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameUtils.key(KEY_LEFT, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
         for bt in (btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn0, btn1):
-            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
             self.assertEqual(menu.get_selected_widget(), bt)
         for bt in (btn6, btn11, btn12, btn13, btn1):
-            menu.update(PygameUtils.joy_key(JOY_RIGHT))
+            menu.update(PygameEventUtils.joy_key(JOY_RIGHT))
             self.assertEqual(menu.get_selected_widget(), bt)
         for bt in (btn0, btn13, btn12, btn11, btn10, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0):
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
             self.assertEqual(menu.get_selected_widget(), bt)
-        menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
+        menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn1)
         for bt in (btn13, btn12, btn11, btn6, btn1):
-            menu.update(PygameUtils.joy_key(JOY_LEFT))
+            menu.update(PygameEventUtils.joy_key(JOY_LEFT))
             self.assertEqual(menu.get_selected_widget(), bt)
 
         # Check mouse events
         for bt in (btn0, btn13, btn12, btn11, btn10, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0):
-            menu.update(PygameUtils.middle_rect_click(bt, evtype=pygame.MOUSEBUTTONDOWN))
+            menu.update(PygameEventUtils.middle_rect_click(bt, evtype=pygame.MOUSEBUTTONDOWN))
             self.assertEqual(menu.get_selected_widget(), bt)
 
         # btn0 | f1(btn2,btn3,btn4,btn5) | f2(btn7,
@@ -1534,8 +1534,8 @@ class FrameWidgetTest(unittest.TestCase):
 
         menu.select_widget(btn0)
         for i in range(14):
-            menu.update(PygameUtils.key(KEY_MOVE_UP, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
         for i in range(14):
-            menu.update(PygameUtils.key(KEY_MOVE_DOWN, keydown=True))
+            menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
