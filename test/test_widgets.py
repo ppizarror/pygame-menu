@@ -34,7 +34,8 @@ __all__ = ['WidgetsTest']
 import copy
 import unittest
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, \
+    PYGAME_V2, WINDOW_SIZE
 
 import pygame
 import pygame_menu
@@ -1489,7 +1490,11 @@ class WidgetsTest(unittest.TestCase):
         Test ScrollBar widget.
         """
         screen_size = surface.get_size()
-        world = MenuUtils.get_large_surface()
+        world = pygame.Surface((WINDOW_SIZE[0] * 2, WINDOW_SIZE[1] * 3))
+        world.fill((200, 200, 200))
+        for x in range(100, world.get_width(), 200):
+            for y in range(100, world.get_height(), 200):
+                pygame.draw.circle(world, (225, 34, 43), (x, y), 100, 10)
 
         # Vertical right scrollbar
         thick = 80
@@ -1505,12 +1510,14 @@ class WidgetsTest(unittest.TestCase):
             page_ctrl_color=(235, 235, 230)
         )
         self.assertEqual(sb.get_thickness(), 80)
+        self.assertIsNone(sb.get_scrollarea())
 
         sb.set_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)
         self.assertFalse(sb._font_shadow)
 
         sb.set_position(x, y)
 
+        self.assertEqual(sb._orientation, 1)
         self.assertEqual(sb.get_orientation(), ORIENTATION_VERTICAL)
         self.assertEqual(sb.get_minimum(), world_range[0])
         self.assertEqual(sb.get_maximum(), world_range[1])
@@ -1542,6 +1549,35 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(sb.scrolling)
         sb.update(PygameEventUtils.mouse_click(1, 1))
         self.assertFalse(sb.scrolling)
+        self.assertEqual(sb.get_value(), 50)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_rect(to_absolute_position=True),
+                                                     evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(sb.get_value(), 964)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertTrue(sb.scrolling)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=4,
+                                                     evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(sb.get_value(), 875)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5,
+                                                     evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(sb.get_value(), 964)
+        self.assertEqual(sb.get_value_percentual(), 0.522)
+
+        # Test mouse motion while scrolling
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 10),
+                                                     evtype=pygame.MOUSEMOTION))
+        self.assertEqual(sb.get_value_percentual(), 0.547)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, -10),
+                                                     evtype=pygame.MOUSEMOTION))
+        self.assertEqual(sb.get_value_percentual(), 0.522)
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 50), rel=(0, 999),
+                                                     evtype=pygame.MOUSEMOTION))
+        self.assertEqual(sb.get_value_percentual(), 1)
+
+        # Ignore events if mouse outside the region
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 500), rel=(0, -100),
+                                                     evtype=pygame.MOUSEMOTION))
+        self.assertEqual(sb.get_value_percentual(), 1)
 
         # Test remove onreturn
         sb = ScrollBar(length, world_range, 'sb', ORIENTATION_VERTICAL, onreturn=-1)

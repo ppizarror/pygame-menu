@@ -546,6 +546,7 @@ class ScrollBar(Widget):
                         self.change()
                         updated = True
 
+                # Click button (left, middle, right)
                 elif event.button in (1, 2, 3):
                     # The _slider_rect origin is related to the widget surface
                     if self.get_slider_rect().collidepoint(*event.pos):
@@ -561,6 +562,7 @@ class ScrollBar(Widget):
                             self.change()
                             updated = True
 
+            # Releases mouse button
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP:
                 if self.scrolling:
                     self.scrolling = False
