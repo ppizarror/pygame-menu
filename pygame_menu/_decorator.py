@@ -89,9 +89,10 @@ class Decorator(object):
     _prev_enabled: bool
     cache: bool
 
-    def __init__(self,
-                 obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
-                 ) -> None:
+    def __init__(
+            self,
+            obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
+    ) -> None:
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
         self._obj = obj
@@ -201,15 +202,16 @@ class Decorator(object):
         self._cache_needs_update[DECOR_TYPE_PREV if prev else DECOR_TYPE_POST] = True
         return self
 
-    def add_polygon(self,
-                    coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                    color: ColorInputType,
-                    filled: bool,
-                    width: int = 0,
-                    prev: bool = True,
-                    gfx: bool = True,
-                    **kwargs
-                    ) -> str:
+    def add_polygon(
+            self,
+            coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+            color: ColorInputType,
+            filled: bool,
+            width: int = 0,
+            prev: bool = True,
+            gfx: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add polygon.
 
@@ -242,13 +244,14 @@ class Decorator(object):
                 gfx = False  # gfx don't support width
         return self._add_decor(DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx, kwargs))
 
-    def add_bezier(self,
-                   coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                   color: ColorInputType,
-                   steps: int = 5,
-                   prev: bool = True,
-                   **kwargs
-                   ) -> str:
+    def add_bezier(
+            self,
+            coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+            color: ColorInputType,
+            steps: int = 5,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add bezier curve.
 
@@ -272,17 +275,18 @@ class Decorator(object):
         assert isinstance(steps, int) and steps >= 1
         return self._add_decor(DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs))
 
-    def add_circle(self,
-                   x: NumberType,
-                   y: NumberType,
-                   radius: NumberType,
-                   color: ColorInputType,
-                   filled: bool,
-                   width: int = 0,
-                   prev: bool = True,
-                   gfx: bool = True,
-                   **kwargs
-                   ) -> str:
+    def add_circle(
+            self,
+            x: NumberType,
+            y: NumberType,
+            radius: NumberType,
+            color: ColorInputType,
+            filled: bool,
+            width: int = 0,
+            prev: bool = True,
+            gfx: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add circle.
 
@@ -318,18 +322,19 @@ class Decorator(object):
         return self._add_decor(DECORATION_CIRCLE, prev,
                                (tuple(coords), int(radius), color, filled, width, gfx, kwargs))
 
-    def add_arc(self,
-                x: NumberType,
-                y: NumberType,
-                radius: NumberType,
-                init_angle: NumberType,
-                final_angle: NumberType,
-                color: ColorInputType,
-                width: int = 0,
-                prev: bool = True,
-                gfx: bool = True,
-                **kwargs
-                ) -> str:
+    def add_arc(
+            self,
+            x: NumberType,
+            y: NumberType,
+            radius: NumberType,
+            init_angle: NumberType,
+            final_angle: NumberType,
+            color: ColorInputType,
+            width: int = 0,
+            prev: bool = True,
+            gfx: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add arc.
 
@@ -363,16 +368,17 @@ class Decorator(object):
         return self._add_decor(DECORATION_ARC, prev,
                                (tuple(coords), int(radius), init_angle, final_angle, color, width, gfx, kwargs))
 
-    def add_pie(self,
-                x: NumberType,
-                y: NumberType,
-                radius: NumberType,
-                init_angle: NumberType,
-                final_angle: NumberType,
-                color: ColorInputType,
-                prev: bool = True,
-                **kwargs
-                ) -> str:
+    def add_pie(
+            self,
+            x: NumberType,
+            y: NumberType,
+            radius: NumberType,
+            init_angle: NumberType,
+            final_angle: NumberType,
+            color: ColorInputType,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add a unfilled pie.
 
@@ -403,14 +409,15 @@ class Decorator(object):
         return self._add_decor(DECORATION_PIE, prev,
                                (tuple(coords), int(radius), init_angle, final_angle, color, kwargs))
 
-    def add_surface(self,
-                    x: NumberType,
-                    y: NumberType,
-                    surface: 'pygame.Surface',
-                    prev: bool = True,
-                    centered: bool = False,
-                    **kwargs
-                    ) -> str:
+    def add_surface(
+            self,
+            x: NumberType,
+            y: NumberType,
+            surface: 'pygame.Surface',
+            prev: bool = True,
+            centered: bool = False,
+            **kwargs
+    ) -> str:
         """
         Adds a surface.
 
@@ -434,14 +441,15 @@ class Decorator(object):
         assert isinstance(surface, pygame.Surface)
         return self._add_decor(DECORATION_SURFACE, prev, (tuple(coords), surface, centered, kwargs))
 
-    def add_baseimage(self,
-                      x: NumberType,
-                      y: NumberType,
-                      image: 'pygame_menu.BaseImage',
-                      prev: bool = True,
-                      centered: bool = False,
-                      **kwargs
-                      ) -> str:
+    def add_baseimage(
+            self,
+            x: NumberType,
+            y: NumberType,
+            image: 'pygame_menu.BaseImage',
+            prev: bool = True,
+            centered: bool = False,
+            **kwargs
+    ) -> str:
         """
         Adds a :py:class:`pygame_menu.baseimage.BaseImage` object.
 
@@ -471,15 +479,16 @@ class Decorator(object):
         assert isinstance(image, pygame_menu.BaseImage)
         return self._add_decor(DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered, kwargs))
 
-    def add_rect(self,
-                 x: NumberType,
-                 y: NumberType,
-                 rect: 'pygame.Rect',
-                 color: ColorInputType,
-                 width: int = 0,
-                 prev: bool = True,
-                 **kwargs
-                 ) -> str:
+    def add_rect(
+            self,
+            x: NumberType,
+            y: NumberType,
+            rect: 'pygame.Rect',
+            color: ColorInputType,
+            width: int = 0,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Adds a BaseImage object.
 
@@ -506,16 +515,17 @@ class Decorator(object):
         assert isinstance(rect, pygame.Rect)
         return self._add_decor(DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs))
 
-    def add_rectangle(self,
-                      x: NumberType,
-                      y: NumberType,
-                      width: NumberType,
-                      height: NumberType,
-                      color: ColorInputType,
-                      border: int = 0,
-                      prev: bool = True,
-                      **kwargs
-                      ) -> str:
+    def add_rectangle(
+            self,
+            x: NumberType,
+            y: NumberType,
+            width: NumberType,
+            height: NumberType,
+            color: ColorInputType,
+            border: int = 0,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Adds a BaseImage object.
 
@@ -541,18 +551,19 @@ class Decorator(object):
         rect = pygame.Rect(0, 0, width, height)
         return self.add_rect(x, y, rect, color, border, prev, **kwargs)
 
-    def add_text(self,
-                 x: NumberType,
-                 y: NumberType,
-                 text: str,
-                 font: FontType,
-                 size: int,
-                 color: ColorInputType,
-                 prev: bool = True,
-                 antialias=True,
-                 centered=False,
-                 **kwargs
-                 ) -> str:
+    def add_text(
+            self,
+            x: NumberType,
+            y: NumberType,
+            text: str,
+            font: FontType,
+            size: int,
+            color: ColorInputType,
+            prev: bool = True,
+            antialias=True,
+            centered=False,
+            **kwargs
+    ) -> str:
         """
         Adds a text.
 
@@ -589,16 +600,17 @@ class Decorator(object):
         surface.blit(surface_font, (0, 0))
         return self._add_decor(DECORATION_TEXT, prev, (tuple(coords), surface, centered, kwargs))
 
-    def add_ellipse(self,
-                    x: NumberType,
-                    y: NumberType,
-                    rx: NumberType,
-                    ry: NumberType,
-                    color: ColorInputType,
-                    filled: bool,
-                    prev: bool = True,
-                    **kwargs
-                    ) -> str:
+    def add_ellipse(
+            self,
+            x: NumberType,
+            y: NumberType,
+            rx: NumberType,
+            ry: NumberType,
+            color: ColorInputType,
+            filled: bool,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add an ellipse.
 
@@ -627,13 +639,14 @@ class Decorator(object):
         assert isinstance(filled, bool)
         return self._add_decor(DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs))
 
-    def add_pixel(self,
-                  x: NumberType,
-                  y: NumberType,
-                  color: ColorInputType,
-                  prev: bool = True,
-                  **kwargs
-                  ) -> str:
+    def add_pixel(
+            self,
+            x: NumberType,
+            y: NumberType,
+            color: ColorInputType,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add a pixel.
 
@@ -656,11 +669,12 @@ class Decorator(object):
         color = assert_color(color)
         return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color, kwargs))
 
-    def add_callable(self,
-                     fun: Union[Callable[['pygame.Surface', Any], Any], Callable[[], Any]],
-                     prev: bool = True,
-                     pass_args: bool = True
-                     ) -> str:
+    def add_callable(
+            self,
+            fun: Union[Callable[['pygame.Surface', Any], Any], Callable[[], Any]],
+            prev: bool = True,
+            pass_args: bool = True
+    ) -> str:
         """
         Add a callable method. The function receives the surface and the object; for example,
         if adding to a widget:
@@ -692,14 +706,15 @@ class Decorator(object):
         else:
             return self._add_decor(DECORATION_CALLABLE_NO_ARGS, prev, fun)
 
-    def add_textured_polygon(self,
-                             coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
-                             texture: Union['pygame.Surface', 'pygame_menu.BaseImage'],
-                             tx: int = 0,
-                             ty: int = 0,
-                             prev: bool = True,
-                             **kwargs
-                             ) -> str:
+    def add_textured_polygon(
+            self,
+            coords: Union[List[Tuple2NumberType], Tuple[Tuple2NumberType, ...]],
+            texture: Union['pygame.Surface', 'pygame_menu.BaseImage'],
+            tx: int = 0,
+            ty: int = 0,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Add a textured polygon.
 
@@ -730,14 +745,15 @@ class Decorator(object):
         assert isinstance(tx, int) and isinstance(ty, int)
         return self._add_decor(DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty, kwargs))
 
-    def add_line(self,
-                 pos1: Tuple2NumberType,
-                 pos2: Tuple2NumberType,
-                 color: ColorInputType,
-                 width: int = 1,
-                 prev: bool = True,
-                 **kwargs
-                 ) -> str:
+    def add_line(
+            self,
+            pos1: Tuple2NumberType,
+            pos2: Tuple2NumberType,
+            color: ColorInputType,
+            width: int = 1,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Adds a line.
 
@@ -764,15 +780,16 @@ class Decorator(object):
         assert length > 0, 'line cannot be zero-length'
         return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs))
 
-    def add_hline(self,
-                  x1: NumberType,
-                  x2: NumberType,
-                  y: NumberType,
-                  color: ColorInputType,
-                  width: int = 1,
-                  prev: bool = True,
-                  **kwargs
-                  ) -> str:
+    def add_hline(
+            self,
+            x1: NumberType,
+            x2: NumberType,
+            y: NumberType,
+            color: ColorInputType,
+            width: int = 1,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Adds a horizontal line.
 
@@ -795,15 +812,16 @@ class Decorator(object):
         assert x1 != x2
         return self.add_line((x1, y), (x2, y), color, width, prev, **kwargs)
 
-    def add_vline(self,
-                  x: NumberType,
-                  y1: NumberType,
-                  y2: NumberType,
-                  color: ColorInputType,
-                  width: int = 1,
-                  prev: bool = True,
-                  **kwargs
-                  ) -> str:
+    def add_vline(
+            self,
+            x: NumberType,
+            y1: NumberType,
+            y2: NumberType,
+            color: ColorInputType,
+            width: int = 1,
+            prev: bool = True,
+            **kwargs
+    ) -> str:
         """
         Adds a vertical line.
 
@@ -889,7 +907,12 @@ class Decorator(object):
         self._decor[p] = []
         return self
 
-    def _draw_assemble_cache(self, prev: str, deco: List[Tuple[int, str, Any]], surface: 'pygame.Surface') -> None:
+    def _draw_assemble_cache(
+            self,
+            prev: str,
+            deco: List[Tuple[int, str, Any]],
+            surface: 'pygame.Surface'
+    ) -> None:
         """
         Draw cache, assemble if needed.
 
@@ -1065,12 +1088,13 @@ class Decorator(object):
             else:
                 raise ValueError('unknown decoration type')
 
-    def _update_pos_list(self,
-                         rect: 'pygame.Rect',
-                         decoid: str,
-                         pos: Union[Tuple2NumberType, Tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
-                         use_center_positioning=True
-                         ) -> Union[Tuple[Tuple2IntType, ...], Tuple2IntType]:
+    def _update_pos_list(
+            self,
+            rect: 'pygame.Rect',
+            decoid: str,
+            pos: Union[Tuple2NumberType, Tuple[Tuple2NumberType, ...]],  # only (x, y) or ((x1,y1), ...
+            use_center_positioning=True
+    ) -> Union[Tuple[Tuple2IntType, ...], Tuple2IntType]:
         """
         Updates position list based on rect center. If position of the rect changes, update
         the coords.
