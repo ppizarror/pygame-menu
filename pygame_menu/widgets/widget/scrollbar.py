@@ -462,6 +462,14 @@ class ScrollBar(Widget):
 
         self._scroll(self.get_rect(), pixels - self._slider_position)
 
+    def get_slider_rect(self) -> 'pygame.Rect':
+        """
+        Get slider rect.
+
+        :return: Slider rect
+        """
+        return self._slider_rect.move(*self.get_rect(to_absolute_position=True).topleft)
+
     def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
         if self.readonly:
             return False
@@ -479,7 +487,8 @@ class ScrollBar(Widget):
                     step = self._page_step
                     if keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT]:
                         step *= 0.35
-                    if self._scroll(rect, direction * step):
+                    pixels = direction * step
+                    if self._scroll(rect, pixels):
                         self.change()
                         updated = True
 
@@ -539,13 +548,13 @@ class ScrollBar(Widget):
 
                 elif event.button in (1, 2, 3):
                     # The _slider_rect origin is related to the widget surface
-                    if self._slider_rect.move(*rect.topleft).collidepoint(*event.pos):
+                    if self.get_slider_rect().collidepoint(*event.pos):
                         # Initialize scrolling
                         self.scrolling = True
 
                     elif rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
-                        srect = self._slider_rect.move(*rect.topleft)
+                        srect = self.get_slider_rect()
                         pos = (srect.x, srect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(rect, direction * self._page_step):
