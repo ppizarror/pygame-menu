@@ -33,9 +33,10 @@ __all__ = ['Label']
 
 import pygame
 
-from pygame_menu.widgets.core import Widget
-from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, ColorInputType
 from pygame_menu.utils import assert_color
+from pygame_menu.widgets.core import Widget
+
+from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, ColorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring

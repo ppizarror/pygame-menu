@@ -40,6 +40,7 @@ import pygame_menu.locals as _locals
 
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
     NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType
 

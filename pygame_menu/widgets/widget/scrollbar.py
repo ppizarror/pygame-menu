@@ -34,11 +34,11 @@ __all__ = ['ScrollBar']
 import pygame
 import pygame_menu.locals as _locals
 
-from pygame_menu._types import NumberType
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Optional, List, Tuple, VectorIntType, ColorType, Tuple2IntType, \
-    CallbackType, Union, NumberInstance, ColorInputType
+    CallbackType, Union, NumberInstance, ColorInputType, NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -154,7 +154,7 @@ class ScrollBar(Widget):
         self.is_scrollable = True
         self.is_selectable = False
 
-    def scroll_to_widget(self) -> 'ScrollBar':
+    def scroll_to_widget(self, *args, **kwargs) -> 'ScrollBar':
         pass
 
     def _apply_font(self) -> None:

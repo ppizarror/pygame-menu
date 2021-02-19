@@ -36,10 +36,11 @@ import pygame_menu
 import pygame_menu.locals as _locals
 
 from pygame_menu._decorator import Decorator
-from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
-    Optional, Tuple2IntType, NumberInstance, ColorInputType
 from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, uuid4
 from pygame_menu.widgets import ScrollBar, MenuBar
+
+from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
+    Optional, Tuple2IntType, NumberInstance, ColorInputType
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -693,6 +694,8 @@ class ScrollArea(object):
         :param margin: Extra margin around the rect (px)
         :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
+        assert isinstance(margin, NumberInstance) and margin >= 0
+
         # Check if visible
         if self.to_real_position(rect, visible=True).height == 0 and self._parent_scrollarea is not None:
             self._parent_scrollarea.scroll_to_rect(self._parent_scrollarea.get_rect())
@@ -958,7 +961,10 @@ class ScrollArea(object):
         """
         return self._menu
 
-    def collide(self, widget: Union['pygame_menu.widgets.Widget', 'pygame.Rect'], event: 'pygame.event.Event') -> bool:
+    def collide(self,
+                widget: Union['pygame_menu.widgets.Widget', 'pygame.Rect'],
+                event: 'pygame.event.Event'
+                ) -> bool:
         """
         If user event collides a widget within the ScrollArea respect to the relative position.
 

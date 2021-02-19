@@ -33,8 +33,10 @@ __all__ = ['RightArrowSelection']
 
 import pygame
 import pygame_menu
+
 from pygame_menu.widgets.core import Selection
 from pygame_menu.widgets.selection.arrow_selection import ArrowSelection
+
 from pygame_menu._types import Tuple2IntType, NumberType, NumberInstance
 
 

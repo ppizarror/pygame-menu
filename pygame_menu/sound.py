@@ -59,10 +59,10 @@ __all__ = [
 
 ]
 
+from pathlib import Path
 import os.path as path
 import time
 import warnings
-from pathlib import Path
 
 from pygame import error as pygame_error
 from pygame import mixer

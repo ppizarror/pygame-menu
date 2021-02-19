@@ -63,6 +63,7 @@ import pygame
 import pygame_menu.locals as _locals
 
 from pygame_menu.utils import assert_vector, assert_position, assert_color
+
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
     NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorInputType, Tuple3IntType, Any, \
     NumberInstance
@@ -797,7 +798,7 @@ class BaseImage(object):
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(area, (pygame.Rect, type(None)))
-        assert isinstance(position, tuple)
+        assert_vector(position, 2, int)
 
         if area is None:
             area = surface.get_rect()

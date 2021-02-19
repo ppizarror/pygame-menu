@@ -35,6 +35,7 @@ import pygame
 
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Optional, NumberType
 
 

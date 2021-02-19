@@ -56,8 +56,9 @@ import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
 
-from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
+from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
     ColorType, Any, Optional, NumberInstance, ColorInputType
 

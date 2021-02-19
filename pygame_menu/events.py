@@ -51,8 +51,8 @@ __all__ = [
 
 ]
 
-import pygame.locals as __locals
 from typing import Any
+import pygame.locals as __locals
 
 
 class MenuAction(object):
