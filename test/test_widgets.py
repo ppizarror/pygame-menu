@@ -40,7 +40,8 @@ from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface
 import pygame
 import pygame_menu
 from pygame_menu import locals as _locals
-from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT
+from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, \
+    KEY_MOVE_DOWN, KEY_MOVE_UP
 from pygame_menu.locals import ORIENTATION_VERTICAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
@@ -441,7 +442,7 @@ class WidgetsTest(unittest.TestCase):
         new_elements = [('4 - Easy', 'EASY'),
                         ('5 - Medium', 'MEDIUM'),
                         ('6 - Hard', 'HARD')]
-        selector.update_elements(new_elements)
+        selector.update_items(new_elements)
         selector.set_value('6 - Hard')
         self.assertEqual(selector.get_value()[1], 2)
         self.assertRaises(AssertionError, lambda: selector.set_value(bool))
@@ -1343,10 +1344,134 @@ class WidgetsTest(unittest.TestCase):
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item10',
                    (-1, -1, -1, 0, 428, 356, 40, 262, 348, 0, 583),
-                   (1, 0, 0, 1, 0, 1, 1)),
-                  (('item10', 10), -1)),)
+                   (1, 0, 0, 1, 0, 1, 1))),)
             ))
         self.assertEqual(drop._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
+        self.assertEqual(drop._drop_frame.get_attribute('width'), 185 if PYGAME_V2 else 186)
+
+        # Test events
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertTrue(drop.active)
+        self.assertEqual(drop.get_index(), -1)
+        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        self.assertEqual(drop.get_index(), 0)
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        self.assertEqual(drop.get_index(), 0)
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))  # Not infinite
+        self.assertEqual(drop.get_index(), 0)
+        scroll_values = [-1, 0, 0.011, 0.125, 0.239, 0.353, 0.459, 0.573, 0.687, 0.789, 0.906, 0.997]
+        for i in range(1, 12):
+            drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+            self.assertEqual(drop.get_index(), i)
+            if PYGAME_V2:
+                self.assertEqual(drop._drop_frame.get_scroll_value_percentual(ORIENTATION_VERTICAL),
+                                 scroll_values[i])
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))  # Not infinite
+        self.assertEqual(drop.get_index(), 11)  # Not infinite
+        if PYGAME_V2:
+            self.assertEqual(drop._drop_frame.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0.997)
+
+        # Scroll to bottom and close, then open again, this should scroll to current selected
+        drop.scrollh(0)
+        drop.scrollv(0)
+        self.assertEqual(drop._drop_frame.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0)
+        drop._toggle_drop()
+        drop._toggle_drop()
+        if PYGAME_V2:
+            self.assertEqual(drop._drop_frame.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0.997)
+
+        # Click drop box should toggle it
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.middle_rect_click(drop))
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.middle_rect_click(drop))
+        self.assertTrue(drop.active)
+
+        # Click middle option
+        drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect()))
+        self.assertEqual(drop.get_index(), 10)
+        self.assertFalse(drop.active)
+
+        # Test focus
+        if not drop.active:
+            drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        if PYGAME_V2:
+            self.assertEqual(menu._draw_focus_widget(surface, drop),
+                             {1: ((0, 0), (600, 0), (600, 307), (0, 307)),
+                              2: ((0, 308), (261, 308), (261, 483), (0, 483)),
+                              3: ((467, 308), (600, 308), (600, 483), (467, 483)),
+                              4: ((0, 484), (600, 484), (600, 600), (0, 600))}
+                             )
+        else:
+            self.assertEqual(menu._draw_focus_widget(surface, drop),
+                             {1: ((0, 0), (600, 0), (600, 306), (0, 306)),
+                              2: ((0, 307), (260, 307), (260, 486), (0, 486)),
+                              3: ((467, 307), (600, 307), (600, 486), (467, 486)),
+                              4: ((0, 487), (600, 487), (600, 600), (0, 600))}
+                             )
+
+        # Test change items
+        drop.update_items([])
+        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMakedException,
+                          lambda: drop._check_drop_maked())
+        drop.make_selection_drop()  # This selection drop is empty
+        self.assertEqual(drop._drop_frame.get_attribute('height'), 0)
+        self.assertEqual(drop._drop_frame.get_attribute('width'), 0)
+        fr = drop.get_focus_rect()
+        r = drop.get_rect(apply_padding=False, to_real_position=True)
+        self.assertEqual(fr.x, r.x)
+        self.assertEqual(fr.y, r.y)
+        self.assertEqual(fr.width + drop._selection_box_border_width, r.width)
+        self.assertEqual(fr.height, r.height)
+        self.assertEqual(drop.get_index(), -1)
+        self.assertRaises(ValueError, lambda: drop.get_value())
+        drop._up()
+        self.assertEqual(drop.get_index(), -1)
+        drop._down()
+        self.assertEqual(drop.get_index(), -1)
+
+        # Restore previous values
+        drop.update_items(items)
+        drop.make_selection_drop()
+        self.assertEqual(drop.get_index(), -1)
+
+        # Apply transforms
+        drop.translate(1, 1)
+        self.assertEqual(drop.get_translate(), (1, 1))
+        drop.translate(0, 0)
+
+        drop.rotate(10)
+        self.assertEqual(drop._angle, 0)
+
+        drop.resize(10, 10)
+        self.assertFalse(drop._scale[0])
+        self.assertEqual(drop._scale[1], 1)
+        self.assertEqual(drop._scale[2], 1)
+
+        drop.scale(100, 100)
+        self.assertFalse(drop._scale[0])
+        self.assertEqual(drop._scale[1], 1)
+        self.assertEqual(drop._scale[2], 1)
+
+        drop.flip(True, True)
+        self.assertFalse(drop._flip[0])
+        self.assertFalse(drop._flip[1])
+
+        drop.set_max_width(100)
+        self.assertIsNone(drop._max_width[0])
+
+        drop.set_max_height(100)
+        self.assertIsNone(drop._max_height[0])
+
+        # Add margin
+        menu.add.vertical_margin(500)
+
+        # Add drop from widgetmanager
         # menu.mainloop(surface)
 
     def test_none(self) -> None:
@@ -1577,7 +1702,7 @@ class WidgetsTest(unittest.TestCase):
         # Ignore events if mouse outside the region
         sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 999), rel=(0, -10),
                                                      evtype=pygame.MOUSEMOTION))
-        self.assertEqual(sb.get_value_percentual(), 1)
+        self.assertEqual(sb.get_value_percentual(), 1 if PYGAME_V2 else 0.976)
 
         # Test remove onreturn
         sb = ScrollBar(length, world_range, 'sb', ORIENTATION_VERTICAL, onreturn=-1)
