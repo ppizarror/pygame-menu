@@ -239,10 +239,10 @@ class ToggleSwitch(Widget):
         self._switch_height = 0
         self._switch_pos = (0, 0)  # horizontal pos, and delta to title
 
-    def set_value(self, value: int) -> None:
-        assert isinstance(value, int), 'value can only be an integer'
-        assert 0 <= value < self._total_states, 'state value exceeds the total states'
-        self._state = value
+    def set_value(self, state: int) -> None:
+        assert isinstance(state, int), 'state value can only be an integer'
+        assert 0 <= state < self._total_states, 'state value exceeds the total states'
+        self._state = state
 
     def scale(self, *args, **kwargs) -> 'ToggleSwitch':
         return self

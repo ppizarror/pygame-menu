@@ -444,18 +444,18 @@ class ScrollBar(Widget):
 
         self._apply_size_changes()
 
-    def set_value(self, value: NumberType) -> None:
+    def set_value(self, position_value: NumberType) -> None:
         """
         Set the position of the scrollbar.
 
-        :param value: Position
+        :param position_value: Position
         :return: None
         """
-        assert isinstance(value, NumberInstance)
-        assert self._values_range[0] <= value <= self._values_range[1], \
-            '{} < {} < {}'.format(self._values_range[0], value, self._values_range[1])
+        assert isinstance(position_value, NumberInstance)
+        assert self._values_range[0] <= position_value <= self._values_range[1], \
+            '{} < {} < {}'.format(self._values_range[0], position_value, self._values_range[1])
 
-        pixels = (value - self._values_range[0]) * (self._page_ctrl_length - self._page_step)
+        pixels = (position_value - self._values_range[0]) * (self._page_ctrl_length - self._page_step)
         pixels /= (self._values_range[1] - self._values_range[0])
 
         # Correction due to value scaling
