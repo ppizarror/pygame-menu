@@ -184,7 +184,7 @@ class Selector(Widget):
 
         self._index = 0
         self._items = items
-        self._sformat = '{0}< {1} >'
+        self._sformat = ''
         self._style = style
         self._title_size = 0
 
@@ -201,6 +201,9 @@ class Selector(Widget):
         default %= len(self._items)
         for k in range(0, default):
             self._right()
+
+        # Last configs
+        self.set_sformat('{0}< {1} >')
         self.set_default_value(default)
 
     def set_sformat(self, sformat: str) -> 'Selector':
