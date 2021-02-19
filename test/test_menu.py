@@ -699,11 +699,7 @@ class MenuTest(unittest.TestCase):
         menu.add.label('Text #1')
         menu.add.vertical_margin(100)
         menu.add.label('Text #2')
-        v = 33
-        if not PYGAME_V2:
-            v = 32
-
-        self.assertEqual(menu._widget_offset[1], v)
+        self.assertEqual(menu._widget_offset[1], 33 if PYGAME_V2 else 32)
 
     def test_getters(self) -> None:
         """

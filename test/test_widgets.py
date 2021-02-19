@@ -892,10 +892,7 @@ class WidgetsTest(unittest.TestCase):
             width=400
         )
         textinput = menu.add.text_input('title', input_underline='_')
-        width = 107
-        if not PYGAME_V2:
-            width = 106
-        self.assertEqual(menu._widget_offset[1], width)
+        self.assertEqual(menu._widget_offset[1], 107 if PYGAME_V2 else 106)
         self.assertEqual(textinput.get_width(), 376)
         self.assertEqual(textinput._current_underline_string, '______________________________')
         menu.render()
@@ -955,18 +952,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertRaises(pygame_menu.menu._MenuSizingException, lambda: menu.add.frame_v(201, 100))
         self.assertEqual(len(menu._widgets), 0)
         textinput = menu.add.text_input('title', input_underline='_')
-        if not PYGAME_V2:
-            self.assertEqual(menu._widget_offset[1], 106)
-        else:
-            self.assertEqual(menu._widget_offset[1], 107)
+        self.assertEqual(menu._widget_offset[1], 107 if PYGAME_V2 else 106)
         self.assertEqual(textinput.get_width(), 178)
         self.assertEqual(textinput._current_underline_string, '____________')
         vframe = menu.add.frame_v(150, 100, background_color=(20, 20, 20))
         vframe.pack(textinput)
-        if not PYGAME_V2:
-            self.assertEqual(menu._widget_offset[1], 75)
-        else:
-            self.assertEqual(menu._widget_offset[1], 76)
+        self.assertEqual(menu._widget_offset[1], 76 if PYGAME_V2 else 75)
         self.assertEqual(textinput.get_width(), 134)
         self.assertEqual(textinput._current_underline_string, '________')
 
@@ -1267,9 +1258,94 @@ class WidgetsTest(unittest.TestCase):
             items.append(('item{}'.format(i + 1), i + 1))
         drop = pygame_menu.widgets.DropSelect('dropsel', items)
         menu.add.generic_widget(drop, configure_defaults=True)
-        self.assertEqual(drop._selection_box_width, 205)
+        self.assertEqual(drop._selection_box_width, 205 if PYGAME_V2 else 206)
         drop.make_selection_drop()
         self.assertEqual(drop.get_frame_depth(), 0)
+        drop.render()
+        if PYGAME_V2:
+            self.assertEqual(menu._test_widgets_status(), (
+                (('DropSelect-dropsel',
+                  (0, 0, 0, 124, 149, 352, 49, 124, 304, 124, 149),
+                  (1, 0, 1, 1, 0, 0, 0),
+                  ('Frame',
+                   (-1, -1, -1, 262, 193, 205, 136, 262, 348, 262, 193),
+                   (0, 0, 0, 1, 1, 0, 0),
+                   (-1, -1),
+                   ('Button-This is a really long selection item',
+                    (-1, -1, -1, 0, -1, 356, 40, 262, 348, 0, 154),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-epic',
+                    (-1, -1, -1, 0, 38, 356, 40, 262, 386, 0, 193),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item1',
+                    (-1, -1, -1, 0, 77, 356, 40, 262, 425, 0, 232),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item2',
+                    (-1, -1, -1, 0, 116, 356, 40, 262, 348, 0, 271),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item3',
+                    (-1, -1, -1, 0, 155, 356, 40, 262, 348, 0, 310),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item4',
+                    (-1, -1, -1, 0, 194, 356, 40, 262, 348, 0, 349),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item5',
+                    (-1, -1, -1, 0, 233, 356, 40, 262, 348, 0, 388),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item6',
+                    (-1, -1, -1, 0, 272, 356, 40, 262, 348, 0, 427),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item7',
+                    (-1, -1, -1, 0, 311, 356, 40, 262, 348, 0, 466),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item8',
+                    (-1, -1, -1, 0, 350, 356, 40, 262, 348, 0, 505),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item9',
+                    (-1, -1, -1, 0, 389, 356, 40, 262, 348, 0, 544),
+                    (1, 0, 0, 1, 0, 1, 1)),
+                   ('Button-item10',
+                    (-1, -1, -1, 0, 428, 356, 40, 262, 348, 0, 583),
+                    (1, 0, 0, 1, 0, 1, 1))),
+                  ('Button-This is a really long selection item',
+                   (-1, -1, -1, 0, -1, 356, 40, 262, 348, 0, 154),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-epic',
+                   (-1, -1, -1, 0, 38, 356, 40, 262, 386, 0, 193),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item1',
+                   (-1, -1, -1, 0, 77, 356, 40, 262, 425, 0, 232),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item2',
+                   (-1, -1, -1, 0, 116, 356, 40, 262, 348, 0, 271),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item3',
+                   (-1, -1, -1, 0, 155, 356, 40, 262, 348, 0, 310),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item4',
+                   (-1, -1, -1, 0, 194, 356, 40, 262, 348, 0, 349),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item5',
+                   (-1, -1, -1, 0, 233, 356, 40, 262, 348, 0, 388),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item6',
+                   (-1, -1, -1, 0, 272, 356, 40, 262, 348, 0, 427),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item7',
+                   (-1, -1, -1, 0, 311, 356, 40, 262, 348, 0, 466),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item8',
+                   (-1, -1, -1, 0, 350, 356, 40, 262, 348, 0, 505),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item9',
+                   (-1, -1, -1, 0, 389, 356, 40, 262, 348, 0, 544),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  ('Button-item10',
+                   (-1, -1, -1, 0, 428, 356, 40, 262, 348, 0, 583),
+                   (1, 0, 0, 1, 0, 1, 1)),
+                  (('item10', 10), -1)),)
+            ))
+        self.assertEqual(drop._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
         # menu.mainloop(surface)
 
     def test_none(self) -> None:
