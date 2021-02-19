@@ -72,7 +72,7 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
     assert len(items) > 0, 'item list cannot be empty'
     for e in items:
         assert len(e) >= 1, \
-            'length of each element on item list must be equal or greater than 1 (i.e. cannot be empty)'
+            'length of each item on item list must be equal or greater than 1 (i.e. cannot be empty)'
         msg = 'first element of each item on list must be a string ' \
               '(the title of each item), but received "{0}"'.format(e[0])
         assert isinstance(e[0], (str, bytes)), msg
@@ -104,7 +104,7 @@ class Selector(Widget):
     :param title: Selector title
     :param items: Items of the selector
     :param selector_id: ID of the selector
-    :param default: Index of default element to display
+    :param default: Index of default item to display
     :param onchange: Callback when changing the selector
     :param onreturn: Callback when pressing return on the selector
     :param onselect: Function when selecting the widget
@@ -155,7 +155,7 @@ class Selector(Widget):
         assert isinstance(default, int)
         assert style in (SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY), 'invalid selector style'
 
-        # Check element list
+        # Check items list
         check_selector_items(items)
         assert default >= 0, 'default position must be equal or greater than zero'
         assert default < len(items), 'default position should be lower than number of values'
@@ -326,7 +326,7 @@ class Selector(Widget):
 
     def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
         """
-        Return the current value of the selector at the selected index.
+        Return the current value of the selected index.
 
         :return: Value and index as a tuple, (value, index)
         """
@@ -358,14 +358,14 @@ class Selector(Widget):
 
     def set_value(self, item: Union[str, int]) -> None:
         """
-        Set the current value of the widget, selecting the element that matches
+        Set the current value of the widget, selecting the item that matches
         the text if ``item`` is a string, or the index if ``item`` is an integer.
-        This method raises ``ValueError`` if no element found.
+        This method raises ``ValueError`` if no item found.
 
         For example, if widget item list is ``[['a',0],['b',1],['a',2]]``:
 
-        - *widget*.set_value('a') -> Widget selects the first element (index 0)
-        - *widget*.set_value(2) -> Widget selects the third element (index 2)
+        - *widget*.set_value('a') -> Widget selects the first item (index 0)
+        - *widget*.set_value(2) -> Widget selects the third item (index 2)
 
         .. note::
 
@@ -376,33 +376,33 @@ class Selector(Widget):
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
         if isinstance(item, str):
-            for element in self._items:
-                if element[0] == item:
-                    self._index = self._items.index(element)
+            for i in self._items:
+                if i[0] == item:
+                    self._index = self._items.index(i)
                     return
             raise ValueError('no value "{}" found in selector'.format(item))
         elif isinstance(item, int):
             assert 0 <= item < len(self._items), \
-                'item index must be greater than zero and lower than the number of elements on the selector'
+                'item index must be greater than zero and lower than the number of items on the selector'
             self._index = item
 
-    def update_items(self, elements: Union[List[Tuple[Any, ...]], List[str]]) -> None:
+    def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
         Update selector items.
 
         .. note::
 
             If the length of the list is different than the previous one,
-            the new index of the selector will be the first element of the list.
+            the new index of the selector will be the first item of the list.
 
-        :param elements: New selector items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :param items: New selector items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None
         """
-        check_selector_items(elements)
-        selected_element = self._items[self._index]
-        self._items = elements
+        check_selector_items(items)
+        selected_item = self._items[self._index]
+        self._items = items
         try:
-            self._index = self._items.index(selected_element)
+            self._index = self._items.index(selected_item)
         except ValueError:
             if self._index >= len(self._items):
                 self._index = 0
