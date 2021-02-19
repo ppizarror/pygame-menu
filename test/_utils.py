@@ -401,11 +401,12 @@ class MenuUtils(object):
     @staticmethod
     def generic_menu(
             center_content: bool = True,
-            columns: int = 1,
             column_max_width: MenuColumnMaxWidthType = None,
             column_min_width: MenuColumnMinWidthType = 0,
+            columns: int = 1,
             enabled: bool = True,
             height: NumberType = 400,
+            mouse_motion_selection: bool = False,
             onclose: Any = None,
             onreset: Any = None,
             position_x: NumberType = 50,
@@ -421,11 +422,12 @@ class MenuUtils(object):
         Generate a generic test menu.
 
         :param center_content: Center menu content
-        :param columns: Number of columns
         :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400, 500)`` (first column 400px, second 500). If ``0` is given uses the menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
         :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default it's ``0``. Negative values are not accepted
+        :param columns: Number of columns
         :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn
         :param height: Menu height (px)
+        :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
         :param onclose: Event or function applied when closing the Menu
         :param onreset: Function executed when resetting the Menu
         :param position_x: X position of the menu
@@ -440,12 +442,13 @@ class MenuUtils(object):
         """
         return pygame_menu.Menu(
             center_content=center_content,
-            columns=columns,
             column_max_width=column_max_width,
             column_min_width=column_min_width,
+            columns=columns,
             enabled=enabled,
             height=height,
             menu_position=(position_x, position_y),
+            mouse_motion_selection=mouse_motion_selection,
             onclose=onclose,
             onreset=onreset,
             rows=rows,

@@ -1252,6 +1252,26 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_margin(), (0, 0))
         w.draw(surface)
 
+        menu = MenuUtils.generic_menu()
+        w = menu.add._horizontal_margin(999)
+        self.assertEqual(w.get_rect().width, 999)
+        self.assertEqual(w.get_rect().height, 0)
+
+    def test_dropselect(self) -> None:
+        """
+        Test dropselect widget.
+        """
+        menu = MenuUtils.generic_menu(mouse_motion_selection=True)
+        items = [('This is a really long selection item', 1), ('epic', 2)]
+        for i in range(10):
+            items.append(('item{}'.format(i + 1), i + 1))
+        drop = pygame_menu.widgets.DropSelect('dropsel', items)
+        menu.add.generic_widget(drop, configure_defaults=True)
+        self.assertEqual(drop._selection_box_width, 205)
+        drop.make_selection_drop()
+        self.assertEqual(drop.get_frame_depth(), 0)
+        # menu.mainloop(surface)
+
     def test_none(self) -> None:
         """
         Test none widget.

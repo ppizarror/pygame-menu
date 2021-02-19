@@ -33,6 +33,7 @@ __all__ = ['ThemeTest']
 
 import unittest
 import pygame_menu
+from pathlib import Path
 
 
 class ThemeTest(unittest.TestCase):
@@ -176,6 +177,10 @@ class ThemeTest(unittest.TestCase):
         t._get({}, '', 'tuple2', (1, -1))
         t._get({}, '', 'tuple2', [1, -1])
         t._get({}, '', 'tuple3', [1, -1, 1])
+        t._get({}, '', 'tuple2int', (1.0, -1))
+        t._get({}, '', 'tuple2int', (0.000000000, 0.0))
+        t._get({}, '', 'tuple2int', [1, -1])
+        t._get({}, '', 'tuple3int', [1, -1.0, 1])
         t._get({}, '', 'color_image', (1, 1, 1))
         t._get({}, '', 'color_image', [11, 1, 0])
         t._get({}, '', 'color_image', [11, 1, 0, 55])
@@ -189,6 +194,8 @@ class ThemeTest(unittest.TestCase):
         t._get({}, '', 'color_image_none', img)
         t._get({}, '', 'cursor', None)
         t._get({}, '', 'cursor', 1)
+        t._get({}, '', 'font', 'font')
+        t._get({}, '', 'font', Path('.'))
 
         self.assertTrue(t._get({}, '', 'callable', dummy)())
 
@@ -209,5 +216,8 @@ class ThemeTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: t._get({}, '', bool, 4.4))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2.1', (1, 1)))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2', (1, 1, 1)))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple2int', (1.5, 1)))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple3', (1, 1, 1, 1)))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'tuple3int', (1, 1, 1.000001)))
         self.assertRaises(AssertionError, lambda: t._get({}, '', 'cursor', 'hi'))
+        self.assertRaises(AssertionError, lambda: t._get({}, '', 'font', 1))
