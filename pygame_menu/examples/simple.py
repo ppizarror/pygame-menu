@@ -53,7 +53,8 @@ def start_the_game() -> None:
 
     :return: None
     """
-    print('Do the job here!')
+    global user_name
+    print('{0}, Do the job here!'.format(user_name.get_value()))
 
 
 menu = pygame_menu.Menu(
@@ -63,7 +64,7 @@ menu = pygame_menu.Menu(
     width=400
 )
 
-menu.add.text_input('Name: ', default='John Doe', maxchar=10)
+user_name = menu.add.text_input('Name: ', default='John Doe', maxchar=10)
 menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
 menu.add.button('Play', start_the_game)
 menu.add.button('Quit', pygame_menu.events.EXIT)
