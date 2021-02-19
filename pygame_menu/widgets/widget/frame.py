@@ -38,10 +38,11 @@ import pygame_menu
 import pygame_menu.locals as _locals
 
 from pygame_menu._decorator import Decorator
+from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation
 from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, \
     Tuple2IntType, NumberInstance, Any, ColorInputType
-from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -239,21 +240,8 @@ class Frame(Widget):
         assert 0 < max_height <= self._height, \
             'scroll area height ({0}) cannot exceed frame height ({1})'.format(max_height, self._height)
 
-        # Create area to get scrollbar thickness
-        sa = pygame_menu.scrollarea.ScrollArea(
-            area_width=max_width,
-            area_height=max_height,
-            scrollbar_slider_pad=scrollbar_slider_pad,
-            scrollbar_thick=scrollbar_thick,
-            scrollbars=scrollbars
-        )
-
-        sx = sa.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL, real=True)
-        sy = sa.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL, real=True)
-        if self._width == max_width:
-            sx *= 0
-        if self._height == max_height:
-            sy *= 0
+        sx = 0 if self._width == max_width else scrollbar_thick
+        sy = 0 if self._height == max_height else scrollbar_thick
 
         if self._width > max_width or self._height > max_height:
             self.is_scrollable = True
@@ -268,8 +256,8 @@ class Frame(Widget):
 
         # Create area object
         self._frame_scrollarea = pygame_menu.scrollarea.ScrollArea(
-            area_width=max_width + sy + sx,
-            area_height=max_height + sx + sy,
+            area_width=max_width + sy,
+            area_height=max_height + sx,
             scrollbar_cursor=scrollbar_cursor,
             scrollbar_color=scrollbar_color,
             parent_scrollarea=self._scrollarea,
@@ -289,7 +277,7 @@ class Frame(Widget):
             self._frame_scrollarea.hide_scrollbars(_locals.ORIENTATION_VERTICAL)
 
         # Create surface
-        self._surface = make_surface(self._width + sy, self._height + sx, alpha=True)
+        self._surface = make_surface(self._width, self._height, alpha=True)
 
         # Configure area
         self._frame_scrollarea.set_world(self._surface)
@@ -384,14 +372,8 @@ class Frame(Widget):
             self.last_surface = surface
             self._draw_background_color(surface)
             self._decorator.draw_prev(surface)
-            selected_widget = None
             for widget in self._widgets.values():
-                if widget.is_visible():
-                    widget.draw(surface)
-                if widget.is_selected():
-                    selected_widget = widget
-            if selected_widget is not None:
-                selected_widget.draw_selection_effect()
+                widget.draw(surface)
             self._draw_border(surface)
             self._decorator.draw_post(surface)
 
@@ -403,14 +385,8 @@ class Frame(Widget):
             scrollarea_decorator = self.get_decorator()
             scrollarea_decorator.force_cache_update()
             scrollarea_decorator.draw_prev(self._surface)
-            selected_widget = None
             for widget in self._widgets.values():
-                if widget.is_visible():
-                    widget.draw(self._surface)
-                if widget.is_selected():
-                    selected_widget = widget
-            if selected_widget is not None:
-                selected_widget.draw_selection_effect()
+                widget.draw(self._surface)
             self._frame_scrollarea.draw(surface)
             self._draw_border(surface)
         self.apply_draw_callbacks()
@@ -907,8 +883,8 @@ class Frame(Widget):
         self._widgets_props[widget.get_id()] = (alignment, vertical_position)
 
         # Sort widgets to keep selection order
-        if widget.get_menu() is not None:
-            menu_widgets = self._menu._widgets
+        menu_widgets = self._menu._widgets
+        if widget.get_menu() is not None and widget in menu_widgets:
             self._menu._validate_frame_widgetmove = False
             widgets_list = list(self._widgets.values())
 
