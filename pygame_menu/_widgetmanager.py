@@ -386,7 +386,7 @@ class WidgetManager(object):
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -558,7 +558,7 @@ class WidgetManager(object):
             - ``dynamic_width``             *(bool)* - If ``True`` the widget width changes if the previsualization color box is active or not
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -749,7 +749,7 @@ class WidgetManager(object):
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -888,7 +888,7 @@ class WidgetManager(object):
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``HAND``
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color. If not defined, uses ``theme.widget_url_color``
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -1003,7 +1003,7 @@ class WidgetManager(object):
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -1038,7 +1038,7 @@ class WidgetManager(object):
             kwargs keys are removed from the object.
 
         :param title: Title of the selector
-        :param items: Item list of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :param items: Item list of the selector; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :param default: Index of default item to display
         :param onchange: Callback executed when when changing the selector
         :param onreturn: Callback executed when pressing return button
@@ -1053,12 +1053,12 @@ class WidgetManager(object):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get fancy style attributes
-        style_fancy_arrow_color = kwargs.get('style_fancy_arrow_color', (230, 230, 230))
-        style_fancy_arrow_margin = kwargs.get('style_fancy_arrow_margin', (5, 5, 0))
-        style_fancy_bgcolor = kwargs.get('style_fancy_bgcolor', (180, 180, 180))
-        style_fancy_bordercolor = kwargs.get('style_fancy_bordercolor', (0, 0, 0))
-        style_fancy_borderwidth = kwargs.get('style_fancy_borderwidth', 1)
-        style_fancy_box_inflate = kwargs.get('style_fancy_box_inflate', (0, 8))
+        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color', (230, 230, 230))
+        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin', (5, 5, 0))
+        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', (180, 180, 180))
+        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', (0, 0, 0))
+        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', 1)
+        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', (0, 8))
 
         widget = pygame_menu.widgets.Selector(
             default=default,
@@ -1080,6 +1080,216 @@ class WidgetManager(object):
 
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
+
+        return widget
+
+    def dropselect(
+            self,
+            title: Any,
+            items: Union[List[Tuple[Any, ...]], List[str]],
+            default: int = 0,
+            dropselect_id: str = '',
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            placeholder: str = 'Select an option',
+            **kwargs
+    ) -> 'pygame_menu.widgets.DropSelect':
+        """
+        Add a dropselect to the Menu: Drop select is a selector within a Frame.
+        This drops a vertical frame if requested.
+        Drop select can contain selectable items (options), only 1 can be selected.
+
+        The items of the DropSelect are:
+
+        .. code-block:: python
+
+            items = [('Item1', a, b, c...), ('Item2', d, e, f...)]
+
+        The callbacks receive the current selected item, its index in the list,
+        the associated arguments, and all unknown keyword arguments, where
+        ``selected_item=widget.get_value()`` and ``selected_index=widget.get_index()``:
+
+        .. code-block:: python
+
+            onchange((selected_item, index), a, b, c..., **kwargs)
+            onreturn((selected_item, index), a, b, c..., **kwargs)
+
+        For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
+
+        kwargs (Optional)
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+
+        kwargs for modifying selection box/option style (Optional)
+            - ``scrollbar_color``                       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``                      *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``               *(int)* - Offset of the scrollbar shadow (px)
+            - ``scrollbar_shadow_position``             *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``                      *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
+            - ``scrollbar_slider_pad``                  *(int, float)* - Space between slider and scrollbars borders (px)
+            - ``scrollbar_thick``                       *(int)* - Scrollbar thickness (px)
+            - ``scrollbars``                            *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``selection_box_arrow_color``             *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selection box arrow color
+            - ``selection_box_arrow_margin``            *(tuple)* - Selection box arrow margin (left, right, vertical) in px
+            - ``selection_box_bgcolor``                 *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selection box background color
+            - ``selection_box_border_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selection box border color
+            - ``selection_box_border_width``            *(int)* - Selection box border width
+            - ``selection_box_height``                  *(int)* - Selection box height, counted as how many options are packed before showing scroll
+            - ``selection_box_inflate``                 *(tuple)* - Selection box inflate on x-axis and y-axis (px)
+            - ``selection_box_margin``                  *(int)* - Selection box left margin from title (px)
+            - ``selection_box_text_margin``             *(int)* - Selection box text margin (left) in px
+            - ``selection_box_width``                   *(int)* - Selection box width (px). If ``0`` compute automatically to fit placeholder
+            - ``selection_infinite``                    *(bool)* - If ``True`` selection can rotate through bottom/top
+            - ``selection_option_border_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Option border color
+            - ``selection_option_border_width``         *(int)* - Option border width
+            - ``selection_option_font_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Option font color
+            - ``selection_option_font_size``            *(int, None)* - Option font size. If ``None`` use the 75% of the widget font size
+            - ``selection_option_font``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Option font. If ``None`` use the same font as the widget
+            - ``selection_option_padding``              *(int, float, tuple, list)* - Selection padding. See padding styling
+            - ``selection_option_selected_bgcolor``     *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selected option background color
+            - ``selection_option_selected_font_color``  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selected option font color
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
+
+        :param title: Drop select title
+        :param items: Item list of the drop select; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :param default: Index of default item to display
+        :param dropselect_id: ID of the selector
+        :param onchange: Callback when changing the drop select item
+        :param onreturn: Callback when pressing return on the selected item
+        :param onselect: Function when selecting the widget
+        :param placeholder: Text shown if no option is selected yet
+        :param kwargs: Optional keyword arguments
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.Selector`
+        """
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+
+        # Get selection box properties
+        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', (150, 150, 150))
+        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', (5, 5, 0))
+        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', (255, 255, 255))
+        selection_box_border_color = kwargs.pop('selection_box_border_color', (150, 150, 150))
+        selection_box_border_width = kwargs.pop('selection_box_border_width', 1)
+        selection_box_height = kwargs.pop('selection_box_height', 3)
+        selection_box_inflate = kwargs.pop('selection_box_inflate', (0, 0))
+        selection_box_margin = kwargs.pop('selection_box_margin', 25)
+        selection_box_text_margin = kwargs.pop('selection_box_text_margin', 5)
+        selection_box_width = kwargs.pop('selection_box_width', 0)
+        selection_infinite = kwargs.pop('selection_infinite', False)
+        selection_option_border_color = kwargs.pop('selection_option_border_color', (220, 220, 220))
+        selection_option_border_width = kwargs.pop('selection_option_border_width', 1)
+        selection_option_font = kwargs.pop('selection_option_font', None)
+        selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
+        selection_option_font_size = kwargs.pop('selection_option_font_size', None)
+        selection_option_padding = kwargs.pop('selection_option_padding', 5)
+        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (230, 250, 247))
+        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
+
+        # Get selection box scrollbar properties
+        scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
+        scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
+        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color)
+        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset)
+        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position)
+        scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
+        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color)
+        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad)
+        scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
+        scrollbars = get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
+
+        widget = pygame_menu.widgets.DropSelect(
+            default=default,
+            dropselect_id=dropselect_id,
+            items=items,
+            onchange=onchange,
+            onreturn=onreturn,
+            onselect=onselect,
+            placeholder=placeholder,
+            selection_box_arrow_color=selection_box_arrow_color,
+            selection_box_arrow_margin=selection_box_arrow_margin,
+            selection_box_bgcolor=selection_box_bgcolor,
+            selection_box_border_color=selection_box_border_color,
+            selection_box_border_width=selection_box_border_width,
+            selection_box_height=selection_box_height,
+            selection_box_inflate=selection_box_inflate,
+            selection_box_margin=selection_box_margin,
+            selection_box_text_margin=selection_box_text_margin,
+            selection_box_width=selection_box_width,
+            selection_infinite=selection_infinite,
+            selection_option_border_color=selection_option_border_color,
+            selection_option_border_width=selection_option_border_width,
+            selection_option_font=selection_option_font,
+            selection_option_font_color=selection_option_font_color,
+            selection_option_font_size=selection_option_font_size,
+            selection_option_padding=selection_option_padding,
+            selection_option_selected_bgcolor=selection_option_selected_bgcolor,
+            selection_option_selected_font_color=selection_option_selected_font_color,
+            title=title,
+            **kwargs
+        )
+
+        self._configure_widget(widget=widget, **attributes)
+        widget.set_theme(self._theme)
+        self._append_widget(widget)
+
+        # After addition, create drop
+        widget.make_selection_drop(
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
+            scrollbar_shadow=scrollbar_shadow,
+            scrollbar_shadow_color=scrollbar_shadow_color,
+            scrollbar_shadow_offset=scrollbar_shadow_offset,
+            scrollbar_shadow_position=scrollbar_shadow_position,
+            scrollbar_slider_color=scrollbar_slider_color,
+            scrollbar_slider_pad=scrollbar_slider_pad,
+            scrollbar_thick=scrollbar_thick,
+            scrollbars=scrollbars,
+            scrollbars_parsed=True
+        )
 
         return widget
 
@@ -1121,7 +1331,7 @@ class WidgetManager(object):
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -1271,7 +1481,7 @@ class WidgetManager(object):
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
             - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
             - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
-            - ``font_name``                 *(str, Path)* - Widget font path
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
             - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
             - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
             - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
@@ -1406,18 +1616,18 @@ class WidgetManager(object):
         self._configure_widget(widget=widget, **attributes)
 
         widget.make_scrollarea(
-            max_width=kwargs.get('max_width', width) - padh,
-            max_height=kwargs.get('max_height', height) - padv,
-            scrollbar_color=kwargs.get('scrollbar_color', self._theme.scrollbar_color),
-            scrollbar_cursor=kwargs.get('scrollbar_cursor', self._theme.scrollbar_cursor),
-            scrollbar_shadow_color=kwargs.get('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
-            scrollbar_shadow_offset=kwargs.get('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
-            scrollbar_shadow_position=kwargs.get('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
-            scrollbar_shadow=kwargs.get('scrollbar_shadow', self._theme.scrollbar_shadow),
-            scrollbar_slider_color=kwargs.get('scrollbar_slider_color', self._theme.scrollbar_slider_color),
-            scrollbar_slider_pad=kwargs.get('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
-            scrollbar_thick=kwargs.get('scrollbar_thick', self._theme.scrollbar_thick),
-            scrollbars=get_scrollbars_from_position(kwargs.get('scrollbars', self._theme.scrollarea_position))
+            max_width=kwargs.pop('max_width', width) - padh,
+            max_height=kwargs.pop('max_height', height) - padv,
+            scrollbar_color=kwargs.pop('scrollbar_color', self._theme.scrollbar_color),
+            scrollbar_cursor=kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor),
+            scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
+            scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
+            scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
+            scrollbar_shadow=kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow),
+            scrollbar_slider_color=kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color),
+            scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
+            scrollbar_thick=kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick),
+            scrollbars=get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
         )
 
         self._append_widget(widget)
@@ -1461,7 +1671,7 @@ class WidgetManager(object):
             - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
-            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_cursor``          *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
             - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
             - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
             - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
@@ -1543,7 +1753,7 @@ class WidgetManager(object):
             - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
-            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_cursor``          *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
             - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
             - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
             - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
