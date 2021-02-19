@@ -36,6 +36,9 @@ __all__ = [
     'SELECTOR_STYLE_CLASSIC',
     'SELECTOR_STYLE_FANCY',
 
+    # Utils
+    'check_selector_items',
+
     # Types
     'SelectorStyleType',
 
@@ -49,8 +52,9 @@ import pygame_menu.controls as _controls
 
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, Literal, ColorType, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, NumberType, NumberInstance
+    ColorInputType, Tuple2IntType, Tuple3IntType, NumberType
 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'
@@ -68,9 +72,10 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
     assert len(items) > 0, 'item list cannot be empty'
     for e in items:
         assert len(e) >= 1, \
-            'length of each element on item list must be equal or greater than 1'
-        assert isinstance(e[0], (str, bytes)), \
-            'first element of each item on list must be a string (the title of each item)'
+            'length of each element on item list must be equal or greater than 1 (i.e. cannot be empty)'
+        msg = 'first element of each item on list must be a string ' \
+              '(the title of each item), but received "{0}"'.format(e[0])
+        assert isinstance(e[0], (str, bytes)), msg
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -140,7 +145,7 @@ class Selector(Widget):
                  style_fancy_bordercolor: ColorInputType = (0, 0, 0),
                  style_fancy_borderwidth: int = 1,
                  style_fancy_box_inflate: Tuple2IntType = (0, 0),
-                 style_fancy_box_margin: NumberType = 25,
+                 style_fancy_box_margin: int = 25,
                  *args,
                  **kwargs
                  ) -> None:
@@ -158,14 +163,14 @@ class Selector(Widget):
 
         # Check fancy style
         style_fancy_arrow_color = assert_color(style_fancy_arrow_color)
-        assert_vector(style_fancy_arrow_margin, 3)
+        assert_vector(style_fancy_arrow_margin, 3, int)
         style_fancy_bgcolor = assert_color(style_fancy_bgcolor)
         style_fancy_bordercolor = assert_color(style_fancy_bordercolor)
         assert isinstance(style_fancy_borderwidth, int) and style_fancy_borderwidth >= 0
-        assert_vector(style_fancy_box_inflate, 2)
+        assert_vector(style_fancy_box_inflate, 2, int)
         assert style_fancy_box_inflate[0] >= 0 and style_fancy_box_inflate[1] >= 0, \
             'box inflate must be equal or greater than zero on both axis'
-        assert isinstance(style_fancy_box_margin, NumberInstance)
+        assert isinstance(style_fancy_box_margin, int), 'box margin must be an integer'
 
         super(Selector, self).__init__(
             onchange=onchange,
@@ -221,7 +226,11 @@ class Selector(Widget):
         return self
 
     def _apply_font(self) -> None:
-        self._title_size = int(self._font.size(self._title)[0])
+        self._title_size = self._font.size(self._title)[0]
+        if self._style == SELECTOR_STYLE_FANCY:
+            self._title_size += self._style_fancy_box_margin - self._style_fancy_box_inflate[0] / 2 \
+                                + self._style_fancy_borderwidth
+        self._title_size = int(self._title_size)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
@@ -280,7 +289,7 @@ class Selector(Widget):
 
             self._surface = make_surface(title.get_width() + 2 * self._style_fancy_arrow_margin[0] +
                                          2 * self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin +
-                                         current.get_width() + 2 * arrow_left.width +
+                                         current.get_width() + 2 * arrow_left.width + self._style_fancy_borderwidth +
                                          self._style_fancy_box_inflate[0] / 2,
                                          title.get_height() + self._style_fancy_box_inflate[1])
             self._surface.blit(title, (0, self._style_fancy_box_inflate[1] / 2))
@@ -346,10 +355,10 @@ class Selector(Widget):
     def set_value(self, item: Union[str, int]) -> None:
         """
         Set the current value of the widget, selecting the element that matches
-        the text if item is a string, or the index of the position of item is an integer.
+        the text if ``item`` is a string, or the index if ``item`` is an integer.
         This method raises ``ValueError`` if no element found.
 
-        For example, if selector is ``[['a',0],['b',1],['a',2]]``:
+        For example, if widget item list is ``[['a',0],['b',1],['a',2]]``:
 
         - *widget*.set_value('a') -> Widget selects the first element (index 0)
         - *widget*.set_value(2) -> Widget selects the third element (index 2)
