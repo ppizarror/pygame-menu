@@ -76,12 +76,12 @@ class DropSelect(Widget):
 
         DropSelect only implements translation.
 
-    :param title: Selector title
-    :param items: Items of the selector
-    :param dropselect_id: ID of the selector
-    :param default: Index of default element to display
-    :param onchange: Callback when changing the selector
-    :param onreturn: Callback when pressing return on the selector
+    :param title: Drop select title
+    :param items: Items of the drop select
+    :param dropselect_id: ID of the drop select
+    :param default: Index of default item to display
+    :param onchange: Callback when changing the drop select item
+    :param onreturn: Callback when pressing return on the selected item
     :param onselect: Function when selecting the widget
     :param placeholder: Text shown if no option is selected yet
     :param selection_box_arrow_color: Selection box arrow color
@@ -108,6 +108,7 @@ class DropSelect(Widget):
     _drop_frame: Optional['Frame']
     _index: int
     _items: Union[List[Tuple[Any, ...]], List[str]]
+    _open_bottom: bool
     _opened: bool
     _option_buttons: List['Button']
     _option_font: Optional['pygame.font.Font']
@@ -168,7 +169,7 @@ class DropSelect(Widget):
         assert isinstance(default, int)
         assert isinstance(placeholder, str)
 
-        # Check element list
+        # Check items list
         check_selector_items(items)
         assert default >= -1, 'default position must be equal or greater than zero'
         assert default < len(items), 'default position should be lower than number of values'
@@ -213,6 +214,7 @@ class DropSelect(Widget):
         self._drop_frame = None
         self._index = -1
         self._items = items
+        self._open_bottom = True
         self._placeholder = placeholder
         self._selection_effect_draw_post = False
         self._theme = None
@@ -397,6 +399,9 @@ class DropSelect(Widget):
             frame_width -= scrollbar_thickness
 
         if total_height > 0:
+            scrollbars = kwargs.get('scrollbars', self._theme.scrollarea_position)
+            if not kwargs.get('scrollbars_parsed', False):
+                scrollbars = get_scrollbars_from_position(scrollbars)
             self._drop_frame.make_scrollarea(
                 max_width=frame_width,
                 max_height=max_height,
@@ -410,7 +415,7 @@ class DropSelect(Widget):
                 scrollbar_slider_color=kwargs.get('scrollbar_slider_color', self._theme.scrollbar_slider_color),
                 scrollbar_slider_pad=kwargs.get('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
                 scrollbar_thick=scrollbar_thickness,
-                scrollbars=get_scrollbars_from_position(kwargs.get('scrollbars', self._theme.scrollarea_position))
+                scrollbars=scrollbars
             )
         self._drop_frame.set_scrollarea(self._scrollarea)
         if self._frame is not None:
@@ -575,6 +580,14 @@ class DropSelect(Widget):
         )
         w = h + self._selection_box_arrow_margin[1]
 
+        # Check which direction it should open
+        if self._drop_frame is not None:
+            rect_full = self.get_rect(render=False)
+            rect_full.height += self._drop_frame.get_attribute('height')
+            if self._scrollarea is not None:
+                rect_clipped = self._scrollarea.get_absolute_view_rect().clip(rect_full)
+                print(rect_full.height, rect_clipped.height)
+
         if not self.active:
             arrow_right_pos = (
                 (arrow.right - w + h / 2 - h / 16, arrow.centery - h / 6 - h / 20),
@@ -629,7 +642,7 @@ class DropSelect(Widget):
 
     def get_value(self) -> Optional[Tuple[Union[Tuple[Any, ...], str], int]]:
         """
-        Return the current value of the selector at the selected index.
+        Return the current value of the selected index.
 
         :return: Value and index as a tuple, (value, index)
         """
@@ -685,14 +698,14 @@ class DropSelect(Widget):
 
     def set_value(self, item: Union[str, int]) -> None:
         """
-        Set the current value of the widget, selecting the element that matches
+        Set the current value of the widget, selecting the item that matches
         the text if ``item`` is a string, or the index if ``item`` is an integer.
-        This method raises ``ValueError`` if no element found.
+        This method raises ``ValueError`` if no item found.
 
         For example, if widget item list is ``[['a',0],['b',1],['a',2]]``:
 
-        - *widget*.set_value('a') -> Widget selects the first element (index 0)
-        - *widget*.set_value(2) -> Widget selects the third element (index 2)
+        - *widget*.set_value('a') -> Widget selects the first item (index 0)
+        - *widget*.set_value(2) -> Widget selects the third item (index 2)
 
         .. note::
 
@@ -704,14 +717,14 @@ class DropSelect(Widget):
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
 
         if isinstance(item, str):
-            for element in self._items:
-                if element[0] == item:
-                    self._index = self._items.index(element)
+            for i in self._items:
+                if i[0] == item:
+                    self._index = self._items.index(i)
                     return
-            raise ValueError('no value "{}" found in selector'.format(item))
+            raise ValueError('no value "{}" found in drop select'.format(item))
         elif isinstance(item, int):
             assert 0 <= item < len(self._items), \
-                'item index must be greater than zero and lower than the number of elements on the selector'
+                'item index must be greater than zero and lower than the number of items on the drop select'
             self._index = item
 
         # Update options background selection
@@ -732,7 +745,7 @@ class DropSelect(Widget):
         .. note::
 
             If the length of the list is different than the previous one,
-            the new index of the select will be the first element of the list.
+            the new index of the select will be the first item of the list.
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None
@@ -741,13 +754,13 @@ class DropSelect(Widget):
         if len(items) > 0:
             check_selector_items(items)
         if self._index != -1:
-            selected_element = self._items[self._index]
+            selected_item = self._items[self._index]
         else:
-            selected_element = None
+            selected_item = None
         self._items = items
-        if selected_element is not None:
+        if selected_item is not None:
             try:
-                self._index = self._items.index(selected_element)
+                self._index = self._items.index(selected_item)
             except ValueError:
                 if self._index >= len(self._items):
                     self._index = -1
@@ -799,7 +812,7 @@ class DropSelect(Widget):
                 self._toggle_drop()
                 updated = True
 
-            # Click on selector; don't consider the mouse wheel (button 4 & 5)
+            # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3) or \
                     self._touchscreen_enabled and event.type == pygame.FINGERUP and \
                     not (self._drop_frame is not None and self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
@@ -866,6 +879,8 @@ class DropSelect(Widget):
             rect.height += self._drop_frame.get_attribute('height')
         else:
             rect.width -= self._selection_box_border_width
+        if self._scrollarea is not None and rect.width != 0 and rect.height != 0:
+            rect = self._scrollarea.get_absolute_view_rect().clip(rect)
         return rect
 
 
