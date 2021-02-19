@@ -50,7 +50,8 @@ from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.widgets import Widget
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
-from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
+
+from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, PaddingInstance, \
     NumberType, Vector2NumberType, List, Tuple, NumberInstance
 
 try:
@@ -148,7 +149,7 @@ class WidgetManager(object):
         if font_background_color is None and \
                 self._theme.widget_font_background_color_from_menu and \
                 not background_is_color:
-            if isinstance(self._theme.background_color, tuple):  # Is color
+            if not isinstance(self._theme.background_color, pygame_menu.BaseImage):
                 font_background_color = _utils.assert_color(self._theme.background_color)
         attributes['font_background_color'] = font_background_color
 
@@ -190,13 +191,12 @@ class WidgetManager(object):
         margin = kwargs.pop('margin', self._theme.widget_margin)
         if margin == 0:
             margin = (0, 0)
-        assert isinstance(margin, tuple)
         _utils.assert_vector(margin, 2)
         attributes['margin'] = margin
 
         # padding
         padding = kwargs.pop('padding', self._theme.widget_padding)
-        assert isinstance(padding, (int, float, tuple))
+        assert isinstance(padding, PaddingInstance)
         attributes['padding'] = padding
 
         # readonly_color
@@ -517,7 +517,7 @@ class WidgetManager(object):
                     title: Union[str, Any],
                     color_type: ColorInputColorType,
                     color_id: str = '',
-                    default: Any = '',
+                    default: Union[str, Tuple[str, ...]] = '',
                     hex_format: ColorInputHexFormatType = 'none',
                     input_separator: str = ',',
                     input_underline: str = '_',
