@@ -647,7 +647,7 @@ class ScrollArea(object):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
-    def get_scroll_value(self, orientation: str) -> float:
+    def get_scroll_value_percentual(self, orientation: str) -> float:
         """
         Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
 

@@ -681,7 +681,7 @@ class Frame(Widget):
             self._frame_scrollarea.scroll_to(_locals.ORIENTATION_VERTICAL, value)
         return self
 
-    def get_scroll_value(self, orientation: str) -> float:
+    def get_scroll_value_percentual(self, orientation: str) -> float:
         """
         Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
@@ -694,7 +694,7 @@ class Frame(Widget):
         :return: Value from ``0`` to ``1``
         """
         if self._frame_scrollarea is not None:
-            return self._frame_scrollarea.get_scroll_value(orientation)
+            return self._frame_scrollarea.get_scroll_value_percentual(orientation)
         return -1
 
     # noinspection PyProtectedMember
