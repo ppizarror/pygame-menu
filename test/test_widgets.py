@@ -1575,7 +1575,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb.get_value_percentual(), 1)
 
         # Ignore events if mouse outside the region
-        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 500), rel=(0, -100),
+        sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 999), rel=(0, -10),
                                                      evtype=pygame.MOUSEMOTION))
         self.assertEqual(sb.get_value_percentual(), 1)
 

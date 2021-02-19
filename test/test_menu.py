@@ -31,20 +31,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['MenuTest']
 
+from typing import Any, Tuple
 import copy
 import math
 import timeit
 import unittest
 
-from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2
-from typing import Any, Tuple
-
 import pygame
 import pygame_menu
+
 from pygame_menu import events
-from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, \
-    JOY_DOWN, JOY_UP, JOY_LEFT, JOY_RIGHT
+from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_DOWN, JOY_UP, \
+    JOY_LEFT, JOY_RIGHT
 from pygame_menu.widgets import Label, Button
+
+from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2
 
 # Configure the tests
 TEST_TIME_DRAW = False

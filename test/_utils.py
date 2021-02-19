@@ -53,10 +53,10 @@ from pygame_menu.font import FONT_EXAMPLES
 from pygame_menu.utils import assert_vector
 
 # noinspection PyProtectedMember
-from pygame_menu._types import NumberType, Union, List, Tuple, Optional, Tuple2IntType, \
+from pygame_menu._types import NumberType, Union, List, Tuple, Optional, Tuple2IntType, EventType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType, VectorIntType
 
-EventListType = Union['pygame.event.Event', List['pygame.event.Event']]
+EventListType = Union[EventType, List[EventType]]
 
 # Constants
 WINDOW_SIZE = (600, 600)  # Width, height
@@ -142,7 +142,7 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
-    def center_joy(testmode: bool = True) -> List['pygame.event.Event']:
+    def center_joy(testmode: bool = True) -> List[EventType]:
         """
         Centers the joy.
 
