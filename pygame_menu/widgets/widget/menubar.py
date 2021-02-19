@@ -59,8 +59,8 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
-    ColorType, Any, Optional, NumberInstance, ColorInputType
+from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
+    ColorType, Any, Optional, NumberInstance, ColorInputType, EventVectorType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -117,20 +117,21 @@ class MenuBar(Widget):
     _style: int
     _width: int
 
-    def __init__(self,
-                 title: Any,
-                 width: NumberType,
-                 background_color: ColorInputType,
-                 menubar_id: str = '',
-                 back_box: bool = False,
-                 mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
-                 modify_scrollarea: bool = True,
-                 offsetx: NumberType = 0,
-                 offsety: NumberType = 0,
-                 onreturn: CallbackType = None,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            width: NumberType,
+            background_color: ColorInputType,
+            menubar_id: str = '',
+            back_box: bool = False,
+            mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
+            modify_scrollarea: bool = True,
+            offsetx: NumberType = 0,
+            offsety: NumberType = 0,
+            onreturn: CallbackType = None,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
 
@@ -480,7 +481,7 @@ class MenuBar(Widget):
             return 0
         return super(MenuBar, self).get_height(apply_padding, apply_selection)
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         updated = False
 
         for event in events:

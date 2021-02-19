@@ -37,8 +37,8 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Optional, List, Tuple, VectorIntType, ColorType, Tuple2IntType, \
-    CallbackType, Union, NumberInstance, ColorInputType, NumberType, Literal
+from pygame_menu._types import Optional, List, VectorIntType, ColorType, Tuple2IntType, \
+    CallbackType, NumberInstance, ColorInputType, NumberType, Literal, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -90,19 +90,20 @@ class ScrollBar(Widget):
     _values_range: List[NumberType]
     scrolling: bool
 
-    def __init__(self,
-                 length: NumberType,
-                 values_range: VectorIntType,
-                 scrollbar_id: str = '',
-                 orientation: str = _locals.ORIENTATION_HORIZONTAL,
-                 slider_pad: NumberType = 0,
-                 slider_color: ColorInputType = (200, 200, 200),
-                 page_ctrl_thick: int = 20,
-                 page_ctrl_color: ColorInputType = (235, 235, 235),
-                 onchange: CallbackType = None,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            length: NumberType,
+            values_range: VectorIntType,
+            scrollbar_id: str = '',
+            orientation: str = _locals.ORIENTATION_HORIZONTAL,
+            slider_pad: NumberType = 0,
+            slider_color: ColorInputType = (200, 200, 200),
+            page_ctrl_thick: int = 20,
+            page_ctrl_color: ColorInputType = (235, 235, 235),
+            onchange: CallbackType = None,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(length, NumberInstance)
         assert isinstance(values_range, (tuple, list))
         assert values_range[1] > values_range[0], 'minimum value first is expected'
@@ -202,12 +203,13 @@ class ScrollBar(Widget):
         setattr(self._slider_rect, pos[self._orientation], self._slider_position)
         self._slider_rect = self._slider_rect.inflate(-2 * self._slider_pad, -2 * self._slider_pad)
 
-    def set_shadow(self,
-                   enabled: bool = True,
-                   color: Optional[ColorInputType] = None,
-                   position: Optional[str] = None,
-                   offset: int = 2
-                   ) -> 'ScrollBar':
+    def set_shadow(
+            self,
+            enabled: bool = True,
+            color: Optional[ColorInputType] = None,
+            position: Optional[str] = None,
+            offset: int = 2
+    ) -> 'ScrollBar':
         """
         Set the scrollbars shadow.
 
@@ -470,7 +472,7 @@ class ScrollBar(Widget):
         """
         return self._slider_rect.move(*self.get_rect(to_absolute_position=True).topleft)
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         if self.readonly:
             return False
         updated = False

@@ -38,7 +38,8 @@ import pygame_menu.controls as _controls
 from pygame_menu.utils import is_callable, assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional, ColorType, ColorInputType
+from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional, ColorType, \
+    ColorInputType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -62,13 +63,14 @@ class Button(Widget):
     _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
     to_menu: bool
 
-    def __init__(self,
-                 title: Any,
-                 button_id: str = '',
-                 onreturn: CallbackType = None,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            button_id: str = '',
+            onreturn: CallbackType = None,
+            *args,
+            **kwargs
+    ) -> None:
         super(Button, self).__init__(
             args=args,
             kwargs=kwargs,
@@ -127,12 +129,13 @@ class Button(Widget):
         self._args = args or []
         self._onreturn = callback
 
-    def add_underline(self,
-                      color: ColorInputType,
-                      offset: int,
-                      width: int,
-                      force_render: bool = False
-                      ) -> 'Button':
+    def add_underline(
+            self,
+            color: ColorInputType,
+            offset: int,
+            width: int,
+            force_render: bool = False
+    ) -> 'Button':
         """
         Adds a underline to text. This is added if widget is rendered
 
@@ -190,7 +193,7 @@ class Button(Widget):
 
         self.force_menu_surface_update()
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         if self.readonly:
             return False
         updated = False

@@ -40,7 +40,7 @@ from pygame_menu.utils import make_surface, assert_color, assert_position, asser
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
-    Optional, Tuple2IntType, NumberInstance, ColorInputType
+    Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -129,26 +129,27 @@ class ScrollArea(object):
     _view_rect: 'pygame.Rect'
     _world: 'pygame.Surface'
 
-    def __init__(self,
-                 area_width: int,
-                 area_height: int,
-                 area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
-                 extend_x: int = 0,
-                 extend_y: int = 0,
-                 menubar: Optional['MenuBar'] = None,
-                 parent_scrollarea: Optional['ScrollArea'] = None,
-                 scrollbar_color: ColorInputType = (235, 235, 235),
-                 scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
-                 scrollbar_slider_color: ColorInputType = (200, 200, 200),
-                 scrollbar_slider_pad: NumberType = 0,
-                 scrollbar_thick: int = 20,
-                 scrollbars: Union[str, Tuple[str, ...]] = get_scrollbars_from_position(_locals.POSITION_SOUTHEAST),
-                 shadow: bool = False,
-                 shadow_color: ColorInputType = (0, 0, 0),
-                 shadow_offset: int = 2,
-                 shadow_position: str = _locals.POSITION_SOUTHEAST,
-                 world: Optional['pygame.Surface'] = None
-                 ) -> None:
+    def __init__(
+            self,
+            area_width: int,
+            area_height: int,
+            area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
+            extend_x: int = 0,
+            extend_y: int = 0,
+            menubar: Optional['MenuBar'] = None,
+            parent_scrollarea: Optional['ScrollArea'] = None,
+            scrollbar_color: ColorInputType = (235, 235, 235),
+            scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
+            scrollbar_slider_color: ColorInputType = (200, 200, 200),
+            scrollbar_slider_pad: NumberType = 0,
+            scrollbar_thick: int = 20,
+            scrollbars: Union[str, Tuple[str, ...]] = get_scrollbars_from_position(_locals.POSITION_SOUTHEAST),
+            shadow: bool = False,
+            shadow_color: ColorInputType = (0, 0, 0),
+            shadow_offset: int = 2,
+            shadow_position: str = _locals.POSITION_SOUTHEAST,
+            world: Optional['pygame.Surface'] = None
+    ) -> None:
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)
         assert isinstance(extend_x, int)
@@ -885,9 +886,10 @@ class ScrollArea(object):
         y_coord = self._rect.y + virtual[1] - offsets[1] + parent_position[1]
         return int(x_coord), int(y_coord)
 
-    def to_world_position(self,
-                          real: Union['pygame.Rect', Tuple2NumberType]
-                          ) -> Union['pygame.Rect', Tuple2IntType]:
+    def to_world_position(
+            self,
+            real: Union['pygame.Rect', Tuple2NumberType]
+    ) -> Union['pygame.Rect', Tuple2IntType]:
         """
         Return the position/Rect in the world surface reference
         of a real position/Rect according to the ScrollArea origin.
@@ -925,7 +927,7 @@ class ScrollArea(object):
             scroll = scroll or sbar.scrolling
         return scroll
 
-    def update(self, events: List['pygame.event.Event']) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         """
         Called by end user to update scroll state.
 
@@ -962,10 +964,11 @@ class ScrollArea(object):
         """
         return self._menu
 
-    def collide(self,
-                widget: Union['pygame_menu.widgets.Widget', 'pygame.Rect'],
-                event: 'pygame.event.Event'
-                ) -> bool:
+    def collide(
+            self,
+            widget: Union['pygame_menu.widgets.Widget', 'pygame.Rect'],
+            event: EventType
+    ) -> bool:
         """
         If user event collides a widget within the ScrollArea respect to the relative position.
 

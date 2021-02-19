@@ -41,8 +41,8 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType
+from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, NumberType, \
+    Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, EventVectorType
 
 try:
 
@@ -182,37 +182,38 @@ class TextInput(Widget):
     _title_size: NumberType
     _valid_chars: Optional[List[str]]
 
-    def __init__(self,
-                 title: Any,
-                 textinput_id: str = '',
-                 copy_paste_enable: bool = True,
-                 cursor_color: ColorInputType = (0, 0, 0),
-                 cursor_selection_color: ColorInputType = (30, 30, 30, 100),
-                 cursor_selection_enable: bool = True,
-                 cursor_switch_ms: NumberType = 500,
-                 history: int = 50,
-                 input_type: str = _locals.INPUT_TEXT,
-                 input_underline: str = '',
-                 input_underline_len: int = 0,
-                 input_underline_vmargin: int = 0,
-                 maxchar: int = 0,
-                 maxwidth: int = 0,
-                 maxwidth_dynamically_update: bool = True,
-                 onchange: CallbackType = None,
-                 onreturn: CallbackType = None,
-                 onselect: CallbackType = None,
-                 password: bool = False,
-                 password_char: str = '*',
-                 repeat_keys_initial_ms: NumberType = 400,
-                 repeat_keys_interval_ms: NumberType = 100,
-                 repeat_mouse_interval_ms: NumberType = 400,
-                 repeat_touch_interval_ms: NumberType = 400,
-                 tab_size: int = 4,
-                 text_ellipsis: str = '...',
-                 valid_chars: Optional[List[str]] = None,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            textinput_id: str = '',
+            copy_paste_enable: bool = True,
+            cursor_color: ColorInputType = (0, 0, 0),
+            cursor_selection_color: ColorInputType = (30, 30, 30, 100),
+            cursor_selection_enable: bool = True,
+            cursor_switch_ms: NumberType = 500,
+            history: int = 50,
+            input_type: str = _locals.INPUT_TEXT,
+            input_underline: str = '',
+            input_underline_len: int = 0,
+            input_underline_vmargin: int = 0,
+            maxchar: int = 0,
+            maxwidth: int = 0,
+            maxwidth_dynamically_update: bool = True,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: CallbackType = None,
+            password: bool = False,
+            password_char: str = '*',
+            repeat_keys_initial_ms: NumberType = 400,
+            repeat_keys_interval_ms: NumberType = 100,
+            repeat_mouse_interval_ms: NumberType = 400,
+            repeat_touch_interval_ms: NumberType = 400,
+            tab_size: int = 4,
+            text_ellipsis: str = '...',
+            valid_chars: Optional[List[str]] = None,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(copy_paste_enable, bool)
         assert isinstance(cursor_selection_enable, bool)
         assert isinstance(cursor_switch_ms, NumberInstance)
@@ -1482,7 +1483,7 @@ class TextInput(Widget):
                 self._sound.play_event_error()
         return False
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         self._clock.tick(60)
 
         # Check mouse pressed

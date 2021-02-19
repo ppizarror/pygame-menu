@@ -63,7 +63,7 @@ import pygame_menu.locals as _locals
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType
+    ColorInputInstance, VectorType, EventType
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 
@@ -184,7 +184,7 @@ def assert_vector(num_vector: VectorType, length: int, instance: type = NumberIn
             'item {0} of vector must be {1}, not type "{2}"'.format(num, instance, type(num))
 
 
-def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
+def check_key_pressed_valid(event: EventType) -> bool:
     """
     Checks if the pressed key is valid.
 

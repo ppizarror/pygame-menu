@@ -48,7 +48,7 @@ from pygame_menu.widgets.core.selection import Selection
 
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
-    NumberInstance, ColorInputType
+    NumberInstance, ColorInputType, EventType, EventVectorType, EventListType
 
 # Stores the previous cursor. This should be a common variable
 # because there's only 1 cursor
@@ -100,7 +100,7 @@ class Widget(object):
     _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
-    _events: List['pygame.event.Event']
+    _events: EventListType
     _flip: Tuple2BoolType
     _floating: bool
     _font: Optional['pygame.font.Font']
@@ -159,17 +159,18 @@ class Widget(object):
     readonly: bool
     selection_expand_background: bool
 
-    def __init__(self,
-                 title: Any = '',
-                 widget_id: str = '',
-                 onchange: CallbackType = None,
-                 onmouseleave: Optional[Callable[['Widget', 'pygame.event.Event'], Any]] = None,
-                 onmouseover: Optional[Callable[['Widget', 'pygame.event.Event'], Any]] = None,
-                 onreturn: CallbackType = None,
-                 onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-                 args=None,
-                 kwargs=None
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any = '',
+            widget_id: str = '',
+            onchange: CallbackType = None,
+            onmouseleave: Optional[Callable[['Widget', EventType], Any]] = None,
+            onmouseover: Optional[Callable[['Widget', EventType], Any]] = None,
+            onreturn: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            args=None,
+            kwargs=None
+    ) -> None:
         assert isinstance(widget_id, str), 'widget id must be a string'
 
         # Store ID, if None or empty create new ID based on UUID
@@ -339,7 +340,7 @@ class Widget(object):
         self._onselect = onselect
         return self
 
-    def set_onmouseover(self, onmouseover: Optional[Callable[['Widget', 'pygame.event.Event'], Any]]) -> 'Widget':
+    def set_onmouseover(self, onmouseover: Optional[Callable[['Widget', EventType], Any]]) -> 'Widget':
         """
         Set ``onmouseover`` callback. This method is executed in
         :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseover` method. The callback function receives
@@ -357,7 +358,7 @@ class Widget(object):
         self._onmouseover = onmouseover
         return self
 
-    def set_onmouseleave(self, onmouseleave: Optional[Callable[['Widget', 'pygame.event.Event'], Any]]) -> 'Widget':
+    def set_onmouseleave(self, onmouseleave: Optional[Callable[['Widget', EventType], Any]]) -> 'Widget':
         """
         Set ``onmouseleave`` callback. This method is executed in
         :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseleave` method. The callback function receives
@@ -375,7 +376,7 @@ class Widget(object):
         self._onmouseleave = onmouseleave
         return self
 
-    def mouseover(self, event: 'pygame.event.Event') -> 'Widget':
+    def mouseover(self, event: EventType) -> 'Widget':
         """
         Run the ``onmouseover`` if the mouse is placed over the Widget. The callback receive the Widget
         object reference and the mouse event:
@@ -411,7 +412,7 @@ class Widget(object):
 
         return self
 
-    def mouseleave(self, event: 'pygame.event.Event') -> 'Widget':
+    def mouseleave(self, event: EventType) -> 'Widget':
         """
         Run the ``onmouseleave`` callback if the mouse is placed outside the Widget. The callback receive
         the Widget object reference and the mouse event:
@@ -1021,13 +1022,14 @@ class Widget(object):
         """
         return self.get_rect(to_real_position=True)
 
-    def get_rect(self,
-                 inflate: Optional[Tuple2IntType] = None,
-                 apply_padding: bool = True,
-                 use_transformed_padding: bool = True,
-                 to_real_position: bool = False,
-                 to_absolute_position: bool = False
-                 ) -> 'pygame.Rect':
+    def get_rect(
+            self,
+            inflate: Optional[Tuple2IntType] = None,
+            apply_padding: bool = True,
+            use_transformed_padding: bool = True,
+            to_real_position: bool = False,
+            to_absolute_position: bool = False
+    ) -> 'pygame.Rect':
         """
         Return the :py:class:`pygame.Rect` object of the Widget.
         This method forces rendering.
@@ -1241,16 +1243,17 @@ class Widget(object):
             return self._font_selected_color
         return self._font_color
 
-    def set_font(self,
-                 font: FontType,
-                 font_size: int,
-                 color: ColorInputType,
-                 selected_color: ColorInputType,
-                 readonly_color: ColorInputType,
-                 readonly_selected_color: ColorInputType,
-                 background_color: Optional[ColorInputType],
-                 antialias: bool = True
-                 ) -> 'Widget':
+    def set_font(
+            self,
+            font: FontType,
+            font_size: int,
+            color: ColorInputType,
+            selected_color: ColorInputType,
+            readonly_color: ColorInputType,
+            readonly_selected_color: ColorInputType,
+            background_color: Optional[ColorInputType],
+            antialias: bool = True
+    ) -> 'Widget':
         """
         Set the Widget font.
 
@@ -1297,12 +1300,13 @@ class Widget(object):
         self._force_render()
         return self
 
-    def set_font_shadow(self,
-                        enabled: bool = True,
-                        color: Optional[ColorInputType] = None,
-                        position: Optional[str] = None,
-                        offset: int = 2
-                        ) -> 'Widget':
+    def set_font_shadow(
+            self,
+            enabled: bool = True,
+            color: Optional[ColorInputType] = None,
+            position: Optional[str] = None,
+            offset: int = 2
+    ) -> 'Widget':
         """
         Set the Widget font shadow.
 
@@ -2061,7 +2065,7 @@ class Widget(object):
             self.set_value(self._default_value)
         return self
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         """
         Update according to the given events list and fire the callbacks.
         This method must return ``True`` if it updated (the internal variables
@@ -2183,7 +2187,7 @@ class Widget(object):
             callback(self, self._menu)
         return self
 
-    def _add_event(self, event: 'pygame.event.Event') -> None:
+    def _add_event(self, event: EventType) -> None:
         """
         Add a custom event to the Widget for the next update.
 
@@ -2192,7 +2196,7 @@ class Widget(object):
         """
         self._events.append(event)
 
-    def _merge_events(self, events: List['pygame.event.Event']) -> List['pygame.event.Event']:
+    def _merge_events(self, events: EventListType) -> EventListType:
         """
         Append the Widget events to events list.
 

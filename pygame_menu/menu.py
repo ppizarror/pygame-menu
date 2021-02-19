@@ -56,7 +56,7 @@ from pygame_menu.widgets import Frame, Widget, MenuBar
 from pygame_menu._types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
     Union, Tuple, List, Vector2IntType, Vector2BoolType, Tuple4Tuple2IntType, Tuple2IntType, \
     MenuColumnMaxWidthType, MenuColumnMinWidthType, MenuRowsType, Optional, Tuple2BoolType, \
-    NumberInstance, VectorInstance
+    NumberInstance, VectorInstance, EventType, EventVectorType, EventListType
 
 # Joy events
 JOY_EVENT_LEFT = 1
@@ -146,10 +146,10 @@ class Menu(object):
     _mouseover: bool
     _onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
     _onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
-    _onmouseleave: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
-    _onmouseover: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
+    _onmouseleave: Optional[Callable[['Menu', EventType], Any]]
+    _onmouseover: Optional[Callable[['Menu', EventType], Any]]
     _onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
-    _onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
+    _onupdate: Optional[Callable[[EventListType, 'Menu'], Any]]
     _onwindowmouseleave: Optional[Callable[['Menu'], Any]]
     _onwindowmouseover: Optional[Callable[['Menu'], Any]]
     _overflow: Tuple2BoolType
@@ -183,30 +183,31 @@ class Menu(object):
     _window_size: Tuple2IntType
     add: 'WidgetManager'
 
-    def __init__(self,
-                 title: str,
-                 width: NumberType,
-                 height: NumberType,
-                 center_content: bool = True,
-                 column_max_width: MenuColumnMaxWidthType = None,
-                 column_min_width: MenuColumnMinWidthType = 0,
-                 columns: int = 1,
-                 enabled: bool = True,
-                 joystick_enabled: bool = True,
-                 menu_id: str = '',
-                 menu_position: Vector2NumberType = (50, 50),
-                 mouse_enabled: bool = True,
-                 mouse_motion_selection: bool = False,
-                 mouse_visible: bool = True,
-                 onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
-                 onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
-                 overflow: Union[Vector2BoolType, bool] = (True, True),
-                 rows: MenuRowsType = None,
-                 screen_dimension: Optional[Vector2IntType] = None,
-                 theme: '_themes.Theme' = _themes.THEME_DEFAULT.copy(),
-                 touchscreen: bool = False,
-                 touchscreen_motion_selection: bool = False
-                 ) -> None:
+    def __init__(
+            self,
+            title: str,
+            width: NumberType,
+            height: NumberType,
+            center_content: bool = True,
+            column_max_width: MenuColumnMaxWidthType = None,
+            column_min_width: MenuColumnMinWidthType = 0,
+            columns: int = 1,
+            enabled: bool = True,
+            joystick_enabled: bool = True,
+            menu_id: str = '',
+            menu_position: Vector2NumberType = (50, 50),
+            mouse_enabled: bool = True,
+            mouse_motion_selection: bool = False,
+            mouse_visible: bool = True,
+            onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]] = None,
+            onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]] = None,
+            overflow: Union[Vector2BoolType, bool] = (True, True),
+            rows: MenuRowsType = None,
+            screen_dimension: Optional[Vector2IntType] = None,
+            theme: '_themes.Theme' = _themes.THEME_DEFAULT.copy(),
+            touchscreen: bool = False,
+            touchscreen_motion_selection: bool = False
+    ) -> None:
 
         # Compatibility from (height, width, title) to (title, width, height)
         if not isinstance(title, str) and isinstance(height, str):
@@ -650,9 +651,10 @@ class Menu(object):
         self._current._decorator.force_cache_update()
         return self
 
-    def set_onbeforeopen(self,
-                         onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
-                         ) -> 'Menu':
+    def set_onbeforeopen(
+            self,
+            onbeforeopen: Optional[Callable[['Menu', 'Menu'], Any]]
+    ) -> 'Menu':
         """
         Set ``onbeforeopen`` callback. Callback is executed before opening the Menu,
         it receives the current Menu and the next Menu:
@@ -675,9 +677,10 @@ class Menu(object):
         self._onbeforeopen = onbeforeopen
         return self
 
-    def set_onupdate(self,
-                     onupdate: Optional[Callable[[List['pygame.event.Event'], 'Menu'], Any]]
-                     ) -> 'Menu':
+    def set_onupdate(
+            self,
+            onupdate: Optional[Callable[[EventListType, 'Menu'], Any]]
+    ) -> 'Menu':
         """
         Set ``onupdate`` callback. Callback is executed before updating the Menu, it receives
         the event list and the menu reference:
@@ -700,9 +703,10 @@ class Menu(object):
         self._onupdate = onupdate
         return self
 
-    def set_onclose(self,
-                    onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
-                    ) -> 'Menu':
+    def set_onclose(
+            self,
+            onclose: Optional[Union['_events.MenuAction', Callable[[], Any], Callable[['Menu'], Any]]]
+    ) -> 'Menu':
         """
         Set ``onclose`` callback. Callback can only receive 1 argument maximum (if not ``None``),
         if so, the Menu instance is provided:
@@ -727,9 +731,10 @@ class Menu(object):
         self._onclose = onclose
         return self
 
-    def set_onreset(self,
-                    onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
-                    ) -> 'Menu':
+    def set_onreset(
+            self,
+            onreset: Optional[Union[Callable[[], Any], Callable[['Menu'], Any]]]
+    ) -> 'Menu':
         """
         Set ``onreset`` callback. Callback can only receive 1 argument maximum (if not ``None``),
         if so, the Menu instance is provided:
@@ -752,9 +757,10 @@ class Menu(object):
         self._onreset = onreset
         return self
 
-    def set_onwindowmouseover(self,
-                              onwindowmouseover: Optional[Callable[['Menu'], Any]]
-                              ) -> 'Menu':
+    def set_onwindowmouseover(
+            self,
+            onwindowmouseover: Optional[Callable[['Menu'], Any]]
+    ) -> 'Menu':
         """
         Set ``onwindowmouseover`` callback. This method is executed in
         :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
@@ -773,9 +779,10 @@ class Menu(object):
         self._onwindowmouseover = onwindowmouseover
         return self
 
-    def set_onwindowmouseleave(self,
-                               onwindowmouseleave: Optional[Callable[['Menu'], Any]]
-                               ) -> 'Menu':
+    def set_onwindowmouseleave(
+            self,
+            onwindowmouseleave: Optional[Callable[['Menu'], Any]]
+    ) -> 'Menu':
         """
         Set ``onmouseleave`` callback. This method is executed in
         :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
@@ -794,9 +801,10 @@ class Menu(object):
         self._onwindowmouseleave = onwindowmouseleave
         return self
 
-    def set_onmouseover(self,
-                        onmouseover: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
-                        ) -> 'Menu':
+    def set_onmouseover(
+            self,
+            onmouseover: Optional[Callable[['Menu', EventType], Any]]
+    ) -> 'Menu':
         """
         Set ``onmouseover`` callback. This method is executed in
         :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
@@ -815,9 +823,10 @@ class Menu(object):
         self._onmouseover = onmouseover
         return self
 
-    def set_onmouseleave(self,
-                         onmouseleave: Optional[Callable[['Menu', 'pygame.event.Event'], Any]]
-                         ) -> 'Menu':
+    def set_onmouseleave(
+            self,
+            onmouseleave: Optional[Callable[['Menu', EventType], Any]]
+    ) -> 'Menu':
         """
         Set ``onmouseleave`` callback. This method is executed in
         :py:meth:`pygame_menu.menu.Menu.update` method. The callback function receives the
@@ -2067,7 +2076,7 @@ class Menu(object):
             return self._current._move_selected_left_right(1)
         return False
 
-    def update(self, events: List['pygame.event.Event']) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         """
         Update the status of the Menu using external events.
         The update event is applied only on the **current** Menu.
@@ -2430,7 +2439,7 @@ class Menu(object):
         if force:
             self._current._check_mouseleave(force=False, widget=widget, menu=menu)
 
-    def collide(self, event: 'pygame.event.Event') -> bool:
+    def collide(self, event: EventType) -> bool:
         """
         Check if user event collides the Menu.
 
@@ -2452,11 +2461,12 @@ class Menu(object):
         else:
             return bool(self.get_rect().collidepoint(*event.pos))
 
-    def mainloop(self,
-                 surface: 'pygame.Surface',
-                 bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
-                 **kwargs
-                 ) -> 'Menu':
+    def mainloop(
+            self,
+            surface: 'pygame.Surface',
+            bgfun: Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]] = None,
+            **kwargs
+    ) -> 'Menu':
         """
         Main loop of the **current** Menu. In this function, the Menu handle exceptions and draw.
         The Menu pauses the application and checks :py:mod:`pygame` events itself.
@@ -3270,12 +3280,13 @@ class Menu(object):
             data.append(w._get_status())
         return tuple(data)
 
-    def move_widget_index(self,
-                          widget: Optional['Widget'],
-                          index: Optional[Union['Widget', int]] = None,
-                          render: bool = True,
-                          **kwargs
-                          ) -> Optional[Tuple2IntType]:
+    def move_widget_index(
+            self,
+            widget: Optional['Widget'],
+            index: Optional[Union['Widget', int]] = None,
+            render: bool = True,
+            **kwargs
+    ) -> Optional[Tuple2IntType]:
         """
         Move a given widget to a certain index. ``index`` can be another widget,
         a numerical position, or ``None``; if ``None`` the widget is pushed to the

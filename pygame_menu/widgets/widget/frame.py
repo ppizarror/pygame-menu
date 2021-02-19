@@ -42,7 +42,7 @@ from pygame_menu.utils import assert_alignment, make_surface, assert_vector, ass
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, \
-    Tuple2IntType, NumberInstance, Any, ColorInputType
+    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -90,12 +90,13 @@ class Frame(Widget):
     horizontal: bool
     last_index: int  # Last selectable widget index
 
-    def __init__(self,
-                 width: NumberType,
-                 height: NumberType,
-                 orientation: str,
-                 frame_id: str = ''
-                 ) -> None:
+    def __init__(
+            self,
+            width: NumberType,
+            height: NumberType,
+            orientation: str,
+            frame_id: str = ''
+    ) -> None:
         super(Frame, self).__init__(widget_id=frame_id)
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
@@ -196,20 +197,21 @@ class Frame(Widget):
             return self._frame_scrollarea.get_size(inner=True)
         return self.get_size()
 
-    def make_scrollarea(self,
-                        max_width: Optional[NumberType],
-                        max_height: Optional[NumberType],
-                        scrollbar_color: ColorInputType,
-                        scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
-                        scrollbar_shadow: bool,
-                        scrollbar_shadow_color: ColorInputType,
-                        scrollbar_shadow_offset: int,
-                        scrollbar_shadow_position: str,
-                        scrollbar_slider_color: ColorInputType,
-                        scrollbar_slider_pad: NumberType,
-                        scrollbar_thick: NumberType,
-                        scrollbars: Union[str, Tuple[str, ...]],
-                        ) -> 'Frame':
+    def make_scrollarea(
+            self,
+            max_width: Optional[NumberType],
+            max_height: Optional[NumberType],
+            scrollbar_color: ColorInputType,
+            scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
+            scrollbar_shadow: bool,
+            scrollbar_shadow_color: ColorInputType,
+            scrollbar_shadow_offset: int,
+            scrollbar_shadow_position: str,
+            scrollbar_slider_color: ColorInputType,
+            scrollbar_slider_pad: NumberType,
+            scrollbar_thick: NumberType,
+            scrollbars: Union[str, Tuple[str, ...]],
+    ) -> 'Frame':
         """
         Make the scrollarea of the frame.
 
@@ -296,7 +298,7 @@ class Frame(Widget):
         """
         return self.first_index, self.last_index
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         if not self.is_scrollable:
             return False
         return self._frame_scrollarea.update(events)
@@ -582,11 +584,12 @@ class Frame(Widget):
 
         return self
 
-    def get_widgets(self,
-                    unpack_subframes: bool = True,
-                    unpack_subframes_include_frame: bool = False,
-                    reverse: bool = False
-                    ) -> Tuple['Widget', ...]:
+    def get_widgets(
+            self,
+            unpack_subframes: bool = True,
+            unpack_subframes_include_frame: bool = False,
+            reverse: bool = False
+    ) -> Tuple['Widget', ...]:
         """
         Get widgets as a tuple.
 
@@ -766,11 +769,12 @@ class Frame(Widget):
         return widget
 
     # noinspection PyProtectedMember
-    def pack(self,
-             widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
-             alignment: str = _locals.ALIGN_LEFT,
-             vertical_position: str = _locals.POSITION_NORTH,
-             margin: Vector2NumberType = (0, 0)) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
+    def pack(
+            self,
+            widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
+            alignment: str = _locals.ALIGN_LEFT,
+            vertical_position: str = _locals.POSITION_NORTH,
+            margin: Vector2NumberType = (0, 0)) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
         """
         Packs widget in the frame line. To pack a widget it has to be already
         appended to Menu, and the Menu must be the same as the frame.

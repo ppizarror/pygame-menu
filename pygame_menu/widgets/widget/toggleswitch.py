@@ -40,7 +40,7 @@ from pygame_menu.font import FontType, FontInstance
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
-    Tuple2NumberType, Tuple2IntType, NumberInstance, ColorInputType
+    Tuple2NumberType, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -114,32 +114,33 @@ class ToggleSwitch(Widget):
     _switch_width: int
     _total_states: int
 
-    def __init__(self,
-                 title: Any,
-                 toggleswitch_id: str = '',
-                 default_state: int = 0,
-                 infinite: bool = False,
-                 onchange: CallbackType = None,
-                 onselect: CallbackType = None,
-                 slider_color: ColorInputType = (255, 255, 255),
-                 slider_height_factor: NumberType = 1,
-                 slider_thickness: int = 25,
-                 slider_vmargin: NumberType = 0,
-                 state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
-                 state_text: Tuple[str, ...] = ('Off', 'On'),
-                 state_text_font: Optional[FontType] = None,
-                 state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
-                 state_text_font_size: Optional[int] = None,
-                 state_text_position: Tuple2NumberType = (0.5, 0.5),
-                 state_values: Tuple[Any, ...] = (False, True),
-                 state_width: Union[Tuple[int, ...], int] = 150,
-                 switch_border_color: ColorInputType = (40, 40, 40),
-                 switch_border_width: int = 1,
-                 switch_height: NumberType = 1.25,
-                 switch_margin: Tuple2NumberType = (25, 0),
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            toggleswitch_id: str = '',
+            default_state: int = 0,
+            infinite: bool = False,
+            onchange: CallbackType = None,
+            onselect: CallbackType = None,
+            slider_color: ColorInputType = (255, 255, 255),
+            slider_height_factor: NumberType = 1,
+            slider_thickness: int = 25,
+            slider_vmargin: NumberType = 0,
+            state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
+            state_text: Tuple[str, ...] = ('Off', 'On'),
+            state_text_font: Optional[FontType] = None,
+            state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
+            state_text_font_size: Optional[int] = None,
+            state_text_position: Tuple2NumberType = (0.5, 0.5),
+            state_values: Tuple[Any, ...] = (False, True),
+            state_width: Union[Tuple[int, ...], int] = 150,
+            switch_border_color: ColorInputType = (40, 40, 40),
+            switch_border_width: int = 1,
+            switch_height: NumberType = 1.25,
+            switch_margin: Tuple2NumberType = (25, 0),
+            *args,
+            **kwargs
+    ) -> None:
         super(ToggleSwitch, self).__init__(
             args=args,
             kwargs=kwargs,
@@ -374,7 +375,7 @@ class ToggleSwitch(Widget):
             self.change()
             self._sound.play_key_add()
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         if self.readonly:
             return False
         updated = False

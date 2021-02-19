@@ -54,7 +54,7 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, Literal, ColorType, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, NumberType
+    ColorInputType, Tuple2IntType, Tuple3IntType, NumberType, EventVectorType
 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'
@@ -130,25 +130,26 @@ class Selector(Widget):
     _style_fancy_box_margin: NumberType  # Box left margin
     _title_size: int
 
-    def __init__(self,
-                 title: Any,
-                 items: Union[List[Tuple[Any, ...]], List[str]],
-                 selector_id: str = '',
-                 default: int = 0,
-                 onchange: CallbackType = None,
-                 onreturn: CallbackType = None,
-                 onselect: CallbackType = None,
-                 style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
-                 style_fancy_arrow_color: ColorInputType = (160, 160, 160),
-                 style_fancy_arrow_margin: Tuple3IntType = (5, 5, 0),
-                 style_fancy_bgcolor: ColorInputType = (180, 180, 180),
-                 style_fancy_bordercolor: ColorInputType = (0, 0, 0),
-                 style_fancy_borderwidth: int = 1,
-                 style_fancy_box_inflate: Tuple2IntType = (0, 0),
-                 style_fancy_box_margin: int = 25,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            items: Union[List[Tuple[Any, ...]], List[str]],
+            selector_id: str = '',
+            default: int = 0,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: CallbackType = None,
+            style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
+            style_fancy_arrow_color: ColorInputType = (160, 160, 160),
+            style_fancy_arrow_margin: Tuple3IntType = (5, 5, 0),
+            style_fancy_bgcolor: ColorInputType = (180, 180, 180),
+            style_fancy_bordercolor: ColorInputType = (0, 0, 0),
+            style_fancy_borderwidth: int = 1,
+            style_fancy_box_inflate: Tuple2IntType = (0, 0),
+            style_fancy_box_margin: int = 25,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(items, list)
         assert isinstance(selector_id, str)
         assert isinstance(default, int)
@@ -403,7 +404,7 @@ class Selector(Widget):
                 self._index = 0
                 self._default_value = 0
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         if self.readonly:
             return False
         updated = False

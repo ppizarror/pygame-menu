@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from pygame.color import Color as _Color
+from pygame.event import Event as EventType
 
 from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optional
 
@@ -44,6 +45,8 @@ ArgsType = Optional[Sequence[Any]]
 CallbackType = Optional[Callable]
 ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
 ColorInputType = Union[ColorType, str, int, _Color]
+EventListType = List[EventType]
+EventVectorType = Union[EventListType, Tuple[EventType]]
 KwargsType = Optional[Mapping[Any, Any]]
 NumberType = Union[int, float]
 

@@ -45,7 +45,8 @@ from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, ColorType, Dict, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, PaddingInstance, Tuple4IntType, NumberType
+    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, PaddingInstance, Tuple4IntType, NumberType, \
+    EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -131,37 +132,38 @@ class DropSelect(Widget):
     _theme: Optional['pygame_menu.Theme']
     _title_size: Tuple2IntType
 
-    def __init__(self,
-                 title: Any,
-                 items: Union[List[Tuple[Any, ...]], List[str]],
-                 dropselect_id: str = '',
-                 default: int = -1,
-                 onchange: CallbackType = None,
-                 onreturn: CallbackType = None,
-                 onselect: CallbackType = None,
-                 placeholder: str = 'Select an option',
-                 selection_box_arrow_color: ColorInputType = (150, 150, 150),
-                 selection_box_arrow_margin: Tuple3IntType = (5, 5, 0),
-                 selection_box_bgcolor: ColorInputType = (255, 255, 255),
-                 selection_box_border_color: ColorInputType = (150, 150, 150),
-                 selection_box_border_width: int = 1,
-                 selection_box_height: int = 3,
-                 selection_box_inflate: Tuple2IntType = (0, 0),
-                 selection_box_margin: int = 25,
-                 selection_box_text_margin: int = 5,
-                 selection_box_width: int = 0,
-                 selection_infinite: bool = False,
-                 selection_option_border_color: ColorInputType = (220, 220, 220),
-                 selection_option_border_width: int = 1,
-                 selection_option_font: Optional[FontType] = None,
-                 selection_option_font_color: ColorInputType = (0, 0, 0),
-                 selection_option_font_size: Optional[int] = None,
-                 selection_option_padding: PaddingType = 5,
-                 selection_option_selected_bgcolor: ColorInputType = (230, 250, 247),
-                 selection_option_selected_font_color: ColorInputType = (0, 0, 0),
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            items: Union[List[Tuple[Any, ...]], List[str]],
+            dropselect_id: str = '',
+            default: int = -1,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: CallbackType = None,
+            placeholder: str = 'Select an option',
+            selection_box_arrow_color: ColorInputType = (150, 150, 150),
+            selection_box_arrow_margin: Tuple3IntType = (5, 5, 0),
+            selection_box_bgcolor: ColorInputType = (255, 255, 255),
+            selection_box_border_color: ColorInputType = (150, 150, 150),
+            selection_box_border_width: int = 1,
+            selection_box_height: int = 3,
+            selection_box_inflate: Tuple2IntType = (0, 0),
+            selection_box_margin: int = 25,
+            selection_box_text_margin: int = 5,
+            selection_box_width: int = 0,
+            selection_infinite: bool = False,
+            selection_option_border_color: ColorInputType = (220, 220, 220),
+            selection_option_border_width: int = 1,
+            selection_option_font: Optional[FontType] = None,
+            selection_option_font_color: ColorInputType = (0, 0, 0),
+            selection_option_font_size: Optional[int] = None,
+            selection_option_padding: PaddingType = 5,
+            selection_option_selected_bgcolor: ColorInputType = (230, 250, 247),
+            selection_option_selected_font_color: ColorInputType = (0, 0, 0),
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(items, list)
         assert isinstance(dropselect_id, str)
         assert isinstance(default, int)
@@ -682,7 +684,7 @@ class DropSelect(Widget):
         self._drop_maked = False
         self._drop_frame = None
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         if self.readonly:
             return False
         updated = False
