@@ -2416,6 +2416,12 @@ class Widget(object):
             for ww in self.get_widgets():
                 data.append(ww._get_status())
 
+        # Append inner widgets if dropselect
+        if isinstance(self, pygame_menu.widgets.DropSelect) and self._drop_frame is not None:
+            data.append(self._drop_frame._get_status())
+            for btn in self._option_buttons:
+                data.append(btn._get_status())
+
         try:
             data.append(self.get_value())
         except ValueError:
