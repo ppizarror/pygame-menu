@@ -855,6 +855,23 @@ class ScrollArea(object):
                 parent = parent._parent_scrollarea
         return view_rect_absolute
 
+    # def get_real_view_rect(self, visible: bool = False) -> 'pygame.Rect':
+    #     """
+    #     Return the ScrollArea real position view rect clipped if it is not visible by
+    #     it's parent ScrollArea.
+    #
+    #     :return: Clipped real position view rect
+    #     """
+    #     view_rect_real = self.to_real_position(self._view_rect, visible=visible)
+    #     if self._parent_scrollarea is not None:
+    #         parent = self._parent_scrollarea
+    #         while True:  # Recursive
+    #             if parent is None:
+    #                 break
+    #             view_rect_real = parent.get_real_view_rect(visible=visible).clip(view_rect_real)
+    #             parent = parent._parent_scrollarea
+    #     return view_rect_real
+
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
                          ) -> Union['pygame.Rect', Tuple2IntType]:
         """
