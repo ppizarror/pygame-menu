@@ -130,10 +130,11 @@ class App(object):
         # get_value returns selected item tuple and index, so [0][1] means the second object from ('The first', 1) tuple
         self._update_from_selection(int(self.selector_widget.get_value()[0][1]))
 
-    def animate_quit_button(self,
-                            widget: 'pygame_menu.widgets.Widget',
-                            menu: 'pygame_menu.Menu'
-                            ) -> None:
+    def animate_quit_button(
+            self,
+            widget: 'pygame_menu.widgets.Widget',
+            menu: 'pygame_menu.Menu'
+    ) -> None:
         """
         Animate widgets if the last option is selected.
 

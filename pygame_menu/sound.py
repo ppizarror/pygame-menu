@@ -133,17 +133,17 @@ class Sound(object):
     _sound: Dict[str, Dict[str, Any]]
     _uniquechannel: bool
 
-    # noinspection PyShadowingBuiltins
-    def __init__(self,
-                 uniquechannel: bool = True,
-                 frequency: int = 22050,
-                 size: int = -16,
-                 channels: int = 2,
-                 buffer: int = 4096,
-                 devicename: str = '',
-                 allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
-                 force_init: bool = False
-                 ) -> None:
+    def __init__(
+            self,
+            uniquechannel: bool = True,
+            frequency: int = 22050,
+            size: int = -16,
+            channels: int = 2,
+            buffer: int = 4096,
+            devicename: str = '',
+            allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
+            force_init: bool = False
+    ) -> None:
         assert isinstance(uniquechannel, bool)
         assert isinstance(frequency, int)
         assert isinstance(size, int)

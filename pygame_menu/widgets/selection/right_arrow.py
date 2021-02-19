@@ -52,12 +52,13 @@ class RightArrowSelection(ArrowSelection):
     """
     _arrow_left_margin: int
 
-    def __init__(self,
-                 arrow_size: Tuple2IntType = (10, 15),
-                 arrow_left_margin: int = 3,
-                 arrow_vertical_offset: int = 0,
-                 blink_ms: NumberType = 0
-                 ) -> None:
+    def __init__(
+            self,
+            arrow_size: Tuple2IntType = (10, 15),
+            arrow_left_margin: int = 3,
+            arrow_vertical_offset: int = 0,
+            blink_ms: NumberType = 0
+    ) -> None:
         assert isinstance(arrow_left_margin, NumberInstance)
         assert arrow_left_margin >= 0, 'margin cannot be negative'
         super(RightArrowSelection, self).__init__(

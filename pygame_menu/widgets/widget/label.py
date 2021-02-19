@@ -50,11 +50,12 @@ class Label(Widget):
     """
     _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
 
-    def __init__(self,
-                 title: Any,
-                 label_id: str = '',
-                 onselect: CallbackType = None,
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            label_id: str = '',
+            onselect: CallbackType = None,
+    ) -> None:
         super(Label, self).__init__(
             title=title,
             onselect=onselect,
@@ -62,12 +63,13 @@ class Label(Widget):
         )
         self._last_underline = ['', None]
 
-    def add_underline(self,
-                      color: ColorInputType,
-                      offset: int,
-                      width: int,
-                      force_render: bool = False
-                      ) -> 'Label':
+    def add_underline(
+            self,
+            color: ColorInputType,
+            offset: int,
+            width: int,
+            force_render: bool = False
+    ) -> 'Label':
         """
         Adds a underline to text. This is added if widget is rendered
 

@@ -61,14 +61,15 @@ class Image(Widget):
     """
     _image: 'BaseImage'
 
-    def __init__(self,
-                 image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
-                 angle: NumberType = 0,
-                 image_id: str = '',
-                 onselect: CallbackType = None,
-                 scale: Tuple2NumberType = (1, 1),
-                 scale_smooth: bool = True
-                 ) -> None:
+    def __init__(
+            self,
+            image_path: Union[str, 'BaseImage', 'Path', 'BytesIO'],
+            angle: NumberType = 0,
+            image_id: str = '',
+            onselect: CallbackType = None,
+            scale: Tuple2NumberType = (1, 1),
+            scale_smooth: bool = True
+    ) -> None:
         assert isinstance(image_path, (str, Path, BaseImage, BytesIO))
         assert isinstance(image_id, str)
         assert isinstance(angle, NumberInstance)
