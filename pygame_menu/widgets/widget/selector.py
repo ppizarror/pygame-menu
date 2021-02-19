@@ -367,6 +367,10 @@ class Selector(Widget):
         - *widget*.set_value('a') -> Widget selects the first element (index 0)
         - *widget*.set_value(2) -> Widget selects the third element (index 2)
 
+        .. note::
+
+            This method does not trigger any event (change).
+
         :param item: Item to select, can be a string or an integer.
         :return: None
         """
@@ -382,16 +386,16 @@ class Selector(Widget):
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
 
-    def update_elements(self, elements: Union[List[Tuple[Any, ...]], List[str]]) -> None:
+    def update_items(self, elements: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
-        Update selector elements.
+        Update selector items.
 
         .. note::
 
             If the length of the list is different than the previous one,
             the new index of the selector will be the first element of the list.
 
-        :param elements: Elements of the selector ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :param elements: New selector items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None
         """
         check_selector_items(elements)
