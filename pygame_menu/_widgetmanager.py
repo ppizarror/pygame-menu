@@ -45,6 +45,7 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
+from pygame_menu.font import FontInstance
 from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.widgets import Widget
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
@@ -109,7 +110,7 @@ class WidgetManager(object):
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         if background_inflate == 0:
             background_inflate = (0, 0)
-        _utils.assert_vector(background_inflate, 2)
+        _utils.assert_vector(background_inflate, 2, int)
         assert background_inflate[0] >= 0 and background_inflate[1] >= 0, \
             'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
@@ -124,7 +125,7 @@ class WidgetManager(object):
         border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
         if border_inflate == 0:
             border_inflate = (0, 0)
-        _utils.assert_vector(border_inflate, 2)
+        _utils.assert_vector(border_inflate, 2, int)
         assert isinstance(border_inflate[0], int) and border_inflate[0] >= 0
         assert isinstance(border_inflate[1], int) and border_inflate[1] >= 0
         attributes['border_inflate'] = border_inflate
@@ -157,7 +158,7 @@ class WidgetManager(object):
 
         # font_name
         font_name = kwargs.pop('font_name', self._theme.widget_font)
-        assert isinstance(font_name, (str, Path))
+        assert isinstance(font_name, FontInstance)
         attributes['font_name'] = str(font_name)
 
         # font_shadow
@@ -221,55 +222,6 @@ class WidgetManager(object):
 
         return attributes
 
-    @staticmethod
-    def _check_kwargs(kwargs: Dict) -> None:
-        """
-        Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
-
-        :param kwargs: Kwargs dict
-        :return: None
-        """
-        for invalid_keyword in kwargs.keys():
-            msg = 'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
-            raise ValueError(msg)
-
-    def _append_widget(self, widget: 'Widget') -> None:
-        """
-        Add a widget to the list of widgets.
-
-        :param widget: Widget object
-        :return: None
-        """
-        assert isinstance(widget, Widget)
-        if widget.get_menu() is None:
-            widget.set_menu(self._menu)
-        if widget.get_menu() == self._menu:
-            self._menu._check_id_duplicated(widget.get_id())
-        assert widget.get_menu() == self._menu, \
-            'widget cannot have a different instance of menu'
-
-        if widget.get_scrollarea() is None:
-            widget.set_scrollarea(self._menu.get_scrollarea())
-
-        # Unselect
-        widget.select(False)
-
-        # Append to lists
-        self._menu._widgets.append(widget)
-
-        # Update selection index
-        if self._menu._index < 0 and widget.is_selectable:
-            widget.select()
-            self._menu._index = len(self._menu._widgets) - 1
-
-        # Force menu rendering, this checks if the menu overflows or has sizing errors
-        self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
-        try:
-            self._menu._render()
-        except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
-            self._menu.remove_widget(widget)
-            raise
-
     def _configure_widget(self, widget: 'Widget', **kwargs) -> None:
         """
         Update the given widget with the parameters defined at the Menu level.
@@ -332,6 +284,55 @@ class WidgetManager(object):
         if self._theme.widget_background_inflate_to_selection:
             widget.background_inflate_to_selection_effect()
         widget.configured = True
+
+    @staticmethod
+    def _check_kwargs(kwargs: Dict) -> None:
+        """
+        Check kwargs after widget addition. It should be empty. Raises ``ValueError``.
+
+        :param kwargs: Kwargs dict
+        :return: None
+        """
+        for invalid_keyword in kwargs.keys():
+            msg = 'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
+            raise ValueError(msg)
+
+    def _append_widget(self, widget: 'Widget') -> None:
+        """
+        Add a widget to the list of widgets.
+
+        :param widget: Widget object
+        :return: None
+        """
+        assert isinstance(widget, Widget)
+        if widget.get_menu() is None:
+            widget.set_menu(self._menu)
+        if widget.get_menu() == self._menu:
+            self._menu._check_id_duplicated(widget.get_id())
+        assert widget.get_menu() == self._menu, \
+            'widget cannot have a different instance of menu'
+
+        if widget.get_scrollarea() is None:
+            widget.set_scrollarea(self._menu.get_scrollarea())
+
+        # Unselect
+        widget.select(False)
+
+        # Append to lists
+        self._menu._widgets.append(widget)
+
+        # Update selection index
+        if self._menu._index < 0 and widget.is_selectable:
+            widget.select()
+            self._menu._index = len(self._menu._widgets) - 1
+
+        # Force menu rendering, this checks if the menu overflows or has sizing errors
+        self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
+        try:
+            self._menu._render()
+        except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
+            self._menu.remove_widget(widget)
+            raise
 
     def configure_defaults_widget(self, widget: 'Widget') -> None:
         """
@@ -1084,6 +1085,7 @@ class WidgetManager(object):
                       toggleswitch_id: str = '',
                       state_text: Tuple[str, ...] = ('Off', 'On'),
                       state_values: Tuple[Any, ...] = (False, True),
+                      width: int = 150,
                       **kwargs
                       ) -> 'pygame_menu.widgets.ToggleSwitch':
         """
@@ -1134,7 +1136,6 @@ class WidgetManager(object):
             - ``switch_border_width``       *(int)* - Switch border width. ``1`` px by default
             - ``switch_height``             *(int, float)* - Height factor respect to the title font size height. ``1.25`` by default
             - ``switch_margin``             *(tuple, list)* - *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title. ``(25, 0)`` by default
-            - ``width``                     *(int)* - Width of the switch box (px). ``150`` px by default
 
         .. note::
 
@@ -1164,6 +1165,7 @@ class WidgetManager(object):
         :param toggleswitch_id: Widget ID
         :param state_text: Text of each state
         :param state_values: Value of each state of the switch
+        :param width: Width of the switch box (px)
         :return: :py:class:`pygame_menu.widgets.ToggleSwitch`
         """
         if isinstance(default, (int, bool)):
@@ -1184,7 +1186,6 @@ class WidgetManager(object):
         switch_border_width = kwargs.pop('switch_border_width', 1)
         switch_height = kwargs.pop('switch_height', 1.25)
         switch_margin = kwargs.pop('switch_margin', (25, 0))
-        width = kwargs.pop('width', 150)
 
         widget = pygame_menu.widgets.ToggleSwitch(
             default_state=default,

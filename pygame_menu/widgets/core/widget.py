@@ -31,23 +31,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Widget']
 
+import random
+import time
+import warnings
+
 import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
 
-from pygame_menu.widgets.core.selection import Selection
 from pygame_menu._decorator import Decorator
+from pygame_menu.font import FontType
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable, parse_padding, uuid4
+from pygame_menu.widgets.core.selection import Selection
+
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
     NumberInstance, ColorInputType
-
-from pathlib import Path
-import random
-import time
-import warnings
 
 # Stores the previous cursor. This should be a common variable
 # because there's only 1 cursor
@@ -106,7 +107,7 @@ class Widget(object):
     _font_antialias: bool
     _font_background_color: Optional[ColorType]
     _font_color: ColorType
-    _font_name: str
+    _font_name: FontType
     _font_readonly_color: ColorType
     _font_readonly_selected_color: ColorType
     _font_selected_color: ColorType
@@ -116,7 +117,7 @@ class Widget(object):
     _font_shadow_position: str
     _font_shadow_tuple: Tuple2IntType
     _font_size: int
-    _frame: Optional['Widget']
+    _frame: Optional['pygame_menu.widgets.Frame']
     _id: str
     _joystick_enabled: bool
     _kwargs: Dict[Any, Any]
@@ -134,10 +135,12 @@ class Widget(object):
     _padding: Tuple4IntType
     _padding_transform: Tuple4IntType
     _rect: 'pygame.Rect'
+    _rect_size_delta: Tuple2IntType
     _scale: List[Union[bool, NumberType]]
     _scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']  # Parent scrollarea
     _selected: bool
     _selection_effect: 'Selection'
+    _selection_effect_draw_post: bool
     _selection_time: NumberType
     _sound: 'Sound'
     _surface: Optional['pygame.Surface']
@@ -211,6 +214,7 @@ class Widget(object):
         # widgets like MenuBar are the exception, as its position never changes during menu execution
         # (unless user triggers a change), then widgets like these may access without problems.
         self._rect = pygame.Rect(0, 0, 0, 0)
+        self._rect_size_delta = (0, 0)  # Size added to rect width/height
 
         # Callbacks
         self._draw_callbacks = {}
@@ -263,6 +267,7 @@ class Widget(object):
         # Selection effect, for avoiding exception while getting object rect, NullSelection
         # was created. Initially it was None
         self._selection_effect = _WidgetNullSelection()
+        self._selection_effect_draw_post = True  # If False, the selection effect is drawn previous the widget surface
 
         # Inputs
         self._keyboard_enabled = True
@@ -706,7 +711,7 @@ class Widget(object):
                 color = assert_color(color)
         if inflate is None:
             inflate = self._background_inflate
-        assert_vector(inflate, 2)
+        assert_vector(inflate, 2, int)
         assert inflate[0] >= 0 and inflate[1] >= 0, \
             'widget background inflate must be equal or greater than zero in both axis'
 
@@ -796,7 +801,7 @@ class Widget(object):
         """
         return self._selection_effect
 
-    def set_selection_effect(self, selection: 'Selection') -> 'Widget':
+    def set_selection_effect(self, selection: Optional['Selection']) -> 'Widget':
         """
         Set the selection effect handler.
 
@@ -881,18 +886,6 @@ class Widget(object):
                 pass
             return self._onchange(*args, **self._kwargs)
 
-    def draw_selection_effect(self, surface: Optional['pygame.Surface'] = None) -> 'Widget':
-        """
-        Draws the widget selection effect on the given surface.
-
-        :param surface: Surface to draw from. If ``None`` uses the last drawn surface
-        :return: Self reference
-        """
-        if surface is None:
-            surface = self.last_surface
-        self._selection_effect.draw(surface, self)
-        return self
-
     def draw(self, surface: 'pygame.Surface') -> 'Widget':
         """
         Draw the Widget on a given surface.
@@ -901,19 +894,27 @@ class Widget(object):
 
             1. Background color
             2. ``prev`` decorator
-            3. Widget surface
-            4. Widget border
-            5. ``post`` decorator
+            3. Widget selection effect (if prev)
+            4. Widget surface
+            5. Widget selection effect (if post)
+            6. Widget border
+            7. ``post`` decorator
 
         :param surface: Surface to draw
         :return: Self reference
         """
+        if not self.is_visible():
+            return self
         self._render()
+        if self.is_selected() and not self._selection_effect_draw_post:
+            self._selection_effect.draw(surface, self)
         self._draw_background_color(surface)
         self._decorator.draw_prev(surface)
         self._draw(surface)
         self._draw_border(surface)
         self._decorator.draw_post(surface)
+        if self.is_selected() and self._selection_effect_draw_post:
+            self._selection_effect.draw(surface, self)
         self.apply_draw_callbacks()
         self.last_surface = surface
         return self
@@ -999,17 +1000,26 @@ class Widget(object):
         """
         return self._scrollarea
 
-    def scroll_to_widget(self) -> 'Widget':
+    def scroll_to_widget(self, margin: NumberType = 10) -> 'Widget':
         """
         Scroll to widget.
 
+        :param margin: Extra margin around the rect (px)
         :return: Self reference
         """
         if self.get_frame() is not None and self.get_frame().is_scrollable:
-            self.get_frame().get_scrollarea().scroll_to_rect(self.get_frame().get_rect())
+            self.get_frame().get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin=margin)
         if self._scrollarea is not None:
-            self._scrollarea.scroll_to_rect(self.get_rect())
+            self._scrollarea.scroll_to_rect(self.get_rect(), margin=margin)
         return self
+
+    def get_focus_rect(self) -> 'pygame.Rect':
+        """
+        Return rect to be used in Widget focus.
+
+        :return: Focus rect
+        """
+        return self.get_rect(to_real_position=True)
 
     def get_rect(self,
                  inflate: Optional[Tuple2IntType] = None,
@@ -1043,8 +1053,8 @@ class Widget(object):
 
         rect = pygame.Rect(int(self._rect.x - pad_left),
                            int(self._rect.y - pad_top),
-                           int(self._rect.width + pad_left + pad_right),
-                           int(self._rect.height + pad_bottom + pad_top))
+                           int(self._rect.width + pad_left + pad_right + self._rect_size_delta[0]),
+                           int(self._rect.height + pad_bottom + pad_top + self._rect_size_delta[1]))
 
         if self._scrollarea is not None:
             if to_real_position:
@@ -1216,22 +1226,23 @@ class Widget(object):
         surface.blit(text, (0, 0))
         return surface
 
-    def get_font_color_status(self) -> ColorType:
+    def get_font_color_status(self, check_selection: bool = True) -> ColorType:
         """
         Return the Widget font color based on the widget status.
 
+        :param check_selection: If ``True`` font is also checked if selected
         :return: Color by widget status
         """
         if self.readonly:
             if self._selected:
                 return self._font_readonly_selected_color
             return self._font_readonly_color
-        if self._selected:
+        if self._selected and check_selection:
             return self._font_selected_color
         return self._font_color
 
     def set_font(self,
-                 font: Union[str, 'Path'],
+                 font: FontType,
                  font_size: int,
                  color: ColorInputType,
                  selected_color: ColorInputType,
@@ -1253,8 +1264,7 @@ class Widget(object):
         :param antialias: Determines if antialias is applied to font (uses more processing power)
         :return: Self reference
         """
-        assert isinstance(font, (str, Path))
-        assert isinstance(font_size, int)
+        assert isinstance(font_size, int) and font_size > 0
         assert isinstance(antialias, bool)
         color = assert_color(color)
         selected_color = assert_color(selected_color)
@@ -1277,7 +1287,7 @@ class Widget(object):
         self._font_antialias = antialias
         self._font_background_color = background_color
         self._font_color = color
-        self._font_name = str(font)
+        self._font_name = font
         self._font_readonly_color = readonly_color
         self._font_readonly_selected_color = readonly_selected_color
         self._font_selected_color = selected_color
@@ -1436,6 +1446,24 @@ class Widget(object):
         :return: None
         """
         raise NotImplementedError('override is mandatory')
+
+    def set_position_relative_to_frame(self, index: int = -1) -> 'Widget':
+        """
+        Set the Widget position relative to its frame.
+
+        :param index: Widget index
+        :return: Self reference
+        """
+        if self._frame is not None:
+            fx, fy = self._frame.get_position()
+            self.set_position(fx + self._padding[3], fy + self._padding[0])
+            c, r, _ = self._frame.get_col_row_index()
+            self.set_col_row_index(c, r, index)
+            self._frame.update_indices()
+        else:
+            # raise ValueError('{0} is not within a frame'.format(self.get_class_id()))
+            pass
+        return self
 
     def set_position(self, posx: NumberType, posy: NumberType) -> 'Widget':
         """
@@ -2271,7 +2299,7 @@ class Widget(object):
         """
         return self._col_row_index
 
-    def set_border(self, width: int, color: Optional[ColorInputType], inflate: Tuple2IntType) -> 'Widget':
+    def set_border(self, width: int, color: Optional[ColorInputType], inflate: Tuple2IntType = (0, 0)) -> 'Widget':
         """
         Set the Widget border.
 
@@ -2287,7 +2315,8 @@ class Widget(object):
         assert isinstance(width, int) and width >= 0
         if color is not None:
             color = assert_color(color)
-        assert isinstance(inflate, tuple) and inflate[0] >= 0 and inflate[1] >= 0
+        assert_vector(inflate, 2, int)
+        assert inflate[0] >= 0 and inflate[1] >= 0
         self._border_width = width
         self._border_color = color
         self._border_inflate = inflate
@@ -2309,7 +2338,7 @@ class Widget(object):
         """
         return self._frame
 
-    def set_frame(self, frame: 'Widget') -> 'Widget':
+    def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Widget':
         """
         Set Widget frame.
 

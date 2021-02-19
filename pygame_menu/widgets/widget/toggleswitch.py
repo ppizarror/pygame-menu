@@ -36,9 +36,11 @@ import pygame_menu
 import pygame_menu.controls as _controls
 
 from pygame_menu.widgets.core import Widget
+from pygame_menu.font import FontType, FontInstance
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
+
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
     Tuple2NumberType, Tuple2IntType, NumberInstance, ColorInputType
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -95,7 +97,7 @@ class ToggleSwitch(Widget):
     _state_color: Tuple[ColorType, ...]
     _state_font: Optional['pygame.font.Font']
     _state_text: Tuple[str, ...]
-    _state_text_font: Optional[str]
+    _state_text_font: Optional[FontType]
     _state_text_font_color: Tuple[ColorType, ...]
     _state_text_font_size: Optional[int]
     _state_text_position: Tuple2NumberType
@@ -125,7 +127,7 @@ class ToggleSwitch(Widget):
                  slider_vmargin: NumberType = 0,
                  state_color: Tuple[ColorInputType, ...] = ((178, 178, 178), (117, 185, 54)),
                  state_text: Tuple[str, ...] = ('Off', 'On'),
-                 state_text_font: Optional[str] = None,
+                 state_text_font: Optional[FontType] = None,
                  state_text_font_color: Tuple[ColorInputType, ...] = ((255, 255, 255), (255, 255, 255)),
                  state_text_font_size: Optional[int] = None,
                  state_text_position: Tuple2NumberType = (0.5, 0.5),
@@ -156,7 +158,8 @@ class ToggleSwitch(Widget):
         assert 2 <= self._total_states, 'the minimum number of states is 2'
         assert 0 <= default_state < self._total_states, 'invalid default state value'
 
-        assert isinstance(state_text_font, (str, type(None)))
+        if state_text_font is not None:
+            assert isinstance(state_text_font, FontInstance)
         assert isinstance(state_text_font_size, (int, type(None)))
         if state_text_font_size is not None:
             assert state_text_font_size > 0, 'state text font size must be equal or greater than zero'
@@ -193,7 +196,7 @@ class ToggleSwitch(Widget):
         self._switch_width = 0
         if isinstance(state_width, NumberInstance):
             state_width = [state_width]
-        assert_vector(state_width, self._total_states - 1)
+        assert_vector(state_width, self._total_states - 1, int)
 
         for i in range(len(state_width)):
             assert isinstance(state_width[i], int), 'each state width must be an integer'

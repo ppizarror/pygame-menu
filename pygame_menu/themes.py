@@ -52,10 +52,11 @@ import pygame_menu.font as _font
 import pygame_menu.locals as _locals
 import pygame_menu.utils as _utils
 import pygame_menu.widgets as _widgets
+
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
-from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, \
+from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, Tuple2IntType, \
     VectorInstance, Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, PaddingInstance
 
 
@@ -143,12 +144,12 @@ class Theme(object):
     :type title_close_button: bool
     :param title_floating: If ``True`` title don't contributes height to the Menu. Thus, scroll uses full menu width/height
     :type title_floating: bool
-    :param title_font: Optional title font, if ``None`` theme uses the Menu default font
-    :type title_font: str, None
+    :param title_font: Title font
+    :type title_font: str, :py:class:`pygame.font.Font`, :py:class:`pathlib.Path`
     :param title_font_antialias: Title font renders with antialiasing
     :type title_font_antialias: bool
-    :param title_font_color: Title font color. If ``None`` use the widget font color
-    :type title_font_color: tuple, list, str, int, :py:class:`pygame.Color`, None
+    :param title_font_color: Title font color
+    :type title_font_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param title_font_shadow: Enable title font shadow
     :type title_font_shadow: bool
     :param title_font_shadow_color: Title font shadow color
@@ -180,7 +181,7 @@ class Theme(object):
     :param widget_cursor: Widget cursor if mouse is placed over. If ``None`` the widget don't changes the cursor
     :type widget_cursor: int, :py:class:`pygame.cursors.Cursor`, None
     :param widget_font: Widget font path or name
-    :type widget_font: str
+    :type widget_font: str, :py:class:`pygame.font.Font`, :py:class:`pathlib.Path`
     :param widget_font_antialias: Widget font renders with antialiasing
     :type widget_font_antialias: bool
     :param widget_font_background_color: Widget font background color. If ``None`` the value will be the same as ``background_color`` if it's is a color object and if ``widget_font_background_color_from_menu`` is ``True`` and ``widget_background_color`` is ``None``
@@ -238,7 +239,7 @@ class Theme(object):
     title_close_button: bool
     title_close_button_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
     title_floating: bool
-    title_font: str
+    title_font: _font.FontType
     title_font_antialias: bool
     title_font_color: ColorType
     title_font_shadow: bool
@@ -250,13 +251,13 @@ class Theme(object):
     title_updates_pygame_display: bool
     widget_alignment: str
     widget_background_color: Optional[Union[ColorType, 'BaseImage']]
-    widget_background_inflate: Tuple2NumberType
+    widget_background_inflate: Tuple2IntType
     widget_background_inflate_to_selection: bool
     widget_border_color: Optional[ColorType]
-    widget_border_inflate: Tuple2NumberType
+    widget_border_inflate: Tuple2IntType
     widget_border_width: int
     widget_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
-    widget_font: str
+    widget_font: _font.FontType
     widget_font_antialias: str
     widget_font_background_color: Optional[ColorType]
     widget_font_background_color_from_menu: bool
@@ -295,7 +296,7 @@ class Theme(object):
         self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
         self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
-        self.title_font = self._get(kwargs, 'title_font', str, _font.FONT_OPEN_SANS)
+        self.title_font = self._get(kwargs, 'title_font', 'font', _font.FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
         self.title_font_color = self._get(kwargs, 'title_font_color', 'color', (220, 220, 220))
         self.title_font_shadow = self._get(kwargs, 'title_font_shadow', bool, False)
@@ -330,14 +331,14 @@ class Theme(object):
 
         self.widget_alignment = self._get(kwargs, 'widget_alignment', 'alignment', _locals.ALIGN_CENTER)
         self.widget_background_color = self._get(kwargs, 'widget_background_color', 'color_image_none', )
-        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2', (0, 0))
+        self.widget_background_inflate = self._get(kwargs, 'background_inflate', 'tuple2int', (0, 0))
         self.widget_background_inflate_to_selection = self._get(kwargs, 'widget_background_inflate_to_selection',
                                                                 bool, False)
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color_none', (0, 0, 0))
-        self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2', (0, 0))
+        self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
         self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
         self.widget_cursor = self._get(kwargs, 'widget_cursor', 'cursor')
-        self.widget_font = self._get(kwargs, 'widget_font', str, _font.FONT_OPEN_SANS)
+        self.widget_font = self._get(kwargs, 'widget_font', 'font', _font.FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
         self.widget_font_background_color_from_menu = self._get(kwargs, 'widget_font_background_color_from_menu',
@@ -412,13 +413,13 @@ class Theme(object):
         assert isinstance(self.scrollbar_slider_pad, NumberInstance)
         assert isinstance(self.scrollbar_thick, int)
         assert isinstance(self.title_floating, bool)
-        assert isinstance(self.title_font, str)
+        assert isinstance(self.title_font, _font.FontInstance)
         assert isinstance(self.title_font_shadow_offset, NumberInstance)
         assert isinstance(self.title_font_size, int)
         assert isinstance(self.title_updates_pygame_display, bool)
         assert isinstance(self.widget_background_inflate_to_selection, bool)
         assert isinstance(self.widget_border_width, int)
-        assert isinstance(self.widget_font, str)
+        assert isinstance(self.widget_font, _font.FontInstance)
         assert isinstance(self.widget_font_shadow_offset, int)
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, PaddingInstance)
@@ -584,12 +585,15 @@ class Theme(object):
             -   color_image_none    Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
             -   color_none          Color or None
             -   cursor              Cursor object (pygame)
+            -   font                Font type
             -   image               Value must be ``BaseImage``
             -   none                None only
             -   position            pygame-menu position (locals)}
-            -   type                Type-class (bool, str, etc...)
             -   tuple2              Only valid numeric tuples ``(x, y)`` or ``[x, y]``
+            -   tuple2int           Only valid integer tuples ``(x, y)`` or ``[x, y]``
             -   tuple3              Only valid numeric tuples ``(x, y, z)`` or ``[x, y, z]``
+            -   tuple3int           Only valid integer tuples ``(x, y, z)`` or ``[x, y, z]``
+            -   type                Type-class (bool, str, etc...)
 
         :param params: Parameters dictionary
         :param key: Key to look for
@@ -608,7 +612,8 @@ class Theme(object):
                     _utils.assert_alignment(value)
 
                 elif valtype == callable or valtype == 'function' or valtype == 'callable':
-                    assert _utils.is_callable(value), 'value must be callable type'
+                    assert _utils.is_callable(value), \
+                        'value must be callable type'
 
                 elif valtype == 'color':
                     value = _utils.assert_color(value)
@@ -628,8 +633,13 @@ class Theme(object):
                 elif valtype == 'cursor':
                     _utils.assert_cursor(value)
 
+                elif valtype == 'font':
+                    assert isinstance(value, _font.FontInstance), \
+                        'value must be a font type (str, Path, pygame.Font)'
+
                 elif valtype == 'image':
-                    assert isinstance(value, BaseImage), 'value must be BaseImage type'
+                    assert isinstance(value, BaseImage), \
+                        'value must be BaseImage type'
 
                 elif valtype == 'none':
                     assert value is None
@@ -638,13 +648,20 @@ class Theme(object):
                     _utils.assert_position(value)
 
                 elif valtype == 'type':
-                    assert isinstance(value, type), 'value is not type-class'
+                    assert isinstance(value, type), \
+                        'value is not type-class'
 
                 elif valtype == 'tuple2':
                     _utils.assert_vector(value, 2)
 
+                elif valtype == 'tuple2int':
+                    _utils.assert_vector(value, 2, int)
+
                 elif valtype == 'tuple3':
                     _utils.assert_vector(value, 3)
+
+                elif valtype == 'tuple3int':
+                    _utils.assert_vector(value, 3, int)
 
                 else:  # Unknown type
                     assert isinstance(valtype, type), \

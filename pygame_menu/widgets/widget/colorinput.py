@@ -55,6 +55,7 @@ import pygame_menu.locals as _locals
 
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
+
 from pygame_menu._types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
     Literal, Tuple3IntType, NumberInstance
 
@@ -149,7 +150,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  ) -> None:
         assert isinstance(color_type, str)
         assert isinstance(colorinput_id, str)
-        assert isinstance(cursor_color, tuple)
         assert isinstance(dynamic_width, bool)
         assert isinstance(hex_format, str)
         assert isinstance(input_separator, str)

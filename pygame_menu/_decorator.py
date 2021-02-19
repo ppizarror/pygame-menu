@@ -33,22 +33,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['Decorator']
 
 from math import pi
-from pathlib import Path
 import math
 import warnings
 
 import pygame
 import pygame_menu
 import pygame_menu.menu
-
-from pygame.font import Font
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
-from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
-    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
+from pygame_menu.font import FontType
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
     uuid4
+
+from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
+    Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
 
 # Decoration constants
 DECORATION_ARC = 2000
@@ -546,7 +545,7 @@ class Decorator(object):
                  x: NumberType,
                  y: NumberType,
                  text: str,
-                 font: Union[str, 'Font', 'Path'],
+                 font: FontType,
                  size: int,
                  color: ColorInputType,
                  prev: bool = True,

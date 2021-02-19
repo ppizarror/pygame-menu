@@ -47,15 +47,19 @@ __all__ = [
     'FONT_PT_SERIF',
     'FONT_EXAMPLES',
 
-    # Font util
+    # Typing
+    'FontType',
+    'FontInstance',
+
+    # Font utils
     'get_font'
 
 ]
 
-import os.path as path
-import pygame.font as _font
 from pathlib import Path
 from typing import Union, Optional
+import os.path as path
+import pygame.font as _font
 
 # Available fonts path
 __fonts_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
@@ -81,8 +85,11 @@ FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRAN
 # Stores font cache
 _cache = {}
 
+FontType = Union[str, _font.Font, Path]
+FontInstance = (str, _font.Font, Path)
 
-def get_font(name: Union[str, '_font.Font', 'Path'], size: int) -> '_font.Font':
+
+def get_font(name: FontType, size: int) -> '_font.Font':
     """
     Return a :py:class:`pygame.font.Font` object from a name or file.
 
@@ -90,7 +97,7 @@ def get_font(name: Union[str, '_font.Font', 'Path'], size: int) -> '_font.Font':
     :param size: Font size (px)
     :return: Font object
     """
-    assert isinstance(name, (str, _font.Font, Path))
+    assert isinstance(name, FontInstance)
     assert isinstance(size, int)
 
     font: Optional['_font.Font']
