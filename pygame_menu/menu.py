@@ -46,11 +46,11 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
-from pygame_menu.widgets import Frame, Widget, MenuBar
-from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu._decorator import Decorator
+from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
+from pygame_menu.widgets import Frame, Widget, MenuBar
 
 # Import types
 from pygame_menu._types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
@@ -233,13 +233,11 @@ class Menu(object):
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
         assert isinstance(menu_id, str)
-        assert isinstance(menu_position, VectorInstance)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
         assert isinstance(overflow, (tuple, list, bool))
         assert isinstance(rows, (int, type(None), VectorInstance))
-        assert isinstance(screen_dimension, (VectorInstance, type(None)))
         assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
         assert isinstance(touchscreen_motion_selection, bool)
@@ -1297,7 +1295,6 @@ class Menu(object):
             widget = self._widgets[index]
 
             align = widget.get_alignment()
-            frame = widget.get_frame()
             margin = widget.get_margin()
             padding = widget.get_padding()
             selection_effect = widget.get_selection_effect()
@@ -1308,12 +1305,8 @@ class Menu(object):
                 continue
 
             # If widget within frame update col/row position
-            if frame is not None:
-                fx, fy = frame.get_position()
-                widget.set_position(fx + margin[0] + padding[3], fy + padding[0])
-                c, r, _ = frame.get_col_row_index()
-                widget.set_col_row_index(c, r, index)
-                frame.update_indices()
+            if widget.get_frame() is not None:
+                widget.set_position_relative_to_frame(index)
                 continue
 
             # Get column and row position
@@ -1801,14 +1794,10 @@ class Menu(object):
 
             # Iterate through widgets and draw them
             for widget in self._current._widgets:
-                if not widget.is_visible() or widget.get_frame() is not None:
+                # Widgets within frames are not drawn as it's frame draw these widgets
+                if widget.get_frame() is not None:
                     continue
                 widget.draw(self._current._widgets_surface)
-
-            # Draw selection on current scrollarea only
-            widget_selected = self._current.get_selected_widget()
-            if widget_selected is not None and widget_selected.last_surface == self._current._widgets_surface:
-                widget_selected.draw_selection_effect()
 
             self._current._stats.draw_update_cached += 1
 
@@ -1841,7 +1830,7 @@ class Menu(object):
         window_width, window_height = self._window_size
 
         self._render()  # Surface may be none, then update the positioning
-        rect = widget.get_rect(to_real_position=True)
+        rect = widget.get_focus_rect()
 
         # Apply selection effect
         rect = widget.get_selection_effect().inflate(rect)
@@ -2286,7 +2275,7 @@ class Menu(object):
                     # only if the user clicked outside the widget
                     else:
                         if selected_widget is not None:
-                            if not selected_widget_scrollarea.collide(selected_widget, event):
+                            if not selected_widget_scrollarea.collide(selected_widget.get_focus_rect(), event):
                                 selected_widget.active = False
 
                 # Mouse motion. It changes the cursor of the mouse if enabled
@@ -3304,8 +3293,6 @@ class Menu(object):
         :param kwargs: Optional keyword arguments
         :return: The new indices of the widget and the previous index element
         """
-        assert len(self._widgets) >= 2, 'menu must contain at least 2 widgets to perform this task'
-        selected_widget = self.get_selected_widget()
         depth = kwargs.get('depth', 0)
 
         # Update only selected index
@@ -3329,6 +3316,8 @@ class Menu(object):
                       ''.format(selected, ','.join(invalid_w))
                 raise _MenuMultipleSelectedWidgetsException(msg)
             return
+
+        selected_widget = self.get_selected_widget()
 
         # Reverse widgets
         if widget is None:
@@ -3361,6 +3350,7 @@ class Menu(object):
             return
 
         # Asserts
+        assert len(self._widgets) >= 2, 'menu must contain at least 2 widgets to perform this task'
         widget_index = self._widgets.index(widget)
         assert widget in self._widgets, \
             '{0} does not exist on current menu widgets list'.format(widget.get_class_id())
