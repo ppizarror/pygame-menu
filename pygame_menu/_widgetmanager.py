@@ -52,7 +52,7 @@ from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInpu
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, PaddingInstance, \
-    NumberType, Vector2NumberType, List, Tuple, NumberInstance
+    NumberType, Vector2NumberType, List, Tuple, NumberInstance, Tuple3IntType
 
 try:
     PygameCursorType = (int, pygame.cursors.Cursor, type(None))
@@ -343,12 +343,13 @@ class WidgetManager(object):
         """
         self._configure_widget(widget, **self._filter_widget_attributes({}))
 
-    def button(self,
-               title: Any,
-               action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
-               *args,
-               **kwargs
-               ) -> 'pygame_menu.widgets.Button':
+    def button(
+            self,
+            title: Any,
+            action: Optional[Union['pygame_menu.Menu', '_events.MenuAction', Callable, int]] = None,
+            *args,
+            **kwargs
+    ) -> 'pygame_menu.widgets.Button':
         """
         Adds a button to the Menu.
 
@@ -513,19 +514,20 @@ class WidgetManager(object):
         self._append_widget(widget)
         return widget
 
-    def color_input(self,
-                    title: Union[str, Any],
-                    color_type: ColorInputColorType,
-                    color_id: str = '',
-                    default: Union[str, Tuple[str, ...]] = '',
-                    hex_format: ColorInputHexFormatType = 'none',
-                    input_separator: str = ',',
-                    input_underline: str = '_',
-                    onchange: CallbackType = None,
-                    onreturn: CallbackType = None,
-                    onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-                    **kwargs
-                    ) -> 'pygame_menu.widgets.ColorInput':
+    def color_input(
+            self,
+            title: Union[str, Any],
+            color_type: ColorInputColorType,
+            color_id: str = '',
+            default: Union[str, Tuple3IntType] = '',
+            hex_format: ColorInputHexFormatType = 'none',
+            input_separator: str = ',',
+            input_underline: str = '_',
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            **kwargs
+    ) -> 'pygame_menu.widgets.ColorInput':
         """
         Add a color widget with RGB or Hex format to the Menu.
         Includes a preview box that renders the given color.
@@ -636,16 +638,17 @@ class WidgetManager(object):
 
         return widget
 
-    def image(self,
-              image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
-              angle: NumberType = 0,
-              image_id: str = '',
-              onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-              scale: Vector2NumberType = (1, 1),
-              scale_smooth: bool = True,
-              selectable: bool = False,
-              **kwargs
-              ) -> 'pygame_menu.widgets.Image':
+    def image(
+            self,
+            image_path: Union[str, 'Path', 'pygame_menu.BaseImage', 'BytesIO'],
+            angle: NumberType = 0,
+            image_id: str = '',
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            scale: Vector2NumberType = (1, 1),
+            scale_smooth: bool = True,
+            selectable: bool = False,
+            **kwargs
+    ) -> 'pygame_menu.widgets.Image':
         """
         Add a simple image to the Menu.
 
@@ -717,14 +720,15 @@ class WidgetManager(object):
 
         return widget
 
-    def label(self,
-              title: Any,
-              label_id: str = '',
-              max_char: int = 0,
-              onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-              selectable: bool = False,
-              **kwargs
-              ) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
+    def label(
+            self,
+            title: Any,
+            label_id: str = '',
+            max_char: int = 0,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            selectable: bool = False,
+            **kwargs
+    ) -> Union['pygame_menu.widgets.Label', List['pygame_menu.widgets.Label']]:
         """
         Add a simple text to the Menu.
 
@@ -856,11 +860,12 @@ class WidgetManager(object):
 
         return widget
 
-    def url(self,
+    def url(
+            self,
             href: str,
             title: str = '',
             **kwargs
-            ) -> 'pygame_menu.widgets.Button':
+    ) -> 'pygame_menu.widgets.Button':
         """
         Adds a Button url. Clicking the widget will open the link. If title is defined, the link will
         not be written. For example: ``href='google.com', title=''`` will write the link, but
@@ -947,17 +952,18 @@ class WidgetManager(object):
         # Return new button
         return self.button(title if title != '' else href, action, **kwargs)
 
-    def selector(self,
-                 title: Any,
-                 items: Union[List[Tuple[Any, ...]], List[str]],
-                 default: int = 0,
-                 onchange: CallbackType = None,
-                 onreturn: CallbackType = None,
-                 onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-                 selector_id: str = '',
-                 style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
-                 **kwargs
-                 ) -> 'pygame_menu.widgets.Selector':
+    def selector(
+            self,
+            title: Any,
+            items: Union[List[Tuple[Any, ...]], List[str]],
+            default: int = 0,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            selector_id: str = '',
+            style: SelectorStyleType = SELECTOR_STYLE_CLASSIC,
+            **kwargs
+    ) -> 'pygame_menu.widgets.Selector':
         """
         Add a selector to the Menu: several items and two functions that are executed
         when changing the selector (left/right) and pressing return button on the selected
@@ -1047,7 +1053,7 @@ class WidgetManager(object):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get fancy style attributes
-        style_fancy_arrow_color = kwargs.get('style_fancy_arrow_color', (160, 160, 160))
+        style_fancy_arrow_color = kwargs.get('style_fancy_arrow_color', (230, 230, 230))
         style_fancy_arrow_margin = kwargs.get('style_fancy_arrow_margin', (5, 5, 0))
         style_fancy_bgcolor = kwargs.get('style_fancy_bgcolor', (180, 180, 180))
         style_fancy_bordercolor = kwargs.get('style_fancy_bordercolor', (0, 0, 0))
@@ -1077,17 +1083,18 @@ class WidgetManager(object):
 
         return widget
 
-    def toggle_switch(self,
-                      title: Any,
-                      default: Union[int, bool] = 0,
-                      onchange: CallbackType = None,
-                      onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-                      toggleswitch_id: str = '',
-                      state_text: Tuple[str, ...] = ('Off', 'On'),
-                      state_values: Tuple[Any, ...] = (False, True),
-                      width: int = 150,
-                      **kwargs
-                      ) -> 'pygame_menu.widgets.ToggleSwitch':
+    def toggle_switch(
+            self,
+            title: Any,
+            default: Union[int, bool] = 0,
+            onchange: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            toggleswitch_id: str = '',
+            state_text: Tuple[str, ...] = ('Off', 'On'),
+            state_values: Tuple[Any, ...] = (False, True),
+            width: int = 150,
+            **kwargs
+    ) -> 'pygame_menu.widgets.ToggleSwitch':
         """
         Add a toggle switch to the Menu: It can switch between two states.
 
@@ -1214,25 +1221,26 @@ class WidgetManager(object):
 
         return widget
 
-    def text_input(self,
-                   title: Any,
-                   default: Union[str, int, float] = '',
-                   copy_paste_enable: bool = True,
-                   cursor_selection_enable: bool = True,
-                   input_type: str = _locals.INPUT_TEXT,
-                   input_underline: str = '',
-                   input_underline_len: int = 0,
-                   maxchar: int = 0,
-                   maxwidth: int = 0,
-                   onchange: CallbackType = None,
-                   onreturn: CallbackType = None,
-                   onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
-                   password: bool = False,
-                   tab_size: int = 4,
-                   textinput_id: str = '',
-                   valid_chars: Optional[List[str]] = None,
-                   **kwargs
-                   ) -> 'pygame_menu.widgets.TextInput':
+    def text_input(
+            self,
+            title: Any,
+            default: Union[str, int, float] = '',
+            copy_paste_enable: bool = True,
+            cursor_selection_enable: bool = True,
+            input_type: str = _locals.INPUT_TEXT,
+            input_underline: str = '',
+            input_underline_len: int = 0,
+            maxchar: int = 0,
+            maxwidth: int = 0,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            password: bool = False,
+            tab_size: int = 4,
+            textinput_id: str = '',
+            valid_chars: Optional[List[str]] = None,
+            **kwargs
+    ) -> 'pygame_menu.widgets.TextInput':
         """
         Add a text input to the Menu: free text area and two functions
         that execute when changing the text and pressing return button
@@ -1351,13 +1359,14 @@ class WidgetManager(object):
 
         return widget
 
-    def _frame(self,
-               width: NumberType,
-               height: NumberType,
-               orientation: str,
-               frame_id: str = '',
-               **kwargs
-               ) -> 'pygame_menu.widgets.Frame':
+    def _frame(
+            self,
+            width: NumberType,
+            height: NumberType,
+            orientation: str,
+            frame_id: str = '',
+            **kwargs
+    ) -> 'pygame_menu.widgets.Frame':
         """
         Adds a frame.
 
@@ -1415,12 +1424,13 @@ class WidgetManager(object):
 
         return widget
 
-    def frame_h(self,
-                width: NumberType,
-                height: NumberType,
-                frame_id: str = '',
-                **kwargs
-                ) -> 'pygame_menu.widgets.Frame':
+    def frame_h(
+            self,
+            width: NumberType,
+            height: NumberType,
+            frame_id: str = '',
+            **kwargs
+    ) -> 'pygame_menu.widgets.Frame':
         """
         Adds a horizontal Frame. Frame is a widget container that packs many widgets within.
         All contained widgets have a floating position, and use only 1 position in
@@ -1495,12 +1505,13 @@ class WidgetManager(object):
         """
         return self._frame(width, height, _locals.ORIENTATION_HORIZONTAL, frame_id, **kwargs)
 
-    def frame_v(self,
-                width: NumberType,
-                height: NumberType,
-                frame_id: str = '',
-                **kwargs
-                ) -> 'pygame_menu.widgets.Frame':
+    def frame_v(
+            self,
+            width: NumberType,
+            height: NumberType,
+            frame_id: str = '',
+            **kwargs
+    ) -> 'pygame_menu.widgets.Frame':
         """
         Adds a vertical Frame. Frame is a widget container that packs many widgets within.
         All contained widgets have a floating position, and use only 1 position in
@@ -1576,10 +1587,11 @@ class WidgetManager(object):
         """
         return self._frame(width, height, _locals.ORIENTATION_VERTICAL, frame_id, **kwargs)
 
-    def _horizontal_margin(self,
-                           margin: NumberType,
-                           margin_id: str = ''
-                           ) -> 'pygame_menu.widgets.HMargin':
+    def _horizontal_margin(
+            self,
+            margin: NumberType,
+            margin_id: str = ''
+    ) -> 'pygame_menu.widgets.HMargin':
         """
         Adds a horizontal margin to the Menu. Only useful in Frames.
 
@@ -1605,10 +1617,11 @@ class WidgetManager(object):
 
         return widget
 
-    def vertical_margin(self,
-                        margin: NumberType,
-                        margin_id: str = ''
-                        ) -> 'pygame_menu.widgets.VMargin':
+    def vertical_margin(
+            self,
+            margin: NumberType,
+            margin_id: str = ''
+    ) -> 'pygame_menu.widgets.VMargin':
         """
         Adds a vertical margin to the Menu.
 
@@ -1634,9 +1647,10 @@ class WidgetManager(object):
 
         return widget
 
-    def none_widget(self,
-                    widget_id: str = ''
-                    ) -> 'pygame_menu.widgets.NoneWidget':
+    def none_widget(
+            self,
+            widget_id: str = ''
+    ) -> 'pygame_menu.widgets.NoneWidget':
         """
         Add none widget to the Menu.
 
@@ -1665,10 +1679,11 @@ class WidgetManager(object):
 
         return widget
 
-    def generic_widget(self,
-                       widget: 'Widget',
-                       configure_defaults: bool = False
-                       ) -> 'Widget':
+    def generic_widget(
+            self,
+            widget: 'Widget',
+            configure_defaults: bool = False
+    ) -> 'Widget':
         """
         Add generic widget to the Menu.
 
