@@ -604,14 +604,15 @@ class ScrollArea(object):
             return self._view_rect.width, self._view_rect.height
         return self._rect.width, self._rect.height
 
-    def mouse_is_over(self) -> bool:
+    def mouse_is_over(self, view: bool = False) -> bool:
         """
         Return ``True`` if the mouse is placed over the ScrollArea.
 
+        :param view: If ``True`` uses "view rect" instead of "rect"
         :return: ``True`` if the mouse is over the object
         """
         mousex, mousey = pygame.mouse.get_pos()
-        return bool(self.to_absolute_position(self._view_rect).collidepoint(mousex, mousey))  # _rect do not work
+        return bool(self.to_absolute_position(self._view_rect if view else self._rect).collidepoint(mousex, mousey))
 
     def _on_horizontal_scroll(self, value: NumberType) -> None:
         """
