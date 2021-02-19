@@ -250,7 +250,7 @@ class DropSelect(Widget):
         self.set_default_value(default)
 
         # Configure publics
-        self.selection_effect_draw_post = False
+        self._selection_effect_draw_post = False
 
     def set_theme(self, theme: 'pygame_menu.Theme') -> 'DropSelect':
         """
@@ -417,7 +417,11 @@ class DropSelect(Widget):
         for opt in self._option_buttons:
             self._drop_frame.pack(opt, margin=(0, -self._selection_option_border_width))
 
+        # Update options if index is defined
+        if self._index != -1:
+            self.set_value(self._index)
         self._drop_maked = True
+
         return self
 
     def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
@@ -724,9 +728,10 @@ class DropSelect(Widget):
                 self._toggle_drop()
                 updated = True
 
-            # Click on selector
+            # Click on selector; don't consider the mouse wheel (button 4 & 5)
             elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3) or \
-                    self._touchscreen_enabled and event.type == pygame.FINGERUP:  # Don't consider the mouse wheel (button 4 & 5)
+                    self._touchscreen_enabled and event.type == pygame.FINGERUP and \
+                    not (self._drop_frame is not None and self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
 
                 # Check for mouse clicks within
                 if self.active:
