@@ -36,12 +36,14 @@ import pygame_menu
 import pygame_menu.locals as _locals
 
 from pygame_menu._decorator import Decorator
-from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, uuid4
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
     Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType
+
+ORIENTATION_VERTICAL = _locals.ORIENTATION_VERTICAL
+ORIENTATION_HORIZONTAL = _locals.ORIENTATION_HORIZONTAL
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
