@@ -220,6 +220,9 @@ class WidgetManager(object):
         assert isinstance(selection_effect, pygame_menu.widgets.core.Selection)
         attributes['selection_effect'] = selection_effect
 
+        # tab_size
+        attributes['tab_size'] = kwargs.pop('tab_size', self._theme.widget_tab_size)
+
         return attributes
 
     def _configure_widget(self, widget: 'Widget', **kwargs) -> None:
@@ -278,6 +281,9 @@ class WidgetManager(object):
         )
         widget.set_selection_effect(
             selection=kwargs['selection_effect']
+        )
+        widget.set_tab_size(
+            tab_size=kwargs['tab_size']
         )
 
         # Finals
@@ -399,6 +405,7 @@ class WidgetManager(object):
             - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
             - ``underline_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
@@ -520,7 +527,7 @@ class WidgetManager(object):
             color_type: ColorInputColorType,
             color_id: str = '',
             default: Union[str, Tuple3IntType] = '',
-            hex_format: ColorInputHexFormatType = 'none',
+            hex_format: ColorInputHexFormatType = pygame_menu.widgets.COLORINPUT_HEX_FORMAT_NONE,
             input_separator: str = ',',
             input_underline: str = '_',
             onchange: CallbackType = None,
@@ -573,6 +580,7 @@ class WidgetManager(object):
             - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
 
         .. note::
 
@@ -759,6 +767,7 @@ class WidgetManager(object):
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
             - ``underline_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
@@ -898,6 +907,7 @@ class WidgetManager(object):
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
             - ``underline_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
             - ``underline_offset``          *(int)* - Vertical offset in px. ``2`` by default
             - ``underline_width``           *(int)* - Underline width in px. ``2`` by default
@@ -1021,6 +1031,7 @@ class WidgetManager(object):
             - ``style_fancy_bordercolor``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Border color of fancy style
             - ``style_fancy_borderwidth``   *(int)* - Border width of fancy style; ``1`` by default
             - ``style_fancy_box_inflate``   *(tuple, list)* - Box inflate of fancy style (x, y) in px
+            - ``tab_size``                  *(int)* - Width of a tab character
 
         .. note::
 
@@ -1058,7 +1069,7 @@ class WidgetManager(object):
         style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', (180, 180, 180))
         style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', (0, 0, 0))
         style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', 1)
-        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', (0, 8))
+        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', (0, 0))
 
         widget = pygame_menu.widgets.Selector(
             default=default,
@@ -1087,7 +1098,7 @@ class WidgetManager(object):
             self,
             title: Any,
             items: Union[List[Tuple[Any, ...]], List[str]],
-            default: int = 0,
+            default: int = -1,
             dropselect_id: str = '',
             onchange: CallbackType = None,
             onreturn: CallbackType = None,
@@ -1146,6 +1157,7 @@ class WidgetManager(object):
             - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
 
         kwargs for modifying selection box/option style (Optional)
             - ``scrollbar_color``                       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
@@ -1212,7 +1224,7 @@ class WidgetManager(object):
         selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', (150, 150, 150))
         selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', (5, 5, 0))
         selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', (255, 255, 255))
-        selection_box_border_color = kwargs.pop('selection_box_border_color', (150, 150, 150))
+        selection_box_border_color = kwargs.pop('selection_box_border_color', (0, 0, 0))
         selection_box_border_width = kwargs.pop('selection_box_border_width', 1)
         selection_box_height = kwargs.pop('selection_box_height', 3)
         selection_box_inflate = kwargs.pop('selection_box_inflate', (0, 0))
@@ -1353,6 +1365,7 @@ class WidgetManager(object):
             - ``switch_border_width``       *(int)* - Switch border width. ``1`` px by default
             - ``switch_height``             *(int, float)* - Height factor respect to the title font size height. ``1.25`` by default
             - ``switch_margin``             *(tuple, list)* - *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title. ``(25, 0)`` by default
+            - ``tab_size``                  *(int)* - Width of a tab character
 
         .. note::
 
@@ -1401,7 +1414,7 @@ class WidgetManager(object):
         state_text_font_size = kwargs.pop('state_text_font_size', None)
         switch_border_color = kwargs.pop('switch_border_color', (40, 40, 40))
         switch_border_width = kwargs.pop('switch_border_width', 1)
-        switch_height = kwargs.pop('switch_height', 1.25)
+        switch_height = kwargs.pop('switch_height', 1)
         switch_margin = kwargs.pop('switch_margin', (25, 0))
 
         widget = pygame_menu.widgets.ToggleSwitch(
@@ -1446,7 +1459,6 @@ class WidgetManager(object):
             onreturn: CallbackType = None,
             onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
             password: bool = False,
-            tab_size: int = 4,
             textinput_id: str = '',
             valid_chars: Optional[List[str]] = None,
             **kwargs
@@ -1494,6 +1506,7 @@ class WidgetManager(object):
             - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
             - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
             - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
 
         .. note::
 
@@ -1523,7 +1536,6 @@ class WidgetManager(object):
         :param onreturn: Callback executed when pressing return on the text input
         :param onselect: Callback executed when selecting the widget
         :param password: Text input is a password
-        :param tab_size: Size of tab key
         :param textinput_id: ID of the text input
         :param valid_chars: List of authorized chars. ``None`` if all chars are valid
         :param kwargs: Optional keyword arguments
@@ -1556,7 +1568,6 @@ class WidgetManager(object):
             onreturn=onreturn,
             onselect=onselect,
             password=password,
-            tab_size=tab_size,
             textinput_id=textinput_id,
             title=title,
             valid_chars=valid_chars,
@@ -1616,14 +1627,15 @@ class WidgetManager(object):
         self._configure_widget(widget=widget, **attributes)
 
         widget.make_scrollarea(
-            max_width=kwargs.pop('max_width', width) - padh,
             max_height=kwargs.pop('max_height', height) - padv,
+            max_width=kwargs.pop('max_width', width) - padh,
+            scrollarea_color=kwargs.pop('scrollarea_color', None),
             scrollbar_color=kwargs.pop('scrollbar_color', self._theme.scrollbar_color),
             scrollbar_cursor=kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor),
+            scrollbar_shadow=kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow),
             scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
             scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
             scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
-            scrollbar_shadow=kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow),
             scrollbar_slider_color=kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color),
             scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
             scrollbar_thick=kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick),
@@ -1631,6 +1643,7 @@ class WidgetManager(object):
         )
 
         self._append_widget(widget)
+        self._check_kwargs(kwargs)
 
         return widget
 
@@ -1670,6 +1683,7 @@ class WidgetManager(object):
             - ``max_height``                *(int)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
             - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``scrollarea_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, *None)* - Scroll area color. If ``None`` area is transparent
             - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
             - ``scrollbar_cursor``          *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
             - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
@@ -1752,6 +1766,7 @@ class WidgetManager(object):
             - ``max_height``                *(int)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
             - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
             - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``scrollarea_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, *None)* - Scroll area color. If ``None`` area is transparent
             - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
             - ``scrollbar_cursor``          *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
             - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
