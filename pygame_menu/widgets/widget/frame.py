@@ -375,6 +375,9 @@ class Frame(Widget):
         return self
 
     def draw(self, surface: 'pygame.Surface') -> 'Frame':
+        if not self.is_visible():
+            return self
+
         selected_widget = None
 
         # Simple case, no scrollarea
@@ -406,6 +409,8 @@ class Frame(Widget):
             if selected_widget is not None:
                 selected_widget.draw_after_if_selected(self._surface)
             self._frame_scrollarea.draw(surface)
+            if selected_widget is not None and selected_widget.last_surface != self._surface:  # Draw after was not completed
+                selected_widget.draw_after_if_selected(None)
             self._draw_border(surface)
         self.apply_draw_callbacks()
         return self
@@ -566,14 +571,14 @@ class Frame(Widget):
         # Apply position to each widget
         for w in self._widgets.keys():
             widget = self._widgets[w]
+            if not widget.is_visible():
+                widget.set_position(0, 0)
+                continue
             if widget.is_floating():
                 tx = 0
                 ty = 0
             else:
                 tx, ty = self._pos[w]
-            if not widget.is_visible():
-                widget.set_position(0, 0)
-                continue
             if widget.get_menu() is None:  # Widget is only appended to Frame
                 fx, fy = self.get_position()
                 margin = widget.get_margin()
@@ -667,7 +672,7 @@ class Frame(Widget):
             return self._frame_scrollarea
         return self._scrollarea
 
-    def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)
