@@ -173,15 +173,30 @@ def main(test: bool = False) -> None:
         input_underline='_'
     )
 
+    # Selectible items
+    items = [('Easy', 'EASY'),
+             ('Medium', 'MEDIUM'),
+             ('Hard', 'HARD')]
+
     # Create selector with 3 difficulty options
     settings_menu.add.selector(
-        'Select difficulty',
-        [('Easy', 'EASY'),
-         ('Medium', 'MEDIUM'),
-         ('Hard', 'HARD')],
+        'Select difficulty:\t',
+        items,
         selector_id='difficulty',
+        default=1
+    )
+    settings_menu.add.selector(
+        'Select difficulty fancy',
+        items,
+        selector_id='difficulty_fancy',
         default=1,
         style='fancy'
+    )
+    settings_menu.add.dropselect(
+        'Select difficulty (drop)',
+        items,
+        default=1,
+        dropselect_id='difficulty_drop'
     )
 
     # Create switch
