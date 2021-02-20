@@ -499,7 +499,8 @@ class ScrollBar(Widget):
             elif self._mouse_enabled and event.type == pygame.MOUSEMOTION and hasattr(event, 'rel'):
                 # If mouse outside region and scroll is on limits, ignore
                 mx, my = pygame.mouse.get_pos()
-                if self.scrolling and self.get_value_percentual() in (0, 1):
+                if self.scrolling and self.get_value_percentual() in (0, 1) and \
+                        self.get_scrollarea() is not None and self.get_scrollarea().get_parent() is not None:
                     if self._orientation == 1:  # Vertical
                         h = self._slider_rect.height / 2
                         if my > (rect.bottom - h) or my < (rect.top + h):
