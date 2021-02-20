@@ -208,6 +208,8 @@ class Theme(object):
     :type widget_offset: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
+    :param widget_tab_size: Widget tab size
+    :type widget_tab_size: int
     :param widget_url_color: Color of url text links
     :type widget_url_color: tuple, list, str, int, :py:class:`pygame.Color`
     """
@@ -271,6 +273,7 @@ class Theme(object):
     widget_offset: Tuple2NumberType
     widget_padding: PaddingType
     widget_selection_effect: 'pygame_menu.widgets.core.Selection'
+    widget_tab_size: int
     widget_url_color: ColorType
 
     def __init__(self, **kwargs) -> None:
@@ -353,6 +356,7 @@ class Theme(object):
         self.widget_margin = self._get(kwargs, 'widget_margin', 'tuple2', (0, 0))
         self.widget_offset = self._get(kwargs, 'widget_offset', 'tuple2', (0, 0))
         self.widget_padding = self._get(kwargs, 'widget_padding', PaddingInstance, (4, 8))
+        self.widget_tab_size = self._get(kwargs, 'widget_tab_size', int, 4)
         self.widget_url_color = self._get(kwargs, 'widget_url_color', 'color', (6, 69, 173))
 
         # Compatibility check
@@ -424,6 +428,7 @@ class Theme(object):
         assert isinstance(self.widget_font_size, int)
         assert isinstance(self.widget_padding, PaddingInstance)
         assert isinstance(self.widget_selection_effect, _widgets.core.Selection)
+        assert isinstance(self.widget_tab_size, int)
 
         # Format colors, this converts all color lists to tuples automatically
         self.background_color = self._format_opacity(self.background_color)
@@ -477,6 +482,7 @@ class Theme(object):
         assert self.title_font_size > 0, 'title font size must be greater than zero'
         assert self.widget_font_shadow_offset > 0, 'widget shadow offset must be greater than zero'
         assert self.widget_font_size > 0, 'widget font size must be greater than zero'
+        assert self.widget_tab_size >= 0, 'widget tab size must be equal or greater than zero'
 
         # Color asserts
         assert self.focus_background_color[3] != 0, \
