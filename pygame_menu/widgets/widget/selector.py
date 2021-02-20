@@ -54,7 +54,7 @@ from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vect
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, Literal, ColorType, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, NumberType, EventVectorType
+    ColorInputType, Tuple2IntType, Tuple3IntType, EventVectorType, Tuple2NumberType
 
 SELECTOR_STYLE_CLASSIC = 'classic'
 SELECTOR_STYLE_FANCY = 'fancy'
@@ -115,6 +115,7 @@ class Selector(Widget):
     :param style_fancy_bordercolor: Border color of fancy style
     :param style_fancy_borderwidth: Border width of fancy style
     :param style_fancy_box_inflate: Box inflate of fancy style (x, y) in px
+    :param style_fancy_box_margin: Box margin (x, y) in fancy style from title in px
     :param kwargs: Optional keyword arguments
     """
     _index: int
@@ -127,7 +128,7 @@ class Selector(Widget):
     _style_fancy_bordercolor: ColorType
     _style_fancy_borderwidth: int
     _style_fancy_box_inflate: Tuple2IntType
-    _style_fancy_box_margin: NumberType  # Box left margin
+    _style_fancy_box_margin: Tuple2IntType  # Box (left, top)
     _title_size: int
 
     def __init__(
@@ -146,7 +147,7 @@ class Selector(Widget):
             style_fancy_bordercolor: ColorInputType = (0, 0, 0),
             style_fancy_borderwidth: int = 1,
             style_fancy_box_inflate: Tuple2IntType = (0, 0),
-            style_fancy_box_margin: int = 25,
+            style_fancy_box_margin: Tuple2NumberType = (25, 0),
             *args,
             **kwargs
     ) -> None:
@@ -165,13 +166,13 @@ class Selector(Widget):
         # Check fancy style
         style_fancy_arrow_color = assert_color(style_fancy_arrow_color)
         assert_vector(style_fancy_arrow_margin, 3, int)
+        assert_vector(style_fancy_box_margin, 2)
         style_fancy_bgcolor = assert_color(style_fancy_bgcolor)
         style_fancy_bordercolor = assert_color(style_fancy_bordercolor)
         assert isinstance(style_fancy_borderwidth, int) and style_fancy_borderwidth >= 0
         assert_vector(style_fancy_box_inflate, 2, int)
         assert style_fancy_box_inflate[0] >= 0 and style_fancy_box_inflate[1] >= 0, \
             'box inflate must be equal or greater than zero on both axis'
-        assert isinstance(style_fancy_box_margin, int), 'box margin must be an integer'
 
         super(Selector, self).__init__(
             onchange=onchange,
@@ -196,7 +197,7 @@ class Selector(Widget):
         self._style_fancy_bordercolor = style_fancy_bordercolor
         self._style_fancy_borderwidth = style_fancy_borderwidth
         self._style_fancy_box_inflate = style_fancy_box_inflate
-        self._style_fancy_box_margin = style_fancy_box_margin
+        self._style_fancy_box_margin = (int(style_fancy_box_margin[0]), int(style_fancy_box_margin[1]))
 
         # Apply default item
         default %= len(self._items)
@@ -225,14 +226,10 @@ class Selector(Widget):
         self._default_value = index
         return self
 
-    def reset_value(self) -> 'Selector':
-        self._index = self._default_value
-        return self
-
     def _apply_font(self) -> None:
         self._title_size = self._font.size(self._title)[0]
         if self._style == SELECTOR_STYLE_FANCY:
-            self._title_size += self._style_fancy_box_margin - self._style_fancy_box_inflate[0] / 2 \
+            self._title_size += self._style_fancy_box_margin[0] - self._style_fancy_box_inflate[0] / 2 \
                                 + self._style_fancy_borderwidth
         self._title_size = int(self._title_size)
 
@@ -253,11 +250,11 @@ class Selector(Widget):
 
         else:
             title = self._render_string(self._title, color)
-            current = self._render_string(current_selected, color)
+            current = self._render_string(current_selected, self.get_font_color_status(check_selection=False))
 
             # Create arrows
             arrow_left = pygame.Rect(
-                title.get_width() + self._style_fancy_arrow_margin[0] + self._style_fancy_box_margin,
+                title.get_width() + self._style_fancy_arrow_margin[0] + self._style_fancy_box_margin[0],
                 self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2,
                 title.get_height(),
                 title.get_height()
@@ -274,9 +271,10 @@ class Selector(Widget):
             )
 
             arrow_right = pygame.Rect(
-                title.get_width() + 2 * self._style_fancy_arrow_margin[0] + self._style_fancy_box_margin +
+                title.get_width() + 2 * self._style_fancy_arrow_margin[0] + self._style_fancy_box_margin[0] +
                 self._style_fancy_arrow_margin[1] + current.get_width(),
-                self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2,
+                self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2 +
+                self._style_fancy_box_margin[1],
                 title.get_height(),
                 title.get_height()
             )
@@ -292,14 +290,14 @@ class Selector(Widget):
             )
 
             self._surface = make_surface(title.get_width() + 2 * self._style_fancy_arrow_margin[0] +
-                                         2 * self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin +
+                                         2 * self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin[0] +
                                          current.get_width() + 2 * arrow_left.width + self._style_fancy_borderwidth +
                                          self._style_fancy_box_inflate[0] / 2,
                                          title.get_height() + self._style_fancy_box_inflate[1])
             self._surface.blit(title, (0, self._style_fancy_box_inflate[1] / 2))
             current_rect_bg = current.get_rect()
-            current_rect_bg.x += title.get_width() + self._style_fancy_box_margin
-            current_rect_bg.y += self._style_fancy_box_inflate[1] / 2
+            current_rect_bg.x += title.get_width() + self._style_fancy_box_margin[0]
+            current_rect_bg.y += self._style_fancy_box_inflate[1] / 2 + self._style_fancy_box_margin[1]
             current_rect_bg.width += 2 * (self._style_fancy_arrow_margin[0] + self._style_fancy_arrow_margin[1] +
                                           arrow_left.width)
             current_rect_bg = current_rect_bg.inflate(self._style_fancy_box_inflate)
@@ -307,8 +305,8 @@ class Selector(Widget):
             pygame.draw.rect(self._surface, self._style_fancy_bordercolor, current_rect_bg,
                              self._style_fancy_borderwidth)
             self._surface.blit(current, (title.get_width() + arrow_left.width + self._style_fancy_arrow_margin[0] +
-                                         self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin,
-                                         self._style_fancy_box_inflate[1] / 2))
+                                         self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin[0],
+                                         self._style_fancy_box_inflate[1] / 2 + self._style_fancy_box_margin[1]))
             pygame.draw.polygon(self._surface, self._style_fancy_arrow_color, arrow_left_pos)
             pygame.draw.polygon(self._surface, self._style_fancy_arrow_color, arrow_right_pos)
 
@@ -376,11 +374,14 @@ class Selector(Widget):
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
         if isinstance(item, str):
+            found = False
             for i in self._items:
                 if i[0] == item:
                     self._index = self._items.index(i)
-                    return
-            raise ValueError('no value "{}" found in selector'.format(item))
+                    found = True
+                    break
+            if not found:
+                raise ValueError('no value "{}" found in selector'.format(item))
         elif isinstance(item, int):
             assert 0 <= item < len(self._items), \
                 'item index must be greater than zero and lower than the number of items on the selector'
