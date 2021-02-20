@@ -936,14 +936,15 @@ class Widget(object):
 
         return self
 
-    def draw_after_if_selected(self, surface: 'pygame.Surface') -> None:
+    def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'Widget':
         """
         Draw Widget if selected after all widgets have been drawn.
+        This method should also update ``last_surface``; see :py:class:`pygame_menu.widgets.DropSelect` widget example.
 
-        :param surface: Surface to draw
-        :return: None
+        :param surface: Surface to draw. ``None`` if frame is requesting the draw, as some widgets are drawn outside the frame surface
+        :return: Self reference
         """
-        pass
+        return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         """
@@ -1009,13 +1010,14 @@ class Widget(object):
         self._force_render()
         return self
 
-    def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
         """
         Set scrollarea reference. Mostly used for events.
 
         :param scrollarea: Scrollarea object
         :return: None
         """
+        assert isinstance(scrollarea, (type(None), pygame_menu.scrollarea.ScrollArea))
         self._scrollarea = scrollarea
 
     def get_scrollarea(self) -> 'pygame_menu.scrollarea.ScrollArea':
@@ -1034,10 +1036,12 @@ class Widget(object):
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
         :return: Self reference
         """
-        if self.get_frame() is not None and self.get_frame().is_scrollable:
-            self.get_frame().get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
+        if self._frame is not None and self._frame.is_scrollable and self._frame.get_scrollarea() is not None:
+            self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
         if self._scrollarea is not None:
-            self._scrollarea.scroll_to_rect(self.get_rect(), margin, scroll_parent)
+            rect = self.get_rect()
+            # rect.y += self._border_width
+            self._scrollarea.scroll_to_rect(rect, margin, scroll_parent)
         return self
 
     def get_focus_rect(self) -> 'pygame.Rect':
