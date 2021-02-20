@@ -790,7 +790,7 @@ class WidgetManager(object):
         :param selectable: Label accepts user selection; useful to move along the Menu using label selection
         :param kwargs: Optional keyword arguments
         :return: Widget object, or List of widgets if the text overflows
-        :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
+        :rtype: :py:class:`pygame_menu.widgets.Label`, :py:class:`typing.List` [:py:class:`pygame_menu.widgets.Label`]
         """
         assert isinstance(label_id, str)
         assert isinstance(max_char, int)
@@ -1031,6 +1031,7 @@ class WidgetManager(object):
             - ``style_fancy_bordercolor``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Border color of fancy style
             - ``style_fancy_borderwidth``   *(int)* - Border width of fancy style; ``1`` by default
             - ``style_fancy_box_inflate``   *(tuple, list)* - Box inflate of fancy style (x, y) in px
+            - ``style_fancy_box_margin``    *(tuple, list)* - Box margin (x, y) in fancy style from title in px
             - ``tab_size``                  *(int)* - Width of a tab character
 
         .. note::
@@ -1064,12 +1065,13 @@ class WidgetManager(object):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get fancy style attributes
-        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color', (230, 230, 230))
-        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin', (5, 5, 0))
-        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', (180, 180, 180))
-        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', (0, 0, 0))
-        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', 1)
-        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', (0, 0))
+        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color', self._theme.widget_box_arrow_color)
+        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin', self._theme.widget_box_arrow_margin)
+        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', self._theme.widget_box_background_color)
+        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', self._theme.widget_box_border_color)
+        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', self._theme.widget_box_border_width)
+        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', self._theme.widget_box_inflate)
+        style_fancy_box_margin = kwargs.pop('style_fancy_box_margin', self._theme.widget_box_margin)
 
         widget = pygame_menu.widgets.Selector(
             default=default,
@@ -1085,6 +1087,7 @@ class WidgetManager(object):
             style_fancy_bordercolor=style_fancy_bordercolor,
             style_fancy_borderwidth=style_fancy_borderwidth,
             style_fancy_box_inflate=style_fancy_box_inflate,
+            style_fancy_box_margin=style_fancy_box_margin,
             title=title,
             **kwargs
         )
@@ -1103,7 +1106,9 @@ class WidgetManager(object):
             onchange: CallbackType = None,
             onreturn: CallbackType = None,
             onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            open_middle: bool = False,
             placeholder: str = 'Select an option',
+            placeholder_add_to_selection_box: bool = True,
             **kwargs
     ) -> 'pygame_menu.widgets.DropSelect':
         """
@@ -1177,7 +1182,7 @@ class WidgetManager(object):
             - ``selection_box_border_width``            *(int)* - Selection box border width
             - ``selection_box_height``                  *(int)* - Selection box height, counted as how many options are packed before showing scroll
             - ``selection_box_inflate``                 *(tuple)* - Selection box inflate on x-axis and y-axis (px)
-            - ``selection_box_margin``                  *(int)* - Selection box left margin from title (px)
+            - ``selection_box_margin``                  *(tuple, list)* - Selection box (x, y) margin from title (px)
             - ``selection_box_text_margin``             *(int)* - Selection box text margin (left) in px
             - ``selection_box_width``                   *(int)* - Selection box width (px). If ``0`` compute automatically to fit placeholder
             - ``selection_infinite``                    *(bool)* - If ``True`` selection can rotate through bottom/top
@@ -1212,23 +1217,25 @@ class WidgetManager(object):
         :param onchange: Callback when changing the drop select item
         :param onreturn: Callback when pressing return on the selected item
         :param onselect: Function when selecting the widget
+        :param open_middle: If ``True`` the selection box is opened in the middle of the menu
         :param placeholder: Text shown if no option is selected yet
+        :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
         :param kwargs: Optional keyword arguments
         :return: Widget object
-        :rtype: :py:class:`pygame_menu.widgets.Selector`
+        :rtype: :py:class:`pygame_menu.widgets.DropSelect`
         """
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get selection box properties
-        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', (150, 150, 150))
-        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', (5, 5, 0))
-        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', (255, 255, 255))
-        selection_box_border_color = kwargs.pop('selection_box_border_color', (0, 0, 0))
-        selection_box_border_width = kwargs.pop('selection_box_border_width', 1)
+        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', self._theme.widget_box_arrow_color)
+        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', self._theme.widget_box_arrow_margin)
+        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', self._theme.widget_box_background_color)
+        selection_box_border_color = kwargs.pop('selection_box_border_color', self._theme.widget_box_border_color)
+        selection_box_border_width = kwargs.pop('selection_box_border_width', self._theme.widget_box_border_width)
         selection_box_height = kwargs.pop('selection_box_height', 3)
-        selection_box_inflate = kwargs.pop('selection_box_inflate', (0, 0))
-        selection_box_margin = kwargs.pop('selection_box_margin', 25)
+        selection_box_inflate = kwargs.pop('selection_box_inflate', self._theme.widget_border_inflate)
+        selection_box_margin = kwargs.pop('selection_box_margin', self._theme.widget_box_margin)
         selection_box_text_margin = kwargs.pop('selection_box_text_margin', 5)
         selection_box_width = kwargs.pop('selection_box_width', 0)
         selection_infinite = kwargs.pop('selection_infinite', False)
@@ -1237,7 +1244,7 @@ class WidgetManager(object):
         selection_option_font = kwargs.pop('selection_option_font', None)
         selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
         selection_option_font_size = kwargs.pop('selection_option_font_size', None)
-        selection_option_padding = kwargs.pop('selection_option_padding', 5)
+        selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
         selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (230, 250, 247))
         selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
 
@@ -1260,7 +1267,9 @@ class WidgetManager(object):
             onchange=onchange,
             onreturn=onreturn,
             onselect=onselect,
+            open_middle=open_middle,
             placeholder=placeholder,
+            placeholder_add_to_selection_box=placeholder_add_to_selection_box,
             selection_box_arrow_color=selection_box_arrow_color,
             selection_box_arrow_margin=selection_box_arrow_margin,
             selection_box_bgcolor=selection_box_bgcolor,
@@ -1361,10 +1370,10 @@ class WidgetManager(object):
             - ``state_color``               *(tuple)* - 2-item color tuple for each state
             - ``state_text_font_color``     *(tuple)* - 2-item color tuple for each font state text color
             - ``state_text_font_size``      *(str, None)* - Font size of the state text. If ``None`` uses the widget font size
-            - ``switch_border_color``       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Switch border color. ``(40, 40, 40)`` by default
-            - ``switch_border_width``       *(int)* - Switch border width. ``1`` px by default
-            - ``switch_height``             *(int, float)* - Height factor respect to the title font size height. ``1.25`` by default
-            - ``switch_margin``             *(tuple, list)* - *(x, y)* margin respect to the title of the widget. X is in px, Y is relative to the height of the title. ``(25, 0)`` by default
+            - ``switch_border_color``       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Switch border color
+            - ``switch_border_width``       *(int)* - Switch border width
+            - ``switch_height``             *(int, float)* - Height factor respect to the title font size height
+            - ``switch_margin``             *(tuple, list)* - Switch (x, y) margin respect to the title of the widget (px)
             - ``tab_size``                  *(int)* - Width of a tab character
 
         .. note::
@@ -1412,10 +1421,10 @@ class WidgetManager(object):
         state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
         state_text_font_color = kwargs.pop('state_text_font_color', ((255, 255, 255), (255, 255, 255)))
         state_text_font_size = kwargs.pop('state_text_font_size', None)
-        switch_border_color = kwargs.pop('switch_border_color', (40, 40, 40))
-        switch_border_width = kwargs.pop('switch_border_width', 1)
+        switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
+        switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)
         switch_height = kwargs.pop('switch_height', 1)
-        switch_margin = kwargs.pop('switch_margin', (25, 0))
+        switch_margin = kwargs.pop('switch_margin', self._theme.widget_box_margin)
 
         widget = pygame_menu.widgets.ToggleSwitch(
             default_state=default,
