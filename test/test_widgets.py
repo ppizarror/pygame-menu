@@ -1259,96 +1259,97 @@ class WidgetsTest(unittest.TestCase):
         for i in range(10):
             items.append(('item{}'.format(i + 1), i + 1))
         drop = pygame_menu.widgets.DropSelect('dropsel', items,
-                                              selection_option_font_size=int(0.75 * menu._theme.widget_font_size))
+                                              selection_option_font_size=int(0.75 * menu._theme.widget_font_size),
+                                              placeholder_add_to_selection_box=False)
         menu.add.generic_widget(drop, configure_defaults=True)
-        self.assertEqual(drop._selection_box_width, 205 if PYGAME_V2 else 206)
+        self.assertEqual(drop._selection_box_width, 207 if PYGAME_V2 else 208)
         drop.make_selection_drop()
         self.assertEqual(drop.get_frame_depth(), 0)
         drop.render()
         if PYGAME_V2:
             self.assertEqual(menu._test_widgets_status(), (
                 (('DropSelect-dropsel',
-                  (0, 0, 0, 124, 149, 352, 49, 124, 304, 124, 149),
+                  (0, 0, 0, 123, 149, 354, 49, 123, 304, 123, 149),
                   (1, 0, 1, 1, 0, 0, 0),
                   ('Frame',
-                   (-1, -1, -1, 262, 193, 205, 136, 262, 348, 262, 193),
+                   (-1, -1, -1, 261, 193, 207, 136, 261, 348, 261, 193),
                    (0, 0, 0, 1, 1, 0, 0),
                    (-1, -1),
                    ('Button-This is a really long selection item',
-                    (-1, -1, -1, 0, -1, 356, 40, 262, 348, 0, 154),
+                    (-1, -1, -1, 0, -1, 356, 40, 261, 348, 0, 154),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-epic',
-                    (-1, -1, -1, 0, 38, 356, 40, 262, 386, 0, 193),
+                    (-1, -1, -1, 0, 38, 356, 40, 261, 386, 0, 193),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item1',
-                    (-1, -1, -1, 0, 77, 356, 40, 262, 425, 0, 232),
+                    (-1, -1, -1, 0, 77, 356, 40, 261, 425, 0, 232),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item2',
-                    (-1, -1, -1, 0, 116, 356, 40, 262, 348, 0, 271),
+                    (-1, -1, -1, 0, 116, 356, 40, 261, 348, 0, 271),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item3',
-                    (-1, -1, -1, 0, 155, 356, 40, 262, 348, 0, 310),
+                    (-1, -1, -1, 0, 155, 356, 40, 261, 348, 0, 310),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item4',
-                    (-1, -1, -1, 0, 194, 356, 40, 262, 348, 0, 349),
+                    (-1, -1, -1, 0, 194, 356, 40, 261, 348, 0, 349),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item5',
-                    (-1, -1, -1, 0, 233, 356, 40, 262, 348, 0, 388),
+                    (-1, -1, -1, 0, 233, 356, 40, 261, 348, 0, 388),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item6',
-                    (-1, -1, -1, 0, 272, 356, 40, 262, 348, 0, 427),
+                    (-1, -1, -1, 0, 272, 356, 40, 261, 348, 0, 427),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item7',
-                    (-1, -1, -1, 0, 311, 356, 40, 262, 348, 0, 466),
+                    (-1, -1, -1, 0, 311, 356, 40, 261, 348, 0, 466),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item8',
-                    (-1, -1, -1, 0, 350, 356, 40, 262, 348, 0, 505),
+                    (-1, -1, -1, 0, 350, 356, 40, 261, 348, 0, 505),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item9',
-                    (-1, -1, -1, 0, 389, 356, 40, 262, 348, 0, 544),
+                    (-1, -1, -1, 0, 389, 356, 40, 261, 348, 0, 544),
                     (1, 0, 0, 1, 0, 1, 1)),
                    ('Button-item10',
-                    (-1, -1, -1, 0, 428, 356, 40, 262, 348, 0, 583),
+                    (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
                     (1, 0, 0, 1, 0, 1, 1))),
                   ('Button-This is a really long selection item',
-                   (-1, -1, -1, 0, -1, 356, 40, 262, 348, 0, 154),
+                   (-1, -1, -1, 0, -1, 356, 40, 261, 348, 0, 154),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-epic',
-                   (-1, -1, -1, 0, 38, 356, 40, 262, 386, 0, 193),
+                   (-1, -1, -1, 0, 38, 356, 40, 261, 386, 0, 193),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item1',
-                   (-1, -1, -1, 0, 77, 356, 40, 262, 425, 0, 232),
+                   (-1, -1, -1, 0, 77, 356, 40, 261, 425, 0, 232),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item2',
-                   (-1, -1, -1, 0, 116, 356, 40, 262, 348, 0, 271),
+                   (-1, -1, -1, 0, 116, 356, 40, 261, 348, 0, 271),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item3',
-                   (-1, -1, -1, 0, 155, 356, 40, 262, 348, 0, 310),
+                   (-1, -1, -1, 0, 155, 356, 40, 261, 348, 0, 310),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item4',
-                   (-1, -1, -1, 0, 194, 356, 40, 262, 348, 0, 349),
+                   (-1, -1, -1, 0, 194, 356, 40, 261, 348, 0, 349),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item5',
-                   (-1, -1, -1, 0, 233, 356, 40, 262, 348, 0, 388),
+                   (-1, -1, -1, 0, 233, 356, 40, 261, 348, 0, 388),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item6',
-                   (-1, -1, -1, 0, 272, 356, 40, 262, 348, 0, 427),
+                   (-1, -1, -1, 0, 272, 356, 40, 261, 348, 0, 427),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item7',
-                   (-1, -1, -1, 0, 311, 356, 40, 262, 348, 0, 466),
+                   (-1, -1, -1, 0, 311, 356, 40, 261, 348, 0, 466),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item8',
-                   (-1, -1, -1, 0, 350, 356, 40, 262, 348, 0, 505),
+                   (-1, -1, -1, 0, 350, 356, 40, 261, 348, 0, 505),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item9',
-                   (-1, -1, -1, 0, 389, 356, 40, 262, 348, 0, 544),
+                   (-1, -1, -1, 0, 389, 356, 40, 261, 348, 0, 544),
                    (1, 0, 0, 1, 0, 1, 1)),
                   ('Button-item10',
-                   (-1, -1, -1, 0, 428, 356, 40, 262, 348, 0, 583),
+                   (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
                    (1, 0, 0, 1, 0, 1, 1))),)
             ))
         self.assertEqual(drop._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
-        self.assertEqual(drop._drop_frame.get_attribute('width'), 185 if PYGAME_V2 else 186)
+        self.assertEqual(drop._drop_frame.get_attribute('width'), 187 if PYGAME_V2 else 188)
 
         # Test events
         self.assertFalse(drop.active)
@@ -1381,6 +1382,19 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(drop.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0.997)
 
+        # Mouseup over rect returns True updated status
+        self.assertTrue(drop.active)
+        self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(),
+                                                                       evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertTrue(drop.active)
+
+        # Touch also does the same trick
+        if PYGAME_V2:
+            drop._touchscreen_enabled = True
+            self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(), menu=menu,
+                                                                           evtype=pygame.FINGERDOWN)))
+            self.assertTrue(drop.active)
+
         # Scroll to bottom and close, then open again, this should scroll to current selected
         drop.scrollh(0)
         drop.scrollv(0)
@@ -1408,15 +1422,15 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(menu._draw_focus_widget(surface, drop),
                              {1: ((0, 0), (600, 0), (600, 307), (0, 307)),
-                              2: ((0, 308), (261, 308), (261, 483), (0, 483)),
-                              3: ((467, 308), (600, 308), (600, 483), (467, 483)),
+                              2: ((0, 308), (260, 308), (260, 483), (0, 483)),
+                              3: ((468, 308), (600, 308), (600, 483), (468, 483)),
                               4: ((0, 484), (600, 484), (600, 600), (0, 600))}
                              )
         else:
             self.assertEqual(menu._draw_focus_widget(surface, drop),
                              {1: ((0, 0), (600, 0), (600, 306), (0, 306)),
-                              2: ((0, 307), (260, 307), (260, 486), (0, 486)),
-                              3: ((467, 307), (600, 307), (600, 486), (467, 486)),
+                              2: ((0, 307), (259, 307), (259, 486), (0, 486)),
+                              3: ((468, 307), (600, 307), (600, 486), (468, 486)),
                               4: ((0, 487), (600, 487), (600, 600), (0, 600))}
                              )
 
@@ -1427,6 +1441,7 @@ class WidgetsTest(unittest.TestCase):
         drop.make_selection_drop()  # This selection drop is empty
         self.assertEqual(drop._drop_frame.get_attribute('height'), 0)
         self.assertEqual(drop._drop_frame.get_attribute('width'), 0)
+        self.assertFalse(drop.active)
         drop._toggle_drop()
         self.assertFalse(drop.active)
         fr = drop.get_focus_rect()
@@ -1477,9 +1492,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(drop.active)
 
         # Add margin
-        menu.add.vertical_margin(500)
+        vm = menu.add.vertical_margin(500)
+        self.assertEqual(vm.get_height(), 500)
 
-        # Add drop from widgetmanager
+        # Add drop from widgetmanager, this has the placeholder button
         drop2 = menu.add.dropselect('drop2', items, dropselect_id='2', selection_infinite=True,
                                     selection_option_font_size=int(0.75 * menu._theme.widget_font_size))
         self.assertEqual(drop2._tab_size, menu._theme.widget_tab_size)
@@ -1498,8 +1514,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(drop2._open_bottom)
         menu.select_widget(drop2)
         drop2._toggle_drop()
-        self.assertEqual(drop2._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
-        self.assertEqual(drop2._drop_frame.get_attribute('width'), 185 if PYGAME_V2 else 186)
+
+        self.assertEqual(drop2.get_position(), (142, 554) if PYGAME_V2 else (141, 555))
+        self.assertEqual(drop2._drop_frame.get_attribute('height'), 117 if PYGAME_V2 else 120)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'), 187 if PYGAME_V2 else 188)
 
         # Test infinite
         self.assertTrue(drop2.active)
@@ -1528,18 +1546,22 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2.get_index(), 7)
         drop2.readonly = False
         menu.render()
-        self.assertEqual(drop2.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0)
+        self.assertEqual(drop2.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0.621 if PYGAME_V2 else 0.615)
         drop2.reset_value()
+        self.assertTrue(drop2.active)
         self.assertEqual(drop2.get_index(), -1)
         drop2.set_scrollarea(drop2.get_scrollarea())
 
         if PYGAME_V2:
             self.assertEqual(menu._draw_focus_widget(surface, drop2),
-                             {1: ((0, 0), (600, 0), (600, 319), (0, 319)),
-                              2: ((0, 320), (250, 320), (250, 495), (0, 495)),
-                              3: ((456, 320), (600, 320), (600, 495), (456, 495)),
+                             {1: ((0, 0), (600, 0), (600, 337), (0, 337)),
+                              2: ((0, 338), (249, 338), (249, 495), (0, 495)),
+                              3: ((457, 338), (600, 338), (600, 495), (457, 495)),
                               4: ((0, 496), (600, 496), (600, 600), (0, 600))}
                              )
+        menu.draw(surface)
+        self.assertIsNone(drop2.get_frame())
+        self.assertEqual(drop2.last_surface, menu._widgets_surface)  # Outside frame, must be the widgets surface
 
         # Add drop inside frame
         f = menu.add.frame_v(400, 500, max_height=200, background_color=(0, 0, 255))
@@ -1552,16 +1574,32 @@ class WidgetsTest(unittest.TestCase):
         drop2.make_selection_drop()
 
         if PYGAME_V2:
-            self.assertEqual(drop2._get_status(), ((
-                'DropSelect-drop2', (0, 2, 3, 0, 0, 330, 49, 98, 308, 0, -242), (1, 0, 1, 1, 0, 1, 1), (
-                    'Frame', (-1, -1, -1, 116, 44, 205, 78, 214, 352, 116, -198), (0, 0, 0, 1, 0, 1, 1), (-1, -1),
-                    ('Button-optionA', (-1, -1, -1, 116, 43, 204, 40, 214, 351, 116, -199), (1, 0, 0, 1, 0, 1, 2)),
-                    ('Button-optionB', (-1, -1, -1, 116, 82, 204, 40, 214, 390, 116, -160), (1, 0, 0, 1, 0, 1, 2))),
-                ('Button-optionA', (-1, -1, -1, 116, 43, 204, 40, 214, 351, 116, -199), (1, 0, 0, 1, 0, 1, 2)),
-                ('Button-optionB', (-1, -1, -1, 116, 82, 204, 40, 214, 390, 116, -160), (1, 0, 0, 1, 0, 1, 2)))
+            self.assertEqual(drop2._get_status(), (
+                ('DropSelect-drop2',
+                 (0, 2, 3, 0, 0, 332, 49, 98, 308, 0, -242),
+                 (1, 0, 1, 1, 0, 1, 1),
+                 ('Frame',
+                  (-1, -1, -1, 116, 44, 207, 100, 214, 352, 116, -198),
+                  (0, 0, 0, 1, 0, 1, 1),
+                  (-1, -1),
+                  ('Button-Select an option',
+                   (-1, -1, -1, 116, 44, 207, 34, 214, 352, 116, -198),
+                   (1, 0, 0, 1, 0, 1, 2)),
+                  ('Button-optionA',
+                   (-1, -1, -1, 116, 77, 207, 34, 214, 385, 116, -165),
+                   (1, 0, 0, 1, 0, 1, 2)),
+                  ('Button-optionB',
+                   (-1, -1, -1, 116, 110, 207, 34, 214, 418, 116, -132),
+                   (1, 0, 0, 1, 0, 1, 2))),
+                 ('Button-optionA',
+                  (-1, -1, -1, 116, 77, 207, 34, 214, 385, 116, -165),
+                  (1, 0, 0, 1, 0, 1, 2)),
+                 ('Button-optionB',
+                  (-1, -1, -1, 116, 110, 207, 34, 214, 418, 116, -132),
+                  (1, 0, 0, 1, 0, 1, 2)))
             ))
-        self.assertEqual(drop2._drop_frame.get_attribute('height'), 77 if PYGAME_V2 else 79)
-        self.assertEqual(drop2._drop_frame.get_attribute('width'), 205 if PYGAME_V2 else 206)
+        self.assertEqual(drop2._drop_frame.get_attribute('height'), 100 if PYGAME_V2 else 103)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'), 207 if PYGAME_V2 else 208)
         self.assertEqual(drop2.get_scrollarea().get_parent_scroll_value_percentual(ORIENTATION_VERTICAL),
                          (0, 1))
         self.assertTrue(drop2._open_bottom)
@@ -1601,6 +1639,9 @@ class WidgetsTest(unittest.TestCase):
         drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # This only opens but not apply
         self.assertTrue(test[1])
         self.assertTrue(drop2.active)
+        menu.draw(surface)
+        self.assertEqual(drop2.get_frame(), f)
+        self.assertEqual(drop2.last_surface, f.get_surface())  # Frame surface as drop is not in middle
         drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Now applies
         self.assertFalse(test[1])
         self.assertFalse(drop2.active)
@@ -1609,8 +1650,66 @@ class WidgetsTest(unittest.TestCase):
         f.unpack(drop2)
         self.assertTrue(drop2.is_floating())
         drop2.set_float(False)
-        self.assertEqual(drop2._drop_frame.get_attribute('height'), 77 if PYGAME_V2 else 79)
-        self.assertEqual(drop2._drop_frame.get_attribute('width'), 205 if PYGAME_V2 else 206)
+        self.assertEqual(drop2._drop_frame.get_attribute('height'), 100 if PYGAME_V2 else 103)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'), 207 if PYGAME_V2 else 208)
+
+        # Test close if mouse clicks outside
+        menu.select_widget(drop)
+        drop._toggle_drop()
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.mouse_click(0, 0))
+        self.assertFalse(drop.active)
+
+        # Set drop in middle
+        if PYGAME_V2:
+            self.assertEqual(drop._drop_frame.get_position(), (261, 45))
+            self.assertEqual(drop.get_focus_rect(), pygame.Rect(131, 159, 337, 41))
+        drop._open_middle = True
+        menu.render()
+
+        # For this test, hide all widgets except drop
+        # for w in menu.get_widgets():
+        #     w.hide()
+        # drop.show()
+
+        if PYGAME_V2:
+            self.assertEqual(drop._drop_frame.get_position(), (196, 106))
+            self.assertEqual(drop.get_focus_rect(), pygame.Rect(131, 159, 337, 41))
+
+        scr = drop._drop_frame.get_scrollarea()
+        sfr = drop._drop_frame.get_frame()
+
+        # Add drop to frame
+        f.pack(drop)
+        menu.render()
+        self.assertEqual(drop._drop_frame.get_scrollarea(), scr)
+        self.assertEqual(drop._drop_frame.get_frame(), sfr)
+        if PYGAME_V2:
+            self.assertEqual(drop._drop_frame.get_position(), (196, 462))
+            self.assertEqual(drop.get_focus_rect(), pygame.Rect(106, 303, 337, 41))
+        self.assertFalse(drop.active)
+        drop._toggle_drop()
+        menu.render()
+        menu.draw(surface)
+        self.assertEqual(drop.last_surface, menu._widgets_surface)  # Menu surface as drop is in middle
+        if PYGAME_V2:
+            self.assertEqual(menu._draw_focus_widget(surface, drop),
+                             {1: ((0, 0), (600, 0), (600, 259), (0, 259)),
+                              2: ((0, 260), (195, 260), (195, 394), (0, 394)),
+                              3: ((403, 260), (600, 260), (600, 394), (403, 394)),
+                              4: ((0, 395), (600, 395), (600, 600), (0, 600))}
+                             )
+        drop._toggle_drop()
+
+        drop2._open_middle = True
+        menu.render()
+        menu.select_widget(drop2)
+        drop2._toggle_drop()
+        menu.draw(surface)
+        self.assertEqual(drop2.last_surface, menu._widgets_surface)
+        if PYGAME_V2:
+            self.assertEqual(drop2._drop_frame.get_position(), (196, 519))
+            self.assertEqual(drop2.get_focus_rect(), pygame.Rect(196, 277, 207, 99))
 
         # Disable focus
         menu._mouse_motion_selection = False

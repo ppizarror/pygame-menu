@@ -108,16 +108,18 @@ class ThemeTest(unittest.TestCase):
         Test format opacity color.
         """
         t = pygame_menu.themes.THEME_DEFAULT
-        self.assertEqual(t._format_opacity((1, 2, 3)), (1, 2, 3, 255))
-        self.assertEqual(t._format_opacity([1, 2, 3]), (1, 2, 3, 255))
-        self.assertEqual(t._format_opacity([1, 2, 3, 25]), (1, 2, 3, 25))
-        self.assertRaises(AssertionError, lambda: t._format_opacity([1, 2]))
+        self.assertEqual(t._format_color_opacity((1, 2, 3)), (1, 2, 3, 255))
+        self.assertEqual(t._format_color_opacity([1, 2, 3]), (1, 2, 3, 255))
+        self.assertEqual(t._format_color_opacity([1, 2, 3, 25]), (1, 2, 3, 25))
+        self.assertRaises(AssertionError, lambda: t._format_color_opacity([1, 2]))
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        self.assertEqual(img, t._format_opacity(img))
-        self.assertIsNone(t._format_opacity(None))
-        self.assertRaises(ValueError, lambda: t._format_opacity('1,2,3'))
-        self.assertRaises(AssertionError, lambda: t._format_opacity((1, 1, -1)))
-        self.assertRaises(AssertionError, lambda: self.assertEqual(t._format_opacity((1, 1, 1.1)), (1, 1, 1, 255)))
+        self.assertEqual(img, t._format_color_opacity(img))
+        self.assertIsNone(t._format_color_opacity(None, none=True))
+        self.assertRaises(ValueError, lambda: self.assertIsNone(t._format_color_opacity(None)))
+        self.assertRaises(ValueError, lambda: t._format_color_opacity('1,2,3'))
+        self.assertRaises(AssertionError, lambda: t._format_color_opacity((1, 1, -1)))
+        self.assertRaises(AssertionError,
+                          lambda: self.assertEqual(t._format_color_opacity((1, 1, 1.1)), (1, 1, 1, 255)))
 
     def test_str_int_color(self) -> None:
         """

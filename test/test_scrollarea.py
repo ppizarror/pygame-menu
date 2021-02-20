@@ -168,7 +168,7 @@ class ScrollAreaTest(unittest.TestCase):
         # Get the size of the scrollarea
         sa = menu.get_scrollarea()
 
-        sa_height = menu.get_height() - menu.get_menubar_widget().get_height()
+        sa_height = menu.get_height() - menu.get_menubar().get_height()
         sa_width = menu.get_width()
         self.assertEqual(sa.get_world_size()[0], sa_width)
         self.assertEqual(sa.get_world_size()[1], sa_height)

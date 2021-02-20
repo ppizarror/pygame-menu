@@ -142,7 +142,7 @@ class MenuTest(unittest.TestCase):
         menu.center_content()
         self.assertEqual(menu.get_height(), 400)
         self.assertEqual(menu.get_height(inner=True), 345)
-        self.assertEqual(menu.get_menubar_widget().get_height(), 55)
+        self.assertEqual(menu.get_menubar().get_height(), 55)
 
         h = 41
         if not PYGAME_V2:
@@ -706,7 +706,7 @@ class MenuTest(unittest.TestCase):
         """
         Test other getters.
         """
-        self.assertTrue(self.menu.get_menubar_widget() is not None)
+        self.assertTrue(self.menu.get_menubar() is not None)
         self.assertTrue(self.menu.get_scrollarea() is not None)
 
         w, h = self.menu.get_size()
@@ -1239,7 +1239,7 @@ class MenuTest(unittest.TestCase):
         """
         menu = MenuUtils.generic_menu(title='menu')
         theme = menu.get_theme()
-        menubar = menu.get_menubar_widget()
+        menubar = menu.get_menubar()
 
         self.assertEqual(menu.get_title(), 'menu')
         self.assertEqual(menubar.get_title_offset()[0], theme.title_offset[0])
