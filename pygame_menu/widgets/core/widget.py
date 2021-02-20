@@ -39,6 +39,7 @@ import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
 
+from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
 from pygame_menu.font import FontType
 from pygame_menu.sound import Sound
@@ -70,7 +71,7 @@ def _restore_cursor() -> None:
         _CURSOR_PREV[0] = None
 
 
-class Widget(object):
+class Widget(Base):
     """
     Widget abstract class.
 
@@ -89,7 +90,6 @@ class Widget(object):
     _alignment: str
     _angle: NumberType
     _args: List[Any]
-    _attributes: Dict[str, Any]
     _background_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']]
     _background_inflate: Tuple2IntType
     _border_color: ColorType
@@ -118,7 +118,6 @@ class Widget(object):
     _font_shadow_tuple: Tuple2IntType
     _font_size: int
     _frame: Optional['pygame_menu.widgets.Frame']
-    _id: str
     _joystick_enabled: bool
     _kwargs: Dict[Any, Any]
     _last_render_hash: int
@@ -172,14 +171,9 @@ class Widget(object):
             args=None,
             kwargs=None
     ) -> None:
-        assert isinstance(widget_id, str), 'widget id must be a string'
-
-        # Store ID, if None or empty create new ID based on UUID
-        if widget_id is None or len(widget_id) == 0:
-            widget_id = uuid4()
+        super(Widget, self).__init__(object_id=widget_id)
 
         self._alignment = _locals.ALIGN_CENTER
-        self._attributes = {}  # Stores widget attributes
         self._background_color = None
         self._background_inflate = (0, 0)
         self._col_row_index = (-1, -1, -1)
@@ -189,7 +183,6 @@ class Widget(object):
         self._events = []
         self._floating = False  # If True, the widget don't contribute width/height to the Menu widget positioning computation. Use .set_float() to modify this status
         self._frame = None
-        self._id = str(widget_id)
         self._margin = (0, 0)
         self._max_height = [None, False, True]  # size, width_scale, smooth
         self._max_width = [None, False, True]  # size, height_scale, smooth
@@ -591,53 +584,6 @@ class Widget(object):
         :return: ``True`` if widget has rendered a new state, ``None`` if the widget has not changed, so render used a cache
         """
         raise NotImplementedError('override is mandatory')
-
-    def set_attribute(self, key: str, value: Any) -> 'Widget':
-        """
-        Set a Widget attribute.
-
-        :param key: Key of the attribute
-        :param value: Value of the attribute
-        :return: Self reference
-        """
-        assert isinstance(key, str)
-        self._attributes[key] = value
-        return self
-
-    def get_attribute(self, key: str, default: Any = None) -> Any:
-        """
-        Get an attribute value.
-
-        :param key: Key of the attribute
-        :param default: Value if does not exists
-        :return: Attribute data
-        """
-        assert isinstance(key, str)
-        if not self.has_attribute(key):
-            return default
-        return self._attributes[key]
-
-    def has_attribute(self, key: str) -> bool:
-        """
-        Return ``True`` if the Widget has the given attribute.
-
-        :param key: Key of the attribute
-        :return: ``True`` if exists
-        """
-        assert isinstance(key, str)
-        return key in self._attributes.keys()
-
-    def remove_attribute(self, key: str) -> 'Widget':
-        """
-        Removes the given attribute from the Widget. Throws ``IndexError`` if given key does not exist.
-
-        :param key: Key of the attribute
-        :return: Self reference
-        """
-        if not self.has_attribute(key):
-            raise IndexError('attribute "{0}" does not exists on widget'.format(key))
-        del self._attributes[key]
-        return self
 
     @staticmethod
     def _hash_variables(*args) -> int:
@@ -1113,28 +1059,6 @@ class Widget(object):
         :return: Widget data value
         """
         raise ValueError('{0} does not accept value'.format(self.get_class_id()))
-
-    def get_id(self) -> str:
-        """
-        Return the Widget ID.
-
-        :return: Widget ID
-        """
-        return self._id
-
-    def change_id(self, widget_id: str) -> 'Widget':
-        """
-        Change the Widget ID.
-
-        :param widget_id: Widget ID
-        :return: Self reference
-        """
-        assert isinstance(widget_id, str)
-        if self._menu is not None:
-            # noinspection PyProtectedMember
-            self._menu._check_id_duplicated(widget_id)
-        self._id = widget_id
-        return self
 
     def add_self_to_kwargs(self, key: str = 'widget') -> 'Widget':
         """
@@ -2406,14 +2330,6 @@ class Widget(object):
             depth += 1
             frame = frame._frame
         return depth
-
-    def get_class_id(self) -> str:
-        """
-        Return the Widget Class+ID as a string.
-
-        :return: Class+ID format
-        """
-        return '{0}<"{1}">'.format(self.__class__.__name__, self._id)
 
     def _get_status(self) -> Tuple[Any, ...]:
         """

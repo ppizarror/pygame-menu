@@ -35,8 +35,9 @@ import pygame
 import pygame_menu
 import pygame_menu.locals as _locals
 
+from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
-from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, uuid4
+from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
@@ -76,7 +77,10 @@ def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], T
         raise ValueError('unknown ScrollArea position')
 
 
-class ScrollArea(object):
+DEFAULT_SCROLLBARS = get_scrollbars_from_position(_locals.POSITION_SOUTHEAST)
+
+
+class ScrollArea(Base):
     """
     The ScrollArea class provides a scrolling view managing up to 4 scroll bars.
 
@@ -100,6 +104,7 @@ class ScrollArea(object):
     :param extend_y: Px to extend the surface on y axis (px) from top. Recommended use only within Menus
     :param menubar: Menubar for style compatibility. ``None`` if ScrollArea is not used within a Menu (for example, in Frames)
     :param parent_scrollarea: Parent ScrollArea if the new one is added within another area
+    :param scrollarea_id: Scrollarea ID
     :param scrollbar_color: Scrollbars color
     :param scrollbar_cursor: Scrollbar cursor
     :param scrollbar_slider_color: Color of the sliders
@@ -117,7 +122,6 @@ class ScrollArea(object):
     _decorator: 'Decorator'
     _extend_x: int
     _extend_y: int
-    _id: str
     _menu: Optional['pygame_menu.Menu']
     _menubar: 'pygame_menu.widgets.MenuBar'
     _parent_scrollarea: 'ScrollArea'
@@ -138,19 +142,21 @@ class ScrollArea(object):
             extend_y: int = 0,
             menubar: Optional['MenuBar'] = None,
             parent_scrollarea: Optional['ScrollArea'] = None,
+            scrollarea_id: str = '',
             scrollbar_color: ColorInputType = (235, 235, 235),
             scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
             scrollbar_slider_color: ColorInputType = (200, 200, 200),
             scrollbar_slider_pad: NumberType = 0,
             scrollbar_thick: int = 20,
-            scrollbars: Union[str, Tuple[str, ...], List[str]] = get_scrollbars_from_position(
-                _locals.POSITION_SOUTHEAST),
+            scrollbars: Union[str, Tuple[str, ...], List[str]] = DEFAULT_SCROLLBARS,
             shadow: bool = False,
             shadow_color: ColorInputType = (0, 0, 0),
             shadow_offset: int = 2,
             shadow_position: str = _locals.POSITION_SOUTHEAST,
             world: Optional['pygame.Surface'] = None
     ) -> None:
+        super(ScrollArea, self).__init__(object_id=scrollarea_id)
+
         assert isinstance(area_height, int)
         assert isinstance(area_width, int)
         assert isinstance(extend_x, int)
@@ -186,7 +192,6 @@ class ScrollArea(object):
         self._bg_surface = None
         self._bg_surface = None
         self._decorator = Decorator(self)
-        self._id = uuid4()
         self._rect = pygame.Rect(0, 0, int(area_width), int(area_height))
         self._scrollbar_positions = tuple(unique_scrolls)  # Ensure unique
         self._scrollbar_thick = scrollbar_thick
@@ -263,25 +268,6 @@ class ScrollArea(object):
                 self._area_color.draw(surface=self._bg_surface, area=self._bg_surface.get_rect())
             else:
                 self._bg_surface.fill(assert_color(self._area_color))
-
-    def set_id(self, scrollarea_id: str) -> 'ScrollArea':
-        """
-        Set ScrollArea id.
-
-        :param scrollarea_id: New area ID
-        :return: Self reference
-        """
-        assert isinstance(scrollarea_id, str)
-        self._id = scrollarea_id
-        return self
-
-    def get_id(self) -> str:
-        """
-        Return the ScrollArea id.
-
-        :return: Self reference
-        """
-        return self._id
 
     def set_parent_scrollarea(self, parent: Optional['ScrollArea']) -> None:
         """

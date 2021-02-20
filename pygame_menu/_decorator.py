@@ -42,6 +42,7 @@ import pygame_menu.menu
 import pygame.draw as pydraw
 import pygame.gfxdraw as gfxdraw
 
+from pygame_menu._base import Base
 from pygame_menu.font import FontType
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
     uuid4
@@ -71,11 +72,12 @@ DECOR_TYPE_PREV = 'prev'
 DECOR_TYPE_POST = 'post'
 
 
-class Decorator(object):
+class Decorator(Base):
     """
     Decorator class.
 
     :param obj: Object to decorate
+    :param decorator_id: ID of the decorator
     """
     _coord_cache: Dict[
         str, Tuple[int, int, Union[Tuple[Tuple2NumberType, ...], Tuple2NumberType]]]  # centerx, centery, coords
@@ -91,8 +93,11 @@ class Decorator(object):
 
     def __init__(
             self,
-            obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
+            obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu'],
+            decorator_id: str = ''
     ) -> None:
+        super(Decorator, self).__init__(object_id=decorator_id)
+
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
         self._obj = obj

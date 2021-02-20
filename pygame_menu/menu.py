@@ -46,6 +46,7 @@ import pygame_menu.locals as _locals
 import pygame_menu.themes as _themes
 import pygame_menu.utils as _utils
 
+from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
 from pygame_menu._widgetmanager import WidgetManager
 from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
@@ -76,7 +77,7 @@ SELECT_TOUCH = 'touch'
 SELECT_WIDGET = 'widget'
 
 
-class Menu(object):
+class Menu(Base):
     """
     Menu object.
 
@@ -116,7 +117,6 @@ class Menu(object):
     :param touchscreen: Enable/disable touch action inside the Menu. Only available on pygame 2
     :param touchscreen_motion_selection: Select widgets using touchscreen motion. If ``True`` menu draws a ``focus`` on the selected widget
     """
-    _attributes: Dict[str, Any]
     _auto_centering: bool
     _background_function: Tuple[bool, Optional[Union[Callable[['Menu'], Any], Callable[[], Any]]]]
     _clock: 'pygame.time.Clock'
@@ -131,7 +131,6 @@ class Menu(object):
     _disable_update: bool
     _enabled: bool
     _height: int
-    _id: str
     _index: int
     _joy_event: int
     _joy_event_repeat: int
@@ -208,6 +207,7 @@ class Menu(object):
             touchscreen: bool = False,
             touchscreen_motion_selection: bool = False
     ) -> None:
+        super(Menu, self).__init__(object_id=menu_id)
 
         # Compatibility from (height, width, title) to (title, width, height)
         if not isinstance(title, str) and isinstance(height, str):
@@ -226,14 +226,12 @@ class Menu(object):
 
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
-
         assert isinstance(center_content, bool)
         assert isinstance(column_max_width, (VectorInstance, type(None), NumberInstance))
         assert isinstance(column_min_width, (VectorInstance, NumberInstance))
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_id, str)
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
@@ -372,19 +370,13 @@ class Menu(object):
         assert isinstance(overflow[0], bool), 'overflow on x-axis must be a boolean object'
         assert isinstance(overflow[1], bool), 'overflow on y-axis must be a boolean object'
 
-        # Generate ID if empty
-        if len(menu_id) == 0:
-            menu_id = _utils.uuid4()
-
         # General properties of the Menu
-        self._attributes = {}
         self._auto_centering = center_content
         self._background_function = (False, None)  # Accept menu as argument, callable object
         self._clock = pygame.time.Clock()
         self._decorator = Decorator(self)
         self._enabled = enabled  # Menu is enabled or not. If disabled menu can't update or draw
         self._height = int(height)
-        self._id = menu_id
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._last_selected_type = ''  # Last type selection, used for test purposes
         self._onclose = None  # Function or event called on Menu close
@@ -1284,7 +1276,7 @@ class Menu(object):
         min_x, min_y = 1e8, 1e8
 
         # Cache rects
-        rects_cache = {}
+        rects_cache: Dict[str, 'pygame.Rect'] = {}
 
         def get_rect(wid: 'Widget') -> 'pygame.Rect':
             """
@@ -1294,10 +1286,10 @@ class Menu(object):
             :return: Rect cache
             """
             try:
-                return rects_cache[wid.get_id]
+                return rects_cache[wid.get_id()]
             except KeyError:
-                rects_cache[wid.get_id] = wid.get_rect(render=True)
-            return rects_cache[wid.get_id]
+                rects_cache[wid.get_id()] = wid.get_rect(render=True)
+            return rects_cache[wid.get_id()]
 
         # Update appended widgets
         for index in range(len(self._widgets)):
@@ -2965,20 +2957,6 @@ class Menu(object):
 
         return self
 
-    def get_id(self) -> str:
-        """
-        Return the ID of the base Menu.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :return: Menu ID
-        """
-        return self._id
-
     def get_window_size(self) -> Tuple2IntType:
         """
         Return the window size (px) as a tuple of (width, height).
@@ -3202,77 +3180,6 @@ class Menu(object):
             return self._widgets[self._index % len(self._widgets)]
         except (IndexError, ZeroDivisionError):
             return None
-
-    def set_attribute(self, key: str, value: Any) -> 'Menu':
-        """
-        Set an attribute value.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :param key: Key of the attribute
-        :param value: Value of the attribute
-        :return: Self reference
-        """
-        assert isinstance(key, str)
-        self._attributes[key] = value
-        return self
-
-    def get_attribute(self, key: str, default: Any = None) -> Any:
-        """
-        Get an attribute value.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :param key: Key of the attribute
-        :param default: Value if does not exists
-        :return: Attribute data
-        """
-        assert isinstance(key, str)
-        if not self.has_attribute(key):
-            return default
-        return self._attributes[key]
-
-    def has_attribute(self, key: str) -> bool:
-        """
-        Return ``True`` if the Menu has the given attribute.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :param key: Key of the attribute
-        :return: ``True`` if exists
-        """
-        assert isinstance(key, str)
-        return key in self._attributes.keys()
-
-    def remove_attribute(self, key: str) -> 'Menu':
-        """
-        Removes the given attribute. Throws ``IndexError`` if given key does not exist.
-
-        .. note::
-
-            This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        :param key: Key of the attribute
-        :return: Self reference
-        """
-        if not self.has_attribute(key):
-            raise IndexError('attribute "{0}" does not exists on menu'.format(key))
-        del self._attributes[key]
-        return self
 
     def get_decorator(self) -> 'Decorator':
         """
