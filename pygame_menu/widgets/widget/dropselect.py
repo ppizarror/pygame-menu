@@ -99,7 +99,7 @@ class DropSelect(Widget):
     :param selection_option_border_width: Option border width
     :param selection_option_font: Option font. If ``None`` use the same font as the widget
     :param selection_option_font_color: Option font color
-    :param selection_option_font_size: Option font size. If ``None`` use the 75% of the widget font size
+    :param selection_option_font_size: Option font size. If ``None`` use the 100% of the widget font size
     :param selection_option_padding: Selection padding. See padding styling
     :param selection_option_selected_bgcolor: Selected option background color
     :param selection_option_selected_font_color: Selected option font color
@@ -210,9 +210,9 @@ class DropSelect(Widget):
             kwargs=kwargs
         )
 
-        self._default_value = -1
+        self._default_value = default
         self._drop_frame = None
-        self._index = -1
+        self._index = default
         self._items = items
         self._open_bottom = True
         self._placeholder = placeholder
@@ -244,13 +244,6 @@ class DropSelect(Widget):
             'name': selection_option_font,
             'size': selection_option_font_size
         }
-
-        # Apply default item
-        if default >= 0:
-            default %= len(self._items)
-            for k in range(0, default):
-                self._up()
-        self.set_default_value(default)
 
         # Configure publics
         self.active = False
@@ -285,7 +278,7 @@ class DropSelect(Widget):
         if self._selection_option_font_style['name'] is None:
             self._selection_option_font_style['name'] = self._font_name
         if self._selection_option_font_style['size'] is None:
-            self._selection_option_font_style['size'] = int(0.75 * self._font_size)
+            self._selection_option_font_style['size'] = int(self._font_size)
         self._option_font = get_font(self._selection_option_font_style['name'],
                                      self._selection_option_font_style['size'])
         if self._selection_box_width == 0:
@@ -362,6 +355,7 @@ class DropSelect(Widget):
             btn.set_padding(
                 padding=self._selection_option_padding
             )
+            btn.set_tab_size(self._tab_size)
             btn.configured = True
             btn.set_menu(self._menu)
             self._option_buttons.append(btn)
@@ -373,11 +367,16 @@ class DropSelect(Widget):
 
         # Update options rect delta width
         for btn in self._option_buttons:
-            btn._rect_size_delta = (max_width - btn.get_width(), 0)
+            k = -self._selection_option_border_width if total_height == max_height else 0  # Correction
+            btn._rect_size_delta = (max_width - btn.get_width() + k, 0)
 
         # Subtract border width to button height (last)
-        total_height -= self._selection_option_border_width
-        max_height -= self._selection_option_border_width
+        if total_height != max_height:
+            total_height -= self._selection_option_border_width
+            max_height -= self._selection_option_border_width
+        else:
+            max_width += self._selection_option_border_width
+            frame_width += self._selection_option_border_width
 
         # Create frame
         self._drop_frame = Frame(max_width - self._selection_option_border_width,
@@ -390,6 +389,7 @@ class DropSelect(Widget):
             color=self._selection_box_border_color
         )
         self._drop_frame.set_menu(self._menu)
+        self._drop_frame.set_scrollarea(self._scrollarea)
         self._drop_frame.relax()
         self._drop_frame.configured = True
 
@@ -397,15 +397,19 @@ class DropSelect(Widget):
         scrollbar_thickness = kwargs.get('scrollbar_thick', self._theme.scrollbar_thick)
         if max_height != total_height:
             frame_width -= scrollbar_thickness
+        else:
+            frame_width -= self._selection_option_border_width
 
         if total_height > 0:
+            scrollbar_color = kwargs.get('scrollbar_color', self._theme.scrollbar_color)
             scrollbars = kwargs.get('scrollbars', self._theme.scrollarea_position)
             if not kwargs.get('scrollbars_parsed', False):
                 scrollbars = get_scrollbars_from_position(scrollbars)
             self._drop_frame.make_scrollarea(
                 max_width=frame_width,
                 max_height=max_height,
-                scrollbar_color=kwargs.get('scrollbar_color', self._theme.scrollbar_color),
+                scrollarea_color=self._selection_box_arrow_color,
+                scrollbar_color=scrollbar_color,
                 scrollbar_cursor=kwargs.get('scrollbar_cursor', self._theme.scrollbar_cursor),
                 scrollbar_shadow_color=kwargs.get('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
                 scrollbar_shadow_offset=kwargs.get('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
@@ -417,14 +421,16 @@ class DropSelect(Widget):
                 scrollbar_thick=scrollbar_thickness,
                 scrollbars=scrollbars
             )
+
         self._drop_frame.set_scrollarea(self._scrollarea)
         if self._frame is not None:
             self._drop_frame.set_frame(self._frame)
 
         # Set sizing properties
         if total_height > 0:
+            add_scrollbar = scrollbar_thickness if total_height != max_height else 0
             self._drop_frame.set_attribute('height',
-                                           max_height + scrollbar_thickness - self._selection_option_border_width)
+                                           max_height + add_scrollbar - self._selection_option_border_width)
             self._drop_frame.set_attribute('width', frame_width)
         else:
             self._drop_frame.set_attribute('height', 0)
@@ -501,7 +507,14 @@ class DropSelect(Widget):
     def set_position(self, posx: NumberType, posy: NumberType) -> 'DropSelect':
         super(DropSelect, self).set_position(posx, posy)
         if self._drop_frame is not None:
-            self._drop_frame.set_position(posx + self._title_size[0], posy + self._title_size[1])
+            posx = self._rect.x
+            posy = self._rect.y
+            if self._open_bottom:
+                self._drop_frame.set_position(posx + self._title_size[0],
+                                              posy + self._title_size[1])
+            else:
+                self._drop_frame.set_position(posx + self._title_size[0],
+                                              posy - self._drop_frame.get_attribute('height'))
             for w in self._option_buttons:
                 w.set_position_relative_to_frame()
             self._drop_frame.update_position()
@@ -533,6 +546,8 @@ class DropSelect(Widget):
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
+
+    def draw_after_if_selected(self, surface: 'pygame.Surface') -> None:
         if self.active:
             self._check_drop_maked()
             self._drop_frame.draw(surface)
@@ -547,6 +562,7 @@ class DropSelect(Widget):
         color = self._selection_option_font_style['color']
         if self.readonly or self._index == -1:
             color = self._font_readonly_color
+        text = text.replace('\t', ' ' * self._tab_size)
         return self._option_font.render(text, self._font_antialias, color)
 
     def _render(self) -> Optional[bool]:
@@ -558,8 +574,13 @@ class DropSelect(Widget):
         else:
             current_selected = self.get_value()[0][0]
 
+        # scroll_v = 0 if self._scrollarea is None else self._scrollarea.get_parent_scroll_value_percentual(
+        #     ORIENTATION_VERTICAL)
+        scroll_v = 0
+        menu_height = 0 if self._menu is None else self._menu.get_height(widget=True)
+
         if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index, self.readonly,
-                                         self.active):
+                                         self.active, self._open_bottom, scroll_v, menu_height):
             return True
 
         title = self._render_string(self._title, self.get_font_color_status())
@@ -581,25 +602,37 @@ class DropSelect(Widget):
         w = h + self._selection_box_arrow_margin[1]
 
         # Check which direction it should open
-        if self._drop_frame is not None:
-            rect_full = self.get_rect(render=False)
-            rect_full.height += self._drop_frame.get_attribute('height')
-            if self._scrollarea is not None:
-                rect_clipped = self._scrollarea.get_absolute_view_rect().clip(rect_full)
-                print(rect_full.height, rect_clipped.height)
+        self._open_bottom = True
+        if self._drop_frame is not None and self._scrollarea is not None:
+            rect = self._rect.copy()
+            rect.width = self._selection_box_width
+            rect.x += self._title_size[0]
+            rect.height += self._drop_frame.get_attribute('height')
+            if rect.width != 0 and rect.height != 0:
+                rect_clipped = self._scrollarea.get_world_rect().clip(rect)
+                if rect.height != rect_clipped.height:
+                    self._open_bottom = False
 
-        if not self.active:
-            arrow_right_pos = (
-                (arrow.right - w + h / 2 - h / 16, arrow.centery - h / 6 - h / 20),
-                (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery + h / 4 - h / 20),
-                (arrow.right - w + h - h / 16, arrow.centery - h / 6 - h / 20),
-            )
+        arrow_up = (
+            (arrow.right - w + h / 2 - h / 16, arrow.centery - h / 6 - h / 20),
+            (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery + h / 4 - h / 20),
+            (arrow.right - w + h - h / 16, arrow.centery - h / 6 - h / 20),
+        )
+        arrow_down = (
+            (arrow.right - w + h / 2 - h / 16, arrow.centery + h / 4 - h / 20),
+            (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery - h / 6 - h / 20),
+            (arrow.right - w + h - h / 16, arrow.centery + h / 4 - h / 20),
+        )
+        if not self._open_bottom:
+            if not self.active:
+                arrow_right_pos = arrow_down
+            else:
+                arrow_right_pos = arrow_up
         else:
-            arrow_right_pos = (
-                (arrow.right - w + h / 2 - h / 16, arrow.centery + h / 4 - h / 20),
-                (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery - h / 6 - h / 20),
-                (arrow.right - w + h - h / 16, arrow.centery + h / 4 - h / 20),
-            )
+            if not self.active:
+                arrow_right_pos = arrow_up
+            else:
+                arrow_right_pos = arrow_down
 
         self._surface = make_surface(title.get_width() + self._selection_box_margin +
                                      self._selection_box_width + self._selection_box_inflate[0] / 2 +
@@ -662,14 +695,17 @@ class DropSelect(Widget):
             return
         if not self.active:
             return self._toggle_drop()
-        if self._selection_infinite:
-            self.set_value((self._index - 1) % len(self._items))
+        if self._index == -1:
+            self.set_value(len(self._items) - 1)
         else:
-            prev = self._index
-            new = max(0, self._index - 1)
-            if prev == new:
-                return
-            self.set_value(new)
+            if self._selection_infinite:
+                self.set_value((self._index - 1) % len(self._items))
+            else:
+                prev = self._index
+                new = max(0, self._index - 1)
+                if prev == new:
+                    return
+                self.set_value(new)
         self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
 
@@ -685,14 +721,17 @@ class DropSelect(Widget):
             return
         if not self.active:
             return self._toggle_drop()
-        if self._selection_infinite:
-            self.set_value((self._index + 1) % len(self._items))
+        if self._index == -1:
+            self.set_value(0)
         else:
-            prev = self._index
-            new = min(self._index + 1, len(self._items) - 1)
-            if prev == new:
-                return
-            self.set_value(new)
+            if self._selection_infinite:
+                self.set_value((self._index + 1) % len(self._items))
+            else:
+                prev = self._index
+                new = min(self._index + 1, len(self._items) - 1)
+                if prev == new:
+                    return
+                self.set_value(new)
         self.change(*self._items[self._index][1:])
         self._sound.play_key_add()
 
@@ -733,7 +772,7 @@ class DropSelect(Widget):
             if bindx == self._index:
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})
-                btn.scroll_to_widget(margin=5)
+                btn.scroll_to_widget(margin=5, scroll_parent=False)
             else:
                 btn.set_background_color(self._selection_box_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color']})
@@ -793,6 +832,8 @@ class DropSelect(Widget):
             if keydown and event.key == _controls.KEY_MOVE_DOWN or \
                     joy_hatmotion and event.value == _controls.JOY_LEFT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
+                if not self.active:
+                    continue
                 self._down()
                 updated = True
 
@@ -800,16 +841,24 @@ class DropSelect(Widget):
             elif keydown and event.key == _controls.KEY_MOVE_UP or \
                     joy_hatmotion and event.value == _controls.JOY_RIGHT or \
                     joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
+                if not self.active:
+                    continue
                 self._up()
                 updated = True
 
             # Press enter
-            elif keydown and event.key == _controls.KEY_APPLY or \
+            elif keydown and (event.key == _controls.KEY_APPLY) or \
                     joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
                 if self.active and self._index >= 0:
                     self._sound.play_open_menu()
                     self.apply(*self._items[self._index][1:])
                 self._toggle_drop()
+                updated = True
+
+            # Press keys which active the drop but not apply
+            elif keydown and (event.key == pygame.K_TAB):
+                if not self.active:
+                    self._toggle_drop()
                 updated = True
 
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
@@ -866,6 +915,8 @@ class DropSelect(Widget):
         :return: None
         """
         self._check_drop_maked()
+        if not self._selected:
+            return
         self.active = not self.active
         if self.active and self._index != -1:
             self.set_value(self._index)
@@ -873,14 +924,14 @@ class DropSelect(Widget):
     def get_focus_rect(self) -> 'pygame.Rect':
         self._check_drop_maked()
         rect = self.get_rect(apply_padding=False, to_real_position=True)
-        if self.active and self._drop_frame.is_scrollable:
+        if self.active:
             rect.width = self._selection_box_width
             rect.x += self._title_size[0]
             rect.height += self._drop_frame.get_attribute('height')
+            if not self._open_bottom:
+                rect.y -= self._drop_frame.get_attribute('height')
         else:
             rect.width -= self._selection_box_border_width
-        if self._scrollarea is not None and rect.width != 0 and rect.height != 0:
-            rect = self._scrollarea.get_absolute_view_rect().clip(rect)
         return rect
 
 
