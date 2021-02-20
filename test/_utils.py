@@ -420,7 +420,8 @@ class PygameEventUtils(object):
         else:
             raise ValueError('unknown rect type')
         if evtype == FINGERDOWN or evtype == FINGERUP or evtype == FINGERMOTION:
-            assert menu is not None, 'menu cannot be none if FINGER'
+            assert menu is not None, \
+                'menu cannot be none if FINGERDOWN, FINGERUP, or FINGERMOTION'
             display = menu.get_window_size()
             evt = pygame.event.Event(evtype,
                                      {

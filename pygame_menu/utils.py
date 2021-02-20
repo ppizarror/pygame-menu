@@ -171,7 +171,7 @@ def assert_vector(num_vector: VectorType, length: int, instance: type = NumberIn
     :return: None
     """
     assert isinstance(num_vector, VectorInstance), \
-        'vector "{0}" must be a list or tuple of {1} items'.format(num_vector, length)
+        'vector "{0}" must be a list or tuple of {1} items if type {2}'.format(num_vector, length, instance)
     if length != 0:
         msg = 'vector "{0}" must contain {1} numbers only, ' \
               'but {2} were given'.format(num_vector, length, len(num_vector))
