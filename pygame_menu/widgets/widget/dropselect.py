@@ -641,7 +641,7 @@ class DropSelect(Widget):
 
         if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index, self.readonly,
                                          self.active, self._open_bottom, scroll_v, menu_height, self._open_middle,
-                                         len(self._items)):
+                                         len(self._items), self._rect.x, self._rect.y):
             return True
 
         title = self._render_string(self._title, self.get_font_color_status())
