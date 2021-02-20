@@ -81,7 +81,7 @@ class ToggleSwitch(Widget):
     :param switch_border_color: Border color of the switch
     :param switch_border_width: Border width of the switch (px)
     :param switch_height: Height factor respect to the title font size height
-    :param switch_margin: (x, y) margin respect to the title of the widget. X is in px, Y is relative to the height of the title
+    :param switch_margin: Switch (x, y) margin respect to the title of the widget (px)
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
@@ -288,7 +288,7 @@ class ToggleSwitch(Widget):
 
         # Draw switch
         switchx = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
-        switchy = self._rect.y + self._switch_margin[1] * self._switch.get_height()
+        switchy = self._rect.y + self._switch_margin[1]
         surface.blit(self._switch, (switchx, switchy))
 
         # Draw switch border
