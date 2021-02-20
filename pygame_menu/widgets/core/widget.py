@@ -144,6 +144,7 @@ class Widget(object):
     _selection_time: NumberType
     _sound: 'Sound'
     _surface: Optional['pygame.Surface']
+    _tab_size: int
     _title: str
     _touchscreen_enabled: bool
     _translate: Tuple2IntType  # Translation made by user
@@ -198,6 +199,7 @@ class Widget(object):
         self._selected = False  # Use select() to modify this status
         self._selection_time = 0
         self._sound = Sound()
+        self._tab_size = 0  # Tab spaces
         self._title = str(title)
         self._visible = True  # Use show() or hide() to modify this status
 
@@ -277,7 +279,7 @@ class Widget(object):
         self._touchscreen_enabled = True
 
         # Public statutes. These values can be changed without calling for methods (safe to update)
-        self.active = False  # Widget requests focus
+        self.active = False  # Widget requests focus if selected
         self.configured = False  # Widget has been configured
         self.is_scrollable = False  # Some widgets can be scrolled, such as the Frame
         self.is_selectable = True  # Some widgets cannot be selected like labels
@@ -843,7 +845,7 @@ class Widget(object):
         :param args: Extra arguments passed to the callback
         :return: Callback return value
         """
-        self.scroll_to_widget()
+        self.scroll_to_widget(scroll_parent=False)
         if self.readonly:
             return
         if self._onreturn:
@@ -876,7 +878,7 @@ class Widget(object):
         :param args: Extra arguments passed to the callback
         :return: Callback return value
         """
-        self.scroll_to_widget()
+        self.scroll_to_widget(scroll_parent=False)
         if self.readonly:
             return
         if self._onchange:
@@ -906,19 +908,42 @@ class Widget(object):
         """
         if not self.is_visible():
             return self
+
+        # Check for consistency
+        if self.active and not self._selected:
+            self.active = False
+
+        # Force rendering
         self._render()
+
         if self.is_selected() and not self._selection_effect_draw_post:
             self._selection_effect.draw(surface, self)
+
         self._draw_background_color(surface)
         self._decorator.draw_prev(surface)
         self._draw(surface)
         self._draw_border(surface)
         self._decorator.draw_post(surface)
+
         if self.is_selected() and self._selection_effect_draw_post:
             self._selection_effect.draw(surface, self)
+
+        # Apply callbacks
         self.apply_draw_callbacks()
+
+        # Store last surface
         self.last_surface = surface
+
         return self
+
+    def draw_after_if_selected(self, surface: 'pygame.Surface') -> None:
+        """
+        Draw Widget if selected after all widgets have been drawn.
+
+        :param surface: Surface to draw
+        :return: None
+        """
+        pass
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         """
@@ -1001,17 +1026,18 @@ class Widget(object):
         """
         return self._scrollarea
 
-    def scroll_to_widget(self, margin: NumberType = 10) -> 'Widget':
+    def scroll_to_widget(self, margin: NumberType = 10, scroll_parent: bool = True) -> 'Widget':
         """
         Scroll to widget.
 
-        :param margin: Extra margin around the rect (px)
+        :param margin: Extra margin around the rect (px){
+        :param scroll_parent: If ``True`` parent scroll also scrolls to widget
         :return: Self reference
         """
         if self.get_frame() is not None and self.get_frame().is_scrollable:
-            self.get_frame().get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin=margin)
+            self.get_frame().get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
         if self._scrollarea is not None:
-            self._scrollarea.scroll_to_rect(self.get_rect(), margin=margin)
+            self._scrollarea.scroll_to_rect(self.get_rect(), margin, scroll_parent)
         return self
 
     def get_focus_rect(self) -> 'pygame.Rect':
@@ -1028,7 +1054,9 @@ class Widget(object):
             apply_padding: bool = True,
             use_transformed_padding: bool = True,
             to_real_position: bool = False,
-            to_absolute_position: bool = False
+            to_absolute_position: bool = False,
+            render: bool = False,
+            real_position_visible: bool = True
     ) -> 'pygame.Rect':
         """
         Return the :py:class:`pygame.Rect` object of the Widget.
@@ -1039,9 +1067,12 @@ class Widget(object):
         :param use_transformed_padding: Use scaled padding if the widget is scaled
         :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
         :param to_absolute_position: Transform the widget rect to absolute coordinates (if the Widget does not change the position if scrollbars move offsets). Used by events
+        :param render: Force widget rendering
+        :param real_position_visible: Return only the visible width/height
         :return: Widget rect object
         """
-        self._render()
+        if render:
+            self._render()
 
         # Padding + inflate
         if inflate is None:
@@ -1060,7 +1091,7 @@ class Widget(object):
 
         if self._scrollarea is not None:
             if to_real_position:
-                rect = self._scrollarea.to_real_position(rect, visible=True)
+                rect = self._scrollarea.to_real_position(rect, visible=real_position_visible)
             elif to_absolute_position:
                 rect = self._scrollarea.to_absolute_position(rect)
 
@@ -1199,6 +1230,9 @@ class Widget(object):
 
         if self._font is None:
             return make_surface(0, 0)
+
+        # Replace tabs
+        text = text.replace('\t', ' ' * self._tab_size)
 
         surface = self._font.render(text, self._font_antialias, color, bgcolor)
         return surface
@@ -1929,7 +1963,7 @@ class Widget(object):
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
-        rect = self.get_rect(apply_padding=apply_padding)
+        rect = self.get_rect(apply_padding=apply_padding, render=True)
         width = rect.width
         if apply_selection:
             width += self._selection_effect.get_width()
@@ -1949,7 +1983,7 @@ class Widget(object):
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
-        rect = self.get_rect(apply_padding=apply_padding)
+        rect = self.get_rect(apply_padding=apply_padding, render=True)
         height = rect.height
         if apply_selection:
             height += self._selection_effect.get_height()
@@ -2389,7 +2423,7 @@ class Widget(object):
             clsname += '-' + self.get_title()
 
         # Assemble geometric data
-        rect = self.get_rect()
+        rect = self.get_rect(render=True)
         rect_real = self.get_rect(to_real_position=True)
         rect_abs = self.get_rect(to_absolute_position=True)
         cri = self.get_col_row_index()
@@ -2432,6 +2466,17 @@ class Widget(object):
             pass
 
         return tuple(data)
+
+    def set_tab_size(self, tab_size: int) -> 'Widget':
+        """
+        Set widget tab size.
+
+        :param tab_size: Width of a tab character
+        :return: Self reference
+        """
+        assert isinstance(tab_size, int) and tab_size >= 0
+        self._tab_size = tab_size
+        return self
 
 
 class _WidgetNullSelection(Selection):
