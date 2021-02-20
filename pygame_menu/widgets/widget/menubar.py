@@ -59,8 +59,8 @@ import pygame_menu.locals as _locals
 from pygame_menu.utils import assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
-    ColorType, Any, Optional, NumberInstance, ColorInputType, EventVectorType
+from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, Optional, \
+    NumberInstance, ColorInputType, EventVectorType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -107,7 +107,6 @@ class MenuBar(Widget):
     _backbox_border_width: int
     _backbox_pos: Any
     _backbox_rect: Optional['pygame.Rect']
-    _background_color: ColorType
     _box_mode: int
     _modify_scrollarea: bool
     _mouseoverback: bool

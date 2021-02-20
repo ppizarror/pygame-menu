@@ -126,7 +126,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     _prev_margin: int
     _previsualization_surface: Optional['pygame.Surface']
     _separator: str
-    _valid_chars: List[str]
 
     def __init__(
             self,
