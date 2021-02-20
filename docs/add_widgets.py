@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'DROPSELECT'
+EXAMPLE = 'TOGGLESWITCH'
 
 # Create example
 menu: 'pygame_menu.Menu'
