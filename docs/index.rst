@@ -126,7 +126,9 @@ class. The currently existing classes are:
 
     - :py:class:`~pygame_menu.widgets.Button`
     - :py:class:`~pygame_menu.widgets.ColorInput`
+    - :py:class:`~pygame_menu.widgets.DropSelect`
     - :py:class:`~pygame_menu.widgets.Frame`
+    - :py:class:`~pygame_menu.widgets.HMargin`
     - :py:class:`~pygame_menu.widgets.Image`
     - :py:class:`~pygame_menu.widgets.Label`
     - :py:class:`~pygame_menu.widgets.MenuBar`
@@ -151,6 +153,7 @@ class to display large custom surfaces.
 
     _source/widgets_button
     _source/widgets_colorinput
+    _source/widgets_dropselect
     _source/widgets_frame
     _source/widgets_hmargin
     _source/widgets_image

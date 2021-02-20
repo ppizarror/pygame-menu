@@ -39,12 +39,11 @@ three values:
 
 .. code-block:: python
 
+    menu = pygame_menu.Menu(...)
+    about_menu = pygame_menu.Menu(...)
+
     def func(name):
         print('Hello world from', name)  # name will be 'foo'
-
-    menu = pygame_menu.Menu(...)
-
-    about_menu = pygame_menu.Menu(...)
 
     menu.add.button('Exec', func, 'foo',                    # Execute a function
                     align=pygame_menu.locals.ALIGN_LEFT)
@@ -72,6 +71,8 @@ displayed, the others are the arguments passed to the callbacks
 
 .. code-block:: python
 
+    menu = pygame_menu.Menu(...)
+
     def change_background_color(selected_value, color, **kwargs):
         value_tuple, index = selected_value
         print('Change widget color to', value_tuple[0])  # selected_value ('Color', surface, color)
@@ -80,8 +81,6 @@ displayed, the others are the arguments passed to the callbacks
         widget: 'pygame_menu.widgets.Selector' = kwargs.get('widget')
         widget.update_font({'selected_color': color})
         widget.get_selection_effect().color = color
-
-    menu = pygame_menu.Menu(...)
 
     items = [('Default', (255, 255, 255)),
                ('Black', (0, 0, 0)),
@@ -119,10 +118,10 @@ is a comma (``,``).
 
 .. code-block:: python
 
+    menu = pygame_menu.Menu(...)
+
     def check_color(value):
         print('New color:', value)
-
-    menu = pygame_menu.Menu(...)
 
     menu.add.color_input('RGB color 1: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
                          default=(255, 0, 255), font_size=18)
@@ -132,6 +131,69 @@ is a comma (``,``).
                          default='#ffaa11', font_size=18)
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.color_input
+
+
+Add a drop selection
+--------------------
+
+A drop selector gives the possibility choose a value in a predefined list.
+An item of a drop selector is a tuple: the first element is the text
+displayed, the others are the arguments passed to the callbacks
+``onchange`` and ``onreturn``.
+
+**Example:**
+
+.. image:: ../_static/widget_dropselect.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    selector_epic = menu.add.dropselect(
+        title='Is pygame-menu epic?',
+        items=[('Yes', 0),
+               ('Absolutely Yes', 1)],
+        font_size=16,
+        selection_option_font_size=20
+    )
+    selector_sum = menu.add.dropselect(
+        title='What is the value of π?',
+        items=[('3 (Engineer)', 0),
+               ('3.141592653589793238462643383279502884197169399375105820974944592', 1),
+               ('4', 2),
+               ('I don\'t know what is π', 3)],
+        font_size=16,
+        selection_box_width=173,
+        selection_option_padding=(0, 5),
+        selection_option_font_size=20
+    )
+    selector_country = menu.add.dropselect(
+        title='Pick a country',
+        items=[('Argentina', 'ar'),
+               ('Australia', 'au'),
+               ('Bolivia', 'bo'),
+               ('Chile', 'ch'),
+               ('China', 'cn'),
+               ('Finland', 'fi'),
+               ('France', 'fr'),
+               ('Germany', 'de'),
+               ('Italy', 'it'),
+               ('Japan', 'jp'),
+               ('Mexico', 'mx'),
+               ('Peru', 'pe'),
+               ('United States', 'us')],
+        font_size=20,
+        default=3,
+        open_middle=True,  # Opens in the middle of the menu
+        selection_box_height=5,
+        selection_box_width=212,
+        selection_infinite=True,
+        selection_option_font_size=20
+    )
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.dropselect
 
 
 Add a frame
@@ -152,6 +214,8 @@ the way the widgets are added to the frame (packed).
     :align: center
 
 .. code-block:: python
+
+    menu = pygame_menu.Menu(...)
 
     frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
     frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180))
@@ -191,6 +255,8 @@ configured before the addition.
     def check_color(value):
         print('New color:', value)
 
+    menu = pygame_menu.Menu(...)
+
     widget_label = pygame_menu.widgets.Label(...)
     widget_image = pygame_menu.widgets.Image(...)
 
@@ -217,12 +283,12 @@ can be wrapped in order to fit the menu size.
 
 .. code-block:: python
 
+    menu = pygame_menu.Menu(...)
+
     HELP = "Press ESC to enable/disable Menu "\
            "Press ENTER to access a Sub-Menu or use an option "\
            "Press UP/DOWN to move through Menu "\
            "Press LEFT/RIGHT to move through Selectors."
-
-    menu = pygame_menu.Menu(...)
     menu.add.label(HELP, max_char=-1, font_size=20)
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.label
@@ -237,6 +303,7 @@ or even add drawing callbacks for being executed on each menu draw.
 .. code-block:: python
 
     menu = pygame_menu.Menu(...)
+
     menu.add.none_widget()
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.none_widget
@@ -257,10 +324,10 @@ on entered characters can be set using ``input_type``, ``maxchar``,
 
 .. code-block:: python
 
+    menu = pygame_menu.Menu(...)
+
     def check_name(value):
         print('User name:', value)
-
-    menu = pygame_menu.Menu(...)
 
     menu.add.text_input('First name: ', default='John', onreturn=check_name)
     menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')

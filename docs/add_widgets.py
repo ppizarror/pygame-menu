@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'SELECTOR'
+EXAMPLE = 'DROPSELECT'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -95,67 +95,7 @@ def func(name):
     print('Hello world from', name)  # name will be 'foo'
 
 
-if EXAMPLE == 'IMAGE':
-    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Image')
-    image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
-    menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
-    menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
-
-elif EXAMPLE == 'VERTICALMARGIN':
-    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical spacer')
-    menu.add.label('Text #1')
-    menu.add.vertical_margin(100)
-    menu.add.label('Text #2')
-
-elif EXAMPLE == 'TOGGLESWITCH':
-    menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Switches')
-    menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
-    menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
-                           state_text=('Apagado', 'Encencido'), state_text_font_size=18)
-
-elif EXAMPLE == 'TEXTINPUT':
-    menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Text Entry')
-    menu.add.text_input('First name: ', default='John')
-    menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
-    menu.add.text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
-
-elif EXAMPLE == 'LABEL':
-    menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
-    HELP = "Press ESC to enable/disable Menu " \
-           "Press ENTER to access a Sub-Menu or use an option " \
-           "Press UP/DOWN to move through Menu " \
-           "Press LEFT/RIGHT to move through Selectors."
-    menu.add.label(HELP, max_char=-1, font_size=20)
-
-elif EXAMPLE == 'COLORINPUT':
-    menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
-    menu.add.color_input('RGB color 1: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
-                         default=(255, 0, 255), font_size=18)
-    menu.add.color_input('RGB color 2: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
-                         input_separator='-', font_size=18)
-    menu.add.color_input('HEX color 3: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_HEX,
-                         default='#ffaa11', font_size=18)
-
-elif EXAMPLE == 'SELECTOR':
-    menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')
-    items = [('Default', (255, 255, 255)),
-             ('Black', (0, 0, 0)),
-             ('Blue', (0, 0, 255)),
-             ('Random', (-1, -1, -1))]
-    selector = menu.add.selector(
-        title='Current color:\t',
-        items=items,
-        onreturn=change_background_color,  # user press "Return" button
-        onchange=change_background_color  # User changes value with left/right keys
-    )
-    selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
-    selector2 = menu.add.selector(
-        title='New color:',
-        items=items,
-        style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
-    )
-
-elif EXAMPLE == 'BUTTON':
+if EXAMPLE == 'BUTTON':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Button')
     about_menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'About')
     menu.add.button('Exec', func, 'foo',  # Execute a function, it receives 'foo' as *arg
@@ -166,11 +106,58 @@ elif EXAMPLE == 'BUTTON':
                     align=pygame_menu.locals.ALIGN_RIGHT)
     btn.select(update_menu=True)
 
-elif EXAMPLE == 'URL':
-    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Url', widget_font_size=18)
-    menu.add.url('https://github.com/ppizarror/pygame-menu')
-    menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
-    menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
+elif EXAMPLE == 'COLORINPUT':
+    menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
+    menu.add.color_input('RGB color 1: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
+                         default=(255, 0, 255), font_size=18)
+    menu.add.color_input('RGB color 2: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
+                         input_separator='-', font_size=18)
+    menu.add.color_input('HEX color 3: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_HEX,
+                         default='#ffaa11', font_size=18)
+
+elif EXAMPLE == 'DROPSELECT':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Drop Select')
+    selector_epic = menu.add.dropselect(
+        title='Is pygame-menu epic?',
+        items=[('Yes', 0),
+               ('Absolutely Yes', 1)],
+        font_size=16,
+        selection_option_font_size=20
+    )
+    selector_sum = menu.add.dropselect(
+        title='What is the value of π?',
+        items=[('3 (Engineer)', 0),
+               ('3.141592653589793238462643383279502884197169399375105820974944592', 1),
+               ('4', 2),
+               ('I don\'t know what is π', 3)],
+        font_size=16,
+        selection_box_width=173,
+        selection_option_padding=(0, 5),
+        selection_option_font_size=20
+    )
+    selector_country = menu.add.dropselect(
+        title='Pick a country',
+        items=[('Argentina', 'ar'),
+               ('Australia', 'au'),
+               ('Bolivia', 'bo'),
+               ('Chile', 'ch'),
+               ('China', 'cn'),
+               ('Finland', 'fi'),
+               ('France', 'fr'),
+               ('Germany', 'de'),
+               ('Italy', 'it'),
+               ('Japan', 'jp'),
+               ('Mexico', 'mx'),
+               ('Peru', 'pe'),
+               ('United States', 'us')],
+        font_size=20,
+        default=3,
+        open_middle=True,  # Opens in the middle of the menu
+        selection_box_height=5,
+        selection_box_width=212,
+        selection_infinite=True,
+        selection_option_font_size=20
+    )
 
 elif EXAMPLE == 'FRAME':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Frames', widget_font_size=18)
@@ -195,6 +182,63 @@ elif EXAMPLE == 'FRAME':
     frame_content.pack(menu.add.vertical_margin(15))
     frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
                        alignment=pygame_menu.locals.ALIGN_CENTER)
+
+elif EXAMPLE == 'IMAGE':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Image')
+    image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
+    menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
+    menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
+
+elif EXAMPLE == 'LABEL':
+    menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
+    HELP = "Press ESC to enable/disable Menu " \
+           "Press ENTER to access a Sub-Menu or use an option " \
+           "Press UP/DOWN to move through Menu " \
+           "Press LEFT/RIGHT to move through Selectors."
+    menu.add.label(HELP, max_char=-1, font_size=20)
+
+elif EXAMPLE == 'SELECTOR':
+    menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')
+    items = [('Default', (255, 255, 255)),
+             ('Black', (0, 0, 0)),
+             ('Blue', (0, 0, 255)),
+             ('Random', (-1, -1, -1))]
+    selector = menu.add.selector(
+        title='Current color:\t',
+        items=items,
+        onreturn=change_background_color,  # user press "Return" button
+        onchange=change_background_color  # User changes value with left/right keys
+    )
+    selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
+    selector2 = menu.add.selector(
+        title='New color:',
+        items=items,
+        style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
+    )
+
+elif EXAMPLE == 'TEXTINPUT':
+    menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Text Entry')
+    menu.add.text_input('First name: ', default='John')
+    menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
+    menu.add.text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
+
+elif EXAMPLE == 'TOGGLESWITCH':
+    menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Switches')
+    menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
+    menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+                           state_text=('Apagado', 'Encencido'), state_text_font_size=18)
+
+elif EXAMPLE == 'URL':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Url', widget_font_size=18)
+    menu.add.url('https://github.com/ppizarror/pygame-menu')
+    menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
+    menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
+
+elif EXAMPLE == 'VERTICALMARGIN':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical spacer')
+    menu.add.label('Text #1')
+    menu.add.vertical_margin(100)
+    menu.add.label('Text #2')
 
 else:
     raise ValueError('unknown example "{}"'.format(EXAMPLE))
