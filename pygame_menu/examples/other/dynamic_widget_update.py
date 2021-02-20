@@ -66,8 +66,9 @@ class App(object):
 
         # Set theme
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
-        theme.title_font_color = (35, 35, 35)
         theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE
+        theme.title_close_button_cursor = pygame_menu.locals.CURSOR_HAND
+        theme.title_font_color = (35, 35, 35)
 
         # This dict stores the values of the widgets to be changed dynamically
         self.modes = {
@@ -143,9 +144,7 @@ class App(object):
         :return: None
         """
         if self.current == 3:
-            t = widget.get_attribute('t', default=math.pi)
-            t += menu.get_clock().get_time() * 0.0075
-            widget.set_attribute('t', t)
+            t = widget.get_counter_attribute('t', menu.get_clock().get_time() * 0.0075, math.pi)
             widget.set_padding(10 * (1 + math.sin(t)))  # Oscillating padding
             widget.set_background_color((int(125 * (1 + math.sin(t))), 0, 0), None)
             c = int(127 * (1 + math.cos(t)))
