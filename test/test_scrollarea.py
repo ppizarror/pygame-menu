@@ -81,15 +81,6 @@ class ScrollAreaTest(unittest.TestCase):
         sa._world = None
         sa.draw(surface)
 
-    def test_surface_id(self) -> None:
-        """
-        Test surface id.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        sa.set_id('nice')
-        self.assertEqual(sa.get_id(), 'nice')
-
     def test_copy(self) -> None:
         """
         Test copy.

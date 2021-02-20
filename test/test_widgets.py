@@ -1102,23 +1102,6 @@ class WidgetsTest(unittest.TestCase):
         btn.readonly = True
         self.assertIsNone(btn.apply())
 
-    def test_attributes(self) -> None:
-        """
-        Test widget attributes.
-        """
-        menu = MenuUtils.generic_menu()
-        widget = menu.add.label('epic')
-        self.assertFalse(widget.has_attribute('epic'))
-        self.assertRaises(IndexError, lambda: widget.remove_attribute('epic'))
-        widget.set_attribute('epic', True)
-        self.assertTrue(widget.has_attribute('epic'))
-        self.assertTrue(widget.get_attribute('epic'))
-        widget.set_attribute('epic', False)
-        self.assertFalse(widget.get_attribute('epic'))
-        widget.remove_attribute('epic')
-        self.assertFalse(widget.has_attribute('epic'))
-        self.assertEqual(widget.get_attribute('epic', 420), 420)
-
     def test_draw_callback(self) -> None:
         """
         Test drawing callback.
@@ -1204,19 +1187,6 @@ class WidgetsTest(unittest.TestCase):
         btn.remove_attribute('epic')
         self.assertRaises(IndexError, lambda: btn.remove_attribute('epic'))
         self.assertFalse(btn.has_attribute('epic'))
-
-    def test_change_id(self) -> None:
-        """
-        Test widget id change.
-        """
-        menu = MenuUtils.generic_menu()
-        menu.add.button('b1', button_id='id')
-        w = menu.add.button('b1', button_id='other')
-        self.assertRaises(IndexError, lambda: w.change_id('id'))
-        w.change_id('id2')
-        v = menu.add.vertical_margin(10, 'margin')
-        self.assertEqual(menu.get_widget('margin'), v)
-        self.assertRaises(IndexError, lambda: v.change_id('id2'))
 
     def test_vmargin(self) -> None:
         """
@@ -1730,8 +1700,6 @@ class WidgetsTest(unittest.TestCase):
         Test none widget.
         """
         wid = NoneWidget()
-        wid.change_id('none')
-        self.assertEqual(wid.get_id(), 'none')
 
         wid.set_margin(9, 9)
         self.assertEqual(wid.get_margin(), (0, 0))

@@ -1001,10 +1001,10 @@ class FrameWidgetTest(unittest.TestCase):
         f4._pack_margin_warning = False
 
         # Get scrollareas
-        s0 = menu.get_scrollarea().set_id('s0')
-        s1 = f2.get_scrollarea(inner=True).set_id('s1')
-        s2 = f3.get_scrollarea(inner=True).set_id('s2')
-        s3 = f4.get_scrollarea(inner=True).set_id('s3')
+        s0 = menu.get_scrollarea()
+        s1 = f2.get_scrollarea(inner=True)
+        s2 = f3.get_scrollarea(inner=True)
+        s3 = f4.get_scrollarea(inner=True)
 
         vm = f2.pack(menu.add.vertical_margin(25, margin_id='margin'))
         b1 = f1.pack(menu.add.button('btn1', button_id='b1'), margin=(25, 0))

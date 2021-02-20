@@ -286,22 +286,6 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(b6.get_col_row_index(), (0, 0, 3))
         self.assertEqual(b7.get_col_row_index(), (0, 1, 4))
 
-    def test_attributes(self) -> None:
-        """
-        Test menu attributes.
-        """
-        menu = MenuUtils.generic_menu()
-        self.assertFalse(menu.has_attribute('epic'))
-        self.assertRaises(IndexError, lambda: menu.remove_attribute('epic'))
-        menu.set_attribute('epic', True)
-        self.assertTrue(menu.has_attribute('epic'))
-        self.assertTrue(menu.get_attribute('epic'))
-        menu.set_attribute('epic', False)
-        self.assertFalse(menu.get_attribute('epic'))
-        menu.remove_attribute('epic')
-        self.assertFalse(menu.has_attribute('epic'))
-        self.assertEqual(menu.get_attribute('epic', 420), 420)
-
     def test_close(self) -> None:
         """
         Test menu close.
