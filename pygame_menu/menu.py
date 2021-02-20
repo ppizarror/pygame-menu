@@ -1754,6 +1754,7 @@ class Menu(object):
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(clear_surface, bool)
+        self.set_attribute('last_drawn_menu_surface', surface)
 
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.draw, 'menu is not enabled')
@@ -1824,8 +1825,12 @@ class Menu(object):
         self._current._stats.draw += 1
         return self._current
 
-    def _draw_focus_widget(self, surface: 'pygame.Surface', widget: Optional['Widget']
-                           ) -> Optional[Dict[int, Tuple4Tuple2IntType]]:
+    def _draw_focus_widget(
+            self,
+            surface: 'pygame.Surface',
+            widget: Optional['Widget'],
+            force: bool = False
+    ) -> Optional[Dict[int, Tuple4Tuple2IntType]]:
         """
         Draw the focus background from a given widget. Widget must be selectable,
         active, selected. Not all widgets requests the active status, then focus may not
@@ -1833,13 +1838,19 @@ class Menu(object):
 
         :param surface: Pygame surface to draw the Menu
         :param widget: Focused widget
+        :param force: If ``True`` forces focus without any checks
         :return: Returns the focus region, ``None`` if the focus could not be possible
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(widget, (Widget, type(None)))
 
-        if widget is None or not widget.active or not widget.is_selectable or not widget.is_selected() or \
-                not (self._mouse_motion_selection or self._touchscreen_motion_selection) or not widget.is_visible():
+        force = force or (widget is not None and widget.get_attribute('force_menu_draw_focus', False) and widget.active)
+        if not force and (widget is None
+                          or not widget.active
+                          or not widget.is_selectable
+                          or not widget.is_selected()
+                          or not (self._mouse_motion_selection or self._touchscreen_motion_selection)
+                          or not widget.is_visible()):
             return
         window_width, window_height = self._window_size
 
@@ -2294,7 +2305,9 @@ class Menu(object):
                         if selected_widget is not None:
                             if not selected_widget_scrollarea.collide(selected_widget.get_focus_rect(), event):
                                 selected_widget.active = False
-                                selected_widget.render() # Some widgets need to be rendered
+                                selected_widget.render()  # Some widgets need to be rendered
+                                updated = True
+                                break
 
                 # Mouse motion. It changes the cursor of the mouse if enabled
                 elif self._current._mouse and event.type == pygame.MOUSEMOTION:
@@ -2375,6 +2388,9 @@ class Menu(object):
                         if selected_widget is not None:
                             if not selected_widget_scrollarea.collide(selected_widget, event):
                                 selected_widget.active = False
+                                selected_widget.render()  # Some widgets need to be rendered
+                                updated = True
+                                break
 
                 # Select widgets by touchscreen motion, this is valid only if the current selected widget
                 # is not active and the pointed widget is selectable
@@ -2940,8 +2956,13 @@ class Menu(object):
                 rect.x += sx / 2
             rect.x = min(rect.x, rx_min)
             rect.width = int(max(rect.width, self._column_widths[col])) - sy
+
+        # noinspection PyProtectedMember
+        # rect.y += widget._border_width
+
         widget_scroll.scroll_to_rect(rect, margin, scroll_parent)  # The first set the scrolls
         widget_scroll.scroll_to_rect(rect, margin, scroll_parent)  # The later updates to active object
+
         return self
 
     def get_id(self) -> str:
@@ -2990,7 +3011,7 @@ class Menu(object):
         """
         return tuple(self._widgets)
 
-    def get_menubar_widget(self) -> 'MenuBar':
+    def get_menubar(self) -> 'MenuBar':
         """
         Return menubar widget.
 
