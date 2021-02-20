@@ -409,7 +409,7 @@ class PygameEventUtils(object):
         assert_vector(rel, 2, int)
         assert_vector(delta, 2, int)
         if isinstance(rect, pygame_menu.widgets.Widget):
-            x, y = rect.get_rect(to_real_position=True, apply_padding=False).center
+            x, y = rect.get_rect(to_real_position=True, apply_padding=False, render=True).center
             menu = rect.get_menu()
         elif isinstance(rect, pygame.Rect):
             x, y = rect.center

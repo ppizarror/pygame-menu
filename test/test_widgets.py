@@ -1258,7 +1258,8 @@ class WidgetsTest(unittest.TestCase):
         items = [('This is a really long selection item', 1), ('epic', 2)]
         for i in range(10):
             items.append(('item{}'.format(i + 1), i + 1))
-        drop = pygame_menu.widgets.DropSelect('dropsel', items)
+        drop = pygame_menu.widgets.DropSelect('dropsel', items,
+                                              selection_option_font_size=int(0.75 * menu._theme.widget_font_size))
         menu.add.generic_widget(drop, configure_defaults=True)
         self.assertEqual(drop._selection_box_width, 205 if PYGAME_V2 else 206)
         drop.make_selection_drop()
@@ -1354,13 +1355,17 @@ class WidgetsTest(unittest.TestCase):
         drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertTrue(drop.active)
         self.assertEqual(drop.get_index(), -1)
-        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(drop.get_index(), 0)
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(drop.active)
         drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(drop.get_index(), 0)
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))  # Enable
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 0)
@@ -1369,12 +1374,12 @@ class WidgetsTest(unittest.TestCase):
             drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
             self.assertEqual(drop.get_index(), i)
             if PYGAME_V2:
-                self.assertEqual(drop._drop_frame.get_scroll_value_percentual(ORIENTATION_VERTICAL),
+                self.assertEqual(drop.get_scroll_value_percentual(ORIENTATION_VERTICAL),
                                  scroll_values[i])
         drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 11)  # Not infinite
         if PYGAME_V2:
-            self.assertEqual(drop._drop_frame.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0.997)
+            self.assertEqual(drop.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0.997)
 
         # Scroll to bottom and close, then open again, this should scroll to current selected
         drop.scrollh(0)
@@ -1422,6 +1427,8 @@ class WidgetsTest(unittest.TestCase):
         drop.make_selection_drop()  # This selection drop is empty
         self.assertEqual(drop._drop_frame.get_attribute('height'), 0)
         self.assertEqual(drop._drop_frame.get_attribute('width'), 0)
+        drop._toggle_drop()
+        self.assertFalse(drop.active)
         fr = drop.get_focus_rect()
         r = drop.get_rect(apply_padding=False, to_real_position=True)
         self.assertEqual(fr.x, r.x)
@@ -1467,12 +1474,157 @@ class WidgetsTest(unittest.TestCase):
 
         drop.set_max_height(100)
         self.assertIsNone(drop._max_height[0])
+        self.assertFalse(drop.active)
 
         # Add margin
         menu.add.vertical_margin(500)
 
         # Add drop from widgetmanager
-        # menu.mainloop(surface)
+        drop2 = menu.add.dropselect('drop2', items, dropselect_id='2', selection_infinite=True,
+                                    selection_option_font_size=int(0.75 * menu._theme.widget_font_size))
+        self.assertEqual(drop2._tab_size, menu._theme.widget_tab_size)
+        for btn in drop2._option_buttons:
+            self.assertEqual(btn._tab_size, menu._theme.widget_tab_size)
+        self.assertEqual(drop2._drop_frame._tab_size, 0)
+        self.assertEqual(drop2.get_id(), '2')
+        self.assertEqual(menu.get_scrollarea().get_scroll_value_percentual(ORIENTATION_VERTICAL), 0)
+        self.assertTrue(drop._open_bottom)
+        self.assertFalse(drop2._open_bottom)
+
+        # Move to bottom
+        menu.get_scrollarea().scroll_to(ORIENTATION_VERTICAL, 1)
+        menu.render()
+        self.assertTrue(drop._open_bottom)
+        self.assertFalse(drop2._open_bottom)
+        menu.select_widget(drop2)
+        drop2._toggle_drop()
+        self.assertEqual(drop2._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'), 185 if PYGAME_V2 else 186)
+
+        # Test infinite
+        self.assertTrue(drop2.active)
+        self.assertEqual(drop2.get_index(), -1)
+        drop2._down()
+        self.assertEqual(drop2.get_index(), 11)
+        drop2.draw(surface)
+        drop._index = -1
+        drop2._up()
+        self.assertEqual(drop2.get_index(), 0)
+        drop2._up()
+        self.assertEqual(drop2.get_index(), 1)
+        drop2._down()
+        self.assertEqual(drop2.get_index(), 0)
+        drop2._down()
+        self.assertEqual(drop2.get_index(), 11)
+        drop2._up()
+        self.assertEqual(drop2.get_index(), 0)
+        drop2.set_value('item6')
+        self.assertEqual(drop2.get_index(), 7)
+
+        drop2.readonly = True
+        drop2._up()
+        self.assertEqual(drop2.get_index(), 7)
+        drop2._down()
+        self.assertEqual(drop2.get_index(), 7)
+        drop2.readonly = False
+        menu.render()
+        self.assertEqual(drop2.get_scroll_value_percentual(ORIENTATION_VERTICAL), 0)
+        drop2.reset_value()
+        self.assertEqual(drop2.get_index(), -1)
+        drop2.set_scrollarea(drop2.get_scrollarea())
+
+        if PYGAME_V2:
+            self.assertEqual(menu._draw_focus_widget(surface, drop2),
+                             {1: ((0, 0), (600, 0), (600, 319), (0, 319)),
+                              2: ((0, 320), (250, 320), (250, 495), (0, 495)),
+                              3: ((456, 320), (600, 320), (600, 495), (456, 495)),
+                              4: ((0, 496), (600, 496), (600, 600), (0, 600))}
+                             )
+
+        # Add drop inside frame
+        f = menu.add.frame_v(400, 500, max_height=200, background_color=(0, 0, 255))
+        f.pack(drop2)
+        self.assertEqual(drop2.get_scrollarea(), f.get_scrollarea(inner=True))
+        self.assertEqual(drop2._drop_frame.get_scrollarea(), f.get_scrollarea(inner=True))
+        self.assertEqual(drop2.get_scrollarea().get_parent(), menu.get_scrollarea())
+        self.assertEqual(drop2._drop_frame.get_scrollarea().get_parent(), menu.get_scrollarea())
+        drop2.update_items([('optionA', 1), ('optionB', 2)])
+        drop2.make_selection_drop()
+
+        if PYGAME_V2:
+            self.assertEqual(drop2._get_status(), ((
+                'DropSelect-drop2', (0, 2, 3, 0, 0, 330, 49, 98, 308, 0, -242), (1, 0, 1, 1, 0, 1, 1), (
+                    'Frame', (-1, -1, -1, 116, 44, 205, 78, 214, 352, 116, -198), (0, 0, 0, 1, 0, 1, 1), (-1, -1),
+                    ('Button-optionA', (-1, -1, -1, 116, 43, 204, 40, 214, 351, 116, -199), (1, 0, 0, 1, 0, 1, 2)),
+                    ('Button-optionB', (-1, -1, -1, 116, 82, 204, 40, 214, 390, 116, -160), (1, 0, 0, 1, 0, 1, 2))),
+                ('Button-optionA', (-1, -1, -1, 116, 43, 204, 40, 214, 351, 116, -199), (1, 0, 0, 1, 0, 1, 2)),
+                ('Button-optionB', (-1, -1, -1, 116, 82, 204, 40, 214, 390, 116, -160), (1, 0, 0, 1, 0, 1, 2)))
+            ))
+        self.assertEqual(drop2._drop_frame.get_attribute('height'), 77 if PYGAME_V2 else 79)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'), 205 if PYGAME_V2 else 206)
+        self.assertEqual(drop2.get_scrollarea().get_parent_scroll_value_percentual(ORIENTATION_VERTICAL),
+                         (0, 1))
+        self.assertTrue(drop2._open_bottom)
+
+        # Test onchange
+        test = [-1, False]
+
+        def test_change(item, v) -> None:
+            """
+            Test change.
+            """
+            assert item[0][1] == v
+            test[0] = item[0][0]
+
+        def test_apply(item, v) -> None:
+            """
+            Test apply.
+            """
+            assert item[0][1] == v
+            test[1] = not test[1]
+
+        drop2.set_onchange(test_change)
+        drop2.set_onreturn(test_apply)
+        drop2._toggle_drop()
+        self.assertEqual(drop2.get_index(), -1)
+        self.assertEqual(test[0], -1)
+        drop2._up()
+        self.assertEqual(test[0], 'optionA')
+        drop2._up()
+        self.assertEqual(test[0], 'optionB')
+        drop2._up()
+        self.assertEqual(test[0], 'optionA')
+        self.assertFalse(test[1])
+        drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Now it's closed
+        self.assertTrue(test[1])
+        self.assertFalse(drop2.active)
+        drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # This only opens but not apply
+        self.assertTrue(test[1])
+        self.assertTrue(drop2.active)
+        drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Now applies
+        self.assertFalse(test[1])
+        self.assertFalse(drop2.active)
+
+        # Unpack from frame
+        f.unpack(drop2)
+        self.assertTrue(drop2.is_floating())
+        drop2.set_float(False)
+        self.assertEqual(drop2._drop_frame.get_attribute('height'), 77 if PYGAME_V2 else 79)
+        self.assertEqual(drop2._drop_frame.get_attribute('width'), 205 if PYGAME_V2 else 206)
+
+        # Disable focus
+        menu._mouse_motion_selection = False
+
+        def drawrect() -> None:
+            """
+            Draw absolute rect on surface for testing purposes.
+            """
+            # surface.fill((255, 0, 0), drop2.get_focus_rect())
+            # surface.fill((0, 0, 255), drop2.get_scrollarea().get_absolute_view_rect())
+            # surface.fill((255, 255, 0), drop2.get_scrollarea().get_absolute_view_rect().clip(drop.get_focus_rect()))
+            return
+
+        menu.get_decorator().add_callable(drawrect, prev=False, pass_args=False)
 
     def test_none(self) -> None:
         """
@@ -1702,7 +1854,7 @@ class WidgetsTest(unittest.TestCase):
         # Ignore events if mouse outside the region
         sb.update(PygameEventUtils.middle_rect_click(sb.get_slider_rect(), button=5, delta=(0, 999), rel=(0, -10),
                                                      evtype=pygame.MOUSEMOTION))
-        self.assertEqual(sb.get_value_percentual(), 1 if PYGAME_V2 else 0.976)
+        self.assertIn(sb.get_value_percentual(), (0.976, 1))
 
         # Test remove onreturn
         sb = ScrollBar(length, world_range, 'sb', ORIENTATION_VERTICAL, onreturn=-1)
