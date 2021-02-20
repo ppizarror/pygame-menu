@@ -1296,7 +1296,7 @@ class Menu(object):
             try:
                 return rects_cache[wid.get_id]
             except KeyError:
-                rects_cache[wid.get_id] = wid.get_rect()
+                rects_cache[wid.get_id] = wid.get_rect(render=True)
             return rects_cache[wid.get_id]
 
         # Update appended widgets
@@ -1802,11 +1802,16 @@ class Menu(object):
             scrollarea_decorator.draw_prev(self._current._widgets_surface)
 
             # Iterate through widgets and draw them
+            selected_widget = None
             for widget in self._current._widgets:
                 # Widgets within frames are not drawn as it's frame draw these widgets
                 if widget.get_frame() is not None:
                     continue
+                if widget.is_selected():
+                    selected_widget = widget
                 widget.draw(self._current._widgets_surface)
+            if selected_widget is not None:
+                selected_widget.draw_after_if_selected(self._current._widgets_surface)
 
             self._current._stats.draw_update_cached += 1
 
@@ -2122,19 +2127,22 @@ class Menu(object):
         mouse_changed_over_menu = False  # Set to True if mousemenuover has changed
 
         selected_widget = self._current.get_selected_widget()
+        selected_widget_active_disable_scroll = (False if selected_widget is None else selected_widget.active) and \
+                                                self._current._mouse_motion_selection
         selected_widget_scrollarea = None if selected_widget is None else selected_widget.get_scrollarea()
 
         # First, check scrollable widgets (if any)
         scrollable_frames_update = False
-        for scrollable_frame in self._current._scrollable_frames:
-            scrollable_frames_update = scrollable_frames_update or scrollable_frame.update(events)
+        if not selected_widget_active_disable_scroll:
+            for scrollable_frame in self._current._scrollable_frames:
+                scrollable_frames_update = scrollable_frames_update or scrollable_frame.update(events)
 
         # Scrollable widgets have changed
         if scrollable_frames_update:
             updated = True
 
         # Update scroll bars
-        elif self._current._scroll.update(events):
+        elif not selected_widget_active_disable_scroll and self._current._scroll.update(events):
             updated = True
 
         # Update the menubar, it may change the status of the widget because
@@ -2286,6 +2294,7 @@ class Menu(object):
                         if selected_widget is not None:
                             if not selected_widget_scrollarea.collide(selected_widget.get_focus_rect(), event):
                                 selected_widget.active = False
+                                selected_widget.render() # Some widgets need to be rendered
 
                 # Mouse motion. It changes the cursor of the mouse if enabled
                 elif self._current._mouse and event.type == pygame.MOUSEMOTION:
@@ -2882,7 +2891,12 @@ class Menu(object):
 
         return True
 
-    def scroll_to_widget(self, widget: Optional['Widget']) -> 'Menu':
+    def scroll_to_widget(
+            self,
+            widget: Optional['Widget'],
+            margin: NumberType = 10,
+            scroll_parent: bool = True
+    ) -> 'Menu':
         """
         Scroll the Menu to the given widget.
 
@@ -2893,6 +2907,8 @@ class Menu(object):
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget: Widget to request scroll. If ``None`` scrolls to the selected widget
+        :param margin: Extra margin around the rect (px)
+        :param scroll_parent: If ``True`` parent scroll also scrolls to rect
         :return: Self reference
         """
         if widget is None:
@@ -2910,7 +2926,7 @@ class Menu(object):
 
         # Call scroll parent container
         if widget_frame is not None and widget_frame.is_scrollable:
-            widget_frame.scroll_to_widget()
+            widget_frame.scroll_to_widget(margin, scroll_parent)
 
         # Get scroll thickness
         widget_scroll = widget.get_scrollarea()
@@ -2924,8 +2940,8 @@ class Menu(object):
                 rect.x += sx / 2
             rect.x = min(rect.x, rx_min)
             rect.width = int(max(rect.width, self._column_widths[col])) - sy
-        widget_scroll.scroll_to_rect(rect)  # The first set the scrolls
-        widget_scroll.scroll_to_rect(rect)  # The later updates to active object
+        widget_scroll.scroll_to_rect(rect, margin, scroll_parent)  # The first set the scrolls
+        widget_scroll.scroll_to_rect(rect, margin, scroll_parent)  # The later updates to active object
         return self
 
     def get_id(self) -> str:

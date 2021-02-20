@@ -201,6 +201,7 @@ class Frame(Widget):
             self,
             max_width: Optional[NumberType],
             max_height: Optional[NumberType],
+            scrollarea_color: Optional[ColorInputType],
             scrollbar_color: ColorInputType,
             scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
             scrollbar_shadow: bool,
@@ -217,6 +218,7 @@ class Frame(Widget):
 
         :param max_width: Maximum width of the scrollarea
         :param max_height: Maximum height of the scrollarea
+        :param scrollarea_color: Scroll area color. If ``None`` area is transparent
         :param scrollbar_color: Scrollbar color
         :param scrollbar_cursor: Scrollbar cursor
         :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -241,6 +243,11 @@ class Frame(Widget):
             'scroll area width ({0}) cannot exceed frame width ({1})'.format(max_width, self._width)
         assert 0 < max_height <= self._height, \
             'scroll area height ({0}) cannot exceed frame height ({1})'.format(max_height, self._height)
+        # if not self._relax:
+        #     pass
+        # else:
+        #     max_height = min(max_height, self._height)
+        #     max_width = min(max_width, self._width)
 
         sx = 0 if self._width == max_width else scrollbar_thick
         sy = 0 if self._height == max_height else scrollbar_thick
@@ -258,11 +265,12 @@ class Frame(Widget):
 
         # Create area object
         self._frame_scrollarea = pygame_menu.scrollarea.ScrollArea(
-            area_width=max_width + sy,
+            area_color=scrollarea_color,
             area_height=max_height + sx,
-            scrollbar_cursor=scrollbar_cursor,
-            scrollbar_color=scrollbar_color,
+            area_width=max_width + sy,
             parent_scrollarea=self._scrollarea,
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
             scrollbar_slider_color=scrollbar_slider_color,
             scrollbar_slider_pad=scrollbar_slider_pad,
             scrollbar_thick=scrollbar_thick,
@@ -363,19 +371,23 @@ class Frame(Widget):
     def set_position(self, posx: NumberType, posy: NumberType) -> 'Frame':
         super(Frame, self).set_position(posx, posy)
         if self.is_scrollable:
-            tx, ty = self.get_translate()
-            txs, tys = self.get_translate(virtual=True)
-            self._frame_scrollarea.set_position(posx + tx + txs, posy + ty + tys)
+            self._frame_scrollarea.set_position(self._rect.x, self._rect.y)
         return self
 
     def draw(self, surface: 'pygame.Surface') -> 'Frame':
+        selected_widget = None
+
         # Simple case, no scrollarea
         if not self.is_scrollable:
             self.last_surface = surface
             self._draw_background_color(surface)
             self._decorator.draw_prev(surface)
             for widget in self._widgets.values():
+                if widget.is_selected():
+                    selected_widget = widget
                 widget.draw(surface)
+            if selected_widget is not None:
+                selected_widget.draw_after_if_selected(surface)
             self._draw_border(surface)
             self._decorator.draw_post(surface)
 
@@ -388,7 +400,11 @@ class Frame(Widget):
             scrollarea_decorator.force_cache_update()
             scrollarea_decorator.draw_prev(self._surface)
             for widget in self._widgets.values():
+                if widget.is_selected():
+                    selected_widget = widget
                 widget.draw(self._surface)
+            if selected_widget is not None:
+                selected_widget.draw_after_if_selected(self._surface)
             self._frame_scrollarea.draw(surface)
             self._draw_border(surface)
         self.apply_draw_callbacks()
@@ -766,6 +782,13 @@ class Frame(Widget):
                     self._control_widget_last_pos = self._control_widget.get_position()
                     break
 
+        if widget.is_selected():
+            widget.scroll_to_widget()
+
+        if len(self._widgets) == 0:  # Scroll to top
+            self.scrollv(0)
+            self.scrollh(0)
+
         return widget
 
     # noinspection PyProtectedMember
@@ -952,6 +975,11 @@ class Frame(Widget):
         except _FrameSizeException:
             self.unpack(widget)
             raise
+
+        # Request scroll if widget is selected
+        if widget.is_selected():
+            widget.scroll_to_widget()
+            widget.scroll_to_widget()
 
         return widget
 
