@@ -45,12 +45,10 @@ from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorTy
     Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, EventVectorType
 
 try:
-
     # noinspection PyProtectedMember
     from pyperclip import copy, paste, PyperclipException
 
 except (ModuleNotFoundError, ImportError):
-
     # noinspection PyUnusedLocal
     def copy(text) -> None:
         """
@@ -118,7 +116,6 @@ class TextInput(Widget):
     :param repeat_keys_interval_ms: Interval between key press repetition when held
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :param repeat_touch_interval_ms: Interval between mouse events when held
-    :param tab_size: Tab whitespace characters
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
     :param kwargs: Optional keyword arguments
@@ -178,7 +175,6 @@ class TextInput(Widget):
     _selection_mouse_first_position: int  # Touch emulates a mouse, so this is used by both touch and mouse
     _selection_position: List[int]
     _selection_surface: Optional['pygame.Surface']
-    _tab_size: int
     _title_size: NumberType
     _valid_chars: Optional[List[str]]
 
@@ -208,7 +204,6 @@ class TextInput(Widget):
             repeat_keys_interval_ms: NumberType = 100,
             repeat_mouse_interval_ms: NumberType = 400,
             repeat_touch_interval_ms: NumberType = 400,
-            tab_size: int = 4,
             text_ellipsis: str = '...',
             valid_chars: Optional[List[str]] = None,
             *args,
@@ -230,7 +225,6 @@ class TextInput(Widget):
         assert isinstance(repeat_keys_interval_ms, NumberInstance)
         assert isinstance(repeat_mouse_interval_ms, NumberInstance)
         assert isinstance(repeat_touch_interval_ms, NumberInstance)
-        assert isinstance(tab_size, int)
         assert isinstance(text_ellipsis, str)
         assert isinstance(textinput_id, str)
         assert isinstance(valid_chars, (type(None), list))
@@ -238,7 +232,6 @@ class TextInput(Widget):
         assert history >= 0, 'history must be equal or greater than zero'
         assert maxchar >= 0, 'maxchar must be equal or greater than zero'
         assert maxwidth >= 0, 'maxwidth must be equal or greater than zero'
-        assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
         assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
         assert cursor_switch_ms > 0, 'cursor switch in milliseconds must be greater than zero'
@@ -356,7 +349,6 @@ class TextInput(Widget):
         self._maxwidthsize = 0  # Updated in _apply_font()
         self._password = password
         self._password_char = password_char
-        self._tab_size = tab_size
         self._title_size = 0
 
     def _apply_font(self) -> None:

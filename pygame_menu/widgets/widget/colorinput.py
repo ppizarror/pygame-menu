@@ -202,7 +202,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             repeat_keys_initial_ms=repeat_keys_initial_ms,
             repeat_keys_interval_ms=repeat_keys_interval_ms,
             repeat_mouse_interval_ms=repeat_mouse_interval_ms,
-            tab_size=0,
             text_ellipsis='',
             textinput_id=colorinput_id,
             title=title,
