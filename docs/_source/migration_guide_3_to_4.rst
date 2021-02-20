@@ -24,6 +24,7 @@ Migration Guide - v3 to v4
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
 - Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
 - Renamed Selector ``elements`` to ``items``.
+- Renamed Selector ``update_elements`` to ``update_items``.
 - Renamed Theme ``menubar_close_button`` to ``title_close_button``.
 - Renamed Theme ``title_shadow_color`` to ``title_font_shadow_color``.
 - Renamed Theme ``title_shadow_offset`` to ``title_font_shadow_offset``.

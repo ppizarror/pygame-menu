@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'FRAME'
+EXAMPLE = 'SELECTOR'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -129,22 +129,31 @@ elif EXAMPLE == 'LABEL':
 
 elif EXAMPLE == 'COLORINPUT':
     menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
-    menu.add.color_input('RGB color 1: ', color_type='rgb', default=(255, 0, 255), font_size=18)
-    menu.add.color_input('RGB color 2: ', color_type='rgb', input_separator='-', font_size=18)
-    menu.add.color_input('HEX color 3: ', color_type='hex', default='#ffaa11', font_size=18)
+    menu.add.color_input('RGB color 1: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
+                         default=(255, 0, 255), font_size=18)
+    menu.add.color_input('RGB color 2: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
+                         input_separator='-', font_size=18)
+    menu.add.color_input('HEX color 3: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_HEX,
+                         default='#ffaa11', font_size=18)
 
 elif EXAMPLE == 'SELECTOR':
     menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')
+    items = [('Default', (255, 255, 255)),
+             ('Black', (0, 0, 0)),
+             ('Blue', (0, 0, 255)),
+             ('Random', (-1, -1, -1))]
     selector = menu.add.selector(
-        title='Current color: ',
-        items=[('Default', (255, 255, 255)),
-               ('Black', (0, 0, 0)),
-               ('Blue', (0, 0, 255)),
-               ('Random', (-1, -1, -1))],
+        title='Current color:\t',
+        items=items,
         onreturn=change_background_color,  # user press "Return" button
         onchange=change_background_color  # User changes value with left/right keys
     )
     selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
+    selector2 = menu.add.selector(
+        title='New color:',
+        items=items,
+        style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
+    )
 
 elif EXAMPLE == 'BUTTON':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Button')
