@@ -72,7 +72,7 @@ class ScrollBar(Widget):
     """
     _last_mouse_pos: Tuple2IntType
     _mouseover: bool
-    _orientation: Literal[0, 1]  # 0: horizontal, 1: vertical
+    _orientation: Literal[0, 1]
     _page_ctrl_color: ColorType
     _page_ctrl_length: NumberType
     _page_ctrl_thick: int
@@ -123,7 +123,7 @@ class ScrollBar(Widget):
 
         self._last_mouse_pos = (-1, -1)
         self._mouseover = False
-        self._orientation = 0
+        self._orientation = 0  # 0: horizontal, 1: vertical
         self._values_range = list(values_range)
 
         self._page_ctrl_length = length
@@ -309,11 +309,13 @@ class ScrollBar(Widget):
         return int(value)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._rect.size, self._slider_rect.x, self._slider_rect.y,
+        width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
+
+        if not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y,
                                          self._slider_rect.width, self._slider_rect.height, self._visible):
             return True
 
-        self._surface = make_surface(*self._rect.size)
+        self._surface = make_surface(width, height)
         self._surface.fill(self._page_ctrl_color)
 
         # Render slider
