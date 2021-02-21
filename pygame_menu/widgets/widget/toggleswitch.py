@@ -376,7 +376,7 @@ class ToggleSwitch(Widget):
             self._sound.play_key_add()
 
     def update(self, events: EventVectorType) -> bool:
-        if self.readonly or not self._visible:
+        if self.readonly or not self.is_visible():
             return False
         updated = False
 

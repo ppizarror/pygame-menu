@@ -462,13 +462,26 @@ class Widget(Base):
         """
         return self
 
-    def is_visible(self) -> bool:
+    def is_visible(self, check_frame: bool = True) -> bool:
         """
         Return ``True`` if the Widget is visible.
 
+        :param check_frame: If ``True`` check frame and subframes if they're opened as well
         :return: Visible status
         """
-        return self._visible
+        if not check_frame:
+            return self._visible
+        if not self._visible:
+            return False
+        frame = self._frame
+        if frame is not None:
+            while True:
+                if frame is None:
+                    break
+                if not frame._visible:
+                    return False
+                frame = frame._frame
+        return True
 
     def is_floating(self) -> bool:
         """
@@ -2339,11 +2352,12 @@ class Widget(Base):
         """
         frame = self._frame
         depth = 0
-        while True:
-            if frame is None:
-                break
-            depth += 1
-            frame = frame._frame
+        if frame is not None:
+            while True:
+                if frame is None:
+                    break
+                depth += 1
+                frame = frame._frame
         return depth
 
     def _get_status(self) -> Tuple[Any, ...]:

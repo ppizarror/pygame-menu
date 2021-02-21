@@ -1483,7 +1483,7 @@ class TextInput(Widget):
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self._mouse_enabled
 
-        if self.readonly or not self._visible:
+        if self.readonly or not self.is_visible():
             return False
 
         # Get time clock

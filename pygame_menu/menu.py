@@ -945,7 +945,7 @@ class Menu(Base):
         assert isinstance(widget, Widget)
         if not widget.is_selectable:
             raise ValueError('{0} is not selectable'.format(widget.get_class_id()))
-        if not widget.is_visible():
+        if not widget.is_visible():  # Considers frame
             raise ValueError('{0} is not visible'.format(widget.get_class_id()))
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1011,7 +1011,7 @@ class Menu(Base):
         last_selectable = 0
         for indx in range(len(self._widgets)):
             wid = self._widgets[indx]
-            if wid.is_selectable and wid.is_visible():
+            if wid.is_selectable and wid.is_visible():  # Considers frame
                 nselect += 1
                 last_selectable = indx
 
@@ -1055,7 +1055,7 @@ class Menu(Base):
         if len(self._widgets) > 0:
             if self._index != -1:
                 selected_widget = self._widgets[self._index % len(self._widgets)]
-                if not selected_widget.is_visible():
+                if not selected_widget.is_visible():  # Considers frame
                     selected_widget.select(False)  # Unselect
                     self._update_after_remove_or_hidden(-1, update_surface=False)
             else:
