@@ -68,8 +68,14 @@ class Frame(Widget):
 
         Frame cannot be selected. Thus, it does not receive any selection effect.
 
-    :param width: Frame width
-    :param height: Frame height
+    .. note::
+
+        Frames should be appended to Menu scrollable frames if it's scrollable,
+        be careful when removing. Check :py:class:`pygame_menu.widgets.DropSelect`
+        as a complete example of Frame implementation within another Widgets.
+
+    :param width: Frame width (px)
+    :param height: Frame height (px)
     :param orientation: Frame orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
     :param frame_id: ID of the frame
     """
@@ -157,6 +163,12 @@ class Frame(Widget):
             for w in widgets:
                 self._menu._scrollable_frames.append(w[1])
 
+    def on_remove_from_menu(self) -> 'Frame':
+        for w in self.get_widgets(unpack_subframes=False):
+            self.unpack(w)
+        self.update_indices()
+        return self
+
     # noinspection PyProtectedMember
     def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
         # If menu is set, remove from previous scrollable if enabled
@@ -164,7 +176,6 @@ class Frame(Widget):
             scrollable_widgets = self._menu._scrollable_frames
             if self in scrollable_widgets:
                 scrollable_widgets.remove(self)
-                self._sort_menu_scrollable_frames()
 
         # Update menu
         super(Frame, self).set_menu(menu)
@@ -216,8 +227,8 @@ class Frame(Widget):
         """
         Make the scrollarea of the frame.
 
-        :param max_width: Maximum width of the scrollarea
-        :param max_height: Maximum height of the scrollarea
+        :param max_width: Maximum width of the scrollarea (px)
+        :param max_height: Maximum height of the scrollarea (px)
         :param scrollarea_color: Scroll area color. If ``None`` area is transparent
         :param scrollbar_color: Scrollbar color
         :param scrollbar_cursor: Scrollbar cursor
@@ -260,6 +271,14 @@ class Frame(Widget):
             self._rect.height = self._height
             self._rect.width = self._width
             self._frame_scrollarea = None
+
+            # If in previous scrollable frames
+            if self._menu is not None and self.is_scrollable:
+                # noinspection PyProtectedMember
+                scrollable_frames = self._menu._scrollable_frames
+                if self in scrollable_frames:
+                    scrollable_frames.remove(self)
+
             self.is_scrollable = False
             return self
 
@@ -307,7 +326,7 @@ class Frame(Widget):
         return self.first_index, self.last_index
 
     def update(self, events: EventVectorType) -> bool:
-        if not self.is_scrollable:
+        if not self.is_scrollable or not self._visible or self.readonly:
             return False
         return self._frame_scrollarea.update(events)
 
