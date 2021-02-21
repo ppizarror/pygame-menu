@@ -204,7 +204,10 @@ class Button(Widget):
             if self._keyboard_enabled and event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
                     self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
                     event.button == _controls.JOY_BUTTON_SELECT:
-                self._sound.play_open_menu()
+                if self.to_menu:
+                    self._sound.play_open_menu()
+                else:
+                    self._sound.play_key_add()
                 self.apply()
                 updated = True
 
