@@ -985,12 +985,7 @@ class Menu(Base):
         if frame is not None:
             frame.unpack(widget)
 
-        # If frame is removed, all widgets within now are unpacked
-        if isinstance(widget, Frame):
-            for w in widget.get_widgets(unpack_subframes=False):
-                widget.unpack(w)
-            widget.update_indices()
-
+        widget.on_remove_from_menu()
         widget.set_menu(None)  # Removes Menu reference from widget
 
         return self
