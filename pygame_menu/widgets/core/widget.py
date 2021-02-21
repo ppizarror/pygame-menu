@@ -978,10 +978,12 @@ class Widget(Base):
         """
         Scroll to widget.
 
-        :param margin: Extra margin around the rect (px){
+        :param margin: Extra margin around the rect (px)
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
         :return: Self reference
         """
+        if self.has_attribute('ignore_scroll_to_widget'):
+            return self
         if self._frame is not None and self._frame.is_scrollable and self._frame.get_scrollarea() is not None:
             self._frame.get_scrollarea().scroll_to_rect(self.get_frame().get_rect(), margin, scroll_parent)
         if self._scrollarea is not None:

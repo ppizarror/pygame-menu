@@ -1231,6 +1231,7 @@ class WidgetsTest(unittest.TestCase):
         for i in range(10):
             items.append(('item{}'.format(i + 1), i + 1))
         drop = pygame_menu.widgets.DropSelectMultiple('dropsel', items, open_middle=True, selection_box_height=5)
+        self.assertNotEqual(id(items), id(drop._items))
         menu.add.generic_widget(drop, configure_defaults=True)
         self.assertEqual(drop._selection_box_width, 225)
         drop.make_selection_drop()
