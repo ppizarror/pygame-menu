@@ -40,6 +40,7 @@ __all__ = [
     'assert_position',
     'assert_vector',
     'check_key_pressed_valid',
+    'fill_gradient',
     'format_color',
     'is_callable',
     'make_surface',
@@ -63,7 +64,7 @@ import pygame_menu.locals as _locals
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType, EventType
+    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 
@@ -80,14 +81,18 @@ def assert_alignment(align: str) -> None:
         'incorrect alignment value "{0}"'.format(align)
 
 
-def assert_color(color: Union[ColorInputType, List[int]]) -> ColorType:
+def assert_color(
+        color: Union[ColorInputType, List[int]],
+        warn_if_invalid: bool = True
+) -> ColorType:
     """
     Assert that a certain color is valid.
 
     :param color: Object color
+    :param warn_if_invalid: If ``True`` warns if the color is invalid
     :return: Formatted color if valid, else, throws an ``AssertionError`` exception
     """
-    color = format_color(color)
+    color = format_color(color, warn_if_invalid=warn_if_invalid)
     assert isinstance(color, VectorInstance), \
         'color must be a tuple or list, not type "{0}"'.format(type(color))
     assert 4 >= len(color) >= 3, \
@@ -106,17 +111,14 @@ def assert_color(color: Union[ColorInputType, List[int]]) -> ColorType:
     return color
 
 
-def assert_cursor(cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> None:
+def assert_cursor(cursor: CursorInputType) -> None:
     """
     Assert a given cursor is valid.
 
     :param cursor: Cursor object
     :return: None
     """
-    if hasattr(pygame.cursors, 'Cursor'):
-        assert isinstance(cursor, (int, type(pygame.cursors.Cursor), type(None)))
-    else:
-        assert isinstance(cursor, (int, type(None)))
+    assert isinstance(cursor, CursorInputInstance)
 
 
 def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
@@ -203,7 +205,67 @@ def check_key_pressed_valid(event: EventType) -> bool:
     return not bad_event
 
 
-def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
+def fill_gradient(
+        surface: 'pygame.Surface',
+        color: ColorInputType,
+        gradient: ColorInputType,
+        rect: Optional['pygame.Rect'] = None,
+        vertical: bool = True,
+        forward: bool = True
+) -> None:
+    """
+    Fill a surface with a gradient pattern.
+
+    :param surface: Surface to fill
+    :param color: Starting color
+    :param gradient: Final color
+    :param rect: Area to fill; default is surface's rect
+    :param vertical: True=vertical; False=horizontal
+    :param forward: True=forward; False=reverse
+    :return: None
+    """
+    if rect is None:
+        rect = surface.get_rect()
+    x1, x2 = rect.left, rect.right
+    y1, y2 = rect.top, rect.bottom
+    color = assert_color(color)
+    gradient = assert_color(gradient)
+    if vertical:
+        h = y2 - y1
+    else:
+        h = x2 - x1
+    if forward:
+        a, b = color, gradient
+    else:
+        b, a = color, gradient
+    rate = (
+        float(b[0] - a[0]) / h,
+        float(b[1] - a[1]) / h,
+        float(b[2] - a[2]) / h
+    )
+    fn_line = pygame.draw.line
+    if vertical:
+        for line in range(y1, y2):
+            color = (
+                min(max(a[0] + (rate[0] * (line - y1)), 0), 255),
+                min(max(a[1] + (rate[1] * (line - y1)), 0), 255),
+                min(max(a[2] + (rate[2] * (line - y1)), 0), 255)
+            )
+            fn_line(surface, color, (x1, line), (x2, line))
+    else:
+        for col in range(x1, x2):
+            color = (
+                min(max(a[0] + (rate[0] * (col - x1)), 0), 255),
+                min(max(a[1] + (rate[1] * (col - x1)), 0), 255),
+                min(max(a[2] + (rate[2] * (col - x1)), 0), 255)
+            )
+            fn_line(surface, color, (col, y1), (col, y2))
+
+
+def format_color(
+        color: Union[ColorInputType, Any],
+        warn_if_invalid: bool = True
+) -> Union[ColorType, Any]:
     """
     Format color from string, int, or tuple to tuple type.
 
@@ -215,6 +277,7 @@ def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
     - tuple/list of int color values: ``(R, G, B, A)`` or ``(R, G, B)``, where R, G, B, and A are int values in the range of ``0`` to ``255`` inclusive, the A (alpha) value defaults to ``255`` (opaque) if not provided
 
     :param color: Color to format. If format is valid returns the same input value
+    :param warn_if_invalid: If ``True`` warns if the color is invalid
     :return: Color in (r, g, b, a) format
     """
     if not isinstance(color, ColorInputInstance):
@@ -230,7 +293,10 @@ def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
             else:
                 c = pygame.Color(color)
         except ValueError:
-            warnings.warn('invalid color value "{0}"'.format(color))
+            if warn_if_invalid:
+                warnings.warn('invalid color value "{0}"'.format(color))
+            else:
+                raise
             return color
     else:
         c = color
