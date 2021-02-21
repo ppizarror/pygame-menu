@@ -378,10 +378,6 @@ class DropSelect(Widget):
                 readonly_selected_color=self._font_readonly_selected_color,
                 selected_color=self._font_selected_color
             )
-            btn.set_margin(
-                x=0,
-                y=0
-            )
             btn.set_padding(
                 padding=self._selection_option_padding
             )
@@ -434,8 +430,8 @@ class DropSelect(Widget):
             self._drop_frame.set_menu(None)
 
         # Create frame
-        self._drop_frame = Frame(max_width,
-                                 max(total_height, 1), ORIENTATION_VERTICAL)
+        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL)
+        self._drop_frame._accepts_title = False
         self._drop_frame.hide()
         self._drop_frame.set_background_color(
             color=self._selection_box_bgcolor
