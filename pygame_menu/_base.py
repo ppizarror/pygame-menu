@@ -55,7 +55,7 @@ class Base(object):
         self._attributes = {}
         self._id = object_id
 
-    def set_attribute(self, key: str, value: Any) -> 'Base':
+    def set_attribute(self, key: str, value: Any = None) -> 'Base':
         """
         Set an attribute.
 
