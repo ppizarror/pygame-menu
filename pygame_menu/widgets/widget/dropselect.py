@@ -508,6 +508,18 @@ class DropSelect(Widget):
             self._drop_frame.set_menu(None)
         return self
 
+    def hide(self) -> 'DropSelect':
+        super(DropSelect, self).hide()
+        if self._drop_frame is not None:
+            self._drop_frame.hide()
+        return self
+
+    def show(self) -> 'DropSelect':
+        super(DropSelect, self).show()
+        if self.active:
+            self._toggle_drop()
+        return self
+
     def scrollh(self, value: NumberType) -> 'DropSelect':
         """
         Scroll to horizontal value.
@@ -941,7 +953,7 @@ class DropSelect(Widget):
         self.active = False
 
     def update(self, events: EventVectorType) -> bool:
-        if self.readonly:
+        if self.readonly or not self.is_visible():
             return False
 
         # Check scroll
