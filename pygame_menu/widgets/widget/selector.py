@@ -96,8 +96,8 @@ class Selector(Widget):
 
     .. code-block:: python
 
-        onchange((selected_item, index), a, b, c..., **kwargs)
-        onreturn((selected_item, index), a, b, c..., **kwargs)
+        onchange((selected_item, selected_index), a, b, c..., **kwargs)
+        onreturn((selected_item, selected_index), a, b, c..., **kwargs)
 
     For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
@@ -185,7 +185,7 @@ class Selector(Widget):
         )
 
         self._index = 0
-        self._items = items
+        self._items = items.copy()
         self._sformat = ''
         self._style = style
         self._title_size = 0
@@ -369,7 +369,7 @@ class Selector(Widget):
 
             This method does not trigger any event (change).
 
-        :param item: Item to select, can be a string or an integer.
+        :param item: Item to select, can be a string or an integer
         :return: None
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
@@ -443,7 +443,7 @@ class Selector(Widget):
             # Press enter
             elif keydown and event.key == _controls.KEY_APPLY or \
                     joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
-                self._sound.play_open_menu()
+                self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
                 updated = True
 
