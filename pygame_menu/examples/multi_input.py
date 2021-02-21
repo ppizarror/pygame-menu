@@ -198,6 +198,19 @@ def main(test: bool = False) -> None:
         default=1,
         dropselect_id='difficulty_drop'
     )
+    settings_menu.add.dropselect_multiple(
+        title='Pick 3 colors',
+        items=[('Black', (0, 0, 0)),
+               ('Blue', (0, 0, 255)),
+               ('Cyan', (0, 255, 255)),
+               ('Fuchsia', (255, 0, 255)),
+               ('Green', (0, 255, 0)),
+               ('Red', (255, 0, 0)),
+               ('White', (255, 255, 255)),
+               ('Yellow', (255, 255, 0))],
+        dropselect_multiple_id='pickcolors',
+        max_selected=3
+    )
 
     # Create switch
     settings_menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
