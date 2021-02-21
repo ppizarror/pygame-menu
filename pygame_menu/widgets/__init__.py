@@ -38,10 +38,15 @@ from pygame_menu.widgets.selection import HighlightSelection, LeftArrowSelection
     RightArrowSelection
 
 # Widgets
-from pygame_menu.widgets.widget import Button, ColorInput, Frame, HMargin, Image, Label, NoneWidget, ScrollBar, \
-    Selector, TextInput, ToggleSwitch, VMargin
+from pygame_menu.widgets.widget import Button, ColorInput, DropSelect, DropSelectMultiple, Frame, \
+    HMargin, Image, Label, MenuBar, NoneWidget, ScrollBar, Selector, TextInput, ToggleSwitch, VMargin
 
-# Menubar and positions
-from pygame_menu.widgets.widget import MenuBar, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
-    MENUBAR_STYLE_UNDERLINE_TITLE
+# Widget constants
+from pygame_menu.widgets.widget.colorinput import COLORINPUT_TYPE_RGB, COLORINPUT_TYPE_HEX, \
+    COLORINPUT_HEX_FORMAT_UPPER, COLORINPUT_HEX_FORMAT_NONE, COLORINPUT_HEX_FORMAT_LOWER
+
+from pygame_menu.widgets.widget.menubar import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
+    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, \
+    MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE
+
+from pygame_menu.widgets.widget.selector import SELECTOR_STYLE_CLASSIC, SELECTOR_STYLE_FANCY

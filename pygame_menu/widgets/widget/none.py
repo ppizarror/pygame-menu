@@ -35,6 +35,7 @@ import pygame
 
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets.core import Widget
+
 from pygame_menu._types import Optional, NumberType
 
 
@@ -51,9 +52,10 @@ class NoneWidget(Widget):
     :param widget_id: ID of the widget
     """
 
-    def __init__(self,
-                 widget_id: str = ''
-                 ) -> None:
+    def __init__(
+            self,
+            widget_id: str = ''
+    ) -> None:
         super(NoneWidget, self).__init__(widget_id=widget_id)
         self.is_selectable = False
         self._surface = make_surface(0, 0, alpha=True)

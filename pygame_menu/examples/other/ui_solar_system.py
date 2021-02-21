@@ -356,8 +356,7 @@ class SolarSystemApp(object):
         :param args: Optional arguments
         :return: None
         """
-        t = self.menu.get_attribute('t', 0)
-        t += self.menu.get_clock().get_time() * 0.001
+        t = self.menu.get_counter_attribute('t', self.menu.get_clock().get_time() * 0.001)
 
         # Draw nebulas
         for nebula in self.nebulas:
@@ -381,8 +380,6 @@ class SolarSystemApp(object):
             # Update velocity + window constraints
             s[0] = (s[0] + speed * math.cos(theta)) % self.menu.get_width()
             s[1] = (s[1] + speed * math.sin(theta)) % self.menu.get_height()
-
-        self.menu.set_attribute('t', t)
 
         # This line forces cache update for submenus that call this method
         self.menu.force_surface_cache_update()

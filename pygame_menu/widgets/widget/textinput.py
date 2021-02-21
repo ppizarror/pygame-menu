@@ -40,16 +40,15 @@ import pygame_menu.locals as _locals
 
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
-from pygame_menu._types import Optional, Any, CallbackType, Union, Tuple, List, ColorType, \
-    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType
+
+from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, NumberType, \
+    Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, EventVectorType
 
 try:
-
     # noinspection PyProtectedMember
     from pyperclip import copy, paste, PyperclipException
 
 except (ModuleNotFoundError, ImportError):
-
     # noinspection PyUnusedLocal
     def copy(text) -> None:
         """
@@ -117,7 +116,6 @@ class TextInput(Widget):
     :param repeat_keys_interval_ms: Interval between key press repetition when held
     :param repeat_mouse_interval_ms: Interval between mouse events when held
     :param repeat_touch_interval_ms: Interval between mouse events when held
-    :param tab_size: Tab whitespace characters
     :param text_ellipsis: Ellipsis text when overflow occurs (input length exceeds maxwidth)
     :param valid_chars: List of chars that are valid, ``None`` if all chars are valid
     :param kwargs: Optional keyword arguments
@@ -177,41 +175,40 @@ class TextInput(Widget):
     _selection_mouse_first_position: int  # Touch emulates a mouse, so this is used by both touch and mouse
     _selection_position: List[int]
     _selection_surface: Optional['pygame.Surface']
-    _tab_size: int
     _title_size: NumberType
     _valid_chars: Optional[List[str]]
 
-    def __init__(self,
-                 title: Any,
-                 textinput_id: str = '',
-                 copy_paste_enable: bool = True,
-                 cursor_color: ColorInputType = (0, 0, 0),
-                 cursor_selection_color: ColorInputType = (30, 30, 30, 100),
-                 cursor_selection_enable: bool = True,
-                 cursor_switch_ms: NumberType = 500,
-                 history: int = 50,
-                 input_type: str = _locals.INPUT_TEXT,
-                 input_underline: str = '',
-                 input_underline_len: int = 0,
-                 input_underline_vmargin: int = 0,
-                 maxchar: int = 0,
-                 maxwidth: int = 0,
-                 maxwidth_dynamically_update: bool = True,
-                 onchange: CallbackType = None,
-                 onreturn: CallbackType = None,
-                 onselect: CallbackType = None,
-                 password: bool = False,
-                 password_char: str = '*',
-                 repeat_keys_initial_ms: NumberType = 400,
-                 repeat_keys_interval_ms: NumberType = 100,
-                 repeat_mouse_interval_ms: NumberType = 400,
-                 repeat_touch_interval_ms: NumberType = 400,
-                 tab_size: int = 4,
-                 text_ellipsis: str = '...',
-                 valid_chars: Optional[List[str]] = None,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            textinput_id: str = '',
+            copy_paste_enable: bool = True,
+            cursor_color: ColorInputType = (0, 0, 0),
+            cursor_selection_color: ColorInputType = (30, 30, 30, 100),
+            cursor_selection_enable: bool = True,
+            cursor_switch_ms: NumberType = 500,
+            history: int = 50,
+            input_type: str = _locals.INPUT_TEXT,
+            input_underline: str = '',
+            input_underline_len: int = 0,
+            input_underline_vmargin: int = 0,
+            maxchar: int = 0,
+            maxwidth: int = 0,
+            maxwidth_dynamically_update: bool = True,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: CallbackType = None,
+            password: bool = False,
+            password_char: str = '*',
+            repeat_keys_initial_ms: NumberType = 400,
+            repeat_keys_interval_ms: NumberType = 100,
+            repeat_mouse_interval_ms: NumberType = 400,
+            repeat_touch_interval_ms: NumberType = 400,
+            text_ellipsis: str = '...',
+            valid_chars: Optional[List[str]] = None,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(copy_paste_enable, bool)
         assert isinstance(cursor_selection_enable, bool)
         assert isinstance(cursor_switch_ms, NumberInstance)
@@ -228,7 +225,6 @@ class TextInput(Widget):
         assert isinstance(repeat_keys_interval_ms, NumberInstance)
         assert isinstance(repeat_mouse_interval_ms, NumberInstance)
         assert isinstance(repeat_touch_interval_ms, NumberInstance)
-        assert isinstance(tab_size, int)
         assert isinstance(text_ellipsis, str)
         assert isinstance(textinput_id, str)
         assert isinstance(valid_chars, (type(None), list))
@@ -236,7 +232,6 @@ class TextInput(Widget):
         assert history >= 0, 'history must be equal or greater than zero'
         assert maxchar >= 0, 'maxchar must be equal or greater than zero'
         assert maxwidth >= 0, 'maxwidth must be equal or greater than zero'
-        assert tab_size >= 0, 'tab size must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
         assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
         assert cursor_switch_ms > 0, 'cursor switch in milliseconds must be greater than zero'
@@ -354,7 +349,6 @@ class TextInput(Widget):
         self._maxwidthsize = 0  # Updated in _apply_font()
         self._password = password
         self._password_char = password_char
-        self._tab_size = tab_size
         self._title_size = 0
 
     def _apply_font(self) -> None:
@@ -445,7 +439,6 @@ class TextInput(Widget):
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
 
-        assert self._menu is not None, 'menu must be defined to render a textinput'
         if not self._render_hash_changed(string, self._selected, self._cursor_render,
                                          self._selection_enabled, self.active, self._visible, self.readonly,
                                          self._get_max_container_width()):
@@ -1482,7 +1475,7 @@ class TextInput(Widget):
                 self._sound.play_event_error()
         return False
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
         self._clock.tick(60)
 
         # Check mouse pressed
@@ -1490,7 +1483,7 @@ class TextInput(Widget):
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
         self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self._mouse_enabled
 
-        if self.readonly:
+        if self.readonly or not self.is_visible():
             return False
 
         # Get time clock
@@ -1786,7 +1779,7 @@ class TextInput(Widget):
                     self._selection_mouse_first_position = -1
                     self.active = True
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
                 window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos) and \

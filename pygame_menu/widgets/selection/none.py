@@ -33,6 +33,7 @@ __all__ = ['NoneSelection']
 
 import pygame
 import pygame_menu
+
 from pygame_menu.widgets.core import Selection
 
 

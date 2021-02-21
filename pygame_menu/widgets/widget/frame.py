@@ -38,10 +38,11 @@ import pygame_menu
 import pygame_menu.locals as _locals
 
 from pygame_menu._decorator import Decorator
-from pygame_menu.widgets.core import Widget
-from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, \
-    Tuple2IntType, NumberInstance, Any, ColorInputType
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation
+from pygame_menu.widgets.core import Widget
+
+from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, \
+    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -67,8 +68,14 @@ class Frame(Widget):
 
         Frame cannot be selected. Thus, it does not receive any selection effect.
 
-    :param width: Frame width
-    :param height: Frame height
+    .. note::
+
+        Frames should be appended to Menu scrollable frames if it's scrollable,
+        be careful when removing. Check :py:class:`pygame_menu.widgets.DropSelect`
+        as a complete example of Frame implementation within another Widgets.
+
+    :param width: Frame width (px)
+    :param height: Frame height (px)
     :param orientation: Frame orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
     :param frame_id: ID of the frame
     """
@@ -89,12 +96,13 @@ class Frame(Widget):
     horizontal: bool
     last_index: int  # Last selectable widget index
 
-    def __init__(self,
-                 width: NumberType,
-                 height: NumberType,
-                 orientation: str,
-                 frame_id: str = ''
-                 ) -> None:
+    def __init__(
+            self,
+            width: NumberType,
+            height: NumberType,
+            orientation: str,
+            frame_id: str = ''
+    ) -> None:
         super(Frame, self).__init__(widget_id=frame_id)
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
@@ -133,6 +141,52 @@ class Frame(Widget):
         """
         return self._width, self._height
 
+    # noinspection PyProtectedMember
+    def _sort_menu_scrollable_frames(self) -> None:
+        """
+        Sort the menu scrollable frames.
+
+        :return: None
+        """
+        if self._menu is not None and self.is_scrollable:
+            if len(self._menu._scrollable_frames) == 0:
+                return
+            widgets: List[Tuple[int, 'Widget']] = []
+            for w in self._menu._scrollable_frames:
+                if isinstance(w, Frame):
+                    sa = w.get_scrollarea(inner=True)
+                else:
+                    sa = w.get_scrollarea()
+                widgets.append((-sa.get_depth(), w))
+            widgets.sort(key=lambda x: x[0])
+            self._menu._scrollable_frames = []
+            for w in widgets:
+                self._menu._scrollable_frames.append(w[1])
+
+    def on_remove_from_menu(self) -> 'Frame':
+        for w in self.get_widgets(unpack_subframes=False):
+            self.unpack(w)
+        self.update_indices()
+        return self
+
+    # noinspection PyProtectedMember
+    def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
+        # If menu is set, remove from previous scrollable if enabled
+        if self._menu is not None and self.is_scrollable:
+            scrollable_widgets = self._menu._scrollable_frames
+            if self in scrollable_widgets:
+                scrollable_widgets.remove(self)
+
+        # Update menu
+        super(Frame, self).set_menu(menu)
+
+        # Add self to scrollable
+        if self.is_scrollable and self._menu is not None:
+            self._menu._scrollable_frames.append(self)
+            self._sort_menu_scrollable_frames()
+
+        return self
+
     def relax(self, relax: bool = True) -> 'Frame':
         """
         Set relax status. If ``True`` Frame ignores sizing checks.
@@ -154,25 +208,28 @@ class Frame(Widget):
             return self._frame_scrollarea.get_size(inner=True)
         return self.get_size()
 
-    def make_scrollarea(self,
-                        max_width: Optional[NumberType],
-                        max_height: Optional[NumberType],
-                        scrollbar_color: ColorInputType,
-                        scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
-                        scrollbar_shadow: bool,
-                        scrollbar_shadow_color: ColorInputType,
-                        scrollbar_shadow_offset: int,
-                        scrollbar_shadow_position: str,
-                        scrollbar_slider_color: ColorInputType,
-                        scrollbar_slider_pad: NumberType,
-                        scrollbar_thick: NumberType,
-                        scrollbars: Union[str, Tuple[str, ...]],
-                        ) -> 'Frame':
+    def make_scrollarea(
+            self,
+            max_width: Optional[NumberType],
+            max_height: Optional[NumberType],
+            scrollarea_color: Optional[ColorInputType],
+            scrollbar_color: ColorInputType,
+            scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
+            scrollbar_shadow: bool,
+            scrollbar_shadow_color: ColorInputType,
+            scrollbar_shadow_offset: int,
+            scrollbar_shadow_position: str,
+            scrollbar_slider_color: ColorInputType,
+            scrollbar_slider_pad: NumberType,
+            scrollbar_thick: NumberType,
+            scrollbars: Union[str, Tuple[str, ...]],
+    ) -> 'Frame':
         """
         Make the scrollarea of the frame.
 
-        :param max_width: Maximum width of the scrollarea
-        :param max_height: Maximum height of the scrollarea
+        :param max_width: Maximum width of the scrollarea (px)
+        :param max_height: Maximum height of the scrollarea (px)
+        :param scrollarea_color: Scroll area color. If ``None`` area is transparent
         :param scrollbar_color: Scrollbar color
         :param scrollbar_cursor: Scrollbar cursor
         :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -187,7 +244,6 @@ class Frame(Widget):
         """
         assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
-        assert self._menu is not None, 'menu must be defined before creating the scrollarea'
         if max_width is None:
             max_width = self._width
         if max_height is None:
@@ -198,22 +254,14 @@ class Frame(Widget):
             'scroll area width ({0}) cannot exceed frame width ({1})'.format(max_width, self._width)
         assert 0 < max_height <= self._height, \
             'scroll area height ({0}) cannot exceed frame height ({1})'.format(max_height, self._height)
+        # if not self._relax:
+        #     pass
+        # else:
+        #     max_height = min(max_height, self._height)
+        #     max_width = min(max_width, self._width)
 
-        # Create area to get scrollbar thickness
-        sa = pygame_menu.scrollarea.ScrollArea(
-            area_width=max_width,
-            area_height=max_height,
-            scrollbar_slider_pad=scrollbar_slider_pad,
-            scrollbar_thick=scrollbar_thick,
-            scrollbars=scrollbars
-        )
-
-        sx = sa.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL, real=True)
-        sy = sa.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL, real=True)
-        if self._width == max_width:
-            sx *= 0
-        if self._height == max_height:
-            sy *= 0
+        sx = 0 if self._width == max_width else scrollbar_thick
+        sy = 0 if self._height == max_height else scrollbar_thick
 
         if self._width > max_width or self._height > max_height:
             self.is_scrollable = True
@@ -223,16 +271,25 @@ class Frame(Widget):
             self._rect.height = self._height
             self._rect.width = self._width
             self._frame_scrollarea = None
+
+            # If in previous scrollable frames
+            if self._menu is not None and self.is_scrollable:
+                # noinspection PyProtectedMember
+                scrollable_frames = self._menu._scrollable_frames
+                if self in scrollable_frames:
+                    scrollable_frames.remove(self)
+
             self.is_scrollable = False
             return self
 
         # Create area object
         self._frame_scrollarea = pygame_menu.scrollarea.ScrollArea(
-            area_width=max_width + sy + sx,
-            area_height=max_height + sx + sy,
-            scrollbar_cursor=scrollbar_cursor,
-            scrollbar_color=scrollbar_color,
+            area_color=scrollarea_color,
+            area_height=max_height + sx,
+            area_width=max_width + sy,
             parent_scrollarea=self._scrollarea,
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
             scrollbar_slider_color=scrollbar_slider_color,
             scrollbar_slider_pad=scrollbar_slider_pad,
             scrollbar_thick=scrollbar_thick,
@@ -249,7 +306,7 @@ class Frame(Widget):
             self._frame_scrollarea.hide_scrollbars(_locals.ORIENTATION_VERTICAL)
 
         # Create surface
-        self._surface = make_surface(self._width + sy, self._height + sx, alpha=True)
+        self._surface = make_surface(self._width, self._height, alpha=True)
 
         # Configure area
         self._frame_scrollarea.set_world(self._surface)
@@ -268,8 +325,8 @@ class Frame(Widget):
         """
         return self.first_index, self.last_index
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
-        if not self.is_scrollable:
+    def update(self, events: EventVectorType) -> bool:
+        if not self.is_scrollable or not self.is_visible() or self.readonly:
             return False
         return self._frame_scrollarea.update(events)
 
@@ -333,25 +390,26 @@ class Frame(Widget):
     def set_position(self, posx: NumberType, posy: NumberType) -> 'Frame':
         super(Frame, self).set_position(posx, posy)
         if self.is_scrollable:
-            tx, ty = self.get_translate()
-            txs, tys = self.get_translate(virtual=True)
-            self._frame_scrollarea.set_position(posx + tx + txs, posy + ty + tys)
+            self._frame_scrollarea.set_position(self._rect.x, self._rect.y)
         return self
 
     def draw(self, surface: 'pygame.Surface') -> 'Frame':
+        if not self.is_visible():
+            return self
+
+        selected_widget = None
+
         # Simple case, no scrollarea
         if not self.is_scrollable:
             self.last_surface = surface
             self._draw_background_color(surface)
             self._decorator.draw_prev(surface)
-            selected_widget = None
             for widget in self._widgets.values():
-                if widget.is_visible():
-                    widget.draw(surface)
                 if widget.is_selected():
                     selected_widget = widget
+                widget.draw(surface)
             if selected_widget is not None:
-                selected_widget.draw_selection_effect()
+                selected_widget.draw_after_if_selected(surface)
             self._draw_border(surface)
             self._decorator.draw_post(surface)
 
@@ -363,15 +421,15 @@ class Frame(Widget):
             scrollarea_decorator = self.get_decorator()
             scrollarea_decorator.force_cache_update()
             scrollarea_decorator.draw_prev(self._surface)
-            selected_widget = None
             for widget in self._widgets.values():
-                if widget.is_visible():
-                    widget.draw(self._surface)
                 if widget.is_selected():
                     selected_widget = widget
+                widget.draw(self._surface)
             if selected_widget is not None:
-                selected_widget.draw_selection_effect()
+                selected_widget.draw_after_if_selected(self._surface)
             self._frame_scrollarea.draw(surface)
+            if selected_widget is not None and selected_widget.last_surface != self._surface:  # Draw after was not completed
+                selected_widget.draw_after_if_selected(None)
             self._draw_border(surface)
         self.apply_draw_callbacks()
         return self
@@ -434,7 +492,7 @@ class Frame(Widget):
 
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if align == _locals.ALIGN_CENTER:
                 wcenter += w.get_width() + w.get_margin()[0]
@@ -462,7 +520,7 @@ class Frame(Widget):
         xcenter = int(self._width / 2 - wcenter / 2)
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if align == _locals.ALIGN_CENTER:
                 xcenter += w.get_margin()[0]
@@ -480,7 +538,7 @@ class Frame(Widget):
         wcenter = 0
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if vpos == _locals.POSITION_CENTER:
                 wcenter += w.get_width() + w.get_margin()[1]
@@ -507,7 +565,7 @@ class Frame(Widget):
         ycenter = int(self._height / 2 - wcenter / 2)
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if vpos == _locals.POSITION_CENTER:
                 ycenter += w.get_margin()[1]
@@ -532,14 +590,14 @@ class Frame(Widget):
         # Apply position to each widget
         for w in self._widgets.keys():
             widget = self._widgets[w]
+            if not widget.is_visible(check_frame=False):
+                widget.set_position(0, 0)
+                continue
             if widget.is_floating():
                 tx = 0
                 ty = 0
             else:
                 tx, ty = self._pos[w]
-            if not widget.is_visible():
-                widget.set_position(0, 0)
-                continue
             if widget.get_menu() is None:  # Widget is only appended to Frame
                 fx, fy = self.get_position()
                 margin = widget.get_margin()
@@ -558,7 +616,7 @@ class Frame(Widget):
             cpos = self._control_widget.get_position()
             if self._control_widget_last_pos != cpos:
                 self._control_widget_last_pos = cpos
-                if self._recursive_render <= 100:
+                if self._recursive_render <= 100 and self._menu is not None:
                     self._menu.render()
                 self._recursive_render += 1
             else:
@@ -566,11 +624,12 @@ class Frame(Widget):
 
         return self
 
-    def get_widgets(self,
-                    unpack_subframes: bool = True,
-                    unpack_subframes_include_frame: bool = False,
-                    reverse: bool = False
-                    ) -> Tuple['Widget', ...]:
+    def get_widgets(
+            self,
+            unpack_subframes: bool = True,
+            unpack_subframes_include_frame: bool = False,
+            reverse: bool = False
+    ) -> Tuple['Widget', ...]:
         """
         Get widgets as a tuple.
 
@@ -632,7 +691,7 @@ class Frame(Widget):
             return self._frame_scrollarea
         return self._scrollarea
 
-    def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)
@@ -662,7 +721,7 @@ class Frame(Widget):
             self._frame_scrollarea.scroll_to(_locals.ORIENTATION_VERTICAL, value)
         return self
 
-    def get_scroll_value(self, orientation: str) -> float:
+    def get_scroll_value_percentual(self, orientation: str) -> float:
         """
         Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
@@ -675,9 +734,10 @@ class Frame(Widget):
         :return: Value from ``0`` to ``1``
         """
         if self._frame_scrollarea is not None:
-            return self._frame_scrollarea.get_scroll_value(orientation)
+            return self._frame_scrollarea.get_scroll_value_percentual(orientation)
         return -1
 
+    # noinspection PyProtectedMember
     def unpack(self, widget: 'Widget') -> 'Frame':
         """
         Unpack widget from Frame. If widget does not exist, raises ``ValueError``.
@@ -694,7 +754,8 @@ class Frame(Widget):
             raise ValueError(msg)
         assert widget._frame == self, 'widget frame differs from current'
         widget.set_float()
-        widget.set_scrollarea(self._menu.get_scrollarea())
+        if self._menu is not None:
+            widget.set_scrollarea(self._menu.get_scrollarea())
         widget._frame = None
         widget._translate_virtual = (0, 0)
         del self._widgets[wid]
@@ -704,7 +765,7 @@ class Frame(Widget):
             pass
 
         # Move widget to the last position of widget list
-        if widget.get_menu() == self._menu:
+        if widget.get_menu() == self._menu and self._menu is not None:
             self._menu._validate_frame_widgetmove = False
             try:
                 self._menu.move_widget_index(widget, render=False)
@@ -726,13 +787,15 @@ class Frame(Widget):
                 break
 
         # Update selected
-        self._menu.move_widget_index(None, update_selected_index=True)
+        if self._menu is not None:
+            self._menu.move_widget_index(None, update_selected_index=True)
 
         # Update indices
         self.update_indices()
 
-        # noinspection PyProtectedMember
-        self._menu._render()
+        # Render menu
+        if self._menu is not None:
+            self._menu._render()
 
         if self._control_widget == widget:
             self._control_widget = None
@@ -743,13 +806,22 @@ class Frame(Widget):
                     self._control_widget_last_pos = self._control_widget.get_position()
                     break
 
+        if widget.is_selected():
+            widget.scroll_to_widget()
+
+        if len(self._widgets) == 0:  # Scroll to top
+            self.scrollv(0)
+            self.scrollh(0)
+
         return widget
 
-    def pack(self,
-             widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
-             alignment: str = _locals.ALIGN_LEFT,
-             vertical_position: str = _locals.POSITION_NORTH,
-             margin: Vector2NumberType = (0, 0)) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
+    # noinspection PyProtectedMember
+    def pack(
+            self,
+            widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
+            alignment: str = _locals.ALIGN_LEFT,
+            vertical_position: str = _locals.POSITION_NORTH,
+            margin: Vector2NumberType = (0, 0)) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
         """
         Packs widget in the frame line. To pack a widget it has to be already
         appended to Menu, and the Menu must be the same as the frame.
@@ -855,18 +927,15 @@ class Frame(Widget):
         widget.set_margin(*margin)
         if self._frame_scrollarea is not None:
             widget.set_scrollarea(self._frame_scrollarea)
-            # noinspection PyProtectedMember
-            self._menu._sort_scrollable_widgets()
+            self._sort_menu_scrollable_frames()
         else:
             widget.set_scrollarea(self._scrollarea)
         self._widgets[widget.get_id()] = widget
         self._widgets_props[widget.get_id()] = (alignment, vertical_position)
 
-        # noinspection PyProtectedMember
-        menu_widgets = self._menu._widgets
-
         # Sort widgets to keep selection order
-        if widget.get_menu() is not None:
+        menu_widgets = self._menu._widgets
+        if widget.get_menu() is not None and widget in menu_widgets:
             self._menu._validate_frame_widgetmove = False
             widgets_list = list(self._widgets.values())
 
@@ -912,9 +981,10 @@ class Frame(Widget):
                     break
             self._menu._validate_frame_widgetmove = True
 
-        if self._control_widget is None and widget.get_menu() is not None:
-            self._control_widget = widget
-            self._control_widget_last_pos = self._control_widget.get_position()
+            # Update control widget
+            if self._control_widget is None:
+                self._control_widget = widget
+                self._control_widget_last_pos = self._control_widget.get_position()
 
         if isinstance(widget, Frame):
             self._has_frames = True
@@ -925,11 +995,15 @@ class Frame(Widget):
         # Render is mandatory as it modifies row/column layout
         try:
             self.update_position()
-            # noinspection PyProtectedMember
             self._menu._render()
         except _FrameSizeException:
             self.unpack(widget)
             raise
+
+        # Request scroll if widget is selected
+        if widget.is_selected():
+            widget.scroll_to_widget()
+            widget.scroll_to_widget()
 
         return widget
 

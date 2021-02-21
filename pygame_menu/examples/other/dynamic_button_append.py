@@ -55,9 +55,8 @@ def add_dynamic_button() -> None:
     btn = menu.add.button(randrange(0, 10))
 
     def _update_button() -> None:
-        count = btn.get_attribute('count', int(btn.get_title())) + 1
-        btn.set_title(count)
-        btn.set_attribute('count', count)
+        count = btn.get_counter_attribute('count', 1, btn.get_title())
+        btn.set_title(str(count))
 
     btn.update_callback(_update_button)
 

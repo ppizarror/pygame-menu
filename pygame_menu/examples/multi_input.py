@@ -173,15 +173,43 @@ def main(test: bool = False) -> None:
         input_underline='_'
     )
 
+    # Selectible items
+    items = [('Easy', 'EASY'),
+             ('Medium', 'MEDIUM'),
+             ('Hard', 'HARD')]
+
     # Create selector with 3 difficulty options
     settings_menu.add.selector(
-        'Select difficulty',
-        [('Easy', 'EASY'),
-         ('Medium', 'MEDIUM'),
-         ('Hard', 'HARD')],
+        'Select difficulty:\t',
+        items,
         selector_id='difficulty',
+        default=1
+    )
+    settings_menu.add.selector(
+        'Select difficulty fancy',
+        items,
+        selector_id='difficulty_fancy',
         default=1,
         style='fancy'
+    )
+    settings_menu.add.dropselect(
+        'Select difficulty (drop)',
+        items,
+        default=1,
+        dropselect_id='difficulty_drop'
+    )
+    settings_menu.add.dropselect_multiple(
+        title='Pick 3 colors',
+        items=[('Black', (0, 0, 0)),
+               ('Blue', (0, 0, 255)),
+               ('Cyan', (0, 255, 255)),
+               ('Fuchsia', (255, 0, 255)),
+               ('Green', (0, 255, 0)),
+               ('Red', (255, 0, 0)),
+               ('White', (255, 255, 255)),
+               ('Yellow', (255, 255, 0))],
+        dropselect_multiple_id='pickcolors',
+        max_selected=3
     )
 
     # Create switch

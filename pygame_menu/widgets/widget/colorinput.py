@@ -55,8 +55,9 @@ import pygame_menu.locals as _locals
 
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu._types import Union, Tuple, List, NumberType, Any, Optional, CallbackType, \
-    Literal, Tuple3IntType, NumberInstance
+
+from pygame_menu._types import Union, List, NumberType, Any, Optional, CallbackType, \
+    Literal, Tuple3IntType, NumberInstance, EventVectorType
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'
@@ -69,7 +70,9 @@ COLORINPUT_HEX_FORMAT_UPPER = 'upper'
 
 # Custom typing
 ColorInputColorType = Literal[COLORINPUT_TYPE_RGB, COLORINPUT_TYPE_HEX]
-ColorInputHexFormatType = Literal[COLORINPUT_HEX_FORMAT_LOWER, COLORINPUT_HEX_FORMAT_UPPER, COLORINPUT_HEX_FORMAT_NONE]
+ColorInputHexFormatType = Literal[COLORINPUT_HEX_FORMAT_LOWER,
+                                  COLORINPUT_HEX_FORMAT_UPPER,
+                                  COLORINPUT_HEX_FORMAT_NONE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -123,33 +126,32 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     _prev_margin: int
     _previsualization_surface: Optional['pygame.Surface']
     _separator: str
-    _valid_chars: List[str]
 
-    def __init__(self,
-                 title: Any,
-                 colorinput_id: str = '',
-                 color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
-                 cursor_color: Tuple3IntType = (0, 0, 0),
-                 cursor_ms_counter: NumberType = 500,
-                 dynamic_width: bool = True,
-                 hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
-                 input_separator: str = ',',
-                 input_underline: str = '_',
-                 input_underline_vmargin: int = 0,
-                 onchange: CallbackType = None,
-                 onreturn: CallbackType = None,
-                 onselect: CallbackType = None,
-                 prev_margin: int = 10,
-                 prev_width_factor: NumberType = 3,
-                 repeat_keys_initial_ms: NumberType = 450,
-                 repeat_keys_interval_ms: NumberType = 80,
-                 repeat_mouse_interval_ms: NumberType = 100,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            colorinput_id: str = '',
+            color_type: ColorInputColorType = COLORINPUT_TYPE_RGB,
+            cursor_color: Tuple3IntType = (0, 0, 0),
+            cursor_ms_counter: NumberType = 500,
+            dynamic_width: bool = True,
+            hex_format: ColorInputHexFormatType = COLORINPUT_HEX_FORMAT_NONE,
+            input_separator: str = ',',
+            input_underline: str = '_',
+            input_underline_vmargin: int = 0,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: CallbackType = None,
+            prev_margin: int = 10,
+            prev_width_factor: NumberType = 3,
+            repeat_keys_initial_ms: NumberType = 450,
+            repeat_keys_interval_ms: NumberType = 80,
+            repeat_mouse_interval_ms: NumberType = 100,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(color_type, str)
         assert isinstance(colorinput_id, str)
-        assert isinstance(cursor_color, tuple)
         assert isinstance(dynamic_width, bool)
         assert isinstance(hex_format, str)
         assert isinstance(input_separator, str)
@@ -199,7 +201,6 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             repeat_keys_initial_ms=repeat_keys_initial_ms,
             repeat_keys_interval_ms=repeat_keys_interval_ms,
             repeat_mouse_interval_ms=repeat_mouse_interval_ms,
-            tab_size=0,
             text_ellipsis='',
             textinput_id=colorinput_id,
             title=title,
@@ -392,8 +393,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         elif self._hex_format == COLORINPUT_HEX_FORMAT_UPPER:
             self._input_string = self._input_string.upper()
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
-        if self.readonly:
+    def update(self, events: EventVectorType) -> bool:
+        if self.readonly or not self.is_visible():
             return False
         input_str = self._input_string
         cursor_pos = self._cursor_position

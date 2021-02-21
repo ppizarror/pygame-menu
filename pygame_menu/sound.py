@@ -59,15 +59,16 @@ __all__ = [
 
 ]
 
+from pathlib import Path
 import os.path as path
 import time
 import warnings
-from pathlib import Path
 
 from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
+from pygame_menu._base import Base
 from pygame_menu._types import NumberType, Dict, Any, Optional, Union, NumberInstance
 
 try:  # pygame<2.0.0 compatibility
@@ -113,18 +114,19 @@ SOUND_EXAMPLES = (SOUND_EXAMPLE_CLICK_MOUSE, SOUND_EXAMPLE_CLOSE_MENU, SOUND_EXA
 SOUND_INITIALIZED = [False]
 
 
-class Sound(object):
+class Sound(Base):
     """
     Sound engine class.
     
-    :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
+    :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
+    :param buffer: Buffer size
+    :param channels: Number of channels
+    :param devicename: Device name
+    :param force_init: Force mixer init with new parameters
     :param frequency: Frequency of sounds
     :param size: Size of sample
-    :param channels: Number of channels
-    :param buffer: Buffer size
-    :param devicename: Device name
-    :param allowedchanges: Convert the samples at runtime, only in pygame>=2.0.0
-    :param force_init: Force mixer init with new parameters
+    :param sound_id: Sound ID
+    :param uniquechannel: Force the channel to be unique, this is set at the object creation moment
     """
     _channel: Optional['mixer.Channel']
     _last_play: str
@@ -133,28 +135,32 @@ class Sound(object):
     _sound: Dict[str, Dict[str, Any]]
     _uniquechannel: bool
 
-    # noinspection PyShadowingBuiltins
-    def __init__(self,
-                 uniquechannel: bool = True,
-                 frequency: int = 22050,
-                 size: int = -16,
-                 channels: int = 2,
-                 buffer: int = 4096,
-                 devicename: str = '',
-                 allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
-                 force_init: bool = False
-                 ) -> None:
-        assert isinstance(uniquechannel, bool)
+    def __init__(
+            self,
+            allowedchanges: int = AUDIO_ALLOW_CHANNELS_CHANGE | AUDIO_ALLOW_FREQUENCY_CHANGE,
+            buffer: int = 4096,
+            channels: int = 2,
+            devicename: str = '',
+            force_init: bool = False,
+            frequency: int = 22050,
+            size: int = -16,
+            sound_id: str = '',
+            uniquechannel: bool = True
+    ) -> None:
+        super(Sound, self).__init__(object_id=sound_id)
+
+        assert isinstance(allowedchanges, int)
+        assert isinstance(buffer, int)
+        assert isinstance(channels, int)
+        assert isinstance(devicename, str)
+        assert isinstance(force_init, bool)
         assert isinstance(frequency, int)
         assert isinstance(size, int)
-        assert isinstance(channels, int)
-        assert isinstance(buffer, int)
-        assert isinstance(devicename, str)
-        assert isinstance(allowedchanges, int)
-        assert isinstance(force_init, bool)
-        assert frequency > 0, 'frequency must be greater than zero'
-        assert channels > 0, 'channels must be greater than zero'
+        assert isinstance(uniquechannel, bool)
+
         assert buffer > 0, 'buffer size must be greater than zero'
+        assert channels > 0, 'channels must be greater than zero'
+        assert frequency > 0, 'frequency must be greater than zero'
 
         # Initialize sounds if not initialized
         if (mixer.get_init() is None and not SOUND_INITIALIZED[0]) or force_init:

@@ -62,9 +62,11 @@ import os.path as path
 import pygame
 import pygame_menu.locals as _locals
 
+from pygame_menu._base import Base
 from pygame_menu.utils import assert_vector, assert_position, assert_color
+
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorInputType, Tuple3IntType, Any, \
+    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorInputType, Tuple3IntType, \
     NumberInstance
 
 # Example image paths
@@ -95,7 +97,7 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', 
 ColorChannelType = Literal['r', 'g', 'b']
 
 
-class BaseImage(object):
+class BaseImage(Base):
     """
     Object that loads an image, stores as a surface, transform it and
     let write the image to an surface.
@@ -106,9 +108,9 @@ class BaseImage(object):
     :param drawing_position: Drawing position if mode is ``IMAGE_MODE_SIMPLE``. See :py:mod:`pygame_menu.locals` for valid ``position`` values
     :param load_from_file: Loads the image from the given path
     :param frombase64: If ``True`` consider ``image_path`` as base64 string
+    :param image_id: str
     """
     _angle: NumberType
-    _attributes: Dict[str, Any]
     _drawing_mode: int
     _drawing_offset: Tuple2IntType
     _drawing_position: str
@@ -122,15 +124,20 @@ class BaseImage(object):
     _surface: 'pygame.Surface'
     smooth_scaling: bool
 
-    def __init__(self,
-                 image_path: Union[str, 'Path', 'BytesIO'],
-                 drawing_mode: int = IMAGE_MODE_FILL,
-                 drawing_offset: Vector2NumberType = (0, 0),
-                 drawing_position: str = _locals.POSITION_NORTHWEST,
-                 load_from_file: bool = True,
-                 frombase64: bool = False
-                 ) -> None:
-        assert isinstance(image_path, (str, Path, BytesIO)), 'path must be string, Path, or BytesIO object type'
+    def __init__(
+            self,
+            image_path: Union[str, 'Path', 'BytesIO'],
+            drawing_mode: int = IMAGE_MODE_FILL,
+            drawing_offset: Vector2NumberType = (0, 0),
+            drawing_position: str = _locals.POSITION_NORTHWEST,
+            load_from_file: bool = True,
+            frombase64: bool = False,
+            image_id: str = ''
+    ) -> None:
+        super(BaseImage, self).__init__(object_id=image_id)
+
+        assert isinstance(image_path, (str, Path, BytesIO)), \
+            'path must be string, Path, or BytesIO object type'
         assert isinstance(load_from_file, bool)
         assert isinstance(frombase64, bool)
 
@@ -139,15 +146,17 @@ class BaseImage(object):
             if not frombase64:
                 _, file_extension = path.splitext(image_path)
                 file_extension = file_extension.lower()
-                assert path.isfile(image_path), 'file {0} does not exist or could not be found, please ' \
-                                                'check if the path of the image is valid'.format(image_path)
+                assert path.isfile(image_path), \
+                    'file {0} does not exist or could not be found, please ' \
+                    'check if the path of the image is valid'.format(image_path)
             else:
                 file_extension = 'base64'
         else:
             file_extension = 'BytesIO'
 
         assert file_extension in _VALID_IMAGE_FORMATS, \
-            'file extension {0} not valid, please use: {1}'.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
+            'file extension {0} not valid, please use: {1}' \
+            ''.format(file_extension, ','.join(_VALID_IMAGE_FORMATS))
 
         self._filepath = image_path
         if isinstance(self._filepath, str) and not frombase64:
@@ -182,7 +191,6 @@ class BaseImage(object):
 
         # Other internals
         self._angle = 0
-        self._attributes = {}
         self._last_transform = (0, 0, None)  # Improves drawing
         self._rotated = False
         self.smooth_scaling = True  # Uses smooth scaling by default in draw() method
@@ -203,53 +211,6 @@ class BaseImage(object):
         :return: New instance of the object
         """
         return self.copy()
-
-    def set_attribute(self, key: str, value: Any) -> 'BaseImage':
-        """
-        Set an attribute value.
-
-        :param key: Key of the attribute
-        :param value: Value of the attribute
-        :return: Self reference
-        """
-        assert isinstance(key, str)
-        self._attributes[key] = value
-        return self
-
-    def get_attribute(self, key: str, default: Any = None) -> Any:
-        """
-        Get an attribute value.
-
-        :param key: Key of the attribute
-        :param default: Value if does not exists
-        :return: Attribute data
-        """
-        assert isinstance(key, str)
-        if not self.has_attribute(key):
-            return default
-        return self._attributes[key]
-
-    def has_attribute(self, key: str) -> bool:
-        """
-        Return ``True`` if the image has the given attribute.
-
-        :param key: Key of the attribute
-        :return: ``True`` if exists
-        """
-        assert isinstance(key, str)
-        return key in self._attributes.keys()
-
-    def remove_attribute(self, key: str) -> 'BaseImage':
-        """
-        Removes the given attribute. Throws ``IndexError`` if given key does not exist.
-
-        :param key: Key of the attribute
-        :return: Self reference
-        """
-        if not self.has_attribute(key):
-            raise IndexError('attribute "{0}" does not exists on baseimage'.format(key))
-        del self._attributes[key]
-        return self
 
     def crop_rect(self, rect: 'pygame.Rect') -> 'BaseImage':
         """
@@ -322,12 +283,18 @@ class BaseImage(object):
         :param height: Crop height (px)
         :return: Cropped surface
         """
-        assert 0 <= x < self.get_width(), 'X position must be between 0 and the image width'
-        assert 0 <= y < self.get_height(), 'Y position must be between 0 and the image width'
-        assert 0 < width <= self.get_width(), 'Width must be greater than zero and less than the image width'
-        assert 0 < height <= self.get_height(), 'Height must be greater than zero and less than the image height'
-        assert (x + width) <= self.get_width(), 'Crop box cannot exceed image width'
-        assert (y + height) <= self.get_height(), 'Crop box cannot exceed image height'
+        assert 0 <= x < self.get_width(), \
+            'X position must be between 0 and the image width'
+        assert 0 <= y < self.get_height(), \
+            'Y position must be between 0 and the image width'
+        assert 0 < width <= self.get_width(), \
+            'Width must be greater than zero and less than the image width'
+        assert 0 < height <= self.get_height(), \
+            'Height must be greater than zero and less than the image height'
+        assert (x + width) <= self.get_width(), \
+            'Crop box cannot exceed image width'
+        assert (y + height) <= self.get_height(), \
+            'Crop box cannot exceed image height'
         rect = pygame.Rect(0, 0, 0, 0)
         rect.x = x
         rect.y = y
@@ -470,10 +437,7 @@ class BaseImage(object):
             return color[0], color[1], color[2]
         return color
 
-    def set_at(self,
-               pos: Tuple2NumberType,
-               color: ColorInputType
-               ) -> 'BaseImage':
+    def set_at(self, pos: Tuple2NumberType, color: ColorInputType) -> 'BaseImage':
         """
         Set the color of pixel on x-axis and y-axis.
 
@@ -797,7 +761,7 @@ class BaseImage(object):
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(area, (pygame.Rect, type(None)))
-        assert isinstance(position, tuple)
+        assert_vector(position, 2, int)
 
         if area is None:
             area = surface.get_rect()

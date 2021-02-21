@@ -33,9 +33,10 @@ __all__ = ['Label']
 
 import pygame
 
-from pygame_menu.widgets.core import Widget
-from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, ColorInputType
 from pygame_menu.utils import assert_color
+from pygame_menu.widgets.core import Widget
+
+from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, ColorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -49,11 +50,12 @@ class Label(Widget):
     """
     _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
 
-    def __init__(self,
-                 title: Any,
-                 label_id: str = '',
-                 onselect: CallbackType = None,
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            label_id: str = '',
+            onselect: CallbackType = None,
+    ) -> None:
         super(Label, self).__init__(
             title=title,
             onselect=onselect,
@@ -61,12 +63,13 @@ class Label(Widget):
         )
         self._last_underline = ['', None]
 
-    def add_underline(self,
-                      color: ColorInputType,
-                      offset: int,
-                      width: int,
-                      force_render: bool = False
-                      ) -> 'Label':
+    def add_underline(
+            self,
+            color: ColorInputType,
+            offset: int,
+            width: int,
+            force_render: bool = False
+    ) -> 'Label':
         """
         Adds a underline to text. This is added if widget is rendered
 

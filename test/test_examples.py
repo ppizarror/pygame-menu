@@ -33,7 +33,7 @@ __all__ = ['ExamplesTest']
 
 import pygame
 import unittest
-from test._utils import test_reset_surface, MenuUtils, PygameUtils
+from test._utils import test_reset_surface, MenuUtils, PygameEventUtils
 
 import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
@@ -119,42 +119,42 @@ class ExamplesTest(unittest.TestCase):
         Test calculator example.
         """
         app = calculator.main(test=True)
-        app.process_events(PygameUtils.keydown([pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,
-                                                pygame.K_5, pygame.K_PLUS]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,
+                                                     pygame.K_5, pygame.K_PLUS]))
         self.assertEqual(app.prev, '12345')
         self.assertEqual(app.op, '+')
-        app.process_events(PygameUtils.keydown([pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9,
-                                                pygame.K_0]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9,
+                                                     pygame.K_0]))
         self.assertEqual(app.curr, '67890')
-        app.process_events(PygameUtils.keydown(pygame.K_EQUALS))
+        app.process_events(PygameEventUtils.keydown(pygame.K_EQUALS))
         self.assertEqual(app.op, '')
         self.assertEqual(app.curr, '80235')
         self.assertEqual(app.prev, '')
-        app.process_events(PygameUtils.keydown([pygame.K_x, pygame.K_2]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_x, pygame.K_2]))
         self.assertEqual(app.op, 'x')
         self.assertEqual(app.curr, '2')
         self.assertEqual(app.prev, '80235')
-        app.process_events(PygameUtils.keydown([pygame.K_x]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_x]))
         self.assertEqual(app.op, 'x')
         self.assertEqual(app.curr, '')
         self.assertEqual(app.prev, '160470')
-        app.process_events(PygameUtils.keydown([pygame.K_PLUS, pygame.K_3, pygame.K_0]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_PLUS, pygame.K_3, pygame.K_0]))
         self.assertEqual(app.op, '+')
         self.assertEqual(app.curr, '30')
         self.assertEqual(app.prev, '160470')
-        app.process_events(PygameUtils.keydown(pygame.K_EQUALS))
+        app.process_events(PygameEventUtils.keydown(pygame.K_EQUALS))
         self.assertEqual(app.op, '')
         self.assertEqual(app.curr, '160500')
         self.assertEqual(app.prev, '')
-        app.process_events(PygameUtils.keydown([pygame.K_SLASH, pygame.K_5, pygame.K_MINUS]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_SLASH, pygame.K_5, pygame.K_MINUS]))
         self.assertEqual(app.op, '-')
         self.assertEqual(app.curr, '')
         self.assertEqual(app.prev, '32100')
-        app.process_events(PygameUtils.keydown([pygame.K_3, pygame.K_2, pygame.K_1, pygame.K_0, pygame.K_EQUALS]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_3, pygame.K_2, pygame.K_1, pygame.K_0, pygame.K_EQUALS]))
         self.assertEqual(app.op, '')
         self.assertEqual(app.curr, '28890')
         self.assertEqual(app.prev, '')
-        app.process_events(PygameUtils.keydown([pygame.K_9, pygame.K_BACKSPACE]))
+        app.process_events(PygameEventUtils.keydown([pygame.K_9, pygame.K_BACKSPACE]))
         self.assertEqual(app.op, '')
         self.assertEqual(app.curr, '')
         self.assertEqual(app.prev, '')
@@ -196,8 +196,8 @@ class ExamplesTest(unittest.TestCase):
         """
         app = ui_solarsystem.main(test=True)
         self.assertFalse(app.menu._disable_draw)
-        app.process_events(PygameUtils.keydown([pygame.K_p]), app.menu)
+        app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)
         self.assertTrue(app.menu._disable_draw)
-        app.process_events(PygameUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]), app.menu)
+        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]), app.menu)
         self.assertFalse(app.menu._disable_draw)
         test_reset_surface()

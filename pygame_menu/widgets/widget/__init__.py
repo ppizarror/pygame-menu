@@ -29,21 +29,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-# Widgets
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.colorinput import ColorInput
+from pygame_menu.widgets.widget.dropselect import DropSelect
+from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultiple
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.hmargin import HMargin
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
+from pygame_menu.widgets.widget.menubar import MenuBar
 from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu.widgets.widget.scrollbar import ScrollBar
 from pygame_menu.widgets.widget.selector import Selector
 from pygame_menu.widgets.widget.textinput import TextInput
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
 from pygame_menu.widgets.widget.vmargin import VMargin
-
-# Menubar and positions
-from pygame_menu.widgets.widget.menubar import MenuBar, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
-    MENUBAR_STYLE_UNDERLINE_TITLE

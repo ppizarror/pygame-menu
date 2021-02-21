@@ -63,7 +63,7 @@ import pygame_menu.locals as _locals
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType
+    ColorInputInstance, VectorType, EventType
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 
@@ -130,7 +130,7 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     """
     assert isinstance(list_vector, (tuple, list))
     for v in list_vector:
-        assert_vector(v, length=length)
+        assert_vector(v, length)
 
 
 def assert_orientation(orientation: str) -> None:
@@ -161,26 +161,30 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
-def assert_vector(num_vector: VectorType, length: int) -> None:
+def assert_vector(num_vector: VectorType, length: int, instance: type = NumberInstance) -> None:
     """
     Assert that a fixed length vector is numeric.
 
     :param num_vector: Numeric vector
     :param length: Length of the required vector. If ``0`` don't check the length
+    :param instance: Instance of each item of the vector
     :return: None
     """
     assert isinstance(num_vector, VectorInstance), \
-        'vector "{0}" must be a list or tuple of {1} items'.format(num_vector, length)
+        'vector "{0}" must be a list or tuple of {1} items if type {2}'.format(num_vector, length, instance)
     if length != 0:
         msg = 'vector "{0}" must contain {1} numbers only, ' \
               'but {2} were given'.format(num_vector, length, len(num_vector))
         assert len(num_vector) == length, msg
     for i in range(len(num_vector)):
-        assert isinstance(num_vector[i], NumberInstance), \
-            'item {0} of vector must be integer or float, not type "{1}"'.format(num_vector[i], type(num_vector[i]))
+        num = num_vector[i]
+        if instance == int and isinstance(num, float) and int(num) == num:
+            num = int(num)
+        assert isinstance(num, instance), \
+            'item {0} of vector must be {1}, not type "{2}"'.format(num, instance, type(num))
 
 
-def check_key_pressed_valid(event: 'pygame.event.Event') -> bool:
+def check_key_pressed_valid(event: EventType) -> bool:
     """
     Checks if the pressed key is valid.
 

@@ -363,23 +363,12 @@ class BaseImageTest(unittest.TestCase):
         self.assertEqual(image._get_position_delta(), (w, h))
         self.assertRaises(AssertionError, lambda: image.set_drawing_position(pygame_menu.locals.ALIGN_LEFT))
 
-    def test_attributes(self) -> None:
+    def test_attributes_copy(self) -> None:
         """
-        Test image attributes.
+        Test image attributes on object copy.
         """
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, drawing_offset=(100, 100))
-        self.assertFalse(image.has_attribute('epic'))
-        self.assertRaises(IndexError, lambda: image.remove_attribute('epic'))
-        image.set_attribute('epic', True)
-        self.assertTrue(image.has_attribute('epic'))
-        self.assertTrue(image.get_attribute('epic'))
-        image.set_attribute('epic', False)
-        self.assertFalse(image.get_attribute('epic'))
-        image.remove_attribute('epic')
-        self.assertFalse(image.has_attribute('epic'))
-        self.assertEqual(image.get_attribute('epic', 420), 420)
         image.set_attribute('angle', 0)
-
         image2 = image.copy()
         self.assertTrue(image2.has_attribute('angle'))
         self.assertEqual(image2.get_attribute('angle'), 0)

@@ -33,7 +33,7 @@ __all__ = ['ScrollAreaTest']
 
 import copy
 import unittest
-from test._utils import MenuUtils, PygameUtils, surface, TEST_THEME
+from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME
 
 import pygame_menu
 import pygame_menu.locals as _locals
@@ -80,15 +80,6 @@ class ScrollAreaTest(unittest.TestCase):
         # Remove world and draw
         sa._world = None
         sa.draw(surface)
-
-    def test_surface_id(self) -> None:
-        """
-        Test surface id.
-        """
-        menu = MenuUtils.generic_menu()
-        sa = menu.get_scrollarea()
-        sa.set_id('nice')
-        self.assertEqual(sa.get_id(), 'nice')
 
     def test_copy(self) -> None:
         """
@@ -168,7 +159,7 @@ class ScrollAreaTest(unittest.TestCase):
         # Get the size of the scrollarea
         sa = menu.get_scrollarea()
 
-        sa_height = menu.get_height() - menu.get_menubar_widget().get_height()
+        sa_height = menu.get_height() - menu.get_menubar().get_height()
         sa_width = menu.get_width()
         self.assertEqual(sa.get_world_size()[0], sa_width)
         self.assertEqual(sa.get_world_size()[1], sa_height)
@@ -202,10 +193,10 @@ class ScrollAreaTest(unittest.TestCase):
         sa._world = world
 
         # Test collide
-        event = PygameUtils.mouse_click(100, 100, inlist=False)
+        event = PygameEventUtils.mouse_click(100, 100, inlist=False)
         self.assertFalse(sa.collide(btn, event))
 
         # Create virtual rect from button
         rect_virtual = sa.to_real_position(btn.get_rect())
-        event_click_widget = PygameUtils.middle_rect_click(rect_virtual, inlist=False)
+        event_click_widget = PygameEventUtils.middle_rect_click(rect_virtual, inlist=False)
         self.assertTrue(sa.collide(btn, event_click_widget))

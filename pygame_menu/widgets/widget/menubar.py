@@ -56,10 +56,11 @@ import pygame.gfxdraw as gfxdraw
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
 
-from pygame_menu.widgets.core import Widget
 from pygame_menu.utils import assert_color
-from pygame_menu._types import Union, List, Tuple, CallbackType, Tuple2IntType, Literal, NumberType, \
-    ColorType, Any, Optional, NumberInstance, ColorInputType
+from pygame_menu.widgets.core import Widget
+
+from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, Optional, \
+    NumberInstance, ColorInputType, EventVectorType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -106,7 +107,6 @@ class MenuBar(Widget):
     _backbox_border_width: int
     _backbox_pos: Any
     _backbox_rect: Optional['pygame.Rect']
-    _background_color: ColorType
     _box_mode: int
     _modify_scrollarea: bool
     _mouseoverback: bool
@@ -116,20 +116,21 @@ class MenuBar(Widget):
     _style: int
     _width: int
 
-    def __init__(self,
-                 title: Any,
-                 width: NumberType,
-                 background_color: ColorInputType,
-                 menubar_id: str = '',
-                 back_box: bool = False,
-                 mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
-                 modify_scrollarea: bool = True,
-                 offsetx: NumberType = 0,
-                 offsety: NumberType = 0,
-                 onreturn: CallbackType = None,
-                 *args,
-                 **kwargs
-                 ) -> None:
+    def __init__(
+            self,
+            title: Any,
+            width: NumberType,
+            background_color: ColorInputType,
+            menubar_id: str = '',
+            back_box: bool = False,
+            mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
+            modify_scrollarea: bool = True,
+            offsetx: NumberType = 0,
+            offsety: NumberType = 0,
+            onreturn: CallbackType = None,
+            *args,
+            **kwargs
+    ) -> None:
         assert isinstance(width, NumberInstance)
         assert isinstance(back_box, bool)
 
@@ -192,7 +193,7 @@ class MenuBar(Widget):
 
         :return: None
         """
-        if background_menu:
+        if background_menu and self._menu is not None:
             cback = self._menu.get_theme().background_color
         else:
             cback = self._background_color
@@ -246,7 +247,7 @@ class MenuBar(Widget):
         # not be displayed
         # noinspection PyProtectedMember
         return self._mouse_enabled and self._backbox and \
-               not (self._box_mode == _MODE_CLOSE and self._menu._onclose is None)
+               not (self._box_mode == _MODE_CLOSE and self._menu is not None and self._menu._onclose is None)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
         if len(self._polygon_pos) > 2:
@@ -279,6 +280,9 @@ class MenuBar(Widget):
         return 0, (0, 0)
 
     def _render(self) -> Optional[bool]:
+        if self._menu is None:
+            return
+
         # noinspection PyProtectedMember
         menu_prev_condition = not self._menu or not self._menu._top or not self._menu._top._prev
 
@@ -417,7 +421,7 @@ class MenuBar(Widget):
 
             # Subtract the scrollarea thickness if float and enabled
             scroll_delta = 0
-            if self._floating:
+            if self._floating and self._menu is not None:
                 scroll_delta = self._menu.get_width() - self._menu.get_width(inner=True)
 
             self._backbox_rect = pygame.Rect(
@@ -476,7 +480,9 @@ class MenuBar(Widget):
             return 0
         return super(MenuBar, self).get_height(apply_padding, apply_selection)
 
-    def update(self, events: Union[List['pygame.event.Event'], Tuple['pygame.event.Event']]) -> bool:
+    def update(self, events: EventVectorType) -> bool:
+        if self.readonly or not self.is_visible():
+            return False
         updated = False
 
         for event in events:
@@ -509,7 +515,7 @@ class MenuBar(Widget):
                         self._mouseoverback = False
                         self.mouseleave(event)
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
                 window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):
