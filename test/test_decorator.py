@@ -93,7 +93,7 @@ class DecoratorTest(unittest.TestCase):
         # Prev
         self.assertIsNone(deco._cache_surface['prev'])
         self.assertIsNone(deco._cache_surface['post'])
-        deco.add_circle(1, 1, 1, (0, 0, 0), True)
+        f = deco.add_circle(1, 1, 1, (0, 0, 0), True)
         self.assertIsNone(deco._cache_surface['prev'])
         self.assertIsNone(deco._cache_surface['post'])
         deco.draw_prev(surface)
@@ -113,6 +113,9 @@ class DecoratorTest(unittest.TestCase):
         self.assertFalse(deco._cache_needs_update['prev'])
         self.assertFalse(deco._cache_needs_update['post'])
         self.assertEqual(deco._total_decor(), 3)
+        deco.disable(f)
+        self.assertTrue(deco._cache_needs_update['prev'])
+        self.assertFalse(deco._cache_needs_update['post'])
         deco.remove_all()
         self.assertEqual(deco._total_decor(), 0)
         self.assertFalse(deco._cache_needs_update['prev'])
@@ -151,6 +154,8 @@ class DecoratorTest(unittest.TestCase):
         d = deco._add_none()
         self.assertEqual(len(deco._decor['prev']), 1)
         self.assertEqual(len(deco._decor['post']), 0)
+        self.assertEqual(len(deco._decor_prev_id), 1)
+        self.assertIn(d, deco._decor_prev_id)
         self.assertEqual(deco._total_decor(), 1)
         assert isinstance(d, str)
 
@@ -158,6 +163,7 @@ class DecoratorTest(unittest.TestCase):
         deco.remove(d)
         self.assertEqual(len(deco._decor['prev']), 0)
         self.assertEqual(len(deco._decor['post']), 0)
+        self.assertEqual(len(deco._decor_prev_id), 0)
 
         p = deco.add_pixel(1, 1, (1, 1, 1))
         self.assertEqual(len(deco._coord_cache.keys()), 0)

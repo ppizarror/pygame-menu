@@ -86,6 +86,7 @@ class Decorator(Base):
     _cache_surface: Dict[str, Optional['pygame.Surface']]
     _decor: Dict[str, List[Tuple[int, str, Any]]]  # type, id, data
     _decor_enabled: Dict[str, bool]
+    _decor_prev_id: List[str]
     _obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
     _post_enabled: bool
     _prev_enabled: bool
@@ -100,6 +101,7 @@ class Decorator(Base):
 
         self._coord_cache = {}
         self._decor = {DECOR_TYPE_PREV: [], DECOR_TYPE_POST: []}
+        self._decor_prev_id = []  # Stores all decoration prev ids
         self._obj = obj
         self._decor_enabled = {}
 
@@ -156,6 +158,7 @@ class Decorator(Base):
         if prev:
             assert self._prev_enabled, 'prev decorators are not enabled'
             self._decor[DECOR_TYPE_PREV].append((decortype, decor_id, data))
+            self._decor_prev_id.append(decor_id)
         else:
             assert self._post_enabled, 'post decorators are not enabled'
             self._decor[DECOR_TYPE_POST].append((decortype, decor_id, data))
@@ -860,6 +863,7 @@ class Decorator(Base):
         if decorid not in self._decor_enabled.keys():
             raise IndexError('decoration<"{0}"> was not found'.format(decorid))
         self._decor_enabled[decorid] = False
+        self.force_cache_update(prev=decorid in self._decor_prev_id)
         return self
 
     def enable(self, decorid: str) -> 'Decorator':
@@ -873,6 +877,7 @@ class Decorator(Base):
         if decorid not in self._decor_enabled.keys():
             raise IndexError('decoration<"{0}"> was not found'.format(decorid))
         self._decor_enabled[decorid] = True
+        self.force_cache_update(prev=decorid in self._decor_prev_id)
         return self
 
     def remove(self, decorid: str) -> 'Decorator':
@@ -891,6 +896,8 @@ class Decorator(Base):
                 if d[1] == decorid:
                     self._decor[p].remove(d)
                     self._cache_needs_update[p] = True
+                    if decorid in self._decor_prev_id:
+                        self._decor_prev_id.remove(decorid)
                     del self._decor_enabled[decorid]
                     return self
         raise IndexError('decoration<"{0}"> was not found'.format(decorid))
