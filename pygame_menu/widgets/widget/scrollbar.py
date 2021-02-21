@@ -475,7 +475,7 @@ class ScrollBar(Widget):
         return self._slider_rect.move(*self.get_rect(to_absolute_position=True).topleft)
 
     def update(self, events: EventVectorType) -> bool:
-        if self.readonly:
+        if self.readonly or not self._visible:
             return False
         updated = False
         rect = self.get_rect(to_absolute_position=True)

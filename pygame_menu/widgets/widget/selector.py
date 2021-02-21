@@ -410,7 +410,7 @@ class Selector(Widget):
                 self._default_value = 0
 
     def update(self, events: EventVectorType) -> bool:
-        if self.readonly:
+        if self.readonly or not self._visible:
             return False
         updated = False
 

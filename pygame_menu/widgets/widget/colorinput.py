@@ -394,7 +394,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._input_string = self._input_string.upper()
 
     def update(self, events: EventVectorType) -> bool:
-        if self.readonly:
+        if self.readonly or not self._visible:
             return False
         input_str = self._input_string
         cursor_pos = self._cursor_position

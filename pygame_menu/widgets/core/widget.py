@@ -2043,6 +2043,10 @@ class Widget(Base):
         This method must return ``True`` if it updated (the internal variables
         changed during user input).
 
+        .. note::
+
+            Update is not performed if the Widget is in ``readonly`` state or it's hidden.
+
         :param events: List/Tuple of pygame events
         :return: ``True`` if updated
         """
@@ -2245,6 +2249,7 @@ class Widget(Base):
         :return: Self reference
         """
         self._visible = False
+        self.active = False
         self._render()
         if self._menu is not None:
             # noinspection PyProtectedMember

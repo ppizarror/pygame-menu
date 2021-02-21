@@ -194,7 +194,7 @@ class Button(Widget):
         self.force_menu_surface_update()
 
     def update(self, events: EventVectorType) -> bool:
-        if self.readonly:
+        if self.readonly or not self._visible:
             return False
         updated = False
         rect = self.get_rect(to_real_position=True)

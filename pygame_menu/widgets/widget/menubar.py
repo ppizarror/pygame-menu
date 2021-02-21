@@ -481,6 +481,8 @@ class MenuBar(Widget):
         return super(MenuBar, self).get_height(apply_padding, apply_selection)
 
     def update(self, events: EventVectorType) -> bool:
+        if self.readonly or not self._visible:
+            return False
         updated = False
 
         for event in events:
