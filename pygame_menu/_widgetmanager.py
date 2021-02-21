@@ -1848,8 +1848,8 @@ class WidgetManager(object):
         """
         Adds a frame.
 
-        :param width: Frame width
-        :param height: Frame height
+        :param width: Frame width (px)
+        :param height: Frame height (px)
         :param orientation: Frame orientation, horizontal or vertical. See :py:mod:`pygame_menu.locals`
         :param frame_id: ID of the frame
         :param kwargs: Optional keyword arguments
@@ -1977,9 +1977,9 @@ class WidgetManager(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param width: Frame width
-        :param height: Frame height
-        :param frame_id: ID of the frame
+        :param width: Frame width (px)
+        :param height: Frame height (px)
+        :param frame_id: ID of the horizontal frame
         :param kwargs: Optional keyword arguments
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
@@ -2060,9 +2060,9 @@ class WidgetManager(object):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param width: Frame width
-        :param height: Frame height
-        :param frame_id: ID of the frame
+        :param width: Frame width (px)
+        :param height: Frame height (px)
+        :param frame_id: ID of the vertical frame
         :param kwargs: Optional keyword arguments
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
