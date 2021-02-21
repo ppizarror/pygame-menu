@@ -1325,6 +1325,35 @@ class WidgetsTest(unittest.TestCase):
         drop2.set_value(0, process_index=True)
         self.assertEqual(drop2.get_index(), [1])
         self.assertEqual(drop2._get_current_selected_text(), 'nice 1')
+        self.assertEqual(drop2._default_value, [])
+        self.assertEqual(drop2._index, 0)
+
+        # Reset
+        drop2.reset_value()
+        self.assertEqual(drop2._get_current_selected_text(), 'epic')
+        self.assertEqual(drop2._default_value, [])
+        self.assertEqual(drop2._index, -1)
+        self.assertEqual(drop2.get_index(), [])
+        self.assertNotEqual(id(drop2._default_value), id(drop2._selected_indices))
+
+        menu.select_widget(drop2)
+        self.assertTrue(drop2.update(PygameEventUtils.key(pygame.K_TAB, keydown=True)))
+
+        # Test hide
+        self.assertTrue(drop2._drop_frame.is_visible())
+        self.assertTrue(drop2.active)
+        drop2.hide()  # Hiding selects the other widget
+        self.assertEqual(menu.get_selected_widget(), drop)
+        self.assertFalse(drop2._drop_frame.is_visible())
+        self.assertFalse(drop2.active)
+        drop2.show()
+        self.assertFalse(drop2._drop_frame.is_visible())
+        self.assertFalse(drop2.active)
+        self.assertEqual(menu.get_selected_widget(), drop)
+        menu.select_widget(drop2)
+        drop2._toggle_drop()
+        self.assertTrue(drop2.active)
+        self.assertTrue(drop2._drop_frame.is_visible())
 
     def test_dropselect(self) -> None:
         """
@@ -1342,6 +1371,10 @@ class WidgetsTest(unittest.TestCase):
         drop.make_selection_drop()
         self.assertEqual(drop.get_frame_depth(), 0)
         drop.render()
+        self.assertTrue(drop._drop_frame.is_scrollable)
+        dropframe = drop._drop_frame
+
+        self.assertIn(dropframe, menu._scrollable_frames)
         if PYGAME_V2:
             self.assertEqual(menu._test_widgets_status(), (
                 (('DropSelect-dropsel',
@@ -1349,94 +1382,97 @@ class WidgetsTest(unittest.TestCase):
                   (1, 0, 1, 1, 0, 0, 0),
                   ('Frame',
                    (-1, -1, -1, 261, 193, 207, 136, 261, 348, 261, 193),
-                   (0, 0, 0, 1, 1, 0, 0),
+                   (0, 0, 0, 0, 1, 0, 0),
                    (-1, -1),
                    ('Button-This is a really long selection item',
                     (-1, -1, -1, 0, -1, 356, 40, 261, 348, 0, 154),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-epic',
                     (-1, -1, -1, 0, 38, 356, 40, 261, 386, 0, 193),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item1',
                     (-1, -1, -1, 0, 77, 356, 40, 261, 425, 0, 232),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item2',
                     (-1, -1, -1, 0, 116, 356, 40, 261, 348, 0, 271),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item3',
                     (-1, -1, -1, 0, 155, 356, 40, 261, 348, 0, 310),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item4',
                     (-1, -1, -1, 0, 194, 356, 40, 261, 348, 0, 349),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item5',
                     (-1, -1, -1, 0, 233, 356, 40, 261, 348, 0, 388),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item6',
                     (-1, -1, -1, 0, 272, 356, 40, 261, 348, 0, 427),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item7',
                     (-1, -1, -1, 0, 311, 356, 40, 261, 348, 0, 466),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item8',
                     (-1, -1, -1, 0, 350, 356, 40, 261, 348, 0, 505),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item9',
                     (-1, -1, -1, 0, 389, 356, 40, 261, 348, 0, 544),
-                    (1, 0, 0, 1, 0, 1, 1)),
+                    (1, 0, 0, 0, 0, 1, 1)),
                    ('Button-item10',
                     (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
-                    (1, 0, 0, 1, 0, 1, 1))),
+                    (1, 0, 0, 0, 0, 1, 1))),
                   ('Button-This is a really long selection item',
                    (-1, -1, -1, 0, -1, 356, 40, 261, 348, 0, 154),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-epic',
                    (-1, -1, -1, 0, 38, 356, 40, 261, 386, 0, 193),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item1',
                    (-1, -1, -1, 0, 77, 356, 40, 261, 425, 0, 232),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item2',
                    (-1, -1, -1, 0, 116, 356, 40, 261, 348, 0, 271),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item3',
                    (-1, -1, -1, 0, 155, 356, 40, 261, 348, 0, 310),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item4',
                    (-1, -1, -1, 0, 194, 356, 40, 261, 348, 0, 349),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item5',
                    (-1, -1, -1, 0, 233, 356, 40, 261, 348, 0, 388),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item6',
                    (-1, -1, -1, 0, 272, 356, 40, 261, 348, 0, 427),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item7',
                    (-1, -1, -1, 0, 311, 356, 40, 261, 348, 0, 466),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item8',
                    (-1, -1, -1, 0, 350, 356, 40, 261, 348, 0, 505),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item9',
                    (-1, -1, -1, 0, 389, 356, 40, 261, 348, 0, 544),
-                   (1, 0, 0, 1, 0, 1, 1)),
+                   (1, 0, 0, 0, 0, 1, 1)),
                   ('Button-item10',
                    (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
-                   (1, 0, 0, 1, 0, 1, 1))),)
+                   (1, 0, 0, 0, 0, 1, 1))),)
             ))
         self.assertEqual(drop._drop_frame.get_attribute('height'), 135 if PYGAME_V2 else 138)
         self.assertEqual(drop._drop_frame.get_attribute('width'), 187 if PYGAME_V2 else 188)
 
         # Test events
         self.assertFalse(drop.active)
+        self.assertFalse(drop._drop_frame.is_visible())
         drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertTrue(drop.active)
+        self.assertTrue(drop._drop_frame.is_visible())
         self.assertEqual(drop.get_index(), -1)
         drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(drop.get_index(), 0)
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
         self.assertFalse(drop.active)
+        self.assertFalse(drop._drop_frame.is_visible())
         drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(drop.get_index(), 0)
         self.assertFalse(drop.active)
@@ -1534,6 +1570,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop.get_index(), -1)
         drop._down()
         self.assertEqual(drop.get_index(), -1)
+
+        # Check previous frame not in scrollable frames
+        self.assertFalse(drop._drop_frame.is_scrollable)
+        self.assertNotIn(dropframe, menu._scrollable_frames)
 
         # Restore previous values
         drop.update_items(items)
@@ -1658,23 +1698,23 @@ class WidgetsTest(unittest.TestCase):
                  (1, 0, 1, 1, 0, 1, 1),
                  ('Frame',
                   (-1, -1, -1, 116, 44, 207, 100, 214, 352, 116, -198),
-                  (0, 0, 0, 1, 0, 1, 1),
+                  (0, 0, 0, 0, 0, 1, 1),
                   (-1, -1),
                   ('Button-Select an option',
                    (-1, -1, -1, 116, 44, 207, 34, 214, 352, 116, -198),
-                   (1, 0, 0, 1, 0, 1, 2)),
+                   (1, 0, 0, 0, 0, 1, 2)),
                   ('Button-optionA',
                    (-1, -1, -1, 116, 77, 207, 34, 214, 385, 116, -165),
-                   (1, 0, 0, 1, 0, 1, 2)),
+                   (1, 0, 0, 0, 0, 1, 2)),
                   ('Button-optionB',
                    (-1, -1, -1, 116, 110, 207, 34, 214, 418, 116, -132),
-                   (1, 0, 0, 1, 0, 1, 2))),
+                   (1, 0, 0, 0, 0, 1, 2))),
                  ('Button-optionA',
                   (-1, -1, -1, 116, 77, 207, 34, 214, 385, 116, -165),
-                  (1, 0, 0, 1, 0, 1, 2)),
+                  (1, 0, 0, 0, 0, 1, 2)),
                  ('Button-optionB',
                   (-1, -1, -1, 116, 110, 207, 34, 214, 418, 116, -132),
-                  (1, 0, 0, 1, 0, 1, 2)))
+                  (1, 0, 0, 0, 0, 1, 2)))
             ))
         self.assertEqual(drop2._drop_frame.get_attribute('height'), 100 if PYGAME_V2 else 103)
         self.assertEqual(drop2._drop_frame.get_attribute('width'), 207 if PYGAME_V2 else 208)
@@ -1791,6 +1831,12 @@ class WidgetsTest(unittest.TestCase):
 
         # Disable focus
         menu._mouse_motion_selection = False
+
+        # As drop1 is scrollable, remove from menu, this should remove the widget too
+        dropframe = drop._drop_frame
+        self.assertIn(dropframe, menu._scrollable_frames)
+        menu.remove_widget(drop)
+        self.assertNotIn(dropframe, menu._scrollable_frames)
 
         def drawrect() -> None:
             """
