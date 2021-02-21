@@ -326,7 +326,7 @@ class Frame(Widget):
         return self.first_index, self.last_index
 
     def update(self, events: EventVectorType) -> bool:
-        if not self.is_scrollable or not self._visible or self.readonly:
+        if not self.is_scrollable or not self.is_visible() or self.readonly:
             return False
         return self._frame_scrollarea.update(events)
 
@@ -492,7 +492,7 @@ class Frame(Widget):
 
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if align == _locals.ALIGN_CENTER:
                 wcenter += w.get_width() + w.get_margin()[0]
@@ -520,7 +520,7 @@ class Frame(Widget):
         xcenter = int(self._width / 2 - wcenter / 2)
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if align == _locals.ALIGN_CENTER:
                 xcenter += w.get_margin()[0]
@@ -538,7 +538,7 @@ class Frame(Widget):
         wcenter = 0
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if vpos == _locals.POSITION_CENTER:
                 wcenter += w.get_width() + w.get_margin()[1]
@@ -565,7 +565,7 @@ class Frame(Widget):
         ycenter = int(self._height / 2 - wcenter / 2)
         for w in self._widgets.values():
             align, vpos = self._widgets_props[w.get_id()]
-            if not w.is_visible() or w.is_floating():
+            if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if vpos == _locals.POSITION_CENTER:
                 ycenter += w.get_margin()[1]
@@ -590,7 +590,7 @@ class Frame(Widget):
         # Apply position to each widget
         for w in self._widgets.keys():
             widget = self._widgets[w]
-            if not widget.is_visible():
+            if not widget.is_visible(check_frame=False):
                 widget.set_position(0, 0)
                 continue
             if widget.is_floating():
