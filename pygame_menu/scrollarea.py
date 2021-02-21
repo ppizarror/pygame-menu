@@ -296,11 +296,12 @@ class ScrollArea(Base):
         """
         parent = self._parent_scrollarea
         count = 0
-        while True:
-            if parent is None:
-                break
-            count += 1
-            parent = parent._parent_scrollarea
+        if parent is not None:
+            while True:
+                if parent is None:
+                    break
+                count += 1
+                parent = parent._parent_scrollarea
         return count
 
     def __copy__(self) -> 'ScrollArea':
@@ -679,11 +680,12 @@ class ScrollArea(Base):
         """
         values = [self.get_scroll_value_percentual(orientation)]
         parent = self._parent_scrollarea
-        while True:  # Recursive
-            if parent is None:
-                break
-            values.append(parent.get_scroll_value_percentual(orientation))
-            parent = parent._parent_scrollarea
+        if parent is not None:
+            while True:  # Recursive
+                if parent is None:
+                    break
+                values.append(parent.get_scroll_value_percentual(orientation))
+                parent = parent._parent_scrollarea
         return tuple(values)
 
     def get_scroll_value_percentual(self, orientation: str) -> float:
@@ -885,11 +887,12 @@ class ScrollArea(Base):
         view_rect_absolute = self.to_absolute_position(self._view_rect)
         if self._parent_scrollarea is not None:
             parent = self._parent_scrollarea
-            while True:  # Recursive
-                if parent is None:
-                    break
-                view_rect_absolute = parent.get_absolute_view_rect().clip(view_rect_absolute)
-                parent = parent._parent_scrollarea
+            if parent is not None:
+                while True:  # Recursive
+                    if parent is None:
+                        break
+                    view_rect_absolute = parent.get_absolute_view_rect().clip(view_rect_absolute)
+                    parent = parent._parent_scrollarea
         return view_rect_absolute
 
     # def get_real_view_rect(self, visible: bool = False) -> 'pygame.Rect':

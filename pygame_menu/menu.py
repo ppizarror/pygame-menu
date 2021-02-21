@@ -944,14 +944,14 @@ class Menu(Base):
             return self
         assert isinstance(widget, Widget)
         if not widget.is_selectable:
-            raise ValueError('widget is not selectable')
+            raise ValueError('{0} is not selectable'.format(widget.get_class_id()))
         if not widget.is_visible():
-            raise ValueError('widget is not visible')
+            raise ValueError('{0} is not visible'.format(widget.get_class_id()))
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
         except ValueError:
-            raise ValueError('widget is not in Menu, check if exists on the current '
-                             'with menu.get_current().remove_widget(widget)')
+            raise ValueError('{0} is not in Menu, check if exists on the current '
+                             'with menu.get_current().remove_widget(widget)'.format(widget.get_class_id()))
         self._select(index, 1, SELECT_WIDGET, False)
         return self
 
@@ -1529,12 +1529,13 @@ class Menu(Base):
             return 0
         prev = self._top._prev
         depth = 0
-        while True:
-            if prev is not None:
-                prev = prev[0]
-                depth += 1
-            else:
-                break
+        if prev is not None:
+            while True:
+                if prev is not None:
+                    prev = prev[0]
+                    depth += 1
+                else:
+                    break
         return depth
 
     def disable(self) -> 'Menu':
@@ -2780,16 +2781,17 @@ class Menu(Base):
         assert total > 0, 'total must be greater than zero'
 
         i = 0
-        while True:
-            if self._top._prev is not None:
-                prev = self._top._prev
-                self._top._current = prev[1]  # This changes the "current" pointer
-                self._top._prev = prev[0]  # Eventually will reach None
-                i += 1
-                if i == total:
+        if self._top._prev is not None:
+            while True:
+                if self._top._prev is not None:
+                    prev = self._top._prev
+                    self._top._current = prev[1]  # This changes the "current" pointer
+                    self._top._prev = prev[0]  # Eventually will reach None
+                    i += 1
+                    if i == total:
+                        break
+                else:
                     break
-            else:
-                break
 
         # Execute onreset callback
         if self._current._onreset is not None:
