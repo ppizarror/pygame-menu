@@ -3125,7 +3125,8 @@ class Menu(Base):
 
         .. warning::
 
-            Use with caution.
+            Use with caution, changing the theme may affect other menues or widgets if not
+            properly copied.
 
         :return: Menu theme
         """
