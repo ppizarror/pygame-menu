@@ -429,9 +429,14 @@ class DropSelect(Widget):
         else:
             placeholder_button = None
 
+        # Unpack previous frame (if exists)
+        if self._drop_frame is not None:
+            self._drop_frame.set_menu(None)
+
         # Create frame
         self._drop_frame = Frame(max_width,
                                  max(total_height, 1), ORIENTATION_VERTICAL)
+        self._drop_frame.hide()
         self._drop_frame.set_background_color(
             color=self._selection_box_bgcolor
         )
@@ -439,7 +444,6 @@ class DropSelect(Widget):
             width=self._selection_box_border_width,
             color=self._selection_box_border_color
         )
-        self._drop_frame.set_menu(self._menu)
         self._drop_frame.set_scrollarea(self._scrollarea)
         self._drop_frame.relax()
         self._drop_frame.configured = True
@@ -466,6 +470,7 @@ class DropSelect(Widget):
                 scrollbars=scrollbars
             )
 
+        self._drop_frame.set_menu(self._menu)
         self._drop_frame.set_scrollarea(self._scrollarea)
         if self._frame is not None:
             self._drop_frame.set_frame(self._frame)
@@ -496,6 +501,11 @@ class DropSelect(Widget):
         if self._index != -1:
             self.set_value(self._index)
 
+        return self
+
+    def on_remove_from_menu(self) -> 'DropSelect':
+        if self._drop_frame is not None:
+            self._drop_frame.set_menu(None)
         return self
 
     def scrollh(self, value: NumberType) -> 'DropSelect':
@@ -561,6 +571,8 @@ class DropSelect(Widget):
             self.change(*self._items[self._index][1:])
         if self._close_on_apply:
             self.active = False
+            if self._drop_frame is not None:
+                self._drop_frame.hide()
         btn.remove_attribute('ignore_scroll_to_widget')
 
     def set_position(self, posx: NumberType, posy: NumberType) -> 'DropSelect':
@@ -923,6 +935,8 @@ class DropSelect(Widget):
                 if self._index >= len(self._items):
                     self._index = -1
                     self._default_value = -1
+        if self._drop_frame is not None:
+            self._drop_frame.set_menu(None)
         self._drop_frame = None
         self.active = False
 
@@ -1073,7 +1087,12 @@ class DropSelect(Widget):
             return
         self.active = not self.active
         if self.active:
+            if self._drop_frame is not None:
+                self._drop_frame.show()
             self.scroll_to_widget(scroll_parent=False)
+        else:
+            if self._drop_frame is not None:
+                self._drop_frame.hide()
         if self.active and self._index != -1:
             self.set_value(self._index)
 

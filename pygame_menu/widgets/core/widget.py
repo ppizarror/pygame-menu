@@ -454,6 +454,14 @@ class Widget(Base):
         """
         return self._selected
 
+    def on_remove_from_menu(self) -> 'Widget':
+        """
+        Function executed if the Widget is removed from the Menu.
+
+        :return: Self reference
+        """
+        return self
+
     def is_visible(self) -> bool:
         """
         Return ``True`` if the Widget is visible.
