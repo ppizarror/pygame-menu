@@ -58,6 +58,7 @@ DECORATION_CALLABLE = 2003
 DECORATION_CALLABLE_NO_ARGS = 2015
 DECORATION_CIRCLE = 2004
 DECORATION_ELLIPSE = 2005
+DECORATION_FILL = 2020
 DECORATION_LINE = 2006
 DECORATION_NONE = 2007
 DECORATION_PIE = 2008
@@ -440,7 +441,7 @@ class Decorator(Base):
         :param y: Y position (px), being ``0`` the center of the object
         :param surface: Surface
         :param prev: If ``True`` draw previous the object, else draws post
-        :param centered: If ``True`` the text is centered into the position
+        :param centered: If ``True`` the surface is centered
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
@@ -478,7 +479,7 @@ class Decorator(Base):
         :param y: Y position (px), being ``0`` the center of the object
         :param image: ``BaseImage`` object
         :param prev: If ``True`` draw previous the object, else draws post
-        :param centered: If ``True`` the text is centered into the position
+        :param centered: If ``True`` the image is centered
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
@@ -590,7 +591,7 @@ class Decorator(Base):
         :param color: Font color
         :param prev: If ``True`` draw previous the object, else draws post
         :param antialias: Font antialias enabled
-        :param centered: If ``True`` the text is centered into the position
+        :param centered: If ``True`` the text is centered
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
@@ -787,6 +788,27 @@ class Decorator(Base):
         length = math.sqrt(math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
         assert length > 0, 'line cannot be zero-length'
         return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs))
+
+    def add_fill(
+            self,
+            color: ColorInputType,
+            prev: bool = True
+    ) -> str:
+        """
+        Fills the decorator rect object.
+
+        .. note::
+
+            Consider ``(0, 0)`` coordinates as the center of the object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+
+        :param color: Fill color
+        :param prev: If ``True`` draw previous the object, else draws post
+        :return: ID of the decoration
+        """
+        return self._add_decor(DECORATION_FILL, prev, assert_color(color))
 
     def add_hline(
             self,
@@ -1077,6 +1099,9 @@ class Decorator(Base):
                 points, color, steps, kwargs = data
                 points = self._update_pos_list(rect, decoid, points, **kwargs)
                 gfxdraw.bezier(surface, points, steps, color)
+
+            elif dtype == DECORATION_FILL:
+                surface.fill(data, rect)
 
             elif dtype == DECORATION_RECT:
                 drect: 'pygame.Rect'

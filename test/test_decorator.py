@@ -354,5 +354,8 @@ class DecoratorTest(unittest.TestCase):
         deco.add_hline(1, 2, 3, color)
         deco.add_vline(1, 2, 3, color)
 
+        # Fill
+        deco.add_fill((0, 0, 0))
+
         menu.draw(surface)
         deco.remove_all()
