@@ -152,6 +152,7 @@ class Widget(Base):
     _visible: bool
     active: bool
     configured: bool
+    force_menu_draw_focus: bool
     is_scrollable: bool
     is_selectable: bool
     last_surface: Optional['pygame.Surface']
@@ -274,6 +275,7 @@ class Widget(Base):
         # Public statutes. These values can be changed without calling for methods (safe to update)
         self.active = False  # Widget requests focus if selected
         self.configured = False  # Widget has been configured
+        self.force_menu_draw_focus = False  # If True Menu draw focus if widget is selected, don't considering the previous requisites
         self.is_scrollable = False  # Some widgets can be scrolled, such as the Frame
         self.is_selectable = True  # Some widgets cannot be selected like labels
         self.last_surface = None  # Stores the last surface the widget has been drawn
@@ -1041,7 +1043,7 @@ class Widget(Base):
         :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
         :param to_absolute_position: Transform the widget rect to absolute coordinates (if the Widget does not change the position if scrollbars move offsets). Used by events
         :param render: Force widget rendering
-        :param real_position_visible: Return only the visible width/height
+        :param real_position_visible: Return only the visible width/height if ``to_real_position=True``
         :return: Widget rect object
         """
         if render:
@@ -1063,6 +1065,8 @@ class Widget(Base):
                            int(self._rect.height + pad_bottom + pad_top + self._rect_size_delta[1]))
 
         if self._scrollarea is not None:
+            assert not (to_real_position and to_absolute_position), \
+                'real and absolute positions cannot be True at the same time'
             if to_real_position:
                 rect = self._scrollarea.to_real_position(rect, visible=real_position_visible)
             elif to_absolute_position:
@@ -1475,13 +1479,34 @@ class Widget(Base):
         self._rect.y = int(posy) + self._translate[1] + self._translate_virtual[1]
         return self
 
-    def get_position(self) -> Tuple2IntType:
+    def get_position(
+            self,
+            apply_padding: bool = False,
+            use_transformed_padding: bool = True,
+            to_real_position: bool = False,
+            to_absolute_position: bool = False,
+            real_position_visible: bool = True
+    ) -> Tuple2IntType:
         """
         Return the widget position tuple (x, y).
 
+        :param apply_padding: Apply widget padding to position
+        :param use_transformed_padding: Use scaled padding if the widget is scaled
+        :param to_real_position: Get the real position within window (not the surface container)
+        :param to_absolute_position: Get the absolute position within surface container, considering also the parent scrollarea positioning
+        :param real_position_visible: Return only the visible width/height if ``to_real_position=True``
         :return: Widget position
         """
-        return self._rect.x, self._rect.y
+        if not (apply_padding or to_real_position or to_absolute_position):
+            return self._rect.x, self._rect.y
+        rect = self.get_rect(
+            apply_padding=apply_padding,
+            use_transformed_padding=use_transformed_padding,
+            to_real_position=to_real_position,
+            to_absolute_position=to_absolute_position,
+            real_position_visible=real_position_visible
+        )
+        return rect.x, rect.y
 
     def flip(self, x: bool, y: bool) -> 'Widget':
         """

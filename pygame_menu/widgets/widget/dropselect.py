@@ -751,7 +751,9 @@ class DropSelect(Widget):
             self._drop_frame._frame = None
             # noinspection PyProtectedMember
             if not self._menu._mouse_motion_selection:
-                self.set_attribute('force_menu_draw_focus', True)
+                self.force_menu_draw_focus = True
+        else:
+            self.force_menu_draw_focus = False
 
         if delta_title_height != 0:
             self.set_attribute('delta_title_height', math.ceil((current_rect_bg.height - h) / 2) +
@@ -1141,7 +1143,7 @@ class DropSelect(Widget):
                 rect.y -= self._drop_frame.get_attribute('height') - self._drop_frame.get_attribute('extra_margin')
             if self._open_middle:
                 x, y = self._compute_position_middle(add_offset=False)
-                rect.x = x
+                rect.x = x + self._menu.get_position()[0]
                 rect.y = y + self._menu.get_scrollarea().get_position()[1]
                 rect.height -= self._rect.height
         else:

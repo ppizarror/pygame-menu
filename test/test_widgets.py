@@ -1849,6 +1849,38 @@ class WidgetsTest(unittest.TestCase):
 
         menu.get_decorator().add_callable(drawrect, prev=False, pass_args=False)
 
+        # Test active with different menu settings
+        menu_theme = pygame_menu.themes.THEME_ORANGE.copy()
+        menu_theme.title_offset = (5, -2)
+        menu_theme.widget_alignment = pygame_menu.locals.ALIGN_LEFT
+        menu_theme.widget_font = pygame_menu.font.FONT_OPEN_SANS_LIGHT
+        menu_theme.widget_font_size = 20
+        menu2 = MenuUtils.generic_menu(theme=menu_theme, width=400)
+        menu2.add_vertical_margin(1000)
+        drop3 = menu2.add.dropselect_multiple(
+            title='Pick 3 colors',
+            items=[('Black', (0, 0, 0)),
+                   ('Blue', (0, 0, 255)),
+                   ('Cyan', (0, 255, 255)),
+                   ('Fuchsia', (255, 0, 255)),
+                   ('Green', (0, 255, 0)),
+                   ('Red', (255, 0, 0)),
+                   ('White', (255, 255, 255)),
+                   ('Yellow', (255, 255, 0))],
+            dropselect_multiple_id='pickcolors',
+            open_middle=True,
+            max_selected=3
+        )
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, 28))
+
+        # Translate the menu, this should also modify focus
+        menu2.translate(100, 50)
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 50, 320, 28))
+        menu2.translate(100, 150)
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108 + 100, 468 + 150, 320, 28))
+        menu2.translate(0, 0)
+        self.assertEqual(drop3.get_focus_rect(), pygame.Rect(108, 468, 320, 28))
+
     def test_none(self) -> None:
         """
         Test none widget.

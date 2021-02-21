@@ -1619,3 +1619,8 @@ class FrameWidgetTest(unittest.TestCase):
         for i in range(14):
             menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
+
+    def test_title(self) -> None:
+        """
+        Test frame title.
+        """

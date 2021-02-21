@@ -286,6 +286,31 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(b6.get_col_row_index(), (0, 0, 3))
         self.assertEqual(b7.get_col_row_index(), (0, 1, 4))
 
+    def test_translate(self) -> None:
+        """
+        Test menu translation.
+        """
+        menu = MenuUtils.generic_menu(width=400)
+        btn = menu.add.button('button')
+        self.assertEqual(menu.get_menubar().get_height(), 55)
+        self.assertEqual(menu.get_position(), (100, 100))
+        self.assertEqual(menu.get_scrollarea().get_position(), (100, 100 + 55))
+        self.assertEqual(menu.get_menubar().get_position(), (100, 100))
+        self.assertEqual(btn.get_position(), (153, 153 if PYGAME_V2 else 152))  # Position is respective the menu
+        self.assertEqual(btn.get_position(to_real_position=True), (253, 308 if PYGAME_V2 else 307))
+        self.assertEqual(btn.get_position(to_absolute_position=True), (153, 153 if PYGAME_V2 else 152))
+        self.assertEqual(menu.get_translate(), (0, 0))
+
+        # Translate by 0,100
+        menu.translate(0, 100)
+        self.assertEqual(menu.get_position(), (100, 200))
+        self.assertEqual(menu.get_scrollarea().get_position(), (100, 200 + 55))
+        self.assertEqual(menu.get_menubar().get_position(), (100, 200))
+        self.assertEqual(btn.get_position(), (153, 153 if PYGAME_V2 else 152))  # Position is respective the menu
+        self.assertEqual(btn.get_position(to_real_position=True), (253, 408 if PYGAME_V2 else 407))
+        self.assertEqual(btn.get_position(to_absolute_position=True), (153, 153 if PYGAME_V2 else 152))
+        self.assertEqual(menu.get_translate(), (0, 100))
+
     def test_close(self) -> None:
         """
         Test menu close.
