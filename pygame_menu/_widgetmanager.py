@@ -1128,8 +1128,8 @@ class WidgetManager(object):
 
         .. code-block:: python
 
-            onchange((selected_item, index), a, b, c..., **kwargs)
-            onreturn((selected_item, index), a, b, c..., **kwargs)
+            onchange((selected_item, selected_index), a, b, c..., **kwargs)
+            onreturn((selected_item, selected_index), a, b, c..., **kwargs)
 
         For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
@@ -1236,16 +1236,16 @@ class WidgetManager(object):
         selection_box_height = kwargs.pop('selection_box_height', 3)
         selection_box_inflate = kwargs.pop('selection_box_inflate', self._theme.widget_border_inflate)
         selection_box_margin = kwargs.pop('selection_box_margin', self._theme.widget_box_margin)
-        selection_box_text_margin = kwargs.pop('selection_box_text_margin', 5)
+        selection_box_text_margin = kwargs.pop('selection_box_text_margin', self._theme.widget_box_arrow_margin[0])
         selection_box_width = kwargs.pop('selection_box_width', 0)
         selection_infinite = kwargs.pop('selection_infinite', False)
-        selection_option_border_color = kwargs.pop('selection_option_border_color', (220, 220, 220))
-        selection_option_border_width = kwargs.pop('selection_option_border_width', 1)
+        selection_option_border_color = kwargs.pop('selection_option_border_color', self._theme.scrollbar_color)
+        selection_option_border_width = kwargs.pop('selection_option_border_width', self._theme.widget_box_border_width)
         selection_option_font = kwargs.pop('selection_option_font', None)
         selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
         selection_option_font_size = kwargs.pop('selection_option_font_size', None)
         selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
-        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (230, 250, 247))
+        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (188, 227, 244))
         selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
 
         # Get selection box scrollbar properties
@@ -1288,6 +1288,253 @@ class WidgetManager(object):
             selection_option_font_size=selection_option_font_size,
             selection_option_padding=selection_option_padding,
             selection_option_selected_bgcolor=selection_option_selected_bgcolor,
+            selection_option_selected_font_color=selection_option_selected_font_color,
+            title=title,
+            **kwargs
+        )
+
+        self._configure_widget(widget=widget, **attributes)
+        widget.set_theme(self._theme)
+        self._append_widget(widget)
+
+        # After addition, create drop
+        widget.make_selection_drop(
+            scrollbar_color=scrollbar_color,
+            scrollbar_cursor=scrollbar_cursor,
+            scrollbar_shadow=scrollbar_shadow,
+            scrollbar_shadow_color=scrollbar_shadow_color,
+            scrollbar_shadow_offset=scrollbar_shadow_offset,
+            scrollbar_shadow_position=scrollbar_shadow_position,
+            scrollbar_slider_color=scrollbar_slider_color,
+            scrollbar_slider_pad=scrollbar_slider_pad,
+            scrollbar_thick=scrollbar_thick,
+            scrollbars=scrollbars,
+            scrollbars_parsed=True
+        )
+
+        return widget
+
+    def dropselect_multiple(
+            self,
+            title: Any,
+            items: Union[List[Tuple[Any, ...]], List[str]],
+            default: Optional[Union[int, List[int]]] = None,
+            dropselect_multiple_id: str = '',
+            max_selected: int = 0,
+            onchange: CallbackType = None,
+            onreturn: CallbackType = None,
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            open_middle: bool = False,
+            placeholder: str = 'Select an option',
+            placeholder_add_to_selection_box: bool = True,
+            placeholder_selected: str = '{0} selected',
+            **kwargs
+    ) -> 'pygame_menu.widgets.DropSelectMultiple':
+        """
+        Add a dropselect multiple to the Menu: Drop select multiple is a drop
+        select which can select many options at the same time.
+        This drops a vertical frame if requested.
+
+        The items of the DropSelectMultiple are:
+
+        .. code-block:: python
+
+            items = [('Item1', a, b, c...), ('Item2', d, e, f...), ('Item3', g, h, i...)]
+
+        The callbacks receive the current selected items (tuple) and the indices (tuple), where
+        ``selected_item=widget.get_value()`` and ``selected_index=widget.get_index()``:
+
+        .. code-block:: python
+
+            onchange((selected_item, selected_index), **kwargs)
+            onreturn((selected_item, selected_index), **kwargs)
+
+        For example, if ``selected_index=[0, 2]`` then ``selected_item=[('Item1', a, b, c...), ('Item3', g, h, i...)]``.
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
+
+        kwargs (Optional)
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if mouse is placed over. By default is ``None``
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset (px)
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
+            - ``font_size``                 *(int)* - Font size of the widget
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``readonly_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode
+            - ``readonly_selected_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the widget if readonly mode and is selected
+            - ``selection_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``          *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect
+            - ``tab_size``                  *(int)* - Width of a tab character
+
+        kwargs for modifying selection box/option style (Optional)
+            - ``scrollbar_color``                       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``                      *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``               *(int)* - Offset of the scrollbar shadow (px)
+            - ``scrollbar_shadow_position``             *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``                      *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
+            - ``scrollbar_slider_pad``                  *(int, float)* - Space between slider and scrollbars borders (px)
+            - ``scrollbar_thick``                       *(int)* - Scrollbar thickness (px)
+            - ``scrollbars``                            *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``selection_box_arrow_color``             *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selection box arrow color
+            - ``selection_box_arrow_margin``            *(tuple)* - Selection box arrow margin (left, right, vertical) in px
+            - ``selection_box_bgcolor``                 *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selection box background color
+            - ``selection_box_border_color``            *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selection box border color
+            - ``selection_box_border_width``            *(int)* - Selection box border width
+            - ``selection_box_height``                  *(int)* - Selection box height, counted as how many options are packed before showing scroll
+            - ``selection_box_inflate``                 *(tuple)* - Selection box inflate on x-axis and y-axis (px)
+            - ``selection_box_margin``                  *(tuple, list)* - Selection box (x, y) margin from title (px)
+            - ``selection_box_text_margin``             *(int)* - Selection box text margin (left) in px
+            - ``selection_box_width``                   *(int)* - Selection box width (px). If ``0`` compute automatically to fit placeholder
+            - ``selection_infinite``                    *(bool)* - If ``True`` selection can rotate through bottom/top
+            - ``selection_option_active_bgcolor``       *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Active option(s) background color; active options is the currently active (by user)
+            - ``selection_option_active_font_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Active option(s) font color
+            - ``selection_option_border_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Option border color
+            - ``selection_option_border_width``         *(int)* - Option border width
+            - ``selection_option_font_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Option font color
+            - ``selection_option_font_size``            *(int, None)* - Option font size. If ``None`` use the 75% of the widget font size
+            - ``selection_option_font``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Option font. If ``None`` use the same font as the widget
+            - ``selection_option_padding``              *(int, float, tuple, list)* - Selection padding. See padding styling
+            - ``selection_option_selected_bgcolor``     *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selected option background color
+            - ``selection_option_selected_box_border``  *(int)* - Box border width in px
+            - ``selection_option_selected_box_color``   *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Box color
+            - ``selection_option_selected_box_height``  *(int, float)* - Height of the selection box relative to the options height
+            - ``selection_option_selected_box_margin``  *(tuple, list)* - Option box margin (left, right, vertical) in px
+            - ``selection_option_selected_box``         *(bool)* - Draws a box in the selected option(s)
+            - ``selection_option_selected_font_color``  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Selected option font color
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        .. warning::
+
+            Be careful with kwargs collision. Consider that all optional documented
+            kwargs keys are removed from the object.
+
+        :param title: Drop select title
+        :param items: Item list of the drop select; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
+        :param default: Index(es) of default item(s) to display. If ``None`` no item is selected
+        :param dropselect_multiple_id: ID of the selector
+        :param max_selected: Max items to be selected. If ``0`` there's no limit
+        :param onchange: Callback when changing the drop select item
+        :param onreturn: Callback when pressing return on the selected item
+        :param onselect: Function when selecting the widget
+        :param open_middle: If ``True`` the selection box is opened in the middle of the menu
+        :param placeholder: Text shown if no option is selected yet
+        :param placeholder_add_to_selection_box: If ``True`` adds the placeholder button to the selection box
+        :param placeholder_selected: Text shown if option is selected. Accepts the number of selected options
+        :param kwargs: Optional keyword arguments
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.DropSelectMultiple`
+        """
+        # Filter widget attributes to avoid passing them to the callbacks
+        attributes = self._filter_widget_attributes(kwargs)
+
+        # Get selection box properties
+        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', self._theme.widget_box_arrow_color)
+        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', self._theme.widget_box_arrow_margin)
+        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', self._theme.widget_box_background_color)
+        selection_box_border_color = kwargs.pop('selection_box_border_color', self._theme.widget_box_border_color)
+        selection_box_border_width = kwargs.pop('selection_box_border_width', self._theme.widget_box_border_width)
+        selection_box_height = kwargs.pop('selection_box_height', 3)
+        selection_box_inflate = kwargs.pop('selection_box_inflate', self._theme.widget_border_inflate)
+        selection_box_margin = kwargs.pop('selection_box_margin', self._theme.widget_box_margin)
+        selection_box_text_margin = kwargs.pop('selection_box_text_margin', self._theme.widget_box_arrow_margin[0])
+        selection_box_width = kwargs.pop('selection_box_width', 0)
+        selection_infinite = kwargs.pop('selection_infinite', False)
+        selection_option_active_bgcolor = kwargs.pop('selection_option_active_bgcolor', (188, 227, 244))
+        selection_option_active_font_color = kwargs.pop('selection_option_active_font_color', (0, 0, 0))
+        selection_option_border_color = kwargs.pop('selection_option_border_color', self._theme.scrollbar_color)
+        selection_option_border_width = kwargs.pop('selection_option_border_width', self._theme.widget_box_border_width)
+        selection_option_font = kwargs.pop('selection_option_font', None)
+        selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
+        selection_option_font_size = kwargs.pop('selection_option_font_size', None)
+        selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
+        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (142, 247, 141))
+        selection_option_selected_box = kwargs.pop('selection_option_selected_box', True)
+        selection_option_selected_box_border = kwargs.pop('selection_option_selected_box_border',
+                                                          self._theme.widget_box_border_width)
+        selection_option_selected_box_color = kwargs.pop('selection_option_selected_box_color',
+                                                         self._theme.widget_box_arrow_color)
+        selection_option_selected_box_height = kwargs.pop('selection_option_selected_box_height', 0.5)
+        selection_option_selected_box_margin = kwargs.pop('selection_option_selected_box_margin',
+                                                          (0, self._theme.widget_box_arrow_margin[1],
+                                                           self._theme.widget_box_arrow_margin[2]))
+        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
+
+        # Get selection box scrollbar properties
+        scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
+        scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
+        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color)
+        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset)
+        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position)
+        scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
+        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color)
+        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad)
+        scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
+        scrollbars = get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
+
+        widget = pygame_menu.widgets.DropSelectMultiple(
+            default=default,
+            dropselect_id=dropselect_multiple_id,
+            items=items,
+            max_selected=max_selected,
+            onchange=onchange,
+            onreturn=onreturn,
+            onselect=onselect,
+            open_middle=open_middle,
+            placeholder=placeholder,
+            placeholder_add_to_selection_box=placeholder_add_to_selection_box,
+            placeholder_selected=placeholder_selected,
+            selection_box_arrow_color=selection_box_arrow_color,
+            selection_box_arrow_margin=selection_box_arrow_margin,
+            selection_box_bgcolor=selection_box_bgcolor,
+            selection_box_border_color=selection_box_border_color,
+            selection_box_border_width=selection_box_border_width,
+            selection_box_height=selection_box_height,
+            selection_box_inflate=selection_box_inflate,
+            selection_box_margin=selection_box_margin,
+            selection_box_text_margin=selection_box_text_margin,
+            selection_box_width=selection_box_width,
+            selection_infinite=selection_infinite,
+            selection_option_active_bgcolor=selection_option_active_bgcolor,
+            selection_option_active_font_color=selection_option_active_font_color,
+            selection_option_border_color=selection_option_border_color,
+            selection_option_border_width=selection_option_border_width,
+            selection_option_font=selection_option_font,
+            selection_option_font_color=selection_option_font_color,
+            selection_option_font_size=selection_option_font_size,
+            selection_option_padding=selection_option_padding,
+            selection_option_selected_bgcolor=selection_option_selected_bgcolor,
+            selection_option_selected_box=selection_option_selected_box,
+            selection_option_selected_box_border=selection_option_selected_box_border,
+            selection_option_selected_box_color=selection_option_selected_box_color,
+            selection_option_selected_box_height=selection_option_selected_box_height,
+            selection_option_selected_box_margin=selection_option_selected_box_margin,
             selection_option_selected_font_color=selection_option_selected_font_color,
             title=title,
             **kwargs
@@ -1416,10 +1663,11 @@ class WidgetManager(object):
         attributes = self._filter_widget_attributes(kwargs)
 
         infinite = kwargs.pop('infinite', False)
-        slider_color = kwargs.pop('slider_color', (255, 255, 255))
-        slider_thickness = kwargs.pop('slider_thickness', 20)
+        slider_color = kwargs.pop('slider_color', self._theme.widget_box_background_color)
+        slider_thickness = kwargs.pop('slider_thickness', self._theme.scrollbar_thick)
         state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
-        state_text_font_color = kwargs.pop('state_text_font_color', ((255, 255, 255), (255, 255, 255)))
+        state_text_font_color = kwargs.pop('state_text_font_color', (self._theme.widget_box_background_color,
+                                                                     self._theme.widget_box_background_color))
         state_text_font_size = kwargs.pop('state_text_font_size', None)
         switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
         switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)
@@ -1871,8 +2119,7 @@ class WidgetManager(object):
         :rtype: :py:class:`pygame_menu.widgets.VMargin`
         """
         assert isinstance(margin, NumberInstance)
-        assert margin > 0, \
-            'zero margin is not valid, prefer adding a NoneWidget menu.add.none_widget()'
+        assert margin > 0, 'negative or zero margin is not valid'
 
         attributes = self._filter_widget_attributes({})
         widget = pygame_menu.widgets.VMargin(margin, widget_id=margin_id)

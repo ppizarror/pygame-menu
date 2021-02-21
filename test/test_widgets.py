@@ -1220,6 +1220,111 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_rect().width, 999)
         self.assertEqual(w.get_rect().height, 0)
 
+    def test_dropselect_multiple(self) -> None:
+        """
+        Test dropselect multiple widget.
+        """
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme.widget_font_size = 25
+        menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=theme)
+        items = [('This is a really long selection item', 1), ('epic', 2)]
+        for i in range(10):
+            items.append(('item{}'.format(i + 1), i + 1))
+        drop = pygame_menu.widgets.DropSelectMultiple('dropsel', items, open_middle=True, selection_box_height=5)
+        menu.add.generic_widget(drop, configure_defaults=True)
+        self.assertEqual(drop._selection_box_width, 225)
+        drop.make_selection_drop()
+
+        # Check drop is empty
+        self.assertEqual(drop.get_value(), ([], []))
+        self.assertEqual(drop.get_index(), [])
+        self.assertEqual(drop._get_current_selected_text(), 'Select an option')
+
+        # Check events
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertTrue(drop.active)
+        self.assertEqual(drop._index, -1)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Index is -1
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        self.assertEqual(drop._index, 0)
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        self.assertEqual(drop._index, 1)
+
+        # Apply on current
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
+        self.assertEqual(drop.get_index(), [1])
+        self.assertEqual(drop._get_current_selected_text(), '1 selected')
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertEqual(drop.get_value(), ([('epic', 2), ('item2', 2)], [1, 3]))
+        self.assertEqual(drop._get_current_selected_text(), '2 selected')
+
+        # Click item 2, this should unselect
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.middle_rect_click(drop._option_buttons[3]))
+        self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
+        self.assertEqual(drop._get_current_selected_text(), '1 selected')
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        self.assertEqual(drop._index, 4)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3)], [1, 4]))
+        self.assertEqual(drop._get_current_selected_text(), '2 selected')
+
+        # Close
+        drop.update(PygameEventUtils.key(pygame.K_ESCAPE, keydown=True))
+        self.assertFalse(drop.active)
+        self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3)], [1, 4]))
+        self.assertEqual(drop._get_current_selected_text(), '2 selected')
+
+        # Set max limit
+        drop._max_selected = 3
+        self.assertEqual(drop.get_total_selected(), 2)
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertEqual(drop.get_total_selected(), 3)
+        self.assertTrue(drop.active)
+        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        self.assertEqual(drop.get_total_selected(), 3)  # Limit reached
+        self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3), ('item4', 4)], [1, 4, 5]))
+        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Unselect previous
+        self.assertEqual(drop.get_total_selected(), 2)  # Limit reached
+        self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3)], [1, 4]))
+
+        # Update elements
+        drop.update_items([('This is a really long selection item', 1), ('epic', 2)])
+        self.assertEqual(drop.get_value(), ([], []))
+        self.assertEqual(drop._get_current_selected_text(), 'Select an option')
+        drop.set_value(1, process_index=True)
+        self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
+        drop.set_value('This is a really long selection item', process_index=True)
+        self.assertEqual(drop.get_value(), ([('This is a really long selection item', 1), ('epic', 2)], [0, 1]))
+        self.assertEqual(drop._get_current_selected_text(), '2 selected')
+        drop.set_default_value(1)
+        self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
+        self.assertEqual(drop._get_current_selected_text(), '1 selected')
+        drop.make_selection_drop()
+
+        # Use manager
+        drop2 = menu.add.dropselect_multiple('nice', [('This is a really long selection item', 1), ('epic', 2)],
+                                             placeholder_selected='nice {0}', placeholder='epic', max_selected=1)
+        self.assertEqual(drop2._selection_box_width, 134)
+        self.assertEqual(drop2._get_current_selected_text(), 'epic')
+        drop2.set_value('epic', process_index=True)
+        self.assertEqual(drop2.get_index(), [1])
+        self.assertEqual(drop2._get_current_selected_text(), 'nice 1')
+        drop2.set_value(0, process_index=True)
+        self.assertEqual(drop2.get_index(), [1])
+        self.assertEqual(drop2._get_current_selected_text(), 'nice 1')
+
     def test_dropselect(self) -> None:
         """
         Test dropselect widget.
@@ -1337,6 +1442,8 @@ class WidgetsTest(unittest.TestCase):
         drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))  # Enable
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
+        self.assertFalse(drop.active)
+        drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))  # Enable
         self.assertTrue(drop.active)
         drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 0)
