@@ -47,20 +47,25 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'TOGGLESWITCH'
+EXAMPLE = 'DROPSELECT_MULTIPLE'
 
 # Create example
 menu: 'pygame_menu.Menu'
 widgets: List['pygame_menu.widgets.Widget']
 
 
-def make_menu(menu_theme: 'pygame_menu.themes.Theme', title: str,
-              widget_font_size: int = 25) -> 'pygame_menu.Menu':
+def make_menu(
+        menu_theme: 'pygame_menu.themes.Theme',
+        title: str,
+        center: bool = True,
+        widget_font_size: int = 25
+) -> 'pygame_menu.Menu':
     """
     Make menu.
 
     :param menu_theme: Menu theme object
     :param title: Menu title
+    :param center: Center the menu
     :param widget_font_size: Theme widget font size
     :return: Menu object
     """
@@ -69,11 +74,12 @@ def make_menu(menu_theme: 'pygame_menu.themes.Theme', title: str,
     menu_theme.widget_font_size = widget_font_size
 
     return pygame_menu.Menu(
+        center_content=center,
         column_min_width=400,
         height=300,
+        onclose=pygame_menu.events.CLOSE,
         theme=menu_theme,
         title=title,
-        onclose=pygame_menu.events.CLOSE,
         width=400
     )
 
@@ -157,6 +163,25 @@ elif EXAMPLE == 'DROPSELECT':
         selection_box_width=212,
         selection_infinite=True,
         selection_option_font_size=20
+    )
+
+elif EXAMPLE == 'DROPSELECT_MULTIPLE':
+    menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Drop Select Multiple', center=False)
+    menu.add.vertical_margin(75)
+
+    selector = menu.add.dropselect_multiple(
+        title='Pick 3 colors',
+        items=[('Black', (0, 0, 0)),
+               ('Blue', (0, 0, 255)),
+               ('Cyan', (0, 255, 255)),
+               ('Fuchsia', (255, 0, 255)),
+               ('Green', (0, 255, 0)),
+               ('Red', (255, 0, 0)),
+               ('White', (255, 255, 255)),
+               ('Yellow', (255, 255, 0))],
+        font_size=23,
+        max_selected=3,
+        selection_option_font_size=23
     )
 
 elif EXAMPLE == 'FRAME':

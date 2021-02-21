@@ -196,6 +196,42 @@ displayed, the others are the arguments passed to the callbacks
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.dropselect
 
 
+Add a drop selection multiple
+-----------------------------
+
+A multiple drop selector gives the possibility choose a value in a predefined list.
+An item of a drop selector is a tuple: the first element is the text
+displayed, the others are the arguments passed to the callbacks
+``onchange`` and ``onreturn``.
+
+**Example:**
+
+.. image:: ../_static/widget_dropselect_multiple.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    selector = menu.add.dropselect_multiple(
+        title='Pick 3 colors',
+        items=[('Black', (0, 0, 0)),
+               ('Blue', (0, 0, 255)),
+               ('Cyan', (0, 255, 255)),
+               ('Fuchsia', (255, 0, 255)),
+               ('Green', (0, 255, 0)),
+               ('Red', (255, 0, 0)),
+               ('White', (255, 255, 255)),
+               ('Yellow', (255, 255, 0))],
+        font_size=23,
+        max_selected=3,
+        selection_option_font_size=23
+    )
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.dropselect_multiple
+
+
 Add a frame
 -----------
 
