@@ -295,8 +295,10 @@ class DropSelectMultiple(DropSelect):
             assert isinstance(i, int) and 0 <= i < len(self._items), \
                 'each default index must be an integer between 0 and the number of elements ({0})' \
                 ''.format(len(self._items) - 1)
-        self._default_value = default
-        self._selected_indices = self._default_value
+        self._default_value = default.copy()
+        self._selected_indices = default.copy()
+        if self._drop_frame is not None:
+            self._drop_frame.set_menu(None)
         self._drop_frame = None
         self.active = False
         self.render()
@@ -336,6 +338,17 @@ class DropSelectMultiple(DropSelect):
             else:
                 self._sound.play_event_error()
         self._update_buttons()
+
+    def reset_value(self) -> 'DropSelectMultiple':
+        """
+        Reset the Widget value to the default one.
+
+        :return: Self reference
+        """
+        self._index = -1
+        self._selected_indices = self._default_value.copy()
+        self._update_buttons()
+        return self
 
     def set_value(self, item: Union[str, int], process_index: bool = False) -> None:
         """
