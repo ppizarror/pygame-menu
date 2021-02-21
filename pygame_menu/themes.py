@@ -58,7 +58,7 @@ from pygame_menu.scrollarea import get_scrollbars_from_position
 
 from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, Tuple2IntType, \
     VectorInstance, Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, PaddingInstance, \
-    Tuple3IntType
+    Tuple3IntType, CursorType
 
 
 def _check_menubar_style(style: int) -> bool:
@@ -243,7 +243,7 @@ class Theme(object):
     scrollarea_outer_margin: Tuple2NumberType
     scrollarea_position: str
     scrollbar_color: ColorType
-    scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
+    scrollbar_cursor: CursorType
     scrollbar_shadow: bool
     scrollbar_shadow_color: ColorType
     scrollbar_shadow_offset: int
@@ -257,7 +257,7 @@ class Theme(object):
     title_bar_modify_scrollarea: bool
     title_bar_style: int
     title_close_button: bool
-    title_close_button_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
+    title_close_button_cursor: CursorType
     title_floating: bool
     title_font: _font.FontType
     title_font_antialias: bool
@@ -283,7 +283,7 @@ class Theme(object):
     widget_box_border_width: int
     widget_box_inflate: Tuple2IntType
     widget_box_margin: Tuple2NumberType
-    widget_cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
+    widget_cursor: CursorType
     widget_font: _font.FontType
     widget_font_antialias: str
     widget_font_background_color: Optional[ColorType]

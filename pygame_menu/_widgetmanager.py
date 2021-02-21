@@ -38,7 +38,6 @@ import textwrap
 import warnings
 import webbrowser
 
-import pygame
 import pygame_menu
 import pygame_menu.events as _events
 import pygame_menu.locals as _locals
@@ -52,12 +51,7 @@ from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInpu
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, PaddingInstance, \
-    NumberType, Vector2NumberType, List, Tuple, NumberInstance, Tuple3IntType
-
-try:
-    PygameCursorType = (int, pygame.cursors.Cursor, type(None))
-except AttributeError:
-    PygameCursorType = (int, type(None))
+    NumberType, Vector2NumberType, List, Tuple, NumberInstance, Tuple3IntType, CursorInputInstance
 
 
 # noinspection PyProtectedMember
@@ -138,7 +132,7 @@ class WidgetManager(object):
 
         # cursor
         cursor = kwargs.pop('cursor', self._theme.widget_cursor)
-        assert isinstance(cursor, PygameCursorType)
+        assert isinstance(cursor, CursorInputInstance)
         attributes['cursor'] = cursor
 
         # font_antialias

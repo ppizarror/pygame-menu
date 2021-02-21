@@ -49,7 +49,7 @@ from pygame_menu.widgets.core.selection import Selection
 
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
-    NumberInstance, ColorInputType, EventType, EventVectorType, EventListType
+    NumberInstance, ColorInputType, EventType, EventVectorType, EventListType, CursorInputType, CursorType
 
 # Stores the previous cursor. This should be a common variable
 # because there's only 1 cursor
@@ -96,7 +96,7 @@ class Widget(Base):
     _border_inflate: Tuple2IntType
     _border_width: int
     _col_row_index: Tuple3IntType
-    _cursor: Optional[Union[int, 'pygame.cursors.Cursor']]
+    _cursor: CursorType
     _decorator: 'Decorator'
     _default_value: Any
     _draw_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
@@ -430,7 +430,7 @@ class Widget(Base):
         _restore_cursor()
         return self
 
-    def set_cursor(self, cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> 'Widget':
+    def set_cursor(self, cursor: CursorInputType) -> 'Widget':
         """
         Set the Widget cursor if user places the mouse over the Widget.
 

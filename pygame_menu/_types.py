@@ -43,12 +43,15 @@ from typing_extensions import Literal  # lgtm [py/unused-import]
 # Common types
 ArgsType = Optional[Sequence[Any]]
 CallbackType = Optional[Callable]
-ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
-ColorInputType = Union[ColorType, str, int, _Color]
 EventListType = List[EventType]
 EventVectorType = Union[EventListType, Tuple[EventType]]
 KwargsType = Optional[Mapping[Any, Any]]
 NumberType = Union[int, float]
+
+# Colors
+ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
+ColorInputType = Union[ColorType, str, int, _Color]
+ColorInputGradientType = Tuple[ColorInputType, ColorInputType, bool, bool]  # from, to, vertical, forward
 
 # Vectors
 Vector2BoolType = Union[Tuple[bool, bool], List[bool]]
@@ -87,3 +90,15 @@ ColorInputInstance = (int, str, tuple, list, _Color)
 NumberInstance = (int, float)
 PaddingInstance = (int, float, tuple, list)
 VectorInstance = (tuple, list)
+
+# Cursor
+try:
+    # noinspection PyUnresolvedReferences
+    from pygame.cursors import Cursor as _Cursor
+
+    CursorInputType = Optional[Union[int, _Cursor]]
+    CursorInputInstance = (int, _Cursor, type(None))
+except (AttributeError, ImportError):
+    CursorInputType = Optional[int]
+    CursorInputInstance = (int, type(None))
+CursorType = CursorInputType

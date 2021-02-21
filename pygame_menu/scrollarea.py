@@ -40,7 +40,7 @@ from pygame_menu._decorator import Decorator
 from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation
 from pygame_menu.widgets import ScrollBar, MenuBar
 
-from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
+from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
     Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType
 
 ORIENTATION_VERTICAL = _locals.ORIENTATION_VERTICAL
@@ -144,7 +144,7 @@ class ScrollArea(Base):
             parent_scrollarea: Optional['ScrollArea'] = None,
             scrollarea_id: str = '',
             scrollbar_color: ColorInputType = (235, 235, 235),
-            scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
+            scrollbar_cursor: CursorInputType = None,
             scrollbar_slider_color: ColorInputType = (200, 200, 200),
             scrollbar_slider_pad: NumberType = 0,
             scrollbar_thick: int = 20,
