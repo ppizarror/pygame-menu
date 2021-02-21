@@ -69,8 +69,8 @@ class DropSelect(Widget):
 
     .. code-block:: python
 
-        onchange((selected_item, index), a, b, c..., **kwargs)
-        onreturn((selected_item, index), a, b, c..., **kwargs)
+        onchange((selected_item, selected_index), a, b, c..., **kwargs)
+        onreturn((selected_item, selected_index), a, b, c..., **kwargs)
 
     For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
@@ -109,6 +109,7 @@ class DropSelect(Widget):
     :param selection_option_selected_font_color: Selected option font color
     :param kwargs: Optional keyword arguments
     """
+    _close_on_apply: bool
     _drop_frame: Optional['Frame']
     _index: int
     _items: Union[List[Tuple[Any, ...]], List[str]]
@@ -133,6 +134,9 @@ class DropSelect(Widget):
     _selection_option_border_color: ColorType
     _selection_option_border_width: int
     _selection_option_font_style: Dict[str, Any]
+    _selection_option_left_space: bool
+    _selection_option_left_space_height_factor: float
+    _selection_option_left_space_margin: Tuple3IntType
     _selection_option_padding: Tuple4IntType
     _selection_option_selected_bgcolor: ColorType
     _theme: Optional['pygame_menu.Theme']
@@ -167,7 +171,7 @@ class DropSelect(Widget):
             selection_option_font_color: ColorInputType = (0, 0, 0),
             selection_option_font_size: Optional[int] = None,
             selection_option_padding: PaddingType = 5,
-            selection_option_selected_bgcolor: ColorInputType = (230, 250, 247),
+            selection_option_selected_bgcolor: ColorInputType = (188, 227, 244),
             selection_option_selected_font_color: ColorInputType = (0, 0, 0),
             *args,
             **kwargs
@@ -220,10 +224,11 @@ class DropSelect(Widget):
             kwargs=kwargs
         )
 
+        self._close_on_apply = True
         self._default_value = default
         self._drop_frame = None
         self._index = default
-        self._items = items
+        self._items = items.copy()
         self._open_bottom = True
         self._open_middle = open_middle
         self._placeholder = placeholder
@@ -231,6 +236,12 @@ class DropSelect(Widget):
         self._selection_effect_draw_post = False
         self._theme = None
         self._title_size = (0, 0)
+
+        # If True adds a space equals to the height of the option at left, used for
+        # drawing some options (for example, ticks, boxes, etc)
+        self._selection_option_left_space = False
+        self._selection_option_left_space_height_factor = 1
+        self._selection_option_left_space_margin = (0, 0, 0)  # left, right, top
 
         # Style
         self._option_font = None
@@ -348,9 +359,10 @@ class DropSelect(Widget):
                 color=self._selection_option_border_color
             )
             btn.set_controls(
-                joystick=self._joystick_enabled,
+                joystick=False,
                 mouse=self._mouse_enabled,
-                touchscreen=self._touchscreen_enabled
+                touchscreen=self._touchscreen_enabled,
+                keyboard=False
             )
             if self._placeholder_add_to_selection_box:
                 font_color = self._selection_option_font_style['color'] if optid != 0 else self._font_readonly_color
@@ -373,6 +385,7 @@ class DropSelect(Widget):
             btn.set_padding(
                 padding=self._selection_option_padding
             )
+            btn.add_self_to_kwargs('btn')
             btn.set_tab_size(self._tab_size)
             btn.configured = True
             btn.set_menu(self._menu)
@@ -380,6 +393,15 @@ class DropSelect(Widget):
             self._option_buttons.append(btn)
 
             bh = btn.get_height() - self._selection_option_border_width
+            if self._selection_option_left_space and not (self._placeholder_add_to_selection_box and optid == 0):
+                prev_pad = btn._padding  # top, right, bottom, left
+                prev_padt: Tuple4IntType = btn._padding_transform
+                dh = int(btn.get_height(apply_padding=False) * self._selection_option_left_space_height_factor)
+                btn.set_attribute('left_space_height', dh)
+                m = self._selection_option_left_space_margin
+                btn._padding = prev_pad[0], prev_pad[1], prev_pad[2], prev_pad[3] + dh + m[0] + m[1]
+                btn._padding_transform = prev_padt[0], prev_padt[1], prev_padt[2], prev_padt[3] + dh + m[0] + m[1]
+
             total_height += bh
             if optid + 1 <= self._selection_box_height:
                 max_height += bh
@@ -525,15 +547,21 @@ class DropSelect(Widget):
             self._drop_frame.set_frame(frame)
         return self
 
-    def _click_option(self, index: int) -> None:
+    def _click_option(self, index: int, btn: 'Button') -> None:
         """
         Function triggered after option has been selected or clicked.
 
         :param index: Option index within list
         :return: None
         """
+        btn.set_attribute('ignore_scroll_to_widget')
+        prev_index = self._index
         self.set_value(index)
-        self.active = False
+        if self._index != prev_index and self._index != -1:
+            self.change(*self._items[self._index][1:])
+        if self._close_on_apply:
+            self.active = False
+        btn.remove_attribute('ignore_scroll_to_widget')
 
     def set_position(self, posx: NumberType, posy: NumberType) -> 'DropSelect':
         super(DropSelect, self).set_position(posx, posy)
@@ -547,7 +575,8 @@ class DropSelect(Widget):
                                                   self.get_attribute('delta_title_height', 0))
                 else:
                     self._drop_frame.set_position(posx + self._title_size[0],
-                                                  posy - self._drop_frame.get_attribute('height'))
+                                                  posy - self._drop_frame.get_attribute('height') +
+                                                  self._drop_frame.get_attribute('extra_margin'))
             else:
                 self._drop_frame.set_position(*self._compute_position_middle())
             for w in self._option_buttons:
@@ -625,19 +654,27 @@ class DropSelect(Widget):
         text = text.replace('\t', ' ' * self._tab_size)
         return self._option_font.render(text, self._font_antialias, color)
 
-    def _render(self) -> Optional[bool]:
-        if self._option_font is None:
-            return
+    def _get_current_selected_text(self) -> str:
+        """
+        Return the current selected text.
 
+        :return: Text
+        """
         if self._index == -1:
             current_selected = self._placeholder
         else:
             current_selected = self.get_value()[0][0]
+        return current_selected
+
+    def _render(self) -> Optional[bool]:
+        if self._option_font is None:
+            return
 
         # scroll_v = 0 if self._scrollarea is None else self._scrollarea.get_parent_scroll_value_percentual(
         #     ORIENTATION_VERTICAL)
         scroll_v = 0
         menu_height = 0 if self._menu is None else self._menu.get_height(widget=True)
+        current_selected = self._get_current_selected_text()
 
         if not self._render_hash_changed(current_selected, self._selected, self._visible, self._index, self.readonly,
                                          self.active, self._open_bottom, scroll_v, menu_height, self._open_middle,
@@ -751,7 +788,7 @@ class DropSelect(Widget):
         """
         return self._index
 
-    def get_value(self) -> Optional[Tuple[Union[Tuple[Any, ...], str], int]]:
+    def get_value(self) -> Tuple[Union[Tuple[Any, ...], str], int]:
         """
         Return the current value of the selected index.
 
@@ -828,7 +865,7 @@ class DropSelect(Widget):
 
             This method does not trigger any event (change).
 
-        :param item: Item to select, can be a string or an integer.
+        :param item: Item to select, can be a string or an integer
         :return: None
         """
         assert isinstance(item, (str, int)), 'item must be an string or an integer'
@@ -853,7 +890,8 @@ class DropSelect(Widget):
             if bindx == self._index:
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})
-                btn.scroll_to_widget(margin=5, scroll_parent=False)
+                if not self._drop_frame.has_attribute('ignorescroll'):
+                    btn.scroll_to_widget(margin=btn.get_height() if self._open_middle else 5, scroll_parent=False)
             else:
                 btn.set_background_color(self._selection_box_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color']})
@@ -932,14 +970,20 @@ class DropSelect(Widget):
             elif keydown and (event.key == _controls.KEY_APPLY) or \
                     joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
                 if self.active and self._index >= 0:
-                    self._sound.play_open_menu()
+                    self._sound.play_key_add()
                     self.apply(*self._items[self._index][1:])
-                self._toggle_drop()
+                if not (self.active and (not self._close_on_apply and self._index != -1)):
+                    self._toggle_drop()
                 updated = True
 
             # Press keys which active the drop but not apply
             elif keydown and (event.key == pygame.K_TAB):
-                if not self.active:
+                self._toggle_drop()
+                updated = True
+
+            # Close the selection
+            elif keydown and (event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE):
+                if self.active:
                     self._toggle_drop()
                 updated = True
 
@@ -968,7 +1012,12 @@ class DropSelect(Widget):
                 # Check for mouse clicks within
                 if self.active:
                     for btn in self._option_buttons:
+                        btn.set_attribute('ignore_scroll_to_widget')
                         updated = btn.update(events)
+                        try:
+                            btn.remove_attribute('ignore_scroll_to_widget')
+                        except IndexError:
+                            pass
                         if updated:
                             return True
 
@@ -1058,7 +1107,7 @@ class DropSelect(Widget):
             rect.x += self._title_size[0]
             rect.height += self._drop_frame.get_attribute('height') - self._drop_frame.get_attribute('extra_margin')
             if not self._open_bottom:
-                rect.y -= self._drop_frame.get_attribute('height')
+                rect.y -= self._drop_frame.get_attribute('height') - self._drop_frame.get_attribute('extra_margin')
             if self._open_middle:
                 x, y = self._compute_position_middle(add_offset=False)
                 rect.x = x
