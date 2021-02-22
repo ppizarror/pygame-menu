@@ -1624,3 +1624,38 @@ class FrameWidgetTest(unittest.TestCase):
         """
         Test frame title.
         """
+        menu = MenuUtils.generic_menu()
+
+        pad = 10
+        frame = menu.add.frame_v(300, 200, background_color=(170, 170, 170), padding=pad)
+
+        # self.assertRaises(ValueError, lambda: frame.get_title())
+        frame._accepts_title = False
+        self.assertRaises(pygame_menu.widgets.widget.frame._FrameDoNotAcceptTitle, lambda: frame.set_title('title'))
+        frame._accepts_title = True
+        self.assertEqual(frame.get_size(), (300, 200))
+        self.assertEqual(frame.get_title(), '')
+
+        # Add a title
+        self.assertNotIn(frame, menu._scrollable_frames)
+        frame.set_title('epic', padding_outer=3, title_font_size=20, padding_inner=(0, 3), title_font_color='white',
+                        title_alignment=pygame_menu.locals.ALIGN_CENTER)
+        self.assertIn(frame, menu._scrollable_frames)
+        self.assertEqual(frame.get_size(), (300, 234))
+        self.assertEqual(frame.get_position(), (150 + pad, 73 + pad))
+        self.assertEqual(len(frame._frame_title.get_widgets()), 1)  # The title itself
+        self.assertEqual(frame._frame_title.get_widgets()[0].get_size(), (38, 28))
+        self.assertEqual(frame._frame_title.get_widgets()[0].get_title(), 'epic')
+        self.assertEqual(frame.get_title(), 'epic')
+        self.assertEqual(frame._title_height(), 34)
+        self.assertEqual(frame.get_position(), (150 + pad, 73 + pad))
+        self.assertEqual(frame._frame_title.get_position(), (156, 76))
+        menu.render()
+        self.assertEqual(frame.get_position(), (150 + pad, 56 + pad))
+        self.assertEqual(frame._frame_title.get_position(), (156, 59))
+        frame.pack(menu.add.button('Button'))
+
+        # Add button to title
+        frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, lambda: print('clicked'))
+
+        menu.mainloop(surface)

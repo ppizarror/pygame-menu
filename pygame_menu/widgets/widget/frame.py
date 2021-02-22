@@ -29,7 +29,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Frame']
+__all__ = [
+
+    # Class
+    'Frame',
+
+    # Types
+    'FrameTitleBackgroundColorType',
+    'FrameTitleButtonType',
+
+    # Constants
+    'FRAME_DEFAULT_TITLE_BACKGROUND_COLOR',
+    'FRAME_TITLE_BUTTON_CLOSE',
+    'FRAME_TITLE_BUTTON_MAXIMIZE',
+    'FRAME_TITLE_BUTTON_MINIMIZE'
+
+]
 
 import warnings
 
@@ -38,11 +53,28 @@ import pygame_menu
 import pygame_menu.locals as _locals
 
 from pygame_menu._decorator import Decorator
-from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation
+from pygame_menu.baseimage import BaseImage
+from pygame_menu.locals import CURSOR_HAND
+from pygame_menu.font import FontType, FontInstance
+from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
+    assert_color, fill_gradient, parse_padding
 from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.widget.button import Button
+from pygame_menu.widgets.widget.label import Label
 
-from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, \
-    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType
+from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, Literal, \
+    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType, PaddingType, ColorInputGradientType, \
+    CallbackType, CursorInputType
+
+# Constants
+FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
+FRAME_TITLE_BUTTON_CLOSE = 'close'
+FRAME_TITLE_BUTTON_MAXIMIZE = 'maximize'
+FRAME_TITLE_BUTTON_MINIMIZE = 'minimize'
+
+# Types
+FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradientType, BaseImage]]
+FrameTitleButtonType = Literal[FRAME_TITLE_BUTTON_CLOSE, FRAME_TITLE_BUTTON_MAXIMIZE, FRAME_TITLE_BUTTON_MINIMIZE]
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -79,11 +111,16 @@ class Frame(Widget):
     :param orientation: Frame orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
     :param frame_id: ID of the frame
     """
+    _accepts_title: bool
     _control_widget: Optional['Widget']
     _control_widget_last_pos: Optional[Vector2NumberType]
     _frame_scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']
+    _frame_size: Tuple2IntType
+    _frame_title: Optional['Frame']
     _has_frames: bool  # True if frame has packed other frames
+    _has_title: bool
     _height: int
+    _is_title: bool
     _orientation: str
     _pack_margin_warning: bool
     _pos: Dict[str, Tuple[int, int]]  # Widget positioning
@@ -111,9 +148,12 @@ class Frame(Widget):
         assert_orientation(orientation)
 
         # Internals
+        self._accepts_title = True
         self._control_widget = None
         self._control_widget_last_pos = None  # This checks if menu has updated widget position
+        self._is_title = False
         self._frame_scrollarea = None
+        self._frame_size = (width, height)  # Size of the frame, set in make_scrollarea
         self._has_frames = False
         self._height = int(height)
         self._orientation = orientation
@@ -126,12 +166,256 @@ class Frame(Widget):
         self._widgets_props = {}
         self._width = int(width)
 
+        # Title
+        self._frame_title = None
+        self._has_title = False
+
         # Configure widget publics
         self.first_index = -1
         self.horizontal = orientation == _locals.ORIENTATION_HORIZONTAL
         self.is_scrollable = False
         self.is_selectable = False
         self.last_index = -1
+
+    def set_title(
+            self,
+            title: str,
+            background_color: FrameTitleBackgroundColorType = FRAME_DEFAULT_TITLE_BACKGROUND_COLOR,
+            padding_inner: PaddingType = 0,
+            padding_outer: PaddingType = 0,
+            title_alignment: str = _locals.ALIGN_LEFT,
+            title_buttons_alignment: str = _locals.ALIGN_RIGHT,
+            title_font: Optional[FontType] = None,
+            title_font_color: Optional[ColorInputType] = None,
+            title_font_size: Optional[int] = None
+    ) -> 'Frame':
+        """
+        Add a title to the frame.
+
+        :param title: New title
+        :param background_color: Title background color. It can be a Color, a gradient, or an image
+        :param padding_inner: Padding inside the title
+        :param padding_outer: Paddint outside the title (respect to the Frame)
+        :param title_alignment: Alignment of the title
+        :param title_buttons_alignment: Alignment of the title buttons (if appended later)
+        :param title_font: Title font. If ``None`` uses the same as the Frame
+        :param title_font_color: Title font color. If ``None`` uses the same as the Frame
+        :param title_font_size: Title font size (px). If ``None`` uses the same as the Frame
+        :return: Self reference
+        """
+        assert self.configured, '{0} must be configured before setting a title'.format(self.get_class_id())
+        if not self._accepts_title:
+            raise _FrameDoNotAcceptTitle('{0} does not accept a title'.format(self.get_class_id()))
+        self._title = title
+
+        # Format title font properties
+        if title_font is None:
+            title_font = self._font_name
+        assert isinstance(title_font, FontInstance)
+        if title_font_color is None:
+            title_font_color = self._font_color
+        title_font_color = assert_color(title_font_color)
+        if title_font_size is None:
+            title_font_size = self._font_size
+        assert isinstance(title_font_size, int) and title_font_size > 0
+        assert_alignment(title_alignment)
+        assert_alignment(title_buttons_alignment)
+
+        # Check alignment are different
+        assert title_alignment != title_buttons_alignment, \
+            'title alignment and buttons alignment must be different'
+
+        # Create title widget
+        title_label = Label(title)
+        title_label.set_font(
+            antialias=self._font_antialias,
+            background_color=None,
+            color=title_font_color,
+            font=title_font,
+            font_size=title_font_size,
+            readonly_color=self._font_readonly_color,
+            readonly_selected_color=self._font_readonly_selected_color,
+            selected_color=self._font_selected_color
+        )
+        title_label.set_tab_size(self._tab_size)
+        title_label.configured = True
+        title_label.set_menu(self._menu)
+
+        # Create frame title
+        pad_outer = parse_padding(padding_outer)  # top, right, bottom, left
+        pad_inner = parse_padding(padding_inner)
+        self._frame_title = Frame(self.get_width() - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
+                                  title_label.get_height(),
+                                  _locals.ORIENTATION_HORIZONTAL)
+        self._frame_title.translate(pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0])
+        self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
+        self._frame_title._menu = self._menu
+        self._frame_title.set_scrollarea(self._scrollarea)
+        self._frame_title._accepts_title = False
+        self._frame_title._is_title = True
+        self._frame_title.set_padding(padding_inner)
+        self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
+
+        # Set background
+        is_color = True
+        try:
+            assert_color(background_color, warn_if_invalid=False)
+        except (ValueError, AssertionError):
+            is_color = False
+        if isinstance(background_color, pygame_menu.BaseImage) or is_color:
+            self._frame_title.set_background_color(background_color)
+        else:  # Is gradient
+            assert isinstance(background_color, tuple)
+            assert len(background_color) == 4, \
+                'gradient color type must has 4 components (from color, to color, vertical, forward)'
+            w, h = self._frame_title.get_size()
+            new_surface = make_surface(w, h)
+            fill_gradient(
+                surface=new_surface,
+                color=background_color[0],
+                gradient=background_color[1],
+                vertical=background_color[2],
+                forward=background_color[3]
+            )
+            self._frame_title.get_decorator().add_surface(-w / 2, -h / 2, new_surface)
+
+        # Pack title
+        self._frame_title.pack(title_label, alignment=title_alignment)
+
+        self._has_title = True
+        self._render()
+        self.set_position(self._position[0], self._position[1])
+        self.force_menu_surface_update()
+
+        # Title adds frame to scrollable frames even if not scrollable
+        # noinspection PyProtectedMember
+        scrollable_widgets = self._menu._scrollable_frames
+        if self._menu is not None and (self not in scrollable_widgets):
+            scrollable_widgets.append(self)
+            self._sort_menu_scrollable_frames()
+
+        return self
+
+    def add_title_generic_button(self, button: 'Button', margin: Vector2NumberType = (0, 0)) -> 'Frame':
+        """
+        Add button to title. Button kwargs receive the Frame reference in ``frame`` argument, such as:
+
+        .. code-block:: python
+
+            onreturn_button_callback(*args, frame=Frame, **kwargs)
+
+        :param button: Button object
+        :param margin: Pack margin on x-axis and y-axis in px
+        :return: Self reference
+        """
+        assert self._has_title, \
+            '{0} does not have any title, call set_title(...) beforehand'.format(self.get_class_id())
+        assert isinstance(button, Button)
+        assert button.get_menu() is None, \
+            '{0} menu reference must be None'.format(button.get_class_id())
+        assert button.configured, \
+            '{0} must be configured before addition to title'.format(button.get_class_id())
+        assert button.get_frame() is None, \
+            '{0} frame must be None'.format(button.get_class_id())
+
+        # Check sizing
+        total_title_height = self._frame_title.get_height(apply_padding=False)
+        assert button.get_height() <= total_title_height, \
+            '{0} height ({0}) must be lower than frame title height ({1})' \
+            ''.format(button.get_class_id(), button.get_height(), total_title_height)
+
+        # Add frame to button kwargs
+        if 'frame' in button._kwargs.keys():
+            raise ValueError('{0} already has frame kwargs option'.format(button.get_class_id()))
+        button._kwargs['frame'] = self
+
+        # Pack
+        align = self._frame_title.get_attribute('buttons_alignment')
+        self._frame_title.pack(button, alignment=align, margin=margin)
+
+        return self
+
+    def add_title_button(
+            self,
+            style: FrameTitleButtonType,
+            callback: CallbackType,
+            background_color: ColorInputType = (150, 150, 150),
+            cursor: CursorInputType = CURSOR_HAND,
+            margin: Vector2NumberType = (0, 0),
+            symbol_color: ColorInputType = (0, 0, 0),
+            symbol_height: NumberType = 0.75
+    ) -> 'Button':
+        """
+        Add predefined button to title.
+
+        :param style: Style of the button (changes the symbol)
+        :param callback: Callback of the button if pressed
+        :param cursor: Button cursor
+        :param background_color: Button background color
+        :param margin: Pack margin on x-axis and y-axis in px
+        :param symbol_color: Color of the symbol
+        :param symbol_height: Symbol height factor, if ``1.0`` uses 100% of the button height
+        :return: Added button
+        """
+        assert self._has_title, \
+            '{0} does not have any title, call set_title(...) beforehand'.format(self.get_class_id())
+        assert isinstance(symbol_height, NumberInstance) and 0 <= symbol_height <= 1
+        h = self._frame_title.get_height(apply_padding=False) * symbol_height
+        dh = self._frame_title.get_height(apply_padding=False) * (1 - symbol_height)
+        if dh > 0:
+            dh += 1
+
+        # Create button
+        btn = Button('', onreturn=callback)
+        btn.set_padding(h / 2)
+        btn.translate(0, dh / 2)
+        btn.set_cursor(cursor)
+        btn.set_background_color(background_color)
+        btn.configured = True
+
+        # Create style decoration
+        btn_rect = btn.get_rect()
+        btn_rect.x = 0
+        btn_rect.y = 0
+        if style == FRAME_TITLE_BUTTON_CLOSE:
+            style_pos = (
+                (btn_rect.left + 4, btn_rect.top + 4),
+                (btn_rect.centerx, btn_rect.centery),
+                (btn_rect.right - 4, btn_rect.top + 4),
+                (btn_rect.centerx, btn_rect.centery),
+                (btn_rect.right - 4, btn_rect.bottom - 4),
+                (btn_rect.centerx, btn_rect.centery),
+                (btn_rect.left + 4, btn_rect.bottom - 4),
+                (btn_rect.centerx, btn_rect.centery),
+                (btn_rect.left + 4, btn_rect.top + 4),
+            )
+        else:
+            raise ValueError('unknown button style "{0}"'.format(style))
+
+        # Draw style
+        style_surface = make_surface(h, h, alpha=True)
+        pygame.draw.polygon(style_surface, symbol_color, style_pos)
+        btn.get_decorator().add_surface(0, 0, surface=style_surface, centered=True)
+
+        self.add_title_generic_button(btn, margin)
+        return btn
+
+    def remove_title(self) -> 'Frame':
+        """
+        Remove title from current Frame.
+
+        :return: Self reference
+        """
+        if self._has_title:
+            self._frame_title = None
+            self._has_title = False
+        return self
+
+    def get_title(self) -> str:
+        if not self._has_title:
+            # raise ValueError('{0} does not have any title'.format(self.get_class_id()))
+            return ''
+        return self._title
 
     def get_inner_size(self) -> Tuple2IntType:
         """
@@ -148,7 +432,7 @@ class Frame(Widget):
 
         :return: None
         """
-        if self._menu is not None and self.is_scrollable:
+        if self._menu is not None:
             if len(self._menu._scrollable_frames) == 0:
                 return
             widgets: List[Tuple[int, 'Widget']] = []
@@ -157,7 +441,8 @@ class Frame(Widget):
                     sa = w.get_scrollarea(inner=True)
                 else:
                     sa = w.get_scrollarea()
-                widgets.append((-sa.get_depth(), w))
+                depth = 0 if sa is None else (-sa.get_depth())
+                widgets.append((depth, w))
             widgets.sort(key=lambda x: x[0])
             self._menu._scrollable_frames = []
             for w in widgets:
@@ -172,7 +457,7 @@ class Frame(Widget):
     # noinspection PyProtectedMember
     def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
         # If menu is set, remove from previous scrollable if enabled
-        if self._menu is not None and self.is_scrollable:
+        if self._menu is not None:
             scrollable_widgets = self._menu._scrollable_frames
             if self in scrollable_widgets:
                 scrollable_widgets.remove(self)
@@ -214,7 +499,7 @@ class Frame(Widget):
             max_height: Optional[NumberType],
             scrollarea_color: Optional[ColorInputType],
             scrollbar_color: ColorInputType,
-            scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']],
+            scrollbar_cursor: CursorInputType,
             scrollbar_shadow: bool,
             scrollbar_shadow_color: ColorInputType,
             scrollbar_shadow_offset: int,
@@ -267,9 +552,8 @@ class Frame(Widget):
             self.is_scrollable = True
             self.set_padding(0)
         else:
-            # Configure rect
-            self._rect.height = self._height
-            self._rect.width = self._width
+            # Configure size
+            self._frame_size = (self._width, self._height)
             self._frame_scrollarea = None
 
             # If in previous scrollable frames
@@ -311,9 +595,14 @@ class Frame(Widget):
         # Configure area
         self._frame_scrollarea.set_world(self._surface)
 
-        # Configure rect
-        self._rect.height = max_height + sx
-        self._rect.width = max_width + sy
+        # Configure size
+        self._frame_size = (max_width + sy, max_height + sx)
+
+        # If has title
+        if self._has_title:
+            msg = 'previous {0} title has been removed'.format(self.get_class_id())
+            warnings.warn(msg)
+            self.remove_title()
 
         return self
 
@@ -326,9 +615,16 @@ class Frame(Widget):
         return self.first_index, self.last_index
 
     def update(self, events: EventVectorType) -> bool:
+        updated = False
+        if self._has_title:
+            updated = self._frame_title.update(events)
+        if self._is_title:
+            for w in self.get_widgets():
+                if w.update(events):
+                    return True
         if not self.is_scrollable or not self.is_visible() or self.readonly:
-            return False
-        return self._frame_scrollarea.update(events)
+            return updated
+        return updated or self._frame_scrollarea.update(events)
 
     def select(self, *args, **kwargs) -> 'Frame':
         return self
@@ -339,8 +635,22 @@ class Frame(Widget):
     def _apply_font(self) -> None:
         pass
 
+    def _title_height(self) -> int:
+        """
+        Return the title height.
+
+        :return: Title height in px
+        """
+        if not self._has_title:
+            return 0
+        h = self._frame_title.get_height()
+        h += self._frame_title.get_translate()[1]
+        h += self._frame_title.get_attribute('pbottom')  # Bottom padding
+        return h
+
     def _render(self) -> None:
-        pass
+        self._rect.height = self._frame_size[1] + self._title_height()
+        self._rect.width = self._frame_size[0]
 
     def _draw(self, *args, **kwargs) -> None:
         pass
@@ -369,7 +679,7 @@ class Frame(Widget):
 
         :return: ScrollArea decorator
         """
-        if not self.is_scrollable:
+        if self.is_scrollable:
             return self._frame_scrollarea.get_decorator()
         return self._decorator
 
@@ -388,6 +698,11 @@ class Frame(Widget):
             raise IndexError('{0} widget does not exist on {1}'.format(widget.get_class_id(), self.get_class_id()))
 
     def set_position(self, posx: NumberType, posy: NumberType) -> 'Frame':
+        if self._has_title:
+            pad = self.get_padding()  # top, right, bottom, left
+            self._frame_title.set_position(posx - pad[3], posy - pad[0])
+            for w in self._frame_title.get_widgets():
+                w.set_position_relative_to_frame()
         super(Frame, self).set_position(posx, posy)
         if self.is_scrollable:
             self._frame_scrollarea.set_position(self._rect.x, self._rect.y)
@@ -431,7 +746,13 @@ class Frame(Widget):
             if selected_widget is not None and selected_widget.last_surface != self._surface:  # Draw after was not completed
                 selected_widget.draw_after_if_selected(None)
             self._draw_border(surface)
+
+        # If title
+        if self._has_title:
+            self._frame_title.draw(surface)
+
         self.apply_draw_callbacks()
+
         return self
 
     def _get_ht(self, widget: 'Widget', a: str) -> int:
@@ -598,6 +919,7 @@ class Frame(Widget):
                 ty = 0
             else:
                 tx, ty = self._pos[w]
+            ty += self._title_height()
             if widget.get_menu() is None:  # Widget is only appended to Frame
                 fx, fy = self.get_position()
                 margin = widget.get_margin()
@@ -621,6 +943,10 @@ class Frame(Widget):
                 self._recursive_render += 1
             else:
                 self._recursive_render = 0
+
+        # If frame has title
+        if self._has_title:
+            self._frame_title.update_position()
 
         return self
 
@@ -1052,5 +1378,12 @@ class Frame(Widget):
 class _FrameSizeException(Exception):
     """
     If widget size is greater than frame raises exception.
+    """
+    pass
+
+
+class _FrameDoNotAcceptTitle(Exception):
+    """
+    Raised if the frame does not accept a title.
     """
     pass
