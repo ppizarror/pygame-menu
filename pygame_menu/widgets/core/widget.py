@@ -133,6 +133,7 @@ class Widget(Base):
     _onselect: CallbackType
     _padding: Tuple4IntType
     _padding_transform: Tuple4IntType
+    _position: Tuple2IntType
     _rect: 'pygame.Rect'
     _rect_size_delta: Tuple2IntType
     _scale: List[Union[bool, NumberType]]
@@ -189,6 +190,7 @@ class Widget(Base):
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
+        self._position = (0, 0)
         self._scrollarea = None  # Widget scrollarea container
         self._selected = False  # Use select() to modify this status
         self._selection_time = 0
@@ -1475,8 +1477,9 @@ class Widget(Base):
         assert isinstance(posy, NumberInstance)
         if self.lock_position:
             return self
-        self._rect.x = int(posx) + self._translate[0] + self._translate_virtual[0]
-        self._rect.y = int(posy) + self._translate[1] + self._translate_virtual[1]
+        self._position = (int(posx), int(posy))
+        self._rect.x = self._position[0] + self._translate[0] + self._translate_virtual[0]
+        self._rect.y = self._position[1] + self._translate[1] + self._translate_virtual[1]
         return self
 
     def get_position(
