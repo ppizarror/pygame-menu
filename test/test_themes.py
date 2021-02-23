@@ -31,9 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ThemeTest']
 
-import unittest
-import pygame_menu
 from pathlib import Path
+import unittest
+
+import pygame_menu
 
 
 class ThemeTest(unittest.TestCase):

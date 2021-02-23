@@ -32,12 +32,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['FrameWidgetTest']
 
-import unittest
-
 from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2
+import unittest
 
 import pygame
 import pygame_menu
+
 from pygame_menu.controls import KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_RIGHT, JOY_LEFT, KEY_MOVE_DOWN
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 
@@ -1658,4 +1658,4 @@ class FrameWidgetTest(unittest.TestCase):
         # Add button to title
         frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, lambda: print('clicked'))
 
-        menu.mainloop(surface)
+        # menu.mainloop(surface)

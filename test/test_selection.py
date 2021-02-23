@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SelectionTest']
 
+from test._utils import MenuUtils, surface
 import copy
 import unittest
-from test._utils import MenuUtils, surface
 
 from pygame_menu.widgets import Button
-from pygame_menu.widgets.selection import *
+from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, HighlightSelection, NoneSelection
 
 
 class SelectionTest(unittest.TestCase):

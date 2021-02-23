@@ -31,18 +31,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['WidgetsTest']
 
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, \
+    PYGAME_V2, WINDOW_SIZE
 import copy
 import unittest
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, \
-    PYGAME_V2, WINDOW_SIZE
-
 import pygame
 import pygame_menu
-from pygame_menu import locals as _locals
+
 from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, \
     KEY_MOVE_DOWN, KEY_MOVE_UP
-from pygame_menu.locals import ORIENTATION_VERTICAL
+from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, POSITION_SOUTHEAST
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
@@ -689,14 +688,14 @@ class WidgetsTest(unittest.TestCase):
                                'culpa qui officia deserunt mollit anim id est laborum.',
                                max_char=33,
                                margin=(3, 5),
-                               align=_locals.ALIGN_LEFT,
+                               align=ALIGN_LEFT,
                                font_size=3)
         self.assertEqual(len(label), 15)
         w = label[0]
         self.assertFalse(w.is_selectable)
         self.assertEqual(w.get_margin()[0], 3)
         self.assertEqual(w.get_margin()[1], 5)
-        self.assertEqual(w.get_alignment(), _locals.ALIGN_LEFT)
+        self.assertEqual(w.get_alignment(), ALIGN_LEFT)
         self.assertEqual(w.get_font_info()['size'], 3)
         w.draw(surface)
         self.assertFalse(w.update([]))
@@ -984,7 +983,7 @@ class WidgetsTest(unittest.TestCase):
             1,  # int
             'a',  # str
             True,  # bool
-            _locals,  # module
+            pygame,  # module
             surface,  # pygame
             1.1,  # float
             menu.add.button('eee'),  # widget
@@ -1506,7 +1505,7 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             drop._touchscreen_enabled = True
             self.assertTrue(drop.update(PygameEventUtils.middle_rect_click(drop.get_focus_rect(), menu=menu,
-                                                                           evtype=pygame.FINGERDOWN)))
+                                                                           evtype=FINGERDOWN)))
             self.assertTrue(drop.active)
 
         # Scroll to bottom and close, then open again, this should scroll to current selected
@@ -2042,7 +2041,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(sb.get_thickness(), 80)
         self.assertIsNone(sb.get_scrollarea())
 
-        sb.set_shadow(color=(245, 245, 245), position=_locals.POSITION_SOUTHEAST)
+        sb.set_shadow(color=(245, 245, 245), position=POSITION_SOUTHEAST)
         self.assertFalse(sb._font_shadow)
 
         sb.set_position(x, y)

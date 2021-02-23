@@ -32,8 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['FontTest']
 
 from pathlib import Path
-import unittest
 from test._utils import MenuUtils
+import unittest
 
 import pygame_menu
 

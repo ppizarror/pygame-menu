@@ -50,6 +50,7 @@ import pygame
 import pygame_menu
 
 from pygame_menu.font import FONT_EXAMPLES
+from pygame_menu.locals import FINGERDOWN, FINGERMOTION, FINGERUP
 from pygame_menu.utils import assert_vector
 
 # noinspection PyProtectedMember
@@ -64,19 +65,6 @@ WINDOW_SIZE = (600, 600)  # Width, height
 # Init pygame
 pygame.init()
 surface = pygame.display.set_mode(WINDOW_SIZE)
-
-# Events compatibility with lower pygame versions
-FINGERDOWN = -1
-if hasattr(pygame, 'FINGERDOWN'):
-    FINGERDOWN = pygame.FINGERDOWN
-
-FINGERUP = -1
-if hasattr(pygame, 'FINGERUP'):
-    FINGERUP = pygame.FINGERUP
-
-FINGERMOTION = -1
-if hasattr(pygame, 'FINGERMOTION'):
-    FINGERMOTION = pygame.FINGERMOTION
 
 TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
 TEST_THEME.widget_margin = (0, 10)

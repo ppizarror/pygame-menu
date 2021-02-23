@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['MenuTest']
 
+from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2
 from typing import Any, Tuple
 import copy
 import math
@@ -43,9 +44,8 @@ import pygame_menu
 from pygame_menu import events
 from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_DOWN, JOY_UP, \
     JOY_LEFT, JOY_RIGHT
+from pygame_menu.locals import FINGERDOWN, FINGERMOTION
 from pygame_menu.widgets import Label, Button
-
-from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2
 
 # Configure the tests
 TEST_TIME_DRAW = False
@@ -1508,17 +1508,17 @@ class MenuTest(unittest.TestCase):
 
         # Fingerdown don't change selected widget if _touchscreen_motion_selection is enabled
         self.assertTrue(menu._touchscreen_motion_selection)
-        menu.update(PygameEventUtils.middle_rect_click(widg[0], evtype=pygame.FINGERDOWN))
+        menu.update(PygameEventUtils.middle_rect_click(widg[0], evtype=FINGERDOWN))
         # self.assertNotEqual(menu.get_selected_widget(), widg[0])
 
         # If touchscreen motion is disabled, then fingerdown should select the widget
         menu._touchscreen_motion_selection = False
-        menu.update(PygameEventUtils.middle_rect_click(widg[1], evtype=pygame.FINGERDOWN))
+        menu.update(PygameEventUtils.middle_rect_click(widg[1], evtype=FINGERDOWN))
         self.assertEqual(menu.get_selected_widget(), widg[1])
         menu._touchscreen_motion_selection = True
 
         # Fingermoution should select widgets as touchscreen is active
-        menu.update(PygameEventUtils.middle_rect_click(widg[0], evtype=pygame.FINGERMOTION))
+        menu.update(PygameEventUtils.middle_rect_click(widg[0], evtype=FINGERMOTION))
         self.assertEqual(menu.get_selected_widget(), widg[0])
 
         # Infinite joy

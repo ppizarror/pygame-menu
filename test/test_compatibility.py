@@ -31,8 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['CompatibilityTest']
 
-import unittest
 from test._utils import MenuUtils, surface
+import unittest
 
 import pygame_menu
 

@@ -31,17 +31,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['BaseImageTest']
 
-import unittest
+from pathlib import Path
 from test._utils import surface, PYGAME_V2
-
-import io
 import base64
-
 import copy
+import io
+import unittest
+
 import pygame
 import pygame_menu
-from pygame_menu.baseimage import *
-from pathlib import Path
+
+from pygame_menu.baseimage import IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, \
+    IMAGE_MODE_REPEAT_XY, IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE
 
 
 class BaseImageTest(unittest.TestCase):

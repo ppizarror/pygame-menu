@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['DecoratorTest']
 
+from test._utils import MenuUtils, surface, TEST_THEME
 import copy
-import timeit
-import unittest
 import pygame
 import pygame_menu
-from test._utils import MenuUtils, surface, TEST_THEME
+import timeit
+import unittest
 
 # Configure the tests
 TEST_TIME_DRAW = False
