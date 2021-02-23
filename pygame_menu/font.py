@@ -52,14 +52,16 @@ __all__ = [
     'FontInstance',
 
     # Font utils
+    'assert_font',
     'get_font'
 
 ]
 
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Any
 import os.path as path
-import pygame.font as _font
+
+import pygame.font as __font
 
 # Available fonts path
 __fonts_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'fonts', '{0}')
@@ -85,11 +87,22 @@ FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRAN
 # Stores font cache
 _cache = {}
 
-FontType = Union[str, _font.Font, Path]
-FontInstance = (str, _font.Font, Path)
+FontType = Union[str, __font.Font, Path]
+FontInstance = (str, __font.Font, Path)
 
 
-def get_font(name: FontType, size: int) -> '_font.Font':
+def assert_font(font: Any) -> None:
+    """
+    Asserts if the given object is a font type.
+
+    :param font: Font object
+    :return: None
+    """
+    assert isinstance(font, FontInstance), \
+        'value must be a font type (str, Path, pygame.Font)'
+
+
+def get_font(name: FontType, size: int) -> '__font.Font':
     """
     Return a :py:class:`pygame.font.Font` object from a name or file.
 
@@ -97,13 +110,14 @@ def get_font(name: FontType, size: int) -> '_font.Font':
     :param size: Font size (px)
     :return: Font object
     """
-    assert isinstance(name, FontInstance)
+    assert_font(name)
     assert isinstance(size, int)
 
-    font: Optional['_font.Font']
-    if isinstance(name, _font.Font):
+    font: Optional['__font.Font']
+    if isinstance(name, __font.Font):
         font = name
         return font
+
     else:
         name = str(name)
 
@@ -116,12 +130,12 @@ def get_font(name: FontType, size: int) -> '_font.Font':
         # Font is not a file, then use a system font
         if not path.isfile(name):
             font_name = name
-            name = _font.match_font(font_name)
+            name = __font.match_font(font_name)
 
             if name is None:  # Show system available fonts
                 from difflib import SequenceMatcher
                 from random import randrange
-                system_fonts = _font.get_fonts()
+                system_fonts = __font.get_fonts()
 
                 # Get the most similar example
                 most_similar = 0
@@ -162,7 +176,7 @@ def get_font(name: FontType, size: int) -> '_font.Font':
         if (name, size) in _cache:
             return _cache[(name, size)]
         try:
-            font = _font.Font(name, size)
+            font = __font.Font(name, size)
         except IOError:
             pass
 
