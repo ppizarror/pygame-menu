@@ -32,7 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['main']
 
 import pygame
-import pygame_menu.locals as _locals
+import pygame_menu
+
 from pygame_menu.examples import create_example_window
 from pygame_menu.utils import make_surface
 from pygame_menu.widgets import ScrollBar
@@ -110,7 +111,7 @@ def main(test: bool = False) -> None:
                      slider_pad=2,
                      page_ctrl_thick=thick_h,
                      onchange=h_changed)
-    sb_h.set_shadow(color=(0, 0, 0), position=_locals.POSITION_SOUTHEAST)
+    sb_h.set_shadow(color=(0, 0, 0), position=pygame_menu.locals.POSITION_SOUTHEAST)
     sb_h.set_controls(False)
     sb_h.set_position(0, scr_size[1] - thick_h)
     sb_h.set_page_step(scr_size[0] - thick_v)
@@ -120,15 +121,15 @@ def main(test: bool = False) -> None:
     sb_v = ScrollBar(scr_size[1] - thick_h,
                      (0, world.get_height() - scr_size[1] + thick_h),
                      '',
-                     _locals.ORIENTATION_VERTICAL,
+                     pygame_menu.locals.ORIENTATION_VERTICAL,
                      6,
                      (135, 193, 180),
                      thick_v,
                      (253, 246, 220),
                      onchange=v_changed)
     sb_v.set_shadow(color=(52, 54, 56),
-                         position=_locals.POSITION_NORTHWEST,
-                         offset=4)
+                    position=pygame_menu.locals.POSITION_NORTHWEST,
+                    offset=4)
     sb_v.set_controls(False)
     sb_v.set_position(scr_size[0] - thick_v, 0)
     sb_v.set_page_step(scr_size[1] - thick_h)

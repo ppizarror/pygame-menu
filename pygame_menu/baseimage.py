@@ -60,9 +60,10 @@ import math
 import os.path as path
 
 import pygame
-import pygame_menu.locals as _locals
 
 from pygame_menu._base import Base
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, POSITION_WEST, \
+    POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, POSITION_SOUTH, POSITION_NORTH
 from pygame_menu.utils import assert_vector, assert_position, assert_color
 
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
@@ -129,7 +130,7 @@ class BaseImage(Base):
             image_path: Union[str, 'Path', 'BytesIO'],
             drawing_mode: int = IMAGE_MODE_FILL,
             drawing_offset: Vector2NumberType = (0, 0),
-            drawing_position: str = _locals.POSITION_NORTHWEST,
+            drawing_position: str = POSITION_NORTHWEST,
             load_from_file: bool = True,
             frombase64: bool = False,
             image_id: str = ''
@@ -728,23 +729,23 @@ class BaseImage(Base):
         :return: Delta position on x-axis and y-axis (x, y)
         """
         rect = self.get_rect()
-        if self._drawing_position == _locals.POSITION_NORTHWEST:
+        if self._drawing_position == POSITION_NORTHWEST:
             return rect.topleft
-        elif self._drawing_position == _locals.POSITION_NORTH:
+        elif self._drawing_position == POSITION_NORTH:
             return rect.midtop
-        elif self._drawing_position == _locals.POSITION_NORTHEAST:
+        elif self._drawing_position == POSITION_NORTHEAST:
             return rect.topright
-        elif self._drawing_position == _locals.POSITION_WEST:
+        elif self._drawing_position == POSITION_WEST:
             return rect.midleft
-        elif self._drawing_position == _locals.POSITION_CENTER:
+        elif self._drawing_position == POSITION_CENTER:
             return rect.center
-        elif self._drawing_position == _locals.POSITION_EAST:
+        elif self._drawing_position == POSITION_EAST:
             return rect.midright
-        elif self._drawing_position == _locals.POSITION_SOUTHWEST:
+        elif self._drawing_position == POSITION_SOUTHWEST:
             return rect.bottomleft
-        elif self._drawing_position == _locals.POSITION_SOUTH:
+        elif self._drawing_position == POSITION_SOUTH:
             return rect.midbottom
-        elif self._drawing_position == _locals.POSITION_SOUTHEAST:
+        elif self._drawing_position == POSITION_SOUTHEAST:
             return rect.bottomright
         else:
             raise ValueError('unknown drawing position')

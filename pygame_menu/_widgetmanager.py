@@ -40,18 +40,17 @@ import webbrowser
 
 import pygame_menu
 import pygame_menu.events as _events
-import pygame_menu.locals as _locals
-import pygame_menu.themes as _themes
-import pygame_menu.utils as _utils
 
-from pygame_menu.font import FontInstance
+from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+from pygame_menu.font import assert_font
 from pygame_menu.scrollarea import get_scrollbars_from_position
+from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, uuid4, parse_padding
 from pygame_menu.widgets import Widget
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, PaddingInstance, \
-    NumberType, Vector2NumberType, List, Tuple, NumberInstance, Tuple3IntType, CursorInputInstance
+    NumberType, Vector2NumberType, List, Tuple, NumberInstance, Tuple3IntType
 
 
 # noinspection PyProtectedMember
@@ -67,7 +66,7 @@ class WidgetManager(object):
         self._menu = menu
 
     @property
-    def _theme(self) -> '_themes.Theme':
+    def _theme(self) -> 'pygame_menu.Theme':
         """
         Return menu theme.
 
@@ -97,7 +96,7 @@ class WidgetManager(object):
             if isinstance(background_color, pygame_menu.BaseImage):
                 pass
             else:
-                background_color = _utils.assert_color(background_color)
+                background_color = assert_color(background_color)
                 background_is_color = True
         attributes['background_color'] = background_color
 
@@ -105,7 +104,7 @@ class WidgetManager(object):
         background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
         if background_inflate == 0:
             background_inflate = (0, 0)
-        _utils.assert_vector(background_inflate, 2, int)
+        assert_vector(background_inflate, 2, int)
         assert background_inflate[0] >= 0 and background_inflate[1] >= 0, \
             'both background inflate components must be equal or greater than zero'
         attributes['background_inflate'] = background_inflate
@@ -113,14 +112,14 @@ class WidgetManager(object):
         # border_color
         border_color = kwargs.pop('border_color', self._theme.widget_border_color)
         if border_color is not None:
-            border_color = _utils.assert_color(border_color)
+            border_color = assert_color(border_color)
         attributes['border_color'] = border_color
 
         # border_inflate
         border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
         if border_inflate == 0:
             border_inflate = (0, 0)
-        _utils.assert_vector(border_inflate, 2, int)
+        assert_vector(border_inflate, 2, int)
         assert isinstance(border_inflate[0], int) and border_inflate[0] >= 0
         assert isinstance(border_inflate[1], int) and border_inflate[1] >= 0
         attributes['border_inflate'] = border_inflate
@@ -132,7 +131,7 @@ class WidgetManager(object):
 
         # cursor
         cursor = kwargs.pop('cursor', self._theme.widget_cursor)
-        assert isinstance(cursor, CursorInputInstance)
+        assert_cursor(cursor)
         attributes['cursor'] = cursor
 
         # font_antialias
@@ -144,16 +143,16 @@ class WidgetManager(object):
                 self._theme.widget_font_background_color_from_menu and \
                 not background_is_color:
             if not isinstance(self._theme.background_color, pygame_menu.BaseImage):
-                font_background_color = _utils.assert_color(self._theme.background_color)
+                font_background_color = assert_color(self._theme.background_color)
         attributes['font_background_color'] = font_background_color
 
         # font_color
         font_color = kwargs.pop('font_color', self._theme.widget_font_color)
-        attributes['font_color'] = _utils.assert_color(font_color)
+        attributes['font_color'] = assert_color(font_color)
 
         # font_name
         font_name = kwargs.pop('font_name', self._theme.widget_font)
-        assert isinstance(font_name, FontInstance)
+        assert_font(font_name)
         attributes['font_name'] = str(font_name)
 
         # font_shadow
@@ -163,7 +162,7 @@ class WidgetManager(object):
 
         # font_shadow_color
         font_shadow_color = kwargs.pop('font_shadow_color', self._theme.widget_font_shadow_color)
-        attributes['font_shadow_color'] = _utils.assert_color(font_shadow_color)
+        attributes['font_shadow_color'] = assert_color(font_shadow_color)
 
         # font_shadow_offset
         font_shadow_offset = kwargs.pop('font_shadow_offset', self._theme.widget_font_shadow_offset)
@@ -185,7 +184,7 @@ class WidgetManager(object):
         margin = kwargs.pop('margin', self._theme.widget_margin)
         if margin == 0:
             margin = (0, 0)
-        _utils.assert_vector(margin, 2)
+        assert_vector(margin, 2)
         attributes['margin'] = margin
 
         # padding
@@ -195,15 +194,15 @@ class WidgetManager(object):
 
         # readonly_color
         readonly_color = kwargs.pop('readonly_color', self._theme.readonly_color)
-        attributes['readonly_color'] = _utils.assert_color(readonly_color)
+        attributes['readonly_color'] = assert_color(readonly_color)
 
         # readonly_selected_color
         readonly_selected_color = kwargs.pop('readonly_selected_color', self._theme.readonly_selected_color)
-        attributes['readonly_selected_color'] = _utils.assert_color(readonly_selected_color)
+        attributes['readonly_selected_color'] = assert_color(readonly_selected_color)
 
         # selection_color
         selection_color = kwargs.pop('selection_color', self._theme.selection_color)
-        attributes['selection_color'] = _utils.assert_color(selection_color)
+        attributes['selection_color'] = assert_color(selection_color)
 
         # selection_effect
         selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
@@ -244,6 +243,7 @@ class WidgetManager(object):
         )
         widget.set_controls(
             joystick=self._menu._joystick,
+            keyboard=self._menu._keyboard,
             mouse=self._menu._mouse,
             touchscreen=self._menu._touchscreen
         )
@@ -491,7 +491,7 @@ class WidgetManager(object):
             widget = pygame_menu.widgets.Button(title, button_id, self._menu.full_reset)
 
         # If element is a function or callable
-        elif _utils.is_callable(action):
+        elif is_callable(action):
             if not accept_kwargs:
                 widget = pygame_menu.widgets.Button(title, button_id, action, *args)
             else:
@@ -793,7 +793,7 @@ class WidgetManager(object):
 
         title = str(title)
         if len(label_id) == 0:
-            label_id = _utils.uuid4()
+            label_id = uuid4()
 
         # If newline detected, split in two new lines
         if '\n' in title:
@@ -943,7 +943,7 @@ class WidgetManager(object):
 
         # Configure kwargs
         if 'cursor' not in kwargs.keys():
-            kwargs['cursor'] = _locals.CURSOR_HAND
+            kwargs['cursor'] = CURSOR_HAND
         if 'font_color' not in kwargs.keys():
             kwargs['font_color'] = self._theme.widget_url_color
         if 'selection_color' not in kwargs.keys():
@@ -1701,7 +1701,7 @@ class WidgetManager(object):
             default: Union[str, int, float] = '',
             copy_paste_enable: bool = True,
             cursor_selection_enable: bool = True,
-            input_type: str = _locals.INPUT_TEXT,
+            input_type: str = INPUT_TEXT,
             input_underline: str = '',
             input_underline_len: int = 0,
             maxchar: int = 0,
@@ -1860,7 +1860,7 @@ class WidgetManager(object):
                 kwargs.pop(key, None)
 
         attributes = self._filter_widget_attributes(kwargs)
-        pad = _utils.parse_padding(attributes['padding'])  # top, right, bottom, left
+        pad = parse_padding(attributes['padding'])  # top, right, bottom, left
         padh = pad[1] + pad[3]
         padv = pad[0] + pad[2]
 
@@ -1978,7 +1978,7 @@ class WidgetManager(object):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        return self._frame(width, height, _locals.ORIENTATION_HORIZONTAL, frame_id, **kwargs)
+        return self._frame(width, height, ORIENTATION_HORIZONTAL, frame_id, **kwargs)
 
     def frame_v(
             self,
@@ -2061,7 +2061,7 @@ class WidgetManager(object):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
-        return self._frame(width, height, _locals.ORIENTATION_VERTICAL, frame_id, **kwargs)
+        return self._frame(width, height, ORIENTATION_VERTICAL, frame_id, **kwargs)
 
     def _horizontal_margin(
             self,

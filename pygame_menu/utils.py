@@ -60,7 +60,10 @@ import warnings
 
 import pygame
 import pygame_menu
-import pygame_menu.locals as _locals
+
+from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, \
+    POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, \
+    POSITION_SOUTHWEST, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
@@ -77,7 +80,7 @@ def assert_alignment(align: str) -> None:
     :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
-    assert align in (_locals.ALIGN_LEFT, _locals.ALIGN_CENTER, _locals.ALIGN_RIGHT), \
+    assert align in (ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT), \
         'incorrect alignment value "{0}"'.format(align)
 
 
@@ -118,7 +121,8 @@ def assert_cursor(cursor: CursorInputType) -> None:
     :param cursor: Cursor object
     :return: None
     """
-    assert isinstance(cursor, CursorInputInstance)
+    assert isinstance(cursor, CursorInputInstance), \
+        'cursor instance invalid, it can be None, an integer, or pygame.cursors.Cursor'
 
 
 def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
@@ -130,7 +134,8 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(list_vector, (tuple, list))
+    assert isinstance(list_vector, (tuple, list)), \
+        'list_vector "{0}" must be a tuple or list'.format(list_vector)
     for v in list_vector:
         assert_vector(v, length)
 
@@ -142,8 +147,9 @@ def assert_orientation(orientation: str) -> None:
     :param orientation: Object orientation
     :return: None
     """
-    assert isinstance(orientation, str), 'orientation must be a string'
-    assert orientation in [_locals.ORIENTATION_HORIZONTAL, _locals.ORIENTATION_VERTICAL], \
+    assert isinstance(orientation, str), \
+        'orientation "{0}" must be a string'.format(orientation)
+    assert orientation in [ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL], \
         'invalid orientation value "{0}"'.format(orientation)
 
 
@@ -154,12 +160,10 @@ def assert_position(position: str) -> None:
     :param position: Object position
     :return: None
     """
-    assert isinstance(position, str), 'position must be a string'
-    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
-                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
-                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST,
-                        _locals.POSITION_CENTER], \
+    assert isinstance(position, str), \
+        'position "{0}" must be a string'.format(position)
+    assert position in [POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_EAST,
+                        POSITION_NORTH, POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER], \
         'invalid position value "{0}"'.format(position)
 
 
