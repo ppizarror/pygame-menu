@@ -37,11 +37,12 @@ import warnings
 
 import pygame
 import pygame_menu
-import pygame_menu.locals as _locals
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
 from pygame_menu.font import FontType
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_WEST, POSITION_EAST, \
+    POSITION_NORTHEAST, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, POSITION_SOUTHEAST, ALIGN_CENTER
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
     is_callable, parse_padding, uuid4
@@ -126,6 +127,7 @@ class Widget(Base):
     _max_width: List[Optional[bool]]
     _menu: Optional['pygame_menu.Menu']
     _mouse_enabled: bool
+    _mouseover: bool  # Check if mouse is over
     _onchange: CallbackType
     _onmouseleave: CallbackType
     _onmouseover: CallbackType
@@ -175,7 +177,7 @@ class Widget(Base):
     ) -> None:
         super(Widget, self).__init__(object_id=widget_id)
 
-        self._alignment = _locals.ALIGN_CENTER
+        self._alignment = ALIGN_CENTER  # Widget alignment
         self._background_color = None
         self._background_inflate = (0, 0)
         self._col_row_index = (-1, -1, -1)
@@ -188,6 +190,7 @@ class Widget(Base):
         self._margin = (0, 0)
         self._max_height = [None, False, True]  # size, width_scale, smooth
         self._max_width = [None, False, True]  # size, height_scale, smooth
+        self._mouseover = False
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
         self._position = (0, 0)
@@ -249,7 +252,7 @@ class Widget(Base):
         self._font_shadow = False
         self._font_shadow_color = (0, 0, 0)
         self._font_shadow_offset = 2.0
-        self._font_shadow_position = _locals.POSITION_NORTHWEST
+        self._font_shadow_position = POSITION_NORTHWEST
         self._font_shadow_tuple = (0, 0)  # (x px offset, y px offset)
 
         # Border
@@ -431,6 +434,32 @@ class Widget(Base):
             self._onmouseleave(self, event)
         _restore_cursor()
         return self
+
+    def _check_mouseover(self, event: EventType, rect: Optional['pygame.Rect'] = None) -> bool:
+        """
+        Check the mouse is over the widget. If so, execute the methods.
+
+        :param event: Mouse event
+        :param rect: Rect object. If ``None`` uses the widget rect in real position
+        :return: ``True`` if the mouseover status changed
+        """
+        if rect is None:
+            rect = self.get_rect(to_real_position=True)
+        updated = False
+
+        if self._visible and self._mouse_enabled and event.type == pygame.MOUSEMOTION:
+            if rect.collidepoint(*event.pos):
+                if not self._mouseover:
+                    self._mouseover = True
+                    self.mouseover(event)
+                    updated = True
+            else:
+                if self._mouseover:
+                    self._mouseover = False
+                    self.mouseleave(event)
+                    updated = True
+
+        return updated
 
     def set_cursor(self, cursor: CursorInputType) -> 'Widget':
         """
@@ -1325,27 +1354,27 @@ class Widget(Base):
         # Set position
         x = 0
         y = 0
-        if self._font_shadow_position == _locals.POSITION_NORTHWEST:
+        if self._font_shadow_position == POSITION_NORTHWEST:
             x = -1
             y = -1
-        elif self._font_shadow_position == _locals.POSITION_NORTH:
+        elif self._font_shadow_position == POSITION_NORTH:
             y = -1
-        elif self._font_shadow_position == _locals.POSITION_NORTHEAST:
+        elif self._font_shadow_position == POSITION_NORTHEAST:
             x = 1
             y = -1
-        elif self._font_shadow_position == _locals.POSITION_EAST:
+        elif self._font_shadow_position == POSITION_EAST:
             x = 1
-        elif self._font_shadow_position == _locals.POSITION_SOUTHEAST:
+        elif self._font_shadow_position == POSITION_SOUTHEAST:
             x = 1
             y = 1
-        elif self._font_shadow_position == _locals.POSITION_SOUTH:
+        elif self._font_shadow_position == POSITION_SOUTH:
             y = 1
-        elif self._font_shadow_position == _locals.POSITION_SOUTHWEST:
+        elif self._font_shadow_position == POSITION_SOUTHWEST:
             x = -1
             y = 1
-        elif self._font_shadow_position == _locals.POSITION_WEST:
+        elif self._font_shadow_position == POSITION_WEST:
             x = -1
-        elif self._font_shadow_position == _locals.POSITION_CENTER:
+        elif self._font_shadow_position == POSITION_CENTER:
             pass  # (0, 0)
 
         self._font_shadow_tuple = (x * self._font_shadow_offset, y * self._font_shadow_offset)
