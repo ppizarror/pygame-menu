@@ -97,7 +97,7 @@ can be used.
 
 .. code-block:: python
 
-    import pygame_menu.widgets as _widgets
+    import pygame_menu.widgets
 
     class WidgetManager(object):
         ...
@@ -109,7 +109,7 @@ can be used.
             attributes = self._filter_widget_attributes(kwargs)
 
             # Create your widget
-            widget = _widgets.MyWidget(..., **kwargs)
+            widget = pygame_menu.widgets.MyWidget(..., **kwargs)
 
             self._configure_widget(widget=widget, **attributes)
             widget.set_default_value(default) # May add the default value
