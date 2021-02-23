@@ -156,9 +156,6 @@ class NoneWidget(Widget):
     def set_value(self, *args, **kwargs) -> None:
         pass
 
-    def update(self, *args, **kwargs) -> bool:
-        return False
-
     def add_update_callback(self, *args, **kwargs) -> None:
         pass
 
@@ -170,3 +167,6 @@ class NoneWidget(Widget):
 
     def set_border(self, *args, **kwargs) -> 'NoneWidget':
         return self
+
+    def update(self, *args, **kwargs) -> bool:
+        return False

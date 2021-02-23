@@ -36,10 +36,11 @@ import math
 
 import pygame
 import pygame_menu
-import pygame_menu.controls as _controls
 
-from pygame_menu.font import FontType, FontInstance, get_font
-from pygame_menu.locals import ORIENTATION_VERTICAL
+from pygame_menu.controls import KEY_APPLY, KEY_MOVE_DOWN, KEY_MOVE_UP, JOY_BUTTON_SELECT, JOY_LEFT, JOY_DEADZONE, \
+    JOY_RIGHT, JOY_AXIS_X
+from pygame_menu.font import FontType, get_font, assert_font
+from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, parse_padding
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.button import Button
@@ -210,7 +211,7 @@ class DropSelect(Widget):
         selection_option_selected_font_color = assert_color(selection_option_selected_font_color)
 
         if selection_option_font is not None:
-            assert isinstance(selection_option_font, FontInstance)
+            assert_font(selection_option_font)
         if selection_option_font_size is not None:
             assert isinstance(selection_option_font_size, int) and selection_option_font_size > 0
 
@@ -359,10 +360,10 @@ class DropSelect(Widget):
                 color=self._selection_option_border_color
             )
             btn.set_controls(
-                joystick=False,
+                joystick=False,  # Only drop select controls the joystick behaviour
                 mouse=self._mouse_enabled,
                 touchscreen=self._touchscreen_enabled,
-                keyboard=False
+                keyboard=False  # Only drop select controls the keyboard behaviour
             )
             if self._placeholder_add_to_selection_box:
                 font_color = self._selection_option_font_style['color'] if optid != 0 else self._font_readonly_color
@@ -950,129 +951,6 @@ class DropSelect(Widget):
         self._drop_frame = None
         self.active = False
 
-    def update(self, events: EventVectorType) -> bool:
-        if self.readonly or not self.is_visible():
-            return False
-
-        # Check scroll
-        self._check_drop_maked()
-        updated = self._drop_frame.update(events)
-        if updated:
-            return True
-
-        for event in events:
-
-            if event.type == pygame.KEYDOWN:  # Check key is valid
-                if not check_key_pressed_valid(event):
-                    continue
-
-            # Events
-            keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
-            joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
-            joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
-            joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
-
-            # Left button
-            if keydown and event.key == _controls.KEY_MOVE_DOWN or \
-                    joy_hatmotion and event.value == _controls.JOY_LEFT or \
-                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
-                if not self.active:
-                    continue
-                self._down()
-                updated = True
-
-            # Right button
-            elif keydown and event.key == _controls.KEY_MOVE_UP or \
-                    joy_hatmotion and event.value == _controls.JOY_RIGHT or \
-                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
-                if not self.active:
-                    continue
-                self._up()
-                updated = True
-
-            # Press enter
-            elif keydown and (event.key == _controls.KEY_APPLY) or \
-                    joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
-                if self.active and self._index >= 0:
-                    self._sound.play_key_add()
-                    self.apply(*self._items[self._index][1:])
-                if not (self.active and (not self._close_on_apply and self._index != -1)):
-                    self._toggle_drop()
-                updated = True
-
-            # Press keys which active the drop but not apply
-            elif keydown and (event.key == pygame.K_TAB):
-                self._toggle_drop()
-                updated = True
-
-            # Close the selection
-            elif keydown and (event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE):
-                if self.active:
-                    self._toggle_drop()
-                updated = True
-
-            # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
-            elif self.active and (
-                    self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3) or (
-                    self._touchscreen_enabled and event.type == pygame.FINGERDOWN and self._drop_frame is not None and
-                    not self._drop_frame.get_scrollarea(inner=True).is_scrolling())
-            ):
-
-                # Get event position based on input type
-                if self._touchscreen_enabled and event.type == pygame.FINGERDOWN and self._menu is not None:
-                    window_size = self._menu.get_window_size()
-                    event_pos = (event.x * window_size[0], event.y * window_size[1])
-                else:
-                    event_pos = event.pos
-
-                if self._drop_frame.get_rect(apply_padding=False, to_real_position=True).collidepoint(*event_pos):
-                    updated = True
-
-            # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3) or \
-                    self._touchscreen_enabled and event.type == pygame.FINGERUP and \
-                    not (self._drop_frame is not None and self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
-
-                # Check for mouse clicks within
-                if self.active:
-                    for btn in self._option_buttons:
-                        btn.set_attribute('ignore_scroll_to_widget')
-                        updated = btn.update(events)
-                        try:
-                            btn.remove_attribute('ignore_scroll_to_widget')
-                        except IndexError:
-                            pass
-                        if updated:
-                            return True
-
-                # Get event position based on input type
-                if self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
-                    window_size = self._menu.get_window_size()
-                    event_pos = (event.x * window_size[0], event.y * window_size[1])
-                else:
-                    event_pos = event.pos
-
-                # If collides
-                rect = self.get_rect(to_real_position=True, apply_padding=False)
-                if rect.collidepoint(*event_pos):
-                    # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = event.pos
-                    topleft, _ = rect.topleft
-                    topright, _ = rect.topright
-                    dist = mousex - (topleft + self._title_size[0])  # Distance from title
-                    if dist > 0:  # User clicked the options, not title
-                        self._toggle_drop()
-                        updated = True
-                else:
-                    if self.active and not self.get_focus_rect().collidepoint(*event_pos):
-                        self._toggle_drop()
-                        updated = True
-
-        if updated:
-            self.apply_update_callbacks()
-
-        return updated
-
     def _check_drop_maked(self) -> None:
         """
         Checks if drop selection has been maked.
@@ -1145,6 +1023,132 @@ class DropSelect(Widget):
         else:
             rect.width -= self._selection_box_border_width
         return rect
+
+    def update(self, events: EventVectorType) -> bool:
+        if self.readonly or not self.is_visible():
+            return False
+
+        # Check scroll
+        self._check_drop_maked()
+        updated = self._drop_frame.update(events)
+        if updated:
+            return True
+
+        for event in events:
+
+            if event.type == pygame.KEYDOWN:  # Check key is valid
+                if not check_key_pressed_valid(event):
+                    continue
+
+            # Check mouse over
+            self._check_mouseover(event)
+
+            # Events
+            keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
+            joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
+            joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
+            joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
+
+            # Left button
+            if keydown and event.key == KEY_MOVE_DOWN or \
+                    joy_hatmotion and event.value == JOY_LEFT or \
+                    joy_axismotion and event.axis == JOY_AXIS_X and event.value < JOY_DEADZONE:
+                if not self.active:
+                    continue
+                self._down()
+                updated = True
+
+            # Right button
+            elif keydown and event.key == KEY_MOVE_UP or \
+                    joy_hatmotion and event.value == JOY_RIGHT or \
+                    joy_axismotion and event.axis == JOY_AXIS_X and event.value > -JOY_DEADZONE:
+                if not self.active:
+                    continue
+                self._up()
+                updated = True
+
+            # Press enter
+            elif keydown and event.key == KEY_APPLY or \
+                    joy_button_down and event.button == JOY_BUTTON_SELECT:
+                if self.active and self._index >= 0:
+                    self._sound.play_key_add()
+                    self.apply(*self._items[self._index][1:])
+                if not (self.active and (not self._close_on_apply and self._index != -1)):
+                    self._toggle_drop()
+                updated = True
+
+            # Press keys which active the drop but not apply
+            elif keydown and (event.key == pygame.K_TAB):
+                self._toggle_drop()
+                updated = True
+
+            # Close the selection
+            elif keydown and (event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE):
+                if self.active:
+                    self._toggle_drop()
+                updated = True
+
+            # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
+            elif self.active and (
+                    event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or (
+                    event.type == FINGERDOWN and self._touchscreen_enabled and self._drop_frame is not None and
+                    not self._drop_frame.get_scrollarea(inner=True).is_scrolling())
+            ):
+
+                # Get event position based on input type
+                if event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None:
+                    window_size = self._menu.get_window_size()
+                    event_pos = (event.x * window_size[0], event.y * window_size[1])
+                else:
+                    event_pos = event.pos
+
+                if self._drop_frame.get_rect(apply_padding=False, to_real_position=True).collidepoint(*event_pos):
+                    updated = True
+
+            # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+                    event.type == FINGERUP and self._touchscreen_enabled and \
+                    not (self._drop_frame is not None and self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
+
+                # Check for mouse clicks within
+                if self.active:
+                    for btn in self._option_buttons:
+                        btn.set_attribute('ignore_scroll_to_widget')
+                        updated = btn.update(events)
+                        try:
+                            btn.remove_attribute('ignore_scroll_to_widget')
+                        except IndexError:
+                            pass
+                        if updated:
+                            return True
+
+                # Get event position based on input type
+                if event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                    window_size = self._menu.get_window_size()
+                    event_pos = (event.x * window_size[0], event.y * window_size[1])
+                else:
+                    event_pos = event.pos
+
+                # If collides
+                rect = self.get_rect(to_real_position=True, apply_padding=False)
+                if rect.collidepoint(*event_pos):
+                    # Check if mouse collides left or right as percentage, use only X coordinate
+                    mousex, _ = event.pos
+                    topleft, _ = rect.topleft
+                    topright, _ = rect.topright
+                    dist = mousex - (topleft + self._title_size[0])  # Distance from title
+                    if dist > 0:  # User clicked the options, not title
+                        self._toggle_drop()
+                        updated = True
+                else:
+                    if self.active and not self.get_focus_rect().collidepoint(*event_pos):
+                        self._toggle_drop()
+                        updated = True
+
+        if updated:
+            self.apply_update_callbacks()
+
+        return updated
 
 
 class _SelectionDropNotMakedException(Exception):

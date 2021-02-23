@@ -48,8 +48,10 @@ __all__ = [
 ]
 
 import pygame
-import pygame_menu.controls as _controls
 
+from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, JOY_AXIS_X, JOY_LEFT, JOY_RIGHT, JOY_DEADZONE, \
+    KEY_APPLY, JOY_BUTTON_SELECT
+from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 from pygame_menu.widgets.core import Widget
 
@@ -420,6 +422,9 @@ class Selector(Widget):
                 if not check_key_pressed_valid(event):
                     continue
 
+            # Check mouse over
+            self._check_mouseover(event)
+
             # Events
             keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
             joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
@@ -427,32 +432,32 @@ class Selector(Widget):
             joy_button_down = self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN
 
             # Left button
-            if keydown and event.key == _controls.KEY_LEFT or \
-                    joy_hatmotion and event.value == _controls.JOY_LEFT or \
-                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
+            if keydown and event.key == KEY_LEFT or \
+                    joy_hatmotion and event.value == JOY_LEFT or \
+                    joy_axismotion and event.axis == JOY_AXIS_X and event.value < JOY_DEADZONE:
                 self._left()
                 updated = True
 
             # Right button
-            elif keydown and event.key == _controls.KEY_RIGHT or \
-                    joy_hatmotion and event.value == _controls.JOY_RIGHT or \
-                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
+            elif keydown and event.key == KEY_RIGHT or \
+                    joy_hatmotion and event.value == JOY_RIGHT or \
+                    joy_axismotion and event.axis == JOY_AXIS_X and event.value > -JOY_DEADZONE:
                 self._right()
                 updated = True
 
             # Press enter
-            elif keydown and event.key == _controls.KEY_APPLY or \
-                    joy_button_down and event.button == _controls.JOY_BUTTON_SELECT:
+            elif keydown and event.key == KEY_APPLY or \
+                    joy_button_down and event.button == JOY_BUTTON_SELECT:
                 self._sound.play_key_add()
                 self.apply(*self._items[self._index][1:])
                 updated = True
 
             # Click on selector; don't consider the mouse wheel (button 4 & 5)
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3) or \
-                    self._touchscreen_enabled and event.type == pygame.FINGERUP:
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+                    event.type == FINGERUP and self._touchscreen_enabled:
 
                 # Get event position based on input type
-                if self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
+                if event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
                     window_size = self._menu.get_window_size()
                     event_pos = (event.x * window_size[0], event.y * window_size[1])
                 else:

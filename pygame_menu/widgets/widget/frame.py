@@ -50,12 +50,12 @@ import warnings
 
 import pygame
 import pygame_menu
-import pygame_menu.locals as _locals
 
 from pygame_menu._decorator import Decorator
 from pygame_menu.baseimage import BaseImage
-from pygame_menu.locals import CURSOR_HAND
-from pygame_menu.font import FontType, FontInstance
+from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
+    ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH
+from pygame_menu.font import FontType, assert_font
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
     assert_color, fill_gradient, parse_padding
 from pygame_menu.widgets.core import Widget
@@ -172,7 +172,7 @@ class Frame(Widget):
 
         # Configure widget publics
         self.first_index = -1
-        self.horizontal = orientation == _locals.ORIENTATION_HORIZONTAL
+        self.horizontal = orientation == ORIENTATION_HORIZONTAL
         self.is_scrollable = False
         self.is_selectable = False
         self.last_index = -1
@@ -183,8 +183,8 @@ class Frame(Widget):
             background_color: FrameTitleBackgroundColorType = FRAME_DEFAULT_TITLE_BACKGROUND_COLOR,
             padding_inner: PaddingType = 0,
             padding_outer: PaddingType = 0,
-            title_alignment: str = _locals.ALIGN_LEFT,
-            title_buttons_alignment: str = _locals.ALIGN_RIGHT,
+            title_alignment: str = ALIGN_LEFT,
+            title_buttons_alignment: str = ALIGN_RIGHT,
             title_font: Optional[FontType] = None,
             title_font_color: Optional[ColorInputType] = None,
             title_font_size: Optional[int] = None
@@ -211,7 +211,7 @@ class Frame(Widget):
         # Format title font properties
         if title_font is None:
             title_font = self._font_name
-        assert isinstance(title_font, FontInstance)
+        assert_font(title_font)
         if title_font_color is None:
             title_font_color = self._font_color
         title_font_color = assert_color(title_font_color)
@@ -246,7 +246,7 @@ class Frame(Widget):
         pad_inner = parse_padding(padding_inner)
         self._frame_title = Frame(self.get_width() - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
                                   title_label.get_height(),
-                                  _locals.ORIENTATION_HORIZONTAL)
+                                  ORIENTATION_HORIZONTAL)
         self._frame_title.translate(pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0])
         self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
         self._frame_title._menu = self._menu
@@ -585,9 +585,9 @@ class Frame(Widget):
         )
 
         if self._width == max_width:
-            self._frame_scrollarea.hide_scrollbars(_locals.ORIENTATION_HORIZONTAL)
+            self._frame_scrollarea.hide_scrollbars(ORIENTATION_HORIZONTAL)
         if self._height == max_height:
-            self._frame_scrollarea.hide_scrollbars(_locals.ORIENTATION_VERTICAL)
+            self._frame_scrollarea.hide_scrollbars(ORIENTATION_VERTICAL)
 
         # Create surface
         self._surface = make_surface(self._width, self._height, alpha=True)
@@ -613,18 +613,6 @@ class Frame(Widget):
         :return: First, Last widget selectable indices
         """
         return self.first_index, self.last_index
-
-    def update(self, events: EventVectorType) -> bool:
-        updated = False
-        if self._has_title:
-            updated = self._frame_title.update(events)
-        if self._is_title:
-            for w in self.get_widgets():
-                if w.update(events):
-                    return True
-        if not self.is_scrollable or not self.is_visible() or self.readonly:
-            return updated
-        return updated or self._frame_scrollarea.update(events)
 
     def select(self, *args, **kwargs) -> 'Frame':
         return self
@@ -771,9 +759,9 @@ class Frame(Widget):
                 'the widget as floating'.format(
                     widget.get_class_id(), w, self._width, self.get_class_id()
                 ))
-        if a == _locals.ALIGN_CENTER:
+        if a == ALIGN_CENTER:
             return int((self._width - w) / 2)
-        elif a == _locals.ALIGN_RIGHT:
+        elif a == ALIGN_RIGHT:
             return self._width - w
         else:  # Alignment left
             return 0
@@ -794,9 +782,9 @@ class Frame(Widget):
                 'the widget as floating'.format(
                     widget.get_class_id(), h, self._height, self.get_class_id()
                 ))
-        if v == _locals.POSITION_CENTER:
+        if v == POSITION_CENTER:
             return int((self._height - h) / 2)
-        elif v == _locals.POSITION_SOUTH:
+        elif v == POSITION_SOUTH:
             return self._height - h
         else:  # Position north
             return 0
@@ -815,14 +803,14 @@ class Frame(Widget):
             align, vpos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if align == _locals.ALIGN_CENTER:
+            if align == ALIGN_CENTER:
                 wcenter += w.get_width() + w.get_margin()[0]
                 continue
-            elif align == _locals.ALIGN_LEFT:
+            elif align == ALIGN_LEFT:
                 xleft += w.get_margin()[0]
                 self._pos[w.get_id()] = (xleft, self._get_vt(w, vpos) + w.get_margin()[1])
                 xleft += w.get_width()
-            elif align == _locals.ALIGN_RIGHT:
+            elif align == ALIGN_RIGHT:
                 xright -= (w.get_width())
                 self._pos[w.get_id()] = (self._width + xright, self._get_vt(w, vpos) + w.get_margin()[1])
                 xright += w.get_margin()[0]
@@ -843,7 +831,7 @@ class Frame(Widget):
             align, vpos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if align == _locals.ALIGN_CENTER:
+            if align == ALIGN_CENTER:
                 xcenter += w.get_margin()[0]
                 self._pos[w.get_id()] = (xcenter, self._get_vt(w, vpos) + w.get_margin()[1])
                 xcenter += w.get_width()
@@ -861,14 +849,14 @@ class Frame(Widget):
             align, vpos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if vpos == _locals.POSITION_CENTER:
+            if vpos == POSITION_CENTER:
                 wcenter += w.get_width() + w.get_margin()[1]
                 continue
-            elif vpos == _locals.POSITION_NORTH:
+            elif vpos == POSITION_NORTH:
                 ytop += w.get_margin()[1]
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], ytop)
                 ytop += w.get_height()
-            elif vpos == _locals.POSITION_SOUTH:
+            elif vpos == POSITION_SOUTH:
                 ybottom -= (w.get_margin()[1] + w.get_height())
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + ybottom)
             dh = ytop - ybottom
@@ -888,7 +876,7 @@ class Frame(Widget):
             align, vpos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if vpos == _locals.POSITION_CENTER:
+            if vpos == POSITION_CENTER:
                 ycenter += w.get_margin()[1]
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], ycenter)
                 ycenter += w.get_height()
@@ -903,9 +891,9 @@ class Frame(Widget):
             return self
 
         # Update position based on orientation
-        if self._orientation == _locals.ORIENTATION_HORIZONTAL:
+        if self._orientation == ORIENTATION_HORIZONTAL:
             self._update_position_horizontal()
-        elif self._orientation == _locals.ORIENTATION_VERTICAL:
+        elif self._orientation == ORIENTATION_VERTICAL:
             self._update_position_vertical()
 
         # Apply position to each widget
@@ -1033,7 +1021,7 @@ class Frame(Widget):
         :return: Self reference
         """
         if self._frame_scrollarea is not None:
-            self._frame_scrollarea.scroll_to(_locals.ORIENTATION_HORIZONTAL, value)
+            self._frame_scrollarea.scroll_to(ORIENTATION_HORIZONTAL, value)
         return self
 
     def scrollv(self, value: NumberType) -> 'Frame':
@@ -1044,7 +1032,7 @@ class Frame(Widget):
         :return: Self reference
         """
         if self._frame_scrollarea is not None:
-            self._frame_scrollarea.scroll_to(_locals.ORIENTATION_VERTICAL, value)
+            self._frame_scrollarea.scroll_to(ORIENTATION_VERTICAL, value)
         return self
 
     def get_scroll_value_percentual(self, orientation: str) -> float:
@@ -1145,8 +1133,8 @@ class Frame(Widget):
     def pack(
             self,
             widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
-            alignment: str = _locals.ALIGN_LEFT,
-            vertical_position: str = _locals.POSITION_NORTH,
+            alignment: str = ALIGN_LEFT,
+            vertical_position: str = POSITION_NORTH,
             margin: Vector2NumberType = (0, 0)) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
         """
         Packs widget in the frame line. To pack a widget it has to be already
@@ -1235,7 +1223,7 @@ class Frame(Widget):
         assert widget.get_frame() is None, \
             '{0} is already packed in {1}'.format(widget.get_class_id(), widget.get_frame().get_class_id())
         assert_alignment(alignment)
-        assert vertical_position in (_locals.POSITION_NORTH, _locals.POSITION_CENTER, _locals.POSITION_SOUTH), \
+        assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), \
             'vertical position must be NORTH, CENTER, or SOUTH'
         assert_vector(margin, 2)
         assert widget.configured, 'widget must be configured before packing'
@@ -1373,6 +1361,31 @@ class Frame(Widget):
                     self.last_index = max(self.last_index, windex)
         if self.get_frame() is not None:
             self.get_frame()._update_indices()
+
+    def update(self, events: EventVectorType) -> bool:
+        updated = False
+
+        # Check title events
+        if self._has_title:
+            updated = self._frame_title.update(events)
+        if self._is_title:
+            for w in self.get_widgets():
+                if w.update(events):
+                    return True
+
+        if self.is_visible() or self.readonly:
+            return updated
+
+        # Check events
+        for event in events:
+            if self._check_mouseover(event):
+                break
+
+        # If not scrollable, return
+        if not self.is_scrollable:
+            return updated
+
+        return updated or self._frame_scrollarea.update(events)
 
 
 class _FrameSizeException(Exception):

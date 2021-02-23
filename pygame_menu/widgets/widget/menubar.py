@@ -53,9 +53,9 @@ import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.controls as _controls
-import pygame_menu.locals as _locals
 
+from pygame_menu.controls import JOY_BUTTON_BACK
+from pygame_menu.locals import FINGERUP, POSITION_EAST
 from pygame_menu.utils import assert_color
 from pygame_menu.widgets.core import Widget
 
@@ -109,7 +109,6 @@ class MenuBar(Widget):
     _backbox_rect: Optional['pygame.Rect']
     _box_mode: int
     _modify_scrollarea: bool
-    _mouseoverback: bool
     _offsetx: NumberType
     _offsety: NumberType
     _polygon_pos: Any
@@ -152,7 +151,6 @@ class MenuBar(Widget):
         self._background_color = background_color
         self._box_mode = 0
         self._modify_scrollarea = modify_scrollarea
-        self._mouseoverback = False
         self._offsetx = 0
         self._offsety = 0
         self._polygon_pos = None
@@ -274,7 +272,7 @@ class MenuBar(Widget):
         if not self._modify_scrollarea:
             return 0, (0, 0)
         if self._style == MENUBAR_STYLE_ADAPTIVE:
-            if position == _locals.POSITION_EAST:
+            if position == POSITION_EAST:
                 t = self._polygon_pos[4][1] - self._polygon_pos[2][1]
                 return t, (0, -t)
         return 0, (0, 0)
@@ -487,35 +485,27 @@ class MenuBar(Widget):
 
         for event in events:
 
-            if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+            # User clicks the backbox rect
+            if event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self._sound.play_click_mouse()
                     self.apply()
                     updated = True
-                    if self._backbox_visible() and self._mouseoverback:
-                        self._mouseoverback = False
-                        self.mouseleave(event)
 
-            elif self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
-                if event.button == _controls.JOY_BUTTON_BACK:
+            # User applies joy back button
+            elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
+                if event.button == JOY_BUTTON_BACK:
                     self._sound.play_key_del()
                     self.apply()
                     updated = True
 
-            # Check mouse over backrect and visible
-            elif self._backbox_visible() and \
-                    (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION):
-                if self._backbox_rect.collidepoint(*event.pos):
-                    if not self._mouseoverback:
-                        self._mouseoverback = True
-                        self.mouseover(event)
-                else:
-                    if self._mouseoverback:
-                        self._mouseoverback = False
-                        self.mouseleave(event)
+            # User moves mouse, check mouseover
+            elif event.type == pygame.MOUSEMOTION and self._backbox_visible():
+                self._check_mouseover(event, self._backbox_rect)
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
+            # User touches the backbox button
+            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
                 window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):

@@ -35,9 +35,9 @@ import math
 import warnings
 
 import pygame
-import pygame_menu.controls as _controls
-import pygame_menu.locals as _locals
 
+from pygame_menu.controls import KEY_MOVE_UP, KEY_MOVE_DOWN, KEY_APPLY
+from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
 from pygame_menu.widgets.core import Widget
 
@@ -188,7 +188,7 @@ class TextInput(Widget):
             cursor_selection_enable: bool = True,
             cursor_switch_ms: NumberType = 500,
             history: int = 50,
-            input_type: str = _locals.INPUT_TEXT,
+            input_type: str = INPUT_TEXT,
             input_underline: str = '',
             input_underline_len: int = 0,
             input_underline_vmargin: int = 0,
@@ -254,8 +254,8 @@ class TextInput(Widget):
 
         self._input_string = ''
         self._ignore_keys = (  # Ignore keys on keyrepeat event
-            _controls.KEY_MOVE_DOWN,
-            _controls.KEY_MOVE_UP,
+            KEY_MOVE_DOWN,
+            KEY_MOVE_UP,
             pygame.K_CAPSLOCK,
             pygame.K_END,
             pygame.K_ESCAPE,
@@ -392,14 +392,14 @@ class TextInput(Widget):
         :return: Text inside the widget
         """
         value = ''
-        if self._input_type == _locals.INPUT_TEXT:
+        if self._input_type == INPUT_TEXT:
             value = self._input_string  # Without filters
-        elif self._input_type == _locals.INPUT_FLOAT:
+        elif self._input_type == INPUT_FLOAT:
             try:
                 value = float(self._input_string)
             except ValueError:
                 value = 0
-        elif self._input_type == _locals.INPUT_INT:
+        elif self._input_type == INPUT_INT:
             try:
                 value = int(float(self._input_string))
             except ValueError:
@@ -1061,13 +1061,13 @@ class TextInput(Widget):
         if string == '':  # Empty is valid
             return True
 
-        if self._input_type == _locals.INPUT_TEXT:
+        if self._input_type == INPUT_TEXT:
             return True
 
         conv = None
-        if self._input_type == _locals.INPUT_FLOAT:
+        if self._input_type == INPUT_FLOAT:
             conv = float
-        elif self._input_type == _locals.INPUT_INT:
+        elif self._input_type == INPUT_INT:
             conv = int
 
         if string == '-':
@@ -1502,7 +1502,11 @@ class TextInput(Widget):
 
         for event in events:
 
-            if self._keyboard_enabled and event.type == pygame.KEYDOWN:
+            # Check mouse over
+            self._check_mouseover(event, rect)
+
+            # User press a key
+            if event.type == pygame.KEYDOWN and self._keyboard_enabled:
 
                 # Check if any key is pressed, if True the event is invalid
                 if not check_key_pressed_valid(event):
@@ -1677,11 +1681,11 @@ class TextInput(Widget):
                     updated = True
 
                 # Up arrow
-                elif event.key == _controls.KEY_MOVE_UP:
+                elif event.key == KEY_MOVE_UP:
                     self.active = False
 
                 # Down arrow
-                elif event.key == _controls.KEY_MOVE_DOWN:
+                elif event.key == KEY_MOVE_DOWN:
                     self.active = False
 
                 # End
@@ -1710,7 +1714,7 @@ class TextInput(Widget):
                     self.active = True
 
                 # Enter
-                elif event.key == _controls.KEY_APPLY:
+                elif event.key == KEY_APPLY:
                     self._sound.play_open_menu()
                     self.apply()
                     self._unselect_text()
@@ -1748,7 +1752,8 @@ class TextInput(Widget):
                     self.active = True
                     updated = True
 
-            elif self._keyboard_enabled and event.type == pygame.KEYUP:
+            # User releases a key
+            elif event.type == pygame.KEYUP and self._keyboard_enabled:
                 # Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
@@ -1761,7 +1766,8 @@ class TextInput(Widget):
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+            # User releases the mouse button
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if rect.collidepoint(*event.pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
@@ -1769,7 +1775,8 @@ class TextInput(Widget):
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONDOWN and \
+            # User press the mouse button
+            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
                     if self._selection_active:
@@ -1779,7 +1786,8 @@ class TextInput(Widget):
                     self._selection_mouse_first_position = -1
                     self.active = True
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
+            # User releases the finger
+            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
                 window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])
                 if rect.collidepoint(*finger_pos) and \
@@ -1788,7 +1796,8 @@ class TextInput(Widget):
                     self._check_touch_collide_input(finger_pos)
                     self._cursor_ms_counter = 0
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERDOWN:
+            # User press finger on widget
+            elif event.type == FINGERDOWN and self._touchscreen_enabled:
                 if self.get_selected_time() > self._keyrepeat_touch_interval_ms:
                     if self._selection_active:
                         self._unselect_text()
