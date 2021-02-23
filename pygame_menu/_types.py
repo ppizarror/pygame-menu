@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame.color import Color as _Color
+from pygame.color import Color as __Color
 from pygame.event import Event as EventType
 
 from typing import Union, List, Tuple, Any, Callable, Sequence, Mapping, Optional
@@ -50,7 +50,7 @@ NumberType = Union[int, float]
 
 # Colors
 ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
-ColorInputType = Union[ColorType, str, int, _Color]
+ColorInputType = Union[ColorType, str, int, __Color]
 ColorInputGradientType = Tuple[ColorInputType, ColorInputType, bool, bool]  # from, to, vertical, forward
 
 # Vectors
@@ -86,7 +86,7 @@ PaddingType = Union[NumberType, List[NumberType],
                     Tuple[NumberType, NumberType, NumberType, NumberType]]
 
 # Instances
-ColorInputInstance = (int, str, tuple, list, _Color)
+ColorInputInstance = (int, str, tuple, list, __Color)
 NumberInstance = (int, float)
 PaddingInstance = (int, float, tuple, list)
 VectorInstance = (tuple, list)
@@ -94,10 +94,10 @@ VectorInstance = (tuple, list)
 # Cursor
 try:
     # noinspection PyUnresolvedReferences
-    from pygame.cursors import Cursor as _Cursor
+    from pygame.cursors import Cursor as __Cursor
 
-    CursorInputType = Optional[Union[int, _Cursor]]
-    CursorInputInstance = (int, _Cursor, type(None))
+    CursorInputType = Optional[Union[int, __Cursor]]
+    CursorInputInstance = (int, __Cursor, type(None))
 except (AttributeError, ImportError):
     CursorInputType = Optional[int]
     CursorInputInstance = (int, type(None))
