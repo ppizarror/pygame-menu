@@ -31,6 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Main class
+    'Sound',
+
     # Sound types
     'SOUND_TYPE_CLICK_MOUSE',
     'SOUND_TYPE_CLOSE_MENU',
@@ -52,10 +55,7 @@ __all__ = [
     'SOUND_EXAMPLE_KEY_DELETE',
     'SOUND_EXAMPLE_OPEN_MENU',
     'SOUND_EXAMPLE_WIDGET_SELECTION',
-    'SOUND_EXAMPLES',
-
-    # Class
-    'Sound'
+    'SOUND_EXAMPLES'
 
 ]
 

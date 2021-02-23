@@ -33,6 +33,8 @@ __all__ = [
 
     # Class
     'MenuAction',
+
+    # Utils
     'is_event',
 
     # Menu events

@@ -51,7 +51,7 @@ __all__ = [
     'FontType',
     'FontInstance',
 
-    # Font utils
+    # Utils
     'assert_font',
     'get_font'
 

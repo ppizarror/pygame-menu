@@ -49,7 +49,7 @@ __all__ = [
     'widget_terminal_title',
 
     # Classes
-    'TerminalColors',
+    'TerminalColors'
 
 ]
 

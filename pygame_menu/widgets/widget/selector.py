@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Main class
+    'Selector',
+
     # Constants
     'SELECTOR_STYLE_CLASSIC',
     'SELECTOR_STYLE_FANCY',
@@ -40,10 +43,7 @@ __all__ = [
     'check_selector_items',
 
     # Types
-    'SelectorStyleType',
-
-    # Main class
-    'Selector'
+    'SelectorStyleType'
 
 ]
 

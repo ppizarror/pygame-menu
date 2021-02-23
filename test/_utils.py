@@ -33,12 +33,14 @@ __all__ = [
 
     # Globals
     'PYGAME_V2',
-    'surface',
-    'test_reset_surface',
     'TEST_THEME',
     'WINDOW_SIZE',
 
-    # Utils
+    # Methods
+    'surface',
+    'test_reset_surface',
+
+    # Class utils (static)
     'PygameEventUtils',
     'MenuUtils'
 

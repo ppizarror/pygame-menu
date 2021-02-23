@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Main class
+    'MenuBar',
+
     # Menubar styles
     'MENUBAR_STYLE_ADAPTIVE',
     'MENUBAR_STYLE_SIMPLE',
@@ -42,10 +45,7 @@ __all__ = [
     'MENUBAR_STYLE_UNDERLINE_TITLE',
 
     # Custom types
-    'MenuBarStyleModeType',
-
-    # Main class
-    'MenuBar'
+    'MenuBarStyleModeType'
 
 ]
 

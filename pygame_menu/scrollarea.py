@@ -29,7 +29,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['ScrollArea', 'get_scrollbars_from_position']
+__all__ = [
+
+    # Main class
+    'ScrollArea',
+
+    # Utils
+    'get_scrollbars_from_position'
+
+]
 
 import pygame
 import pygame_menu

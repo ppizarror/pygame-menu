@@ -29,7 +29,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['Widget']
+__all__ = [
+
+    # Main class
+    'Widget',
+
+    # Utils
+    'check_mouseleave'
+
+]
 
 import random
 import time
@@ -52,9 +60,21 @@ from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, P
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
     NumberInstance, ColorInputType, EventType, EventVectorType, EventListType, CursorInputType, CursorType
 
-# Stores the previous cursor. This should be a common variable
-# because there's only 1 cursor
-_CURSOR_PREV: List[Any] = [None]
+# This list stores the current widget which requested the mouseover status, and the previous
+# widget list which requested the mouseover. Each time the widget changes the over status, if leaves
+# all previous widgets that are not hovered trigger mouseleave
+WIDGET_OVER: List[Any] = [None, []]
+
+
+def check_mouseleave(event: Optional[EventType], force: bool = False) -> None:
+    """
+    Check if the active widget (WIDGET_OVER[0]) is still over, else,
+    execute previous list.
+
+    :param event: Mouse motion event. If ``None`` this method creates the event
+    :param force: If ``True`` calls all mouse leave without checking if still over
+    :return: None
+    """
 
 
 def _restore_cursor() -> None:
@@ -63,13 +83,13 @@ def _restore_cursor() -> None:
 
     :return: None
     """
-    if not isinstance(_CURSOR_PREV[0], _WidgetUnknownCursor):
-        if _CURSOR_PREV[0] is not None:
+    if not isinstance(WIDGET_OVER[0], _WidgetUnknownCursor):
+        if WIDGET_OVER[0] is not None:
             # noinspection PyArgumentList
-            pygame.mouse.set_cursor(_CURSOR_PREV[0])
-            _CURSOR_PREV[0] = None
+            pygame.mouse.set_cursor(WIDGET_OVER[0])
+            WIDGET_OVER[0] = None
     else:
-        _CURSOR_PREV[0] = None
+        WIDGET_OVER[0] = None
 
 
 class Widget(Base):
@@ -407,8 +427,8 @@ class Widget(Base):
                 msg = 'could not stablish widget cursor, invalid value {0}'.format(self._cursor)
                 warnings.warn(msg)
                 cursor = _WidgetUnknownCursor()
-            if _CURSOR_PREV[0] is None:
-                _CURSOR_PREV[0] = cursor
+            if WIDGET_OVER[0] is None:
+                WIDGET_OVER[0] = cursor
         else:
             _restore_cursor()
 

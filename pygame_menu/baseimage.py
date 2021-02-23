@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Base class
+    'BaseImage',
+
     # Image paths
     'IMAGE_EXAMPLE_CARBON_FIBER',
     'IMAGE_EXAMPLE_GRAY_LINES',
@@ -46,10 +49,7 @@ __all__ = [
     'IMAGE_MODE_REPEAT_X',
     'IMAGE_MODE_REPEAT_XY',
     'IMAGE_MODE_REPEAT_Y',
-    'IMAGE_MODE_SIMPLE',
-
-    # Base class
-    'BaseImage'
+    'IMAGE_MODE_SIMPLE'
 
 ]
 

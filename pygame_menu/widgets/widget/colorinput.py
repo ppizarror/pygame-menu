@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Main class
+    'ColorInput',
+
     # Constants
     'COLORINPUT_TYPE_HEX',
     'COLORINPUT_TYPE_RGB',
@@ -41,10 +44,7 @@ __all__ = [
 
     # Type
     'ColorInputColorType',
-    'ColorInputHexFormatType',
-
-    # Main class
-    'ColorInput'
+    'ColorInputHexFormatType'
 
 ]
 
