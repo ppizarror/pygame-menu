@@ -44,9 +44,14 @@ __all__ = [
     'format_color',
     'is_callable',
     'make_surface',
+    'mouse_motion_current_mouse_position',
     'parse_padding',
+    'set_pygame_cursor',
     'uuid4',
     'widget_terminal_title',
+
+    # Constants
+    'PYGAME_V2',
 
     # Classes
     'TerminalColors'
@@ -345,6 +350,16 @@ def make_surface(width: NumberType, height: NumberType,
     return surface
 
 
+def mouse_motion_current_mouse_position() -> EventType:
+    """
+    Returns a pygame event type MOUSEMOTION in the current mouse position.
+
+    :return: Event
+    """
+    x, y = pygame.mouse.get_pos()
+    return pygame.event.Event(pygame.MOUSEMOTION, {'pos': (int(x), int(y))})
+
+
 def parse_padding(padding: PaddingType) -> Tuple4IntType:
     """
     Get the padding value from tuple.
@@ -379,6 +394,22 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
             return padding[0], padding[1], padding[2], padding[1]
         else:
             return padding[0], padding[1], padding[2], padding[3]
+
+
+def set_pygame_cursor(cursor: CursorInputType) -> None:
+    """
+    Set pygame cursor.
+
+    :param cursor: Cursor object
+    :return: None
+    """
+    try:
+        if cursor is not None:
+            # noinspection PyArgumentList
+            pygame.mouse.set_cursor(cursor)
+    except (pygame.error, TypeError):
+        msg = 'could not stablish widget cursor, invalid value {0}'.format(cursor)
+        warnings.warn(msg)
 
 
 def uuid4() -> str:
@@ -423,7 +454,7 @@ def widget_terminal_title(
             wtitle = '{0} - {1} - '.format(wclassid,
                                            TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
         else:
-            wtitle = wclassid
+            wtitle = wclassid + ' - '
 
     # Column/Row position
     wtitle += TerminalColors.INDIGO
@@ -434,6 +465,11 @@ def widget_terminal_title(
     # Add position
     wtitle += TerminalColors.MAGENTA
     wtitle += ' ({0},{1})'.format(*widget.get_position())
+    wtitle += TerminalColors.ENDC
+
+    # Add size
+    wtitle += TerminalColors.BLUE
+    wtitle += ' ({0},{1})'.format(*widget.get_size())
     wtitle += TerminalColors.ENDC
 
     # Add mods
@@ -461,6 +497,7 @@ class TerminalColors(object):
 
     See https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html.
     """
+    BLUE = '\u001b[38;5;27m'
     BOLD = '\033[1m'
     BRIGHT_MAGENTA = '\u001b[35;1m'
     BRIGHT_WHITE = '\u001b[37;1m'
