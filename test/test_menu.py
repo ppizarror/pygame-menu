@@ -31,7 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['MenuTest']
 
-from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2
+from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2, \
+    WIDGET_MOUSEOVER, reset_widgets_over
 from typing import Any, Tuple
 import copy
 import math
@@ -572,10 +573,10 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(len(self.menu.get_widgets()), 0)
 
         # Add 3 widgets, select the last one and remove it, then the selected widget must be the first
-        w1 = self.menu.add.button('1', None)
+        w1 = self.menu.add.button('1')
         w2 = Label('2')
         self.menu.add.generic_widget(w2, configure_defaults=True)
-        w3 = self.menu.add.button('3', None)
+        w3 = self.menu.add.button('3')
         self.assertEqual(self.menu.get_selected_widget(), w1)
         self.menu.select_widget(w3)
         self.assertEqual(self.menu.get_selected_widget(), w3)
@@ -1309,7 +1310,6 @@ class MenuTest(unittest.TestCase):
         """
         menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
         btn = menu.add.button('nice')
-        # menu.add.button('nice', None)
 
         # Test focus
         btn.active = True
@@ -1441,7 +1441,7 @@ class MenuTest(unittest.TestCase):
         menu_top.add.button('menu', menu).apply()
         widg = []
         for i in range(8):
-            b = menu.add.button('test' + str(i), None)
+            b = menu.add.button('test' + str(i))
             widg.append(b)
 
         # btn0 | btn2 | btn4 | btn6
@@ -1687,43 +1687,51 @@ class MenuTest(unittest.TestCase):
         Test mouseover + motion.
         """
         menu = MenuUtils.generic_menu()
-        btn1 = menu.add.button('1')
-        btn2 = menu.add.button('2')
+        btn1 = menu.add.button('1', cursor=pygame_menu.locals.CURSOR_ARROW)
+        btn2 = menu.add.button('2', cursor=pygame_menu.locals.CURSOR_ARROW)
 
         # Setup
         self.assertTrue(btn1.is_selected())
         self.assertFalse(menu._mouse_motion_selection)
-        self.assertIsNone(menu._widget_mouseover)
 
         test = [False, False, False, False]  # btn1over, btn1leave, btn2over, btn2leave
+        print_events = False
 
         def onover1(widget, _) -> None:
             """
             Onover event.
             """
             self.assertEqual(btn1, widget)
-            test[0] = True
+            test[0] = not test[0]
+            if print_events:
+                print('Enter 1')
 
         def onleave1(widget, _) -> None:
             """
             Onleave event.
             """
             self.assertEqual(btn1, widget)
-            test[1] = True
+            test[1] = not test[1]
+            if print_events:
+                print('Leave 1')
 
         def onover2(widget, _) -> None:
             """
             Onover event.
             """
             self.assertEqual(btn2, widget)
-            test[2] = True
+            test[2] = not test[2]
+            if print_events:
+                print('Enter 2')
 
         def onleave2(widget, _) -> None:
             """
             Onleave event.
             """
             self.assertEqual(btn2, widget)
-            test[3] = True
+            test[3] = not test[3]
+            if print_events:
+                print('Leave 2')
 
         btn1.set_onmouseover(onover1)
         btn1.set_onmouseleave(onleave1)
@@ -1731,12 +1739,27 @@ class MenuTest(unittest.TestCase):
         btn2.set_onmouseleave(onleave2)
 
         btn1.set_cursor(pygame_menu.locals.CURSOR_HAND)
+        btn2.set_cursor(pygame_menu.locals.CURSOR_CROSSHAIR)
 
         # Test before
         self.assertEqual(test, [False, False, False, False])
-        if pygame_menu.widgets.core.widget._CURSOR_PREV[0] is not None:
-            pygame_menu.widgets.core.widget._CURSOR_PREV[0] = None
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])  # None cursor should be the start
+
+        reset_widgets_over()
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+
+        # Get cursors
+        curnone = pygame.mouse.get_cursor()
+
+        if btn1._cursor is not None:
+            pygame.mouse.set_cursor(btn1._cursor)
+        cur1 = pygame.mouse.get_cursor()
+
+        if btn2._cursor is not None:
+            pygame.mouse.set_cursor(btn2._cursor)
+        cur2 = pygame.mouse.get_cursor()
+
+        if PYGAME_V2:
+            pygame.mouse.set_cursor(curnone)
 
         # Place mouse over widget 1, it should set as mouseover and trigger the events
         deco = menu.get_decorator()
@@ -1748,75 +1771,133 @@ class MenuTest(unittest.TestCase):
             surface.fill((255, 255, 255), btn1.get_rect(to_real_position=True))
 
         deco.add_callable(drawrect, prev=False, pass_args=False)
-        menu.update(PygameEventUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION))
-        self.assertEqual(menu._widget_mouseover, btn1)
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
-        if not PYGAME_V2:
-            self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        else:
-            self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
+        self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur1)
 
         # Place mouse away. This should force widget 1 mouseleave
-        menu.update(PygameEventUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
+        mouse_away_event = PygameEventUtils.middle_rect_click((1000, 1000), evtype=pygame.MOUSEMOTION)
+        menu.update(mouse_away_event)
         self.assertEqual(test, [True, True, False, False])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        self.assertIsNone(menu._widget_mouseover)
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
 
         # Place over widget 2
-        menu.update(PygameEventUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION))
-        self.assertEqual(menu._widget_mouseover, btn2)
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
         self.assertEqual(test, [True, True, True, False])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])  # button 2 don't have any cursor
+        self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur2)
 
         # Place mouse away. This should force widget 1 mouseleave
-        menu.update(PygameEventUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
+        menu.update(mouse_away_event)
         self.assertEqual(test, [True, True, True, True])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        self.assertIsNone(menu._widget_mouseover)
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
 
         # Test immediate switch, from 1 to 2, then from 2 to 1, then off
         test = [False, False, False, False]
-        menu.update(PygameEventUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION))
-        self.assertEqual(menu._widget_mouseover, btn1)
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
-        if not PYGAME_V2:
-            self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        else:
-            self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update(PygameEventUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION))
-        self.assertEqual(menu._widget_mouseover, btn2)
+        self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur1)
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, True, True, False])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update(PygameEventUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
+        self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur2)
+        menu.update(mouse_away_event)
         self.assertEqual(test, [True, True, True, True])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        self.assertIsNone(menu._widget_mouseover)
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
 
         # Same switch test, but now with widget selection by mouse motion
         menu._mouse_motion_selection = True
         test = [False, False, False, False]
         menu.select_widget(btn2)
         self.assertEqual(menu.get_selected_widget(), btn2)
-        menu.update(PygameEventUtils.middle_rect_click(btn1, menu, evtype=pygame.MOUSEMOTION))
-        self.assertEqual(menu._widget_mouseover, btn1)
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
         self.assertEqual(menu.get_selected_widget(), btn1)
         self.assertEqual(test, [True, False, False, False])
-        if not PYGAME_V2:
-            self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        else:
-            self.assertIsNotNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update(PygameEventUtils.middle_rect_click(btn2, menu, evtype=pygame.MOUSEMOTION))
-        self.assertEqual(menu._widget_mouseover, btn2)
+        self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur1)
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
         self.assertEqual(menu.get_selected_widget(), btn2)
         self.assertEqual(test, [True, True, True, False])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        menu.update(PygameEventUtils.middle_rect_click((1000, 1000), menu, evtype=pygame.MOUSEMOTION))
+        self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur2)
+        menu.update(mouse_away_event)
         self.assertEqual(test, [True, True, True, True])
-        self.assertIsNone(pygame_menu.widgets.core.widget._CURSOR_PREV[0])
-        self.assertIsNone(menu._widget_mouseover)
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+        menu.update(mouse_away_event)
+        self.assertEqual(test, [True, True, True, True])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+        self.assertEqual(menu.get_selected_widget(), btn2)
+
+        # Mouseover btn1, but then hide it
+        menu._mouse_motion_selection = False
+        test = [False, False, False, False]
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        self.assertEqual(test, [True, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur1)
+        btn1.hide()
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+
+        # Test close
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        self.assertEqual(test, [True, True, True, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur2)
+        menu.disable()
+        self.assertEqual(test, [True, True, True, True])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+        btn2.mouseleave(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        self.assertEqual(test, [True, True, True, True])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+
+        # Enable
+        menu.enable()
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn2))
+        self.assertEqual(test, [True, True, False, True])
+        self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, curnone, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur2)
+
+        # Move to hidden
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        self.assertEqual(test, [True, True, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), curnone)
+
+        # Unhide
+        btn1.show()
+        test = [False, False, False, False]
+        prev_pos1 = PygameEventUtils.middle_rect_mouse_motion(btn1)
+        menu.update(prev_pos1)
+        self.assertEqual(test, [True, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, curnone, []]])
+
+        # Move btn1 and btn2
+        self.assertEqual(menu.get_widgets(), (btn1, btn2))
+        menu.move_widget_index(btn1, btn2)
+        self.assertEqual(menu.get_widgets(), (btn2, btn1))
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+
+        menu.update(prev_pos1)
+        self.assertEqual(WIDGET_MOUSEOVER, [btn2, [btn2, curnone, []]])
+
+        # Remove btn2
+        menu.remove_widget(btn2)
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        menu._test_print_widgets()
 
     def test_floating_pos(self) -> None:
         """

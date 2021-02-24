@@ -1382,43 +1382,7 @@ class WidgetsTest(unittest.TestCase):
                   ('Frame',
                    (-1, -1, -1, 261, 193, 207, 136, 261, 348, 261, 193),
                    (0, 0, 0, 0, 1, 0, 0),
-                   (-1, -1),
-                   ('Button-This is a really long selection item',
-                    (-1, -1, -1, 0, -1, 356, 40, 261, 348, 0, 154),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-epic',
-                    (-1, -1, -1, 0, 38, 356, 40, 261, 386, 0, 193),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item1',
-                    (-1, -1, -1, 0, 77, 356, 40, 261, 425, 0, 232),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item2',
-                    (-1, -1, -1, 0, 116, 356, 40, 261, 348, 0, 271),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item3',
-                    (-1, -1, -1, 0, 155, 356, 40, 261, 348, 0, 310),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item4',
-                    (-1, -1, -1, 0, 194, 356, 40, 261, 348, 0, 349),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item5',
-                    (-1, -1, -1, 0, 233, 356, 40, 261, 348, 0, 388),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item6',
-                    (-1, -1, -1, 0, 272, 356, 40, 261, 348, 0, 427),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item7',
-                    (-1, -1, -1, 0, 311, 356, 40, 261, 348, 0, 466),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item8',
-                    (-1, -1, -1, 0, 350, 356, 40, 261, 348, 0, 505),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item9',
-                    (-1, -1, -1, 0, 389, 356, 40, 261, 348, 0, 544),
-                    (1, 0, 0, 0, 0, 1, 1)),
-                   ('Button-item10',
-                    (-1, -1, -1, 0, 428, 356, 40, 261, 348, 0, 583),
-                    (1, 0, 0, 0, 0, 1, 1))),
+                   (-1, -1)),
                   ('Button-This is a really long selection item',
                    (-1, -1, -1, 0, -1, 356, 40, 261, 348, 0, 154),
                    (1, 0, 0, 0, 0, 1, 1)),
@@ -1698,16 +1662,7 @@ class WidgetsTest(unittest.TestCase):
                  ('Frame',
                   (-1, -1, -1, 116, 44, 207, 100, 214, 352, 116, -198),
                   (0, 0, 0, 0, 0, 1, 1),
-                  (-1, -1),
-                  ('Button-Select an option',
-                   (-1, -1, -1, 116, 44, 207, 34, 214, 352, 116, -198),
-                   (1, 0, 0, 0, 0, 1, 2)),
-                  ('Button-optionA',
-                   (-1, -1, -1, 116, 77, 207, 34, 214, 385, 116, -165),
-                   (1, 0, 0, 0, 0, 1, 2)),
-                  ('Button-optionB',
-                   (-1, -1, -1, 116, 110, 207, 34, 214, 418, 116, -132),
-                   (1, 0, 0, 0, 0, 1, 2))),
+                  (-1, -1)),
                  ('Button-optionA',
                   (-1, -1, -1, 116, 77, 207, 34, 214, 385, 116, -165),
                   (1, 0, 0, 0, 0, 1, 2)),
@@ -1999,6 +1954,33 @@ class WidgetsTest(unittest.TestCase):
         wid.set_border(1, (0, 0, 0), (0, 0))
         self.assertEqual(wid._border_width, 0)
         self.assertEqual(wid.get_selected_time(), 0)
+
+        # Test events
+        def myevent() -> None:
+            """
+            Generic event object.
+            """
+            return
+
+        wid.set_onchange(myevent)
+        self.assertIsNone(wid._onchange)
+        wid.set_onmouseover(myevent)
+        self.assertIsNone(wid._onmouseover)
+        wid.set_onmouseleave(myevent)
+        self.assertIsNone(wid._onmouseleave)
+        wid.set_onselect(myevent)
+        self.assertIsNone(wid._onselect)
+        wid.set_onreturn(myevent)
+        self.assertIsNone(wid._onreturn)
+        wid.mouseleave()
+        wid.mouseover()
+        wid._mouseover = True
+        wid._check_mouseover()
+        self.assertFalse(wid._mouseover)
+
+        # Defaults
+        wid.set_default_value(None)
+        self.assertIsNotNone(wid._default_value)
 
     def test_border(self) -> None:
         """

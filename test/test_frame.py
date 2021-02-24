@@ -32,7 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['FrameWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2, \
+    WIDGET_MOUSEOVER, reset_widgets_over
 import unittest
 
 import pygame
@@ -40,6 +41,7 @@ import pygame_menu
 
 from pygame_menu.controls import KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_RIGHT, JOY_LEFT, KEY_MOVE_DOWN
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+from pygame_menu.widgets import Button
 
 
 class FrameWidgetTest(unittest.TestCase):
@@ -287,9 +289,9 @@ class FrameWidgetTest(unittest.TestCase):
         menu.remove_widget(frame_v)
         self.assertTrue(b1.is_floating())
         self.assertTrue(b2.is_floating())
-        self.assertEqual(b1.get_frame(), None)
-        self.assertEqual(b2.get_frame(), None)
-        self.assertEqual(frame_v.get_menu(), None)
+        self.assertIsNone(b1.get_frame())
+        self.assertIsNone(b2.get_frame())
+        self.assertIsNone(frame_v.get_menu())
         self.assertEqual(b1.get_translate(virtual=True), (0, 0))
         self.assertEqual(b2.get_translate(virtual=True), (0, 0))
 
@@ -372,7 +374,7 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Create container frame
         f4 = menu.add.frame_v(400, 1500, frame_id='f4')
-        self.assertEqual(f2.get_frame(), None)
+        self.assertIsNone(f2.get_frame())
         f4.pack(f2)
         self.assertEqual(menu._widgets, [f1, b2, b0, b4, f4, f2, b3, b5, f3, b1])
         f4.pack(f1.unpack(b2))
@@ -402,8 +404,8 @@ class FrameWidgetTest(unittest.TestCase):
         f4.unpack(f2)
         self.assertEqual(menu._widgets, [f4, b2, f1, b0, b4, f2, f3, b5, b1, b3])
         menu.remove_widget(f4)
-        self.assertEqual(b2.get_frame(), None)
-        self.assertEqual(f1.get_frame(), None)
+        self.assertIsNone(b2.get_frame())
+        self.assertIsNone(f1.get_frame())
         self.assertEqual(b0.get_frame(), f1)
         self.assertEqual(b4.get_frame(), f1)
         self.assertEqual(menu._widgets, [f2, f3, b5, b1, b3, b2, f1, b0, b4])
@@ -571,7 +573,7 @@ class FrameWidgetTest(unittest.TestCase):
         frame_scroll = frame_sc.get_scrollarea(inner=True)
         frame2 = menu.add.frame_v(400, 200, background_color=(30, 30, 30), padding=25)
         menu.add.frame_v(300, 200, background_color=(255, 255, 0))
-        self.assertEqual(menu.get_selected_widget(), None)
+        self.assertIsNone(menu.get_selected_widget())
         btn_frame21 = frame2.pack(menu.add.button('Button frame nosc'))
         btn_frame22 = frame2.pack(menu.add.button('Button frame nosc 2'))
         btn = frame_sc.pack(menu.add.button('Nice', lambda: print('Clicked'), padding=10))
@@ -595,7 +597,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(btn.get_frame(), frame_sc)
         self.assertEqual(btn2.get_frame(), frame_sc)
         self.assertEqual(btn.get_scrollarea(), frame_sc.get_scrollarea(inner=True))
-        self.assertEqual(btn_real.get_frame(), None)
+        self.assertIsNone(btn_real.get_frame())
         self.assertEqual(btn_real.get_scrollarea(), menu.get_scrollarea())
         self.assertEqual(btn_frame21.get_frame(), frame2)
         self.assertEqual(btn_frame22.get_frame(), frame2)
@@ -774,26 +776,7 @@ class FrameWidgetTest(unittest.TestCase):
                 (('Frame',
                   (0, 0, 0, 148, 1, 304, 192, 148, 155, 148, 1),
                   (0, 0, 0, 1, 1, 0, 0),
-                  (1, 6),
-                  ('Button-Nice2',
-                   (0, 0, 1, 0, 0, 99, 61, 148, 155, 0, 154),
-                   (1, 0, 0, 1, 0, 1, 1)),
-                  ('Button-Nice3',
-                   (0, 0, 2, 0, 61, 99, 61, 148, 216, 0, 215),
-                   (1, 0, 0, 1, 0, 1, 1)),
-                  ('Button-Nice4',
-                   (0, 0, 3, 0, 0, 99, 61, 148, 155, 0, 154),
-                   (1, 1, 0, 1, 0, 1, 1)),
-                  ('Button-Nice5',
-                   (-1, -1, 4, -158, 172, 99, 61, 148, 155, -158, 326),
-                   (1, 0, 0, 0, 0, 1, 1)),
-                  ('TextInput-text: ',
-                   (0, 0, 5, 0, 0, 87, 49, 148, 155, 0, 154),
-                   (1, 1, 1, 1, 0, 1, 1),
-                   ''),
-                  ('Button-btn6',
-                   (0, 0, 6, 0, 122, 80, 49, 148, 277, 0, 276),
-                   (1, 0, 0, 1, 0, 1, 1))),
+                  (1, 6)),
                  ('Button-Nice2',
                   (0, 0, 1, 0, 0, 99, 61, 148, 155, 0, 154),
                   (1, 0, 0, 1, 0, 1, 1)),
@@ -816,13 +799,7 @@ class FrameWidgetTest(unittest.TestCase):
                  ('Frame',
                   (0, 1, 7, 100, 193, 400, 200, 100, 347, 100, 193),
                   (0, 0, 0, 1, 0, 0, 0),
-                  (8, 9),
-                  ('Button-Button frame nosc',
-                   (0, 1, 8, 125, 218, 275, 49, 125, 372, 125, 218),
-                   (1, 0, 0, 1, 0, 1, 1)),
-                  ('Button-Button frame nosc 2',
-                   (0, 1, 9, 125, 267, 300, 49, 125, 421, 125, 267),
-                   (1, 0, 0, 1, 0, 1, 1))),
+                  (8, 9)),
                  ('Button-Button frame nosc',
                   (0, 1, 8, 125, 218, 275, 49, 125, 372, 125, 218),
                   (1, 0, 0, 1, 0, 1, 1)),
@@ -863,13 +840,7 @@ class FrameWidgetTest(unittest.TestCase):
                  ('Frame',
                   (0, 1, 1, 100, 193, 400, 200, 100, 155, 100, 193),
                   (0, 0, 0, 1, 0, 0, 0),
-                  (2, 3),
-                  ('Button-Button frame nosc',
-                   (0, 1, 2, 125, 218, 275, 49, 125, 169, 125, 218),
-                   (1, 0, 1, 1, 0, 1, 1)),
-                  ('Button-Button frame nosc 2',
-                   (0, 1, 3, 125, 267, 300, 49, 125, 218, 125, 267),
-                   (1, 0, 0, 1, 0, 1, 1))),
+                  (2, 3)),
                  ('Button-Button frame nosc',
                   (0, 1, 2, 125, 218, 275, 49, 125, 169, 125, 218),
                   (1, 0, 1, 1, 0, 1, 1)),
@@ -1050,7 +1021,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertTrue(f3.is_scrollable)
         self.assertTrue(f4.is_scrollable)
 
-        self.assertEqual(s0.get_parent(), None)
+        self.assertIsNone(s0.get_parent())
         self.assertEqual(f1.get_scrollarea(), s0)
         self.assertEqual(f2.get_scrollarea(), s0)
         self.assertEqual(f3.get_scrollarea(), s1)
@@ -1109,37 +1080,14 @@ class FrameWidgetTest(unittest.TestCase):
                 (('Frame',
                   (0, 0, 0, 75, 1, 450, 400, 75, 156, 75, 1),
                   (0, 0, 0, 1, 0, 0, 0),
-                  (1, 2),
-                  ('Button-btn1',
-                   (0, 0, 1, 108, 5, 80, 49, 108, 160, 108, 5),
-                   (1, 0, 0, 1, 0, 1, 1)),
-                  ('VMargin', (0, 0, 3, 0, 0, 0, 25, 0, 0, 0, 0), (0, 0, 0, 1, 0, 1, 2)),
-                  ('Button-btn2',
-                   (0, 0, 4, 25, 25, 80, 49, 108, 234, 25, 180),
-                   (1, 0, 0, 1, 0, 1, 2)),
-                  ('Button-btn3',
-                   (0, 0, 6, 25, 0, 80, 49, 108, 283, 108, 209),
-                   (1, 0, 0, 1, 0, 1, 3)),
-                  ('Button-btn4',
-                   (0, 0, 8, 25, 0, 80, 49, 108, 332, 108, 283),
-                   (1, 0, 1, 1, 0, 1, 4))),
+                  (1, 2)),
                  ('Button-btn1',
                   (0, 0, 1, 108, 5, 80, 49, 108, 160, 108, 5),
                   (1, 0, 0, 1, 0, 1, 1)),
                  ('Frame',
                   (0, 0, 2, 83, 54, 404, 292, 83, 209, 83, 54),
                   (0, 0, 0, 1, 1, 1, 1),
-                  (4, 5),
-                  ('VMargin', (0, 0, 3, 0, 0, 0, 25, 0, 0, 0, 0), (0, 0, 0, 1, 0, 1, 2)),
-                  ('Button-btn2',
-                   (0, 0, 4, 25, 25, 80, 49, 108, 234, 25, 180),
-                   (1, 0, 0, 1, 0, 1, 2)),
-                  ('Button-btn3',
-                   (0, 0, 6, 25, 0, 80, 49, 108, 283, 108, 209),
-                   (1, 0, 0, 1, 0, 1, 3)),
-                  ('Button-btn4',
-                   (0, 0, 8, 25, 0, 80, 49, 108, 332, 108, 283),
-                   (1, 0, 1, 1, 0, 1, 4))),
+                  (4, 5)),
                  ('VMargin', (0, 0, 3, 0, 0, 0, 25, 0, 0, 0, 0), (0, 0, 0, 1, 0, 1, 2)),
                  ('Button-btn2',
                   (0, 0, 4, 25, 25, 80, 49, 108, 234, 25, 180),
@@ -1147,23 +1095,14 @@ class FrameWidgetTest(unittest.TestCase):
                  ('Frame',
                   (0, 0, 5, 0, 74, 354, 192, 83, 283, 0, 229),
                   (0, 0, 0, 1, 1, 1, 2),
-                  (6, 7),
-                  ('Button-btn3',
-                   (0, 0, 6, 25, 0, 80, 49, 108, 283, 108, 209),
-                   (1, 0, 0, 1, 0, 1, 3)),
-                  ('Button-btn4',
-                   (0, 0, 8, 25, 0, 80, 49, 108, 332, 108, 283),
-                   (1, 0, 1, 1, 0, 1, 4))),
+                  (6, 7)),
                  ('Button-btn3',
                   (0, 0, 6, 25, 0, 80, 49, 108, 283, 108, 209),
                   (1, 0, 0, 1, 0, 1, 3)),
                  ('Frame',
                   (0, 0, 7, 0, 49, 304, 92, 83, 332, 83, 258),
                   (0, 0, 0, 1, 1, 1, 3),
-                  (8, 8),
-                  ('Button-btn4',
-                   (0, 0, 8, 25, 0, 80, 49, 108, 332, 108, 283),
-                   (1, 0, 1, 1, 0, 1, 4))),
+                  (8, 8)),
                  ('Button-btn4',
                   (0, 0, 8, 25, 0, 80, 49, 108, 332, 108, 283),
                   (1, 0, 1, 1, 0, 1, 4)),
@@ -1381,19 +1320,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (1, 0, 2, 84, 82, 200, 50, 84, 237, 84, 82),
               (0, 0, 0, 1, 0, 0, 0),
-              (3, 6),
-              ('Button-btn2 ',
-               (1, 0, 3, 84, 82, 47, 28, 84, 237, 84, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn3 ',
-               (1, 0, 4, 131, 82, 47, 28, 131, 237, 131, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn4 ',
-               (1, 0, 5, 178, 82, 47, 28, 178, 237, 178, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn5 ',
-               (1, 0, 6, 225, 82, 47, 28, 225, 237, 225, 82),
-               (1, 0, 0, 1, 0, 1, 1))),
+              (3, 6)),
              ('Button-btn2 ',
               (1, 0, 3, 84, 82, 47, 28, 84, 237, 84, 82),
               (1, 0, 0, 1, 0, 1, 1)),
@@ -1412,19 +1339,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (2, 0, 8, 351, 82, 200, 132, 351, 237, 351, 82),
               (0, 0, 0, 1, 0, 0, 0),
-              (9, 11),
-              ('Button-btn7',
-               (2, 0, 9, 430, 82, 42, 28, 430, 237, 430, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn8',
-               (2, 0, 10, 430, 110, 42, 28, 430, 265, 430, 110),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn9 ',
-               (2, 0, 12, 351, 138, 47, 28, 351, 293, 351, 138),
-               (1, 0, 0, 1, 0, 1, 2)),
-              ('Button-btn10',
-               (2, 0, 13, 398, 138, 53, 28, 398, 293, 398, 138),
-               (1, 0, 0, 1, 0, 1, 2))),
+              (9, 11)),
              ('Button-btn7',
               (2, 0, 9, 430, 82, 42, 28, 430, 237, 430, 82),
               (1, 0, 0, 1, 0, 1, 1)),
@@ -1434,13 +1349,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (2, 0, 11, 351, 138, 200, 50, 351, 293, 351, 138),
               (0, 0, 0, 1, 0, 1, 1),
-              (12, 13),
-              ('Button-btn9 ',
-               (2, 0, 12, 351, 138, 47, 28, 351, 293, 351, 138),
-               (1, 0, 0, 1, 0, 1, 2)),
-              ('Button-btn10',
-               (2, 0, 13, 398, 138, 53, 28, 398, 293, 398, 138),
-               (1, 0, 0, 1, 0, 1, 2))),
+              (12, 13)),
              ('Button-btn9 ',
               (2, 0, 12, 351, 138, 47, 28, 351, 293, 351, 138),
               (1, 0, 0, 1, 0, 1, 2)),
@@ -1450,16 +1359,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (2, 1, 14, 321, 214, 260, 50, 321, 369, 321, 214),
               (0, 0, 0, 1, 0, 0, 0),
-              (15, 17),
-              ('Button-btn11 ',
-               (2, 1, 15, 321, 214, 58, 28, 321, 369, 321, 214),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn12 ',
-               (2, 1, 16, 379, 214, 58, 28, 379, 369, 379, 214),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn13',
-               (2, 1, 17, 437, 214, 53, 28, 437, 369, 437, 214),
-               (1, 0, 0, 1, 0, 1, 1))),
+              (15, 17)),
              ('Button-btn11 ',
               (2, 1, 15, 321, 214, 58, 28, 321, 369, 321, 214),
               (1, 0, 0, 1, 0, 1, 1)),
@@ -1538,19 +1438,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (1, 0, 2, 84, 82, 200, 50, 84, 237, 84, 82),
               (0, 0, 0, 1, 0, 0, 0),
-              (3, 6),
-              ('Button-btn2 ',
-               (1, 0, 3, 84, 82, 47, 28, 84, 237, 84, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn3 ',
-               (1, 0, 4, 131, 82, 47, 28, 131, 237, 131, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn4 ',
-               (1, 0, 5, 178, 82, 47, 28, 178, 237, 178, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn5 ',
-               (1, 0, 6, 225, 82, 47, 28, 225, 237, 225, 82),
-               (1, 0, 0, 1, 0, 1, 1))),
+              (3, 6)),
              ('Button-btn2 ',
               (1, 0, 3, 84, 82, 47, 28, 84, 237, 84, 82),
               (1, 0, 0, 1, 0, 1, 1)),
@@ -1569,13 +1457,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (2, 0, 8, 351, 82, 200, 132, 351, 237, 351, 82),
               (0, 0, 0, 1, 0, 0, 0),
-              (9, 10),
-              ('Button-btn7',
-               (2, 0, 9, 430, 82, 42, 28, 430, 237, 430, 82),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn8',
-               (2, 0, 10, 430, 110, 42, 28, 430, 265, 430, 110),
-               (1, 0, 0, 1, 0, 1, 1))),
+              (9, 10)),
              ('Button-btn7',
               (2, 0, 9, 430, 82, 42, 28, 430, 237, 430, 82),
               (1, 0, 0, 1, 0, 1, 1)),
@@ -1585,16 +1467,7 @@ class FrameWidgetTest(unittest.TestCase):
              ('Frame',
               (2, 1, 11, 321, 214, 260, 50, 321, 369, 321, 214),
               (0, 0, 0, 1, 0, 0, 0),
-              (12, 14),
-              ('Button-btn11 ',
-               (2, 1, 12, 321, 214, 58, 28, 321, 369, 321, 214),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn12 ',
-               (2, 1, 13, 379, 214, 58, 28, 379, 369, 379, 214),
-               (1, 0, 0, 1, 0, 1, 1)),
-              ('Button-btn13',
-               (2, 1, 14, 437, 214, 53, 28, 437, 369, 437, 214),
-               (1, 0, 0, 1, 0, 1, 1))),
+              (12, 14)),
              ('Button-btn11 ',
               (2, 1, 12, 321, 214, 58, 28, 321, 369, 321, 214),
               (1, 0, 0, 1, 0, 1, 1)),
@@ -1619,6 +1492,247 @@ class FrameWidgetTest(unittest.TestCase):
         for i in range(14):
             menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn0)
+
+    def test_mouseover(self) -> None:
+        """
+        Test frame mouse support.
+        """
+        menu = MenuUtils.generic_menu()
+        reset_widgets_over()
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+
+        f1 = menu.add.frame_v(500, 500, background_color='red',
+                              cursor=pygame_menu.locals.CURSOR_HAND, frame_id='f1')
+        menu.add.vertical_margin(100, margin_id='vbottom')
+        f1.pack(menu.add.vertical_margin(100, margin_id='vtop'))
+
+        f2 = menu.add.frame_v(400, 300, background_color='blue',
+                              cursor=pygame_menu.locals.CURSOR_HAND, frame_id='f2')
+        b1 = f1.pack(menu.add.button('1', button_id='b1', cursor=pygame_menu.locals.CURSOR_ARROW))
+        f1.pack(f2)
+        b2 = f2.pack(menu.add.button('2', button_id='b2', cursor=pygame_menu.locals.CURSOR_ARROW))
+
+        f3 = f2.pack(menu.add.frame_v(100, 100, background_color='green',
+                                      cursor=pygame_menu.locals.CURSOR_HAND, frame_id='f3'))
+        b3 = f3.pack(menu.add.button('3', button_id='b3', cursor=pygame_menu.locals.CURSOR_ARROW))
+
+        f1._id__repr__ = True
+        f2._id__repr__ = True
+        f3._id__repr__ = True
+
+        # Get cursors
+        cur_none = pygame.mouse.get_cursor()
+        if PYGAME_V2:
+            pygame.mouse.set_cursor(pygame_menu.locals.CURSOR_ARROW)
+        cur_arrow = pygame.mouse.get_cursor()
+        if PYGAME_V2:
+            pygame.mouse.set_cursor(pygame_menu.locals.CURSOR_HAND)
+        cur_hand = pygame.mouse.get_cursor()
+        if PYGAME_V2:
+            pygame.mouse.set_cursor(cur_none)
+
+        if PYGAME_V2:
+            self.assertEqual(menu._test_widgets_status(), (
+                (('Frame',
+                  (0, 0, 0, 50, 1, 500, 500, 50, 155, 50, 1),
+                  (0, 0, 0, 1, 0, 0, 0),
+                  (2, 3)),
+                 ('VMargin', (0, 0, 1, 0, 0, 0, 100, 0, 0, 0, 0), (0, 0, 0, 1, 0, 1, 1)),
+                 ('Button-1',
+                  (0, 0, 2, 58, 105, 33, 49, 58, 197, 58, 105),
+                  (1, 0, 1, 1, 0, 1, 1)),
+                 ('Frame',
+                  (0, 0, 3, 58, 154, 400, 300, 58, 246, 58, 154),
+                  (0, 0, 0, 1, 0, 1, 1),
+                  (4, 5)),
+                 ('Button-2',
+                  (0, 0, 4, 66, 158, 33, 49, 66, 250, 66, 158),
+                  (1, 0, 0, 1, 0, 1, 2)),
+                 ('Frame',
+                  (0, 0, 5, 66, 207, 100, 100, 66, 299, 66, 207),
+                  (0, 0, 0, 1, 0, 1, 2),
+                  (6, 6)),
+                 ('Button-3',
+                  (0, 0, 6, 74, 211, 33, 49, 74, 303, 74, 211),
+                  (1, 0, 0, 1, 0, 1, 3)),
+                 ('VMargin', (0, 1, 7, 0, 0, 0, 100, 0, 0, 0, 0), (0, 0, 0, 1, 0, 0, 0)))
+            ))
+
+        # Setup
+        self.assertTrue(b1.is_selected())
+        self.assertFalse(menu._mouse_motion_selection)
+        menu._test_print_widgets()
+
+        test = [False, False, False, False, False, False]  # f1, b1, f2, b2, f3, b3
+        print_events = True
+
+        def onf1(widget, _) -> None:
+            """
+            f1 event.
+            """
+            self.assertEqual(widget, f1)
+            test[0] = not test[0]
+            if print_events:
+                print('{0} f1'.format('Enter' if test[0] else 'Leave'))
+
+        def onb1(widget, _) -> None:
+            """
+            b1 event.
+            """
+            self.assertEqual(widget, b1)
+            test[1] = not test[1]
+            if print_events:
+                print('{0} b1'.format('Enter' if test[1] else 'Leave'))
+
+        def onf2(widget, _) -> None:
+            """
+            f2 event.
+            """
+            self.assertEqual(widget, f2)
+            test[2] = not test[2]
+            if print_events:
+                print('{0} f2'.format('Enter' if test[2] else 'Leave'))
+
+        def onb2(widget, _) -> None:
+            """
+            b2 event.
+            """
+            self.assertEqual(widget, b2)
+            test[3] = not test[3]
+            if print_events:
+                print('{0} b2'.format('Enter' if test[3] else 'Leave'))
+
+        def onf3(widget, _) -> None:
+            """
+            f3 event.
+            """
+            self.assertEqual(widget, f3)
+            test[4] = not test[4]
+            if print_events:
+                print('{0} f3'.format('Enter' if test[4] else 'Leave'))
+
+        def onb3(widget, _) -> None:
+            """
+            b3 event.
+            """
+            self.assertEqual(widget, b3)
+            test[5] = not test[5]
+            if print_events:
+                print('{0} b3'.format('Enter' if test[5] else 'Leave'))
+
+        f1.set_onmouseover(onf1)
+        f1.set_onmouseleave(onf1)
+        b1.set_onmouseover(onb1)
+        b1.set_onmouseleave(onb1)
+
+        f2.set_onmouseover(onf2)
+        f2.set_onmouseleave(onf2)
+        b2.set_onmouseover(onb2)
+        b2.set_onmouseleave(onb2)
+
+        f3.set_onmouseover(onf3)
+        f3.set_onmouseleave(onf3)
+        b3.set_onmouseover(onb3)
+        b3.set_onmouseleave(onb3)
+
+        # Start moving mouse
+        #
+        # .------------f1-----------.
+        # | vop <100px>             |
+        # | b1                      |
+        # | .----------f2---------. |
+        # | | b2                  | |
+        # | | .--------f3-------. | |
+        # | | | b3              | | |
+        # | | .-----------------. | |
+        # | .---------------------. |
+        # .-------------------------.
+        # vbottom <100px>
+        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(f1))
+        self.assertEqual(test, [True, False, False, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [f1, [f1, cur_none, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+
+        # Move to b1 inside f1
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b1))
+        self.assertEqual(test, [True, True, False, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [b1, [b1, cur_hand, [f1, cur_none, []]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+
+        # Move to f2, inside f1
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(f2))
+        self.assertEqual(test, [True, False, True, False, False, False])  # out from b1
+        self.assertEqual(WIDGET_MOUSEOVER, [f2, [f2, cur_hand, [f1, cur_none, []]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+
+        # Move to b2, inside f2+f1
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b2))
+        self.assertEqual(test, [True, False, True, True, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+
+        # Move to f3
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(f3))
+        self.assertEqual(test, [True, False, True, False, True, False])  # out from b2
+        self.assertEqual(WIDGET_MOUSEOVER, [f3, [f3, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+
+        # Move to b3, inside f3+f2+f1
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b3))
+        self.assertEqual(test, [True, False, True, False, True, True])
+        self.assertEqual(WIDGET_MOUSEOVER, [b3, [b3, cur_hand, [f3, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+
+        # From b3, move mouse out from window
+        menu.update(PygameEventUtils.leave_window())
+        self.assertEqual(test, [False, False, False, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+
+        # Move from out to inner widget (b3), this should call f1->f2->f3->b3
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b3))
+        self.assertEqual(test, [True, False, True, False, True, True])
+        self.assertEqual(WIDGET_MOUSEOVER, [b3, [b3, cur_hand, [f3, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+
+        # Move from b3->f2, this should call b3, f3 but not call f2 as this is actually over
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(f2))
+        self.assertEqual(test, [True, False, True, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [f2, [f2, cur_hand, [f1, cur_none, []]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_hand)
+
+        # Move from f2->b1, this should call f2
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b1))
+        self.assertEqual(test, [True, True, False, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [b1, [b1, cur_hand, [f1, cur_none, []]]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+
+        # Move from b1 to outside the menu
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion((1, 1)))
+        self.assertEqual(test, [False, False, False, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+
+        # Move from out to b2, this should call f1->f2->b2
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b2))
+        self.assertEqual(test, [True, False, True, True, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_hand, [f2, cur_hand, [f1, cur_none, []]]]])
+        self.assertEqual(menu.get_mouseover_widget(), b2)
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
+
+        # Unpack b2
+        f2.unpack(b2)
+        self.assertEqual(test, [False, False, False, False, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [None, []])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
+
+        # Check b2
+        menu.scroll_to_widget(b2)
+        menu.update(PygameEventUtils.topleft_rect_mouse_motion(b2))
+        self.assertEqual(test, [False, False, False, True, False, False])
+        self.assertEqual(WIDGET_MOUSEOVER, [b2, [b2, cur_none, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur_arrow)
 
     def test_title(self) -> None:
         """
@@ -1656,6 +1770,19 @@ class FrameWidgetTest(unittest.TestCase):
         frame.pack(menu.add.button('Button'))
 
         # Add button to title
-        frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, lambda: print('clicked'))
+        test = [False]
 
-        # menu.mainloop(surface)
+        def click_button(**kwargs) -> None:
+            """
+            Click button.
+            """
+            f = kwargs.pop('frame')
+            b = kwargs.pop('button')
+            self.assertEqual(f, frame)
+            self.assertIsInstance(b, Button)
+            test[0] = not test[0]
+
+        btn = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, click_button)
+
+
+        menu.mainloop(surface)

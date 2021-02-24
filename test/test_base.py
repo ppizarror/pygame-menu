@@ -77,3 +77,12 @@ class BaseTest(unittest.TestCase):
         obj.remove_attribute('epic')
         self.assertFalse(obj.has_attribute('epic'))
         self.assertEqual(obj.get_attribute('epic', 420), 420)
+
+    def test_repr(self) -> None:
+        """
+        Test base repr.
+        """
+        obj = Base('id')
+        self.assertNotIn('["id"]', str(obj))
+        obj._id__repr__ = True
+        self.assertIn('["id"]', str(obj))
