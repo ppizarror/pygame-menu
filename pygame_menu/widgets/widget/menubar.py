@@ -151,6 +151,7 @@ class MenuBar(Widget):
         self._background_color = background_color
         self._box_mode = 0
         self._modify_scrollarea = modify_scrollarea
+        self._mouseover_check_rect = lambda: self._backbox_rect
         self._offsetx = 0
         self._offsety = 0
         self._polygon_pos = None
@@ -485,6 +486,10 @@ class MenuBar(Widget):
 
         for event in events:
 
+            # Check mouse over
+            if self._backbox_visible():
+                self._check_mouseover(event)
+
             # User clicks the backbox rect
             if event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
@@ -499,10 +504,6 @@ class MenuBar(Widget):
                     self._sound.play_key_del()
                     self.apply()
                     updated = True
-
-            # User moves mouse, check mouseover
-            elif event.type == pygame.MOUSEMOTION and self._backbox_visible():
-                self._check_mouseover(event, self._backbox_rect)
 
             # User touches the backbox button
             elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
