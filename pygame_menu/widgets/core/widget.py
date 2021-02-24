@@ -35,7 +35,10 @@ __all__ = [
     'Widget',
 
     # Utils
-    'check_mouseleave'
+    'check_widget_mouseleave',
+
+    # Global widget mouseover list
+    'WIDGET_MOUSEOVER'
 
 ]
 
@@ -53,7 +56,7 @@ from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHWEST, POSITION_
     POSITION_NORTHEAST, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, POSITION_SOUTHEAST, ALIGN_CENTER
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector, \
-    is_callable, parse_padding, uuid4
+    is_callable, parse_padding, uuid4, mouse_motion_current_mouse_position, PYGAME_V2, set_pygame_cursor
 from pygame_menu.widgets.core.selection import Selection
 
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
@@ -62,34 +65,65 @@ from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, P
 
 # This list stores the current widget which requested the mouseover status, and the previous
 # widget list which requested the mouseover. Each time the widget changes the over status, if leaves
-# all previous widgets that are not hovered trigger mouseleave
-WIDGET_OVER: List[Any] = [None, []]
+# all previous widgets that are not hovered trigger mouseleave. The format of each item of the list is
+# [..., [widget, previous_cursor, [previous_widget, previous_cursor2, [....]
+WIDGET_MOUSEOVER: List[Any] = [None, []]
 
 
-def check_mouseleave(event: Optional[EventType], force: bool = False) -> None:
+# noinspection PyProtectedMember
+def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
     """
     Check if the active widget (WIDGET_OVER[0]) is still over, else,
-    execute previous list.
+    execute previous list (WIDGET_OVER[1]).
 
     :param event: Mouse motion event. If ``None`` this method creates the event
-    :param force: If ``True`` calls all mouse leave without checking if still over
+    :param force: If ``True`` calls all mouse leave without checking if the mouse is still over
     :return: None
     """
+    # If no widget is over, return
+    if WIDGET_MOUSEOVER[0] is None:
+        assert len(WIDGET_MOUSEOVER[1]) == 0, 'widget leave sublist must be empty'
+        return
 
+    if event is None:
+        event = mouse_motion_current_mouse_position()
 
-def _restore_cursor() -> None:
-    """
-    Restore cursor status.
+    # Check widget is still over
+    current: 'Widget' = WIDGET_MOUSEOVER[0]
+    current._check_mouseover(event, check_all_widget_mouseleave=False)  # This may change WIDGET_MOUSEOVER
 
-    :return: None
-    """
-    if not isinstance(WIDGET_OVER[0], _WidgetUnknownCursor):
-        if WIDGET_OVER[0] is not None:
-            # noinspection PyArgumentList
-            pygame.mouse.set_cursor(WIDGET_OVER[0])
-            WIDGET_OVER[0] = None
-    else:
-        WIDGET_OVER[0] = None
+    # If mouse is not visible, forces
+    if PYGAME_V2:
+        force = force or not pygame.mouse.get_visible()
+
+    # The active widget is not over
+    if (not current._mouseover or force) and WIDGET_MOUSEOVER[0] is not None:
+        assert len(WIDGET_MOUSEOVER[1]) == 3, 'invalid widget leave sublist length'
+
+        # Unpack list
+        prev_widget: 'Widget' = WIDGET_MOUSEOVER[1][0]
+        prev_cursor = WIDGET_MOUSEOVER[1][1]
+        prev_list: List[Any] = WIDGET_MOUSEOVER[1][2]
+
+        assert WIDGET_MOUSEOVER[0] == prev_widget, 'inconsistent widget leave sublist'
+
+        # Set previous cursor
+        set_pygame_cursor(prev_cursor)
+
+        # Unpack list
+        if len(prev_list) == 0:
+            WIDGET_MOUSEOVER[0] = None
+            WIDGET_MOUSEOVER[1] = []
+        else:
+            assert len(prev_list) == 3, 'invalid widget leave sublist length'
+            WIDGET_MOUSEOVER[0] = prev_list[0]
+            WIDGET_MOUSEOVER[1] = prev_list
+
+        # Call leave
+        prev_widget.mouseleave(event, check_all_widget_mouseleave=False)
+
+        # Recursive call
+        check_widget_mouseleave(event, force)
 
 
 class Widget(Base):
@@ -148,6 +182,8 @@ class Widget(Base):
     _menu: Optional['pygame_menu.Menu']
     _mouse_enabled: bool
     _mouseover: bool  # Check if mouse is over
+    _mouseover_called: Optional[bool]  # Check if the mouseover/mouseleave callbacks were called
+    _mouseover_check_rect: Callable[[], 'pygame.Rect']
     _onchange: CallbackType
     _onmouseleave: CallbackType
     _onmouseover: CallbackType
@@ -211,6 +247,7 @@ class Widget(Base):
         self._max_height = [None, False, True]  # size, width_scale, smooth
         self._max_width = [None, False, True]  # size, height_scale, smooth
         self._mouseover = False
+        self._mouseover_called = None
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
         self._padding_transform = (0, 0, 0, 0)
         self._position = (0, 0)
@@ -221,6 +258,9 @@ class Widget(Base):
         self._tab_size = 0  # Tab spaces
         self._title = str(title)
         self._visible = True  # Use show() or hide() to modify this status
+
+        # Which function is used to get the rect which checks if the widget is active or not
+        self._mouseover_check_rect = lambda: self.get_rect(to_real_position=True)
 
         # Widget transforms
         self._angle = 0  # Rotation angle (degrees)
@@ -398,7 +438,7 @@ class Widget(Base):
         self._onmouseleave = onmouseleave
         return self
 
-    def mouseover(self, event: EventType) -> 'Widget':
+    def mouseover(self, event: EventType, check_all_widget_mouseleave: bool = True) -> 'Widget':
         """
         Run the ``onmouseover`` if the mouse is placed over the Widget. The callback receive the Widget
         object reference and the mouse event:
@@ -412,29 +452,49 @@ class Widget(Base):
             This method does not evaluate if the mouse is placed over the Widget. Only
             executes the callback and updates the cursor if enabled.
 
+        :param event: MOUSEMOVE pygame event
+        :param check_all_widget_mouseleave: Check widget leave statutes
         :return: Self reference
         """
+        # Check if within frame, and the previous frame has not been called, call it
+        if check_all_widget_mouseleave:
+            if self._frame is not None and WIDGET_MOUSEOVER[0] != self._frame:
+                in_prev = False
+
+                # Check frame not in previous
+                prev = WIDGET_MOUSEOVER[1]
+                while True:
+                    if len(prev) == 0:
+                        break
+                    if prev[0] == self._frame:
+                        in_prev = True
+                        break
+                    prev = prev[2]
+
+                if not in_prev:
+                    self._frame.mouseover(event, check_all_widget_mouseleave)
+
         if self._onmouseover is not None:
-            self._onmouseover(self, event)
+            if self._mouseover_called is None or not self._mouseover_called:
+                self._onmouseover(self, event)
+                self._mouseover_called = True
+
+        # Check previous state
+        if check_all_widget_mouseleave:
+            check_widget_mouseleave(event)
 
         # Change cursor
-        if self._cursor is not None:
-            try:
-                cursor = pygame.mouse.get_cursor()  # Previous cursor
-                # noinspection PyArgumentList
-                pygame.mouse.set_cursor(self._cursor)
-            except (pygame.error, TypeError):
-                msg = 'could not stablish widget cursor, invalid value {0}'.format(self._cursor)
-                warnings.warn(msg)
-                cursor = _WidgetUnknownCursor()
-            if WIDGET_OVER[0] is None:
-                WIDGET_OVER[0] = cursor
-        else:
-            _restore_cursor()
+        previous_cursor = pygame.mouse.get_cursor()  # Previous cursor
+        set_pygame_cursor(self._cursor)
+
+        # Update previous state
+        if check_all_widget_mouseleave:
+            WIDGET_MOUSEOVER[0] = self
+            WIDGET_MOUSEOVER[1] = [self, previous_cursor, WIDGET_MOUSEOVER[1]]
 
         return self
 
-    def mouseleave(self, event: EventType) -> 'Widget':
+    def mouseleave(self, event: EventType, check_all_widget_mouseleave: bool = True) -> 'Widget':
         """
         Run the ``onmouseleave`` callback if the mouse is placed outside the Widget. The callback receive
         the Widget object reference and the mouse event:
@@ -448,36 +508,63 @@ class Widget(Base):
             This method does not evaluate if the mouse is placed over the Widget. Only
             executes the callback and updates the cursor if enabled.
 
+        :param event: MOUSEMOVE pygame event
+        :param check_all_widget_mouseleave: Check widget leave statutes
         :return: Self reference
         """
-        if self._onmouseleave is not None:
-            self._onmouseleave(self, event)
-        _restore_cursor()
+        # Check for consistency
+        if WIDGET_MOUSEOVER[0] != self or not check_all_widget_mouseleave:
+            if self._onmouseleave is not None and self._mouseover_called:
+                self._onmouseleave(self, event)
+                self._mouseover_called = False
+        if check_all_widget_mouseleave:
+            check_widget_mouseleave(event)
         return self
 
-    def _check_mouseover(self, event: EventType, rect: Optional['pygame.Rect'] = None) -> bool:
+    def _check_mouseover(
+            self,
+            event: EventType,
+            rect: Optional['pygame.Rect'] = None,
+            check_all_widget_mouseleave: bool = True
+    ) -> bool:
         """
         Check the mouse is over the widget. If so, execute the methods.
 
-        :param event: Mouse event
+        :param event: Mouse event (MOUSEMOTION or ACTIVEEVENT)
         :param rect: Rect object. If ``None`` uses the widget rect in real position
+        :param check_all_widget_mouseleave: Check widget leave statutes
         :return: ``True`` if the mouseover status changed
         """
+        if event.type not in (pygame.MOUSEMOTION, pygame.ACTIVEEVENT):
+            return False
+
+        # If mouse out from window
+        if event.type == pygame.ACTIVEEVENT:
+            if event.gain == 1:
+                return False
+            else:  # Mouse out from window
+                check_widget_mouseleave(force=True)
+                return True
+
         if rect is None:
-            rect = self.get_rect(to_real_position=True)
+            rect = self._mouseover_check_rect()
         updated = False
 
-        if self._visible and self._mouse_enabled and event.type == pygame.MOUSEMOTION:
-            if rect.collidepoint(*event.pos):
-                if not self._mouseover:
-                    self._mouseover = True
-                    self.mouseover(event)
-                    updated = True
-            else:
-                if self._mouseover:
-                    self._mouseover = False
-                    self.mouseleave(event)
-                    updated = True
+        # Check if menu is active
+        menu_enabled = True if self._menu is None else self._menu.is_enabled()
+
+        # Check if mouse is over the widget, the widget must be visible
+        if self.is_visible() and self._mouse_enabled and rect.collidepoint(*event.pos) and menu_enabled:
+            if not self._mouseover:
+                self._mouseover = True
+                self.mouseover(event, check_all_widget_mouseleave)
+                updated = True
+
+        else:
+            if self._mouseover:
+                self._mouseover = False
+                self.mouseleave(event, check_all_widget_mouseleave)
+                updated = True
 
         return updated
 
@@ -2338,6 +2425,9 @@ class Widget(Base):
 
         :return: Self reference
         """
+        if self._mouseover:
+            self._mouseover = False
+            self.mouseleave(mouse_motion_current_mouse_position())
         self._visible = False
         self.active = False
         self._render()
@@ -2474,11 +2564,12 @@ class Widget(Base):
         # Starting data
         data = [clsname, geom, bool_status]
 
-        # Append inner widgets if frame
+        # Append inner widgets if frame and not menu
         if isinstance(self, pygame_menu.widgets.Frame):
             data.append(self.get_indices())
             for ww in self.get_widgets():
-                data.append(ww._get_status())
+                if ww.get_menu() != self.get_menu():
+                    data.append(ww._get_status())
 
         # Append inner widgets if dropselect
         if isinstance(self, pygame_menu.widgets.DropSelect) and self._drop_frame is not None:
@@ -2536,12 +2627,5 @@ class _WidgetCopyException(Exception):
 class _WidgetNoValue(object):
     """
     No value class.
-    """
-    pass
-
-
-class _WidgetUnknownCursor(object):
-    """
-    Unknown cursor class.
     """
     pass

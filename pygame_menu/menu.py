@@ -53,8 +53,9 @@ from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 from pygame_menu.themes import Theme, THEME_DEFAULT
 from pygame_menu.utils import widget_terminal_title, TerminalColors, is_callable, assert_vector, make_surface, \
-    check_key_pressed_valid
+    check_key_pressed_valid, mouse_motion_current_mouse_position
 from pygame_menu.widgets import Frame, Widget, MenuBar
+from pygame_menu.widgets.core.widget import check_widget_mouseleave, WIDGET_MOUSEOVER
 
 # Import types
 from pygame_menu._types import Callable, Any, Dict, NumberType, VectorType, Vector2NumberType, \
@@ -141,6 +142,7 @@ class Menu(Base):
     _joystick: bool
     _keyboard: bool
     _last_selected_type: str
+    _mainloop: bool
     _max_row_column_elements: int
     _menubar: 'MenuBar'
     _mouse: bool
@@ -176,7 +178,6 @@ class Menu(Base):
     _widget_columns: Dict[int, List['Widget']]
     _widget_max_position: Tuple2IntType
     _widget_min_position: Tuple2IntType
-    _widget_mouseover: Optional['Widget']
     _widget_offset: List[int]
     _widget_surface_cache_enabled: bool
     _widget_surface_cache_need_update: bool
@@ -387,6 +388,7 @@ class Menu(Base):
         self._height = int(height)
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
         self._last_selected_type = ''  # Last type selection, used for test purposes
+        self._mainloop = False  # Menu is in mainloop state
         self._onclose = None  # Function or event called on Menu close
         self._sound = Sound()
         self._stats = _MenuStats()
@@ -426,7 +428,6 @@ class Menu(Base):
 
         # Menu widgets, it should not be accessed outside the object as strange issues can occur
         self.add = WidgetManager(self)
-        self._widget_mouseover = None  # Current mouse that has the mouse over
         self._widgets = []
         self._scrollable_frames = []  # Stores the scrollable widgets, updated by Frame widget
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
@@ -1063,6 +1064,7 @@ class Menu(Base):
         widget.on_remove_from_menu()
         widget.set_menu(None)  # Removes Menu reference from widget
 
+        check_widget_mouseleave()
         return self
 
     def get_sound(self) -> 'Sound':
@@ -1624,7 +1626,7 @@ class Menu(Base):
 
         :return: Self reference
         """
-        self._check_mouseleave(force=True)
+        check_widget_mouseleave(force=True)
         self._top._enabled = False
         return self
 
@@ -1885,6 +1887,11 @@ class Menu(Base):
         self._current._draw_focus_widget(surface, self._current.get_selected_widget())
         self._current._decorator.draw_post(surface)
         self._current._stats.draw += 1
+
+        # Update cursor if not mainloop
+        if self._current._mainloop:
+            check_widget_mouseleave()
+
         return self._current
 
     def _draw_focus_widget(
@@ -2196,8 +2203,7 @@ class Menu(Base):
 
         # Update mouse
         pygame.mouse.set_visible(self._current._mouse_visible)
-        mouse_changed_over_widget = False  # Set to True if widgetover has changed
-        mouse_changed_over_menu = False  # Set to True if mousemenuover has changed
+        mouse_motion_event = None
 
         selected_widget = self._current.get_selected_widget()
         selected_widget_active_disable_scroll = (False if selected_widget is None else selected_widget.active) and \
@@ -2234,8 +2240,7 @@ class Menu(Base):
 
             # If mouse motion enabled, add the current mouse position to event list
             if self._current._mouse and self._current._mouse_motion_selection:
-                mousex, mousey = pygame.mouse.get_pos()
-                events.append(pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)}))
+                events.append(mouse_motion_current_mouse_position())
 
             for event in events:
 
@@ -2339,15 +2344,6 @@ class Menu(Base):
                     else:
                         pygame.time.set_timer(self._current._joy_event_repeat, 0)
 
-                # Mouse enters or leaves the window
-                elif event.type == pygame.ACTIVEEVENT:
-                    if event.gain == 1:  # Enter
-                        if self._current._onwindowmouseover is not None:
-                            self._current._onwindowmouseover(self._current)
-                    else:  # Leave
-                        if self._current._onwindowmouseleave is not None:
-                            self._current._onwindowmouseleave(self._current)
-
                 # Select widget by clicking
                 elif event.type == pygame.MOUSEBUTTONDOWN and self._current._mouse and \
                         event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
@@ -2377,8 +2373,24 @@ class Menu(Base):
                                 updated = True
                                 break
 
+                # Mouse enters or leaves the window
+                elif event.type == pygame.ACTIVEEVENT:
+                    if event.gain == 1:  # Enter
+                        if self._current._onwindowmouseover is not None:
+                            self._current._onwindowmouseover(self._current)
+                            check_widget_mouseleave()
+                    else:  # Leave
+                        if self._current._onwindowmouseleave is not None:
+                            self._current._onwindowmouseleave(self._current)
+                        if self._current._mouseover:
+                            self._current._mouseover = False
+                            if self._current._onmouseleave is not None:
+                                self._current._onmouseleave(self._current, event)
+                            check_widget_mouseleave(force=True)
+
                 # Mouse motion. It changes the cursor of the mouse if enabled
                 elif event.type == pygame.MOUSEMOTION and self._current._mouse:
+                    mouse_motion_event = event
 
                     # Check if mouse over menu
                     if not self._current._mouseover:
@@ -2386,13 +2398,13 @@ class Menu(Base):
                             self._current._mouseover = True
                             if self._current._onmouseover is not None:
                                 self._current._onmouseover(self._current, event)
-                            mouse_changed_over_menu = True
                     else:
                         if not self._current.collide(event):
                             self._current._mouseover = False
                             if self._current._onmouseleave is not None:
                                 self._current._onmouseleave(self._current, event)
-                            mouse_changed_over_menu = True
+                            mouse_motion_event = None
+                            check_widget_mouseleave(force=True)
 
                     # If selected widget is active then motion should not select or change mouseover
                     # widget
@@ -2410,14 +2422,8 @@ class Menu(Base):
                             if self._current._mouse_motion_selection and widget.is_selectable and \
                                     not isinstance(widget, Frame):
                                 sel = self._current._select(index, 1, SELECT_MOUSE, True)
-                            if self._current._widget_mouseover != widget:
-                                if self._current._widget_mouseover is not None:
-                                    self._current._widget_mouseover.mouseleave(event)
-                                widget.mouseover(event)
-                                self._current._widget_mouseover = widget
-                                mouse_changed_over_widget = True
-                            if not isinstance(widget, Frame):
-                                break
+                        # noinspection PyProtectedMember
+                        widget._check_mouseover(event)
                     if sel:
                         updated = True
                         break
@@ -2490,12 +2496,8 @@ class Menu(Base):
                         if updated:
                             break
 
-        # If the over menu is not None, check the current mouse position is still over the widget,
-        # if not, call onmouseleave
-        if not mouse_changed_over_widget:
-            self._current._check_mouseleave(force=False, menu=False)
-        if not mouse_changed_over_menu:
-            self._current._check_mouseleave(force=False, widget=False)
+        if mouse_motion_event is not None:
+            check_widget_mouseleave(event=mouse_motion_event)
 
         # If cache is enabled, always force a rendering (user may have have changed any status)
         if self._current._widget_surface_cache_enabled and updated:
@@ -2506,36 +2508,6 @@ class Menu(Base):
             updated = True
 
         return updated
-
-    def _check_mouseleave(self, force: bool, widget: bool = True, menu: bool = True) -> None:
-        """
-        Check ``mouseleave`` on current Menu/Widget.
-
-        :param force: Force leave if ``True``
-        :param widget: Check widget
-        :param menu: Check menu
-        :return: None
-        """
-        mousex, mousey = pygame.mouse.get_pos()
-        mouse_motion_current_pos = pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)})
-
-        # Check widgets
-        if self._widget_mouseover is not None and widget:
-            widget_scrollarea = self._widget_mouseover.get_scrollarea()
-            if not widget_scrollarea.collide(self._widget_mouseover, mouse_motion_current_pos) or force:
-                self._widget_mouseover.mouseleave(mouse_motion_current_pos)
-                self._widget_mouseover = None
-            widget_scrollarea.update([mouse_motion_current_pos])
-
-        # Check menu
-        if (self._mouseover and not self.collide(mouse_motion_current_pos) or force) and menu:
-            if self._onmouseleave is not None:
-                self._onmouseleave(self, mouse_motion_current_pos)
-            self._mouseover = False
-            self._menubar.update([mouse_motion_current_pos])
-
-        if force:
-            self._current._check_mouseleave(force=False, widget=widget, menu=menu)
 
     def collide(self, event: EventType) -> bool:
         """
@@ -2625,9 +2597,10 @@ class Menu(Base):
                 bgfun_accept_menu = True
             except TypeError:
                 pass
-
-        # Store background function and force render
         self._current._background_function = (bgfun_accept_menu, bgfun)
+
+        # Change state
+        self._current._mainloop = True
 
         # Force rendering before loop
         self._current._widgets_surface = None
@@ -2648,6 +2621,8 @@ class Menu(Base):
 
             # Menu closed or disabled
             if not self.is_enabled() or disable_loop:
+                self._current._mainloop = False
+                check_widget_mouseleave(force=True)
                 return self._current
 
     def get_input_data(self, recursive: bool = False) -> Dict[str, Any]:
@@ -2845,7 +2820,7 @@ class Menu(Base):
         self._current._select(0, 1, SELECT_OPEN, False)
 
         # Re-render menu
-        self._check_mouseleave(force=True)
+        check_widget_mouseleave(force=True)
         self._render()
 
     def reset(self, total: int) -> 'Menu':
@@ -2885,7 +2860,7 @@ class Menu(Base):
                 self._current._onreset()
 
         self._current._widgets_surface = None
-        self._current._check_mouseleave(force=True)
+        check_widget_mouseleave(force=True)
         self._current._select(self._top._current._index, 1, SELECT_RESET, False)
         self._current._stats.reset += 1
         return self._current
@@ -3241,6 +3216,24 @@ class Menu(Base):
         """
         return self._index
 
+    def get_mouseover_widget(self, filter_appended: bool = True) -> Optional['Widget']:
+        """
+        Return the mouseover widget on the Menu.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param filter_appended: If ``True`` return the widget only if it's appended to the base Menu
+        :return: Widget object, ``None`` if no widget is mouseover
+        """
+        widget = WIDGET_MOUSEOVER[0]
+        if widget is None or filter_appended and widget.get_menu() != self:
+            return
+        return widget
+
     def get_selected_widget(self) -> Optional['Widget']:
         """
         Return the selected widget on the Menu.
@@ -3384,6 +3377,8 @@ class Menu(Base):
             if render:
                 self._widgets_surface = None
                 self._render()
+
+            check_widget_mouseleave()
             return
 
         # Asserts
@@ -3502,6 +3497,9 @@ class Menu(Base):
         if render:
             self._widgets_surface = None
             self._render()
+
+        if self._validate_frame_widgetmove:
+            check_widget_mouseleave()
 
         return new_widget_index, target_index
 
