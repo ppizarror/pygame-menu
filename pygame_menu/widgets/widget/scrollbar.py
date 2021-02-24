@@ -123,6 +123,7 @@ class ScrollBar(Widget):
         self._last_mouse_pos = (-1, -1)
         self._orientation = 0  # 0: horizontal, 1: vertical
         self._values_range = list(values_range)
+        self._mouseover_check_rect = lambda: self.get_slider_rect()
 
         self._page_ctrl_length = length
         self._page_ctrl_thick = page_ctrl_thick
@@ -482,7 +483,7 @@ class ScrollBar(Widget):
         for event in events:
 
             # Check mouse over
-            self._check_mouseover(event, rect)
+            self._check_mouseover(event)
 
             # User press PAGEUP or PAGEDOWN
             if event.type == pygame.KEYDOWN and event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN) and \
