@@ -45,7 +45,7 @@ from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, OR
 from pygame_menu.font import assert_font
 from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, uuid4, parse_padding
-from pygame_menu.widgets import Widget
+from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 
@@ -333,6 +333,9 @@ class WidgetManager(object):
         except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
             self._menu.remove_widget(widget)
             raise
+
+        # Update widgets
+        check_widget_mouseleave()
 
     def configure_defaults_widget(self, widget: 'Widget') -> None:
         """
