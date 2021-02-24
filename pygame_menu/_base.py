@@ -42,6 +42,7 @@ class Base(object):
     """
     _attributes: Dict[str, Any]
     _id: str
+    _id__repr__: bool
 
     def __init__(self, object_id: str) -> None:
         """
@@ -54,6 +55,18 @@ class Base(object):
             object_id = uuid4()
         self._attributes = {}
         self._id = object_id
+        self._id__repr__ = False  # If True, repr/str of the object adds object id
+
+    def __repr__(self) -> str:
+        """
+        Repr print of object.
+
+        :return: Object str status
+        """
+        suprepr = super(Base, self).__repr__()
+        if self._id__repr__:
+            return suprepr.replace(' object at ', '["{0}"] object at '.format(self.get_id()))
+        return suprepr
 
     def set_attribute(self, key: str, value: Any = None) -> 'Base':
         """
