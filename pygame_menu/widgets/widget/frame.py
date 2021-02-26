@@ -53,19 +53,19 @@ import pygame_menu
 
 from pygame_menu._decorator import Decorator
 from pygame_menu.baseimage import BaseImage
-from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
-    ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, FINGERUP, \
-    FINGERDOWN, FINGERMOTION
+from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, ALIGN_CENTER, \
+    ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, FINGERUP, FINGERDOWN, \
+    FINGERMOTION
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
-    assert_color, fill_gradient, parse_padding
+    assert_color, fill_gradient, parse_padding, uuid4
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
 
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, Literal, \
-    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType, PaddingType, ColorInputGradientType, \
-    CallbackType, CursorInputType
+    Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType, PaddingType, CallbackType, \
+    ColorInputGradientType, CursorInputType
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
@@ -234,7 +234,7 @@ class Frame(Widget):
             'title alignment and buttons alignment must be different'
 
         # Create title widget
-        title_label = Label(title)
+        title_label = Label(title, label_id=self._id + '+title+label-' + uuid4())
         title_label.set_font(
             antialias=self._font_antialias,
             background_color=None,
@@ -248,18 +248,20 @@ class Frame(Widget):
         title_label.set_tab_size(self._tab_size)
         title_label.configured = True
         title_label.set_menu(self._menu)
+        title_label._update__repr___(self)
 
         # Create frame title
         pad_outer = parse_padding(padding_outer)  # top, right, bottom, left
         pad_inner = parse_padding(padding_inner)
         self._frame_title = Frame(self.get_width() - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
                                   title_label.get_height(),
-                                  ORIENTATION_HORIZONTAL)
+                                  ORIENTATION_HORIZONTAL,
+                                  frame_id=self._id + '+title-' + uuid4())
         self._frame_title._accepts_title = False
         self._frame_title._menu = self._menu
         self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
         self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
-        self._frame_title.set_cursor(cursor)
+        self._frame_title.set_cursor(cursor if cursor is not None else self._cursor)
         self._frame_title.set_padding(padding_inner)
         self._frame_title.set_scrollarea(self._scrollarea)
         self._frame_title.translate(pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0])
@@ -269,6 +271,7 @@ class Frame(Widget):
             touchscreen=self._touchscreen_enabled,
             keyboard=self._keyboard_enabled
         )
+        self._frame_title._update__repr___(self)
 
         # Create frame title background rect
         title_bg = make_surface(self.get_width(), title_label.get_height() + pad_outer[0] + pad_outer[2])
@@ -315,10 +318,10 @@ class Frame(Widget):
 
         # Title adds frame to scrollable frames even if not scrollable
         # noinspection PyProtectedMember
-        scrollable_widgets = self._menu._scrollable_frames
+        scrollable_widgets = self._menu._update_frames
         if self._menu is not None and (self not in scrollable_widgets):
             scrollable_widgets.append(self)
-            self._sort_menu_scrollable_frames()
+            self.sort_menu_update_frames()
 
         return self
 
@@ -406,12 +409,14 @@ class Frame(Widget):
             dh += 1
 
         # Create button
-        btn = Button('', onreturn=callback)
+        btn = Button('', onreturn=callback,
+                     button_id=self._frame_title._id + '+button-' + uuid4())
         btn.set_padding(h / 2)
         btn.translate(0, dh / 2)
         btn.set_cursor(cursor)
         btn.set_background_color(background_color)
         btn.configured = True
+        btn._update__repr___(self)
 
         # Create style decoration
         btn_rect = btn.get_rect()
@@ -482,27 +487,45 @@ class Frame(Widget):
         return self._width, self._height
 
     # noinspection PyProtectedMember
-    def _sort_menu_scrollable_frames(self) -> None:
+    def sort_menu_update_frames(self) -> None:
         """
-        Sort the menu scrollable frames.
+        Sort the menu update frames (frames which receive updates).
 
         :return: None
         """
         if self._menu is not None:
-            if len(self._menu._scrollable_frames) == 0:
+            if len(self._menu._update_frames) <= 1:
                 return
-            widgets: List[Tuple[int, 'Widget']] = []
-            for w in self._menu._scrollable_frames:
-                if isinstance(w, Frame):
-                    sa = w.get_scrollarea(inner=True)
-                else:
-                    sa = w.get_scrollarea()
-                depth = 0 if sa is None else (-sa.get_depth())
-                widgets.append((depth, w))
+
+            # Sort frames by depth
+            widgets: List[Tuple[int, 'Frame']] = []
+            for w in self._menu._update_frames:
+                # if isinstance(w, Frame):
+                #     sa = w.get_scrollarea(inner=True)
+                # else:
+                #     raise ValueError('{0} widget is not Frame type'.format(w.get_class_id()))
+                #     # sa = w.get_scrollarea()
+                # depth = 0 if sa is None else (-sa.get_depth())
+                assert isinstance(w, Frame)
+                widgets.append((-w.get_frame_depth(), w))
             widgets.sort(key=lambda x: x[0])
-            self._menu._scrollable_frames = []
+
+            # Sort frames with same depth by index
+            frame_depths: Dict[int, List[Tuple[int, 'Frame']]] = {}
             for w in widgets:
-                self._menu._scrollable_frames.append(w[1])
+                w_depth = w[0]
+                if w_depth not in frame_depths.keys():
+                    frame_depths[w_depth] = []
+                if w[1] in self._menu._widgets:
+                    frame_depths[w_depth].append((self._menu._widgets.index(w[1]), w[1]))
+                else:
+                    frame_depths[w_depth].append((0, w[1]))
+
+            self._menu._update_frames = []
+            for d in frame_depths.keys():
+                frame_depths[d].sort(key=lambda x: x[0])
+                for w in frame_depths[d]:
+                    self._menu._update_frames.append(w[1])
 
     def on_remove_from_menu(self) -> 'Frame':
         for w in self.get_widgets(unpack_subframes=False):
@@ -514,7 +537,7 @@ class Frame(Widget):
     def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
         # If menu is set, remove from previous scrollable if enabled
         if self._menu is not None:
-            scrollable_widgets = self._menu._scrollable_frames
+            scrollable_widgets = self._menu._update_frames
             if self in scrollable_widgets:
                 scrollable_widgets.remove(self)
 
@@ -523,8 +546,8 @@ class Frame(Widget):
 
         # Add self to scrollable
         if self.is_scrollable and self._menu is not None:
-            self._menu._scrollable_frames.append(self)
-            self._sort_menu_scrollable_frames()
+            self._menu._update_frames.append(self)
+            self.sort_menu_update_frames()
 
         return self
 
@@ -615,7 +638,7 @@ class Frame(Widget):
             # If in previous scrollable frames
             if self._menu is not None and self.is_scrollable:
                 # noinspection PyProtectedMember
-                scrollable_frames = self._menu._scrollable_frames
+                scrollable_frames = self._menu._update_frames
                 if self in scrollable_frames:
                     scrollable_frames.remove(self)
 
@@ -1184,6 +1207,9 @@ class Frame(Widget):
             self.scrollv(0)
             self.scrollh(0)
 
+        if isinstance(widget, Frame):
+            self.sort_menu_update_frames()
+
         # Update widget leave
         check_widget_mouseleave()
 
@@ -1302,9 +1328,10 @@ class Frame(Widget):
         widget.set_margin(*margin)
         if self._frame_scrollarea is not None:
             widget.set_scrollarea(self._frame_scrollarea)
-            self._sort_menu_scrollable_frames()
         else:
             widget.set_scrollarea(self._scrollarea)
+        if self.is_scrollable or self._has_title or isinstance(widget, Frame):
+            self.sort_menu_update_frames()
         self._widgets[widget.get_id()] = widget
         self._widgets_props[widget.get_id()] = (alignment, vertical_position)
 
@@ -1325,7 +1352,8 @@ class Frame(Widget):
 
                 # Check for last if w_last is frame
                 while True:
-                    if not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)) or w_last.get_menu() is None:
+                    if not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)) or \
+                            w_last.get_menu() is None:
                         break
                     w_last = menu_widgets[w_last.last_index]
 
@@ -1453,12 +1481,16 @@ class Frame(Widget):
             # Check if clicked the title for drag
             for event in events:
 
+                # Check mouseover
+                self._frame_title._check_mouseover(event)
+
                 # If clicked in title
                 if event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or \
                         event.type == FINGERDOWN and self._touchscreen_enabled:
                     if self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
                         if not self._frame_title.get_attribute('drag', False):
                             self._frame_title.set_attribute('drag', True)
+                            updated = True
 
                 # User releases the button
                 elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
@@ -1475,15 +1507,25 @@ class Frame(Widget):
                 elif event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or \
                         event.type == FINGERMOTION and self._touchscreen_enabled:
                     if self._frame_title.get_attribute('drag', False):
+                        # Get relative movement
+                        rx = event.rel[0]
+                        ry = event.rel[1]
+
                         if self._rect.y <= 0:
-                            if event.rel[1] < 0 or \
+                            if ry < 0 or \
                                     not self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
                                 continue
                         tx, ty = self.get_translate()
-                        self.translate(tx + event.rel[0], ty + event.rel[1])
-                        self.force_menu_surface_update()
 
-        # Check events
+                        # Get the max/min distance which can translate in vertical
+                        if ry < 0:
+                            ry = -min(-ry, self._rect.y)
+
+                        self.translate(tx + rx, ty + ry)
+                        self.force_menu_surface_update()
+                        updated = True
+
+        # Check mouseover
         for event in events:
             if self._check_mouseover(event):
                 break
