@@ -354,7 +354,7 @@ class DropSelect(Widget):
             btn = Button(option[0],
                          onreturn=self._click_option,
                          index=opt_id - (1 if self._placeholder_add_to_selection_box else 0),
-                         button_id=self._id + '+option-' + uuid4())
+                         button_id=self._id + '+option-' + uuid4(short=True))
             btn.set_background_color(
                 color=self._selection_box_bgcolor
             )
@@ -436,7 +436,7 @@ class DropSelect(Widget):
 
         # Create frame
         self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL,
-                                 frame_id=self._id + '+frame-' + uuid4())
+                                 frame_id=self._id + '+frame-' + uuid4(short=True))
         self._drop_frame._accepts_title = False
         self._drop_frame.hide()
         self._drop_frame.set_background_color(
