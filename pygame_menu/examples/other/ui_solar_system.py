@@ -247,21 +247,21 @@ class SolarSystemApp(object):
 
             # Add go back button with a background image
             submenu.add.vertical_margin(150)
-            goback = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=pygame_menu.locals.CURSOR_HAND)
-            goback_img = planet.image.copy().resize(150, 150)
-            goback_color = goback_img.get_at((100, 100), ignore_alpha=True)  # Get color from the figure's center pixel
-            goback.get_decorator().add_baseimage(0, 0, goback_img, centered=True)
-            goback_selection = pygame_menu.widgets.HighlightSelection(border_width=2)
-            goback.set_selection_effect(goback_selection.set_color(goback_color))
+            go_back = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=pygame_menu.locals.CURSOR_HAND)
+            go_back_img = planet.image.copy().resize(150, 150)
+            go_back_color = go_back_img.get_at((100, 100), ignore_alpha=True)  # Get color from figure's center pixel
+            go_back.get_decorator().add_baseimage(0, 0, go_back_img, centered=True)
+            go_back_selection = pygame_menu.widgets.HighlightSelection(border_width=2)
+            go_back.set_selection_effect(go_back_selection.set_color(go_back_color))
 
             # Description
             submenu.add.vertical_margin(75)
             submenu.add.label('Description', align=pygame_menu.locals.ALIGN_LEFT,
                               font_name=pygame_menu.font.FONT_OPEN_SANS_BOLD, margin=(5, 10))
-            labl = submenu.add.label(planet.info, max_char=70, align=pygame_menu.locals.ALIGN_LEFT,
-                                     margin=(20, 1), font_size=20, font_name=pygame_menu.font.FONT_PT_SERIF,
-                                     font_color=(255, 255, 255), padding=0)
-            for line in labl:
+            label = submenu.add.label(planet.info, max_char=70, align=pygame_menu.locals.ALIGN_LEFT,
+                                      margin=(20, 1), font_size=20, font_name=pygame_menu.font.FONT_PT_SERIF,
+                                      font_color=(255, 255, 255), padding=0)
+            for line in label:
                 line.set_max_width(580)
             submenu.add.url(planet.url, align=pygame_menu.locals.ALIGN_LEFT, margin=(20, 1), font_size=20,
                             font_name=pygame_menu.font.FONT_PT_SERIF)
@@ -276,7 +276,7 @@ class SolarSystemApp(object):
             button.set_attribute('planet', planet)
             button.add_draw_callback(self.rotate_planet)
             button_selection = pygame_menu.widgets.LeftArrowSelection(arrow_size=(20, 30), blink_ms=1000)
-            button.set_selection_effect(button_selection.set_color(goback_color))
+            button.set_selection_effect(button_selection.set_color(go_back_color))
 
             # Set random times
             button.set_attribute('t', random.random() * 2 * math.pi)

@@ -1011,11 +1011,11 @@ class Decorator(Base):
                 points, r, ia, fa, color, width, gfx, kwargs = data
                 points = self._update_pos_list(rect, decoid, points, **kwargs)
                 x, y = points[0]
-                rectarc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
+                rect_arc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
                 if gfx:
                     gfxdraw.arc(surface, x, y, r, ia, fa, color)
                 else:
-                    pydraw.arc(surface, color, rectarc, ia / (2 * pi), fa / (2 * pi), width)
+                    pydraw.arc(surface, color, rect_arc, ia / (2 * pi), fa / (2 * pi), width)
 
             elif dtype == DECORATION_PIE:
                 points, r, ia, fa, color, kwargs = data

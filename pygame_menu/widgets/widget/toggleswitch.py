@@ -289,15 +289,15 @@ class ToggleSwitch(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1))
 
         # Draw switch
-        switchx = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
-        switchy = self._rect.y + self._switch_margin[1]
-        surface.blit(self._switch, (switchx, switchy))
+        switch_x = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
+        switch_y = self._rect.y + self._switch_margin[1]
+        surface.blit(self._switch, (switch_x, switch_y))
 
         # Draw switch border
         if self._switch_border_width > 0:
             switch_rect = self._switch.get_rect()
-            switch_rect.x += switchx
-            switch_rect.y += switchy
+            switch_rect.x += switch_x
+            switch_rect.y += switch_y
             pygame.draw.rect(
                 surface,
                 self._switch_border_color,
@@ -308,14 +308,14 @@ class ToggleSwitch(Widget):
         # Draw switch font render
         if self._state_text[self._state] != '':
             text = self._switch_font_rendered[self._state]
-            stextx = switchx + (self._switch_width - text.get_width()) * self._state_text_position[0]
-            stexty = switchy + (self._switch_height - text.get_height()) * self._state_text_position[1]
-            surface.blit(text, (stextx, stexty))
+            s_text_x = switch_x + (self._switch_width - text.get_width()) * self._state_text_position[0]
+            s_text_y = switch_y + (self._switch_height - text.get_height()) * self._state_text_position[1]
+            surface.blit(text, (s_text_x, s_text_y))
 
         # Draw slider
-        sliderx = switchx + self._slider_pos[0] + self._switch_border_width
-        slidery = switchy + self._slider_pos[1] + self._switch_border_width
-        surface.blit(self._slider, (sliderx, slidery))
+        slider_x = switch_x + self._slider_pos[0] + self._switch_border_width
+        slider_y = switch_y + self._slider_pos[1] + self._switch_border_width
+        surface.blit(self._slider, (slider_x, slider_y))
 
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
@@ -429,10 +429,10 @@ class ToggleSwitch(Widget):
                 rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = event.pos
+                    mouse_x, _ = event.pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
-                    dist = mousex - (topleft + self._switch_margin[0] + self._switch_pos[0])  # Distance from title
+                    dist = mouse_x - (topleft + self._switch_margin[0] + self._switch_pos[0])  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         target_index = 0
                         best = 1e6

@@ -452,7 +452,7 @@ class BaseImage(Base):
 
     def get_bitsize(self) -> int:
         """
-        Return the image bitzise.
+        Return the image bitsize.
 
         :return: Image bitsize
         """
@@ -469,7 +469,7 @@ class BaseImage(Base):
             return self.get_crop_rect(self.get_rect())
         return self._surface
 
-    def get_namefile(self) -> str:
+    def get_filename(self) -> str:
         """
         Return the name of the image file.
 
@@ -699,7 +699,7 @@ class BaseImage(Base):
             decays.
 
         :param angle: Rotation angle (degrees ``0-360``)
-        :param auto_checkpoint: Checkpoint after first rotation to avoid rotating the same image. If multiple rotations are applied to the same surface it will increase its size very fast because of innacuracies
+        :param auto_checkpoint: Checkpoint after first rotation to avoid rotating the same image. If multiple rotations are applied to the same surface it will increase its size very fast because of inaccuracies
         :return: Self reference
         """
         assert isinstance(angle, NumberInstance)

@@ -49,7 +49,7 @@ class Label(Widget):
     :param label_id: Label ID
     :param onselect: Function when selecting the label widget
     """
-    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
+    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
 
     def __init__(
             self,

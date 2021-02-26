@@ -669,66 +669,66 @@ class Theme(object):
             other_types = []  # Contain other types to check from
             if not isinstance(allowed_types, (tuple, list)):
                 allowed_types = (allowed_types,)
-            for valtype in allowed_types:
+            for val_type in allowed_types:
 
-                if valtype == 'alignment':
+                if val_type == 'alignment':
                     assert_alignment(value)
 
-                elif valtype == callable or valtype == 'function' or valtype == 'callable':
+                elif val_type == callable or val_type == 'function' or val_type == 'callable':
                     assert is_callable(value), \
                         'value must be callable type'
 
-                elif valtype == 'color':
+                elif val_type == 'color':
                     value = assert_color(value)
 
-                elif valtype == 'color_image':
+                elif val_type == 'color_image':
                     if not isinstance(value, BaseImage):
                         value = assert_color(value)
 
-                elif valtype == 'color_image_none':
+                elif val_type == 'color_image_none':
                     if not (value is None or isinstance(value, BaseImage)):
                         value = assert_color(value)
 
-                elif valtype == 'color_none':
+                elif val_type == 'color_none':
                     if value is not None:
                         value = assert_color(value)
 
-                elif valtype == 'cursor':
+                elif val_type == 'cursor':
                     assert_cursor(value)
 
-                elif valtype == 'font':
+                elif val_type == 'font':
                     assert_font(value)
 
-                elif valtype == 'image':
+                elif val_type == 'image':
                     assert isinstance(value, BaseImage), \
                         'value must be BaseImage type'
 
-                elif valtype == 'none':
+                elif val_type == 'none':
                     assert value is None
 
-                elif valtype == 'position':
+                elif val_type == 'position':
                     assert_position(value)
 
-                elif valtype == 'type':
+                elif val_type == 'type':
                     assert isinstance(value, type), \
                         'value is not type-class'
 
-                elif valtype == 'tuple2':
+                elif val_type == 'tuple2':
                     assert_vector(value, 2)
 
-                elif valtype == 'tuple2int':
+                elif val_type == 'tuple2int':
                     assert_vector(value, 2, int)
 
-                elif valtype == 'tuple3':
+                elif val_type == 'tuple3':
                     assert_vector(value, 3)
 
-                elif valtype == 'tuple3int':
+                elif val_type == 'tuple3int':
                     assert_vector(value, 3, int)
 
                 else:  # Unknown type
-                    assert isinstance(valtype, type), \
-                        'allowed type "{0}" is not a type-class'.format(valtype)
-                    other_types.append(valtype)
+                    assert isinstance(val_type, type), \
+                        'allowed type "{0}" is not a type-class'.format(val_type)
+                    other_types.append(val_type)
 
             # Check other types
             if len(other_types) > 0:

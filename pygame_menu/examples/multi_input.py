@@ -173,7 +173,7 @@ def main(test: bool = False) -> None:
         input_underline='_'
     )
 
-    # Selectible items
+    # Selectable items
     items = [('Easy', 'EASY'),
              ('Medium', 'MEDIUM'),
              ('Hard', 'HARD')]

@@ -426,7 +426,7 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
             # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
-        msg = 'could not stablish widget cursor, invalid value {0}'.format(cursor)
+        msg = 'could not establish widget cursor, invalid value {0}'.format(cursor)
         warnings.warn(msg)
 
 
@@ -441,72 +441,72 @@ def uuid4() -> str:
 
 def widget_terminal_title(
         widget: 'pygame_menu.widgets.Widget',
-        widget_indx: int = -1,
+        widget_index: int = -1,
         current_index: int = -1
 ) -> str:
     """
     Return widget title to be printed on terminals.
 
     :param widget: Widget to get title from
-    :param widget_indx: Widget index
+    :param widget_index: Widget index
     :param current_index: Menu index
     :return: Widget title
     """
-    wclassid = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
+    w_class_id = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
     if isinstance(widget, pygame_menu.widgets.Frame):
-        wtitle = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
-        wtitle += '{0} - {3}[{1},{2},'.format(wclassid, *widget.get_indices(), TerminalColors.LGREEN)
+        w_title = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
+        w_title += '{0} - {3}[{1},{2},'.format(w_class_id, *widget.get_indices(), TerminalColors.LGREEN)
         if widget.horizontal:
-            wtitle += 'H] '
+            w_title += 'H] '
         else:
-            wtitle += 'V] '
+            w_title += 'V] '
         if widget.is_scrollable:
             wsz = widget.get_inner_size()
             wsm = widget.get_max_size()
             wsh = wsm[0] if wsm[0] == wsz[0] else '{0}→{1}'.format(wsm[0], wsz[0])
             wsv = wsm[1] if wsm[1] == wsz[1] else '{0}→{1}'.format(wsm[1], wsz[1])
-            wtitle += '∑ [{0},{1}] '.format(wsh, wsv)
-        wtitle += TerminalColors.ENDC
+            w_title += '∑ [{0},{1}] '.format(wsh, wsv)
+        w_title += TerminalColors.ENDC
     else:
         if widget.get_title() != '':
-            wtitle = '{0} - {1} - '.format(wclassid,
-                                           TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
+            w_title = '{0} - {1} - '.format(w_class_id,
+                                            TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
         else:
-            wtitle = wclassid + ' - '
+            w_title = w_class_id + ' - '
 
     # Column/Row position
-    wtitle += TerminalColors.INDIGO
+    w_title += TerminalColors.INDIGO
     cr = widget.get_col_row_index()
-    wtitle += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
-    wtitle += TerminalColors.ENDC
+    w_title += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
+    w_title += TerminalColors.ENDC
 
     # Add position
-    wtitle += TerminalColors.MAGENTA
-    wtitle += ' ({0},{1})'.format(*widget.get_position())
-    wtitle += TerminalColors.ENDC
+    w_title += TerminalColors.MAGENTA
+    w_title += ' ({0},{1})'.format(*widget.get_position())
+    w_title += TerminalColors.ENDC
 
     # Add size
-    wtitle += TerminalColors.BLUE
-    wtitle += ' ({0},{1})'.format(*widget.get_size())
-    wtitle += TerminalColors.ENDC
+    w_title += TerminalColors.BLUE
+    w_title += ' ({0},{1})'.format(*widget.get_size())
+    w_title += TerminalColors.ENDC
 
     # Add mods
-    wtitle += TerminalColors.CYAN
+    w_title += TerminalColors.CYAN
     if widget.is_floating():
-        wtitle += ' Φ'
+        w_title += ' Φ'
     if not widget.is_visible():
-        wtitle += ' ╳'
+        w_title += ' ╳'
     if not widget.is_selectable:
-        wtitle += ' β'
+        w_title += ' β'
     if widget.is_selected():
-        wtitle += TerminalColors.BOLD + ' ⟵'
-        if current_index != -1 and current_index != widget_indx:
-            wtitle += '! [{0}->{1}]'.format(widget_indx, current_index)
+        w_title += TerminalColors.BOLD + ' ⟵'
+        if current_index != -1 and current_index != widget_index:
+            w_title += '! [{0}->{1}]'.format(widget_index, current_index)
     if widget.get_menu() is None:
-        wtitle += ' !▲'
-    wtitle += TerminalColors.ENDC
+        w_title += ' !▲'
+    w_title += TerminalColors.ENDC
 
-    return wtitle
+    return w_title
 
 
 class TerminalColors(object):

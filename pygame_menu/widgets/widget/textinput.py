@@ -907,11 +907,11 @@ class TextInput(Widget):
                 self._maxwidth = self._maxwidth_base  # Return to normal
                 break
 
-    def _update_cursor_mouse(self, mousex: int) -> None:
+    def _update_cursor_mouse(self, mouse_x: int) -> None:
         """
         Updates cursor position after mouse click or touch action in text.
 
-        :param mousex: Mouse distance relative to surface
+        :param mouse_x: Mouse distance relative to surface
         :return: None
         """
         string = self._get_input_string()
@@ -922,7 +922,7 @@ class TextInput(Widget):
         # Find the accumulated char size that gives the position of cursor
         cursor_pos = 0
         for i in range(len(string)):
-            if self._font.size(self._title + string[0:i])[0] < mousex:
+            if self._font.size(self._title + string[0:i])[0] < mouse_x:
                 cursor_pos += 1
             else:
                 break
@@ -982,9 +982,9 @@ class TextInput(Widget):
         rect = self.get_rect(to_real_position=True, apply_padding=False)
         if rect.collidepoint(*pos):
             # Check if mouse collides left or right as percentage, use only X coordinate
-            mousex, _ = pos
+            mouse_x, _ = pos
             topleft, _ = rect.topleft
-            self._update_cursor_mouse(mousex - topleft)
+            self._update_cursor_mouse(mouse_x - topleft)
             return True  # Prevents double click
 
     def _check_touch_collide_input(self, pos: Tuple2NumberType) -> bool:
@@ -1001,9 +1001,9 @@ class TextInput(Widget):
         rect = self.get_rect(to_real_position=True, apply_padding=False)
         if rect.collidepoint(*pos):
             # Check if touchscreen collides left or right as percentage, use only X coordinate
-            touchx, _ = pos
+            touch_x, _ = pos
             topleft, _ = rect.topleft
-            self._update_cursor_mouse(touchx - topleft)
+            self._update_cursor_mouse(touch_x - topleft)
             return True  # Prevents double click
 
     def set_value(self, text: Any) -> None:
@@ -1453,8 +1453,8 @@ class TextInput(Widget):
 
         # If data is valid
         if self._check_input_type(new_string):
-            lkey = len(keychar)
-            if lkey > 0:
+            l_key = len(keychar)
+            if l_key > 0:
 
                 # Update char size
                 if keychar not in self._keychar_size.keys():

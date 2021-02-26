@@ -72,11 +72,14 @@ def make_long_menu() -> 'pygame_menu.Menu':
 
     :return: Menu
     """
+    theme_menu = pygame_menu.themes.THEME_BLUE.copy()
+    theme_menu.scrollbar_cursor = pygame_menu.locals.CURSOR_HAND
+
     # Main menu, pauses execution of the application
     menu = pygame_menu.Menu(
         height=400,
         onclose=pygame_menu.events.EXIT,
-        theme=pygame_menu.themes.THEME_BLUE,
+        theme=theme_menu,
         title='Main Menu',
         width=600
     )
@@ -126,6 +129,7 @@ def make_long_menu() -> 'pygame_menu.Menu':
         menu_sub.add.button(txt, on_button_click, 100 * i)
     menu_sub.add.button('Back', pygame_menu.events.BACK)
 
+    # noinspection SpellCheckingInspection
     menu_text.add.label(
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
         'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '

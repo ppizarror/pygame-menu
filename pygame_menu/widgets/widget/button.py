@@ -61,7 +61,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
-    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
+    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
     to_menu: bool
 
     def __init__(

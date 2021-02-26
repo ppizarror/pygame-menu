@@ -51,13 +51,13 @@ def make_world(width: int, height: int) -> 'pygame.Surface':
     world.fill((200, 200, 200))
 
     color = [70, 20, 20]
-    maxx = len(list(range(100, width, 200)))
-    maxy = len(list(range(100, height, 200)))
-    numberx = 0
+    max_x = len(list(range(100, width, 200)))
+    max_y = len(list(range(100, height, 200)))
+    number_x = 0
     for x in range(100, width, 200):
-        numbery = 0
+        number_y = 0
         for y in range(100, height, 200):
-            if numberx in (0, maxx - 1) or numbery in (0, maxy - 1):
+            if number_x in (0, max_x - 1) or number_y in (0, max_y - 1):
                 # White circles to delimit world boundaries
                 # noinspection PyArgumentList
                 pygame.draw.circle(world, (255, 255, 255), (x, y), 100, 10)
@@ -70,8 +70,8 @@ def make_world(width: int, height: int) -> 'pygame.Surface':
                     color[1] += 15
                 else:
                     color[2] += 15
-            numbery += 1
-        numberx += 1
+            number_y += 1
+        number_x += 1
 
     return world
 

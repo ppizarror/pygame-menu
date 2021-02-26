@@ -193,21 +193,21 @@ class MenuBar(Widget):
         :return: None
         """
         if background_menu and self._menu is not None:
-            cback = self._menu.get_theme().background_color
+            c_back = self._menu.get_theme().background_color
         else:
-            cback = self._background_color
-        if not isinstance(cback, (tuple, list)):  # If is color
+            c_back = self._background_color
+        if not isinstance(c_back, (tuple, list)):  # If is color
             return
         tol = 5
-        cdif1 = abs(cback[0] - self._font_color[0])
-        cdif2 = abs(cback[1] - self._font_color[1])
-        cdif3 = abs(cback[2] - self._font_color[2])
-        if cdif1 < tol and cdif2 < tol and cdif3 < tol:
+        c_dif_1 = abs(c_back[0] - self._font_color[0])
+        c_dif_2 = abs(c_back[1] - self._font_color[1])
+        c_dif_3 = abs(c_back[2] - self._font_color[2])
+        if c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
             msg = 'title font color {0} is {3} to the {1} background color {2}, consider ' \
                   'editing your Theme'.format(self._font_color,
                                               'menu' if background_menu else 'title',
-                                              cback,
-                                              'equal' if cdif1 == cdif2 == cdif3 == 0 else 'similar')
+                                              c_back,
+                                              'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar')
             warnings.warn(msg)
 
     def get_title_offset(self) -> Tuple2IntType:

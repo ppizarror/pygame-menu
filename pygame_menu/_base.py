@@ -63,10 +63,10 @@ class Base(object):
 
         :return: Object str status
         """
-        suprepr = super(Base, self).__repr__()
+        sup_repr = super(Base, self).__repr__()
         if self._id__repr__:
-            return suprepr.replace(' object at ', '["{0}"] object at '.format(self.get_id()))
-        return suprepr
+            return sup_repr.replace(' object at ', '["{0}"] object at '.format(self.get_id()))
+        return sup_repr
 
     def set_attribute(self, key: str, value: Any = None) -> 'Base':
         """

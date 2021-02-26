@@ -53,7 +53,7 @@ from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 from pygame_menu.themes import Theme, THEME_DEFAULT
 from pygame_menu.utils import widget_terminal_title, TerminalColors, is_callable, assert_vector, make_surface, \
-    check_key_pressed_valid, mouse_motion_current_mouse_position
+    check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos
 from pygame_menu.widgets import Frame, Widget, MenuBar
 from pygame_menu.widgets.core.widget import check_widget_mouseleave, WIDGET_MOUSEOVER
 
@@ -1084,24 +1084,24 @@ class Menu(Base):
         :return: None
         """
         # Check if there's more selectable widgets
-        nselect = 0
+        n_select = 0
         last_selectable = 0
         for indx in range(len(self._widgets)):
             wid = self._widgets[indx]
             if wid.is_selectable and wid.is_visible():  # Considers frame
-                nselect += 1
+                n_select += 1
                 last_selectable = indx
 
         # Any widget is selected
-        if nselect == 0:
+        if n_select == 0:
             self._index = -1
 
         # Select the unique selectable option
-        elif nselect == 1:
+        elif n_select == 1:
             self._select(last_selectable, 0, SELECT_REMOVE, False)
 
         # There is at least 1 option to select from
-        elif nselect > 1:
+        elif n_select > 1:
             if index == -1:  # Index was hidden
                 self._select(self._index + 1, 1, SELECT_REMOVE, False)
             elif self._index > index:  # If the selected widget was after this
@@ -1301,21 +1301,21 @@ class Menu(Base):
             if sum_width_columns < max_width and self._used_columns >= 1:
 
                 # The width it would be added for each column
-                modwidth = max_width  # Available left width for non max columns
-                nonmax = self._used_columns
+                mod_width = max_width  # Available left width for non max columns
+                non_max = self._used_columns
 
                 # First fill all maximum width columns
                 for col in range(self._used_columns):
                     if self._column_max_width[col] is not None:
                         self._column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
-                        modwidth -= self._column_widths[col]
-                        nonmax -= 1
+                        mod_width -= self._column_widths[col]
+                        non_max -= 1
 
                 # Now, update the rest (non maximum set)
-                if nonmax > 0:
+                if non_max > 0:
                     for col in range(self._used_columns):
                         if self._column_max_width[col] is None:
-                            self._column_widths[col] = modwidth / nonmax
+                            self._column_widths[col] = mod_width / non_max
 
         # Cast to int
         for col in range(self._used_columns):
@@ -1410,29 +1410,29 @@ class Menu(Base):
                 raise _MenuSizingException(msg)
 
             # Calculate Y position
-            ysum = 1  # Compute the total height from the current row position to the top of the column
-            for rwidget in self._widget_columns[col]:
-                _, r, _ = rwidget.get_col_row_index()
+            y_sum = 1  # Compute the total height from the current row position to the top of the column
+            for r_widget in self._widget_columns[col]:
+                _, r, _ = r_widget.get_col_row_index()
                 if r >= row:
                     break
-                if rwidget.is_visible() and not rwidget.is_floating() and not rwidget.get_frame() is not None:
-                    ysum += get_rect(rwidget).height  # Height
-                    ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
+                if r_widget.is_visible() and not r_widget.is_floating() and not r_widget.get_frame() is not None:
+                    y_sum += get_rect(r_widget).height  # Height
+                    y_sum += r_widget.get_margin()[1]  # Vertical margin (bottom)
 
                     # If no widget is before add the selection effect
-                    yselh = rwidget.get_selection_effect().get_margin()[0]
-                    if r == 0 and self._widget_offset[1] <= yselh:
-                        if rwidget.is_selectable:
-                            ysum += yselh - self._widget_offset[1]
+                    y_sel_h = r_widget.get_selection_effect().get_margin()[0]
+                    if r == 0 and self._widget_offset[1] <= y_sel_h:
+                        if r_widget.is_selectable:
+                            y_sum += y_sel_h - self._widget_offset[1]
 
             # If the widget offset is zero, then add the selection effect to the height
             # of the widget to avoid visual glitches
-            yselh = widget.get_selection_effect().get_margin()[0]
-            if ysum == 1 and self._widget_offset[1] <= yselh:  # No widget is before
+            y_sel_h = widget.get_selection_effect().get_margin()[0]
+            if y_sum == 1 and self._widget_offset[1] <= y_sel_h:  # No widget is before
                 if widget.is_selectable:  # Add top margin
-                    ysum += yselh - self._widget_offset[1]
+                    y_sum += y_sel_h - self._widget_offset[1]
 
-            y_coord = max(0, self._widget_offset[1]) + ysum + padding[0]
+            y_coord = max(0, self._widget_offset[1]) + y_sum + padding[0]
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
@@ -1815,7 +1815,7 @@ class Menu(Base):
 
         :param surface: Pygame surface to draw the Menu
         :param clear_surface: Clear surface using theme default color
-        :return: Self reference **(curent)**
+        :return: Self reference **(current)**
         """
         assert isinstance(surface, pygame.Surface)
         assert isinstance(clear_surface, bool)
@@ -2522,12 +2522,7 @@ class Menu(Base):
         :param event: Pygame event
         :return: ``True`` if collide
         """
-        if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
-            display_size = self.get_window_size()
-            finger_pos = (event.x * display_size[0], event.y * display_size[1])
-            return bool(self.get_rect().collidepoint(*finger_pos))
-        else:
-            return bool(self.get_rect().collidepoint(*event.pos))
+        return bool(self.get_rect().collidepoint(*get_finger_pos(self, event)))
 
     def mainloop(
             self,
@@ -2667,8 +2662,8 @@ class Menu(Base):
 
                 # Check if there is a collision between keys
                 data_keys = data.keys()
-                subdata_keys = data_submenu.keys()
-                for key in subdata_keys:
+                sub_data_keys = data_submenu.keys()
+                for key in sub_data_keys:
                     if key in data_keys:
                         msg = 'collision between widget data ID="{0}" at depth={1}'.format(key, depth)
                         raise ValueError(msg)
@@ -2916,7 +2911,7 @@ class Menu(Base):
                 else:
                     min_index = new_widget.last_index
                 current_frame = self._widgets[self._index].get_frame()
-                same_frame = current_frame is not None and current_frame == new_widget  # Ignore cicles
+                same_frame = current_frame is not None and current_frame == new_widget  # Ignore cycles
 
                 # Check if recursive but same index as before
                 last_index = kwargs.get('last_index', -1)
@@ -3181,7 +3176,7 @@ class Menu(Base):
 
         .. warning::
 
-            Use with caution, changing the theme may affect other menues or widgets if not
+            Use with caution, changing the theme may affect other menus or widgets if not
             properly copied.
 
         :return: Menu theme
@@ -3353,20 +3348,20 @@ class Menu(Base):
         if widget is None:
             new_widgets = []
             lw = len(self._widgets)
-            jlimit = -1  # Last position containing non frame
+            j_limit = -1  # Last position containing non frame
             for i in range(lw):
                 j = lw - 1 - i
                 if self._widgets[j].get_frame() is None:
                     new_widgets.append(self._widgets[j])
-                    if jlimit != -1:
-                        for k in range(j + 1, jlimit + 1):
+                    if j_limit != -1:
+                        for k in range(j + 1, j_limit + 1):
                             new_widgets.append(self._widgets[k])
-                    jlimit = -1
+                    j_limit = -1
                 else:
-                    if jlimit == -1:
-                        jlimit = j
-            if jlimit != -1:
-                for k in range(jlimit):
+                    if j_limit == -1:
+                        j_limit = j
+            if j_limit != -1:
+                for k in range(j_limit):
                     new_widgets.append(self._widgets[k])
 
             self._widgets = new_widgets
@@ -3408,12 +3403,12 @@ class Menu(Base):
         both_frames = isinstance(target_widget, Frame) and isinstance(widget, Frame)
         check_if_last = both_frames and self._validate_frame_widgetmove and target_index != 0
         if check_if_last:
-            wlast = target_widget
+            w_last = target_widget
             while True:
-                target_index = wlast.last_index
-                wlast = self._widgets[wlast.last_index]
-                target_widget = wlast
-                if not (isinstance(wlast, Frame) and wlast.get_indices() != (-1, -1)) or wlast.get_menu() is None:
+                target_index = w_last.last_index
+                w_last = self._widgets[w_last.last_index]
+                target_widget = w_last
+                if not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)) or w_last.get_menu() is None:
                     break
         to_last_position = target_index == len(self._widgets) - 1
 
@@ -3435,7 +3430,7 @@ class Menu(Base):
         assert new_widget_index != widget_index, 'widget index has not changed'
         assert widget != target_widget, 'widget must be different than target'
 
-        # If frame is moved, move all subelements
+        # If frame is moved, move all sub-elements
         if self._validate_frame_widgetmove:
             if isinstance(widget, Frame):
                 self._validate_frame_widgetmove = False
@@ -3472,19 +3467,19 @@ class Menu(Base):
                         new_list.append(w)
 
                 # Create new list considering non-menu widgets
-                new_list_nonmenu = []
+                new_list_non_menu = []
                 if None in none_menu_widgs.keys():
                     for w in none_menu_widgs[None]:
-                        new_list_nonmenu.append(w)
+                        new_list_non_menu.append(w)
                 for w in new_list:
-                    new_list_nonmenu.append(w)
+                    new_list_non_menu.append(w)
                     if w in none_menu_widgs.keys():
                         for ww in none_menu_widgs[w]:
-                            new_list_nonmenu.append(ww)
+                            new_list_non_menu.append(ww)
 
                 # Make dict and update frame widgets dict
                 new_dict = {}
-                for w in new_list_nonmenu:
+                for w in new_list_non_menu:
                     new_dict[w.get_id()] = w
                 widget.get_frame()._widgets = new_dict
 
@@ -3538,54 +3533,54 @@ class Menu(Base):
                 line = '·   {0}└{1}'.format('│   ' * j, '┄' * 3)  # * depth_widths[j]
                 print(c.BRIGHT_WHITE + line.ljust(0, '━') + c.ENDC)  # 80 also work
 
-        nonmenu_frame_widgets: Dict[int, List['Widget']] = {}
+        non_menu_frame_widgets: Dict[int, List['Widget']] = {}
 
-        def process_nonmenu_frame(windx: int) -> None:
+        def process_non_menu_frame(w_indx: int) -> None:
             """
-            Print nonmenu frames list.
+            Print non-menu frames list.
 
-            :param windx: Current iteration index to print widgets
+            :param w_indx: Current iteration index to print widgets
             :return: None
             """
-            for nmi in list(nonmenu_frame_widgets.keys()):
-                if nmi == windx:
-                    v = nonmenu_frame_widgets[nmi]
-                    for vwid in v:
-                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * vwid.get_frame_depth() + c.ENDC +
-                              widget_terminal_title(vwid))
-                    del nonmenu_frame_widgets[nmi]
+            for nmi in list(non_menu_frame_widgets.keys()):
+                if nmi == w_indx:
+                    v = non_menu_frame_widgets[nmi]
+                    for v_wid in v:
+                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth() + c.ENDC +
+                              widget_terminal_title(v_wid))
+                    del non_menu_frame_widgets[nmi]
 
         for w in self._widgets:
-            wdepth = w.get_frame_depth()
+            w_depth = w.get_frame_depth()
             close_frames(w.get_frame_depth())
             title = widget_terminal_title(w, indx, self._index)
             print('{0}{1}{2}'.format(
                 str(indx).ljust(3),
-                ' ' + c.BRIGHT_WHITE + '│   ' * wdepth + c.ENDC,
+                ' ' + c.BRIGHT_WHITE + '│   ' * w_depth + c.ENDC,
                 title
             ))
-            if wdepth not in depth_widths.keys():
-                depth_widths[wdepth] = 0
-            # depth_widths[wdepth] = max(int(len(title) * 1.2) + 3, depth_widths[wdepth])
-            depth_widths[wdepth] = len(title) - 2
+            if w_depth not in depth_widths.keys():
+                depth_widths[w_depth] = 0
+            # depth_widths[w_depth] = max(int(len(title) * 1.2) + 3, depth_widths[w_depth])
+            depth_widths[w_depth] = len(title) - 2
             current_depth = w.get_frame_depth()
-            process_nonmenu_frame(indx)
+            process_non_menu_frame(indx)
             jw = self._widgets[0]
             try:
                 if isinstance(w, Frame):  # Print ordered non-menu widgets
                     current_depth += 1
-                    previndx = indx
+                    prev_indx = indx
                     for jw in w.get_widgets(unpack_subframes=False):
                         if jw.get_menu() is None:
-                            if previndx not in nonmenu_frame_widgets.keys():
-                                nonmenu_frame_widgets[previndx] = []
-                            nonmenu_frame_widgets[previndx].append(jw)
+                            if prev_indx not in non_menu_frame_widgets.keys():
+                                non_menu_frame_widgets[prev_indx] = []
+                            non_menu_frame_widgets[prev_indx].append(jw)
                         else:
-                            previndx = self._widgets.index(jw)
+                            prev_indx = self._widgets.index(jw)
             except ValueError:
                 print('[ERROR] while requesting widget {0}'.format(jw.get_class_id()))
             indx += 1
-        process_nonmenu_frame(indx)
+        process_non_menu_frame(indx)
         close_frames(0)
 
 

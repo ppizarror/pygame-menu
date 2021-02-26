@@ -270,7 +270,7 @@ class DropSelect(Widget):
             'size': selection_option_font_size
         }
 
-        # Configure publics
+        # Configure public's
         self.active = False
 
     def set_theme(self, theme: 'pygame_menu.Theme') -> 'DropSelect':
@@ -349,10 +349,10 @@ class DropSelect(Widget):
         if self._placeholder_add_to_selection_box:
             self._items.insert(0, (self._placeholder, -1))
 
-        for optid in range(len(self._items)):
-            option = self._items[optid]
+        for opt_id in range(len(self._items)):
+            option = self._items[opt_id]
             btn = Button(option[0], onreturn=self._click_option,
-                         index=optid - (1 if self._placeholder_add_to_selection_box else 0))
+                         index=opt_id - (1 if self._placeholder_add_to_selection_box else 0))
             btn.set_background_color(
                 color=self._selection_box_bgcolor
             )
@@ -367,7 +367,7 @@ class DropSelect(Widget):
                 keyboard=False  # Only drop select controls the keyboard behaviour
             )
             if self._placeholder_add_to_selection_box:
-                font_color = self._selection_option_font_style['color'] if optid != 0 else self._font_readonly_color
+                font_color = self._selection_option_font_style['color'] if opt_id != 0 else self._font_readonly_color
             else:
                 font_color = self._selection_option_font_style['color']
             btn.set_font(
@@ -391,17 +391,17 @@ class DropSelect(Widget):
             self._option_buttons.append(btn)
 
             bh = btn.get_height() - self._selection_option_border_width
-            if self._selection_option_left_space and not (self._placeholder_add_to_selection_box and optid == 0):
+            if self._selection_option_left_space and not (self._placeholder_add_to_selection_box and opt_id == 0):
                 prev_pad = btn._padding  # top, right, bottom, left
-                prev_padt: Tuple4IntType = btn._padding_transform
+                prev_pad_t: Tuple4IntType = btn._padding_transform
                 dh = int(btn.get_height(apply_padding=False) * self._selection_option_left_space_height_factor)
                 btn.set_attribute('left_space_height', dh)
                 m = self._selection_option_left_space_margin
                 btn._padding = prev_pad[0], prev_pad[1], prev_pad[2], prev_pad[3] + dh + m[0] + m[1]
-                btn._padding_transform = prev_padt[0], prev_padt[1], prev_padt[2], prev_padt[3] + dh + m[0] + m[1]
+                btn._padding_transform = prev_pad_t[0], prev_pad_t[1], prev_pad_t[2], prev_pad_t[3] + dh + m[0] + m[1]
 
             total_height += bh
-            if optid + 1 <= self._selection_box_height:
+            if opt_id + 1 <= self._selection_box_height:
                 max_height += bh
 
         max_width = frame_width
@@ -540,7 +540,7 @@ class DropSelect(Widget):
             self._drop_frame.scrollv(value)
         return self
 
-    def get_scroll_value_percentual(self, orientation: str) -> float:
+    def get_scroll_value_percentage(self, orientation: str) -> float:
         """
         Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
@@ -553,7 +553,7 @@ class DropSelect(Widget):
         :return: Value from ``0`` to ``1``
         """
         if self._drop_frame is not None:
-            return self._drop_frame.get_scroll_value_percentual(orientation)
+            return self._drop_frame.get_scroll_value_percentage(orientation)
         return -1
 
     def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
@@ -650,7 +650,7 @@ class DropSelect(Widget):
 
                 # Ignore draw if widget is within a frame, if so, the next call made by frame.draw()
                 # with surface=None is performed, but this time drop frame draws over "new_surface".
-                # If widget is not within a frame, this is not neccesary as the frame is not drawn over
+                # If widget is not within a frame, this is not necessary as the frame is not drawn over
                 # and the widget is drawn at the end of all widgets
                 if surface == self.last_surface and self.get_frame() is not None:
                     self.last_surface = new_surface
@@ -692,7 +692,7 @@ class DropSelect(Widget):
         if self._option_font is None:
             return
 
-        # scroll_v = 0 if self._scrollarea is None else self._scrollarea.get_parent_scroll_value_percentual(
+        # scroll_v = 0 if self._scrollarea is None else self._scrollarea.get_parent_scroll_value_percentage(
         #     ORIENTATION_VERTICAL)
         scroll_v = 0
         menu_height = 0 if self._menu is None else self._menu.get_height(widget=True)
@@ -718,7 +718,7 @@ class DropSelect(Widget):
         current_rect_bg = current_rect_bg.inflate((self._selection_box_inflate[0],
                                                    self._selection_box_inflate[1] + 2 * vi))
 
-        # Compute delta title if height is lower than seleciton box
+        # Compute delta title if height is lower than selection box
         h = title.get_height()
         delta_title_height = max(int(math.floor((current_rect_bg.height - h) / 2)), 0)
 
@@ -909,9 +909,9 @@ class DropSelect(Widget):
             self._index = item
 
         # Update options background selection
-        for bindx in range(len(self._option_buttons)):
-            btn = self._option_buttons[bindx]
-            if bindx == self._index:
+        for b_ind_x in range(len(self._option_buttons)):
+            btn = self._option_buttons[b_ind_x]
+            if b_ind_x == self._index:
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})
                 if not self._drop_frame.has_attribute('ignorescroll'):
@@ -1123,10 +1123,10 @@ class DropSelect(Widget):
                 rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = event.pos
+                    mouse_x, _ = event.pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
-                    dist = mousex - (topleft + self._title_size[0])  # Distance from title
+                    dist = mouse_x - (topleft + self._title_size[0])  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         self._toggle_drop()
                         updated = True

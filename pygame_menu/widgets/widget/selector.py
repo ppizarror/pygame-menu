@@ -462,10 +462,10 @@ class Selector(Widget):
                 rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = event.pos
+                    mouse_x, _ = event.pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
-                    dist = mousex - (topleft + self._title_size)  # Distance from title
+                    dist = mouse_x - (topleft + self._title_size)  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         # Position in percentage, if <0.5 user clicked left
                         pos = dist / float(topright - topleft - self._title_size)

@@ -1864,25 +1864,25 @@ class WidgetManager(object):
 
         attributes = self._filter_widget_attributes(kwargs)
         pad = parse_padding(attributes['padding'])  # top, right, bottom, left
-        padh = pad[1] + pad[3]
-        padv = pad[0] + pad[2]
+        pad_h = pad[1] + pad[3]
+        pad_v = pad[0] + pad[2]
 
-        assert width > padh, \
-            'frame width ({0}) cannot be lower than horizontal padding size ({1})'.format(width, padh)
-        assert height > padv, \
-            'frame height ({0}) cannot be lower than vertical padding size ({1})'.format(height, padv)
+        assert width > pad_h, \
+            'frame width ({0}) cannot be lower than horizontal padding size ({1})'.format(width, pad_h)
+        assert height > pad_v, \
+            'frame height ({0}) cannot be lower than vertical padding size ({1})'.format(height, pad_v)
 
         widget = pygame_menu.widgets.Frame(
-            width=width - padh,
-            height=height - padv,
+            width=width - pad_h,
+            height=height - pad_v,
             orientation=orientation,
             frame_id=frame_id
         )
         self._configure_widget(widget=widget, **attributes)
 
         widget.make_scrollarea(
-            max_height=kwargs.pop('max_height', height) - padv,
-            max_width=kwargs.pop('max_width', width) - padh,
+            max_height=kwargs.pop('max_height', height) - pad_v,
+            max_width=kwargs.pop('max_width', width) - pad_h,
             scrollarea_color=kwargs.pop('scrollarea_color', None),
             scrollbar_color=kwargs.pop('scrollbar_color', self._theme.scrollbar_color),
             scrollbar_cursor=kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor),

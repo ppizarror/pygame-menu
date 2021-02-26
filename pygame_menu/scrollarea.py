@@ -730,9 +730,9 @@ class ScrollArea(Base):
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == orientation:
-                vmin, vmax = sbar.get_minmax()
-                delta = vmax - vmin
-                new_value = int(min(vmin + delta * float(value), vmax))
+                v_min, v_max = sbar.get_minmax()
+                delta = v_max - v_min
+                new_value = int(min(v_min + delta * float(value), v_max))
                 sbar.set_value(new_value)
                 break
         return self
@@ -861,10 +861,10 @@ class ScrollArea(Base):
         if self._parent_scrollarea is not None:
             px, py = self._parent_scrollarea.get_position()
             ox, oy = self._parent_scrollarea.get_offsets()
-            parx, pary = 0, 0
+            par_x, par_y = 0, 0
             if self._parent_scrollarea.get_parent() is not None:
-                parx, pary = self._parent_scrollarea.get_parent_position()
-            return px - ox + parx, py - oy + pary
+                par_x, par_y = self._parent_scrollarea.get_parent_position()
+            return px - ox + par_x, py - oy + par_y
         return 0, 0
 
     def to_absolute_position(self, virtual: 'pygame.Rect') -> 'pygame.Rect':

@@ -539,12 +539,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             # Add an auto separator if the number can't continue growing and the cursor
             # is at the end of the line
             if total_separator < 2 and len(self._input_string) == self._cursor_position:
-                autopos = len(colors) - 1
-                last_num = colors[autopos]
+                auto_pos = len(colors) - 1
+                last_num = colors[auto_pos]
                 if (len(last_num) == 2 and int(last_num) > 25 or len(last_num) == 3 and int(last_num) <= 255) and \
-                        autopos not in self._auto_separator_pos:
+                        auto_pos not in self._auto_separator_pos:
                     self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
-                    self._auto_separator_pos.append(autopos)
+                    self._auto_separator_pos.append(auto_pos)
 
             # If the user cleared all the string, reset auto separator
             if total_separator == 0 and \
