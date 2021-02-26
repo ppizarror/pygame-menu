@@ -430,13 +430,14 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
         warnings.warn(msg)
 
 
-def uuid4() -> str:
+def uuid4(short: bool = False) -> str:
     """
     Create custom version of uuid4.
 
+    :param short: If ``True`` only returns the first 8 chars of the uuid, else, 18
     :return: UUID of 18 chars
     """
-    return str(uuid.uuid4())[:18]
+    return str(uuid.uuid4())[:18 if not short else 8]
 
 
 def widget_terminal_title(
