@@ -51,11 +51,12 @@ class BaseImageTest(unittest.TestCase):
         """
         Test image load with pathlib.
         """
-        pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        image = pygame_menu.BaseImage(pathimg)
+        path_img = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+        image = pygame_menu.BaseImage(path_img)
         image.draw(surface)
-        self.assertEqual(image.get_path(), str(pathimg))
+        self.assertEqual(image.get_path(), str(path_img))
 
+    # noinspection SpellCheckingInspection
     def test_from_bytesio(self) -> None:
         """
         Test image load from base64.
@@ -123,10 +124,10 @@ class BaseImageTest(unittest.TestCase):
         image.rotate(360)
         prev_size = image.get_size()
         self.assertEqual(prev_size, (256, 256))
-        isum = 0
+        i_sum = 0
         for i in range(91):
-            image.rotate(isum)
-            isum += 1  # Rotate the image many angles
+            image.rotate(i_sum)
+            i_sum += 1  # Rotate the image many angles
         self.assertEqual(image.get_size(), prev_size)
 
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
@@ -156,10 +157,10 @@ class BaseImageTest(unittest.TestCase):
         Test baseimage crop.
         """
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-        imagec = image.get_crop(0, 0, 10, 10)
-        imagecr = image.get_crop_rect(pygame.Rect(0, 0, 10, 10))
-        im1 = pygame.image.tostring(imagec, 'RGBA')
-        im2 = pygame.image.tostring(imagecr, 'RGBA')
+        image_c = image.get_crop(0, 0, 10, 10)
+        image_cr = image.get_crop_rect(pygame.Rect(0, 0, 10, 10))
+        im1 = pygame.image.tostring(image_c, 'RGBA')
+        im2 = pygame.image.tostring(image_cr, 'RGBA')
         self.assertTrue(im1 == im2)
 
         # Save the whole image crop
@@ -229,6 +230,7 @@ class BaseImageTest(unittest.TestCase):
         )
         self.assertEqual(image.get_path(), pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
+    # noinspection SpellCheckingInspection
     def test_extension_validation(self) -> None:
         """
         Validate a image extension.
@@ -246,7 +248,7 @@ class BaseImageTest(unittest.TestCase):
         w, h = image.get_size()
         self.assertEqual(w, 256)
         self.assertEqual(h, 256)
-        self.assertEqual(image.get_namefile(), 'gray_lines')
+        self.assertEqual(image.get_filename(), 'gray_lines')
         self.assertEqual(image.get_extension(), '.png')
 
     def test_operations(self) -> None:
@@ -307,8 +309,8 @@ class BaseImageTest(unittest.TestCase):
         self.assertTrue(image.equals(image_original))
 
         # As the example is not 24/32 bits smooth scale fails, but baseimage should notice that
-        imagc = image.copy()
-        imagc.resize(100, 100)
+        imag_c = image.copy()
+        imag_c.resize(100, 100)
 
         # Get rect
         rect = image.get_rect()
