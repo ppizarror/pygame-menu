@@ -163,7 +163,6 @@ class Menu(Base):
     _prev: Optional[List[Union['Menu', List['Menu']]]]
     _runtime_errors: '_MenuRuntimeErrorConfig'
     _scrollarea: 'ScrollArea'
-    _scrollable_frames: List['Frame']  # Stores the reference of scrollable frames to check inputs
     _scrollarea_margin: List[int]
     _sound: 'Sound'
     _stats: '_MenuStats'
@@ -173,6 +172,7 @@ class Menu(Base):
     _touchscreen: bool
     _touchscreen_motion_selection: bool
     _translate: Tuple2IntType
+    _update_frames: List['Frame']  # Stores the reference of scrollable frames to check inputs
     _used_columns: int
     _validate_frame_widgetmove: bool
     _widget_columns: Dict[int, List['Widget']]
@@ -428,9 +428,9 @@ class Menu(Base):
 
         # Menu widgets, it should not be accessed outside the object as strange issues can occur
         self.add = WidgetManager(self)
-        self._widgets = []
-        self._scrollable_frames = []  # Stores the scrollable widgets, updated by Frame widget
+        self._update_frames = []  # Stores the frames which receive update events
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
+        self._widgets = []
 
         if abs(self._widget_offset[0]) < 1:
             self._widget_offset[0] *= self._width
@@ -2215,10 +2215,10 @@ class Menu(Base):
         # First, check scrollable widgets (if any)
         scrollable_frames_update = False
         if not selected_widget_active_disable_scroll:
-            for scrollable_frame in self._current._scrollable_frames:
+            for scrollable_frame in self._current._update_frames:
                 scrollable_frames_update = scrollable_frames_update or scrollable_frame.update(events)
 
-        # Scrollable widgets have changed
+        # Scrollable frames have changed
         if scrollable_frames_update:
             updated = True
 
@@ -3369,6 +3369,9 @@ class Menu(Base):
                 selected_widget.select(False)
                 self._select(self._widgets.index(selected_widget), 1, SELECT_MOVE, False)
 
+            if len(self._update_frames) > 0:
+                self._update_frames[0].sort_menu_update_frames()
+
             if render:
                 self._widgets_surface = None
                 self._render()
@@ -3494,6 +3497,11 @@ class Menu(Base):
             self._render()
 
         if self._validate_frame_widgetmove:
+            if isinstance(widget, Frame) or isinstance(target_widget, Frame):
+                if isinstance(widget, Frame):
+                    widget.sort_menu_update_frames()
+                else:
+                    target_widget.sort_menu_update_frames()
             check_widget_mouseleave()
 
         return new_widget_index, target_index
