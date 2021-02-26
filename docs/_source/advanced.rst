@@ -41,7 +41,7 @@ basic widget should contain this code:
         def _draw(self, surface):
             """
             Draw the widget on a given surface.
-            This method must be overriden by all classes.
+            This method must be overridden by all classes.
             """
             # Draw the self._surface pygame object on the given surface
             surface.blit(self._surface, self._rect.topleft)
@@ -131,7 +131,7 @@ can be used.
 
 .. note::
 
-    The widget ``_render`` method should allways call
+    The widget ``_render`` method should always call
     :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` method, this
     ensures that Menu updates the surface and the positioning.
 

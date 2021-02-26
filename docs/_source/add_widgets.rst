@@ -421,7 +421,7 @@ visual rendering of the menu.
 Add a url link
 --------------
 
-Adds a clickeable url link.
+Adds a clickable url link.
 
 **Example:**
 
