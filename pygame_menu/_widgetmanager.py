@@ -41,6 +41,7 @@ import webbrowser
 import pygame_menu
 import pygame_menu.events as _events
 
+from pygame_menu._base import Base
 from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 from pygame_menu.font import assert_font
 from pygame_menu.scrollarea import get_scrollbars_from_position
@@ -54,7 +55,7 @@ from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackTyp
 
 
 # noinspection PyProtectedMember
-class WidgetManager(object):
+class WidgetManager(Base):
     """
     Add/Remove widgets to the Menu.
 
@@ -63,6 +64,7 @@ class WidgetManager(object):
     _menu: 'pygame_menu.Menu'
 
     def __init__(self, menu: 'pygame_menu.Menu') -> None:
+        super(WidgetManager, self).__init__(object_id=menu.get_id() + '+widget-manager')
         self._menu = menu
 
     @property
@@ -280,9 +282,11 @@ class WidgetManager(object):
             tab_size=kwargs['tab_size']
         )
 
-        # Finals
         if self._theme.widget_background_inflate_to_selection:
             widget.background_inflate_to_selection_effect()
+
+        widget._update__repr___(self)
+
         widget.configured = True
 
     @staticmethod
@@ -307,10 +311,9 @@ class WidgetManager(object):
         assert isinstance(widget, Widget)
         if widget.get_menu() is None:
             widget.set_menu(self._menu)
-        if widget.get_menu() == self._menu:
-            self._menu._check_id_duplicated(widget.get_id())
         assert widget.get_menu() == self._menu, \
             'widget cannot have a different instance of menu'
+        self._menu._check_id_duplicated(widget.get_id())
 
         if widget.get_scrollarea() is None:
             widget.set_scrollarea(self._menu.get_scrollarea())
@@ -333,6 +336,10 @@ class WidgetManager(object):
         except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
             self._menu.remove_widget(widget)
             raise
+
+        # Sort frame widgets, as render position changes frame position/frame
+        if len(self._menu._update_frames) > 0:
+            self._menu._update_frames[0].sort_menu_update_frames()
 
         # Update widgets
         check_widget_mouseleave()
