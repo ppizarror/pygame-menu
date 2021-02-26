@@ -69,6 +69,9 @@ from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, P
 # [..., [widget, previous_cursor, [previous_widget, previous_cursor2, [....]
 WIDGET_MOUSEOVER: List[Any] = [None, []]
 
+# Stores the top cursor for validation
+WIDGET_TOP_CURSOR: List[Any] = [None]
+
 
 # noinspection PyProtectedMember
 def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
@@ -83,6 +86,7 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
     # If no widget is over, return
     if WIDGET_MOUSEOVER[0] is None:
         assert len(WIDGET_MOUSEOVER[1]) == 0, 'widget leave sublist must be empty'
+        assert WIDGET_TOP_CURSOR[0] is None, 'widget top cursor must be None'
         return
 
     if event is None:
@@ -114,6 +118,14 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
         if len(prev_list) == 0:
             WIDGET_MOUSEOVER[0] = None
             WIDGET_MOUSEOVER[1] = []
+            if prev_cursor != WIDGET_TOP_CURSOR[0]:
+                msg = 'expected {0} to be the top cursor (WIDGET_TOP_CURSOR), but {1} is the current ' \
+                      'previous cursor from WIDGET_MOUSEOVER recursive list. The top cursor {0} will ' \
+                      'be established as the pygame default mouse cursor' \
+                      ''.format(WIDGET_TOP_CURSOR[0], prev_cursor)
+                warnings.warn(msg)
+                set_pygame_cursor(WIDGET_TOP_CURSOR[0])
+            WIDGET_TOP_CURSOR[0] = None
         else:
             assert len(prev_list) == 3, 'invalid widget leave sublist length'
             WIDGET_MOUSEOVER[0] = prev_list[0]
@@ -284,11 +296,11 @@ class Widget(Base):
         self._draw_callbacks = {}
         self._update_callbacks = {}
 
-        self.set_onchange(onchange)
-        self.set_onmouseleave(onmouseleave)
-        self.set_onmouseover(onmouseover)
-        self.set_onreturn(onreturn)
-        self.set_onselect(onselect)
+        self.set_onchange(onchange)  # lgtm [py/init-calls-subclass]
+        self.set_onmouseleave(onmouseleave)  # lgtm [py/init-calls-subclass]
+        self.set_onmouseover(onmouseover)  # lgtm [py/init-calls-subclass]
+        self.set_onreturn(onreturn)  # lgtm [py/init-calls-subclass]
+        self.set_onselect(onselect)  # lgtm [py/init-calls-subclass]
 
         self._args = args or []
         self._kwargs = kwargs or {}
@@ -465,13 +477,14 @@ class Widget(Base):
 
                 # Check frame not in previous
                 prev = WIDGET_MOUSEOVER[1]
-                while True:
-                    if len(prev) == 0:
-                        break
-                    if prev[0] == self._frame:
-                        in_prev = True
-                        break
-                    prev = prev[2]
+                if len(prev) != 0:
+                    while True:
+                        if len(prev) == 0:
+                            break
+                        if prev[0] == self._frame:
+                            in_prev = True
+                            break
+                        prev = prev[2]
 
                 if not in_prev:
                     self._frame.mouseover(event, check_all_widget_mouseleave)
@@ -491,6 +504,8 @@ class Widget(Base):
 
         # Update previous state
         if check_all_widget_mouseleave:
+            if WIDGET_MOUSEOVER[0] is None:
+                WIDGET_TOP_CURSOR[0] = previous_cursor
             WIDGET_MOUSEOVER[0] = self
             WIDGET_MOUSEOVER[1] = [self, previous_cursor, WIDGET_MOUSEOVER[1]]
 
