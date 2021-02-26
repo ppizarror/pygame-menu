@@ -34,11 +34,12 @@ __all__ = ['ToggleSwitch']
 import pygame
 import pygame_menu
 
-from pygame_menu.controls import JOY_BUTTON_SELECT, JOY_LEFT, JOY_RIGHT, JOY_AXIS_X, JOY_DEADZONE, KEY_APPLY, \
-    KEY_LEFT, KEY_RIGHT
+from pygame_menu.controls import JOY_BUTTON_SELECT, JOY_LEFT, JOY_RIGHT, JOY_AXIS_X, JOY_DEADZONE, \
+    KEY_APPLY, KEY_LEFT, KEY_RIGHT
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, get_finger_pos
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, \
+    get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \

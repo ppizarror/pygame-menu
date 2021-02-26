@@ -59,8 +59,8 @@ from pygame_menu.locals import FINGERUP, POSITION_EAST
 from pygame_menu.utils import assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, Optional, \
-    NumberInstance, ColorInputType, EventVectorType
+from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, \
+    Optional, NumberInstance, ColorInputType, EventVectorType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000

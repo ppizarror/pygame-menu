@@ -56,8 +56,8 @@ from pygame_menu.locals import INPUT_TEXT
 from pygame_menu.utils import check_key_pressed_valid, make_surface
 from pygame_menu.widgets.widget.textinput import TextInput
 
-from pygame_menu._types import Union, List, NumberType, Any, Optional, CallbackType, \
-    Literal, Tuple3IntType, NumberInstance, EventVectorType
+from pygame_menu._types import Union, List, NumberType, Any, Optional, CallbackType, Literal, \
+    Tuple3IntType, NumberInstance, EventVectorType
 
 # Input modes
 COLORINPUT_TYPE_HEX = 'hex'
