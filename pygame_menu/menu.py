@@ -1346,6 +1346,7 @@ class Menu(Base):
         min_max_updated = False
         max_x, max_y = -1e8, -1e8
         min_x, min_y = 1e8, 1e8
+        consider_translation = False
 
         # Cache rects
         rects_cache: Dict[str, 'pygame.Rect'] = {}
@@ -1437,10 +1438,16 @@ class Menu(Base):
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
 
+            # Add the widget translation to the widget for computing the min/max position
+            tx, ty = widget.get_translate()
+            if not consider_translation:
+                tx = 0
+                ty = 0
+
             # Update max/min position, minus padding
             min_max_updated = True
-            max_x = max(max_x, x_coord + width - padding[1])  # minus right padding
-            max_y = max(max_y, y_coord + get_rect(widget).height - padding[2])  # minus bottom padding
+            max_x = max(max_x, x_coord + width - padding[1] + tx)  # minus right padding
+            max_y = max(max_y, y_coord + get_rect(widget).height - padding[2] + ty)  # minus bottom padding
             min_x = min(min_x, x_coord - padding[3])
             min_y = min(min_y, y_coord - padding[0])
 
