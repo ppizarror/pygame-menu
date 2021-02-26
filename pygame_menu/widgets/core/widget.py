@@ -147,6 +147,7 @@ class Widget(Base):
     _args: List[Any]
     _background_color: Optional[Union[ColorType, 'pygame_menu.BaseImage']]
     _background_inflate: Tuple2IntType
+    _background_surface: Optional[List[Union['pygame.Rect', 'pygame.Surface']]]
     _border_color: ColorType
     _border_inflate: Tuple2IntType
     _border_width: int
@@ -236,6 +237,7 @@ class Widget(Base):
         self._alignment = ALIGN_CENTER  # Widget alignment
         self._background_color = None
         self._background_inflate = (0, 0)
+        self._background_surface = None
         self._col_row_index = (-1, -1, -1)
         self._cursor = None
         self._decorator = Decorator(self)
@@ -267,7 +269,7 @@ class Widget(Base):
         self._flip = (False, False)  # x, y
         self._scale = [False, 1, 1, False]  # do_scale, x, y, smooth
         self._translate = (0, 0)
-        self._translate_virtual = (0, 0)  # Translation virtual used by scrollareas
+        self._translate_virtual = (0, 0)  # Translation virtual used by scrollarea's
 
         # Widget rect. This object does not contain padding. For getting the widget+padding
         # use .get_rect() widget method instead. Widget subclass should ONLY modify width/height,
@@ -654,7 +656,7 @@ class Widget(Base):
 
         .. note::
 
-            If this method is used it's not necesary to call Widget methods
+            If this method is used it's not necessary to call Widget methods
             :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` and
             :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_cache_update`.
             As `render` should force Menu render, updating both surface and cache.
@@ -827,6 +829,7 @@ class Widget(Base):
 
         self._background_color = color
         self._background_inflate = tuple(inflate)
+        self._background_surface = None
         self._force_render()
         return self
 
@@ -845,6 +848,7 @@ class Widget(Base):
         :return: Self reference
         """
         self._background_inflate = self._selection_effect.get_xy_margin()
+        self._background_surface = None
         return self
 
     def _draw_background_color(self, surface: 'pygame.Surface', rect: Optional['pygame.Rect'] = None) -> None:
@@ -857,20 +861,34 @@ class Widget(Base):
         """
         if self._background_color is None:
             return
+
+        # Create rect
         if not (self.selection_expand_background and self._selected):
             inflate = self._background_inflate
         else:
             inflate = self._selection_effect.get_xy_margin()
         if rect is None:
             rect = self.get_rect(inflate=inflate)
-        if isinstance(self._background_color, pygame_menu.BaseImage):
-            self._background_color.draw(
-                surface=surface,
-                area=rect,
-                position=(rect.x, rect.y)
-            )
-        else:
-            surface.fill(self._background_color, rect)
+
+        # Create the background surface
+        if self._background_surface is None or self._background_surface[0] != rect:
+            background_surface = make_surface(rect.width, rect.height, alpha=True)
+            if isinstance(self._background_color, pygame_menu.BaseImage):
+                self._background_color.draw(
+                    surface=background_surface,
+                    area=background_surface.get_rect(),
+                    position=(0, 0)
+                )
+            else:
+                background_surface.fill(self._background_color, background_surface.get_rect())
+            if self._background_surface is None:
+                self._background_surface = [rect, background_surface]
+            else:
+                self._background_surface[0] = rect
+                self._background_surface[1] = background_surface
+
+        # Draw the background surface
+        surface.blit(self._background_surface[1], rect)
 
     def _draw_border(self, surface: 'pygame.Surface') -> None:
         """
@@ -1056,7 +1074,7 @@ class Widget(Base):
     def _draw(self, surface: 'pygame.Surface') -> None:
         """
         Draw the Widget on a given surface.
-        This method must be overriden by all classes.
+        This method must be overridden by all classes.
 
         :param surface: Surface to draw
         :return: None
