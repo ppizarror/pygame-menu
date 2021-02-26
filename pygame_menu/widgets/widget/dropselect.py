@@ -37,20 +37,20 @@ import math
 import pygame
 import pygame_menu
 
-from pygame_menu.controls import KEY_APPLY, KEY_MOVE_DOWN, KEY_MOVE_UP, JOY_BUTTON_SELECT, JOY_LEFT, JOY_DEADZONE, \
-    JOY_RIGHT, JOY_AXIS_X
+from pygame_menu.controls import KEY_APPLY, KEY_MOVE_DOWN, KEY_MOVE_UP, JOY_BUTTON_SELECT, JOY_LEFT, \
+    JOY_DEADZONE, JOY_RIGHT, JOY_AXIS_X
 from pygame_menu.font import FontType, get_font, assert_font
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, parse_padding, \
-    get_finger_pos
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, \
+    parse_padding, get_finger_pos, uuid4
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.selector import check_selector_items
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, ColorType, Dict, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, PaddingInstance, Tuple4IntType, NumberType, \
-    EventVectorType, Tuple2NumberType
+    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, PaddingInstance, Tuple4IntType, \
+    NumberType, EventVectorType, Tuple2NumberType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -351,8 +351,10 @@ class DropSelect(Widget):
 
         for opt_id in range(len(self._items)):
             option = self._items[opt_id]
-            btn = Button(option[0], onreturn=self._click_option,
-                         index=opt_id - (1 if self._placeholder_add_to_selection_box else 0))
+            btn = Button(option[0],
+                         onreturn=self._click_option,
+                         index=opt_id - (1 if self._placeholder_add_to_selection_box else 0),
+                         button_id=self._id + '+option-' + uuid4())
             btn.set_background_color(
                 color=self._selection_box_bgcolor
             )
@@ -387,6 +389,7 @@ class DropSelect(Widget):
             btn.set_tab_size(self._tab_size)
             btn.configured = True
             btn.set_menu(self._menu)
+            btn._update__repr___(self)
 
             self._option_buttons.append(btn)
 
@@ -432,7 +435,8 @@ class DropSelect(Widget):
             self._drop_frame.set_menu(None)
 
         # Create frame
-        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL)
+        self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL,
+                                 frame_id=self._id + '+frame-' + uuid4())
         self._drop_frame._accepts_title = False
         self._drop_frame.hide()
         self._drop_frame.set_background_color(
@@ -445,6 +449,7 @@ class DropSelect(Widget):
         self._drop_frame.set_scrollarea(self._scrollarea)
         self._drop_frame.relax()
         self._drop_frame.configured = True
+        self._drop_frame._update__repr___(self)
 
         if total_height > 0:
             scrollbar_color = kwargs.get('scrollbar_color', self._theme.scrollbar_color)
