@@ -83,7 +83,7 @@ basic widget should contain this code:
             ...
             return False
 
-.. warning:: After creating the widget, it must be added to the  ``__init__.py`` file of the
+.. warning:: After creating the widget, it must be added to the ``__init__.py`` file of the
              :py:mod:`pygame_menu.widgets` package.
 
              .. code-block:: python
@@ -197,7 +197,7 @@ contain the following code:
 
 .. warning::
 
-    After creating the selection effect, it must be added to  ``__init__.py`` file of the
+    After creating the selection effect, it must be added to ``__init__.py`` file of the
     :py:mod:`pygame_menu.widgets` package.
 
     .. code-block:: python
