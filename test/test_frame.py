@@ -1744,6 +1744,8 @@ class FrameWidgetTest(unittest.TestCase):
         pad = 5
         frame = menu.add.frame_v(300, 200, background_color=(170, 170, 170), padding=pad, frame_id='f1')
         frame._class_id__repr__ = True
+        self.assertEqual(frame.get_scroll_value_percentage(ORIENTATION_VERTICAL), -1)
+        frame_prev_rect = frame.get_rect()
 
         # self.assertRaises(ValueError, lambda: frame.get_title())
         frame._accepts_title = False
@@ -1754,9 +1756,12 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Add a title
         self.assertNotIn(frame, menu._update_frames)
+        self.assertEqual(frame._title_height(), 0)
         frame.set_title('epic', padding_outer=3, title_font_size=20, padding_inner=(0, 3), title_font_color='white',
                         title_alignment=pygame_menu.locals.ALIGN_CENTER)
-        self.assertIn(frame, menu._update_frames)
+        self.assertIn(frame, menu._update_frames)  # Even if not scrollable
+        self.assertEqual(frame._title_height(), 34)
+        self.assertTrue(frame._has_title)
         self.assertEqual(frame.get_size(), (300, 234))
         self.assertEqual(frame.get_position(), (150 + pad, 73 + pad))
         self.assertEqual(len(frame._frame_title.get_widgets()), 1)  # The title itself
@@ -1788,6 +1793,10 @@ class FrameWidgetTest(unittest.TestCase):
         btn1 = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, click_button)
         btn2 = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_MAXIMIZE, click_button)
         btn3 = frame.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_MINIMIZE, click_button)
+        self.assertRaises(IndexError, lambda: frame.get_index(btn1))
+        self.assertEqual(frame._frame_title.get_index(btn1), 1)
+        self.assertEqual(frame._frame_title.get_index(btn2), 2)
+        self.assertEqual(frame._frame_title.get_index(btn3), 3)
         self.assertFalse(test[0])
         menu.update(PygameEventUtils.middle_rect_click(btn1))
         self.assertTrue(test[0])
@@ -1808,7 +1817,8 @@ class FrameWidgetTest(unittest.TestCase):
                          title_font_color='white',
                          title_alignment=pygame_menu.locals.ALIGN_CENTER,
                          draggable=True)
-        frame2.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, None)
+        btn4 = frame2.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, None)
+        self.assertEqual(btn4.get_frame(), frame2._frame_title)
 
         self.assertEqual(frame2.get_position(), (145, 235))
         self.assertEqual(frame2.get_size(), (310, 124))
@@ -1827,7 +1837,35 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame2.get_translate(), (10, 0))
         menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, -500)))
         self.assertEqual(frame2.get_translate(), (10, -235))  # Apply top limit
+        menu.render()
+
+        # Test drag with position way over the item
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100), delta=(0, -100)))
+        self.assertEqual(frame2.get_translate(), (10, -235))  # Apply top limit restriction
+
         menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title))
         self.assertFalse(frame2._frame_title.get_attribute('drag'))
+
+        # Test hide
+        self.assertTrue(frame2._frame_title.is_visible())
+        self.assertTrue(btn4.is_visible())
+        frame2.hide()
+        self.assertFalse(frame2.is_visible())
+        self.assertFalse(frame2._frame_title.is_visible())
+        self.assertFalse(btn4.is_visible())
+        frame2.show()
+        self.assertTrue(frame2.is_visible())
+        self.assertTrue(frame2._frame_title.is_visible())
+        self.assertTrue(btn4.is_visible())
+
+        # Remove title from frame 1
+        frame.remove_title()
+        self.assertEqual(frame._title_height(), 0)
+        self.assertNotIn(frame, menu._update_frames)
+        self.assertFalse(frame._has_title)
+
+        menu.render()
+        self.assertEqual(frame.get_rect().width, frame_prev_rect.width)
+        self.assertEqual(frame.get_rect().height, frame_prev_rect.height)
 
         # menu.mainloop(surface)

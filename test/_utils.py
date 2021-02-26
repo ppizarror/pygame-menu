@@ -35,6 +35,7 @@ __all__ = [
     'PYGAME_V2',
     'TEST_THEME',
     'WIDGET_MOUSEOVER',
+    'WIDGET_TOP_CURSOR',
     'WINDOW_SIZE',
 
     # Methods
@@ -77,6 +78,7 @@ TEST_THEME.widget_padding = 0
 TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
 
 WIDGET_MOUSEOVER = pygame_menu.widgets.core.widget.WIDGET_MOUSEOVER
+WIDGET_TOP_CURSOR = pygame_menu.widgets.core.widget.WIDGET_TOP_CURSOR
 
 
 def reset_widgets_over() -> None:
