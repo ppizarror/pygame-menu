@@ -171,7 +171,7 @@ class Frame(Widget):
         self._frame_title = None
         self._has_title = False
 
-        # Configure widget publics
+        # Configure widget public's
         self.first_index = -1
         self.horizontal = orientation == ORIENTATION_HORIZONTAL
         self.is_scrollable = False
@@ -200,7 +200,7 @@ class Frame(Widget):
         :param background_color: Title background color. It can be a Color, a gradient, or an image
         :param draggable: If ``True`` the title accepts user drag using the mouse
         :param padding_inner: Padding inside the title
-        :param padding_outer: Paddint outside the title (respect to the Frame)
+        :param padding_outer: Padding outside the title (respect to the Frame)
         :param title_alignment: Alignment of the title
         :param title_buttons_alignment: Alignment of the title buttons (if appended later)
         :param title_font: Title font. If ``None`` uses the same as the Frame
@@ -852,46 +852,46 @@ class Frame(Widget):
 
         :return: None
         """
-        xleft = 0  # Total added to left
-        xright = 0  # Total added to right
-        wcenter = 0
+        x_left = 0  # Total added to left
+        x_right = 0  # Total added to right
+        w_center = 0
 
         for w in self._widgets.values():
-            align, vpos = self._widgets_props[w.get_id()]
+            align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if align == ALIGN_CENTER:
-                wcenter += w.get_width() + w.get_margin()[0]
+                w_center += w.get_width() + w.get_margin()[0]
                 continue
             elif align == ALIGN_LEFT:
-                xleft += w.get_margin()[0]
-                self._pos[w.get_id()] = (xleft, self._get_vt(w, vpos) + w.get_margin()[1])
-                xleft += w.get_width()
+                x_left += w.get_margin()[0]
+                self._pos[w.get_id()] = (x_left, self._get_vt(w, v_pos) + w.get_margin()[1])
+                x_left += w.get_width()
             elif align == ALIGN_RIGHT:
-                xright -= (w.get_width())
-                self._pos[w.get_id()] = (self._width + xright, self._get_vt(w, vpos) + w.get_margin()[1])
-                xright -= w.get_margin()[0]
-            dw = xleft - xright
+                x_right -= (w.get_width())
+                self._pos[w.get_id()] = (self._width + x_right, self._get_vt(w, v_pos) + w.get_margin()[1])
+                x_right -= w.get_margin()[0]
+            dw = x_left - x_right
             if dw > self._width and not self._relax:
                 msg = '{3} width ({0}) exceeds {2} width ({1})' \
                       ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
                 raise _FrameSizeException(msg)
 
         # Now center widgets
-        available = self._width - (xleft - xright)
-        if wcenter > available and not self._relax:
+        available = self._width - (x_left - x_right)
+        if w_center > available and not self._relax:
             msg = 'cannot place center widgets as required width ({0}) ' \
-                  'is greater than available ({1}) in {2}'.format(wcenter, available, self.get_class_id())
+                  'is greater than available ({1}) in {2}'.format(w_center, available, self.get_class_id())
             raise _FrameSizeException(msg)
-        xcenter = int(self._width / 2 - wcenter / 2)
+        x_center = int(self._width / 2 - w_center / 2)
         for w in self._widgets.values():
-            align, vpos = self._widgets_props[w.get_id()]
+            align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if align == ALIGN_CENTER:
-                xcenter += w.get_margin()[0]
-                self._pos[w.get_id()] = (xcenter, self._get_vt(w, vpos) + w.get_margin()[1])
-                xcenter += w.get_width()
+                x_center += w.get_margin()[0]
+                self._pos[w.get_id()] = (x_center, self._get_vt(w, v_pos) + w.get_margin()[1])
+                x_center += w.get_width()
 
     def _update_position_vertical(self) -> None:
         """
@@ -899,44 +899,44 @@ class Frame(Widget):
 
         :return: None
         """
-        ytop = 0  # Total added to top
-        ybottom = 0  # Total added to bottom
-        wcenter = 0
+        y_top = 0  # Total added to top
+        y_bottom = 0  # Total added to bottom
+        w_center = 0
         for w in self._widgets.values():
-            align, vpos = self._widgets_props[w.get_id()]
+            align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if vpos == POSITION_CENTER:
-                wcenter += w.get_width() + w.get_margin()[1]
+            if v_pos == POSITION_CENTER:
+                w_center += w.get_width() + w.get_margin()[1]
                 continue
-            elif vpos == POSITION_NORTH:
-                ytop += w.get_margin()[1]
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], ytop)
-                ytop += w.get_height()
-            elif vpos == POSITION_SOUTH:
-                ybottom -= (w.get_margin()[1] + w.get_height())
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + ybottom)
-            dh = ytop - ybottom
+            elif v_pos == POSITION_NORTH:
+                y_top += w.get_margin()[1]
+                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_top)
+                y_top += w.get_height()
+            elif v_pos == POSITION_SOUTH:
+                y_bottom -= (w.get_margin()[1] + w.get_height())
+                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + y_bottom)
+            dh = y_top - y_bottom
             if dh > self._height and not self._relax:
                 msg = '{3} height ({0}) exceeds {2} height ({1})' \
                       ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
                 raise _FrameSizeException(msg)
 
         # Now center widgets
-        available = self._height - (ytop - ybottom)
-        if wcenter > available and not self._relax:
+        available = self._height - (y_top - y_bottom)
+        if w_center > available and not self._relax:
             msg = 'cannot place center widgets as required height ({0}) ' \
-                  'is greater than available ({1}) in {2}'.format(wcenter, available, self.get_class_id())
+                  'is greater than available ({1}) in {2}'.format(w_center, available, self.get_class_id())
             raise _FrameSizeException(msg)
-        ycenter = int(self._height / 2 - wcenter / 2)
+        y_center = int(self._height / 2 - w_center / 2)
         for w in self._widgets.values():
-            align, vpos = self._widgets_props[w.get_id()]
+            align, v_pos = self._widgets_props[w.get_id()]
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
-            if vpos == POSITION_CENTER:
-                ycenter += w.get_margin()[1]
-                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], ycenter)
-                ycenter += w.get_height()
+            if v_pos == POSITION_CENTER:
+                y_center += w.get_margin()[1]
+                self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_center)
+                y_center += w.get_height()
 
     def update_position(self) -> 'Frame':
         """
@@ -980,9 +980,9 @@ class Frame(Widget):
 
         # Check if control widget has changed positioning. This fixes centering issues
         if self._control_widget is not None:
-            cpos = self._control_widget.get_position()
-            if self._control_widget_last_pos != cpos:
-                self._control_widget_last_pos = cpos
+            c_pos = self._control_widget.get_position()
+            if self._control_widget_last_pos != c_pos:
+                self._control_widget_last_pos = c_pos
                 if self._recursive_render <= 100 and self._menu is not None:
                     self._menu.render()
                 self._recursive_render += 1
@@ -1092,7 +1092,7 @@ class Frame(Widget):
             self._frame_scrollarea.scroll_to(ORIENTATION_VERTICAL, value)
         return self
 
-    def get_scroll_value_percentual(self, orientation: str) -> float:
+    def get_scroll_value_percentage(self, orientation: str) -> float:
         """
         Get the scroll value in percentage, if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
@@ -1316,21 +1316,21 @@ class Frame(Widget):
 
             # Move frame to last
             if len(self._widgets) > 1:
-                wlast = widgets_list[-2]  # -1 is the last added
+                w_last = widgets_list[-2]  # -1 is the last added
                 for i in range(2, len(self._widgets)):
-                    if wlast.get_menu() is None and len(self._widgets) > 2:
-                        wlast = widgets_list[-(i + 1)]
+                    if w_last.get_menu() is None and len(self._widgets) > 2:
+                        w_last = widgets_list[-(i + 1)]
                     else:
                         break
 
-                # Check for last if wlast is frame
+                # Check for last if w_last is frame
                 while True:
-                    if not (isinstance(wlast, Frame) and wlast.get_indices() != (-1, -1)) or wlast.get_menu() is None:
+                    if not (isinstance(w_last, Frame) and w_last.get_indices() != (-1, -1)) or w_last.get_menu() is None:
                         break
-                    wlast = menu_widgets[wlast.last_index]
+                    w_last = menu_widgets[w_last.last_index]
 
-                if wlast.get_menu() == self._menu:
-                    self._menu.move_widget_index(self, wlast, render=False)
+                if w_last.get_menu() == self._menu:
+                    self._menu.move_widget_index(self, w_last, render=False)
 
             # Swap
             self._menu.move_widget_index(widget, self, render=False)
