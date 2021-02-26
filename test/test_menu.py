@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['MenuTest']
 
 from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    WIDGET_MOUSEOVER, reset_widgets_over
+    WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over
 from typing import Any, Tuple
 import copy
 import math
@@ -1897,6 +1897,17 @@ class MenuTest(unittest.TestCase):
         menu.remove_widget(btn2)
         self.assertEqual(WIDGET_MOUSEOVER, [None, []])
         menu._test_print_widgets()
+
+        # Select btn1
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(btn1))
+        self.assertEqual(WIDGET_MOUSEOVER, [btn1, [btn1, cur_none, []]])
+        self.assertEqual(pygame.mouse.get_cursor(), cur1)
+
+        # Change previous cursor to assert an error
+        self.assertEqual(cur_none, WIDGET_TOP_CURSOR[0])
+        WIDGET_MOUSEOVER[1][1] = cur2
+        menu.update(mouse_away_event)
+        self.assertEqual(pygame.mouse.get_cursor(), cur_none)
 
     # noinspection SpellCheckingInspection
     def test_floating_pos(self) -> None:
