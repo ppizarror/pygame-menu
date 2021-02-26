@@ -178,6 +178,7 @@ class Frame(Widget):
         self.is_selectable = False
         self.last_index = -1
 
+    # noinspection PyProtectedMember
     def set_title(
             self,
             title: str,
@@ -234,7 +235,7 @@ class Frame(Widget):
             'title alignment and buttons alignment must be different'
 
         # Create title widget
-        title_label = Label(title, label_id=self._id + '+title+label-' + uuid4())
+        title_label = Label(title, label_id=self._id + '+title+label-' + uuid4(short=True))
         title_label.set_font(
             antialias=self._font_antialias,
             background_color=None,
@@ -256,7 +257,7 @@ class Frame(Widget):
         self._frame_title = Frame(self.get_width() - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
                                   title_label.get_height(),
                                   ORIENTATION_HORIZONTAL,
-                                  frame_id=self._id + '+title-' + uuid4())
+                                  frame_id=self._id + '+title-' + uuid4(short=True))
         self._frame_title._accepts_title = False
         self._frame_title._menu = self._menu
         self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
@@ -317,12 +318,26 @@ class Frame(Widget):
         self.force_menu_surface_update()
 
         # Title adds frame to scrollable frames even if not scrollable
-        # noinspection PyProtectedMember
-        scrollable_widgets = self._menu._update_frames
-        if self._menu is not None and (self not in scrollable_widgets):
-            scrollable_widgets.append(self)
+        if self._menu is not None and (self not in self._menu._update_frames):
+            self._menu._update_frames.append(self)
             self.sort_menu_update_frames()
 
+        return self
+
+    # noinspection PyProtectedMember
+    def remove_title(self) -> 'Frame':
+        """
+        Remove title from current Frame.
+
+        :return: Self reference
+        """
+        if self._has_title:
+            self._frame_title = None
+            self._has_title = False
+        if not self.is_scrollable and self in self._menu._update_frames:
+            self._menu._update_frames.remove(self)
+        self._render()
+        self.force_menu_surface_update()
         return self
 
     def add_title_generic_button(self, button: 'Button', margin: Vector2NumberType = (0, 0)) -> 'Frame':
@@ -410,7 +425,7 @@ class Frame(Widget):
 
         # Create button
         btn = Button('', onreturn=callback,
-                     button_id=self._frame_title._id + '+button-' + uuid4())
+                     button_id=self._frame_title._id + '+button-' + uuid4(short=True))
         btn.set_padding(h / 2)
         btn.translate(0, dh / 2)
         btn.set_cursor(cursor)
@@ -460,17 +475,6 @@ class Frame(Widget):
 
         self.add_title_generic_button(btn, margin)
         return btn
-
-    def remove_title(self) -> 'Frame':
-        """
-        Remove title from current Frame.
-
-        :return: Self reference
-        """
-        if self._has_title:
-            self._frame_title = None
-            self._has_title = False
-        return self
 
     def get_title(self) -> str:
         if not self._has_title:
@@ -537,9 +541,8 @@ class Frame(Widget):
     def set_menu(self, menu: Optional['pygame_menu.Menu']) -> 'Frame':
         # If menu is set, remove from previous scrollable if enabled
         if self._menu is not None:
-            scrollable_widgets = self._menu._update_frames
-            if self in scrollable_widgets:
-                scrollable_widgets.remove(self)
+            if self in self._menu._update_frames:
+                self._menu._update_frames.remove(self)
 
         # Update menu
         super(Frame, self).set_menu(menu)
@@ -572,6 +575,7 @@ class Frame(Widget):
             return self._frame_scrollarea.get_size(inner=True)
         return self.get_size()
 
+    # noinspection PyProtectedMember
     def make_scrollarea(
             self,
             max_width: Optional[NumberType],
@@ -636,11 +640,8 @@ class Frame(Widget):
             self._frame_scrollarea = None
 
             # If in previous scrollable frames
-            if self._menu is not None and self.is_scrollable:
-                # noinspection PyProtectedMember
-                scrollable_frames = self._menu._update_frames
-                if self in scrollable_frames:
-                    scrollable_frames.remove(self)
+            if self._menu is not None and self.is_scrollable and self in self._menu._update_frames:
+                self._menu._update_frames.remove(self)
 
             self.is_scrollable = False
             return self
@@ -1426,10 +1427,17 @@ class Frame(Widget):
         super(Frame, self).hide()
         if self._has_title:
             self._frame_title.hide()
+        # sub-widgets cannot be hidden because some widgets compute sizing even if the frame itself
+        # is hidden
+        # for w in self.get_widgets(unpack_subframes=False):
+        #     w.hide()
         return self
 
     def show(self) -> 'Frame':
         super(Frame, self).show()
+        # same as hiding, sub-widgets should not be modified
+        # for w in self.get_widgets(unpack_subframes=False):
+        #     w.show()
         if self._has_title:
             self._frame_title.show()
         return self
