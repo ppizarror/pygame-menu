@@ -38,7 +38,7 @@ import pygame
 
 from pygame_menu.controls import KEY_MOVE_UP, KEY_MOVE_DOWN, KEY_APPLY
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, NumberType, \
@@ -1788,8 +1788,7 @@ class TextInput(Widget):
 
             # User releases the finger
             elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                window_size = self._menu.get_window_size()
-                finger_pos = (event.x * window_size[0], event.y * window_size[1])
+                finger_pos = get_finger_pos(self._menu, event)
                 if rect.collidepoint(*finger_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
                     self._selection_active = False

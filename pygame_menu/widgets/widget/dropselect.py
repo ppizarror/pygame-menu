@@ -41,7 +41,8 @@ from pygame_menu.controls import KEY_APPLY, KEY_MOVE_DOWN, KEY_MOVE_UP, JOY_BUTT
     JOY_RIGHT, JOY_AXIS_X
 from pygame_menu.font import FontType, get_font, assert_font
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, parse_padding
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, parse_padding, \
+    get_finger_pos
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
@@ -759,12 +760,12 @@ class DropSelect(Widget):
         arrow_up = (
             (arrow.right - w + h / 2 - h / 16, arrow.centery - h / 6 - h / 20),
             (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery + h / 4 - h / 20),
-            (arrow.right - w + h - h / 16, arrow.centery - h / 6 - h / 20),
+            (arrow.right - w + h - h / 16, arrow.centery - h / 6 - h / 20)
         )
         arrow_down = (
             (arrow.right - w + h / 2 - h / 16, arrow.centery + h / 4 - h / 20),
             (arrow.right - w + h / 2 + h / 4 - h / 16, arrow.centery - h / 6 - h / 20),
-            (arrow.right - w + h - h / 16, arrow.centery + h / 4 - h / 20),
+            (arrow.right - w + h - h / 16, arrow.centery + h / 4 - h / 20)
         )
         if not self._open_bottom:
             if not self.active:
@@ -1092,22 +1093,15 @@ class DropSelect(Widget):
             elif self.active and (
                     event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or (
                     event.type == FINGERDOWN and self._touchscreen_enabled and self._drop_frame is not None and
-                    not self._drop_frame.get_scrollarea(inner=True).is_scrolling())
+                    not self._drop_frame.get_scrollarea(inner=True).is_scrolling() and self._menu is not None)
             ):
-
-                # Get event position based on input type
-                if event.type == FINGERDOWN and self._touchscreen_enabled and self._menu is not None:
-                    window_size = self._menu.get_window_size()
-                    event_pos = (event.x * window_size[0], event.y * window_size[1])
-                else:
-                    event_pos = event.pos
-
+                event_pos = get_finger_pos(self._menu, event)
                 if self._drop_frame.get_rect(apply_padding=False, to_real_position=True).collidepoint(*event_pos):
                     updated = True
 
             # Click on dropselect; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and \
+                    event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None and \
                     not (self._drop_frame is not None and self._drop_frame.get_scrollarea(inner=True).is_scrolling()):
 
                 # Check for mouse clicks within
@@ -1123,11 +1117,7 @@ class DropSelect(Widget):
                             return True
 
                 # Get event position based on input type
-                if event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                    window_size = self._menu.get_window_size()
-                    event_pos = (event.x * window_size[0], event.y * window_size[1])
-                else:
-                    event_pos = event.pos
+                event_pos = get_finger_pos(self._menu, event)
 
                 # If collides
                 rect = self.get_rect(to_real_position=True, apply_padding=False)

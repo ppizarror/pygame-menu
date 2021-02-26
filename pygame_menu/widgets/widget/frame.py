@@ -54,11 +54,12 @@ import pygame_menu
 from pygame_menu._decorator import Decorator
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, \
-    ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH
+    ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, POSITION_SOUTH, FINGERUP, \
+    FINGERDOWN, FINGERMOTION
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
     assert_color, fill_gradient, parse_padding
-from pygame_menu.widgets.core import Widget
+from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
 
@@ -114,13 +115,13 @@ class Frame(Widget):
     _accepts_title: bool
     _control_widget: Optional['Widget']
     _control_widget_last_pos: Optional[Vector2NumberType]
+    _draggable: bool
     _frame_scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']
     _frame_size: Tuple2IntType
     _frame_title: Optional['Frame']
     _has_frames: bool  # True if frame has packed other frames
     _has_title: bool
     _height: int
-    _is_title: bool
     _orientation: str
     _pack_margin_warning: bool
     _pos: Dict[str, Tuple[int, int]]  # Widget positioning
@@ -151,7 +152,7 @@ class Frame(Widget):
         self._accepts_title = True
         self._control_widget = None
         self._control_widget_last_pos = None  # This checks if menu has updated widget position
-        self._is_title = False
+        self._draggable = False
         self._frame_scrollarea = None
         self._frame_size = (width, height)  # Size of the frame, set in make_scrollarea
         self._has_frames = False
@@ -180,7 +181,9 @@ class Frame(Widget):
     def set_title(
             self,
             title: str,
+            cursor: CursorInputType = None,
             background_color: FrameTitleBackgroundColorType = FRAME_DEFAULT_TITLE_BACKGROUND_COLOR,
+            draggable: bool = False,
             padding_inner: PaddingType = 0,
             padding_outer: PaddingType = 0,
             title_alignment: str = ALIGN_LEFT,
@@ -193,7 +196,9 @@ class Frame(Widget):
         Add a title to the frame.
 
         :param title: New title
+        :param cursor: Title cursor
         :param background_color: Title background color. It can be a Color, a gradient, or an image
+        :param draggable: If ``True`` the title accepts user drag using the mouse
         :param padding_inner: Padding inside the title
         :param padding_outer: Paddint outside the title (respect to the Frame)
         :param title_alignment: Alignment of the title
@@ -207,6 +212,9 @@ class Frame(Widget):
         if not self._accepts_title:
             raise _FrameDoNotAcceptTitle('{0} does not accept a title'.format(self.get_class_id()))
         self._title = title
+
+        # If has previous title
+        self.remove_title()
 
         # Format title font properties
         if title_font is None:
@@ -247,14 +255,32 @@ class Frame(Widget):
         self._frame_title = Frame(self.get_width() - (pad_outer[1] + pad_outer[3] + pad_inner[1] + pad_inner[3]),
                                   title_label.get_height(),
                                   ORIENTATION_HORIZONTAL)
-        self._frame_title.translate(pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0])
-        self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
-        self._frame_title._menu = self._menu
-        self._frame_title.set_scrollarea(self._scrollarea)
         self._frame_title._accepts_title = False
-        self._frame_title._is_title = True
-        self._frame_title.set_padding(padding_inner)
+        self._frame_title._menu = self._menu
         self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
+        self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
+        self._frame_title.set_cursor(cursor)
+        self._frame_title.set_padding(padding_inner)
+        self._frame_title.set_scrollarea(self._scrollarea)
+        self._frame_title.translate(pad_outer[3] + pad_inner[3], pad_outer[0] + pad_inner[0])
+        self._frame_title.set_controls(
+            joystick=self._joystick_enabled,
+            mouse=self._mouse_enabled,
+            touchscreen=self._touchscreen_enabled,
+            keyboard=self._keyboard_enabled
+        )
+
+        # Create frame title background rect
+        title_bg = make_surface(self.get_width(), title_label.get_height() + pad_outer[0] + pad_outer[2])
+
+        # Blit frame bgrect if scrollable
+        if self._frame_scrollarea is not None and self.is_scrollable:
+            area_color = self._background_color
+            if isinstance(area_color, BaseImage):
+                area_color.draw(title_bg, area=title_bg.get_rect())
+            elif area_color is not None:
+                title_bg.fill(area_color, rect=title_bg.get_rect())
+        self._frame_title.get_decorator().add_surface(-title_bg.get_width() / 2, -title_bg.get_height() / 2, title_bg)
 
         # Set background
         is_color = True
@@ -298,11 +324,12 @@ class Frame(Widget):
 
     def add_title_generic_button(self, button: 'Button', margin: Vector2NumberType = (0, 0)) -> 'Frame':
         """
-        Add button to title. Button kwargs receive the Frame reference in ``frame`` argument, such as:
+        Add button to title. Button kwargs receive the ``button`` reference and the Frame
+        reference in ``frame`` argument, such as:
 
         .. code-block:: python
 
-            onreturn_button_callback(*args, frame=Frame, **kwargs)
+            onreturn_button_callback(*args, frame=Frame, button=Button, **kwargs)
 
         :param button: Button object
         :param margin: Pack margin on x-axis and y-axis in px
@@ -326,12 +353,16 @@ class Frame(Widget):
 
         # Add frame to button kwargs
         if 'frame' in button._kwargs.keys():
-            raise ValueError('{0} already has frame kwargs option'.format(button.get_class_id()))
+            raise ValueError('{0} already has "frame" kwargs option'.format(button.get_class_id()))
         button._kwargs['frame'] = self
+        if 'button' in button._kwargs.keys():
+            raise ValueError('{0} already has "button" kwargs option'.format(button.get_class_id()))
+        button._kwargs['button'] = button
 
         # Pack
         align = self._frame_title.get_attribute('buttons_alignment')
         self._frame_title.pack(button, alignment=align, margin=margin)
+        self._frame_title.update_position()
 
         return self
 
@@ -341,12 +372,18 @@ class Frame(Widget):
             callback: CallbackType,
             background_color: ColorInputType = (150, 150, 150),
             cursor: CursorInputType = CURSOR_HAND,
-            margin: Vector2NumberType = (0, 0),
+            margin: Vector2NumberType = (4, 0),
             symbol_color: ColorInputType = (0, 0, 0),
-            symbol_height: NumberType = 0.75
+            symbol_height: NumberType = 0.75,
+            symbol_margin: int = 4
     ) -> 'Button':
         """
-        Add predefined button to title.
+        Add predefined button to title. The button kwargs receive the ``button`` reference and
+        the Frame reference in ``frame`` argument, such as:
+
+        .. code-block:: python
+
+            onreturn_button_callback(*args, frame=Frame, button=Button, **kwargs)
 
         :param style: Style of the button (changes the symbol)
         :param callback: Callback of the button if pressed
@@ -355,13 +392,16 @@ class Frame(Widget):
         :param margin: Pack margin on x-axis and y-axis in px
         :param symbol_color: Color of the symbol
         :param symbol_height: Symbol height factor, if ``1.0`` uses 100% of the button height
+        :param symbol_margin: Symbol margin in px
         :return: Added button
         """
         assert self._has_title, \
             '{0} does not have any title, call set_title(...) beforehand'.format(self.get_class_id())
         assert isinstance(symbol_height, NumberInstance) and 0 <= symbol_height <= 1
+        assert isinstance(symbol_margin, int) and 0 <= symbol_margin
         h = self._frame_title.get_height(apply_padding=False) * symbol_height
         dh = self._frame_title.get_height(apply_padding=False) * (1 - symbol_height)
+        assert symbol_margin < h / 2
         if dh > 0:
             dh += 1
 
@@ -377,24 +417,40 @@ class Frame(Widget):
         btn_rect = btn.get_rect()
         btn_rect.x = 0
         btn_rect.y = 0
+        t = symbol_margin
+        border = 1
+
         if style == FRAME_TITLE_BUTTON_CLOSE:
             style_pos = (
-                (btn_rect.left + 4, btn_rect.top + 4),
+                (btn_rect.left + t, btn_rect.top + t),
                 (btn_rect.centerx, btn_rect.centery),
-                (btn_rect.right - 4, btn_rect.top + 4),
+                (btn_rect.right - t, btn_rect.top + t),
                 (btn_rect.centerx, btn_rect.centery),
-                (btn_rect.right - 4, btn_rect.bottom - 4),
+                (btn_rect.right - t, btn_rect.bottom - t),
                 (btn_rect.centerx, btn_rect.centery),
-                (btn_rect.left + 4, btn_rect.bottom - 4),
+                (btn_rect.left + t, btn_rect.bottom - t),
                 (btn_rect.centerx, btn_rect.centery),
-                (btn_rect.left + 4, btn_rect.top + 4),
+                (btn_rect.left + t, btn_rect.top + t)
+            )
+            border = 0
+        elif style == FRAME_TITLE_BUTTON_MAXIMIZE:
+            style_pos = (
+                (btn_rect.left + t, btn_rect.bottom - t),
+                (btn_rect.right - t, btn_rect.bottom - t),
+                (btn_rect.right - t, btn_rect.top + t),
+                (btn_rect.left + t, btn_rect.top + t)
+            )
+        elif style == FRAME_TITLE_BUTTON_MINIMIZE:
+            style_pos = (
+                (btn_rect.left + t, btn_rect.centery + border),
+                (btn_rect.right - t, btn_rect.centery + border)
             )
         else:
             raise ValueError('unknown button style "{0}"'.format(style))
 
         # Draw style
         style_surface = make_surface(h, h, alpha=True)
-        pygame.draw.polygon(style_surface, symbol_color, style_pos)
+        pygame.draw.polygon(style_surface, symbol_color, style_pos, border)
         btn.get_decorator().add_surface(0, 0, surface=style_surface, centered=True)
 
         self.add_title_generic_button(btn, margin)
@@ -497,7 +553,7 @@ class Frame(Widget):
             self,
             max_width: Optional[NumberType],
             max_height: Optional[NumberType],
-            scrollarea_color: Optional[ColorInputType],
+            scrollarea_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']],
             scrollbar_color: ColorInputType,
             scrollbar_cursor: CursorInputType,
             scrollbar_shadow: bool,
@@ -514,7 +570,7 @@ class Frame(Widget):
 
         :param max_width: Maximum width of the scrollarea (px)
         :param max_height: Maximum height of the scrollarea (px)
-        :param scrollarea_color: Scroll area color. If ``None`` area is transparent
+        :param scrollarea_color: Scroll area color or image. If ``None`` area is transparent
         :param scrollbar_color: Scrollbar color
         :param scrollbar_cursor: Scrollbar cursor
         :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
@@ -688,12 +744,13 @@ class Frame(Widget):
     def set_position(self, posx: NumberType, posy: NumberType) -> 'Frame':
         if self._has_title:
             pad = self.get_padding()  # top, right, bottom, left
-            self._frame_title.set_position(posx - pad[3], posy - pad[0])
+            tx, ty = self.get_translate()
+            self._frame_title.set_position(posx - pad[3] + tx, posy - pad[0] + ty)
             for w in self._frame_title.get_widgets():
                 w.set_position_relative_to_frame()
         super(Frame, self).set_position(posx, posy)
         if self.is_scrollable:
-            self._frame_scrollarea.set_position(self._rect.x, self._rect.y)
+            self._frame_scrollarea.set_position(self._rect.x, self._rect.y + self._title_height())
         return self
 
     def draw(self, surface: 'pygame.Surface') -> 'Frame':
@@ -813,7 +870,7 @@ class Frame(Widget):
             elif align == ALIGN_RIGHT:
                 xright -= (w.get_width())
                 self._pos[w.get_id()] = (self._width + xright, self._get_vt(w, vpos) + w.get_margin()[1])
-                xright += w.get_margin()[0]
+                xright -= w.get_margin()[0]
             dw = xleft - xright
             if dw > self._width and not self._relax:
                 msg = '{3} width ({0}) exceeds {2} width ({1})' \
@@ -1048,7 +1105,7 @@ class Frame(Widget):
         :return: Value from ``0`` to ``1``
         """
         if self._frame_scrollarea is not None:
-            return self._frame_scrollarea.get_scroll_value_percentual(orientation)
+            return self._frame_scrollarea.get_scroll_value_percentage(orientation)
         return -1
 
     # noinspection PyProtectedMember
@@ -1127,6 +1184,9 @@ class Frame(Widget):
             self.scrollv(0)
             self.scrollh(0)
 
+        # Update widget leave
+        check_widget_mouseleave()
+
         return widget
 
     # noinspection PyProtectedMember
@@ -1135,7 +1195,8 @@ class Frame(Widget):
             widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
             alignment: str = ALIGN_LEFT,
             vertical_position: str = POSITION_NORTH,
-            margin: Vector2NumberType = (0, 0)) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
+            margin: Vector2NumberType = (0, 0)
+    ) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
         """
         Packs widget in the frame line. To pack a widget it has to be already
         appended to Menu, and the Menu must be the same as the frame.
@@ -1319,6 +1380,9 @@ class Frame(Widget):
             widget.scroll_to_widget()
             widget.scroll_to_widget()
 
+        # Update widget leave
+        check_widget_mouseleave()
+
         return widget
 
     def contains_widget(self, widget: 'Widget') -> bool:
@@ -1329,6 +1393,18 @@ class Frame(Widget):
         :return: ``True`` if widget within frame
         """
         return widget.get_frame() == self and widget.get_id() in self._widgets.keys()
+
+    def hide(self) -> 'Frame':
+        super(Frame, self).hide()
+        if self._has_title:
+            self._frame_title.hide()
+        return self
+
+    def show(self) -> 'Frame':
+        super(Frame, self).show()
+        if self._has_title:
+            self._frame_title.show()
+        return self
 
     def update_indices(self) -> 'Frame':
         """
@@ -1365,16 +1441,47 @@ class Frame(Widget):
     def update(self, events: EventVectorType) -> bool:
         updated = False
 
+        if self.readonly or not self.is_visible():
+            return updated
+
         # Check title events
         if self._has_title:
-            updated = self._frame_title.update(events)
-        if self._is_title:
-            for w in self.get_widgets():
-                if w.update(events):
-                    return True
+            # Check for buttons
+            for w in self._frame_title.get_widgets():
+                updated = updated or w.update(events)
 
-        if self.is_visible() or self.readonly:
-            return updated
+            # Check if clicked the title for drag
+            for event in events:
+
+                # If clicked in title
+                if event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or \
+                        event.type == FINGERDOWN and self._touchscreen_enabled:
+                    if self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
+                        if not self._frame_title.get_attribute('drag', False):
+                            self._frame_title.set_attribute('drag', True)
+
+                # User releases the button
+                elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+                        event.type == FINGERUP and self._touchscreen_enabled:
+                    self._frame_title.set_attribute('drag', False)
+
+                # Mouse out from window
+                # elif event.type == pygame.ACTIVEEVENT:
+                #     if event.gain != 1:
+                #         self._frame_title.set_attribute('drag', False)
+                #         break
+
+                # User moves the mouse while drag
+                elif event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or \
+                        event.type == FINGERMOTION and self._touchscreen_enabled:
+                    if self._frame_title.get_attribute('drag', False):
+                        if self._rect.y <= 0:
+                            if event.rel[1] < 0 or \
+                                    not self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
+                                continue
+                        tx, ty = self.get_translate()
+                        self.translate(tx + event.rel[0], ty + event.rel[1])
+                        self.force_menu_surface_update()
 
         # Check events
         for event in events:

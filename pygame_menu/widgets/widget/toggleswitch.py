@@ -38,7 +38,7 @@ from pygame_menu.controls import JOY_BUTTON_SELECT, JOY_LEFT, JOY_RIGHT, JOY_AXI
     KEY_LEFT, KEY_RIGHT
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
@@ -422,14 +422,8 @@ class ToggleSwitch(Widget):
 
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled:
-
-                # Get event position based on input type
-                if event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                    window_size = self._menu.get_window_size()
-                    event_pos = (event.x * window_size[0], event.y * window_size[1])
-                else:
-                    event_pos = event.pos
+                    event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                event_pos = get_finger_pos(self._menu, event)
 
                 # If collides
                 rect = self.get_rect(to_real_position=True, apply_padding=False)

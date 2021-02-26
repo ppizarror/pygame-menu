@@ -42,6 +42,7 @@ __all__ = [
     'check_key_pressed_valid',
     'fill_gradient',
     'format_color',
+    'get_finger_pos',
     'is_callable',
     'make_surface',
     'mouse_motion_current_mouse_position',
@@ -68,11 +69,11 @@ import pygame_menu
 
 from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, \
     POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, \
-    POSITION_SOUTHWEST, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL
+    POSITION_SOUTHWEST, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType
+    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 
@@ -310,6 +311,23 @@ def format_color(
     else:
         c = color
     return c.r, c.g, c.b, c.a
+
+
+def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
+    """
+    Return the position from finger (or mouse) event on x-axis and y-axis.
+
+    :param menu: Menu object for relative positioning in finger events
+    :param event: Pygame event object
+    :return: (x, y) position
+    """
+    if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
+        assert menu is not None, \
+            'menu reference cannot be none while using finger position'
+        display_size = menu.get_window_size()
+        finger_pos = (int(event.x * display_size[0]), int(event.y * display_size[1]))
+        return finger_pos
+    return event.pos
 
 
 def is_callable(func: Any) -> bool:

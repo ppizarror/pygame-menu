@@ -151,7 +151,7 @@ class ScrollBar(Widget):
 
         self.set_orientation(orientation)
 
-        # Configure publics
+        # Configure public's
         self.is_scrollable = True
         self.is_selectable = False
         self.scrolling = False
@@ -256,7 +256,7 @@ class ScrollBar(Widget):
 
     def get_minmax(self) -> Tuple2IntType:
         """
-        Return the min and max acceptabla tuple values.
+        Return the min and max acceptable tuple values.
 
         :return: Min, Max tuple
         """
@@ -280,18 +280,18 @@ class ScrollBar(Widget):
 
         :return: Page step
         """
-        pstep = self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
-        return int(pstep)
+        p_step = self._page_step * (self._values_range[1] - self._values_range[0]) / self._page_ctrl_length
+        return int(p_step)
 
-    def get_value_percentual(self) -> float:
+    def get_value_percentage(self) -> float:
         """
         Return the value but in percentage between ``0`` (minimum value) and ``1`` (maximum value).
 
         :return: Value as percentage
         """
-        vmin, vmax = self.get_minmax()
+        v_min, v_max = self.get_minmax()
         value = self.get_value()
-        return round((value - vmin) / (vmax - vmin), 3)
+        return round((value - v_min) / (v_max - v_min), 3)
 
     def get_value(self) -> int:
         """
@@ -498,12 +498,12 @@ class ScrollBar(Widget):
                     self.change()
                     updated = True
 
-            # User moves mouse while scorlling
+            # User moves mouse while scrolling
             elif event.type == pygame.MOUSEMOTION and self._mouse_enabled and hasattr(event, 'rel') and \
                     self.scrolling:
                 # If mouse outside region and scroll is on limits, ignore
                 mx, my = pygame.mouse.get_pos()
-                if self.get_value_percentual() in (0, 1) and self.get_scrollarea() is not None and \
+                if self.get_value_percentage() in (0, 1) and self.get_scrollarea() is not None and \
                         self.get_scrollarea().get_parent() is not None:
                     if self._orientation == 1:  # Vertical
                         h = self._slider_rect.height / 2
@@ -554,8 +554,8 @@ class ScrollBar(Widget):
 
                     elif rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
-                        srect = self.get_slider_rect()
-                        pos = (srect.x, srect.y)
+                        s_rect = self.get_slider_rect()
+                        pos = (s_rect.x, s_rect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(rect, direction * self._page_step):
                             self.change()

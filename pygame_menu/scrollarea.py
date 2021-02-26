@@ -47,8 +47,9 @@ from pygame_menu._decorator import Decorator
 from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_WEST, POSITION_NORTHEAST, \
     POSITION_NORTHWEST, POSITION_CENTER, POSITION_EAST, POSITION_NORTH, ORIENTATION_HORIZONTAL, \
     ORIENTATION_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, POSITION_SOUTH, SCROLLAREA_POSITION_FULL, \
-    SCROLLAREA_POSITION_BOTH_VERTICAL, FINGERUP, FINGERMOTION, FINGERDOWN
-from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation
+    SCROLLAREA_POSITION_BOTH_VERTICAL
+from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, \
+    get_finger_pos
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
@@ -80,7 +81,7 @@ def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], T
     elif position == SCROLLAREA_POSITION_BOTH_VERTICAL:
         return POSITION_EAST, POSITION_WEST
     elif position == POSITION_CENTER:
-        raise ValueError('cannot init strollbars from center position')
+        raise ValueError('cannot init scrollbars from center position')
     else:
         raise ValueError('unknown ScrollArea position')
 
@@ -372,9 +373,9 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
 
-            dsize, dx, dy = 0, 0, 0
+            d_size, dx, dy = 0, 0, 0
             if self._menubar is not None:
-                dsize, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
+                d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
 
             if pos == POSITION_WEST:
                 sbar.set_position(self._view_rect.left - self._scrollbar_thick + dx, self._view_rect.top + dy)
@@ -392,7 +393,7 @@ class ScrollArea(Base):
             if pos in (POSITION_NORTH, POSITION_SOUTH) \
                     and self.get_hidden_width() != sbar.get_maximum() \
                     and self.get_hidden_width() != 0:
-                sbar.set_length(self._view_rect.width + dsize)
+                sbar.set_length(self._view_rect.width + d_size)
                 sbar.set_maximum(self.get_hidden_width())
                 sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
                                    (self._view_rect.width + self.get_hidden_width()))
@@ -400,7 +401,7 @@ class ScrollArea(Base):
             elif pos in (POSITION_EAST, POSITION_WEST) \
                     and self.get_hidden_height() != sbar.get_maximum() \
                     and self.get_hidden_height() != 0:
-                sbar.set_length(self._view_rect.height + dsize)
+                sbar.set_length(self._view_rect.height + d_size)
                 sbar.set_maximum(self.get_hidden_height())
                 sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
                                    (self._view_rect.height + self.get_hidden_height()))
@@ -678,25 +679,25 @@ class ScrollArea(Base):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
-    def get_parent_scroll_value_percentual(self, orientation: str) -> Tuple[float]:
+    def get_parent_scroll_value_percentage(self, orientation: str) -> Tuple[float]:
         """
-        Get percentual scroll values of scroll and parents; if ``0`` the scroll is at top/left,
+        Get percentage scroll values of scroll and parents; if ``0`` the scroll is at top/left,
         ``1`` bottom/right.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
         :return: Value from ``0`` to ``1`` as a tuple; first item is the current scrollarea
         """
-        values = [self.get_scroll_value_percentual(orientation)]
+        values = [self.get_scroll_value_percentage(orientation)]
         parent = self._parent_scrollarea
         if parent is not None:
             while True:  # Recursive
                 if parent is None:
                     break
-                values.append(parent.get_scroll_value_percentual(orientation))
+                values.append(parent.get_scroll_value_percentage(orientation))
                 parent = parent._parent_scrollarea
         return tuple(values)
 
-    def get_scroll_value_percentual(self, orientation: str) -> float:
+    def get_scroll_value_percentage(self, orientation: str) -> float:
         """
         Get the scroll value in percentage; if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
@@ -712,7 +713,7 @@ class ScrollArea(Base):
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == orientation:
-                return sbar.get_value_percentual()
+                return sbar.get_value_percentage()
         return -1
 
     def scroll_to(self, orientation: str, value: NumberType) -> 'ScrollArea':
@@ -1045,12 +1046,7 @@ class ScrollArea(Base):
             widget_rect = widget.get_rect(to_real_position=True)
         else:
             widget_rect = widget
-        if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
-            display_size = self._menu.get_window_size()
-            finger_pos = (event.x * display_size[0], event.y * display_size[1])
-            return bool(widget_rect.collidepoint(*finger_pos))
-        else:
-            return bool(widget_rect.collidepoint(*event.pos))
+        return bool(widget_rect.collidepoint(*get_finger_pos(self._menu, event)))
 
     def get_decorator(self) -> 'Decorator':
         """

@@ -56,7 +56,7 @@ import pygame.gfxdraw as gfxdraw
 
 from pygame_menu.controls import JOY_BUTTON_BACK
 from pygame_menu.locals import FINGERUP, POSITION_EAST
-from pygame_menu.utils import assert_color
+from pygame_menu.utils import assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, Optional, \
@@ -441,7 +441,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
                     (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
-                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4)
                 )
             elif self._box_mode == _MODE_BACK:
                 # Make a back arrow for sub-menus
@@ -507,8 +507,7 @@ class MenuBar(Widget):
 
             # User touches the backbox button
             elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                window_size = self._menu.get_window_size()
-                finger_pos = (event.x * window_size[0], event.y * window_size[1])
+                finger_pos = get_finger_pos(self._menu, event)
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):
                     self._sound.play_click_mouse()
                     self.apply()
