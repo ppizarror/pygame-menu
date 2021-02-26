@@ -1164,8 +1164,8 @@ class WidgetsTest(unittest.TestCase):
         else:
             self.assertEqual(btn.get_rect(), pygame.Rect(253, 152, 94, 42))
             self.assertEqual(btn.get_rect(to_real_position=True), pygame.Rect(253, 307, 94, 42))
-        self.assertEqual(len(menu._scrollable_frames), 0)
-        self.assertEqual(len(menu.get_current()._scrollable_frames), 0)
+        self.assertEqual(len(menu._update_frames), 0)
+        self.assertEqual(len(menu.get_current()._update_frames), 0)
         btn.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))  # MOUSEBUTTONUP
         self.assertTrue(btn.get_attribute('attr', False))
         btn.set_attribute('attr', False)
@@ -1379,7 +1379,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(drop._drop_frame.is_scrollable)
         drop_frame = drop._drop_frame
 
-        self.assertIn(drop_frame, menu._scrollable_frames)
+        self.assertIn(drop_frame, menu._update_frames)
         if PYGAME_V2:
             # noinspection SpellCheckingInspection
             self.assertEqual(menu._test_widgets_status(), (
@@ -1543,7 +1543,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Check previous frame not in scrollable frames
         self.assertFalse(drop._drop_frame.is_scrollable)
-        self.assertNotIn(drop_frame, menu._scrollable_frames)
+        self.assertNotIn(drop_frame, menu._update_frames)
 
         # Restore previous values
         drop.update_items(items)
@@ -1795,9 +1795,9 @@ class WidgetsTest(unittest.TestCase):
 
         # As drop1 is scrollable, remove from menu, this should remove the widget too
         drop_frame = drop._drop_frame
-        self.assertIn(drop_frame, menu._scrollable_frames)
+        self.assertIn(drop_frame, menu._update_frames)
         menu.remove_widget(drop)
-        self.assertNotIn(drop_frame, menu._scrollable_frames)
+        self.assertNotIn(drop_frame, menu._update_frames)
 
         def draw_rect() -> None:
             """

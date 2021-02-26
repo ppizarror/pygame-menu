@@ -41,6 +41,7 @@ import pygame_menu
 
 from pygame_menu.controls import KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_RIGHT, JOY_LEFT, KEY_MOVE_DOWN
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+from pygame_menu.utils import set_pygame_cursor
 from pygame_menu.widgets import Button
 
 
@@ -381,6 +382,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(menu._widgets, [f1, b0, b4, f4, f2, b3, b5, f3, b1, b2])
 
         # Sort two widgets
+        self.assertEqual(len(menu._update_frames), 0)
         menu.move_widget_index(b2, f2)
         self.assertEqual(menu._widgets, [f1, b0, b4, f4, b2, f2, b3, b5, f3, b1])
         self.assertRaises(AssertionError, lambda: menu.move_widget_index(b2, b3))
@@ -1014,7 +1016,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(b4.get_frame_depth(), 4)
         self.assertEqual(b5.get_frame_depth(), 0)
 
-        self.assertEqual(menu._scrollable_frames, [f4, f3, f2])
+        self.assertEqual(menu._update_frames, [f4, f3, f2])
 
         self.assertFalse(f1.is_scrollable)
         self.assertTrue(f2.is_scrollable)
@@ -1252,7 +1254,7 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Remove f4 from menu
         menu.remove_widget(f4)
-        self.assertEqual(menu._scrollable_frames, [f3, f2])
+        self.assertEqual(menu._update_frames, [f3, f2])
 
     def test_menu_support(self) -> None:
         """
@@ -1523,14 +1525,11 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Get cursors
         cur_none = pygame.mouse.get_cursor()
-        if PYGAME_V2:
-            pygame.mouse.set_cursor(pygame_menu.locals.CURSOR_ARROW)
+        set_pygame_cursor(pygame_menu.locals.CURSOR_ARROW)
         cur_arrow = pygame.mouse.get_cursor()
-        if PYGAME_V2:
-            pygame.mouse.set_cursor(pygame_menu.locals.CURSOR_HAND)
+        set_pygame_cursor(pygame_menu.locals.CURSOR_HAND)
         cur_hand = pygame.mouse.get_cursor()
-        if PYGAME_V2:
-            pygame.mouse.set_cursor(cur_none)
+        set_pygame_cursor(cur_none)
 
         if PYGAME_V2:
             self.assertEqual(menu._test_widgets_status(), (
@@ -1565,7 +1564,7 @@ class FrameWidgetTest(unittest.TestCase):
         menu._test_print_widgets()
 
         test = [False, False, False, False, False, False]  # f1, b1, f2, b2, f3, b3
-        print_events = True
+        print_events = False
 
         def onf1(widget, _) -> None:
             """
@@ -1743,7 +1742,8 @@ class FrameWidgetTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
 
         pad = 5
-        frame = menu.add.frame_v(300, 200, background_color=(170, 170, 170), padding=pad)
+        frame = menu.add.frame_v(300, 200, background_color=(170, 170, 170), padding=pad, frame_id='f1')
+        frame._class_id__repr__ = True
 
         # self.assertRaises(ValueError, lambda: frame.get_title())
         frame._accepts_title = False
@@ -1753,10 +1753,10 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame.get_title(), '')
 
         # Add a title
-        self.assertNotIn(frame, menu._scrollable_frames)
+        self.assertNotIn(frame, menu._update_frames)
         frame.set_title('epic', padding_outer=3, title_font_size=20, padding_inner=(0, 3), title_font_color='white',
                         title_alignment=pygame_menu.locals.ALIGN_CENTER)
-        self.assertIn(frame, menu._scrollable_frames)
+        self.assertIn(frame, menu._update_frames)
         self.assertEqual(frame.get_size(), (300, 234))
         self.assertEqual(frame.get_position(), (150 + pad, 73 + pad))
         self.assertEqual(len(frame._frame_title.get_widgets()), 1)  # The title itself
@@ -1798,14 +1798,36 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Scrollable widget
         # menu.add.vertical_margin(50)
-        frame2 = menu.add.frame_v(300, 200, max_height=100, background_color='red', padding=pad)
-        frame2.set_title('title', padding_outer=3, title_font_size=20, padding_inner=(0, 3),
-                         title_font_color='white', title_alignment=pygame_menu.locals.ALIGN_CENTER)
+        frame2 = menu.add.frame_v(300, 200, max_height=100, background_color='red', padding=pad, frame_id='f2')
+        frame2._class_id__repr__ = True
+        frame2.set_title('title',
+                         padding_outer=3,
+                         title_font_size=20,
+                         padding_inner=(0, 3),
+                         cursor=pygame_menu.locals.CURSOR_CROSSHAIR,
+                         title_font_color='white',
+                         title_alignment=pygame_menu.locals.ALIGN_CENTER,
+                         draggable=True)
         frame2.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, None)
 
         self.assertEqual(frame2.get_position(), (145, 235))
         self.assertEqual(frame2.get_size(), (310, 124))
         self.assertEqual(frame2._frame_title.get_position(), (151, 238))
         self.assertEqual(frame2._frame_title.get_size(), (304, 28))
+        self.assertEqual(frame2.get_translate(), (0, 0))
+
+        # Test events
+        self.assertFalse(frame2._frame_title.has_attribute('drag'))
+        menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title))
+        self.assertTrue(frame2._frame_title.has_attribute('drag'))
+        self.assertFalse(frame2._frame_title.get_attribute('drag'))
+        menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title, evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertTrue(frame2._frame_title.get_attribute('drag'))
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(10, 0)))
+        self.assertEqual(frame2.get_translate(), (10, 0))
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, -500)))
+        self.assertEqual(frame2.get_translate(), (10, -235))  # Apply top limit
+        menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title))
+        self.assertFalse(frame2._frame_title.get_attribute('drag'))
 
         # menu.mainloop(surface)

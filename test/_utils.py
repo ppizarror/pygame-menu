@@ -427,6 +427,7 @@ class PygameEventUtils(object):
     def middle_rect_mouse_motion(
             rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
             inlist: bool = True,
+            rel: Tuple2IntType = (0, 0),
             delta: Tuple2IntType = (0, 0),
             testmode: bool = True,
             update_mouse: bool = False
@@ -436,6 +437,7 @@ class PygameEventUtils(object):
 
         :param rect: Widget, Rect object, or Tuple
         :param inlist: If ``True`` return the event within a list
+        :param rel: Rel position (relative movement)
         :param delta: Add tuple to rect position
         :param testmode: Event is in test mode
         :param update_mouse: If ``True`` updates the mouse position
@@ -444,6 +446,7 @@ class PygameEventUtils(object):
         return PygameEventUtils.middle_rect_click(
             rect=rect,
             evtype=pygame.MOUSEMOTION,
+            rel=rel,
             inlist=inlist,
             delta=delta,
             testmode=testmode,

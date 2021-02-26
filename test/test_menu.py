@@ -46,6 +46,7 @@ from pygame_menu import events
 from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_DOWN, JOY_UP, \
     JOY_LEFT, JOY_RIGHT
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION
+from pygame_menu.utils import set_pygame_cursor
 from pygame_menu.widgets import Label, Button
 
 # Configure the tests
@@ -1751,16 +1752,13 @@ class MenuTest(unittest.TestCase):
         # Get cursors
         cur_none = pygame.mouse.get_cursor()
 
-        if btn1._cursor is not None:
-            pygame.mouse.set_cursor(btn1._cursor)
+        set_pygame_cursor(btn1._cursor)
         cur1 = pygame.mouse.get_cursor()
 
-        if btn2._cursor is not None:
-            pygame.mouse.set_cursor(btn2._cursor)
+        set_pygame_cursor(btn2._cursor)
         cur2 = pygame.mouse.get_cursor()
 
-        if PYGAME_V2:
-            pygame.mouse.set_cursor(cur_none)
+        set_pygame_cursor(cur_none)
 
         # Place mouse over widget 1, it should set as mouseover and trigger the events
         deco = menu.get_decorator()

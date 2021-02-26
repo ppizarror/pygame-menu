@@ -86,3 +86,6 @@ class BaseTest(unittest.TestCase):
         self.assertNotIn('["id"]', str(obj))
         obj._id__repr__ = True
         self.assertIn('["id"]', str(obj))
+        obj = Base('id2')
+        obj._class_id__repr__ = True
+        self.assertEqual(str(obj), 'Base<"id2">')
