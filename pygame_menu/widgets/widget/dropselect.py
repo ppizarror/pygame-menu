@@ -42,7 +42,7 @@ from pygame_menu.controls import KEY_APPLY, KEY_MOVE_DOWN, KEY_MOVE_UP, JOY_BUTT
 from pygame_menu.font import FontType, get_font, assert_font
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, \
-    parse_padding, get_finger_pos, uuid4
+    parse_padding, get_finger_pos, uuid4, assert_cursor
 from pygame_menu.widgets.core import Widget
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.frame import Frame
@@ -50,7 +50,7 @@ from pygame_menu.widgets.widget.selector import check_selector_items
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, ColorType, Dict, \
     ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, PaddingInstance, Tuple4IntType, \
-    NumberType, EventVectorType, Tuple2NumberType
+    NumberType, EventVectorType, Tuple2NumberType, CursorInputType, CursorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -103,6 +103,7 @@ class DropSelect(Widget):
     :param selection_infinite: If ``True`` selection can rotate through bottom/top
     :param selection_option_border_color: Option border color
     :param selection_option_border_width: Option border width
+    :param selection_option_cursor: Option cursor. If ``None`` use the same cursor as the widget
     :param selection_option_font: Option font. If ``None`` use the same font as the widget
     :param selection_option_font_color: Option font color
     :param selection_option_font_size: Option font size. If ``None`` use the 100% of the widget font size
@@ -135,6 +136,7 @@ class DropSelect(Widget):
     _selection_infinite: bool
     _selection_option_border_color: ColorType
     _selection_option_border_width: int
+    _selection_option_cursor: CursorType
     _selection_option_font_style: Dict[str, Any]
     _selection_option_left_space: bool
     _selection_option_left_space_height_factor: float
@@ -169,6 +171,7 @@ class DropSelect(Widget):
             selection_infinite: bool = False,
             selection_option_border_color: ColorInputType = (220, 220, 220),
             selection_option_border_width: int = 1,
+            selection_option_cursor: CursorInputType = None,
             selection_option_font: Optional[FontType] = None,
             selection_option_font_color: ColorInputType = (0, 0, 0),
             selection_option_font_size: Optional[int] = None,
@@ -200,6 +203,7 @@ class DropSelect(Widget):
         assert isinstance(selection_infinite, bool)
         assert isinstance(selection_option_border_width, int) and selection_option_border_width >= 0
         assert isinstance(selection_option_padding, PaddingInstance)
+        assert_cursor(selection_option_cursor)
         assert_vector(selection_box_arrow_margin, 3, int)
         assert_vector(selection_box_inflate, 2, int)
         assert_vector(selection_box_margin, 2)
@@ -260,6 +264,7 @@ class DropSelect(Widget):
         self._selection_infinite = selection_infinite
         self._selection_option_border_color = selection_option_border_color
         self._selection_option_border_width = selection_option_border_width
+        self._selection_option_cursor = selection_option_cursor
         self._selection_option_padding = parse_padding(selection_option_padding)
         self._selection_option_selected_bgcolor = selection_option_selected_bgcolor
 
@@ -367,6 +372,9 @@ class DropSelect(Widget):
                 mouse=self._mouse_enabled,
                 touchscreen=self._touchscreen_enabled,
                 keyboard=False  # Only drop select controls the keyboard behaviour
+            )
+            btn.set_cursor(
+                cursor=self._selection_option_cursor
             )
             if self._placeholder_add_to_selection_box:
                 font_color = self._selection_option_font_style['color'] if opt_id != 0 else self._font_readonly_color
