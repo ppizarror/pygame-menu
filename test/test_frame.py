@@ -1743,6 +1743,7 @@ class FrameWidgetTest(unittest.TestCase):
 
         pad = 5
         frame = menu.add.frame_v(300, 200, background_color=(170, 170, 170), padding=pad, frame_id='f1')
+        frame.set_cursor(pygame_menu.locals.CURSOR_HAND)
         frame._class_id__repr__ = True
         self.assertEqual(frame.get_scroll_value_percentage(ORIENTATION_VERTICAL), -1)
         frame_prev_rect = frame.get_rect()
@@ -1753,12 +1754,22 @@ class FrameWidgetTest(unittest.TestCase):
         frame._accepts_title = True
         self.assertEqual(frame.get_size(), (300, 200))
         self.assertEqual(frame.get_title(), '')
+        frame.set_onmouseover(lambda: print('over frame 1'))
+        frame.set_onmouseleave(lambda: print('leave frame 1'))
 
         # Add a title
         self.assertNotIn(frame, menu._update_frames)
         self.assertEqual(frame._title_height(), 0)
-        frame.set_title('epic', padding_outer=3, title_font_size=20, padding_inner=(0, 3), title_font_color='white',
-                        title_alignment=pygame_menu.locals.ALIGN_CENTER)
+        frame_title = frame.set_title(
+            'epic',
+            padding_outer=3,
+            title_font_size=20,
+            padding_inner=(0, 3),
+            title_font_color='white',
+            title_alignment=pygame_menu.locals.ALIGN_CENTER
+        )
+        frame_title.set_onmouseover(lambda: print('over title frame 1'))
+        frame_title.set_onmouseleave(lambda: print('leave title frame 1'))
         self.assertIn(frame, menu._update_frames)  # Even if not scrollable
         self.assertEqual(frame._title_height(), 34)
         self.assertTrue(frame._has_title)
@@ -1809,14 +1820,18 @@ class FrameWidgetTest(unittest.TestCase):
         # menu.add.vertical_margin(50)
         frame2 = menu.add.frame_v(300, 200, max_height=100, background_color='red', padding=pad, frame_id='f2')
         frame2._class_id__repr__ = True
-        frame2.set_title('title',
-                         padding_outer=3,
-                         title_font_size=20,
-                         padding_inner=(0, 3),
-                         cursor=pygame_menu.locals.CURSOR_CROSSHAIR,
-                         title_font_color='white',
-                         title_alignment=pygame_menu.locals.ALIGN_CENTER,
-                         draggable=True)
+        frame2.set_onmouseover(lambda: print('over frame 2'))
+        frame2.set_onmouseleave(lambda: print('leave frame 2'))
+        frame2_title = frame2.set_title('title',
+                                        padding_outer=3,
+                                        title_font_size=20,
+                                        padding_inner=(0, 3),
+                                        cursor=pygame_menu.locals.CURSOR_CROSSHAIR,
+                                        title_font_color='white',
+                                        title_alignment=pygame_menu.locals.ALIGN_CENTER,
+                                        draggable=True)
+        frame2_title.set_onmouseover(lambda: print('over title frame 2'))
+        frame2_title.set_onmouseleave(lambda: print('leave title frame 2'))
         btn4 = frame2.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, None)
         self.assertEqual(btn4.get_frame(), frame2._frame_title)
 
@@ -1867,5 +1882,15 @@ class FrameWidgetTest(unittest.TestCase):
         menu.render()
         self.assertEqual(frame.get_rect().width, frame_prev_rect.width)
         self.assertEqual(frame.get_rect().height, frame_prev_rect.height)
+
+        # Move frame 1 to bottom
+        menu.update(PygameEventUtils.middle_rect_click(frame2._frame_title, evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertTrue(frame2._frame_title.get_attribute('drag'))
+        menu.render()
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 350)))
+        self.assertEqual(frame2.get_translate(), (10, 115))
+        menu.render()
+        menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100)))
+        self.assertEqual(frame2.get_translate(), (10, 115))
 
         # menu.mainloop(surface)

@@ -207,7 +207,7 @@ class Frame(Widget):
         :param title_font: Title font. If ``None`` uses the same as the Frame
         :param title_font_color: Title font color. If ``None`` uses the same as the Frame
         :param title_font_size: Title font size (px). If ``None`` uses the same as the Frame
-        :return: Self reference
+        :return: Title frame object
         """
         assert self.configured, '{0} must be configured before setting a title'.format(self.get_class_id())
         if not self._accepts_title:
@@ -322,7 +322,7 @@ class Frame(Widget):
             self._menu._update_frames.append(self)
             self.sort_menu_update_frames()
 
-        return self
+        return self._frame_title
 
     # noinspection PyProtectedMember
     def remove_title(self) -> 'Frame':
@@ -1519,15 +1519,33 @@ class Frame(Widget):
                         rx = event.rel[0]
                         ry = event.rel[1]
 
-                        if self._rect.y <= 0:
-                            if ry < 0 or \
-                                    not self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
-                                continue
                         tx, ty = self.get_translate()
+
+                        if self._rect.y <= 0:
+                            if not self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
+                                if ry > 0:
+                                    self.translate(tx, ty - self._rect.y)
+                                    self.force_menu_surface_update()
+                                    updated = True
+                                continue
+                        elif self.get_scrollarea() is not None:
+                            max_v = self.get_scrollarea().get_world_size()[1] - self._title_height()
+                            if self._rect.y >= max_v:
+                                if not self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
+                                    if ry < 0:
+                                        continue
+                                if ry > 0:
+                                    continue
+                            if ry > 0 and self._rect.y + ry >= max_v:
+                                continue
 
                         # Get the max/min distance which can translate in vertical
                         if ry < 0:
                             ry = -min(-ry, self._rect.y)
+                        # else:
+                        #     if self.get_scrollarea() is not None:
+                        #         ry = min(ry, self.get_scrollarea().get_world_size()[1] - self._title_height() -
+                        #                     - self._position[1] - abs(ty))
 
                         self.translate(tx + rx, ty + ry)
                         self.force_menu_surface_update()
