@@ -49,7 +49,7 @@ import warnings
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW
 from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, assert_position, \
     assert_color, is_callable, format_color
@@ -373,7 +373,7 @@ class Theme(object):
         self.widget_box_border_width = self._get(kwargs, 'widget_box_border_width', int, 1)
         self.widget_box_inflate = self._get(kwargs, 'widget_box_inflate', 'tuple2int', (0, 0))
         self.widget_box_margin = self._get(kwargs, 'widget_box_margin', 'tuple2', (25, 0))
-        self.widget_cursor = self._get(kwargs, 'widget_cursor', 'cursor')
+        self.widget_cursor = self._get(kwargs, 'widget_cursor', 'cursor', CURSOR_ARROW)
         self.widget_font = self._get(kwargs, 'widget_font', 'font', FONT_OPEN_SANS)
         self.widget_font_antialias = self._get(kwargs, 'widget_font_antialias', bool, True)
         self.widget_font_background_color = self._get(kwargs, 'widget_font_background_color', 'color_none', )
@@ -609,7 +609,7 @@ class Theme(object):
         Color may be an Image, so if this is the case return the same object.
 
         - If the color is a list, return a tuple.
-        - If the color is ``None``, return ``None`` if ``none`` is True.
+        - If the color is ``None``, return ``None`` if ``None`` is True.
 
         :param color: Color object
         :param none: If ``True`` Color can be ``None``
