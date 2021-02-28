@@ -71,16 +71,34 @@ WIDGET_MOUSEOVER: List[Any] = [None, []]
 
 # Stores the top cursor for validation
 WIDGET_TOP_CURSOR: List[Any] = [None]
+WIDGET_TOP_CURSOR_WARNING = False
 
 
-# noinspection PyProtectedMember
 def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
     """
-    Check if the active widget (WIDGET_OVER[0]) is still over, else,
-    execute previous list (WIDGET_OVER[1]).
+    Check if the active widget (WIDGET_MOUSEOVER[0]) is still over, else, execute previous
+    list (WIDGET_MOUSEOVER[1]).
 
     :param event: Mouse motion event. If ``None`` this method creates the event
     :param force: If ``True`` calls all mouse leave without checking if the mouse is still over
+    :return: None
+    """
+    return _check_widget_mouseleave(event, force)
+
+
+# noinspection PyProtectedMember
+def _check_widget_mouseleave(
+        event: Optional[EventType] = None,
+        force: bool = False,
+        recursive: bool = False
+) -> None:
+    """
+    Check if the active widget (WIDGET_MOUSEOVER[0]) is still over, else, execute previous
+    list (WIDGET_MOUSEOVER[1]).
+
+    :param event: Mouse motion event. If ``None`` this method creates the event
+    :param force: If ``True`` calls all mouse leave without checking if the mouse is still over
+    :param recursive: If ``True`` the call is recursive
     :return: None
     """
     # If no widget is over, return
@@ -123,7 +141,8 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
                       'previous cursor from WIDGET_MOUSEOVER recursive list. The top cursor {0} will ' \
                       'be established as the pygame default mouse cursor' \
                       ''.format(WIDGET_TOP_CURSOR[0], prev_cursor)
-                warnings.warn(msg)
+                if WIDGET_TOP_CURSOR_WARNING:
+                    warnings.warn(msg)
                 set_pygame_cursor(WIDGET_TOP_CURSOR[0])
             WIDGET_TOP_CURSOR[0] = None
         else:
@@ -135,7 +154,41 @@ def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = Fal
         prev_widget.mouseleave(event, check_all_widget_mouseleave=False)
 
         # Recursive call
-        check_widget_mouseleave(event, force)
+        _check_widget_mouseleave(event, force, recursive=True)
+
+    # Check sublist
+    if len(WIDGET_MOUSEOVER[1]) == 3 and len(WIDGET_MOUSEOVER[1][2]) > 0 and not recursive and not force:
+        prev: List[Any] = WIDGET_MOUSEOVER[1][2]  # [widget, cursor, [widget, cursor, [...]]]
+        while True:
+            if len(prev) == 0:
+                break
+            widget: 'Widget' = prev[0]
+            cursor = prev[1]
+
+            # Check widget is still over
+            widget._check_mouseover(event, check_all_widget_mouseleave=False)
+
+            # If not active
+            if not widget._mouseover:
+                # Update the array
+                if len(prev[2]) == 3:
+                    prev[0] = prev[2][0]
+                    prev[1] = prev[2][1]
+                    prev[2] = prev[2][2]
+
+                    # Set previous cursor
+                    set_pygame_cursor(cursor)
+                else:
+                    for _ in range(len(prev)):
+                        prev.pop()
+                    break
+            else:
+                prev = prev[2]  # Recursive call
+
+
+# Types
+CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], Callable[[], Any]]]
+CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], Callable[[], Any]]]
 
 
 class Widget(Base):
@@ -198,10 +251,10 @@ class Widget(Base):
     _mouseover_called: Optional[bool]  # Check if the mouseover/mouseleave callbacks were called
     _mouseover_check_rect: Callable[[], 'pygame.Rect']
     _onchange: CallbackType
-    _onmouseleave: CallbackType
-    _onmouseover: CallbackType
+    _onmouseleave: CallbackMouseType
+    _onmouseover: CallbackMouseType
     _onreturn: CallbackType
-    _onselect: CallbackType
+    _onselect: CallbackSelectType
     _padding: Tuple4IntType
     _padding_transform: Tuple4IntType
     _position: Tuple2IntType
@@ -376,7 +429,8 @@ class Widget(Base):
         :return: Self reference
         """
         if onchange:
-            assert is_callable(onchange), 'onchange must be callable (function-type) or None'
+            assert is_callable(onchange), \
+                'onchange must be callable (function-type) or None'
         self._onchange = onchange
         return self
 
@@ -394,11 +448,12 @@ class Widget(Base):
         :return: Self reference
         """
         if onreturn:
-            assert is_callable(onreturn), 'onreturn must be callable (function-type) or None'
+            assert is_callable(onreturn), \
+                'onreturn must be callable (function-type) or None'
         self._onreturn = onreturn
         return self
 
-    def set_onselect(self, onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]) -> 'Widget':
+    def set_onselect(self, onselect: CallbackSelectType) -> 'Widget':
         """
         Set ``onselect`` callback. This method is executed in
         :py:meth:`pygame_menu.widgets.core.widget.Widget.select` method. The callback function receives
@@ -406,17 +461,18 @@ class Widget(Base):
 
         .. code-block:: python
 
-            onselect(selected, widget, menu)
+            onselect(selected, widget, menu) <or> onselect()
 
         :param onselect: Callback executed if user selects the Widget; it can be a function or None
         :return: Self reference
         """
         if onselect:
-            assert is_callable(onselect), 'onselect must be callable (function-type) or None'
+            assert is_callable(onselect), \
+                'onselect must be callable (function-type) or None'
         self._onselect = onselect
         return self
 
-    def set_onmouseover(self, onmouseover: Optional[Callable[['Widget', EventType], Any]]) -> 'Widget':
+    def set_onmouseover(self, onmouseover: CallbackMouseType) -> 'Widget':
         """
         Set ``onmouseover`` callback. This method is executed in
         :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseover` method. The callback function receives
@@ -424,17 +480,18 @@ class Widget(Base):
 
         .. code-block:: python
 
-            onmouseover(widget, event)
+            onmouseover(widget, event) <or> onmouseover()
 
         :param onmouseover: Callback executed if user enters the Widget with the mouse; it can be a function or None
         :return: Self reference
         """
         if onmouseover:
-            assert is_callable(onmouseover), 'onmouseover must be callable (function-type) or None'
+            assert is_callable(onmouseover), \
+                'onmouseover must be callable (function-type) or None'
         self._onmouseover = onmouseover
         return self
 
-    def set_onmouseleave(self, onmouseleave: Optional[Callable[['Widget', EventType], Any]]) -> 'Widget':
+    def set_onmouseleave(self, onmouseleave: CallbackMouseType) -> 'Widget':
         """
         Set ``onmouseleave`` callback. This method is executed in
         :py:meth:`pygame_menu.widgets.core.widget.Widget.mouseleave` method. The callback function receives
@@ -442,13 +499,14 @@ class Widget(Base):
 
         .. code-block:: python
 
-            onmouseleave(widget, event)
+            onmouseleave(widget, event) <or> onmouseleave()
 
         :param onmouseleave: Callback executed if user leaves the Widget with the mouse; it can be a function or None
         :return: Self reference
         """
         if onmouseleave:
-            assert is_callable(onmouseleave), 'onmouseleave must be callable (function-type) or None'
+            assert is_callable(onmouseleave), \
+                'onmouseleave must be callable (function-type) or None'
         self._onmouseleave = onmouseleave
         return self
 
@@ -459,7 +517,7 @@ class Widget(Base):
 
         .. code-block:: python
 
-            onmouseover(widget, event)
+            onmouseover(widget, event) <or> onmouseover()
 
         .. warning::
 
@@ -491,7 +549,10 @@ class Widget(Base):
 
         if self._onmouseover is not None:
             if self._mouseover_called is None or not self._mouseover_called:
-                self._onmouseover(self, event)
+                try:
+                    self._onmouseover(self, event)
+                except TypeError:
+                    self._onmouseover()
                 self._mouseover_called = True
 
         # Check previous state
@@ -518,7 +579,7 @@ class Widget(Base):
 
         .. code-block:: python
 
-            onmouseleave(widget, event)
+            onmouseleave(widget, event) <or> onmouseleave()
 
         .. warning::
 
@@ -532,7 +593,10 @@ class Widget(Base):
         # Check for consistency
         if WIDGET_MOUSEOVER[0] != self or not check_all_widget_mouseleave:
             if self._onmouseleave is not None and self._mouseover_called:
-                self._onmouseleave(self, event)
+                try:
+                    self._onmouseleave(self, event)
+                except TypeError:
+                    self._onmouseleave()
                 self._mouseover_called = False
         if check_all_widget_mouseleave:
             check_widget_mouseleave(event)
@@ -2037,7 +2101,7 @@ class Widget(Base):
 
         .. code-block:: python
 
-            onselect(selected, widget, menu)
+            onselect(selected, widget, menu) <or> onselect()
 
         If Widget ``is_selectable`` is ``False`` this function is not executed.
 
@@ -2067,7 +2131,10 @@ class Widget(Base):
             self._events = []  # Remove events
         self._force_render()
         if self._onselect is not None:
-            self._onselect(self._selected, self, self._menu)
+            try:
+                self._onselect(self._selected, self, self._menu)
+            except TypeError:
+                self._onselect()
         if update_menu:
             assert self._menu is not None
             self._menu.select_widget(None)  # Unselect previous one
