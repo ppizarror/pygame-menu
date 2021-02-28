@@ -98,7 +98,8 @@ class Button(Widget):
         :return: None
         """
         if callback is not None:
-            assert is_callable(callback), 'callback must be callable (function-type) or None'
+            assert is_callable(callback), \
+                'callback must be callable (function-type) or None'
         self._onselect = callback
 
     def update_callback(self, callback: Callable, *args) -> None:
@@ -115,7 +116,8 @@ class Button(Widget):
         :param args: Arguments used by the function once triggered
         :return: None
         """
-        assert is_callable(callback), 'only callable (function-type) are allowed'
+        assert is_callable(callback), \
+            'only callable (function-type) are allowed'
 
         # If return is a Menu object, remove it from submenus list
         if self._menu is not None and self._onreturn is not None and self.to_menu:
@@ -124,7 +126,8 @@ class Button(Widget):
             assert self._menu.in_submenu(submenu), \
                 'pointed menu is not in submenu list of parent container'
             # noinspection PyProtectedMember
-            assert self._menu._remove_submenu(submenu), 'submenu could not be removed'
+            assert self._menu._remove_submenu(submenu), \
+                'submenu could not be removed'
             self.to_menu = False
 
         self._args = args or []
