@@ -1439,10 +1439,10 @@ class Menu(Base):
             widget.set_position(x_coord, y_coord)
 
             # Add the widget translation to the widget for computing the min/max position
-            tx, ty = widget.get_translate()
-            if not consider_translation:
-                tx = 0
-                ty = 0
+            if consider_translation:
+                tx, ty = widget.get_translate()
+            else:
+                tx, ty = 0, 0
 
             # Update max/min position, minus padding
             min_max_updated = True
