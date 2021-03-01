@@ -1522,7 +1522,7 @@ class TextInput(Widget):
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if pygame.key.get_mods() in (pygame.KMOD_CTRL, pygame.KMOD_RCTRL, pygame.KMOD_LCTRL):
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
