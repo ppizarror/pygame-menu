@@ -988,6 +988,7 @@ class TextInput(Widget):
             raise ValueError('value cannot be set in password type')
         if not isinstance(text, (int, float)):
             assert isinstance_str(text)
+            text = to_string(text)
         if self._check_input_type(text):
             _default = to_string(text)
 
@@ -1491,7 +1492,7 @@ class TextInput(Widget):
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if pygame.key.get_mods() in (pygame.KMOD_CTRL, pygame.KMOD_RCTRL, pygame.KMOD_LCTRL):
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
