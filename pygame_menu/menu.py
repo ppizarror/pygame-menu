@@ -997,7 +997,7 @@ class Menu(Base):
         self._warn_widgetmanager('add_generic_widget', 'generic_widget')
         return self.add.generic_widget(*args, **kwargs)
 
-    def select_widget(self, widget: Optional['Widget']) -> 'Menu':
+    def select_widget(self, widget: Optional[Union['Widget', str]]) -> 'Menu':
         """
         Select a widget from the Menu. If ``None`` unselect the current one.
 
@@ -1007,7 +1007,7 @@ class Menu(Base):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param widget: Widget to be selected. If ``None`` unselect the current
+        :param widget: Widget to be selected or Widget ID. If ``None`` unselect the current
         :return: Self reference
         """
         if widget is None:
@@ -1015,6 +1015,8 @@ class Menu(Base):
                 w.select(False)
             self._index = -1
             return self
+        if isinstance(widget, str):
+            widget = self.get_widget(widget)
         assert isinstance(widget, Widget)
         if not widget.is_selectable:
             raise ValueError('{0} is not selectable'.format(widget.get_class_id()))
@@ -1039,12 +1041,11 @@ class Menu(Base):
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
-        :param widget: Widget object or ID
+        :param widget: Widget object or Widget ID
         :return: Self reference
         """
         if isinstance(widget, str):
             widget = self.get_widget(widget)
-
         assert isinstance(widget, Widget)
 
         try:
