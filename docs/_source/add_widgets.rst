@@ -253,25 +253,50 @@ the way the widgets are added to the frame (packed).
 
     menu = pygame_menu.Menu(...)
 
-    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
-    frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180))
-    frame_content = menu.add.frame_v(250, 120)
+    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50), padding=0)
+    frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180), padding=0)
+    frame_content = menu.add.frame_v(250, 120, padding=0)
     frame.pack(frame_title)
     frame.pack(frame_content)
 
-    frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
-    frame_title.pack(menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
-                     alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
+    frame_title.pack(menu.add.label('Settings', padding=0), margin=(2, 2))
+    frame_title.pack(
+        menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
+        alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(2, 2))
     frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
                        alignment=pygame_menu.locals.ALIGN_CENTER)
-    frame_numbers = menu.add.frame_h(250, 41)
+    frame_numbers = menu.add.frame_h(250, 41, padding=0)
     frame_content.pack(frame_numbers)
     for i in range(9):
-        frame_numbers.pack(menu.add.button(i, None, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
+        frame_numbers.pack(menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
                            alignment=pygame_menu.locals.ALIGN_CENTER)
     frame_content.pack(menu.add.vertical_margin(15))
-    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
+    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150), padding=0),
                        alignment=pygame_menu.locals.ALIGN_CENTER)
+
+**Example:**
+
+.. image:: ../_static/widget_frame_title.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    frame = menu.add.frame_v(400, 800, background_color=(50, 50, 50), padding=0, max_width=300, max_height=100)
+    frame.set_title('My Frame App', title_font_color='white', padding_inner=(2, 5))
+
+    frame.pack(menu.add.dropselect(
+        title='Is pygame-menu epic?',
+        items=[('Yes', 0),
+               ('Absolutely Yes', 1)],
+        font_color='white',
+        font_size=16,
+        selection_option_font_size=20
+    ))
+    for i in range(20):
+        frame.pack(menu.add.button(i, font_color='white', button_id='b{}'.format(i)))
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.frame_h
 
@@ -343,6 +368,32 @@ or even add drawing callbacks for being executed on each menu draw.
     menu.add.none_widget()
 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.none_widget
+
+
+Add a surface
+-------------
+
+A surface widget only accepts an external surface which is drawn on the Menu.
+The widget size is the same as the surface, considering also the margin and the padding.
+
+**Example:**
+
+.. image:: ../_static/widget_surface.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    new_surface = pygame.Surface((160, 160))
+    new_surface.fill((255, 192, 203))
+    inner_surface = pygame.Surface((80, 80))
+    inner_surface.fill((75, 0, 130))
+    new_surface.blit(inner_surface, (40, 40))
+    menu.add.surface(new_surface)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.surface
 
 
 Add a text entry
@@ -421,7 +472,7 @@ visual rendering of the menu.
 Add a url link
 --------------
 
-Adds a clickeable url link.
+Adds a clickable url link.
 
 **Example:**
 

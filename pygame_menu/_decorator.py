@@ -58,6 +58,7 @@ DECORATION_CALLABLE = 2003
 DECORATION_CALLABLE_NO_ARGS = 2015
 DECORATION_CIRCLE = 2004
 DECORATION_ELLIPSE = 2005
+DECORATION_FILL = 2020
 DECORATION_LINE = 2006
 DECORATION_NONE = 2007
 DECORATION_PIE = 2008
@@ -146,7 +147,7 @@ class Decorator(Base):
 
     def _add_decor(self, decortype: int, prev: bool, data: Any) -> str:
         """
-        Add decoration.
+        Adds a decoration.
 
         :param decortype: Decoration type
         :param prev: To prev or post
@@ -181,7 +182,7 @@ class Decorator(Base):
 
     def _add_none(self, prev: bool = True) -> str:
         """
-        Add none decorator.
+        Adds a none decorator.
 
         :param prev: If ``True`` draw previous the object, else draws post
         :return: ID of the decoration
@@ -221,11 +222,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add polygon.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds a polygon.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -261,11 +258,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add bezier curve.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds a bezier curve.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -296,11 +289,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add circle.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds a circle.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -344,11 +333,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add arc.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds an arc.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -388,11 +373,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add a unfilled pie.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds a unfilled pie.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -429,10 +410,6 @@ class Decorator(Base):
         """
         Adds a surface.
 
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
-
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
@@ -440,7 +417,7 @@ class Decorator(Base):
         :param y: Y position (px), being ``0`` the center of the object
         :param surface: Surface
         :param prev: If ``True`` draw previous the object, else draws post
-        :param centered: If ``True`` the text is centered into the position
+        :param centered: If ``True`` the surface is centered
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
@@ -463,10 +440,6 @@ class Decorator(Base):
 
         .. note::
 
-            Consider ``(0, 0)`` coordinates as the center of the object.
-
-        .. note::
-
             If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
             set ``decorator.cache=False`` or force cache manually by calling
             :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`.
@@ -478,7 +451,7 @@ class Decorator(Base):
         :param y: Y position (px), being ``0`` the center of the object
         :param image: ``BaseImage`` object
         :param prev: If ``True`` draw previous the object, else draws post
-        :param centered: If ``True`` the text is centered into the position
+        :param centered: If ``True`` the image is centered
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
@@ -499,10 +472,6 @@ class Decorator(Base):
     ) -> str:
         """
         Adds a BaseImage object.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -536,10 +505,6 @@ class Decorator(Base):
     ) -> str:
         """
         Adds a BaseImage object.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -575,10 +540,6 @@ class Decorator(Base):
         """
         Adds a text.
 
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
-
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
@@ -590,7 +551,7 @@ class Decorator(Base):
         :param color: Font color
         :param prev: If ``True`` draw previous the object, else draws post
         :param antialias: Font antialias enabled
-        :param centered: If ``True`` the text is centered into the position
+        :param centered: If ``True`` the text is centered
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration
         """
@@ -620,11 +581,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add an ellipse.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds an ellipse.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -656,11 +613,7 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add a pixel.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
+        Adds a pixel.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -684,7 +637,7 @@ class Decorator(Base):
             pass_args: bool = True
     ) -> str:
         """
-        Add a callable method. The function receives the surface and the object; for example,
+        Adds a callable method. The function receives the surface and the object; for example,
         if adding to a widget:
 
         .. code-block:: python
@@ -697,10 +650,6 @@ class Decorator(Base):
             or force cache manually by calling Decorator method
             :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`. Also, the object
             should force the menu surface cache to update.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
 
         :param fun: Function
         :param prev: If ``True`` draw previous the object, else draws post
@@ -724,17 +673,13 @@ class Decorator(Base):
             **kwargs
     ) -> str:
         """
-        Add a textured polygon.
+        Adds a textured polygon.
 
         .. note::
 
             If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
             set ``decorator.cache=False`` or force cache manually by calling
             :py:class:`pygame_menu._decorator.Decorator.force_cache_update`.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -765,10 +710,6 @@ class Decorator(Base):
         """
         Adds a line.
 
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
-
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
@@ -788,6 +729,23 @@ class Decorator(Base):
         assert length > 0, 'line cannot be zero-length'
         return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs))
 
+    def add_fill(
+            self,
+            color: ColorInputType,
+            prev: bool = True
+    ) -> str:
+        """
+        Fills the decorator rect object.
+
+        kwargs (Optional)
+            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+
+        :param color: Fill color
+        :param prev: If ``True`` draw previous the object, else draws post
+        :return: ID of the decoration
+        """
+        return self._add_decor(DECORATION_FILL, prev, assert_color(color))
+
     def add_hline(
             self,
             x1: NumberType,
@@ -800,10 +758,6 @@ class Decorator(Base):
     ) -> str:
         """
         Adds a horizontal line.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -832,10 +786,6 @@ class Decorator(Base):
     ) -> str:
         """
         Adds a vertical line.
-
-        .. note::
-
-            Consider ``(0, 0)`` coordinates as the center of the object.
 
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
@@ -1061,11 +1011,11 @@ class Decorator(Base):
                 points, r, ia, fa, color, width, gfx, kwargs = data
                 points = self._update_pos_list(rect, decoid, points, **kwargs)
                 x, y = points[0]
-                rectarc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
+                rect_arc = pygame.Rect(x - r, y - r, x + 2 * r, y + 2 * r)
                 if gfx:
                     gfxdraw.arc(surface, x, y, r, ia, fa, color)
                 else:
-                    pydraw.arc(surface, color, rectarc, ia / (2 * pi), fa / (2 * pi), width)
+                    pydraw.arc(surface, color, rect_arc, ia / (2 * pi), fa / (2 * pi), width)
 
             elif dtype == DECORATION_PIE:
                 points, r, ia, fa, color, kwargs = data
@@ -1077,6 +1027,9 @@ class Decorator(Base):
                 points, color, steps, kwargs = data
                 points = self._update_pos_list(rect, decoid, points, **kwargs)
                 gfxdraw.bezier(surface, points, steps, color)
+
+            elif dtype == DECORATION_FILL:
+                surface.fill(data, rect)
 
             elif dtype == DECORATION_RECT:
                 drect: 'pygame.Rect'

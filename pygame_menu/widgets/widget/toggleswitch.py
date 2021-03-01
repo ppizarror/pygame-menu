@@ -33,11 +33,14 @@ __all__ = ['ToggleSwitch']
 
 import pygame
 import pygame_menu
-import pygame_menu.controls as _controls
 
+from pygame_menu.controls import JOY_BUTTON_SELECT, JOY_LEFT, JOY_RIGHT, JOY_AXIS_X, JOY_DEADZONE, \
+    KEY_APPLY, KEY_LEFT, KEY_RIGHT
+from pygame_menu.font import FontType, assert_font
+from pygame_menu.locals import FINGERUP
+from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface, \
+    get_finger_pos
 from pygame_menu.widgets.core import Widget
-from pygame_menu.font import FontType, FontInstance
-from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, make_surface
 
 from pygame_menu._types import Any, CallbackType, Union, List, Tuple, Optional, ColorType, NumberType, \
     Tuple2NumberType, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType
@@ -160,7 +163,7 @@ class ToggleSwitch(Widget):
         assert 0 <= default_state < self._total_states, 'invalid default state value'
 
         if state_text_font is not None:
-            assert isinstance(state_text_font, FontInstance)
+            assert_font(state_text_font)
         assert isinstance(state_text_font_size, (int, type(None)))
         if state_text_font_size is not None:
             assert state_text_font_size > 0, 'state text font size must be equal or greater than zero'
@@ -287,15 +290,15 @@ class ToggleSwitch(Widget):
         surface.blit(self._surface, (self._rect.x, self._rect.y + self._switch_pos[1] - 1))
 
         # Draw switch
-        switchx = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
-        switchy = self._rect.y + self._switch_margin[1]
-        surface.blit(self._switch, (switchx, switchy))
+        switch_x = self._rect.x + self._switch_margin[0] + self._switch_pos[0]
+        switch_y = self._rect.y + self._switch_margin[1]
+        surface.blit(self._switch, (switch_x, switch_y))
 
         # Draw switch border
         if self._switch_border_width > 0:
             switch_rect = self._switch.get_rect()
-            switch_rect.x += switchx
-            switch_rect.y += switchy
+            switch_rect.x += switch_x
+            switch_rect.y += switch_y
             pygame.draw.rect(
                 surface,
                 self._switch_border_color,
@@ -306,14 +309,14 @@ class ToggleSwitch(Widget):
         # Draw switch font render
         if self._state_text[self._state] != '':
             text = self._switch_font_rendered[self._state]
-            stextx = switchx + (self._switch_width - text.get_width()) * self._state_text_position[0]
-            stexty = switchy + (self._switch_height - text.get_height()) * self._state_text_position[1]
-            surface.blit(text, (stextx, stexty))
+            s_text_x = switch_x + (self._switch_width - text.get_width()) * self._state_text_position[0]
+            s_text_y = switch_y + (self._switch_height - text.get_height()) * self._state_text_position[1]
+            surface.blit(text, (s_text_x, s_text_y))
 
         # Draw slider
-        sliderx = switchx + self._slider_pos[0] + self._switch_border_width
-        slidery = switchy + self._slider_pos[1] + self._switch_border_width
-        surface.blit(self._slider, (sliderx, slidery))
+        slider_x = switch_x + self._slider_pos[0] + self._switch_border_width
+        slider_y = switch_y + self._slider_pos[1] + self._switch_border_width
+        surface.blit(self._slider, (slider_x, slider_y))
 
     def _render(self) -> Optional[bool]:
         if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
@@ -386,27 +389,32 @@ class ToggleSwitch(Widget):
                 if not check_key_pressed_valid(event):
                     continue
 
+            # Check mouse over
+            self._check_mouseover(event)
+
             # Events
             keydown = self._keyboard_enabled and event.type == pygame.KEYDOWN
             joy_hatmotion = self._joystick_enabled and event.type == pygame.JOYHATMOTION
             joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
 
             # Left button
-            if keydown and event.key == _controls.KEY_LEFT or \
-                    joy_hatmotion and event.value == _controls.JOY_LEFT or \
-                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value < _controls.JOY_DEADZONE:
+            if keydown and event.key == KEY_LEFT or \
+                    joy_hatmotion and event.value == JOY_LEFT or \
+                    joy_axismotion and event.axis == JOY_AXIS_X and event.value < JOY_DEADZONE:
                 self._left()
                 updated = True
 
             # Right button
-            elif keydown and event.key == _controls.KEY_RIGHT or \
-                    joy_hatmotion and event.value == _controls.JOY_RIGHT or \
-                    joy_axismotion and event.axis == _controls.JOY_AXIS_X and event.value > -_controls.JOY_DEADZONE:
+            elif keydown and event.key == KEY_RIGHT or \
+                    joy_hatmotion and event.value == JOY_RIGHT or \
+                    joy_axismotion and event.axis == JOY_AXIS_X and event.value > -JOY_DEADZONE:
                 self._right()
                 updated = True
 
             # Press enter
-            elif keydown and event.key == _controls.KEY_APPLY and self._total_states == 2:
+            elif keydown and event.key == KEY_APPLY and self._total_states == 2 or \
+                    event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
+                    event.button == JOY_BUTTON_SELECT and self._total_states == 2:
                 self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()
@@ -414,24 +422,18 @@ class ToggleSwitch(Widget):
                 self.active = not self.active
 
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3) or \
-                    self._touchscreen_enabled and event.type == pygame.FINGERUP:
-
-                # Get event position based on input type
-                if self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
-                    window_size = self._menu.get_window_size()
-                    event_pos = (event.x * window_size[0], event.y * window_size[1])
-                else:
-                    event_pos = event.pos
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+                    event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                event_pos = get_finger_pos(self._menu, event)
 
                 # If collides
                 rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
                     # Check if mouse collides left or right as percentage, use only X coordinate
-                    mousex, _ = event.pos
+                    mouse_x, _ = event.pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright
-                    dist = mousex - (topleft + self._switch_margin[0] + self._switch_pos[0])  # Distance from title
+                    dist = mouse_x - (topleft + self._switch_margin[0] + self._switch_pos[0])  # Distance from title
                     if dist > 0:  # User clicked the options, not title
                         target_index = 0
                         best = 1e6

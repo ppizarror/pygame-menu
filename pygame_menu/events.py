@@ -33,6 +33,8 @@ __all__ = [
 
     # Class
     'MenuAction',
+
+    # Utils
     'is_event',
 
     # Menu events
@@ -57,7 +59,7 @@ import pygame.locals as __locals
 
 class MenuAction(object):
     """
-    Pymenu events.
+    Pygame-menu events.
 
     :param action: Action identifier
     """

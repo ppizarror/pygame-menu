@@ -51,9 +51,9 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(obj.get_counter_attribute('count', 1), 5)
         self.assertEqual(obj.get_counter_attribute('count', 1), 6)
 
-        self.assertAlmostEqual(obj.get_counter_attribute('countepic', 1, '3.14'), 4.14)
-        self.assertAlmostEqual(obj.get_counter_attribute('countepic', 1, '3.14'), 5.14)
-        self.assertAlmostEqual(obj.get_counter_attribute('countepic', 1, '3.14'), 6.14)
+        self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 4.14)
+        self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 5.14)
+        self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 6.14)
 
     def test_classid(self) -> None:
         """
@@ -77,3 +77,15 @@ class BaseTest(unittest.TestCase):
         obj.remove_attribute('epic')
         self.assertFalse(obj.has_attribute('epic'))
         self.assertEqual(obj.get_attribute('epic', 420), 420)
+
+    def test_repr(self) -> None:
+        """
+        Test base repr.
+        """
+        obj = Base('id')
+        self.assertNotIn('["id"]', str(obj))
+        obj._id__repr__ = True
+        self.assertIn('["id"]', str(obj))
+        obj = Base('id2')
+        obj._class_id__repr__ = True
+        self.assertEqual(str(obj), 'Base<"id2">')

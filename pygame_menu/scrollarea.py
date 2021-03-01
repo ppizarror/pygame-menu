@@ -29,22 +29,31 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-__all__ = ['ScrollArea', 'get_scrollbars_from_position']
+__all__ = [
+
+    # Main class
+    'ScrollArea',
+
+    # Utils
+    'get_scrollbars_from_position'
+
+]
 
 import pygame
 import pygame_menu
-import pygame_menu.locals as _locals
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
-from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation
+from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_WEST, POSITION_NORTHEAST, \
+    POSITION_NORTHWEST, POSITION_CENTER, POSITION_EAST, POSITION_NORTH, ORIENTATION_HORIZONTAL, \
+    ORIENTATION_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, POSITION_SOUTH, SCROLLAREA_POSITION_FULL, \
+    SCROLLAREA_POSITION_BOTH_VERTICAL
+from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, \
+    get_finger_pos
 from pygame_menu.widgets import ScrollBar, MenuBar
 
-from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
+from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
     Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType
-
-ORIENTATION_VERTICAL = _locals.ORIENTATION_VERTICAL
-ORIENTATION_HORIZONTAL = _locals.ORIENTATION_HORIZONTAL
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -55,29 +64,29 @@ def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], T
     :param position: Position
     :return: Scrollbars
     """
-    if position in (_locals.POSITION_EAST, _locals.POSITION_EAST, _locals.POSITION_WEST, _locals.POSITION_NORTH):
+    if position in (POSITION_EAST, POSITION_EAST, POSITION_WEST, POSITION_NORTH):
         return position
-    elif position == _locals.POSITION_NORTHWEST:
-        return _locals.POSITION_NORTH, _locals.POSITION_WEST
-    elif position == _locals.POSITION_NORTHEAST:
-        return _locals.POSITION_NORTH, _locals.POSITION_EAST
-    elif position == _locals.POSITION_SOUTHWEST:
-        return _locals.POSITION_SOUTH, _locals.POSITION_WEST
-    elif position == _locals.POSITION_SOUTHEAST:
-        return _locals.POSITION_SOUTH, _locals.POSITION_EAST
-    elif position == _locals.SCROLLAREA_POSITION_FULL:
-        return _locals.POSITION_SOUTH, _locals.POSITION_EAST, _locals.POSITION_WEST, _locals.POSITION_NORTH
-    elif position == _locals.SCROLLAREA_POSITION_BOTH_HORIZONTAL:
-        return _locals.POSITION_SOUTH, _locals.POSITION_NORTH
-    elif position == _locals.SCROLLAREA_POSITION_BOTH_VERTICAL:
-        return _locals.POSITION_EAST, _locals.POSITION_WEST
-    elif position == _locals.POSITION_CENTER:
-        raise ValueError('cannot init strollbars from center position')
+    elif position == POSITION_NORTHWEST:
+        return POSITION_NORTH, POSITION_WEST
+    elif position == POSITION_NORTHEAST:
+        return POSITION_NORTH, POSITION_EAST
+    elif position == POSITION_SOUTHWEST:
+        return POSITION_SOUTH, POSITION_WEST
+    elif position == POSITION_SOUTHEAST:
+        return POSITION_SOUTH, POSITION_EAST
+    elif position == SCROLLAREA_POSITION_FULL:
+        return POSITION_SOUTH, POSITION_EAST, POSITION_WEST, POSITION_NORTH
+    elif position == SCROLLAREA_POSITION_BOTH_HORIZONTAL:
+        return POSITION_SOUTH, POSITION_NORTH
+    elif position == SCROLLAREA_POSITION_BOTH_VERTICAL:
+        return POSITION_EAST, POSITION_WEST
+    elif position == POSITION_CENTER:
+        raise ValueError('cannot init scrollbars from center position')
     else:
         raise ValueError('unknown ScrollArea position')
 
 
-DEFAULT_SCROLLBARS = get_scrollbars_from_position(_locals.POSITION_SOUTHEAST)
+DEFAULT_SCROLLBARS = get_scrollbars_from_position(POSITION_SOUTHEAST)
 
 
 class ScrollArea(Base):
@@ -144,7 +153,7 @@ class ScrollArea(Base):
             parent_scrollarea: Optional['ScrollArea'] = None,
             scrollarea_id: str = '',
             scrollbar_color: ColorInputType = (235, 235, 235),
-            scrollbar_cursor: Optional[Union[int, 'pygame.cursors.Cursor']] = None,
+            scrollbar_cursor: CursorInputType = None,
             scrollbar_slider_color: ColorInputType = (200, 200, 200),
             scrollbar_slider_pad: NumberType = 0,
             scrollbar_thick: int = 20,
@@ -152,7 +161,7 @@ class ScrollArea(Base):
             shadow: bool = False,
             shadow_color: ColorInputType = (0, 0, 0),
             shadow_offset: int = 2,
-            shadow_position: str = _locals.POSITION_SOUTHEAST,
+            shadow_position: str = POSITION_SOUTHEAST,
             world: Optional['pygame.Surface'] = None
     ) -> None:
         super(ScrollArea, self).__init__(object_id=scrollarea_id)
@@ -209,7 +218,7 @@ class ScrollArea(Base):
         for pos in self._scrollbar_positions:
             assert_position(pos)
 
-            if pos == _locals.POSITION_EAST or pos == _locals.POSITION_WEST:
+            if pos == POSITION_EAST or pos == POSITION_WEST:
                 sbar = ScrollBar(
                     length=self._view_rect.height,
                     onchange=self._on_vertical_scroll,
@@ -364,35 +373,35 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
 
-            dsize, dx, dy = 0, 0, 0
+            d_size, dx, dy = 0, 0, 0
             if self._menubar is not None:
-                dsize, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
+                d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
 
-            if pos == _locals.POSITION_WEST:
+            if pos == POSITION_WEST:
                 sbar.set_position(self._view_rect.left - self._scrollbar_thick + dx, self._view_rect.top + dy)
-            elif pos == _locals.POSITION_EAST:
+            elif pos == POSITION_EAST:
                 sbar.set_position(self._view_rect.right + dx, self._view_rect.top + dy)
-            elif pos == _locals.POSITION_NORTH:
+            elif pos == POSITION_NORTH:
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.top - self._scrollbar_thick + dy)
-            elif pos == _locals.POSITION_SOUTH:  # South
+            elif pos == POSITION_SOUTH:  # South
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.bottom + dy)
-            elif pos == _locals.POSITION_CENTER:
+            elif pos == POSITION_CENTER:
                 raise ValueError('center position cannot be applied to scrollbar')
             else:
                 raise ValueError('unknown position')
 
-            if pos in (_locals.POSITION_NORTH, _locals.POSITION_SOUTH) \
+            if pos in (POSITION_NORTH, POSITION_SOUTH) \
                     and self.get_hidden_width() != sbar.get_maximum() \
                     and self.get_hidden_width() != 0:
-                sbar.set_length(self._view_rect.width + dsize)
+                sbar.set_length(self._view_rect.width + d_size)
                 sbar.set_maximum(self.get_hidden_width())
                 sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
                                    (self._view_rect.width + self.get_hidden_width()))
 
-            elif pos in (_locals.POSITION_EAST, _locals.POSITION_WEST) \
+            elif pos in (POSITION_EAST, POSITION_WEST) \
                     and self.get_hidden_height() != sbar.get_maximum() \
                     and self.get_hidden_height() != 0:
-                sbar.set_length(self._view_rect.height + dsize)
+                sbar.set_length(self._view_rect.height + d_size)
                 sbar.set_maximum(self.get_hidden_height())
                 sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
                                    (self._view_rect.height + self.get_hidden_height()))
@@ -533,54 +542,54 @@ class ScrollArea(Base):
         # All scrollbars: the world is too large
         if self._world.get_height() > self._rect.height \
                 and self._world.get_width() > self._rect.width:
-            if _locals.POSITION_WEST in self._scrollbar_positions:
+            if POSITION_WEST in self._scrollbar_positions:
                 rect.left += self._scrollbar_thick
                 rect.width -= self._scrollbar_thick
-            if _locals.POSITION_EAST in self._scrollbar_positions:
+            if POSITION_EAST in self._scrollbar_positions:
                 rect.width -= self._scrollbar_thick
-            if _locals.POSITION_NORTH in self._scrollbar_positions:
+            if POSITION_NORTH in self._scrollbar_positions:
                 rect.top += self._scrollbar_thick
                 rect.height -= self._scrollbar_thick
-            if _locals.POSITION_SOUTH in self._scrollbar_positions:
+            if POSITION_SOUTH in self._scrollbar_positions:
                 rect.height -= self._scrollbar_thick
             return rect
 
         # Calculate the maximum variations introduces by the scrollbars
         bars_total_width = 0
         bars_total_height = 0
-        if _locals.POSITION_NORTH in self._scrollbar_positions:
+        if POSITION_NORTH in self._scrollbar_positions:
             bars_total_height += self._scrollbar_thick
-        if _locals.POSITION_SOUTH in self._scrollbar_positions:
+        if POSITION_SOUTH in self._scrollbar_positions:
             bars_total_height += self._scrollbar_thick
-        if _locals.POSITION_WEST in self._scrollbar_positions:
+        if POSITION_WEST in self._scrollbar_positions:
             bars_total_width += self._scrollbar_thick
-        if _locals.POSITION_EAST in self._scrollbar_positions:
+        if POSITION_EAST in self._scrollbar_positions:
             bars_total_width += self._scrollbar_thick
 
         if self._world.get_height() > self._rect.height:
-            if _locals.POSITION_WEST in self._scrollbar_positions:
+            if POSITION_WEST in self._scrollbar_positions:
                 rect.left += self._scrollbar_thick
                 rect.width -= self._scrollbar_thick
-            if _locals.POSITION_EAST in self._scrollbar_positions:
+            if POSITION_EAST in self._scrollbar_positions:
                 rect.width -= self._scrollbar_thick
             if self._world.get_width() > self._rect.width - bars_total_width:
-                if _locals.POSITION_NORTH in self._scrollbar_positions:
+                if POSITION_NORTH in self._scrollbar_positions:
                     rect.top += self._scrollbar_thick
                     rect.height -= self._scrollbar_thick
-                if _locals.POSITION_SOUTH in self._scrollbar_positions:
+                if POSITION_SOUTH in self._scrollbar_positions:
                     rect.height -= self._scrollbar_thick
 
         if self._world.get_width() > self._rect.width:
-            if _locals.POSITION_NORTH in self._scrollbar_positions:
+            if POSITION_NORTH in self._scrollbar_positions:
                 rect.top += self._scrollbar_thick
                 rect.height -= self._scrollbar_thick
-            if _locals.POSITION_SOUTH in self._scrollbar_positions:
+            if POSITION_SOUTH in self._scrollbar_positions:
                 rect.height -= self._scrollbar_thick
             if self._world.get_height() > self._rect.height - bars_total_height:
-                if _locals.POSITION_WEST in self._scrollbar_positions:
+                if POSITION_WEST in self._scrollbar_positions:
                     rect.left += self._scrollbar_thick
                     rect.width -= self._scrollbar_thick
-                if _locals.POSITION_EAST in self._scrollbar_positions:
+                if POSITION_EAST in self._scrollbar_positions:
                     rect.width -= self._scrollbar_thick
 
         return rect
@@ -639,8 +648,8 @@ class ScrollArea(Base):
         :param view: If ``True`` uses "view rect" instead of "rect"
         :return: ``True`` if the mouse is over the object
         """
-        mousex, mousey = pygame.mouse.get_pos()
-        return bool(self.to_absolute_position(self._view_rect if view else self._rect).collidepoint(mousex, mousey))
+        rect = self._view_rect if view else self._rect
+        return bool(self.to_absolute_position(rect).collidepoint(*pygame.mouse.get_pos()))
 
     def _on_horizontal_scroll(self, value: NumberType) -> None:
         """
@@ -670,25 +679,25 @@ class ScrollArea(Base):
                     and sbar.get_value() != value:
                 sbar.set_value(value)
 
-    def get_parent_scroll_value_percentual(self, orientation: str) -> Tuple[float]:
+    def get_parent_scroll_value_percentage(self, orientation: str) -> Tuple[float]:
         """
-        Get percentual scroll values of scroll and parents; if ``0`` the scroll is at top/left,
+        Get percentage scroll values of scroll and parents; if ``0`` the scroll is at top/left,
         ``1`` bottom/right.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
         :return: Value from ``0`` to ``1`` as a tuple; first item is the current scrollarea
         """
-        values = [self.get_scroll_value_percentual(orientation)]
+        values = [self.get_scroll_value_percentage(orientation)]
         parent = self._parent_scrollarea
         if parent is not None:
             while True:  # Recursive
                 if parent is None:
                     break
-                values.append(parent.get_scroll_value_percentual(orientation))
+                values.append(parent.get_scroll_value_percentage(orientation))
                 parent = parent._parent_scrollarea
         return tuple(values)
 
-    def get_scroll_value_percentual(self, orientation: str) -> float:
+    def get_scroll_value_percentage(self, orientation: str) -> float:
         """
         Get the scroll value in percentage; if ``0`` the scroll is at top/left, ``1`` bottom/right.
 
@@ -704,7 +713,7 @@ class ScrollArea(Base):
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == orientation:
-                return sbar.get_value_percentual()
+                return sbar.get_value_percentage()
         return -1
 
     def scroll_to(self, orientation: str, value: NumberType) -> 'ScrollArea':
@@ -721,9 +730,9 @@ class ScrollArea(Base):
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == orientation:
-                vmin, vmax = sbar.get_minmax()
-                delta = vmax - vmin
-                new_value = int(min(vmin + delta * float(value), vmax))
+                v_min, v_max = sbar.get_minmax()
+                delta = v_max - v_min
+                new_value = int(min(v_min + delta * float(value), v_max))
                 sbar.set_value(new_value)
                 break
         return self
@@ -852,10 +861,10 @@ class ScrollArea(Base):
         if self._parent_scrollarea is not None:
             px, py = self._parent_scrollarea.get_position()
             ox, oy = self._parent_scrollarea.get_offsets()
-            parx, pary = 0, 0
+            par_x, par_y = 0, 0
             if self._parent_scrollarea.get_parent() is not None:
-                parx, pary = self._parent_scrollarea.get_parent_position()
-            return px - ox + parx, py - oy + pary
+                par_x, par_y = self._parent_scrollarea.get_parent_position()
+            return px - ox + par_x, py - oy + par_y
         return 0, 0
 
     def to_absolute_position(self, virtual: 'pygame.Rect') -> 'pygame.Rect':
@@ -1037,14 +1046,7 @@ class ScrollArea(Base):
             widget_rect = widget.get_rect(to_real_position=True)
         else:
             widget_rect = widget
-        if hasattr(pygame, 'FINGERDOWN') and (
-                event.type == pygame.FINGERDOWN or event.type == pygame.FINGERUP or
-                event.type == pygame.FINGERMOTION):
-            display_size = self._menu.get_window_size()
-            finger_pos = (event.x * display_size[0], event.y * display_size[1])
-            return bool(widget_rect.collidepoint(*finger_pos))
-        else:
-            return bool(widget_rect.collidepoint(*event.pos))
+        return bool(widget_rect.collidepoint(*get_finger_pos(self._menu, event)))
 
     def get_decorator(self) -> 'Decorator':
         """

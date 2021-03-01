@@ -13,7 +13,7 @@ Migration Guide - v3 to v4
 - Menu ``clear`` method now receives ``reset`` optional argument.
 - Menu ``mainloop``, ``update`` and ``draw`` now raises ``RuntimeError`` if it's disabled. This behaviour can be changed though Menu private property ``_runtime_errors``.
 - Menu column/row positioning has changed, now ``column_max_width`` has a different behaviour. For setting the minimum width of columns use ``column_min_width``. Expect some minor changes to the global layout. Now is much more consistent.
-- Menu constructor changed from ``Menu(height, width, title, ...)`` to  ``Menu(title, width, height, ...)``.
+- Menu constructor changed from ``Menu(height, width, title, ...)`` to ``Menu(title, width, height, ...)``.
 - Menu method ``get_width()`` changes to``get_width(inner=False, widget=False)``.
 - Moved ``previsualization_width`` colorinput method to ``kwargs``.
 - Removed ``column_force_fit_text`` from ``Menu`` constructor. Use Widget ``set_max_width`` or ``set_max_height`` instead.
@@ -23,6 +23,7 @@ Migration Guide - v3 to v4
 - Renamed ``ColorInput`` constants ``TYPE_HEX``, ``TYPE_RGB``, ``HEX_FORMAT_LOWER``, ``HEX_FORMAT_NONE``, and ``HEX_FORMAT_UPPER``, to ``COLORINPUT_*``.
 - Renamed ``touchscreen_enabled`` to ``touchscreen`` in ``Menu`` constructor.
 - Renamed ``Widget`` method from ``set_selected(selected=True)`` to ``select(status=True, update_menu=False)``.
+- Renamed Menu constructor parameter ``menu_position`` to ``position``.
 - Renamed Selector ``elements`` to ``items``.
 - Renamed Selector ``update_elements`` to ``update_items``.
 - Renamed Theme ``menubar_close_button`` to ``title_close_button``.

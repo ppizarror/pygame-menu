@@ -31,9 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ExamplesTest']
 
-import pygame
-import unittest
 from test._utils import test_reset_surface, MenuUtils, PygameEventUtils
+import unittest
+
+import pygame
 
 import pygame_menu.examples.game_selector as game_selector
 import pygame_menu.examples.multi_input as multi_input
@@ -198,6 +199,7 @@ class ExamplesTest(unittest.TestCase):
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)
         self.assertTrue(app.menu._disable_draw)
-        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]), app.menu)
+        app.process_events(PygameEventUtils.keydown([pygame.K_p, pygame.K_q, pygame.K_e, pygame.K_s, pygame.K_c]),
+                           app.menu)
         self.assertFalse(app.menu._disable_draw)
         test_reset_surface()

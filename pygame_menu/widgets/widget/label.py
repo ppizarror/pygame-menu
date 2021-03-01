@@ -36,7 +36,8 @@ import pygame
 from pygame_menu.utils import assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, ColorInputType
+from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, \
+    ColorInputType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -48,7 +49,7 @@ class Label(Widget):
     :param label_id: Label ID
     :param onselect: Function when selecting the label widget
     """
-    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
+    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
 
     def __init__(
             self,
@@ -131,5 +132,8 @@ class Label(Widget):
 
         self.force_menu_surface_update()
 
-    def update(self, *args, **kwargs) -> bool:
+    def update(self, events: EventVectorType) -> bool:
+        for event in events:
+            if self._check_mouseover(event):
+                break
         return False

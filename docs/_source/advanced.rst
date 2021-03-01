@@ -41,7 +41,7 @@ basic widget should contain this code:
         def _draw(self, surface):
             """
             Draw the widget on a given surface.
-            This method must be overriden by all classes.
+            This method must be overridden by all classes.
             """
             # Draw the self._surface pygame object on the given surface
             surface.blit(self._surface, self._rect.topleft)
@@ -83,7 +83,7 @@ basic widget should contain this code:
             ...
             return False
 
-.. warning:: After creating the widget, it must be added to the  ``__init__.py`` file of the
+.. warning:: After creating the widget, it must be added to the ``__init__.py`` file of the
              :py:mod:`pygame_menu.widgets` package.
 
              .. code-block:: python
@@ -97,7 +97,7 @@ can be used.
 
 .. code-block:: python
 
-    import pygame_menu.widgets as _widgets
+    import pygame_menu.widgets
 
     class WidgetManager(object):
         ...
@@ -109,7 +109,7 @@ can be used.
             attributes = self._filter_widget_attributes(kwargs)
 
             # Create your widget
-            widget = _widgets.MyWidget(..., **kwargs)
+            widget = pygame_menu.widgets.MyWidget(..., **kwargs)
 
             self._configure_widget(widget=widget, **attributes)
             widget.set_default_value(default) # May add the default value
@@ -131,7 +131,7 @@ can be used.
 
 .. note::
 
-    The widget ``_render`` method should allways call
+    The widget ``_render`` method should always call
     :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` method, this
     ensures that Menu updates the surface and the positioning.
 
@@ -197,7 +197,7 @@ contain the following code:
 
 .. warning::
 
-    After creating the selection effect, it must be added to  ``__init__.py`` file of the
+    After creating the selection effect, it must be added to ``__init__.py`` file of the
     :py:mod:`pygame_menu.widgets` package.
 
     .. code-block:: python

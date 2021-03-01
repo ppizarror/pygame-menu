@@ -40,7 +40,8 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets import Widget
 
-from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, Optional, NumberInstance
+from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, Optional, \
+    NumberInstance, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -134,6 +135,12 @@ class Image(Widget):
         self._surface = None
         return self
 
+    def set_max_width(self, *args, **kwargs) -> 'Image':
+        return self
+
+    def set_max_height(self, *args, **kwargs) -> 'Image':
+        return self
+
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
 
@@ -146,5 +153,8 @@ class Image(Widget):
             return True
         self.force_menu_surface_update()
 
-    def update(self, *args, **kwargs) -> bool:
+    def update(self, events: EventVectorType) -> bool:
+        for event in events:
+            if self._check_mouseover(event):
+                break
         return False

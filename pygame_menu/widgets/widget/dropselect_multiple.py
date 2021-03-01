@@ -39,7 +39,7 @@ from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
 
 from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, ColorType, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, Tuple2NumberType
+    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, Tuple2NumberType, CursorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -95,6 +95,7 @@ class DropSelectMultiple(DropSelect):
     :param selection_option_active_font_color: Active option(s) font color
     :param selection_option_border_color: Option border color
     :param selection_option_border_width: Option border width
+    :param selection_option_cursor: Option cursor. If ``None`` use the same cursor as the widget
     :param selection_option_font: Option font. If ``None`` use the same font as the widget
     :param selection_option_font_color: Option font color
     :param selection_option_font_size: Option font size. If ``None`` use the 100% of the widget font size
@@ -146,6 +147,7 @@ class DropSelectMultiple(DropSelect):
             selection_option_active_font_color: ColorInputType = (0, 0, 0),
             selection_option_border_color: ColorInputType = (220, 220, 220),
             selection_option_border_width: int = 1,
+            selection_option_cursor: CursorInputType = None,
             selection_option_font: Optional[FontType] = None,
             selection_option_font_color: ColorInputType = (0, 0, 0),
             selection_option_font_size: Optional[int] = None,
@@ -182,6 +184,7 @@ class DropSelectMultiple(DropSelect):
             selection_infinite=selection_infinite,
             selection_option_border_color=selection_option_border_color,
             selection_option_border_width=selection_option_border_width,
+            selection_option_cursor=selection_option_cursor,
             selection_option_font=selection_option_font,
             selection_option_font_color=selection_option_font_color,
             selection_option_font_size=selection_option_font_size,
@@ -401,13 +404,13 @@ class DropSelectMultiple(DropSelect):
 
         :return: None
         """
-        for bindx in range(len(self._option_buttons)):
-            btn = self._option_buttons[bindx]
-            if bindx == self._index:
+        for b_ind_x in range(len(self._option_buttons)):
+            btn = self._option_buttons[b_ind_x]
+            if b_ind_x == self._index:
                 btn.set_background_color(self._selection_option_active_bgcolor)
                 btn.update_font({'color': self._selection_option_active_font_color})
                 btn.scroll_to_widget(margin=btn.get_height() if self._open_middle else 5, scroll_parent=False)
-            elif bindx in self._selected_indices:
+            elif b_ind_x in self._selected_indices:
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})
             else:
@@ -415,7 +418,7 @@ class DropSelectMultiple(DropSelect):
                 btn.update_font({'color': self._selection_option_font_style['color']})
             deco = btn.get_decorator()
             if btn.has_attribute('deco_on'):
-                if bindx in self._selected_indices:
+                if b_ind_x in self._selected_indices:
                     deco.enable(btn.get_attribute('deco_on'))
                     deco.disable(btn.get_attribute('deco_off'))
                 else:

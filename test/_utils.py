@@ -33,12 +33,17 @@ __all__ = [
 
     # Globals
     'PYGAME_V2',
-    'surface',
-    'test_reset_surface',
     'TEST_THEME',
+    'WIDGET_MOUSEOVER',
+    'WIDGET_TOP_CURSOR',
     'WINDOW_SIZE',
 
-    # Utils
+    # Methods
+    'reset_widgets_over',
+    'surface',
+    'test_reset_surface',
+
+    # Class utils (static)
     'PygameEventUtils',
     'MenuUtils'
 
@@ -50,7 +55,9 @@ import pygame
 import pygame_menu
 
 from pygame_menu.font import FONT_EXAMPLES
-from pygame_menu.utils import assert_vector
+from pygame_menu.locals import FINGERDOWN, FINGERMOTION, FINGERUP
+from pygame_menu.utils import assert_vector, PYGAME_V2
+from pygame_menu.widgets.core.widget import check_widget_mouseleave
 
 # noinspection PyProtectedMember
 from pygame_menu._types import NumberType, Union, List, Tuple, Optional, Tuple2IntType, EventType, \
@@ -65,25 +72,22 @@ WINDOW_SIZE = (600, 600)  # Width, height
 pygame.init()
 surface = pygame.display.set_mode(WINDOW_SIZE)
 
-# Events compatibility with lower pygame versions
-FINGERDOWN = -1
-if hasattr(pygame, 'FINGERDOWN'):
-    FINGERDOWN = pygame.FINGERDOWN
-
-FINGERUP = -1
-if hasattr(pygame, 'FINGERUP'):
-    FINGERUP = pygame.FINGERUP
-
-FINGERMOTION = -1
-if hasattr(pygame, 'FINGERMOTION'):
-    FINGERMOTION = pygame.FINGERMOTION
-
 TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
 TEST_THEME.widget_margin = (0, 10)
 TEST_THEME.widget_padding = 0
 TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
 
-PYGAME_V2 = pygame.version.vernum[0] >= 2
+WIDGET_MOUSEOVER = pygame_menu.widgets.core.widget.WIDGET_MOUSEOVER
+WIDGET_TOP_CURSOR = pygame_menu.widgets.core.widget.WIDGET_TOP_CURSOR
+
+
+def reset_widgets_over() -> None:
+    """
+    Reset widget over.
+
+    :return: None
+    """
+    check_widget_mouseleave(force=True)
 
 
 def test_reset_surface() -> None:
@@ -316,7 +320,8 @@ class PygameEventUtils(object):
             evtype: int = pygame.MOUSEBUTTONUP,
             rel: Tuple2IntType = (0, 0),
             button: int = 3,
-            testmode: bool = True
+            testmode: bool = True,
+            update_mouse: bool = False
     ) -> EventListType:
         """
         Generate a mouse click event.
@@ -328,6 +333,7 @@ class PygameEventUtils(object):
         :param rel: Rel position (relative movement)
         :param button: Which button presses, ``1`` to ``3`` are the main buttons; ``4`` and ``5`` is the wheel
         :param testmode: Event is in test mode
+        :param update_mouse: If ``True`` updates the mouse position
         :return: Event
         """
         assert isinstance(button, int) and button > 0
@@ -339,6 +345,9 @@ class PygameEventUtils(object):
                                            'rel': rel,
                                            'test': testmode
                                        })
+        if update_mouse:
+            print('set mouse position', (x, y))
+            pygame.mouse.set_pos((x, y))
         if inlist:
             event_obj = [event_obj]
         return event_obj
@@ -382,6 +391,71 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
+    def topleft_rect_mouse_motion(
+            rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+            inlist: bool = True,
+            delta: Tuple2IntType = (0, 0),
+            testmode: bool = True,
+            update_mouse: bool = False
+    ) -> EventListType:
+        """
+        Mouse motion event.
+
+        :param rect: Widget, Rect object, or Tuple
+        :param inlist: If ``True`` return the event within a list
+        :param delta: Add tuple to rect position
+        :param testmode: Event is in test mode
+        :param update_mouse: If ``True`` updates the mouse position
+        :return: Event
+        """
+        if isinstance(rect, pygame_menu.widgets.Widget):
+            x, y = rect.get_rect(to_real_position=True, render=True).topleft
+        elif isinstance(rect, pygame.Rect):
+            x, y = rect.topleft
+        elif isinstance(rect, (tuple, list)):
+            x, y = rect[0], rect[1]
+        else:
+            raise ValueError('unknown rect type')
+        return PygameEventUtils.middle_rect_click(
+            rect=(x, y),
+            evtype=pygame.MOUSEMOTION,
+            inlist=inlist,
+            delta=delta,
+            testmode=testmode,
+            update_mouse=update_mouse
+        )
+
+    @staticmethod
+    def middle_rect_mouse_motion(
+            rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
+            inlist: bool = True,
+            rel: Tuple2IntType = (0, 0),
+            delta: Tuple2IntType = (0, 0),
+            testmode: bool = True,
+            update_mouse: bool = False
+    ) -> EventListType:
+        """
+        Mouse motion event.
+
+        :param rect: Widget, Rect object, or Tuple
+        :param inlist: If ``True`` return the event within a list
+        :param rel: Rel position (relative movement)
+        :param delta: Add tuple to rect position
+        :param testmode: Event is in test mode
+        :param update_mouse: If ``True`` updates the mouse position
+        :return: Event
+        """
+        return PygameEventUtils.middle_rect_click(
+            rect=rect,
+            evtype=pygame.MOUSEMOTION,
+            rel=rel,
+            inlist=inlist,
+            delta=delta,
+            testmode=testmode,
+            update_mouse=update_mouse
+        )
+
+    @staticmethod
     def middle_rect_click(
             rect: Union['pygame_menu.widgets.Widget', 'pygame.Rect', Tuple2NumberType],
             menu: Optional['pygame_menu.Menu'] = None,
@@ -390,7 +464,8 @@ class PygameEventUtils(object):
             rel: Tuple2IntType = (0, 0),
             button: int = 3,
             delta: Tuple2IntType = (0, 0),
-            testmode: bool = True
+            testmode: bool = True,
+            update_mouse: bool = False
     ) -> EventListType:
         """
         Return event clicking the middle of a given rect.
@@ -403,19 +478,18 @@ class PygameEventUtils(object):
         :param button: Which button presses, ``1`` to ``3`` are the main buttons; ``4`` and ``5`` is the wheel
         :param delta: Add tuple to rect position
         :param testmode: Event is in test mode
+        :param update_mouse: If ``True`` updates the mouse position
         :return: Event
         """
         assert isinstance(button, int) and button > 0
         assert_vector(rel, 2, int)
         assert_vector(delta, 2, int)
         if isinstance(rect, pygame_menu.widgets.Widget):
-            x, y = rect.get_rect(to_real_position=True, apply_padding=False, render=True).center
+            x, y = rect.get_rect(to_real_position=True, render=True).center
             menu = rect.get_menu()
         elif isinstance(rect, pygame.Rect):
             x, y = rect.center
-        elif isinstance(rect, tuple):
-            x, y = rect
-        elif isinstance(rect, list):
+        elif isinstance(rect, (tuple, list)):
             x, y = rect[0], rect[1]
         else:
             raise ValueError('unknown rect type')
@@ -441,7 +515,8 @@ class PygameEventUtils(object):
             evtype=evtype,
             rel=rel,
             button=button,
-            testmode=testmode
+            testmode=testmode,
+            update_mouse=update_mouse
         )
 
 
@@ -543,10 +618,10 @@ class MenuUtils(object):
             columns=columns,
             enabled=enabled,
             height=height,
-            menu_position=(position_x, position_y),
             mouse_motion_selection=mouse_motion_selection,
             onclose=onclose,
             onreset=onreset,
+            position=(position_x, position_y),
             rows=rows,
             theme=theme,
             title=title,

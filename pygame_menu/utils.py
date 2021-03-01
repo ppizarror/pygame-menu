@@ -40,15 +40,22 @@ __all__ = [
     'assert_position',
     'assert_vector',
     'check_key_pressed_valid',
+    'fill_gradient',
     'format_color',
+    'get_finger_pos',
     'is_callable',
     'make_surface',
+    'mouse_motion_current_mouse_position',
     'parse_padding',
+    'set_pygame_cursor',
     'uuid4',
     'widget_terminal_title',
 
+    # Constants
+    'PYGAME_V2',
+
     # Classes
-    'TerminalColors',
+    'TerminalColors'
 
 ]
 
@@ -59,11 +66,14 @@ import warnings
 
 import pygame
 import pygame_menu
-import pygame_menu.locals as _locals
+
+from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, \
+    POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, \
+    POSITION_SOUTHWEST, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType, EventType
+    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 
@@ -76,18 +86,22 @@ def assert_alignment(align: str) -> None:
     :return: None
     """
     assert isinstance(align, str), 'alignment "{0}" must be a string'.format(align)
-    assert align in (_locals.ALIGN_LEFT, _locals.ALIGN_CENTER, _locals.ALIGN_RIGHT), \
+    assert align in (ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT), \
         'incorrect alignment value "{0}"'.format(align)
 
 
-def assert_color(color: Union[ColorInputType, List[int]]) -> ColorType:
+def assert_color(
+        color: Union[ColorInputType, List[int]],
+        warn_if_invalid: bool = True
+) -> ColorType:
     """
     Assert that a certain color is valid.
 
     :param color: Object color
+    :param warn_if_invalid: If ``True`` warns if the color is invalid
     :return: Formatted color if valid, else, throws an ``AssertionError`` exception
     """
-    color = format_color(color)
+    color = format_color(color, warn_if_invalid=warn_if_invalid)
     assert isinstance(color, VectorInstance), \
         'color must be a tuple or list, not type "{0}"'.format(type(color))
     assert 4 >= len(color) >= 3, \
@@ -106,17 +120,15 @@ def assert_color(color: Union[ColorInputType, List[int]]) -> ColorType:
     return color
 
 
-def assert_cursor(cursor: Optional[Union[int, 'pygame.cursors.Cursor']]) -> None:
+def assert_cursor(cursor: CursorInputType) -> None:
     """
     Assert a given cursor is valid.
 
     :param cursor: Cursor object
     :return: None
     """
-    if hasattr(pygame.cursors, 'Cursor'):
-        assert isinstance(cursor, (int, type(pygame.cursors.Cursor), type(None)))
-    else:
-        assert isinstance(cursor, (int, type(None)))
+    assert isinstance(cursor, CursorInputInstance), \
+        'cursor instance invalid, it can be None, an integer, or pygame.cursors.Cursor'
 
 
 def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
@@ -128,7 +140,8 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(list_vector, (tuple, list))
+    assert isinstance(list_vector, (tuple, list)), \
+        'list_vector "{0}" must be a tuple or list'.format(list_vector)
     for v in list_vector:
         assert_vector(v, length)
 
@@ -140,8 +153,9 @@ def assert_orientation(orientation: str) -> None:
     :param orientation: Object orientation
     :return: None
     """
-    assert isinstance(orientation, str), 'orientation must be a string'
-    assert orientation in [_locals.ORIENTATION_HORIZONTAL, _locals.ORIENTATION_VERTICAL], \
+    assert isinstance(orientation, str), \
+        'orientation "{0}" must be a string'.format(orientation)
+    assert orientation in [ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL], \
         'invalid orientation value "{0}"'.format(orientation)
 
 
@@ -152,12 +166,10 @@ def assert_position(position: str) -> None:
     :param position: Object position
     :return: None
     """
-    assert isinstance(position, str), 'position must be a string'
-    assert position in [_locals.POSITION_WEST, _locals.POSITION_SOUTHWEST,
-                        _locals.POSITION_SOUTH, _locals.POSITION_SOUTHEAST,
-                        _locals.POSITION_EAST, _locals.POSITION_NORTH,
-                        _locals.POSITION_NORTHWEST, _locals.POSITION_NORTHEAST,
-                        _locals.POSITION_CENTER], \
+    assert isinstance(position, str), \
+        'position "{0}" must be a string'.format(position)
+    assert position in [POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_EAST,
+                        POSITION_NORTH, POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER], \
         'invalid position value "{0}"'.format(position)
 
 
@@ -203,7 +215,67 @@ def check_key_pressed_valid(event: EventType) -> bool:
     return not bad_event
 
 
-def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
+def fill_gradient(
+        surface: 'pygame.Surface',
+        color: ColorInputType,
+        gradient: ColorInputType,
+        rect: Optional['pygame.Rect'] = None,
+        vertical: bool = True,
+        forward: bool = True
+) -> None:
+    """
+    Fill a surface with a gradient pattern.
+
+    :param surface: Surface to fill
+    :param color: Starting color
+    :param gradient: Final color
+    :param rect: Area to fill; default is surface's rect
+    :param vertical: True=vertical; False=horizontal
+    :param forward: True=forward; False=reverse
+    :return: None
+    """
+    if rect is None:
+        rect = surface.get_rect()
+    x1, x2 = rect.left, rect.right
+    y1, y2 = rect.top, rect.bottom
+    color = assert_color(color)
+    gradient = assert_color(gradient)
+    if vertical:
+        h = y2 - y1
+    else:
+        h = x2 - x1
+    if forward:
+        a, b = color, gradient
+    else:
+        b, a = color, gradient
+    rate = (
+        float(b[0] - a[0]) / h,
+        float(b[1] - a[1]) / h,
+        float(b[2] - a[2]) / h
+    )
+    fn_line = pygame.draw.line
+    if vertical:
+        for line in range(y1, y2):
+            color = (
+                min(max(a[0] + (rate[0] * (line - y1)), 0), 255),
+                min(max(a[1] + (rate[1] * (line - y1)), 0), 255),
+                min(max(a[2] + (rate[2] * (line - y1)), 0), 255)
+            )
+            fn_line(surface, color, (x1, line), (x2, line))
+    else:
+        for col in range(x1, x2):
+            color = (
+                min(max(a[0] + (rate[0] * (col - x1)), 0), 255),
+                min(max(a[1] + (rate[1] * (col - x1)), 0), 255),
+                min(max(a[2] + (rate[2] * (col - x1)), 0), 255)
+            )
+            fn_line(surface, color, (col, y1), (col, y2))
+
+
+def format_color(
+        color: Union[ColorInputType, Any],
+        warn_if_invalid: bool = True
+) -> Union[ColorType, Any]:
     """
     Format color from string, int, or tuple to tuple type.
 
@@ -215,6 +287,7 @@ def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
     - tuple/list of int color values: ``(R, G, B, A)`` or ``(R, G, B)``, where R, G, B, and A are int values in the range of ``0`` to ``255`` inclusive, the A (alpha) value defaults to ``255`` (opaque) if not provided
 
     :param color: Color to format. If format is valid returns the same input value
+    :param warn_if_invalid: If ``True`` warns if the color is invalid
     :return: Color in (r, g, b, a) format
     """
     if not isinstance(color, ColorInputInstance):
@@ -230,11 +303,31 @@ def format_color(color: Union[ColorInputType, Any]) -> Union[ColorType, Any]:
             else:
                 c = pygame.Color(color)
         except ValueError:
-            warnings.warn('invalid color value "{0}"'.format(color))
+            if warn_if_invalid:
+                warnings.warn('invalid color value "{0}"'.format(color))
+            else:
+                raise
             return color
     else:
         c = color
     return c.r, c.g, c.b, c.a
+
+
+def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
+    """
+    Return the position from finger (or mouse) event on x-axis and y-axis.
+
+    :param menu: Menu object for relative positioning in finger events
+    :param event: Pygame event object
+    :return: (x, y) position
+    """
+    if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
+        assert menu is not None, \
+            'menu reference cannot be none while using finger position'
+        display_size = menu.get_window_size()
+        finger_pos = (int(event.x * display_size[0]), int(event.y * display_size[1]))
+        return finger_pos
+    return event.pos
 
 
 def is_callable(func: Any) -> bool:
@@ -275,6 +368,16 @@ def make_surface(width: NumberType, height: NumberType,
     return surface
 
 
+def mouse_motion_current_mouse_position() -> EventType:
+    """
+    Returns a pygame event type MOUSEMOTION in the current mouse position.
+
+    :return: Event
+    """
+    x, y = pygame.mouse.get_pos()
+    return pygame.event.Event(pygame.MOUSEMOTION, {'pos': (int(x), int(y))})
+
+
 def parse_padding(padding: PaddingType) -> Tuple4IntType:
     """
     Get the padding value from tuple.
@@ -311,78 +414,100 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
             return padding[0], padding[1], padding[2], padding[3]
 
 
-def uuid4() -> str:
+def set_pygame_cursor(cursor: CursorInputType) -> None:
+    """
+    Set pygame cursor.
+
+    :param cursor: Cursor object
+    :return: None
+    """
+    try:
+        if cursor is not None:
+            # noinspection PyArgumentList
+            pygame.mouse.set_cursor(cursor)
+    except (pygame.error, TypeError):
+        msg = 'could not establish widget cursor, invalid value {0}'.format(cursor)
+        warnings.warn(msg)
+
+
+def uuid4(short: bool = False) -> str:
     """
     Create custom version of uuid4.
 
+    :param short: If ``True`` only returns the first 8 chars of the uuid, else, 18
     :return: UUID of 18 chars
     """
-    return str(uuid.uuid4())[:18]
+    return str(uuid.uuid4())[:18 if not short else 8]
 
 
 def widget_terminal_title(
         widget: 'pygame_menu.widgets.Widget',
-        widget_indx: int = -1,
+        widget_index: int = -1,
         current_index: int = -1
 ) -> str:
     """
     Return widget title to be printed on terminals.
 
     :param widget: Widget to get title from
-    :param widget_indx: Widget index
+    :param widget_index: Widget index
     :param current_index: Menu index
     :return: Widget title
     """
-    wclassid = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
+    w_class_id = TerminalColors.BOLD + widget.get_class_id() + TerminalColors.ENDC
     if isinstance(widget, pygame_menu.widgets.Frame):
-        wtitle = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
-        wtitle += '{0} - {3}[{1},{2},'.format(wclassid, *widget.get_indices(), TerminalColors.LGREEN)
+        w_title = TerminalColors.BRIGHT_WHITE + '┌━' + TerminalColors.ENDC
+        w_title += '{0} - {3}[{1},{2},'.format(w_class_id, *widget.get_indices(), TerminalColors.LGREEN)
         if widget.horizontal:
-            wtitle += 'H] '
+            w_title += 'H] '
         else:
-            wtitle += 'V] '
+            w_title += 'V] '
         if widget.is_scrollable:
             wsz = widget.get_inner_size()
             wsm = widget.get_max_size()
             wsh = wsm[0] if wsm[0] == wsz[0] else '{0}→{1}'.format(wsm[0], wsz[0])
             wsv = wsm[1] if wsm[1] == wsz[1] else '{0}→{1}'.format(wsm[1], wsz[1])
-            wtitle += '∑ [{0},{1}] '.format(wsh, wsv)
-        wtitle += TerminalColors.ENDC
+            w_title += '∑ [{0},{1}] '.format(wsh, wsv)
+        w_title += TerminalColors.ENDC
     else:
         if widget.get_title() != '':
-            wtitle = '{0} - {1} - '.format(wclassid,
-                                           TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
+            w_title = '{0} - {1} - '.format(w_class_id,
+                                            TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
         else:
-            wtitle = wclassid
+            w_title = w_class_id + ' - '
 
     # Column/Row position
-    wtitle += TerminalColors.INDIGO
+    w_title += TerminalColors.INDIGO
     cr = widget.get_col_row_index()
-    wtitle += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
-    wtitle += TerminalColors.ENDC
+    w_title += '{' + str(cr[0]) + ',' + str(cr[1]) + '}'
+    w_title += TerminalColors.ENDC
 
     # Add position
-    wtitle += TerminalColors.MAGENTA
-    wtitle += ' ({0},{1})'.format(*widget.get_position())
-    wtitle += TerminalColors.ENDC
+    w_title += TerminalColors.MAGENTA
+    w_title += ' ({0},{1})'.format(*widget.get_position())
+    w_title += TerminalColors.ENDC
+
+    # Add size
+    w_title += TerminalColors.BLUE
+    w_title += ' ({0},{1})'.format(*widget.get_size())
+    w_title += TerminalColors.ENDC
 
     # Add mods
-    wtitle += TerminalColors.CYAN
+    w_title += TerminalColors.CYAN
     if widget.is_floating():
-        wtitle += ' Φ'
+        w_title += ' Φ'
     if not widget.is_visible():
-        wtitle += ' ╳'
+        w_title += ' ╳'
     if not widget.is_selectable:
-        wtitle += ' β'
+        w_title += ' β'
     if widget.is_selected():
-        wtitle += TerminalColors.BOLD + ' ⟵'
-        if current_index != -1 and current_index != widget_indx:
-            wtitle += '! [{0}->{1}]'.format(widget_indx, current_index)
+        w_title += TerminalColors.BOLD + ' ⟵'
+        if current_index != -1 and current_index != widget_index:
+            w_title += '! [{0}->{1}]'.format(widget_index, current_index)
     if widget.get_menu() is None:
-        wtitle += ' !▲'
-    wtitle += TerminalColors.ENDC
+        w_title += ' !▲'
+    w_title += TerminalColors.ENDC
 
-    return wtitle
+    return w_title
 
 
 class TerminalColors(object):
@@ -391,6 +516,7 @@ class TerminalColors(object):
 
     See https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html.
     """
+    BLUE = '\u001b[38;5;27m'
     BOLD = '\033[1m'
     BRIGHT_MAGENTA = '\u001b[35;1m'
     BRIGHT_WHITE = '\u001b[37;1m'

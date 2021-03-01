@@ -31,6 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Main class
+    'Sound',
+
     # Sound types
     'SOUND_TYPE_CLICK_MOUSE',
     'SOUND_TYPE_CLOSE_MENU',
@@ -52,10 +55,7 @@ __all__ = [
     'SOUND_EXAMPLE_KEY_DELETE',
     'SOUND_EXAMPLE_OPEN_MENU',
     'SOUND_EXAMPLE_WIDGET_SELECTION',
-    'SOUND_EXAMPLES',
-
-    # Class
-    'Sound'
+    'SOUND_EXAMPLES'
 
 ]
 
@@ -374,11 +374,11 @@ class Sound(Base):
             return False
 
         # Play the sound
-        soundtime = time.time()
+        sound_time = time.time()
 
         # If the previous sound is the same and has not ended (max 10% overlap)
         if sound['type'] != self._last_play or \
-                soundtime - self._last_time >= 0.1 * sound['length'] or self._uniquechannel:
+                sound_time - self._last_time >= 0.1 * sound['length'] or self._uniquechannel:
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()
@@ -392,7 +392,7 @@ class Sound(Base):
 
         # Store last execution
         self._last_play = sound['type']
-        self._last_time = soundtime
+        self._last_time = sound_time
         return True
 
     def play_click_mouse(self) -> 'Sound':

@@ -2,7 +2,7 @@
 ==========================
 Migration Guide - v2 to v3
 ==========================
-    
+
 - Removed from library
     - Renamed library ``pygameMenu`` to ``pygame_menu``
     - Removed all configuration variables from ``pygameMenu.config``

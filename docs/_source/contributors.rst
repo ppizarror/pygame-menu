@@ -18,11 +18,13 @@ Other contributors:
 - `ironsmile <https://github.com/ironsmile>`_
 - `jwllee <https://github.com/jwllee>`_
 - `maditnerd <https://github.com/maditnerd>`_
+- `notrurs <https://github.com/notrurs>`_
 - `NullP01nt <https://github.com/NullP01nt>`_
+- `PandaRoux8 <https://github.com/PandaRoux8>`_
 - `Rifqi31 <https://github.com/rifqi31>`_
 - `thisIsMikeKane <https://github.com/thisIsMikeKane>`_
 - `werdeil <https://github.com/werdeil>`_
-- `tzPaw <https://github.com/zPaw>`_
+- `zPaw <https://github.com/zPaw>`_
 
 Ideas and contributions are always welcome. Any found bugs or enhancement suggestions should be posted on
 `GitHub project page <https://github.com/ppizarror/pygame-menu>`_ .

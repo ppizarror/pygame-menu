@@ -33,8 +33,9 @@ __all__ = ['Button']
 
 import pygame
 import pygame_menu
-import pygame_menu.controls as _controls
 
+from pygame_menu.controls import KEY_APPLY, JOY_BUTTON_SELECT
+from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import is_callable, assert_color
 from pygame_menu.widgets.core import Widget
 
@@ -60,7 +61,7 @@ class Button(Widget):
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
-    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (colot, offset, width)
+    _last_underline: List[Union[str, Optional[Tuple[ColorType, int, int]]]]  # deco id, (color, offset, width)
     to_menu: bool
 
     def __init__(
@@ -78,8 +79,8 @@ class Button(Widget):
             title=title,
             widget_id=button_id
         )
-        self.to_menu = False  # True if the button opens a new Menu
         self._last_underline = ['', None]
+        self.to_menu = False  # True if the button opens a new Menu
 
     def _apply_font(self) -> None:
         pass
@@ -97,7 +98,8 @@ class Button(Widget):
         :return: None
         """
         if callback is not None:
-            assert is_callable(callback), 'callback must be callable (function-type) or None'
+            assert is_callable(callback), \
+                'callback must be callable (function-type) or None'
         self._onselect = callback
 
     def update_callback(self, callback: Callable, *args) -> None:
@@ -114,7 +116,8 @@ class Button(Widget):
         :param args: Arguments used by the function once triggered
         :return: None
         """
-        assert is_callable(callback), 'only callable (function-type) are allowed'
+        assert is_callable(callback), \
+            'only callable (function-type) are allowed'
 
         # If return is a Menu object, remove it from submenus list
         if self._menu is not None and self._onreturn is not None and self.to_menu:
@@ -123,7 +126,8 @@ class Button(Widget):
             assert self._menu.in_submenu(submenu), \
                 'pointed menu is not in submenu list of parent container'
             # noinspection PyProtectedMember
-            assert self._menu._remove_submenu(submenu), 'submenu could not be removed'
+            assert self._menu._remove_submenu(submenu), \
+                'submenu could not be removed'
             self.to_menu = False
 
         self._args = args or []
@@ -201,9 +205,13 @@ class Button(Widget):
 
         for event in events:
 
-            if self._keyboard_enabled and event.type == pygame.KEYDOWN and event.key == _controls.KEY_APPLY or \
-                    self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN and \
-                    event.button == _controls.JOY_BUTTON_SELECT:
+            # Check mouse over
+            self._check_mouseover(event, rect)
+
+            # User applies with key
+            if event.type == pygame.KEYDOWN and self._keyboard_enabled and event.key == KEY_APPLY or \
+                    event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
+                    event.button == JOY_BUTTON_SELECT:
                 if self.to_menu:
                     self._sound.play_open_menu()
                 else:
@@ -211,14 +219,16 @@ class Button(Widget):
                 self.apply()
                 updated = True
 
-            elif self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+            # User clicks the button
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 self._sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()
                     updated = True
 
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
+            # User touches the button
+            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
                 self._sound.play_click_mouse()
                 window_size = self._menu.get_window_size()
                 finger_pos = (event.x * window_size[0], event.y * window_size[1])

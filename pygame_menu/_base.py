@@ -41,7 +41,9 @@ class Base(object):
     Base object.
     """
     _attributes: Dict[str, Any]
+    _class_id__repr__: bool
     _id: str
+    _id__repr__: bool
 
     def __init__(self, object_id: str) -> None:
         """
@@ -53,7 +55,34 @@ class Base(object):
         if len(object_id) == 0:
             object_id = uuid4()
         self._attributes = {}
+        self._class_id__repr__ = False  # If True, repr/str of the object is class id
         self._id = object_id
+        self._id__repr__ = False  # If True, repr/str of the object adds object id
+
+    def __repr__(self) -> str:
+        """
+        Repr print of object.
+
+        :return: Object str status
+        """
+        sup_repr = super(Base, self).__repr__()
+        assert not (self._class_id__repr__ and self._id__repr__), \
+            'class id and id __repr__ cannot be True at the same time'
+        if self._class_id__repr__:
+            return self.get_class_id()
+        if self._id__repr__:
+            return sup_repr.replace(' object at ', '["{0}"] object at '.format(self.get_id()))
+        return sup_repr
+
+    def _update__repr___(self, obj: 'Base') -> None:
+        """
+        Update __repr__ from other Base object.
+
+        :param obj: External base object to copy from
+        :return: None
+        """
+        self._class_id__repr__ = obj._class_id__repr__
+        self._id__repr__ = obj._id__repr__
 
     def set_attribute(self, key: str, value: Any = None) -> 'Base':
         """

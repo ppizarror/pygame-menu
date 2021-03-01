@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['DecoratorTest']
 
+from test._utils import MenuUtils, surface, TEST_THEME
 import copy
-import timeit
-import unittest
 import pygame
 import pygame_menu
-from test._utils import MenuUtils, surface, TEST_THEME
+import timeit
+import unittest
 
 # Configure the tests
 TEST_TIME_DRAW = False
@@ -191,21 +191,21 @@ class DecoratorTest(unittest.TestCase):
             assert isinstance(surf, pygame.Surface)
             assert isinstance(obj, pygame_menu.widgets.Button)
 
-        callid = deco.add_callable(fun)
+        call_id = deco.add_callable(fun)
         self.assertFalse(test[0])
         btn.draw(surface)
         self.assertTrue(test[0])
 
         # Now disable the decoration
-        deco.disable(callid)
+        deco.disable(call_id)
         test[0] = False
         btn.draw(surface)
         self.assertFalse(test[0])
-        deco.enable(callid)
+        deco.enable(call_id)
         btn.draw(surface)
         self.assertTrue(test[0])
-        deco.remove(callid)
-        self.assertFalse(callid in deco._decor_enabled.keys())
+        deco.remove(call_id)
+        self.assertFalse(call_id in deco._decor_enabled.keys())
 
         # Disable unknown deco
         self.assertRaises(IndexError, lambda: deco.disable('unknown'))
@@ -245,19 +245,19 @@ class DecoratorTest(unittest.TestCase):
         deco.add_surface(60, 60, img.get_surface(), prev=False)
 
         # BaseImage
-        imgdec = deco.add_baseimage(0, 0, img)
+        img_dec = deco.add_baseimage(0, 0, img)
 
         self.assertEqual(len(deco._coord_cache), 3)
         menu.draw(surface)
         self.assertEqual(len(deco._coord_cache), 7)
-        self.assertEqual(deco._coord_cache[imgdec], (299, 173, ((299, 173),)))
+        self.assertEqual(deco._coord_cache[img_dec], (299, 173, ((299, 173),)))
 
         # If widget changes in size, coord cache should change too
         btn.translate(1, 0)
         menu.draw(surface)
-        self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))  # +1
+        self.assertEqual(deco._coord_cache[img_dec], (300, 173, ((300, 173),)))  # +1
 
-        # As some problems ocurr here, test the position of the widget before padding
+        # As some problems occur here, test the position of the widget before padding
         w, h, (x, y) = btn.get_width(), btn.get_height(), btn.get_position()
         self.assertEqual(menu.get_width(widget=True), w)
         self.assertEqual(menu.get_height(widget=True), h)
@@ -278,15 +278,15 @@ class DecoratorTest(unittest.TestCase):
         self.assertEqual(btn.get_rect().y, y - 100)
         self.assertEqual(btn.get_rect().center, (int(x + w / 2), int(y + h / 2)))
 
-        self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
+        self.assertEqual(deco._coord_cache[img_dec], (300, 173, ((300, 173),)))
 
         # Padding left is 0, then widget center changes
         btn.set_padding((100, 100, 100, 0))
         menu.draw(surface)
-        self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
+        self.assertEqual(deco._coord_cache[img_dec], (300, 173, ((300, 173),)))
         btn.set_padding((100, 0, 100, 0))
         menu.draw(surface)
-        self.assertEqual(deco._coord_cache[imgdec], (300, 173, ((300, 173),)))
+        self.assertEqual(deco._coord_cache[img_dec], (300, 173, ((300, 173),)))
 
         # Text
         self.assertRaises(ValueError, lambda: deco.add_text(100, 200, 'nice', pygame_menu.font.FONT_8BIT, 0, color))
@@ -327,7 +327,7 @@ class DecoratorTest(unittest.TestCase):
         btn.draw(surface)
         self.assertTrue(test[0])
 
-        # Textued polygon
+        # Textured polygon
         deco.add_textured_polygon(((10, 10), (100, 100), (120, 10)), img)
 
         # Arc
@@ -353,6 +353,9 @@ class DecoratorTest(unittest.TestCase):
         deco.add_line((10, 10), (100, 100), (45, 180, 34), 10)
         deco.add_hline(1, 2, 3, color)
         deco.add_vline(1, 2, 3, color)
+
+        # Fill
+        deco.add_fill((0, 0, 0))
 
         menu.draw(surface)
         deco.remove_all()

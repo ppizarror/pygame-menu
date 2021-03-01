@@ -173,7 +173,7 @@ def main(test: bool = False) -> None:
         input_underline='_'
     )
 
-    # Selectible items
+    # Selectable items
     items = [('Easy', 'EASY'),
              ('Medium', 'MEDIUM'),
              ('Hard', 'HARD')]
@@ -209,7 +209,9 @@ def main(test: bool = False) -> None:
                ('White', (255, 255, 255)),
                ('Yellow', (255, 255, 0))],
         dropselect_multiple_id='pickcolors',
-        max_selected=3
+        max_selected=3,
+        open_middle=True,
+        selection_box_height=6  # How many options show if opened
     )
 
     # Create switch

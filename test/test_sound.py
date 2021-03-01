@@ -31,9 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SoundTest']
 
+from test._utils import MenuUtils
 import copy
 import unittest
-from test._utils import MenuUtils
 
 import pygame_menu
 

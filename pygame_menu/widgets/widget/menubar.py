@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = [
 
+    # Main class
+    'MenuBar',
+
     # Menubar styles
     'MENUBAR_STYLE_ADAPTIVE',
     'MENUBAR_STYLE_SIMPLE',
@@ -42,10 +45,7 @@ __all__ = [
     'MENUBAR_STYLE_UNDERLINE_TITLE',
 
     # Custom types
-    'MenuBarStyleModeType',
-
-    # Main class
-    'MenuBar'
+    'MenuBarStyleModeType'
 
 ]
 
@@ -53,14 +53,14 @@ import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
-import pygame_menu.controls as _controls
-import pygame_menu.locals as _locals
 
-from pygame_menu.utils import assert_color
+from pygame_menu.controls import JOY_BUTTON_BACK
+from pygame_menu.locals import FINGERUP, POSITION_EAST
+from pygame_menu.utils import assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, Optional, \
-    NumberInstance, ColorInputType, EventVectorType
+from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, \
+    Optional, NumberInstance, ColorInputType, EventVectorType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -109,7 +109,6 @@ class MenuBar(Widget):
     _backbox_rect: Optional['pygame.Rect']
     _box_mode: int
     _modify_scrollarea: bool
-    _mouseoverback: bool
     _offsetx: NumberType
     _offsety: NumberType
     _polygon_pos: Any
@@ -152,7 +151,7 @@ class MenuBar(Widget):
         self._background_color = background_color
         self._box_mode = 0
         self._modify_scrollarea = modify_scrollarea
-        self._mouseoverback = False
+        self._mouseover_check_rect = lambda: self._backbox_rect
         self._offsetx = 0
         self._offsety = 0
         self._polygon_pos = None
@@ -194,21 +193,21 @@ class MenuBar(Widget):
         :return: None
         """
         if background_menu and self._menu is not None:
-            cback = self._menu.get_theme().background_color
+            c_back = self._menu.get_theme().background_color
         else:
-            cback = self._background_color
-        if not isinstance(cback, (tuple, list)):  # If is color
+            c_back = self._background_color
+        if not isinstance(c_back, (tuple, list)):  # If is color
             return
         tol = 5
-        cdif1 = abs(cback[0] - self._font_color[0])
-        cdif2 = abs(cback[1] - self._font_color[1])
-        cdif3 = abs(cback[2] - self._font_color[2])
-        if cdif1 < tol and cdif2 < tol and cdif3 < tol:
+        c_dif_1 = abs(c_back[0] - self._font_color[0])
+        c_dif_2 = abs(c_back[1] - self._font_color[1])
+        c_dif_3 = abs(c_back[2] - self._font_color[2])
+        if c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
             msg = 'title font color {0} is {3} to the {1} background color {2}, consider ' \
                   'editing your Theme'.format(self._font_color,
                                               'menu' if background_menu else 'title',
-                                              cback,
-                                              'equal' if cdif1 == cdif2 == cdif3 == 0 else 'similar')
+                                              c_back,
+                                              'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar')
             warnings.warn(msg)
 
     def get_title_offset(self) -> Tuple2IntType:
@@ -274,7 +273,7 @@ class MenuBar(Widget):
         if not self._modify_scrollarea:
             return 0, (0, 0)
         if self._style == MENUBAR_STYLE_ADAPTIVE:
-            if position == _locals.POSITION_EAST:
+            if position == POSITION_EAST:
                 t = self._polygon_pos[4][1] - self._polygon_pos[2][1]
                 return t, (0, -t)
         return 0, (0, 0)
@@ -442,7 +441,7 @@ class MenuBar(Widget):
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
                     (self._backbox_rect.left + 4, self._backbox_rect.bottom - 4),
                     (self._backbox_rect.centerx, self._backbox_rect.centery),
-                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4),
+                    (self._backbox_rect.left + 4, self._backbox_rect.top + 4)
                 )
             elif self._box_mode == _MODE_BACK:
                 # Make a back arrow for sub-menus
@@ -487,37 +486,28 @@ class MenuBar(Widget):
 
         for event in events:
 
-            if self._mouse_enabled and event.type == pygame.MOUSEBUTTONUP and \
+            # Check mouse over
+            if self._backbox_visible():
+                self._check_mouseover(event)
+
+            # User clicks the backbox rect
+            if event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
                 if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
                     self._sound.play_click_mouse()
                     self.apply()
                     updated = True
-                    if self._backbox_visible() and self._mouseoverback:
-                        self._mouseoverback = False
-                        self.mouseleave(event)
 
-            elif self._joystick_enabled and event.type == pygame.JOYBUTTONDOWN:
-                if event.button == _controls.JOY_BUTTON_BACK:
+            # User applies joy back button
+            elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
+                if event.button == JOY_BUTTON_BACK:
                     self._sound.play_key_del()
                     self.apply()
                     updated = True
 
-            # Check mouse over backrect and visible
-            elif self._backbox_visible() and \
-                    (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION):
-                if self._backbox_rect.collidepoint(*event.pos):
-                    if not self._mouseoverback:
-                        self._mouseoverback = True
-                        self.mouseover(event)
-                else:
-                    if self._mouseoverback:
-                        self._mouseoverback = False
-                        self.mouseleave(event)
-
-            elif self._touchscreen_enabled and event.type == pygame.FINGERUP and self._menu is not None:
-                window_size = self._menu.get_window_size()
-                finger_pos = (event.x * window_size[0], event.y * window_size[1])
+            # User touches the backbox button
+            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                finger_pos = get_finger_pos(self._menu, event)
                 if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):
                     self._sound.play_click_mouse()
                     self.apply()

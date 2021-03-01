@@ -156,9 +156,6 @@ class NoneWidget(Widget):
     def set_value(self, *args, **kwargs) -> None:
         pass
 
-    def update(self, *args, **kwargs) -> bool:
-        return False
-
     def add_update_callback(self, *args, **kwargs) -> None:
         pass
 
@@ -170,3 +167,42 @@ class NoneWidget(Widget):
 
     def set_border(self, *args, **kwargs) -> 'NoneWidget':
         return self
+
+    def _check_mouseover(self, *args, **kwargs) -> bool:
+        self._mouseover = False
+        return False
+
+    def mouseleave(self, *args, **kwargs) -> 'NoneWidget':
+        return self
+
+    def mouseover(self, *args, **kwargs) -> 'NoneWidget':
+        return self
+
+    def set_onchange(self, *args, **kwargs) -> 'NoneWidget':
+        self._onchange = None
+        return self
+
+    def set_onreturn(self, *args, **kwargs) -> 'NoneWidget':
+        self._onreturn = None
+        return self
+
+    def set_onmouseleave(self, *args, **kwargs) -> 'NoneWidget':
+        self._onmouseleave = None
+        return self
+
+    def set_onmouseover(self, *args, **kwargs) -> 'NoneWidget':
+        self._onmouseover = None
+        return self
+
+    def set_onselect(self, *args, **kwargs) -> 'NoneWidget':
+        self._onselect = None
+        return self
+
+    def set_tab_size(self, *args, **kwargs) -> 'NoneWidget':
+        return self
+
+    def set_default_value(self, *args, **kwargs) -> 'NoneWidget':
+        return self
+
+    def update(self, *args, **kwargs) -> bool:
+        return False

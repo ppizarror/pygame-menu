@@ -68,9 +68,9 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx_autodoc_typehints'
               ]
 
-autodoc_default_options = {
-    'private-members': True
-}
+# autodoc_default_options = {
+#     'private-members': False
+# }
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

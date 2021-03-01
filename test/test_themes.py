@@ -31,9 +31,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ThemeTest']
 
-import unittest
-import pygame_menu
 from pathlib import Path
+import unittest
+
+import pygame_menu
 
 
 class ThemeTest(unittest.TestCase):
@@ -71,8 +72,8 @@ class ThemeTest(unittest.TestCase):
         theme.background_color = image
 
         # Copy the theme
-        themecopy = theme.copy()
-        self.assertNotEqual(theme.background_color, themecopy.background_color)
+        theme_copy = theme.copy()
+        self.assertNotEqual(theme.background_color, theme_copy.background_color)
         self.assertNotEqual(theme.background_color, pygame_menu.themes.THEME_DEFAULT.background_color)
 
     def test_methods(self) -> None:
