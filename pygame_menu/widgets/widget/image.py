@@ -61,7 +61,6 @@ class Image(Widget):
                  scale=(1, 1),
                  scale_smooth=True
                  ):
-        assert isinstance(image_id, str)
         assert isinstance(angle, (int, float))
         assert isinstance(scale, (tuple, list))
         assert isinstance(scale_smooth, bool)

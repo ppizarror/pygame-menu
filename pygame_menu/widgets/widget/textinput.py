@@ -38,7 +38,7 @@ import math
 import pygame
 import pygame_menu.controls as _controls
 import pygame_menu.locals as _locals
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, to_string
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, to_string, isinstance_str
 from pygame_menu.widgets.core import Widget
 
 try:
@@ -164,9 +164,8 @@ class TextInput(Widget):
                  *args,
                  **kwargs
                  ):
-        assert isinstance(textinput_id, str)
-        assert isinstance(input_type, str)
-        assert isinstance(input_underline, str)
+        assert isinstance_str(input_type)
+        assert isinstance_str(input_underline)
         assert isinstance(input_underline_len, int)
         assert isinstance(cursor_color, tuple)
         assert isinstance(copy_paste_enable, bool)
@@ -176,13 +175,13 @@ class TextInput(Widget):
         assert isinstance(maxchar, int)
         assert isinstance(maxwidth, int)
         assert isinstance(password, bool)
-        assert isinstance(password_char, str)
+        assert isinstance_str(password_char)
         assert isinstance(repeat_keys_initial_ms, (int, float))
         assert isinstance(repeat_keys_interval_ms, (int, float))
         assert isinstance(repeat_mouse_interval_ms, (int, float))
         assert isinstance(repeat_touch_interval_ms, (int, float))
         assert isinstance(tab_size, int)
-        assert isinstance(text_ellipsis, str)
+        assert isinstance_str(text_ellipsis)
 
         assert history >= 0, 'history must be equal or greater than zero'
         assert maxchar >= 0, 'maxchar must be equal or greater than zero'
@@ -281,7 +280,7 @@ class TextInput(Widget):
             for ch in range(len(valid_chars)):
                 _char = to_string(valid_chars[ch])
                 valid_chars[ch] = _char
-                assert isinstance(_char, str), 'element "{0}" of valid_chars must be a string'.format(_char)
+                assert isinstance_str(_char), 'element "{0}" of valid_chars must be a string'.format(_char)
                 assert len(_char) == 1, 'element "{0}" of valid_chars must be character'.format(_char)
             assert len(valid_chars) > 0, 'valid_chars list must contain at least 1 element'
         self._valid_chars = valid_chars
@@ -987,7 +986,9 @@ class TextInput(Widget):
         """
         if self._password and text != '':
             raise ValueError('value cannot be set in password type')
-        assert isinstance(text, (str, int, float))
+        if not isinstance(text, (int, float)):
+            assert isinstance_str(text)
+            text = to_string(text)
         if self._check_input_type(text):
             _default = to_string(text)
 
@@ -1128,7 +1129,7 @@ class TextInput(Widget):
         :type update_history: bool
         :return: None
         """
-        assert isinstance(new_string, str)
+        assert isinstance_str(new_string)
         assert isinstance(update_history, bool)
 
         l_history = len(self._history)
@@ -1491,7 +1492,7 @@ class TextInput(Widget):
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if pygame.key.get_mods() & pygame.KMOD_CTRL:
+                if pygame.key.get_mods() in (pygame.KMOD_CTRL, pygame.KMOD_RCTRL, pygame.KMOD_LCTRL):
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:

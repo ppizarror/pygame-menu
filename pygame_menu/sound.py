@@ -48,6 +48,8 @@ except ImportError:
     AUDIO_ALLOW_CHANNELS_CHANGE = False
     AUDIO_ALLOW_FREQUENCY_CHANGE = False
 
+from pygame_menu.utils import isinstance_str
+
 # Sound types
 SOUND_TYPE_CLICK_MOUSE = '__pygame_menu_sound_click_mouse__'
 SOUND_TYPE_CLOSE_MENU = '__pygame_menu_sound_close_menu__'
@@ -118,7 +120,7 @@ class Sound(object):
         assert isinstance(size, int)
         assert isinstance(channels, int)
         assert isinstance(buffer, int)
-        assert isinstance(devicename, str)
+        assert isinstance_str(devicename)
         assert isinstance(allowedchanges, int)
         assert isinstance(force_init, bool)
         assert frequency > 0, 'frequency must be greater than zero'
@@ -227,8 +229,9 @@ class Sound(object):
         :return: The status of the sound load, *True* if the sound was loaded
         :rtype: bool
         """
-        assert isinstance(sound_type, str)
-        assert isinstance(sound_file, (str, type(None)))
+        assert isinstance_str(sound_type)
+        if sound_file is not None:
+            assert isinstance_str(sound_file)
         assert isinstance(volume, float)
         assert isinstance(loops, int)
         assert isinstance(maxtime, (int, float))

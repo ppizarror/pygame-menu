@@ -4,7 +4,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 BASEIMAGE
-Provides a class to perform basic image loading an manipulation with pygame.
+Provides a class to perform basic image loading and manipulation with pygame.
 
 NOTE: pygame-menu v3 will not provide new widgets or functionalities, consider
 upgrading to the latest version.
@@ -44,7 +44,7 @@ except ImportError:
     _Path = None
 
 import pygame
-from pygame_menu.utils import assert_vector2
+from pygame_menu.utils import assert_vector2, isinstance_str
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -74,7 +74,7 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', 
 class BaseImage(object):
     """
     Object that loads an image, stores as a surface, transform it and
-    let write the image to an surface.
+    let write the image to a surface.
 
     :param image_path: Path of the image to be loaded. It can be a string or :py:class:`pathlib.Path` on ``Python 3+``
     :type image_path: str, :py:class:`pathlib.Path`
@@ -92,12 +92,10 @@ class BaseImage(object):
                  drawing_offset=(0, 0),
                  load_from_file=True
                  ):
-        if _Path is None:
-            assert isinstance(image_path, str)
-        else:
-            assert isinstance(image_path, (str, _Path))
+        if _Path is not None:
             if isinstance(image_path, _Path):
                 image_path = str(image_path)
+        assert isinstance_str(image_path)
         assert isinstance(load_from_file, bool)
 
         _, file_extension = path.splitext(image_path)
@@ -340,7 +338,7 @@ class BaseImage(object):
         :return: Self reference
         :rtype: BaseImage
         """
-        if isinstance(channels, str):
+        if isinstance_str(channels):
             channels = [channels]
         assert isinstance(channels, (list, tuple))
         assert 1 <= len(channels) <= 3, 'maximum size of channels can be 3'

@@ -204,6 +204,20 @@ def is_callable(func):
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
 
 
+def isinstance_str(s):
+    """
+    Return ``True`` if the given object is a string (also unicode).
+
+    :param s: String
+    :type s: any
+    :return: Bool
+    :rtype: bool
+    """
+    if sys.version_info < (3, 0) and str(type(s)) == "<type 'unicode'>":
+        return True
+    return isinstance(s, (str, bytes))
+
+
 # noinspection SpellCheckingInspection
 def to_string(s, strict=False):
     """

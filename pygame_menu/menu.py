@@ -127,7 +127,7 @@ class Menu(object):
                  ):
         assert isinstance(height, (int, float))
         assert isinstance(width, (int, float))
-        # assert isinstance(title, str)
+        assert _utils.isinstance_str(title)
 
         assert isinstance(center_content, bool)
         assert isinstance(column_force_fit_text, bool)
@@ -135,7 +135,7 @@ class Menu(object):
         assert isinstance(columns, int)
         assert isinstance(enabled, bool)
         assert isinstance(joystick_enabled, bool)
-        assert isinstance(menu_id, str)
+        assert _utils.isinstance_str(menu_id)
         assert isinstance(menu_position, (tuple, list))
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
@@ -143,7 +143,7 @@ class Menu(object):
         assert isinstance(overflow, (tuple, list, bool))
         assert isinstance(rows, (int, type(None)))
         assert isinstance(screen_dimension, (tuple, list, type(None)))
-        assert isinstance(theme, _themes.Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
+        assert isinstance(theme, _themes.Theme), 'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen_enabled, bool)
         assert isinstance(touchscreen_motion_selection, bool)
 
@@ -468,7 +468,7 @@ class Menu(object):
 
         # Get ID
         button_id = kwargs.pop('button_id', '')
-        assert isinstance(button_id, str), 'id must be a string'
+        assert _utils.isinstance_str(button_id), 'id must be a string'
 
         # Change action if certain events
         if action == _events.PYGAME_QUIT or action == _events.PYGAME_WINDOWCLOSE:
@@ -708,7 +708,7 @@ class Menu(object):
         :return: Widget object, or List of widgets if the text overflows
         :rtype: :py:class:`pygame_menu.widgets.Label`, list[:py:class:`pygame_menu.widgets.Label`]
         """
-        assert isinstance(label_id, str)
+        assert _utils.isinstance_str(label_id)
         assert isinstance(max_char, int)
         assert isinstance(selectable, bool)
         assert max_char >= -1
@@ -929,7 +929,9 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.TextInput`
         """
-        assert isinstance(default, (str, int, float))
+        if not isinstance(default, (int, float)):
+            assert _utils.isinstance_str(default), \
+                'default value must be a string, an integer or a float value'
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -1042,7 +1044,7 @@ class Menu(object):
         """
         attributes = {}
         align = kwargs.pop('align', self._theme.widget_alignment)
-        assert isinstance(align, str)
+        assert _utils.isinstance_str(align)
         attributes['align'] = align
 
         background_is_color = False
@@ -1077,7 +1079,7 @@ class Menu(object):
         attributes['font_color'] = font_color
 
         font_name = kwargs.pop('font_name', self._theme.widget_font)
-        assert isinstance(font_name, str)
+        assert _utils.isinstance_str(font_name)
         attributes['font_name'] = font_name
 
         font_size = kwargs.pop('font_size', self._theme.widget_font_size)
@@ -1111,7 +1113,7 @@ class Menu(object):
         attributes['shadow_color'] = shadow_color
 
         shadow_position = kwargs.pop('shadow_position', self._theme.widget_shadow_position)
-        assert isinstance(shadow_position, str)
+        assert _utils.isinstance_str(shadow_position)
         attributes['shadow_position'] = shadow_position
 
         shadow_offset = kwargs.pop('shadow_offset', self._theme.widget_shadow_offset)
@@ -1212,7 +1214,7 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, str
         :return: None
         """
-        if isinstance(widget, str):
+        if _utils.isinstance_str(widget):
             widget = self.get_widget(widget_id=widget)
         assert isinstance(widget, _widgets.core.Widget)
         if not widget.is_selectable:
@@ -1234,7 +1236,7 @@ class Menu(object):
         :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, str
         :return: None
         """
-        if isinstance(widget, str):
+        if _utils.isinstance_str(widget):
             widget = self.get_widget(widget_id=widget)
         assert isinstance(widget, _widgets.core.Widget)
         try:
@@ -1475,7 +1477,7 @@ class Menu(object):
         sx = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_HORIZONTAL, real=True)
         sy = self._scroll.get_scrollbar_thickness(_locals.ORIENTATION_VERTICAL, real=True)
 
-        # Remove the thick of the scrollbar to avoid displaying an horizontal one
+        # Remove the thick of the scrollbar to avoid displaying a horizontal one
         # If overflow in both axis
         if max_x > self._width and max_y > self._height - menubar_height:
             width, height = max_x + sy * 0.5, max_y + sx * 0.25
@@ -1524,7 +1526,7 @@ class Menu(object):
         :type widget_id: str
         :return: None
         """
-        assert isinstance(widget_id, str)
+        assert _utils.isinstance_str(widget_id)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
                 raise IndexError('widget ID="{0}" already exists on the menu'.format(widget_id))
@@ -2541,7 +2543,7 @@ class Menu(object):
         :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.core.widget.Widget`, None
         """
-        assert isinstance(widget_id, str)
+        assert _utils.isinstance_str(widget_id)
         assert isinstance(recursive, bool)
         for widget in self._widgets:  # type: _widgets.core.Widget
             if widget.get_id() == widget_id:
@@ -2651,7 +2653,7 @@ class Menu(object):
         :type value: any
         :return: None
         """
-        assert isinstance(key, str)
+        assert _utils.isinstance_str(key)
         self._attributes[key] = value
 
     def get_attribute(self, key, default=None):
@@ -2665,7 +2667,7 @@ class Menu(object):
         :return: Attribute data
         :rtype: any
         """
-        assert isinstance(key, str)
+        assert _utils.isinstance_str(key)
         if not self.has_attribute(key):
             return default
         return self._attributes[key]
@@ -2679,7 +2681,7 @@ class Menu(object):
         :return: True if exists
         :rtype: bool
         """
-        assert isinstance(key, str)
+        assert _utils.isinstance_str(key)
         return key in self._attributes.keys()
 
     def remove_attribute(self, key):

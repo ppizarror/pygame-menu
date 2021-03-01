@@ -100,7 +100,6 @@ def play_function(difficulty, font, test=False):
     """
     assert isinstance(difficulty, (tuple, list))
     difficulty = difficulty[0]
-    assert isinstance(difficulty, str)
 
     # Define globals
     global main_menu

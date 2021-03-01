@@ -45,7 +45,7 @@ except (ModuleNotFoundError, ImportError):
 # Import modules that require pygame
 if __pygame_version__ is not None:
     """
-    BaseImage: Provides basic image loading an manipulation with pygame
+    BaseImage: Provides basic image loading and manipulation with pygame
     """
     import pygame_menu.baseimage
 

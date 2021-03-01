@@ -71,7 +71,7 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu, if user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scroll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scroll area margin (px), the tuple is added to computed scroll area width/height, it can add a margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
@@ -399,54 +399,89 @@ class Theme(object):
         """
         Return a value from a dictionary.
 
-        :param params: parameters dictionary
+        Custom types (str)
+            -   alignment           pygame-menu alignment (locals)
+            -   callable            Is callable type, same as ``"function"``
+            -   color               Check color
+            -   color_image         Color or :py:class:`pygame_menu.baseimage.BaseImage`
+            -   color_image_none    Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
+            -   color_none          Color or None
+            -   cursor              Cursor object (pygame)
+            -   font                Font type
+            -   image               Value must be ``BaseImage``
+            -   none                None only
+            -   position            pygame-menu position (locals)}
+            -   tuple2              Only valid numeric tuples ``(x, y)`` or ``[x, y]``
+            -   type                Type-class (bool, str, etc...)
+
+        :param params: Parameters dictionary
         :type params: dict
-        :param key: key to look for
+        :param key: Key to look for
         :type key: str
-        :param allowed_types: list of allowed types
+        :param allowed_types: List of allowed types
         :type allowed_types: any
-        :param default: default value to return
+        :param default: Default value to return
         :type default: any
         :return: The value associated to the key
         :rtype: any
         """
-        if key not in params:
-            return default
-
-        value = params.pop(key)
-        if allowed_types:
+        value = params.pop(key, default)
+        if allowed_types is not None:
+            other_types = []  # Contain other types to check from
             if not isinstance(allowed_types, (tuple, list)):
                 allowed_types = (allowed_types,)
             for val_type in allowed_types:
-                if val_type == 'color':
+
+                if val_type == 'alignment':
+                    _utils.assert_alignment(value)
+
+                elif val_type == callable or val_type == 'function' or val_type == 'callable':
+                    assert _utils.is_callable(value), \
+                        'value must be callable type'
+
+                elif val_type == 'color':
                     _utils.assert_color(value)
-                elif val_type == 'color_none':
-                    if value is None:
-                        return value
-                    _utils.assert_color(value)
+
                 elif val_type == 'color_image':
-                    if isinstance(value, BaseImage):
-                        return value
-                    _utils.assert_color(value)
+                    if not isinstance(value, BaseImage):
+                        _utils.assert_color(value)
+
                 elif val_type == 'color_image_none':
-                    if value is None:
-                        return value
-                    elif isinstance(value, BaseImage):
-                        return value
-                    _utils.assert_color(value)
+                    if not (value is None or isinstance(value, BaseImage)):
+                        _utils.assert_color(value)
+
+                elif val_type == 'color_none':
+                    if value is not None:
+                        _utils.assert_color(value)
+
+                elif val_type == 'image':
+                    assert isinstance(value, BaseImage), \
+                        'value must be BaseImage type'
+
+                elif val_type == 'none':
+                    assert value is None
+
                 elif val_type == 'position':
                     _utils.assert_position(value)
-                elif val_type == 'alignment':
-                    _utils.assert_alignment(value)
+
+                elif val_type == 'type':
+                    assert isinstance(value, type), \
+                        'value is not type-class'
+
                 elif val_type == 'tuple2':
                     _utils.assert_vector2(value)
 
-            all_types = ('color', 'color_none', 'color_image', 'color_image_none',
-                         'position', 'alignment', 'tuple2')
-            others = tuple(t for t in allowed_types if t not in all_types)
-            if others:
+                else:  # Unknown type
+                    assert isinstance(val_type, type), \
+                        'allowed type "{0}" is not a type-class'.format(val_type)
+                    other_types.append(val_type)
+
+            # Check other types
+            if len(other_types) > 0:
+                others = tuple(other_types)
                 msg = 'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
                 assert isinstance(value, others), msg
+
         return value
 
 

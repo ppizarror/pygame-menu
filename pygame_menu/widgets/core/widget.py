@@ -40,7 +40,7 @@ import pygame_menu.locals as _locals
 from pygame_menu.widgets.core.selection import Selection
 from pygame_menu.sound import Sound
 from pygame_menu.utils import make_surface, assert_alignment, assert_color, assert_position, assert_vector2, \
-    to_string, is_callable
+    to_string, is_callable, isinstance_str
 
 from uuid import uuid4
 import time
@@ -73,7 +73,6 @@ class Widget(object):
                  args=None,
                  kwargs=None
                  ):
-        assert isinstance(widget_id, str), 'widget id must be a string'
         if onchange:
             assert is_callable(onchange), 'onchange must be callable or None'
         if onreturn:
@@ -81,14 +80,16 @@ class Widget(object):
 
         # Store id, if None or empty create new ID based on UUID
         if widget_id is None or len(widget_id) == 0:
-            widget_id = uuid4()
+            widget_id = str(uuid4())
+        assert isinstance_str(widget_id), \
+            'widget id must be a string, but received {0}'.format(widget_id)
 
         self._alignment = _locals.ALIGN_CENTER
         self._attributes = {}  # Stores widget attributes
         self._background_color = None
         self._background_inflate = (0, 0)
         self._events = []  # type: list
-        self._id = str(widget_id)
+        self._id = widget_id
         self._margin = (0.0, 0.0)  # type: tuple
         self._max_width = None  # type: (int,float)
         self._padding = (0, 0, 0, 0)  # top, right, bottom, left
@@ -174,7 +175,7 @@ class Widget(object):
         :type value: any
         :return: None
         """
-        assert isinstance(key, str)
+        assert isinstance_str(key)
         self._attributes[key] = value
 
     def get_attribute(self, key, default=None):
@@ -188,7 +189,7 @@ class Widget(object):
         :return: Attribute data
         :rtype: any
         """
-        assert isinstance(key, str)
+        assert isinstance_str(key)
         if not self.has_attribute(key):
             return default
         return self._attributes[key]
@@ -202,7 +203,7 @@ class Widget(object):
         :return: True if exists
         :rtype: bool
         """
-        assert isinstance(key, str)
+        assert isinstance_str(key)
         return key in self._attributes.keys()
 
     def remove_attribute(self, key):
@@ -577,7 +578,7 @@ class Widget(object):
         :type widget_id: str
         :return: None
         """
-        assert isinstance(widget_id, str)
+        assert isinstance_str(widget_id)
         if self._menu is not None:
             # noinspection PyProtectedMember
             self._menu._check_id_duplicated(widget_id)
@@ -608,7 +609,8 @@ class Widget(object):
         :return: Text surface
         :rtype: :py:class:`pygame.Surface`
         """
-        # assert isinstance(text, str)
+        if text is not None:
+            assert isinstance_str(text)
         assert isinstance(color, tuple), 'invalid color'
         assert isinstance(use_background_color, bool), 'use_background_color must be boolean'
         bgcolor = self._font_background_color
@@ -717,7 +719,7 @@ class Widget(object):
         :type antialias: bool
         :return: None
         """
-        assert isinstance(font, str)
+        assert isinstance_str(font)
         assert isinstance(font_size, (int, float))
         assert isinstance(antialias, bool)
         assert_color(color)
@@ -1290,7 +1292,7 @@ class Widget(object):
         :type callback_id: str
         :return: None
         """
-        assert isinstance(callback_id, str)
+        assert isinstance_str(callback_id)
         if callback_id not in self._draw_callbacks.keys():
             raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
         del self._draw_callbacks[callback_id]
@@ -1338,7 +1340,7 @@ class Widget(object):
         :type callback_id: str
         :return: None
         """
-        assert isinstance(callback_id, str)
+        assert isinstance_str(callback_id)
         if callback_id not in self._update_callbacks.keys():
             raise IndexError('callback ID "{0}" does not exist'.format(callback_id))
         del self._update_callbacks[callback_id]
