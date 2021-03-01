@@ -73,9 +73,9 @@ class ScrollAreaTest(unittest.TestCase):
         self.assertEqual(rect.width, btn.get_width())
         self.assertEqual(rect.height, btn.get_height())
 
-        posrect = sa.to_world_position((10, 10))
-        self.assertEqual(posrect[0], 10)
-        self.assertEqual(posrect[1], -145)
+        pos_rect = sa.to_world_position((10, 10))
+        self.assertEqual(pos_rect[0], 10)
+        self.assertEqual(pos_rect[1], -145)
 
         self.assertFalse(sa.is_scrolling())
         self.assertEqual(sa.get_menu(), menu)

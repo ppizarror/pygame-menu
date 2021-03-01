@@ -106,9 +106,9 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(btn.get_size()[1], h)
         self.assertEqual(menu.get_height(widget=True), h)
 
-        vpos = int((345 - h) / 2)  # available_height - widget_height
-        self.assertEqual(menu._widget_offset[1], vpos)
-        self.assertEqual(btn.get_position()[1], vpos + 1)
+        v_pos = int((345 - h) / 2)  # available_height - widget_height
+        self.assertEqual(menu._widget_offset[1], v_pos)
+        self.assertEqual(btn.get_position()[1], v_pos + 1)
 
         # If there's too many widgets, the centering should be disabled
         for i in range(20):
@@ -337,7 +337,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), widg[1])
         menu._touchscreen_motion_selection = True
 
-        # Fingermoution should select widgets as touchscreen is active
+        # Fingermotion should select widgets as touchscreen is active
         menu.update([PygameUtils.middle_rect_click(widg[0].get_rect(), menu_top, evtype=pygame.FINGERMOTION)])
         self.assertEqual(menu.get_selected_widget(), widg[0])
 
@@ -355,16 +355,16 @@ class MenuTest(unittest.TestCase):
         # Active widget, and click outside to disable it (only if motion selection enabled)
         widg = menu.get_selected_widget()
         widg.active = True
-        wrect = widg.get_rect()
+        w_rect = widg.get_rect()
 
         # Clicking the same rect should not fire the callback
-        menu_top.update([PygameUtils.middle_rect_click(wrect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update([PygameUtils.middle_rect_click(w_rect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
         self.assertTrue(widg.active)
         self.assertTrue(widg.selected)
 
-        wrect.x += 500
+        w_rect.x += 500
         menu._mouse_motion_selection = True
-        menu_top.update([PygameUtils.middle_rect_click(wrect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
+        menu_top.update([PygameUtils.middle_rect_click(w_rect, menu, evtype=pygame.MOUSEBUTTONDOWN)])
         self.assertFalse(widg.active)
 
     def test_enabled(self):
@@ -536,29 +536,29 @@ class MenuTest(unittest.TestCase):
         # Add a new widget that cannot be selected
         self.menu.add_label('not selectable')
         self.menu.add_label('not selectable')
-        wlast = self.menu.add_label('not selectable', selectable=True)
+        w_last = self.menu.add_label('not selectable', selectable=True)
 
         # If w2 is removed, then menu will try to select labels, but as them are not selectable it should select the last one
         w2.hide()
-        self.assertEqual(self.menu.get_selected_widget(), wlast)
+        self.assertEqual(self.menu.get_selected_widget(), w_last)
 
         # Mark w1 as unselectable, then w1 is not selectable, nor w2, and labels are unselectable too
         # so the selected should be the same
         w1.is_selectable = False
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
-        self.assertEqual(self.menu.get_selected_widget(), wlast)
+        self.assertEqual(self.menu.get_selected_widget(), w_last)
 
         # Show w2, then if DOWN is pressed again, the selected status should be 2
         w2.show()
         self.menu.update(PygameUtils.key(pygame_menu.controls.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
-        # Hide w2, pass again to wlast
+        # Hide w2, pass again to w_last
         w2.hide()
-        self.assertEqual(self.menu.get_selected_widget(), wlast)
+        self.assertEqual(self.menu.get_selected_widget(), w_last)
 
-        # Hide wlast, then nothing is selected
-        wlast.hide()
+        # Hide w_last, then nothing is selected
+        w_last.hide()
         self.assertEqual(self.menu.get_selected_widget(), None)
 
         # Unhide w2, then it should be selected
@@ -784,6 +784,7 @@ class MenuTest(unittest.TestCase):
         # Add a submenu within submenu with a repeated id, menu.get_input_data
         # should raise an exception
         subsubmenu = MenuUtils.generic_menu()
+        # noinspection SpellCheckingInspection
         subsubmenu.add_text_input('text', textinput_id='id4', default='repeateddata')
         submenu.add_button('submenu', subsubmenu)
         self.assertRaises(ValueError, lambda: self.menu.get_input_data(recursive=True))
@@ -817,8 +818,8 @@ class MenuTest(unittest.TestCase):
         """
         Test menu touchscreen behaviour.
         """
-        vmajor, _, _ = pygame.version.vernum
-        if vmajor < 2:
+        v_major, _, _ = pygame.version.vernum
+        if v_major < 2:
             return
 
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(title='mainmenu', touchscreen_enabled=False,
@@ -987,3 +988,19 @@ class MenuTest(unittest.TestCase):
         btn.active = True
         btn.selected = True
         self.assertNotEqual(None, menu._draw_focus_widget(surface, btn))
+
+    def test_get_by_id(self):
+        """
+        Test get widget by id.
+        """
+        menu = MenuUtils.generic_menu()
+        b1 = menu.add_button('1', None, button_id='1')
+        b2 = menu.add_button('1', None, button_id='2')
+        b3 = menu.add_button('1', None, button_id='3')
+        self.assertEqual(menu.get_widget('2'), b2)
+        self.assertIn(b2, menu.get_widgets())
+        menu.remove_widget('2')
+        self.assertNotIn(b2, menu.get_widgets())
+        menu.select_widget('3')
+        self.assertEqual(menu.get_selected_widget(), b3)
+        menu.select_widget(b1)

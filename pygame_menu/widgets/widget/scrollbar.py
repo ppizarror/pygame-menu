@@ -419,8 +419,8 @@ class ScrollBar(Widget):
 
                     elif rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
-                        srect = self._slider_rect.move(*rect.topleft)
-                        pos = (srect.x, srect.y)
+                        s_rect = self._slider_rect.move(*rect.topleft)
+                        pos = (s_rect.x, s_rect.y)
                         direction = 1 if event.pos[self._orientation] > pos[self._orientation] else -1
                         if self._scroll(direction * self._page_step):
                             self.change()

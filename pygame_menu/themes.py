@@ -97,8 +97,8 @@ class Theme(object):
     :type title_background_color: tuple, list
     :param title_bar_style: Style of the title, use menubar widget styles
     :type title_bar_style: int
-    :param title_font: Title font color. If ``None`` use the widget font color
-    :type title_font: str, None
+    :param title_font: Title font path or name
+    :type title_font: str
     :param title_font_antialias: Title font renders with antialiasing
     :type title_font_antialias: bool
     :param title_font_color: Title font color, if None use the widget font color
@@ -417,28 +417,28 @@ class Theme(object):
         if allowed_types:
             if not isinstance(allowed_types, (tuple, list)):
                 allowed_types = (allowed_types,)
-            for valtype in allowed_types:
-                if valtype == 'color':
+            for val_type in allowed_types:
+                if val_type == 'color':
                     _utils.assert_color(value)
-                elif valtype == 'color_none':
+                elif val_type == 'color_none':
                     if value is None:
                         return value
                     _utils.assert_color(value)
-                elif valtype == 'color_image':
+                elif val_type == 'color_image':
                     if isinstance(value, BaseImage):
                         return value
                     _utils.assert_color(value)
-                elif valtype == 'color_image_none':
+                elif val_type == 'color_image_none':
                     if value is None:
                         return value
                     elif isinstance(value, BaseImage):
                         return value
                     _utils.assert_color(value)
-                elif valtype == 'position':
+                elif val_type == 'position':
                     _utils.assert_position(value)
-                elif valtype == 'alignment':
+                elif val_type == 'alignment':
                     _utils.assert_alignment(value)
-                elif valtype == 'tuple2':
+                elif val_type == 'tuple2':
                     _utils.assert_vector2(value)
 
             all_types = ('color', 'color_none', 'color_image', 'color_image_none',

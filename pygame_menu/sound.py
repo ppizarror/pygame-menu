@@ -307,11 +307,11 @@ class Sound(object):
             return False
 
         # Play the sound
-        soundtime = time.time()
+        sound_time = time.time()
 
         # If the previous sound is the same and has not ended (max 20% overlap)
         if sound['type'] != self._last_play or \
-                soundtime - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
+                sound_time - self._last_time >= 0.2 * sound['length'] or self._uniquechannel:
             try:
                 if self._uniquechannel:  # Stop the current channel if it's unique
                     channel.stop()
@@ -325,7 +325,7 @@ class Sound(object):
 
         # Store last execution
         self._last_play = sound['type']
-        self._last_time = soundtime
+        self._last_time = sound_time
         return True
 
     def play_click_mouse(self):

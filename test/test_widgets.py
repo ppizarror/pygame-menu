@@ -52,6 +52,7 @@ class WidgetsTest(unittest.TestCase):
         test_reset_surface()
         self.menu = MenuUtils.generic_menu()
 
+    # noinspection SpellCheckingInspection
     def test_nonascii(self):
         """
         Test non-ascii.
@@ -147,14 +148,14 @@ class WidgetsTest(unittest.TestCase):
         """
         self.menu.clear()
         w = self.menu.add_label('Text')  # type: Label
-        lasthash = w._last_render_hash
+        last_hash = w._last_render_hash
         w.hide()
         self.assertFalse(w.visible)
-        self.assertNotEqual(w._last_render_hash, lasthash)
-        lasthash = w._last_render_hash
+        self.assertNotEqual(w._last_render_hash, last_hash)
+        last_hash = w._last_render_hash
         w.show()
         self.assertTrue(w.visible)
-        self.assertNotEqual(w._last_render_hash, lasthash)
+        self.assertNotEqual(w._last_render_hash, last_hash)
 
         w = Button('title')  # type: Button
         self.menu.add_generic_widget(w)
@@ -274,7 +275,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
 
-    # noinspection PyArgumentEqualDefault
+    # noinspection PyArgumentEqualDefault,SpellCheckingInspection
     def test_colorinput(self):
         """
         Test ColorInput widget.
@@ -446,6 +447,7 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 255, 255, 255)
         widget._previsualize_color(surface=None)
 
+    # noinspection SpellCheckingInspection
     def test_label(self):
         """
         Test label widget.
@@ -500,6 +502,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label[1].get_title(), 'long so it should split.')
         self.assertEqual(label[2].get_title(), 'The second line')
 
+    # noinspection SpellCheckingInspection
     def test_textinput(self):
         """
         Test TextInput widget.
@@ -796,12 +799,12 @@ class WidgetsTest(unittest.TestCase):
             widget.set_attribute('attr', True)
 
         btn = self.menu.add_button('btn', None)
-        callid = btn.add_draw_callback(call)
+        call_id = btn.add_draw_callback(call)
         self.assertEqual(btn.get_attribute('attr', False), False)
         self.menu.draw(surface)
         self.assertEqual(btn.get_attribute('attr', False), True)
-        btn.remove_draw_callback(callid)
-        self.assertRaises(IndexError, lambda: btn.remove_draw_callback(callid))  # Already removed
+        btn.remove_draw_callback(call_id)
+        self.assertRaises(IndexError, lambda: btn.remove_draw_callback(call_id))  # Already removed
         self.menu.disable()
 
     def test_update_callback(self):
@@ -817,14 +820,14 @@ class WidgetsTest(unittest.TestCase):
 
         menu = MenuUtils.generic_menu()
         btn = menu.add_button('button', None)
-        callid = btn.add_update_callback(update)
+        call_id = btn.add_update_callback(update)
         self.assertEqual(btn.get_attribute('attr', False), False)
         click_pos = PygameUtils.get_middle_rect(btn.get_rect())
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertEqual(btn.get_attribute('attr', False), True)
         btn.set_attribute('attr', False)
-        btn.remove_update_callback(callid)
-        self.assertRaises(IndexError, lambda: btn.remove_update_callback(callid))
+        btn.remove_update_callback(call_id)
+        self.assertRaises(IndexError, lambda: btn.remove_update_callback(call_id))
         self.assertEqual(btn.get_attribute('attr', False), False)
         btn.update(PygameUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertEqual(btn.get_attribute('attr', False), False)
