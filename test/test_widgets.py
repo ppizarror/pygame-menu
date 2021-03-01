@@ -2240,6 +2240,11 @@ class WidgetsTest(unittest.TestCase):
         image.set_max_height(100)
         self.assertIsNone(image._max_height[0])
 
+        image.set_title('epic')
+        self.assertEqual(image.get_title(), '')
+        self.assertEqual(image.get_image(), image._image)
+        image.update(PygameEventUtils.middle_rect_mouse_motion(image))
+
     def test_surface_widget(self) -> None:
         """
         Test surface widget.
@@ -2275,3 +2280,16 @@ class WidgetsTest(unittest.TestCase):
 
         surf_widget.set_max_height(100)
         self.assertIsNone(surf_widget._max_height[0])
+
+        surf_widget.set_title('epic')
+        self.assertEqual(surf_widget.get_title(), '')
+
+        new_surface = pygame.Surface((160, 160))
+        new_surface.fill((255, 192, 203))
+        inner_surface = pygame.Surface((80, 80))
+        inner_surface.fill((75, 0, 130))
+        new_surface.blit(inner_surface, (40, 40))
+        surf_widget.set_surface(new_surface)
+        self.assertEqual(surf_widget.get_size(apply_padding=False), (160, 160))
+        menu.draw(surface)
+        surf_widget.update(PygameEventUtils.middle_rect_mouse_motion(surf_widget))
