@@ -71,7 +71,7 @@ class Theme(object):
     :type focus_background_color: tuple, list
     :param menubar_close_button: Draw a back-box button on header to close the menu, if user moves through nested submenus this buttons turns to a back-arrow
     :type menubar_close_button: bool
-    :param scrollarea_outer_margin: Outer scroll area margin (px), the tuple is added to computed scroll area width/height, it can add an margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
+    :param scrollarea_outer_margin: Outer scroll area margin (px), the tuple is added to computed scroll area width/height, it can add a margin to bottom/right scrolls after widgets. If value less than 1 use percentage of width/height. Default *(0,0)*. It cannot be negative values
     :type scrollarea_outer_margin: tuple, list
     :param scrollbar_color: Scrollbars color
     :type scrollbar_color: tuple, list
