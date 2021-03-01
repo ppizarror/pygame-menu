@@ -275,7 +275,8 @@ class Frame(Widget):
         self._frame_title._update__repr___(self)
 
         # Create frame title background rect
-        title_bg = make_surface(self.get_width(), title_label.get_height() + pad_outer[0] + pad_outer[2])
+        title_bg = make_surface(self.get_width(), title_label.get_height() + pad_outer[0] + pad_outer[2] +
+                                pad_inner[0] + pad_inner[2])
 
         # Blit frame bgrect if scrollable
         if self._frame_scrollarea is not None and self.is_scrollable:
@@ -284,7 +285,8 @@ class Frame(Widget):
                 area_color.draw(title_bg, area=title_bg.get_rect())
             elif area_color is not None:
                 title_bg.fill(area_color, rect=title_bg.get_rect())
-        self._frame_title.get_decorator().add_surface(-title_bg.get_width() / 2, -title_bg.get_height() / 2, title_bg)
+        self._frame_title.get_decorator().add_surface(-title_bg.get_width() / 2,
+                                                      -title_bg.get_height() / 2 + 1, title_bg)
 
         # Set background
         is_color = True
@@ -307,7 +309,7 @@ class Frame(Widget):
                 vertical=background_color[2],
                 forward=background_color[3]
             )
-            self._frame_title.get_decorator().add_surface(-w / 2, -h / 2, new_surface)
+            self._frame_title.get_decorator().add_surface(-w / 2, -h / 2 + 1, new_surface)
 
         # Pack title
         self._frame_title.pack(title_label, alignment=title_alignment)
@@ -892,9 +894,8 @@ class Frame(Widget):
                 self._pos[w.get_id()] = (x_left, self._get_vt(w, v_pos) + w.get_margin()[1])
                 x_left += w.get_width()
             elif align == ALIGN_RIGHT:
-                x_right -= (w.get_width())
+                x_right -= (w.get_width() + w.get_margin()[0])
                 self._pos[w.get_id()] = (self._width + x_right, self._get_vt(w, v_pos) + w.get_margin()[1])
-                x_right -= w.get_margin()[0]
             dw = x_left - x_right
             if dw > self._width and not self._relax:
                 msg = '{3} width ({0}) exceeds {2} width ({1})' \
