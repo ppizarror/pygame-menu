@@ -35,6 +35,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import sys
 
+from pygame import K_l
+
 from test._utils import *
 from pygame_menu import locals as _locals
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar
@@ -70,7 +72,11 @@ class WidgetsTest(unittest.TestCase):
         self.menu.add_selector(u'Sélect'.encode('latin1'), [('a', 'a')])
         self.menu.enable()
         self.menu.draw(surface)
-        text.set_value()
+        text.set_value(u'ą, ę, ś, ć, ż, ź, ó, ł, ń')
+        self.assertEqual(text.get_value(), u'ą, ę, ś, ć, ż, ź, ó, ł, ń')
+        text.set_value('')
+        text.update(PygameUtils.key(K_l, char=u'ł', keydown=True))
+        self.assertEqual(text.get_value(), u'ł')
 
     def test_background(self):
         """
