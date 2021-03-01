@@ -63,13 +63,14 @@ class WidgetsTest(unittest.TestCase):
         self.menu.add_button('Test', pygame_menu.events.NONE)
         self.menu.add_button(u'Menú', pygame_menu.events.NONE)
         self.menu.add_color_input(u'Cólor', 'rgb')
-        self.menu.add_text_input(u'Téxt')
+        text = self.menu.add_text_input(u'Téxt')
         self.menu.add_label(u'Téxt')
         if sys.version_info < (3, 0):
             self.assertRaises(Exception, lambda: self.menu.add_selector(u'Sélect', [('a', 'a')]))  # Strict
         self.menu.add_selector(u'Sélect'.encode('latin1'), [('a', 'a')])
         self.menu.enable()
         self.menu.draw(surface)
+        text.set_value()
 
     def test_background(self):
         """

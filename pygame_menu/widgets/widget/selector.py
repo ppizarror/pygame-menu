@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.controls as _controls
-from pygame_menu.utils import check_key_pressed_valid, to_string
+from pygame_menu.utils import check_key_pressed_valid, to_string, isinstance_str
 from pygame_menu.widgets.core import Widget
 
 
@@ -102,14 +102,12 @@ class Selector(Widget):
                  **kwargs
                  ):
         assert isinstance(elements, list)
-        assert isinstance(selector_id, str)
         assert isinstance(default, int)
 
         # Check element list
         _check_elements(elements)
         assert default >= 0, 'default position must be equal or greater than zero'
         assert default < len(elements), 'default position should be lower than number of values'
-        assert isinstance(selector_id, str), 'id must be a string'
         assert isinstance(default, int), 'default must be an integer'
 
         super(Selector, self).__init__(
@@ -195,8 +193,7 @@ class Selector(Widget):
         :type item: str, int
         :return: None
         """
-        assert isinstance(item, (str, int)), 'item must be an string or an integer'
-        if isinstance(item, str):
+        if isinstance_str(item):
             for element in self._elements:
                 if element[0] == item:
                     self._index = self._elements.index(element)
@@ -206,6 +203,8 @@ class Selector(Widget):
             assert 0 <= item < len(self._elements), \
                 'item index must be greater than zero and lower than the number of elements on the selector'
             self._index = item
+        else:
+            raise AssertionError('item must be a string or an integer, but received {0}'.format(item))
 
     def update_elements(self, elements):
         """

@@ -36,7 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pygame
 import pygame_menu.locals as _locals
-from pygame_menu.utils import check_key_pressed_valid, make_surface, to_string
+from pygame_menu.utils import check_key_pressed_valid, make_surface, to_string, isinstance_str
 from pygame_menu.widgets.widget.textinput import TextInput
 
 TYPE_HEX = 'hex'
@@ -95,10 +95,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                  *args,
                  **kwargs
                  ):
-        assert isinstance(colorinput_id, str)
-        assert isinstance(color_type, str)
-        assert isinstance(input_separator, str)
-        assert isinstance(input_underline, str)
+        assert isinstance_str(color_type)
+        assert isinstance_str(input_separator)
+        assert isinstance_str(input_underline)
         assert isinstance(cursor_color, tuple)
         assert isinstance(repeat_keys_initial_ms, (int, float))
         assert isinstance(repeat_keys_interval_ms, (int, float))
