@@ -1208,10 +1208,12 @@ class Menu(object):
         """
         Select a widget from the Menu.
 
-        :param widget: Widget to be selected
-        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :param widget: Widget to be selected or Widget ID
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, str
         :return: None
         """
+        if isinstance(widget, str):
+            widget = self.get_widget(widget_id=widget)
         assert isinstance(widget, _widgets.core.Widget)
         if not widget.is_selectable:
             raise ValueError('widget is not selectable')
@@ -1228,10 +1230,12 @@ class Menu(object):
         """
         Remove a widget from the Menu.
 
-        :param widget: Widget object
-        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`
+        :param widget: Widget object or ID
+        :type widget: :py:class:`pygame_menu.widgets.core.widget.Widget`, str
         :return: None
         """
+        if isinstance(widget, str):
+            widget = self.get_widget(widget_id=widget)
         assert isinstance(widget, _widgets.core.Widget)
         try:
             index = self._widgets.index(widget)  # If not exists this raises ValueError
@@ -1253,19 +1257,19 @@ class Menu(object):
         :return: None
         """
         # Check if there's more selectable widgets
-        nselect = 0
+        n_select = 0
         last_selectable = 0
         for indx in range(len(self._widgets)):
             wid = self._widgets[indx]  # type: _widgets.core.Widget
             if wid.is_selectable and wid.visible:
-                nselect += 1
+                n_select += 1
                 last_selectable = indx
 
-        if nselect == 0:
+        if n_select == 0:
             self._index = -1  # Any widget is selected
-        elif nselect == 1:
+        elif n_select == 1:
             self._select(last_selectable)  # Select the unique selectable option
-        elif nselect > 1:
+        elif n_select > 1:
             if index == -1:  # Index was hidden
                 self._select(self._index + 1)
             elif self._index > index:  # If the selected widget was after this
@@ -1400,27 +1404,27 @@ class Menu(object):
             x_coord += self._widget_offset[0]
 
             # Calculate Y position
-            ysum = 1  # Compute the total height from the current row position to the top of the column
+            y_sum = 1  # Compute the total height from the current row position to the top of the column
             for r in range(row):
-                rwidget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
-                if rwidget.visible:
-                    ysum += widget_rects[rwidget.get_id()].height  # Height
-                    ysum += rwidget.get_margin()[1]  # Vertical margin (bottom)
+                r_widget = self._widgets[int(self._rows * col + r)]  # type: _widgets.core.Widget
+                if r_widget.visible:
+                    y_sum += widget_rects[r_widget.get_id()].height  # Height
+                    y_sum += r_widget.get_margin()[1]  # Vertical margin (bottom)
 
                     # If no widget is before add the selection effect
-                    yselh = rwidget.get_selection_effect().get_margin()[0]
-                    if r == 0 and self._widget_offset[1] <= yselh:
-                        if rwidget.is_selectable:
-                            ysum += yselh - self._widget_offset[1]
+                    y_sel_h = r_widget.get_selection_effect().get_margin()[0]
+                    if r == 0 and self._widget_offset[1] <= y_sel_h:
+                        if r_widget.is_selectable:
+                            y_sum += y_sel_h - self._widget_offset[1]
 
             # If the widget offset is zero, then add the selection effect to the height
             # of the widget to avoid visual glitches
-            yselh = widget.get_selection_effect().get_margin()[0]
-            if ysum == 1 and self._widget_offset[1] <= yselh:  # No widget is before
+            y_sel_h = widget.get_selection_effect().get_margin()[0]
+            if y_sum == 1 and self._widget_offset[1] <= y_sel_h:  # No widget is before
                 if widget.is_selectable:  # Add top margin
-                    ysum += yselh - self._widget_offset[1]
+                    y_sum += y_sel_h - self._widget_offset[1]
 
-            y_coord = max(0, self._widget_offset[1]) + ysum + widget.get_padding()[0]
+            y_coord = max(0, self._widget_offset[1]) + y_sum + widget.get_padding()[0]
 
             # Update the position of the widget
             widget.set_position(int(x_coord), int(y_coord))
@@ -1971,8 +1975,8 @@ class Menu(object):
 
             # If mouse motion enabled, add the current mouse position to event list
             if self._current._mouse and self._current._mouse_motion_selection:
-                mousex, mousey = pygame.mouse.get_pos()
-                events.append(pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mousex, mousey)}))
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                events.append(pygame.event.Event(pygame.MOUSEMOTION, {'pos': (mouse_x, mouse_y)}))
 
             for event in events:  # type: pygame.event.Event
 
@@ -2245,8 +2249,8 @@ class Menu(object):
 
                 # Check if there is a collision between keys
                 data_keys = data.keys()
-                subdata_keys = data_submenu.keys()
-                for key in subdata_keys:  # type: str
+                sub_data_keys = data_submenu.keys()
+                for key in sub_data_keys:  # type: str
                     if key in data_keys:
                         msg = 'collision between widget data ID="{0}" at depth={1}'.format(key, depth)
                         raise ValueError(msg)
