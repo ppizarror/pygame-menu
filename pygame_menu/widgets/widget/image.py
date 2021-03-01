@@ -135,6 +135,12 @@ class Image(Widget):
         self._surface = None
         return self
 
+    def set_max_width(self, *args, **kwargs) -> 'Image':
+        return self
+
+    def set_max_height(self, *args, **kwargs) -> 'Image':
+        return self
+
     def _draw(self, surface: 'pygame.Surface') -> None:
         surface.blit(self._surface, self._rect.topleft)
 
