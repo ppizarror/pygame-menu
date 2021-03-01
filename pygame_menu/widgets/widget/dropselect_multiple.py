@@ -375,7 +375,7 @@ class DropSelectMultiple(DropSelect):
         :param process_index: Adds/Removes the index from the selected indices list
         :return: None
         """
-        assert isinstance(item, (str, int)), 'item must be an string or an integer'
+        assert isinstance(item, (str, int)), 'item must be a string or an integer'
 
         if isinstance(item, str):
             found = False

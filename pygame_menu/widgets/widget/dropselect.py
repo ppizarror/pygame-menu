@@ -905,7 +905,7 @@ class DropSelect(Widget):
         :param item: Item to select, can be a string or an integer
         :return: None
         """
-        assert isinstance(item, (str, int)), 'item must be an string or an integer'
+        assert isinstance(item, (str, int)), 'item must be a string or an integer'
 
         if isinstance(item, str):
             found = False

@@ -1772,7 +1772,7 @@ class Widget(Base):
     def set_max_width(self, width: Optional[NumberType], scale_height: NumberType = False,
                       smooth: bool = True) -> 'Widget':
         """
-        Transformation: Set the Widget max width, it applies an scaling factor
+        Transformation: Set the Widget max width, it applies a scaling factor
         if the widget width is greater than the limit.
 
         .. note::
@@ -1830,7 +1830,7 @@ class Widget(Base):
     def set_max_height(self, height: NumberType, scale_width: NumberType = False,
                        smooth: bool = True) -> 'Widget':
         """
-        Transformation: Set the Widget max height, it applies an scaling factor
+        Transformation: Set the Widget max height, it applies a scaling factor
         if the widget height is greater than the limit.
 
         .. note::

@@ -213,7 +213,7 @@ class Selector(Widget):
 
     def set_sformat(self, sformat: str) -> 'Selector':
         """
-        Set sformat for classic style. This receives an string which is later
+        Set sformat for classic style. This receives a string which is later
         formatted with {0}: title and {1}: the current selected item.
 
         :param sformat: String. Must contain {0} and {1}
@@ -375,7 +375,7 @@ class Selector(Widget):
         :param item: Item to select, can be a string or an integer
         :return: None
         """
-        assert isinstance(item, (str, int)), 'item must be an string or an integer'
+        assert isinstance(item, (str, int)), 'item must be a string or an integer'
         if isinstance(item, str):
             found = False
             for i in self._items:

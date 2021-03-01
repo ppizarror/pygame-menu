@@ -246,7 +246,7 @@ class Menu(Base):
         assert isinstance(mouse_visible, bool)
         assert isinstance(overflow, (tuple, list, bool))
         assert isinstance(rows, (int, type(None), VectorInstance))
-        assert isinstance(theme, Theme), 'theme bust be an pygame_menu.themes.Theme object instance'
+        assert isinstance(theme, Theme), 'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
         assert isinstance(touchscreen_motion_selection, bool)
 
@@ -1481,7 +1481,7 @@ class Menu(Base):
         sx = self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL, real=True)
         sy = self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL, real=True)
 
-        # Remove the thick of the scrollbar to avoid displaying an horizontal one
+        # Remove the thick of the scrollbar to avoid displaying a horizontal one
         # If overflow on both axis
         if max_x > self._width and max_y > self._height - menubar_height:
             width, height = max_x + sy * 0.5, max_y
