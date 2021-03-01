@@ -49,10 +49,10 @@ class BaseImageTest(unittest.TestCase):
         if sys.version_info >= (3, 0):
             # noinspection PyCompatibility
             from pathlib import Path
-            pathimg = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
-            image = pygame_menu.baseimage.BaseImage(pathimg)
+            path_img = Path(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
+            image = pygame_menu.baseimage.BaseImage(path_img)
             image.draw(surface)
-            self.assertEqual(image.get_path(), str(pathimg))
+            self.assertEqual(image.get_path(), str(path_img))
 
     def test_modes(self):
         """
@@ -101,6 +101,7 @@ class BaseImageTest(unittest.TestCase):
         )
         self.assertEqual(image.get_path(), pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
 
+    # noinspection SpellCheckingInspection
     def test_extension_validation(self):
         """
         Validate a image extension.
@@ -184,8 +185,8 @@ class BaseImageTest(unittest.TestCase):
         self.assertTrue(image.equals(image_original))
 
         # As the example is not 24/32 bits smooth scale fails, but baseimage should notice that
-        imagc = image.copy()
-        imagc.resize(100, 100, True)
+        imag_c = image.copy()
+        imag_c.resize(100, 100, True)
 
         # Get rect
         rect = image.get_rect()

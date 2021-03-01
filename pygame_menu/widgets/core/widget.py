@@ -298,7 +298,7 @@ class Widget(object):
         Expand background inflate to match the selection effect
         (the widget don't require to be selected).
 
-        This is a permanent change; for dynamic purpuoses, depending if the widget
+        This is a permanent change; for dynamic purposes, depending if the widget
         is selected or not, setting ``widget.selection_expand_background`` to ``True`` may help.
 
         .. note::

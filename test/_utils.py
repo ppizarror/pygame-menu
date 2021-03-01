@@ -322,8 +322,8 @@ class PygameUtils(object):
         :return: Event
         :rtype: :py:class:`pygame.event.Event`, list[:py:class:`pygame.event.Event`]
         """
-        vmajor, _, _ = pygame.version.vernum
-        assert vmajor >= 2, 'function only available in pygame v2+'
+        v_major, _, _ = pygame.version.vernum
+        assert v_major >= 2, 'function only available in pygame v2+'
         if normalize:
             assert menu is not None, 'menu reference must be provided if normalize is used'
             display_size = menu.get_window_size()

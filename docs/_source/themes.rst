@@ -70,7 +70,7 @@ Background Color/Images
 
 Theme background can be both a color or an image. All colors can be defined
 using a tuple or an list of 3 or 4 numbers between 0 and 255. The format of
-numers are:
+the numbers are:
 
 .. code-block:: python
 

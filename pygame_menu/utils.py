@@ -204,6 +204,7 @@ def is_callable(func):
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType, types.MethodType, functools.partial))
 
 
+# noinspection SpellCheckingInspection
 def to_string(s, strict=False):
     """
     Check if string, if not convert. See issue #215.

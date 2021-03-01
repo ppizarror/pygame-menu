@@ -304,7 +304,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     # noinspection PyMissingOrEmptyDocstring
     def update(self, events):
         _input = self._input_string
-        _curpos = self._cursor_position
+        _cur_pos = self._cursor_position
         _disable_remove_separator = True
 
         key = ''  # Pressed key
@@ -316,19 +316,19 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if not check_key_pressed_valid(event):
                         return True
 
-                    if _disable_remove_separator and len(_input) > 0 and len(_input) > _curpos and (
+                    if _disable_remove_separator and len(_input) > 0 and len(_input) > _cur_pos and (
                             '{0}{0}'.format(self._separator) not in _input or
-                            _input[_curpos] == self._separator and len(_input) == _curpos + 1
+                            _input[_cur_pos] == self._separator and len(_input) == _cur_pos + 1
                     ):
 
                         # Backspace button, delete text from right
                         if event.key == pygame.K_BACKSPACE:
-                            if len(_input) >= 1 and _input[_curpos - 1] == self._separator:
+                            if len(_input) >= 1 and _input[_cur_pos - 1] == self._separator:
                                 return True
 
                         # Delete button, delete text from left
                         elif event.key == pygame.K_DELETE:
-                            if _input[_curpos] == self._separator:
+                            if _input[_cur_pos] == self._separator:
                                 return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
@@ -362,13 +362,13 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                             if key != self._separator:
                                 _pos_before = 0
                                 _pos_after = 0
-                                for _i in range(_curpos):
-                                    if _new_string[_curpos - _i - 1] == self._separator:
-                                        _pos_before = _curpos - _i
+                                for _i in range(_cur_pos):
+                                    if _new_string[_cur_pos - _i - 1] == self._separator:
+                                        _pos_before = _cur_pos - _i
                                         break
-                                for _i in range(len(_new_string) - _curpos):
-                                    if _new_string[_curpos + _i] == self._separator:
-                                        _pos_after = _curpos + _i
+                                for _i in range(len(_new_string) - _cur_pos):
+                                    if _new_string[_cur_pos + _i] == self._separator:
+                                        _pos_after = _cur_pos + _i
                                         break
                                 if _pos_after == 0:
                                     _pos_after = len(_new_string)
@@ -393,12 +393,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
                     # Backspace button, delete text from right
                     if event.key == pygame.K_BACKSPACE:
-                        if _curpos == 1:
+                        if _cur_pos == 1:
                             return True
 
                     # Delete button, delete text from left
                     elif event.key == pygame.K_DELETE:
-                        if _curpos == 0:
+                        if _cur_pos == 0:
                             return True
 
                     # Verify only on user key input, the rest of events are checked by TextInput on super call
@@ -406,7 +406,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                     if key in self._valid_chars:
                         if key == '#':
                             return True
-                        if _curpos == 0:
+                        if _cur_pos == 0:
                             return True
 
         # Update
@@ -433,7 +433,7 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             for c in colors:
                 if len(c) > 0 and (int(c) > 255 or int(c) < 0):
                     self._input_string = _input
-                    self._cursor_position = _curpos
+                    self._cursor_position = _cur_pos
                     break
 
             if len(colors) == 3:
@@ -442,12 +442,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             # Add an auto separator if the number can't continue growing and the cursor
             # is at the end of the line
             if _total_separator < 2 and len(self._input_string) == self._cursor_position:
-                autopos = len(colors) - 1
-                last_num = colors[autopos]
+                auto_pos = len(colors) - 1
+                last_num = colors[auto_pos]
                 if (len(last_num) == 2 and int(last_num) > 25 or len(last_num) == 3 and int(last_num) <= 255) and \
-                        autopos not in self._auto_separator_pos:
+                        auto_pos not in self._auto_separator_pos:
                     self._push_key_input(self._separator, sounds=False)  # This calls .onchange()
-                    self._auto_separator_pos.append(autopos)
+                    self._auto_separator_pos.append(auto_pos)
 
             # If the user cleared all the string, reset auto separator
             if _total_separator == 0 and \
