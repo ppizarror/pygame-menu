@@ -31,12 +31,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['WidgetsTest']
 
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, \
+    PYGAME_V2, WINDOW_SIZE
 import copy
 import unittest
 
 import pygame
-
 import pygame_menu
+
 from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, \
     KEY_MOVE_DOWN, KEY_MOVE_UP
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, POSITION_SOUTHEAST
@@ -44,8 +46,6 @@ from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
 from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, \
-    PYGAME_V2, WINDOW_SIZE
 
 
 class WidgetsTest(unittest.TestCase):
@@ -2227,3 +2227,51 @@ class WidgetsTest(unittest.TestCase):
         # Assert switch values
         self.assertRaises(ValueError, lambda: menu.add.toggle_switch('toggle', 'false',
                                                                      onchange=onchange, infinite=False))
+
+    def test_image_widget(self) -> None:
+        """
+        Test image widget.
+        """
+        menu = MenuUtils.generic_menu()
+        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, font_color=(2, 9))
+        image.set_max_width(100)
+        self.assertIsNone(image._max_width[0])
+
+        image.set_max_height(100)
+        self.assertIsNone(image._max_height[0])
+
+    def test_surface_widget(self) -> None:
+        """
+        Test surface widget.
+        """
+        menu = MenuUtils.generic_menu()
+        surf = pygame.Surface((150, 150))
+        surf.fill((255, 192, 203))
+        surf_widget = menu.add.surface(surf)
+
+        self.assertEqual(surf_widget.get_size(), (166, 158))
+        self.assertEqual(surf_widget.get_size(apply_padding=False), (150, 150))
+        self.assertEqual(surf_widget.get_surface(), surf)
+
+        surf_widget.rotate(10)
+        self.assertEqual(surf_widget._angle, 0)
+
+        surf_widget.resize(10, 10)
+        self.assertFalse(surf_widget._scale[0])
+        self.assertEqual(surf_widget._scale[1], 1)
+        self.assertEqual(surf_widget._scale[2], 1)
+
+        surf_widget.scale(100, 100)
+        self.assertFalse(surf_widget._scale[0])
+        self.assertEqual(surf_widget._scale[1], 1)
+        self.assertEqual(surf_widget._scale[2], 1)
+
+        surf_widget.flip(True, True)
+        self.assertFalse(surf_widget._flip[0])
+        self.assertFalse(surf_widget._flip[1])
+
+        surf_widget.set_max_width(100)
+        self.assertIsNone(surf_widget._max_width[0])
+
+        surf_widget.set_max_height(100)
+        self.assertIsNone(surf_widget._max_height[0])

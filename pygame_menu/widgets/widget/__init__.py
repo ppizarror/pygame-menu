@@ -41,6 +41,7 @@ from pygame_menu.widgets.widget.menubar import MenuBar
 from pygame_menu.widgets.widget.none import NoneWidget
 from pygame_menu.widgets.widget.scrollbar import ScrollBar
 from pygame_menu.widgets.widget.selector import Selector
+from pygame_menu.widgets.widget.surface import SurfaceWidget
 from pygame_menu.widgets.widget.textinput import TextInput
 from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
 from pygame_menu.widgets.widget.vmargin import VMargin

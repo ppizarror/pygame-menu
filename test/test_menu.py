@@ -1689,10 +1689,13 @@ class MenuTest(unittest.TestCase):
         Test mouseover + motion.
         """
         menu = MenuUtils.generic_menu()
-        btn1 = menu.add.button('1', cursor=pygame_menu.locals.CURSOR_ARROW)
-        btn2 = menu.add.button('2', cursor=pygame_menu.locals.CURSOR_ARROW)
+        btn1 = menu.add.button('1', cursor=pygame_menu.locals.CURSOR_ARROW, button_id='b1')
+        btn2 = menu.add.button('2', cursor=pygame_menu.locals.CURSOR_ARROW, button_id='b2')
 
         # Setup
+        menu.select_widget('b2')
+        self.assertEqual(menu.get_selected_widget(), btn2)
+        menu.select_widget('b1')
         self.assertTrue(btn1.is_selected())
         self.assertFalse(menu._mouse_motion_selection)
 

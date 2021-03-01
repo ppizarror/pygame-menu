@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'DROPSELECT'
+EXAMPLE = 'FRAME_TITLE'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -104,6 +104,7 @@ def func(name):
 if EXAMPLE == 'BUTTON':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Button')
     about_menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'About')
+
     menu.add.button('Exec', func, 'foo',  # Execute a function, it receives 'foo' as *arg
                     align=pygame_menu.locals.ALIGN_LEFT)
     btn = menu.add.button(about_menu.get_title(), about_menu,  # Open a sub-menu
@@ -114,6 +115,7 @@ if EXAMPLE == 'BUTTON':
 
 elif EXAMPLE == 'COLORINPUT':
     menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
+
     menu.add.color_input('RGB color 1: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
                          default=(255, 0, 255), font_size=18)
     menu.add.color_input('RGB color 2: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
@@ -123,6 +125,7 @@ elif EXAMPLE == 'COLORINPUT':
 
 elif EXAMPLE == 'DROPSELECT':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Drop Select')
+
     selector_epic = menu.add.dropselect(
         title='Is pygame-menu epic?',
         items=[('Yes', 0),
@@ -187,35 +190,58 @@ elif EXAMPLE == 'DROPSELECT_MULTIPLE':
 elif EXAMPLE == 'FRAME':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Frames', widget_font_size=18)
     menu.get_theme().widget_selection_effect.zero_margin()
-    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50))
-    frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180))
-    frame_content = menu.add.frame_v(250, 120)
+
+    frame = menu.add.frame_v(250, 150, background_color=(50, 50, 50), padding=0)
+    frame_title = menu.add.frame_h(250, 29, background_color=(180, 180, 180), padding=0)
+    frame_content = menu.add.frame_v(250, 120, padding=0)
     frame.pack(frame_title)
     frame.pack(frame_content)
 
-    frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
+    frame_title.pack(menu.add.label('Settings', padding=0), margin=(2, 2))
     frame_title.pack(
         menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
-        alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
+        alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(2, 2))
     frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
                        alignment=pygame_menu.locals.ALIGN_CENTER)
-    frame_numbers = menu.add.frame_h(250, 41)
+    frame_numbers = menu.add.frame_h(250, 41, padding=0)
     frame_content.pack(frame_numbers)
     for i in range(9):
         frame_numbers.pack(menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
                            alignment=pygame_menu.locals.ALIGN_CENTER)
     frame_content.pack(menu.add.vertical_margin(15))
-    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
+    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150), padding=0),
                        alignment=pygame_menu.locals.ALIGN_CENTER)
+
+elif EXAMPLE == 'FRAME_TITLE':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Frame + Title', widget_font_size=18)
+    menu.get_theme().widget_selection_effect.zero_margin()
+
+    frame = menu.add.frame_v(400, 800, background_color=(50, 50, 50), padding=0, max_width=300, max_height=100)
+    frame.set_title('My Frame App', title_font_color='white', padding_inner=(2, 5))
+
+    frame.pack(menu.add.dropselect(
+        title='Is pygame-menu epic?',
+        items=[('Yes', 0),
+               ('Absolutely Yes', 1)],
+        font_color='white',
+        font_size=16,
+        selection_option_font_size=20
+    ))
+    for i in range(20):
+        frame.pack(menu.add.button(i, font_color='white', button_id='b{}'.format(i)))
+
+    menu.select_widget('b0')
 
 elif EXAMPLE == 'IMAGE':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Image')
+
     image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
     menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
     menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
 
 elif EXAMPLE == 'LABEL':
     menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
+
     HELP = "Press ESC to enable/disable Menu " \
            "Press ENTER to access a Sub-Menu or use an option " \
            "Press UP/DOWN to move through Menu " \
@@ -224,6 +250,7 @@ elif EXAMPLE == 'LABEL':
 
 elif EXAMPLE == 'SELECTOR':
     menu = make_menu(pygame_menu.themes.THEME_ORANGE, 'Selector')
+
     items = [('Default', (255, 255, 255)),
              ('Black', (0, 0, 0)),
              ('Blue', (0, 0, 255)),
@@ -241,26 +268,40 @@ elif EXAMPLE == 'SELECTOR':
         style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
     )
 
+elif EXAMPLE == 'SURFACE':
+    menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Surface')
+
+    new_surface = pygame.Surface((160, 160))
+    new_surface.fill((255, 192, 203))
+    inner_surface = pygame.Surface((80, 80))
+    inner_surface.fill((75, 0, 130))
+    new_surface.blit(inner_surface, (40, 40))
+    menu.add.surface(new_surface)
+
 elif EXAMPLE == 'TEXTINPUT':
     menu = make_menu(pygame_menu.themes.THEME_GREEN, 'Text Entry')
+
     menu.add.text_input('First name: ', default='John')
     menu.add.text_input('Last name: ', default='Doe', maxchar=10, input_underline='_')
     menu.add.text_input('Password: ', input_type=pygame_menu.locals.INPUT_INT, password=True)
 
 elif EXAMPLE == 'TOGGLESWITCH':
     menu = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Switches')
+
     menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
     menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
                            state_text=('Apagado', 'Encencido'), state_text_font_size=18)
 
 elif EXAMPLE == 'URL':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Url', widget_font_size=18)
+
     menu.add.url('https://github.com/ppizarror/pygame-menu')
     menu.add.url('https://github.com/ppizarror/pygame-menu', 'The best menu ever')
     menu.add.url('https://pygame-menu.readthedocs.io/en/master/', 'pygame-menu documentation')
 
 elif EXAMPLE == 'VERTICALMARGIN':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Vertical spacer')
+
     menu.add.label('Text #1')
     menu.add.vertical_margin(100)
     menu.add.label('Text #2')
