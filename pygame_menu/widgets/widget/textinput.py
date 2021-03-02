@@ -92,6 +92,12 @@ class TextInput(Widget):
 
         This widget only accepts vertical flip and translation transformations.
 
+    .. note::
+
+        TextInput text input is sensitive to the widget font, some fonts do not support
+        some characters or languages (for example Chinese). Be careful about which font
+        use.
+
     :param title: Text input title
     :param textinput_id: ID of the text input
     :param copy_paste_enable: Enables copy, paste, and cut

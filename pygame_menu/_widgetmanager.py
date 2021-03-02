@@ -2059,6 +2059,12 @@ class WidgetManager(Base):
 
         .. note::
 
+            The Frame size created with this method does consider the padding. Thus,
+            if Frame is created with ``width=100``, ``height=200`` and ``padding=25`` the
+            final internal size is ``width=50`` and ``height=150``.
+
+        .. note::
+
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
@@ -2140,6 +2146,12 @@ class WidgetManager(Base):
 
             Widget floating is also considered within frames. If a widget is floating,
             it does not add any size to the respective positioning.
+
+        .. note::
+
+            The Frame size created with this method does consider the padding. Thus,
+            if Frame is created with ``width=100``, ``height=200`` and ``padding=25`` the
+            final internal size is ``width=50`` and ``height=150``.
 
         .. note::
 
