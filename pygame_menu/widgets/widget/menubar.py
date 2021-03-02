@@ -480,6 +480,8 @@ class MenuBar(Widget):
         return super(MenuBar, self).get_height(apply_padding, apply_selection)
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         updated = False
@@ -512,8 +514,5 @@ class MenuBar(Widget):
                     self._sound.play_click_mouse()
                     self.apply()
                     updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

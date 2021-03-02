@@ -154,6 +154,7 @@ class Image(Widget):
         self.force_menu_surface_update()
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
         for event in events:
             if self._check_mouseover(event):
                 break

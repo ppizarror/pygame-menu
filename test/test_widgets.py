@@ -1137,10 +1137,11 @@ class WidgetsTest(unittest.TestCase):
         Test update callback.
         """
 
-        def update(widget, _) -> None:
+        def update(event, widget, _) -> None:
             """
             Callback.
             """
+            assert isinstance(event, list)
             widget.set_attribute('attr', True)
 
         menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
@@ -1181,10 +1182,11 @@ class WidgetsTest(unittest.TestCase):
         btn.update(PygameEventUtils.mouse_click(click_pos[0], click_pos[1]))
         self.assertFalse(btn.get_attribute('attr', False))
 
-        def update2(widget, _) -> None:
+        def update2(event, widget, _) -> None:
             """
             Callback.
             """
+            assert isinstance(event, list)
             widget.set_attribute('epic', 'bass')
 
         btn.add_update_callback(update2)

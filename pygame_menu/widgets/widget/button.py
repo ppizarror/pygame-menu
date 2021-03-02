@@ -198,6 +198,8 @@ class Button(Widget):
         self.force_menu_surface_update()
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         updated = False
@@ -235,8 +237,5 @@ class Button(Widget):
                 if rect.collidepoint(*finger_pos):
                     self.apply()
                     updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

@@ -391,6 +391,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._input_string = self._input_string.upper()
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         input_str = self._input_string
@@ -550,8 +552,5 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             if total_separator == 0 and \
                     (len(self._input_string) < 2 or len(self._input_string) == 2 and int(colors[0]) <= 25):
                 self._auto_separator_pos = []
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

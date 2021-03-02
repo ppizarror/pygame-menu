@@ -475,8 +475,11 @@ class ScrollBar(Widget):
         return self._slider_rect.move(*self.get_rect(to_absolute_position=True).topleft)
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
+
         updated = False
         rect = self.get_rect(to_absolute_position=True)
 
@@ -565,8 +568,5 @@ class ScrollBar(Widget):
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and self.scrolling:
                 self.scrolling = False
                 updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

@@ -273,7 +273,7 @@ class Widget(Base):
     _touchscreen_enabled: bool
     _translate: Tuple2IntType  # Translation made by user
     _translate_virtual: Tuple2IntType  # Virtual translation applied by api
-    _update_callbacks: Dict[str, Callable[['Widget', 'pygame_menu.Menu'], Any]]
+    _update_callbacks: Dict[str, Callable[[EventListType, 'Widget', 'pygame_menu.Menu'], Any]]
     _visible: bool
     active: bool
     configured: bool
@@ -2392,11 +2392,11 @@ class Widget(Base):
             callback(self, self._menu)
         return self
 
-    def add_update_callback(self, update_callback: Callable[['Widget', 'pygame_menu.Menu'], Any]) -> str:
+    def add_update_callback(self, update_callback: Callable[[EventListType, 'Widget', 'pygame_menu.Menu'], Any]) -> str:
         """
         Adds a function to the Widget to be executed each time the Widget is updated.
 
-        The function that this method receives receives two objects: the Widget itself and
+        The function that this method receives receives three objects: the events list, the Widget itself and
         the Menu reference. It is similar to :py:meth:`pygame_menu.widgets.core.widget.Widget.add_draw_callback`
 
         After creating a new callback, this functions returns the ID of the call. It can be removed
@@ -2428,16 +2428,21 @@ class Widget(Base):
         del self._update_callbacks[callback_id]
         return self
 
-    def apply_update_callbacks(self) -> 'Widget':
+    def apply_update_callbacks(self, events: EventListType) -> 'Widget':
         """
         Apply callbacks on Widget update.
 
+        .. note::
+
+            Readonly widgets or Hidden widgets do not apply update callbacks.
+
+        :param events: Events list
         :return: Self reference
         """
         if len(self._update_callbacks) == 0 or self.readonly:
             return self
         for callback in self._update_callbacks.values():
-            callback(self, self._menu)
+            callback(events, self, self._menu)
         return self
 
     def _add_event(self, event: EventType) -> None:

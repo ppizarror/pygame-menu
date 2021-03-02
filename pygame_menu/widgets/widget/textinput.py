@@ -1482,6 +1482,9 @@ class TextInput(Widget):
         return False
 
     def update(self, events: EventVectorType) -> bool:
+        if self._apply_widget_update_callback:
+            self.apply_update_callbacks(events)
+
         self._clock.tick(60)
 
         # Check mouse pressed
@@ -1837,8 +1840,5 @@ class TextInput(Widget):
                     )
                 except pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
                     pass
-
-        if updated and self._apply_widget_update_callback:
-            self.apply_update_callbacks()
 
         return updated

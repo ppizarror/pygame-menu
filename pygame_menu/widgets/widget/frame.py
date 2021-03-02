@@ -1626,8 +1626,9 @@ class Frame(Widget):
             self.get_frame()._update_indices()
 
     def update(self, events: EventVectorType) -> bool:
-        updated = False
+        self.apply_update_callbacks(events)
 
+        updated = False
         if self.readonly or not self.is_visible():
             return updated
 

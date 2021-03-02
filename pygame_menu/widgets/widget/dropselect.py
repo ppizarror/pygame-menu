@@ -1039,6 +1039,8 @@ class DropSelect(Widget):
         return rect
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
 
@@ -1147,9 +1149,6 @@ class DropSelect(Widget):
                     if self.active and not self.get_focus_rect().collidepoint(*event_pos):
                         self._toggle_drop()
                         updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated
 

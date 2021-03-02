@@ -413,6 +413,8 @@ class Selector(Widget):
                 self._default_value = 0
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         updated = False
@@ -474,8 +476,5 @@ class Selector(Widget):
                         else:
                             self._right()
                         updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated
