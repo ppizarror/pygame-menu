@@ -53,7 +53,7 @@ from pygame_menu.utils import make_surface, assert_color, assert_position, asser
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
-    Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType
+    Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType, VectorInstance
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -106,23 +106,23 @@ class ScrollArea(Base):
 
         ScrollArea cannot be copied or deepcopied.
 
-    :param area_width: Width of scrollable area (px)
-    :param area_height: Height of scrollable area (px)
+    :param area_width: Width of scrollable area in px
+    :param area_height: Height of scrollable area in px
     :param area_color: Background color, it can be a color or an image
-    :param extend_x: Px to extend the surface on x axis (px) from left. Recommended use only within Menus
-    :param extend_y: Px to extend the surface on y axis (px) from top. Recommended use only within Menus
+    :param extend_x: Px to extend the surface on x axis in px from left. Recommended use only within Menus
+    :param extend_y: Px to extend the surface on y axis in px from top. Recommended use only within Menus
     :param menubar: Menubar for style compatibility. ``None`` if ScrollArea is not used within a Menu (for example, in Frames)
     :param parent_scrollarea: Parent ScrollArea if the new one is added within another area
     :param scrollarea_id: Scrollarea ID
     :param scrollbar_color: Scrollbars color
     :param scrollbar_cursor: Scrollbar cursor
     :param scrollbar_slider_color: Color of the sliders
-    :param scrollbar_slider_pad: Space between slider and scrollbars borders (px)
-    :param scrollbar_thick: Scrollbar thickness (px)
+    :param scrollbar_slider_pad: Space between slider and scrollbars borders in px
+    :param scrollbar_thick: Scrollbar thickness in px
     :param scrollbars: Positions of the scrollbars. See :py:mod:`pygame_menu.locals`
     :param shadow: Indicate if a shadow is drawn on each scrollbar
     :param shadow_color: Color of the shadow of each scrollbar
-    :param shadow_offset: Offset of the scrollbar shadow (px)
+    :param shadow_offset: Offset of the scrollbar shadow in px
     :param shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
     :param world: Surface to draw and scroll
     """
@@ -188,7 +188,7 @@ class ScrollArea(Base):
         assert area_width > 0 and area_height > 0, \
             'area size must be greater than zero'
 
-        assert isinstance(scrollbars, (str, tuple, list))
+        assert isinstance(scrollbars, (str, VectorInstance))
         unique_scrolls = []
         if isinstance(scrollbars, str):
             unique_scrolls.append(scrollbars)
@@ -441,7 +441,7 @@ class ScrollArea(Base):
         Return the total width out of the bounds of the viewable area.
         Zero is returned if the world width is lower than the viewable area.
 
-        :return: Hidden width (px)
+        :return: Hidden width in px
         """
         if not self._world:
             return 0
@@ -452,7 +452,7 @@ class ScrollArea(Base):
         Return the total height out of the bounds of the viewable area.
         Zero is returned if the world height is lower than the viewable area.
 
-        :return: Hidden height (px)
+        :return: Hidden height in px
         """
         if not self._world:
             return 0
@@ -462,7 +462,7 @@ class ScrollArea(Base):
         """
         Return the offset introduced by the scrollbars in the world.
 
-        :return: ScrollArea offset on x-axis and y-axis
+        :return: ScrollArea offset on x-axis and y-axis (x, y)
         """
         offsets = [0, 0]
         for sbar in self._scrollbars:
@@ -494,7 +494,7 @@ class ScrollArea(Base):
 
         :param orientation: Orientation of the scroll. See :py:mod:`pygame_menu.locals`
         :param real: If ``True`` returns the real thickness depending if it is shown or not
-        :return: Thickness (px)
+        :return: Thickness in px
         """
         assert_orientation(orientation)
         assert isinstance(real, bool)
@@ -748,7 +748,7 @@ class ScrollArea(Base):
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
-        :param margin: Extra margin around the rect (px)
+        :param margin: Extra margin around the rect in px
         :param scroll_parent: If ``True`` parent scroll also scrolls to rect
         :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
@@ -817,10 +817,10 @@ class ScrollArea(Base):
 
     def translate(self, x: NumberType, y: NumberType) -> 'ScrollArea':
         """
-        Translate on x-axis and y-axis
+        Translate on x-axis and y-axis (x, y) in px.
 
-        :param x: X translation (px)
-        :param y: Y translation (px)
+        :param x: X translation in px
+        :param y: Y translation in px
         :return: Self reference
         """
         assert isinstance(x, NumberInstance)
@@ -837,7 +837,7 @@ class ScrollArea(Base):
         """
         Get object translation on both axis.
 
-        :return: Translation on x-axis and y-axis (px)
+        :return: Translation on x-axis and y-axis (x, y) in px
         """
         return self._translate
 
@@ -856,7 +856,7 @@ class ScrollArea(Base):
         """
         Return parent ScrollArea position.
 
-        :return: Position on x, y axis (px)
+        :return: Position on x, y axis in px
         """
         if self._parent_scrollarea is not None:
             px, py = self._parent_scrollarea.get_position()
@@ -936,7 +936,7 @@ class ScrollArea(Base):
         :param visible: If a ``virtual`` is Rect object, return only the visible width/height
         :return: Real rect or real position
         """
-        assert isinstance(virtual, (pygame.Rect, tuple, list))
+        assert isinstance(virtual, (pygame.Rect, VectorInstance))
         offsets = self.get_offsets()
         parent_position = self.get_parent_position()
 
@@ -968,7 +968,7 @@ class ScrollArea(Base):
         :param real: Position/Rect according ScrollArea origin
         :return: Rect in world or position in world
         """
-        assert isinstance(real, (pygame.Rect, tuple, list))
+        assert isinstance(real, (pygame.Rect, VectorInstance))
         offsets = self.get_offsets()
         parent_position = self.get_parent_position()
 

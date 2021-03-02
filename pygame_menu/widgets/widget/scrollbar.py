@@ -38,7 +38,7 @@ from pygame_menu.utils import make_surface, assert_orientation, assert_color
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, List, VectorIntType, ColorType, Tuple2IntType, \
-    CallbackType, NumberInstance, ColorInputType, NumberType, Literal, EventVectorType
+    CallbackType, NumberInstance, ColorInputType, NumberType, Literal, EventVectorType, VectorInstance
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -104,7 +104,7 @@ class ScrollBar(Widget):
             **kwargs
     ) -> None:
         assert isinstance(length, NumberInstance)
-        assert isinstance(values_range, (tuple, list))
+        assert isinstance(values_range, VectorInstance)
         assert values_range[1] > values_range[0], 'minimum value first is expected'
         assert isinstance(slider_pad, NumberInstance)
         assert isinstance(page_ctrl_thick, int)
@@ -297,7 +297,7 @@ class ScrollBar(Widget):
         """
         Return the value according to the slider position.
 
-        :return: Position in pixels (px)
+        :return: Position in px
         """
         value = self._values_range[0] + self._slider_position * \
                 (self._values_range[1] - self._values_range[0]) / (self._page_ctrl_length - self._page_step)
@@ -378,7 +378,7 @@ class ScrollBar(Widget):
         """
         Return the thickness of the bar.
 
-        :return: Thickness (px)
+        :return: Thickness in px
         """
         return self._page_ctrl_thick
 

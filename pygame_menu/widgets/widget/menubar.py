@@ -60,7 +60,7 @@ from pygame_menu.utils import assert_color, get_finger_pos
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, \
-    Optional, NumberInstance, ColorInputType, EventVectorType
+    Optional, NumberInstance, ColorInputType, EventVectorType, VectorInstance
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -97,8 +97,8 @@ class MenuBar(Widget):
     :param back_box: Draw a back-box button on header
     :param mode: Mode of drawing the bar
     :param modify_scrollarea: If ``True`` it modifies the scrollbars of the scrollarea depending on the bar mode
-    :param offsetx: Offset x-position of title (px)
-    :param offsety: Offset y-position of title (px)
+    :param offsetx: Offset x-position of title in px
+    :param offsety: Offset y-position of title in px
     :param onreturn: Callback when pressing the back-box button
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments for callbacks
@@ -196,7 +196,7 @@ class MenuBar(Widget):
             c_back = self._menu.get_theme().background_color
         else:
             c_back = self._background_color
-        if not isinstance(c_back, (tuple, list)):  # If is color
+        if not isinstance(c_back, VectorInstance):  # If is color
             return
         tol = 5
         c_dif_1 = abs(c_back[0] - self._font_color[0])
@@ -212,7 +212,7 @@ class MenuBar(Widget):
 
     def get_title_offset(self) -> Tuple2IntType:
         """
-        Return the title offset on x-axis and y-axis (x, y).
+        Return the title offset on x-axis and y-axis (x, y) in px.
 
         :return: Title offset
         """
@@ -267,7 +267,7 @@ class MenuBar(Widget):
         Return scrollbar change (width, position) depending on the style of the menubar.
 
         :param position: Position of the scrollbar
-        :return: Change in length and position (px)
+        :return: Change in length and position in px
         """
         self._render()
         if not self._modify_scrollarea:
@@ -461,8 +461,8 @@ class MenuBar(Widget):
         Set the menubar title.
 
         :param title: Menu title
-        :param offsetx: Offset x-position of title (px)
-        :param offsety: Offset y-position of title (px)
+        :param offsetx: Offset x-position of title in px
+        :param offsety: Offset y-position of title in px
         :return: Self reference
         """
         assert isinstance(offsetx, NumberInstance)

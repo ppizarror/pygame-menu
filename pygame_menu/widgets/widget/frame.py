@@ -65,7 +65,7 @@ from pygame_menu.widgets.widget.label import Label
 
 from pygame_menu._types import Optional, NumberType, Dict, Tuple, Union, List, Vector2NumberType, Literal, \
     Tuple2IntType, NumberInstance, Any, ColorInputType, EventVectorType, PaddingType, CallbackType, \
-    ColorInputGradientType, CursorInputType
+    ColorInputGradientType, CursorInputType, VectorInstance
 
 # Constants
 FRAME_DEFAULT_TITLE_BACKGROUND_COLOR = ((10, 36, 106), (166, 202, 240), False, True)
@@ -107,8 +107,8 @@ class Frame(Widget):
         be careful when removing. Check :py:class:`pygame_menu.widgets.DropSelect`
         as a complete example of Frame implementation within another Widgets.
 
-    :param width: Frame width (px)
-    :param height: Frame height (px)
+    :param width: Frame width in px
+    :param height: Frame height in px
     :param orientation: Frame orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
     :param frame_id: ID of the frame
     """
@@ -206,7 +206,7 @@ class Frame(Widget):
         :param title_buttons_alignment: Alignment of the title buttons (if appended later)
         :param title_font: Title font. If ``None`` uses the same as the Frame
         :param title_font_color: Title font color. If ``None`` uses the same as the Frame
-        :param title_font_size: Title font size (px). If ``None`` uses the same as the Frame
+        :param title_font_size: Title font size in px. If ``None`` uses the same as the Frame
         :return: Title frame object
         """
         assert self.configured, '{0} must be configured before setting a title'.format(self.get_class_id())
@@ -373,7 +373,7 @@ class Frame(Widget):
             onreturn_button_callback(*args, frame=Frame, button=Button, **kwargs)
 
         :param button: Button object
-        :param margin: Pack margin on x-axis and y-axis in px
+        :param margin: Pack margin on x-axis and y-axis (x, y) in px
         :return: Self reference
         """
         assert self._has_title, \
@@ -432,7 +432,7 @@ class Frame(Widget):
         :param callback: Callback of the button if pressed
         :param cursor: Button cursor
         :param background_color: Button background color
-        :param margin: Pack margin on x-axis and y-axis in px
+        :param margin: Pack margin on x-axis and y-axis (x, y) in px
         :param symbol_color: Color of the symbol
         :param symbol_height: Symbol height factor, if ``1.0`` uses 100% of the button height
         :param symbol_margin: Symbol margin in px
@@ -620,18 +620,18 @@ class Frame(Widget):
         """
         Make the scrollarea of the frame.
 
-        :param max_width: Maximum width of the scrollarea (px)
-        :param max_height: Maximum height of the scrollarea (px)
+        :param max_width: Maximum width of the scrollarea in px
+        :param max_height: Maximum height of the scrollarea in px
         :param scrollarea_color: Scroll area color or image. If ``None`` area is transparent
         :param scrollbar_color: Scrollbar color
         :param scrollbar_cursor: Scrollbar cursor
         :param scrollbar_shadow: Indicate if a shadow is drawn on each scrollbar
         :param scrollbar_shadow_color: Color of the shadow of each scrollbar
-        :param scrollbar_shadow_offset: Offset of the scrollbar shadow (px)
+        :param scrollbar_shadow_offset: Offset of the scrollbar shadow in px
         :param scrollbar_shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
         :param scrollbar_slider_color: Color of the sliders
-        :param scrollbar_slider_pad: Space between slider and scrollbars borders (px)
-        :param scrollbar_thick: Scrollbar thickness (px)
+        :param scrollbar_slider_pad: Space between slider and scrollbars borders in px
+        :param scrollbar_thick: Scrollbar thickness in px
         :param scrollbars: Positions of the scrollbars. See :py:mod:`pygame_menu.locals`
         :return: Self reference
         """
@@ -1111,8 +1111,8 @@ class Frame(Widget):
         """
         Resize the Frame.
 
-        :param width: New width (px). Horizontal padding will be subtracted
-        :param height: New height (px). Vertical padding will be subtracted
+        :param width: New width in px. Horizontal padding will be subtracted
+        :param height: New height in px. Vertical padding will be subtracted
         :param max_width: Max frame width if the Frame is scrollable. If ``None`` the same width will be used
         :param max_height: Max frame height if the Frame is scrollable. If ``None`` the same height will be used
         :return: Self reference
@@ -1447,7 +1447,7 @@ class Frame(Widget):
         """
         assert self._menu is not None, \
             'frame menu must be set before packing widgets'
-        if isinstance(widget, (tuple, list)):
+        if isinstance(widget, VectorInstance):
             for w in widget:
                 self.pack(widget=w, alignment=alignment, vertical_position=vertical_position)
             return widget

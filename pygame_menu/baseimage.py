@@ -68,7 +68,7 @@ from pygame_menu.utils import assert_vector, assert_position, assert_color
 
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
     NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorInputType, Tuple3IntType, \
-    NumberInstance
+    NumberInstance, VectorInstance
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -254,12 +254,12 @@ class BaseImage(Base):
 
     def crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'BaseImage':
         """
-        Crops the image from coordinate on x-axis and y-axis.
+        Crops the image from coordinate on x-axis and y-axis (x, y).
 
-        :param x: X position (px) within your image
-        :param y: Y position (px)
-        :param width: Crop width (px)
-        :param height: Crop height (px)
+        :param x: X position within the image in px
+        :param y: Y position in px
+        :param width: Crop width in px
+        :param height: Crop height in px
         :return: Self reference
         """
         self._surface = self.get_crop(x, y, width, height)
@@ -276,12 +276,12 @@ class BaseImage(Base):
 
     def get_crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'pygame.Surface':
         """
-        Get a crop of the image from coordinate on x-axis and y-axis.
+        Get a crop of the image from coordinate on x-axis and y-axis (x, y).
 
-        :param x: X position (px) within your image
-        :param y: Y position (px)
-        :param width: Crop width (px)
-        :param height: Crop height (px)
+        :param x: X position within the image in px
+        :param y: Y position in px
+        :param width: Crop width in px
+        :param height: Crop height in px
         :return: Cropped surface
         """
         assert 0 <= x < self.get_width(), \
@@ -366,7 +366,7 @@ class BaseImage(Base):
         """
         Set the image drawing offset.
 
-        :param offset: Drawing offset tuple on x-axis and y-axis
+        :param offset: Drawing offset tuple on x-axis and y-axis (x, y) in px
         :return: Self reference
         """
         assert_vector(offset, 2)
@@ -414,7 +414,7 @@ class BaseImage(Base):
 
     def get_at(self, pos: Tuple2NumberType, ignore_alpha: bool = False) -> Union[Tuple3IntType, Tuple4IntType]:
         """
-        Get the color from a certain position in image on x-axis and y-axis.
+        Get the color from a certain position in image on x-axis and y-axis (x, y).
 
         ``get_at`` return a copy of the RGBA Color value at the given pixel. If the
         Surface has no per pixel alpha, then the alpha value will always be ``255``
@@ -428,7 +428,7 @@ class BaseImage(Base):
         array interfaces/pygame.PixelArraypygame object for direct pixel access of
         surfaces.
 
-        :param pos: Position on x-axis and y-axis (x, y)
+        :param pos: Position on x-axis and y-axis (x, y) in px
         :param ignore_alpha: If ``True`` returns only the three main channels
         :return: Color
         """
@@ -440,9 +440,9 @@ class BaseImage(Base):
 
     def set_at(self, pos: Tuple2NumberType, color: ColorInputType) -> 'BaseImage':
         """
-        Set the color of pixel on x-axis and y-axis.
+        Set the color of pixel on x-axis and y-axis (x, y).
 
-        :param pos: Position on x-axis and y-axis (x, y)
+        :param pos: Position on x-axis and y-axis (x, y) in px
         :param color: Color
         :return: Self reference
         """
@@ -577,7 +577,7 @@ class BaseImage(Base):
         """
         if isinstance(channels, str):
             channels = [channels]
-        assert isinstance(channels, (tuple, list))
+        assert isinstance(channels, VectorInstance)
         assert 1 <= len(channels) <= 3, 'maximum size of channels can be 3'
 
         w, h = self._surface.get_size()
@@ -726,7 +726,7 @@ class BaseImage(Base):
         """
         Return the delta from drawing position.
 
-        :return: Delta position on x-axis and y-axis (x, y)
+        :return: Delta position on x-axis and y-axis (x, y) in px
         """
         rect = self.get_rect()
         if self._drawing_position == POSITION_NORTHWEST:
@@ -757,7 +757,7 @@ class BaseImage(Base):
 
         :param surface: Pygame surface object
         :param area: Area to draw; if ``None`` the image will be drawn on entire surface
-        :param position: Position to draw on x-axis and y-axis (x, y)
+        :param position: Position to draw on x-axis and y-axis (x, y) in px
         :return: Self reference
         """
         assert isinstance(surface, pygame.Surface)
