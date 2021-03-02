@@ -49,14 +49,16 @@ import warnings
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW, POSITION_NORTH, \
+    POSITION_SOUTH, POSITION_EAST, POSITION_WEST
 from pygame_menu.scrollarea import get_scrollbars_from_position
-from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, assert_position, \
-    assert_color, is_callable, format_color
+from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, assert_position, assert_color, \
+    is_callable, format_color, assert_position_vector
 from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
     MENUBAR_STYLE_UNDERLINE_TITLE
 from pygame_menu.widgets.core import Selection
+from pygame_menu.widgets.core.widget import WidgetBorderPositionType
 
 from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, Tuple2IntType, \
     VectorInstance, Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, \
@@ -111,7 +113,7 @@ class Theme(object):
     :type readonly_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param readonly_selected_color: Color of the selected widget in readonly mode
     :type readonly_selected_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param scrollarea_outer_margin: Outer ScrollArea margin (px); the tuple is added to computed ScrollArea width/height, it can add a margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :param scrollarea_outer_margin: Outer ScrollArea margin in px; the tuple is added to computed ScrollArea width/height, it can add a margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
     :param scrollarea_position: Position of ScrollArea scrollbars. See :py:mod:`pygame_menu.locals`
     :type scrollarea_position: str
@@ -131,7 +133,7 @@ class Theme(object):
     :type scrollbar_slider_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
     :type scrollbar_slider_pad: int, float
-    :param scrollbar_thick: Scrollbar thickness (px)
+    :param scrollbar_thick: Scrollbar thickness in px
     :type scrollbar_thick: int
     :param selection_color: Color of the selected widget
     :type selection_color: tuple, list, str, int, :py:class:`pygame.Color`
@@ -159,13 +161,13 @@ class Theme(object):
     :type title_font_shadow: bool
     :param title_font_shadow_color: Title font shadow color
     :type title_font_shadow_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param title_font_shadow_offset: Offset of title font shadow (px)
+    :param title_font_shadow_offset: Offset of title font shadow in px
     :type title_font_shadow_offset: int
     :param title_font_shadow_position: Position of the title font shadow. See :py:mod:`pygame_menu.locals`
     :type title_font_shadow_position: str
     :param title_font_size: Font size of the title
     :type title_font_size: int
-    :param title_offset: Offset (x-position, y-position) of title (px)
+    :param title_offset: Offset (x-position, y-position) of title in px
     :type title_offset: tuple, list
     :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
     :type title_updates_pygame_display: bool
@@ -181,7 +183,9 @@ class Theme(object):
     :type widget_border_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_border_inflate: Widget inflate size on x-axis and y-axis (x, y) in px. These values cannot be negative
     :type widget_border_inflate: tuple, list
-    :param widget_border_width: Widget border width (px). If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
+    :param widget_border_position: Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: North, South, East, and West. See :py:mod:`pygame_menu.locals`
+    :type widget_border_position: str, tuple, list
+    :param widget_border_width: Widget border width in px. If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
     :type widget_border_width: int
     :param widget_box_arrow_color: Widget box arrow color, used by some widgets (DropSelect, Fancy Selector, etc)
     :type widget_box_arrow_color: tuple, list, str, int, :py:class:`pygame.Color`
@@ -193,9 +197,9 @@ class Theme(object):
     :type widget_box_border_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_box_border_width: Widget box border width in px, used by some widgets (DropSelect, Fancy Selector, etc)
     :type widget_box_border_width: int
-    :param widget_box_inflate: Widget box inflate in (x, y) axis, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_inflate: Widget box inflate on x-axis and y-axis (x, y) in px, used by some widgets (DropSelect, Fancy Selector, etc)
     :type widget_box_inflate: tuple, list
-    :param widget_box_margin: Box margin (x, y) in px
+    :param widget_box_margin: Box margin on x-axis and y-axis (x, y) in px
     :type widget_box_margin: tuple, list
     :param widget_cursor: Widget cursor if mouse is placed over. If ``None`` the widget don't changes the cursor
     :type widget_cursor: int, :py:class:`pygame.cursors.Cursor`, None
@@ -213,17 +217,17 @@ class Theme(object):
     :type widget_font_shadow: bool
     :param widget_font_shadow_color: Color of the widget font shadow
     :type widget_font_shadow_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param widget_font_shadow_offset: Offset of the widget font shadow (px)
+    :param widget_font_shadow_offset: Offset of the widget font shadow in px
     :type widget_font_shadow_offset: int
     :param widget_font_shadow_position: Position of the widget font shadow. See :py:mod:`pygame_menu.locals`
     :type widget_font_shadow_position: str
     :param widget_font_size: Font size
     :type widget_font_size: int
-    :param widget_margin: Horizontal and vertical margin of each element in Menu (px)
+    :param widget_margin: Horizontal and vertical margin of each element in Menu in px
     :type widget_margin: tuple, list
     :param widget_padding: Padding of the widget according to CSS rules. It can be a single digit, or a tuple of 2, 3, or 4 elements. Padding modifies widget width/height
     :type widget_padding: int, float, tuple, list
-    :param widget_offset: (x, y) axis offset of widgets within Menu (px) respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :param widget_offset: x-axis and y-axis (x, y) offset of widgets within Menu in px respect to top-left corner. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type widget_offset: tuple, list
     :param widget_selection_effect: Widget selection effect object. This is visual-only, the selection properties does not affect widget height/width
     :type widget_selection_effect: :py:class:`pygame_menu.widgets.core.Selection`
@@ -276,6 +280,7 @@ class Theme(object):
     widget_background_inflate_to_selection: bool
     widget_border_color: ColorType
     widget_border_inflate: Tuple2IntType
+    widget_border_position: WidgetBorderPositionType
     widget_border_width: int
     widget_box_arrow_color: ColorType
     widget_box_arrow_margin: Tuple3IntType
@@ -365,6 +370,8 @@ class Theme(object):
                                                                 bool, False)
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
         self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
+        self.widget_border_position = self._get(kwargs, 'widget_border_position', 'position_vector',
+                                                (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST))
         self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
         self.widget_box_arrow_color = self._get(kwargs, 'widget_box_arrow_color', 'color', (150, 150, 150))
         self.widget_box_arrow_margin = self._get(kwargs, 'widget_box_arrow_margin', 'tuple3int', (5, 5, 0))
@@ -439,6 +446,7 @@ class Theme(object):
         assert_position(self.scrollbar_shadow_position)
         assert_position(self.title_font_shadow_position)
         assert_position(self.widget_font_shadow_position)
+        assert_position_vector(self.widget_border_position)
 
         assert _check_menubar_style(self.title_bar_style)
         assert get_scrollbars_from_position(self.scrollarea_position) is not None
@@ -620,7 +628,7 @@ class Theme(object):
         if color is None and none:
             return color
         color = format_color(color)
-        if isinstance(color, (tuple, list)):
+        if isinstance(color, VectorInstance):
             assert_color(color)
             if len(color) == 4:
                 if isinstance(color, tuple):
@@ -651,7 +659,8 @@ class Theme(object):
             -   font                Font type
             -   image               Value must be ``BaseImage``
             -   none                None only
-            -   position            pygame-menu position (locals)}
+            -   position            pygame-menu position (locals)
+            -   position_vector     pygame-menu position (str or vector)
             -   tuple2              Only valid numeric tuples ``(x, y)`` or ``[x, y]``
             -   tuple2int           Only valid integer tuples ``(x, y)`` or ``[x, y]``
             -   tuple3              Only valid numeric tuples ``(x, y, z)`` or ``[x, y, z]``
@@ -667,7 +676,7 @@ class Theme(object):
         value = params.pop(key, default)
         if allowed_types is not None:
             other_types = []  # Contain other types to check from
-            if not isinstance(allowed_types, (tuple, list)):
+            if not isinstance(allowed_types, VectorInstance):
                 allowed_types = (allowed_types,)
             for val_type in allowed_types:
 
@@ -708,6 +717,9 @@ class Theme(object):
 
                 elif val_type == 'position':
                     assert_position(value)
+
+                elif val_type == 'position_vector':
+                    assert_position_vector(value)
 
                 elif val_type == 'type':
                     assert isinstance(value, type), \

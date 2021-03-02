@@ -38,6 +38,7 @@ __all__ = [
     'assert_list_vector',
     'assert_orientation',
     'assert_position',
+    'assert_position_vector',
     'assert_vector',
     'check_key_pressed_valid',
     'fill_gradient',
@@ -140,7 +141,7 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(list_vector, (tuple, list)), \
+    assert isinstance(list_vector, VectorInstance), \
         'list_vector "{0}" must be a tuple or list'.format(list_vector)
     for v in list_vector:
         assert_vector(v, length)
@@ -171,6 +172,25 @@ def assert_position(position: str) -> None:
     assert position in [POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_EAST,
                         POSITION_NORTH, POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER], \
         'invalid position value "{0}"'.format(position)
+
+
+def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> None:
+    """
+    Assert that a position vector is valid.
+
+    :param position: Object position
+    :return: None
+    """
+    if isinstance(position, str):
+        assert_position(position)
+    else:
+        assert isinstance(position, VectorInstance)
+        unique = []
+        for pos in position:
+            assert_position(pos)
+            if pos not in unique:
+                unique.append(pos)
+        assert len(unique) == len(position), 'there cannot be repeated positions'
 
 
 def assert_vector(num_vector: VectorType, length: int, instance: type = NumberInstance) -> None:
@@ -294,7 +314,7 @@ def format_color(
         return color
     if not isinstance(color, pygame.Color):
         try:
-            if isinstance(color, (tuple, list)) and 3 <= len(color) <= 4:
+            if isinstance(color, VectorInstance) and 3 <= len(color) <= 4:
                 if PYGAME_V2:
                     for j in color:
                         if not isinstance(j, int):
@@ -315,11 +335,11 @@ def format_color(
 
 def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
     """
-    Return the position from finger (or mouse) event on x-axis and y-axis.
+    Return the position from finger (or mouse) event on x-axis and y-axis (x, y).
 
     :param menu: Menu object for relative positioning in finger events
     :param event: Pygame event object
-    :return: (x, y) position
+    :return: Position on x-axis and y-axis (x, y) in px
     """
     if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
         assert menu is not None, \

@@ -41,7 +41,8 @@ import pygame_menu
 
 from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, \
     KEY_MOVE_DOWN, KEY_MOVE_UP
-from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, POSITION_SOUTHEAST
+from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, POSITION_SOUTHEAST, \
+    POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
@@ -2011,6 +2012,24 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(btn._border_width, 1)
         self.assertEqual(btn._border_color, (0, 0, 0, 255))
         self.assertEqual(btn._border_inflate, (1, 1))
+        self.assertEqual(btn._border_position, pygame_menu.widgets.core.widget.BORDER_POSITION_FULL)
+
+        # Test positioning
+        btn._draw_border(surface)
+
+        # Change border position
+        self.assertRaises(AssertionError, lambda: btn.set_border(1, 'black', (1, 1), POSITION_SOUTHEAST))
+        btn.set_border(1, 'black', (1, 1), POSITION_NORTH)
+        btn._draw_border(surface)
+        btn.set_border(1, 'black', (1, 1), POSITION_SOUTH)
+        btn._draw_border(surface)
+        btn.set_border(1, 'black', (1, 1), POSITION_EAST)
+        btn._draw_border(surface)
+        btn.set_border(1, 'black', (1, 1), POSITION_WEST)
+
+        # Invalid
+        btn._border_position = [POSITION_SOUTHEAST]
+        self.assertRaises(RuntimeError, lambda: btn._draw_border(surface))
 
     def test_scrollbar(self) -> None:
         """

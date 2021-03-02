@@ -37,6 +37,9 @@ __all__ = [
     # Utils
     'check_widget_mouseleave',
 
+    # Types
+    'WidgetBorderPositionType',
+
     # Global widget mouseover list
     'WIDGET_MOUSEOVER'
 
@@ -61,7 +64,8 @@ from pygame_menu.widgets.core.selection import Selection
 
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
-    NumberInstance, ColorInputType, EventType, EventVectorType, EventListType, CursorInputType, CursorType
+    NumberInstance, ColorInputType, EventType, EventVectorType, EventListType, CursorInputType, CursorType, \
+    VectorInstance
 
 # This list stores the current widget which requested the mouseover status, and the previous
 # widget list which requested the mouseover. Each time the widget changes the over status, if leaves
@@ -72,6 +76,9 @@ WIDGET_MOUSEOVER: List[Any] = [None, []]
 # Stores the top cursor for validation
 WIDGET_TOP_CURSOR: List[Any] = [None]
 WIDGET_TOP_CURSOR_WARNING = False
+
+BORDER_POSITION_FULL = 'border-position-border-full'
+BORDER_NONE = 'border-none'
 
 
 def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
@@ -187,8 +194,9 @@ def _check_widget_mouseleave(
 
 
 # Types
-CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], Callable[[], Any]]]
 CallbackMouseType = Optional[Union[Callable[['Widget', EventType], Any], Callable[[], Any]]]
+CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any], Callable[[], Any]]]
+WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
 
 
 class Widget(Base):
@@ -215,6 +223,7 @@ class Widget(Base):
     _background_surface: Optional[List[Union['pygame.Rect', 'pygame.Surface']]]
     _border_color: ColorType
     _border_inflate: Tuple2IntType
+    _border_position: WidgetBorderPositionType
     _border_width: int
     _col_row_index: Tuple3IntType
     _cursor: CursorType
@@ -385,6 +394,7 @@ class Widget(Base):
         # Border
         self._border_color = (0, 0, 0)
         self._border_inflate = (0, 0)
+        self._border_position = 'none'
         self._border_width = 0
 
         # Rendering, this variable may be used by render() method
@@ -980,12 +990,82 @@ class Widget(Base):
             return
         rect = self.get_rect(inflate=(self._border_inflate[0] + self._background_inflate[0],
                                       self._border_inflate[1] + self._background_inflate[1]))
-        pygame.draw.rect(
-            surface,
-            self._border_color,
-            rect,
-            self._border_width
-        )
+
+        if self._border_position == BORDER_NONE:
+            return
+        elif self._border_position == BORDER_POSITION_FULL:
+            pygame.draw.rect(
+                surface,
+                self._border_color,
+                rect,
+                self._border_width
+            )
+        else:
+            for pos in self._border_position:
+                if pos == POSITION_NORTH:
+                    start, end = rect.topleft, rect.topright
+                elif pos == POSITION_SOUTH:
+                    start, end = rect.bottomleft, rect.bottomright
+                elif pos == POSITION_EAST:
+                    start, end = rect.topright, rect.bottomright
+                elif pos == POSITION_WEST:
+                    start, end = rect.topleft, rect.bottomleft
+                else:
+                    raise RuntimeError('invalid border position')
+                pygame.draw.line(
+                    surface,
+                    self._border_color,
+                    start,
+                    end,
+                    self._border_width
+                )
+
+    def set_border(
+            self,
+            width: int,
+            color: Optional[ColorInputType],
+            inflate: Tuple2IntType = (0, 0),
+            position: WidgetBorderPositionType = (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST)
+    ) -> 'Widget':
+        """
+        Set the Widget border.
+
+        .. note::
+
+            Inflate is added to the background inflate in drawing time.
+
+        :param width: Border width in px
+        :param color: Border color
+        :param inflate: Inflate on x-axis and y-axis (x, y) in px
+        :param position: Border position. Valid only: North, South, East, West. See :py:mod:`pygame_menu.locals`
+        :return: Self reference
+        """
+        assert isinstance(width, int) and width >= 0
+        if color is not None:
+            color = assert_color(color)
+        assert_vector(inflate, 2, int)
+        assert inflate[0] >= 0 and inflate[1] >= 0
+
+        # Check position
+        assert isinstance(position, (str, VectorInstance))
+        if isinstance(position, str):
+            position = [position]
+
+        # Check positioning
+        if POSITION_WEST in position and POSITION_SOUTH in position and POSITION_NORTH in position and \
+                POSITION_EAST in position:
+            position = BORDER_POSITION_FULL
+        else:
+            for pos in position:
+                msg = 'only north, south, east, and west positions are valid, but received "{0}"'.format(pos)
+                assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), msg
+
+        self._border_width = width
+        self._border_color = color
+        self._border_inflate = inflate
+        self._border_position = position
+
+        return self
 
     def get_selection_effect(self) -> 'Selection':
         """
@@ -1236,7 +1316,7 @@ class Widget(Base):
         """
         Scroll to widget.
 
-        :param margin: Extra margin around the rect (px)
+        :param margin: Extra margin around the rect in px
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
         :return: Self reference
         """
@@ -1272,7 +1352,7 @@ class Widget(Base):
         Return the :py:class:`pygame.Rect` object of the Widget.
         This method forces rendering.
 
-        :param inflate: Inflate rect (x, y) in px
+        :param inflate: Inflate rect on x-axis and y-axis (x, y) in px
         :param apply_padding: Apply widget padding
         :param use_transformed_padding: Use scaled padding if the widget is scaled
         :param to_real_position: Transform the widget rect to real coordinates (if the Widget change the position if scrollbars move offsets). Used by events
@@ -1724,7 +1804,7 @@ class Widget(Base):
             real_position_visible: bool = True
     ) -> Tuple2IntType:
         """
-        Return the widget position tuple (x, y).
+        Return the widget position tuple on x-axis and y-axis (x, y) in px.
 
         :param apply_padding: Apply widget padding to position
         :param use_transformed_padding: Use scaled padding if the widget is scaled
@@ -2022,7 +2102,7 @@ class Widget(Base):
 
     def get_translate(self, virtual: bool = False) -> Tuple2IntType:
         """
-        Get Widget translate on x-axis and y-axis (x, y).
+        Get Widget translate on x-axis and y-axis (x, y) in px.
 
         :param virtual: If ``True`` get virtual translation, usually applied within frame scrollarea
         :return: Translation on both axis
@@ -2174,7 +2254,7 @@ class Widget(Base):
 
         :param apply_padding: Apply padding
         :param apply_selection: Apply selection
-        :return: Widget width (px)
+        :return: Widget width in px
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
@@ -2194,7 +2274,7 @@ class Widget(Base):
 
         :param apply_padding: Apply padding
         :param apply_selection: Apply selection
-        :return: Widget height (px)
+        :return: Widget height in px
         """
         assert isinstance(apply_padding, bool)
         assert isinstance(apply_selection, bool)
@@ -2564,29 +2644,6 @@ class Widget(Base):
         :return: (column, row, index) tuple
         """
         return self._col_row_index
-
-    def set_border(self, width: int, color: Optional[ColorInputType], inflate: Tuple2IntType = (0, 0)) -> 'Widget':
-        """
-        Set the Widget border.
-
-        .. note::
-
-            Inflate is added to the background inflate in drawing time.
-
-        :param width: Border width (px)
-        :param color: Border color
-        :param inflate: Inflate on (x, y) axis in px
-        :return: Self reference
-        """
-        assert isinstance(width, int) and width >= 0
-        if color is not None:
-            color = assert_color(color)
-        assert_vector(inflate, 2, int)
-        assert inflate[0] >= 0 and inflate[1] >= 0
-        self._border_width = width
-        self._border_color = color
-        self._border_inflate = inflate
-        return self
 
     def get_decorator(self) -> 'Decorator':
         """
