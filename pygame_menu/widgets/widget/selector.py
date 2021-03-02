@@ -113,12 +113,12 @@ class Selector(Widget):
     :param onselect: Function when selecting the widget
     :param style: Selector style (visual)
     :param style_fancy_arrow_color: Arrow color of fancy style
-    :param style_fancy_arrow_margin: Margin of arrows on x-axis and y-axis in px; format: (left, right, vertical)
+    :param style_fancy_arrow_margin: Margin of arrows on x-axis and y-axis (x, y) in px; format: (left, right, vertical)
     :param style_fancy_bgcolor: Background color of fancy style
     :param style_fancy_bordercolor: Border color of fancy style
     :param style_fancy_borderwidth: Border width of fancy style
-    :param style_fancy_box_inflate: Box inflate of fancy style (x, y) in px
-    :param style_fancy_box_margin: Box margin (x, y) in fancy style from title in px
+    :param style_fancy_box_inflate: Box inflate of fancy style on x-axis and y-axis (x, y) in px
+    :param style_fancy_box_margin: Box margin on x-axis and y-axis (x, y) in fancy style from title in px
     :param kwargs: Optional keyword arguments
     """
     _index: int

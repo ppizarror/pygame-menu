@@ -125,13 +125,13 @@ class Selection(object):
         """
         Return the x/y margins of the selection.
 
-        :return: Tuple of (x, y) margins
+        :return: Margin tuple on x-axis and y-axis (x, y) in px
         """
         return int(self.margin_left + self.margin_right), int(self.margin_top + self.margin_bottom)
 
     def get_width(self) -> int:
         """
-        Return the selection width (px) as sum of left and right margins.
+        Return the selection width as sum of left and right margins.
 
         :return: Width in px
         """
@@ -140,7 +140,7 @@ class Selection(object):
 
     def get_height(self) -> int:
         """
-        Return the selection height (px) as sum of top and bottom margins.
+        Return the selection height as sum of top and bottom margins.
 
         :return: Height in px
         """

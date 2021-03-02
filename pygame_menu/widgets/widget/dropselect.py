@@ -96,10 +96,10 @@ class DropSelect(Widget):
     :param selection_box_border_color: Selection box border color
     :param selection_box_border_width: Selection box border width
     :param selection_box_height: Selection box height, counted as how many options are packed before showing scroll
-    :param selection_box_inflate: Selection box inflate on x-axis and y-axis (px)
-    :param selection_box_margin: Selection box (x, y) margin from title (px)
+    :param selection_box_inflate: Selection box inflate on x-axis and y-axis (x, y) in px
+    :param selection_box_margin: Selection box on x-axis and y-axis (x, y) margin from title in px
     :param selection_box_text_margin: Selection box text margin (left) in px
-    :param selection_box_width: Selection box width (px). If ``0`` compute automatically to fit placeholder
+    :param selection_box_width: Selection box width in px. If ``0`` compute automatically to fit placeholder
     :param selection_infinite: If ``True`` selection can rotate through bottom/top
     :param selection_option_border_color: Option border color
     :param selection_option_border_width: Option border width
@@ -322,12 +322,12 @@ class DropSelect(Widget):
             - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
             - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
             - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
-            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
+            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow in px
             - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
             - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
             - ``scrollbar_slider_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
-            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders (px)
-            - ``scrollbar_thick``           *(int)* - Scrollbar thickness (px)
+            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders in px
+            - ``scrollbar_thick``           *(int)* - Scrollbar thickness in px
             - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
 
         :param kwargs: Optional keyword arguments

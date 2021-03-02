@@ -47,7 +47,7 @@ class HMargin(NoneWidget):
 
         This widget does not implement any transformation.
 
-    :param margin: Horizontal margin (px)
+    :param margin: Horizontal margin in px
     :param widget_id: ID of the widget
     """
 

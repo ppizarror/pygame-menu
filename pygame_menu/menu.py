@@ -99,8 +99,8 @@ class Menu(Base):
         Menu cannot be copied or deepcopied.
 
     :param title: Title of the Menu
-    :param width: Width of the Menu (px)
-    :param height: Height of the Menu (px)
+    :param width: Width of the Menu in px
+    :param height: Height of the Menu in px
     :param center_content: Auto centers the Menu on the vertical position after a widget is added/deleted
     :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400,500)`` (first column 400px, second 500). If ``0`` uses the Menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
     :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400,500)`` (first column 400px, second 500). Negative values are not accepted
@@ -244,7 +244,7 @@ class Menu(Base):
         assert isinstance(mouse_enabled, bool)
         assert isinstance(mouse_motion_selection, bool)
         assert isinstance(mouse_visible, bool)
-        assert isinstance(overflow, (tuple, list, bool))
+        assert isinstance(overflow, (VectorInstance, bool))
         assert isinstance(rows, (int, type(None), VectorInstance))
         assert isinstance(theme, Theme), 'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
@@ -894,7 +894,7 @@ class Menu(Base):
 
     def get_translate(self) -> Tuple2IntType:
         """
-        Get Menu translate on x-axis and y-axis (x, y).
+        Get Menu translate on x-axis and y-axis (x, y) in px.
 
         .. note::
 
@@ -1753,7 +1753,7 @@ class Menu(Base):
 
     def get_size(self, inner: bool = False, widget: bool = False) -> Vector2IntType:
         """
-        Return the Menu size (px) as a tuple of (width, height).
+        Return the Menu size as a tuple of (width, height) in px.
 
         .. note::
 
@@ -2973,7 +2973,7 @@ class Menu(Base):
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget: Widget to request scroll. If ``None`` scrolls to the selected widget
-        :param margin: Extra margin around the rect (px)
+        :param margin: Extra margin around the rect in px
         :param scroll_parent: If ``True`` parent scroll also scrolls to rect
         :return: Self reference
         """
@@ -3017,7 +3017,7 @@ class Menu(Base):
 
     def get_window_size(self) -> Tuple2IntType:
         """
-        Return the window size (px) as a tuple of (width, height).
+        Return the window size as a tuple of (width, height).
 
         .. note::
 

@@ -51,7 +51,7 @@ class ArrowSelection(Selection):
     :param margin_right: Right margin
     :param margin_top: Top margin
     :param margin_bottom: Bottom margin
-    :param arrow_size: Size of arrow on x-axis and y-axis (width, height)
+    :param arrow_size: Size of arrow on x-axis and y-axis (width, height) in px
     :param arrow_vertical_offset: Vertical offset of the arrow
     :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
     """

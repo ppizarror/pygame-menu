@@ -109,7 +109,7 @@ class TextInput(Widget):
     :param input_type: Type of the input data. See :py:mod:`pygame_menu.locals`
     :param input_underline: Character string drawn under the input
     :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
-    :param input_underline_vmargin: Vertical margin of underline (px)
+    :param input_underline_vmargin: Vertical margin of underline in px
     :param maxchar: Maximum length of input
     :param maxwidth: Maximum size of the text to be displayed (overflow). If ``0`` this feature is disabled
     :param maxwidth_dynamically_update: Dynamically update maxwidth depending on char size

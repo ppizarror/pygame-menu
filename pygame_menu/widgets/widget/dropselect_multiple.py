@@ -86,10 +86,10 @@ class DropSelectMultiple(DropSelect):
     :param selection_box_border_color: Selection box border color
     :param selection_box_border_width: Selection box border width
     :param selection_box_height: Selection box height, counted as how many options are packed before showing scroll
-    :param selection_box_inflate: Selection box inflate on x-axis and y-axis (px)
-    :param selection_box_margin: Selection box (x, y) margin from title (px)
+    :param selection_box_inflate: Selection box inflate on x-axis and y-axis (x, y) in px
+    :param selection_box_margin: Selection box on x-axis and y-axis (x, y) margin from title in px
     :param selection_box_text_margin: Selection box text margin (left) in px
-    :param selection_box_width: Selection box width (px). If ``0`` compute automatically to fit placeholder
+    :param selection_box_width: Selection box width in px. If ``0`` compute automatically to fit placeholder
     :param selection_infinite: If ``True`` selection can rotate through bottom/top
     :param selection_option_active_bgcolor: Active option(s) background color; active options is the currently active (by user)
     :param selection_option_active_font_color: Active option(s) font color

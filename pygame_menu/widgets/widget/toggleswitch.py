@@ -71,7 +71,7 @@ class ToggleSwitch(Widget):
     :param onselect: Function when selecting the widget
     :param slider_color: Slider color
     :param slider_height_factor: Height of the slider (factor of the switch height)
-    :param slider_thickness: Slider thickness (px)
+    :param slider_thickness: Slider thickness in px
     :param slider_vmargin: Vertical margin of the slider (factor of the switch height)
     :param state_color: Background color of each state, it modifies the whole width of the switch
     :param state_text: Text of each state of the switch
@@ -82,9 +82,9 @@ class ToggleSwitch(Widget):
     :param state_values: Value of each state of the switch
     :param state_width: Width of each state. For example if there's 2 states, ``state_width`` only can have 1 value
     :param switch_border_color: Border color of the switch
-    :param switch_border_width: Border width of the switch (px)
+    :param switch_border_width: Border width of the switch in px
     :param switch_height: Height factor respect to the title font size height
-    :param switch_margin: Switch (x, y) margin respect to the title of the widget (px)
+    :param switch_margin: Switch margin on x-axis and y-axis (x, y) respect to the title of the widget in px
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments
     """
