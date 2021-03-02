@@ -111,7 +111,7 @@ class Theme(object):
     :type readonly_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param readonly_selected_color: Color of the selected widget in readonly mode
     :type readonly_selected_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param scrollarea_outer_margin: Outer ScrollArea margin (px); the tuple is added to computed ScrollArea width/height, it can add an margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
+    :param scrollarea_outer_margin: Outer ScrollArea margin (px); the tuple is added to computed ScrollArea width/height, it can add a margin to bottom/right scrolls after widgets. If value less than ``1`` use percentage of width/height. It cannot be a negative value
     :type scrollarea_outer_margin: tuple, list
     :param scrollarea_position: Position of ScrollArea scrollbars. See :py:mod:`pygame_menu.locals`
     :type scrollarea_position: str

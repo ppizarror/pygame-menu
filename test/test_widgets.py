@@ -156,8 +156,7 @@ class WidgetsTest(unittest.TestCase):
         vmargin.select(update_menu=True)
         self.assertEqual(test[0], text)
 
-    @staticmethod
-    def test_non_ascii() -> None:
+    def test_non_ascii(self) -> None:
         """
         Test non-ascii.
         """
@@ -168,11 +167,18 @@ class WidgetsTest(unittest.TestCase):
         menu.add.button('Test', pygame_menu.events.NONE)
         menu.add.button(u'Menú', pygame_menu.events.NONE)
         menu.add.color_input(u'Cólor', 'rgb')
-        menu.add.text_input(u'Téxt')
+        text = menu.add.text_input(u'Téxt')
         menu.add.label(u'Téxt')
         menu.add.selector(u'Sélect'.encode('latin1'), [('a', 'a')])
         menu.enable()
         menu.draw(surface)
+
+        # Text text input
+        text.set_value('ą, ę, ś, ć, ż, ź, ó, ł, ń')
+        self.assertEqual(text.get_value(), 'ą, ę, ś, ć, ż, ź, ó, ł, ń')
+        text.set_value('')
+        text.update(PygameEventUtils.key(pygame.K_l, char='ł', keydown=True))
+        self.assertEqual(text.get_value(), 'ł')
 
     def test_background(self) -> None:
         """

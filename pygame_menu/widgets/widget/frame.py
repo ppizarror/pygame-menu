@@ -95,7 +95,7 @@ class Frame(Widget):
 
     .. note::
 
-        Frame only implements translation.
+        Frame only implements translation and resize transformations.
 
     .. note::
 
@@ -217,6 +217,9 @@ class Frame(Widget):
         # If has previous title
         self.remove_title()
 
+        assert isinstance(draggable, bool)
+        self._draggable = draggable
+
         # Format title font properties
         if title_font is None:
             title_font = self._font_name
@@ -273,6 +276,23 @@ class Frame(Widget):
             keyboard=self._keyboard_enabled
         )
         self._frame_title._update__repr___(self)
+
+        # Store constructor
+        self._frame_title.set_attribute(
+            'constructor', {
+                'title': title,
+                'cursor': cursor,
+                'background_color': background_color,
+                'draggable': draggable,
+                'padding_inner': padding_inner,
+                'padding_outer': padding_outer,
+                'title_alignment': title_alignment,
+                'title_buttons_alignment': title_buttons_alignment,
+                'title_font': title_font,
+                'title_font_color': title_font_color,
+                'title_font_size': title_font_size
+            }
+        )
 
         # Create frame title background rect
         title_bg = make_surface(self.get_width(), title_label.get_height() + pad_outer[0] + pad_outer[2] +
@@ -338,6 +358,7 @@ class Frame(Widget):
             self._has_title = False
         if not self.is_scrollable and self in self._menu._update_frames:
             self._menu._update_frames.remove(self)
+        self._draggable = False
         self._render()
         self.force_menu_surface_update()
         return self
@@ -381,6 +402,8 @@ class Frame(Widget):
 
         # Pack
         align = self._frame_title.get_attribute('buttons_alignment')
+        button.set_attribute('align', align)
+        button.set_attribute('margin', margin)
         self._frame_title.pack(button, alignment=align, margin=margin)
         self._frame_title.update_position()
 
@@ -592,7 +615,7 @@ class Frame(Widget):
             scrollbar_slider_color: ColorInputType,
             scrollbar_slider_pad: NumberType,
             scrollbar_thick: NumberType,
-            scrollbars: Union[str, Tuple[str, ...]],
+            scrollbars: Union[str, Tuple[str, ...]]
     ) -> 'Frame':
         """
         Make the scrollarea of the frame.
@@ -666,6 +689,24 @@ class Frame(Widget):
             shadow_position=scrollbar_shadow_position
         )
 
+        # Store constructor data
+        self._frame_scrollarea.set_attribute(
+            'constructor',
+            {
+                'scrollarea_color': scrollarea_color,
+                'scrollbar_color': scrollbar_color,
+                'scrollbar_cursor': scrollbar_cursor,
+                'scrollbar_shadow': scrollbar_shadow,
+                'scrollbar_shadow_color': scrollbar_shadow_color,
+                'scrollbar_shadow_offset': scrollbar_shadow_offset,
+                'scrollbar_shadow_position': scrollbar_shadow_position,
+                'scrollbar_slider_color': scrollbar_slider_color,
+                'scrollbar_slider_pad': scrollbar_slider_pad,
+                'scrollbar_thick': scrollbar_thick,
+                'scrollbars': scrollbars
+            }
+        )
+
         if self._width == max_width:
             self._frame_scrollarea.hide_scrollbars(ORIENTATION_HORIZONTAL)
         if self._height == max_height:
@@ -726,9 +767,6 @@ class Frame(Widget):
         pass
 
     def scale(self, *args, **kwargs) -> 'Frame':
-        return self
-
-    def resize(self, *args, **kwargs) -> 'Frame':
         return self
 
     def set_max_width(self, *args, **kwargs) -> 'Frame':
@@ -1062,6 +1100,118 @@ class Frame(Widget):
             self.unpack(w)
             unpackd.append(w)
         return tuple(unpackd)
+
+    def resize(
+            self,
+            width: NumberType,
+            height: NumberType,
+            max_width: Optional[NumberType] = None,
+            max_height: Optional[NumberType] = None
+    ) -> 'Frame':
+        """
+        Resize the Frame.
+
+        :param width: New width (px). Horizontal padding will be subtracted
+        :param height: New height (px). Vertical padding will be subtracted
+        :param max_width: Max frame width if the Frame is scrollable. If ``None`` the same width will be used
+        :param max_height: Max frame height if the Frame is scrollable. If ``None`` the same height will be used
+        :return: Self reference
+        """
+        assert isinstance(width, NumberInstance)
+        assert isinstance(height, NumberInstance)
+
+        pad_h = self._padding[1] + self._padding[3]
+        pad_v = self._padding[0] + self._padding[2]
+
+        # Subtract padding
+        width -= pad_h
+        height -= pad_v
+
+        # Check size
+        assert width > 0 and height > 0, 'new width and height must be greater than zero'
+
+        # Update width/height
+        if width < self._width or height < self._height:
+            self.relax()
+        self._frame_size = (width, height)  # Size of the frame, set in make_scrollarea
+        self._height = int(height)
+        self._real_rect = pygame.Rect(0, 0, width, height)
+        self._width = int(width)
+
+        # Get previous buttons if has title
+        prev_has_title = self._has_title
+        prev_title_frame = self._frame_title
+        prev_title_buttons = list(self._frame_title.get_widgets()) if self._has_title else []
+        if len(prev_title_buttons) >= 1:  # Pop label
+            prev_title_buttons.pop(0)
+
+        # Make scrollable if scrollable
+        if self.is_scrollable:
+            assert self._frame_scrollarea.has_attribute('constructor'), \
+                'frame scrollarea does not have the "constructor" attribute. Make sure the scrollarea ' \
+                'has been created using make_scrollarea() method'
+            kwargs: Dict[str, Any] = self._frame_scrollarea.get_attribute('constructor')
+            if max_width is None:
+                max_width = width
+            if max_height is None:
+                max_height = height
+            self.make_scrollarea(
+                max_height=max_height,
+                max_width=max_width,
+                scrollarea_color=kwargs['scrollarea_color'],
+                scrollbar_color=kwargs['scrollbar_color'],
+                scrollbar_cursor=kwargs['scrollbar_cursor'],
+                scrollbar_shadow=kwargs['scrollbar_shadow'],
+                scrollbar_shadow_color=kwargs['scrollbar_shadow_color'],
+                scrollbar_shadow_offset=kwargs['scrollbar_shadow_offset'],
+                scrollbar_shadow_position=kwargs['scrollbar_shadow_position'],
+                scrollbar_slider_color=kwargs['scrollbar_slider_color'],
+                scrollbar_slider_pad=kwargs['scrollbar_slider_pad'],
+                scrollbar_thick=kwargs['scrollbar_thick'],
+                scrollbars=kwargs['scrollbars']
+            )
+        else:
+            assert max_width is None and max_height is None, \
+                'if previous Frame is not scrollable (make_scrollarea has been ' \
+                'called) max_width and max_height must be None'
+
+        # If had title, remove and create a new one
+        self.remove_title()
+        if prev_has_title:
+            for btn in prev_title_buttons:
+                prev_title_frame.unpack(btn)
+                btn.set_margin(0, 0)
+                btn.set_float(False)
+            assert prev_title_frame.has_attribute('constructor'), \
+                'frame title does not have the attribute "constructor". Make sure the frame title has ' \
+                'been created through set_title() method.'
+            kwargs = prev_title_frame.get_attribute('constructor')
+            new_title_frame = self.set_title(
+                title=kwargs['title'],
+                cursor=kwargs['cursor'],
+                background_color=kwargs['background_color'],
+                draggable=kwargs['draggable'],
+                padding_inner=kwargs['padding_inner'],
+                padding_outer=kwargs['padding_outer'],
+                title_alignment=kwargs['title_alignment'],
+                title_buttons_alignment=kwargs['title_buttons_alignment'],
+                title_font=kwargs['title_font'],
+                title_font_color=kwargs['title_font_color'],
+                title_font_size=kwargs['title_font_size']
+            )
+
+            # Pack previous buttons
+            # prev_title_buttons.reverse()
+            for btn in prev_title_buttons:
+                align = btn.get_attribute('align', kwargs['title_buttons_alignment'])
+                margin = btn.get_attribute('margin', (0, 0))
+                new_title_frame.pack(btn, alignment=align, margin=margin)
+
+        # Force render
+        self._render()
+        self.force_menu_surface_update()
+
+        return self
 
     def unfloat(self) -> 'Frame':
         """
@@ -1494,8 +1644,8 @@ class Frame(Widget):
                 self._frame_title._check_mouseover(event)
 
                 # If clicked in title
-                if event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or \
-                        event.type == FINGERDOWN and self._touchscreen_enabled:
+                if (event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (
+                        1, 2, 3) or event.type == FINGERDOWN and self._touchscreen_enabled) and self._draggable:
                     if self._frame_title.get_rect(to_real_position=True).collidepoint(*event.pos):
                         if not self._frame_title.get_attribute('drag', False):
                             self._frame_title.set_attribute('drag', True)
@@ -1515,7 +1665,7 @@ class Frame(Widget):
                 # User moves the mouse while drag
                 elif event.type == pygame.MOUSEMOTION and hasattr(event, 'rel') or \
                         event.type == FINGERMOTION and self._touchscreen_enabled:
-                    if self._frame_title.get_attribute('drag', False):
+                    if self._frame_title.get_attribute('drag', False) and self._draggable:
                         # Get relative movement
                         rx = event.rel[0]
                         ry = event.rel[1]

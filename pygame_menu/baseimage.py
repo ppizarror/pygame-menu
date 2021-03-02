@@ -3,7 +3,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 BASEIMAGE
-Provides a class to perform basic image loading an manipulation with pygame.
+Provides a class to perform basic image loading and manipulation with pygame.
 
 License:
 -------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ ColorChannelType = Literal['r', 'g', 'b']
 class BaseImage(Base):
     """
     Object that loads an image, stores as a surface, transform it and
-    let write the image to an surface.
+    let write the image to a surface.
 
     :param image_path: Path of the image to be loaded. It can be a string (path, base64), :py:class:`pathlib.Path`, or :py:class:`io.BytesIO`
     :param drawing_mode: Drawing mode of the image
@@ -237,7 +237,7 @@ class BaseImage(Base):
         For pygame 2.0: per-surface alpha can be combined with per-pixel alpha.
 
         The optional flags argument can be set to pygame.RLEACCEL to provide better
-        performance on non accelerated displays. An RLEACCEL Surface will be slower
+        performance on non accelerated displays. A RLEACCEL Surface will be slower
         to modify, but quicker to blit as a source.
 
         :param value: Transparency value from ``0`` to ``255``
