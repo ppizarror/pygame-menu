@@ -1893,4 +1893,49 @@ class FrameWidgetTest(unittest.TestCase):
         menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100)))
         self.assertEqual(frame2.get_translate(), (10, 115))
 
-        # menu.mainloop(surface)
+    def test_resize(self) -> None:
+        """
+        Test resize.
+        """
+        menu = MenuUtils.generic_menu()
+
+        # No title, no scrollable
+        frame = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f1')
+        self.assertEqual(frame.get_size(), (300, 200))
+
+        # Resize
+        frame.resize(400, 400)
+        self.assertEqual(frame.get_size(), (400, 400))
+
+        # No title, scrollable to non-scrollable
+        frame2 = menu.add.frame_v(300, 200, background_color=(170, 170, 170),
+                                  frame_id='f2', max_width=200, max_height=100)
+        self.assertEqual(frame2.get_size(), (204, 112))
+        frame2.resize(400, 400)  # Now it's not scrollable
+        self.assertFalse(frame2.is_scrollable)
+        self.assertEqual(frame2.get_size(), (400, 400))
+        self.assertRaises(AssertionError, lambda: frame2.resize(400, 400, max_width=300, max_height=200))
+
+        # No title, scrollable to scrollable
+        frame3 = menu.add.frame_v(300, 200, background_color=(170, 170, 170),
+                                  frame_id='f3', max_width=200, max_height=100)
+        self.assertTrue(frame3.is_scrollable)
+        frame3.resize(400, 400, max_width=300, max_height=300)
+        self.assertEqual(frame3.get_size(), (320, 320))
+        self.assertTrue(frame3.is_scrollable)
+
+        # Title, no scrollable
+        frame4 = menu.add.frame_v(300, 200, background_color=(170, 170, 170), frame_id='f4')
+        frame4title = frame4.set_title('generic title')
+        btn1 = frame4.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_CLOSE, lambda: print(''))
+        btn2 = frame4.add_title_button(pygame_menu.widgets.FRAME_TITLE_BUTTON_MINIMIZE, lambda: print(''))
+        frame4title_widgets = frame4._frame_title.get_widgets()
+        label = frame4title_widgets[0]
+        self.assertEqual(frame4title_widgets, (label, btn1, btn2))
+
+        frame4.resize(600, 600)
+        new_frame4title_widgets = frame4._frame_title.get_widgets()
+        label = new_frame4title_widgets[0]
+        self.assertEqual(frame4.get_size(), (600, 641 if PYGAME_V2 else 642))  # Plus title height
+        self.assertNotEqual(frame4title, frame4._frame_title)
+        self.assertEqual(new_frame4title_widgets, (label, btn1, btn2))
