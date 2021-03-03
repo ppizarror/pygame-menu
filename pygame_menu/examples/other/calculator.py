@@ -134,11 +134,11 @@ class CalculatorApp(object):
         for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus, b_minus, b_times, b_div):
             w_deco = widget.get_decorator()
             if widget != beq:
-                w_deco.add_rectangle(-37.5, -27.5, 75, 55, (15, 15, 15))
-                on_layer = w_deco.add_rectangle(-37.5, -27.5, 75, 55, (84, 84, 84))
+                w_deco.add_rectangle(-37, -27, 74, 54, (15, 15, 15))
+                on_layer = w_deco.add_rectangle(-37, -27, 74, 54, (84, 84, 84))
             else:
-                w_deco.add_rectangle(-37.5, -27.5, 75, 55, (38, 96, 103))
-                on_layer = w_deco.add_rectangle(-37.5, -27.5, 75, 55, (40, 171, 187))
+                w_deco.add_rectangle(-37, -27, 74, 54, (38, 96, 103))
+                on_layer = w_deco.add_rectangle(-37, -27, 74, 54, (40, 171, 187))
             w_deco.disable(on_layer)
             widget.set_attribute('on_layer', on_layer)
 
