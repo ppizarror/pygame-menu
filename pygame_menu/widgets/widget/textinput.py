@@ -1755,8 +1755,8 @@ class TextInput(Widget):
                 elif event.key not in self._ignore_keys:
                     if event.unicode == ' ' and event.key != 32:
                         warnings.warn(
-                            '{0} received "{1}" unicode but key is different than 32 ({2}), ' \
-                            'check if event has defined the proper unicode char' \
+                            '{0} received "{1}" unicode but key is different than 32 ({2}), '
+                            'check if event has defined the proper unicode char'
                             ''.format(self.get_class_id(), event.unicode, event.key)
                         )
                     if not self._push_key_input(event.unicode):  # Error in char, not valid or string limit exceeds
