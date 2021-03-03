@@ -58,7 +58,7 @@ from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
     MENUBAR_STYLE_UNDERLINE_TITLE
 from pygame_menu.widgets.core import Selection
-from pygame_menu.widgets.core.widget import WidgetBorderPositionType
+from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FULL_BORDER
 
 from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, Tuple2IntType, \
     VectorInstance, Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, \
@@ -370,8 +370,7 @@ class Theme(object):
                                                                 bool, False)
         self.widget_border_color = self._get(kwargs, 'widget_border_color', 'color', (0, 0, 0))
         self.widget_border_inflate = self._get(kwargs, 'widget_border_inflate', 'tuple2int', (0, 0))
-        self.widget_border_position = self._get(kwargs, 'widget_border_position', 'position_vector',
-                                                (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST))
+        self.widget_border_position = self._get(kwargs, 'widget_border_position', 'position_vector', WIDGET_FULL_BORDER)
         self.widget_border_width = self._get(kwargs, 'widget_border_width', int, 0)
         self.widget_box_arrow_color = self._get(kwargs, 'widget_box_arrow_color', 'color', (150, 150, 150))
         self.widget_box_arrow_margin = self._get(kwargs, 'widget_box_arrow_margin', 'tuple3int', (5, 5, 0))

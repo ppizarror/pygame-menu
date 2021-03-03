@@ -41,7 +41,12 @@ __all__ = [
     'WidgetBorderPositionType',
 
     # Global widget mouseover list
-    'WIDGET_MOUSEOVER'
+    'WIDGET_MOUSEOVER',
+
+    # Others
+    'WIDGET_BORDER_POSITION_FULL',
+    'WIDGET_BORDER_POSITION_NONE',
+    'WIDGET_FULL_BORDER'
 
 ]
 
@@ -77,8 +82,9 @@ WIDGET_MOUSEOVER: List[Any] = [None, []]
 WIDGET_TOP_CURSOR: List[Any] = [None]
 WIDGET_TOP_CURSOR_WARNING = False
 
-BORDER_POSITION_FULL = 'border-position-border-full'
-BORDER_NONE = 'border-none'
+WIDGET_BORDER_POSITION_NONE = 'border-none'
+WIDGET_BORDER_POSITION_FULL = 'border-position-border-full'
+WIDGET_FULL_BORDER = (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST)
 
 
 def check_widget_mouseleave(event: Optional[EventType] = None, force: bool = False) -> None:
@@ -991,9 +997,9 @@ class Widget(Base):
         rect = self.get_rect(inflate=(self._border_inflate[0] + self._background_inflate[0],
                                       self._border_inflate[1] + self._background_inflate[1]))
 
-        if self._border_position == BORDER_NONE:
+        if self._border_position == WIDGET_BORDER_POSITION_NONE:
             return
-        elif self._border_position == BORDER_POSITION_FULL:
+        elif self._border_position == WIDGET_BORDER_POSITION_FULL:
             pygame.draw.rect(
                 surface,
                 self._border_color,
@@ -1025,7 +1031,7 @@ class Widget(Base):
             width: int,
             color: Optional[ColorInputType],
             inflate: Tuple2IntType = (0, 0),
-            position: WidgetBorderPositionType = (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST)
+            position: WidgetBorderPositionType = WIDGET_FULL_BORDER
     ) -> 'Widget':
         """
         Set the Widget border.
@@ -1054,11 +1060,13 @@ class Widget(Base):
         # Check positioning
         if POSITION_WEST in position and POSITION_SOUTH in position and POSITION_NORTH in position and \
                 POSITION_EAST in position:
-            position = BORDER_POSITION_FULL
+            position = WIDGET_BORDER_POSITION_FULL
         else:
             for pos in position:
                 msg = 'only north, south, east, and west positions are valid, but received "{0}"'.format(pos)
                 assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), msg
+        if width == 0:
+            position = WIDGET_BORDER_POSITION_NONE
 
         self._border_width = width
         self._border_color = color
