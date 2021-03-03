@@ -1949,12 +1949,14 @@ class FrameWidgetTest(unittest.TestCase):
         menu = MenuUtils.generic_menu()
         btn = menu.add.button('1')
         table = menu.add.table('table', background_color='red')
+        self.assertTrue(table.is_rectangular())
         self.assertEqual(table.get_inner_size(), (0, 0))
         self.assertEqual(table.get_size(apply_padding=False), (0, 0))
         self.assertRaises(RuntimeError, lambda: table.pack(btn))
 
         # Test add rows
         row1 = table.add_row([1, 2, 3], row_background_color='blue', cell_align=pygame_menu.locals.ALIGN_CENTER)
+        self.assertTrue(table.is_rectangular())
         self.assertEqual(row1.get_size(), (51, 41))
         self.assertEqual(table.get_size(apply_padding=False), (51, 41))
         row2 = table.add_row([10, 20, 30], row_background_color='green', cell_padding=10)
@@ -1962,6 +1964,7 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(row2.get_size(), (162, 61))
         self.assertEqual(table.get_size(apply_padding=False), (162, 102))
         table.draw(surface)
+        self.assertTrue(table.is_rectangular())
 
         # Test get cell
         self.assertEqual(table.get_cell(2, 1), row1.get_widgets(unpack_subframes=False)[1])
@@ -2030,6 +2033,7 @@ class FrameWidgetTest(unittest.TestCase):
         # Add and remove row
         self.assertEqual(table.get_size(), (258, 190))
         row3 = table.add_row([12])
+        self.assertFalse(table.is_rectangular())
         self.assertEqual(row1.get_total_packed(), 3)
         self.assertEqual(row3.get_total_packed(), 1)
         self.assertEqual(table.get_size(), (258, 231))
@@ -2153,3 +2157,14 @@ class FrameWidgetTest(unittest.TestCase):
         img = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_METAL)
         img.scale(0.2, 0.2)
         table.add_row(img)
+
+        # Test update using -1 column/row
+        self.assertEqual(len(table.update_cell_style(-1, 1)), 3)
+        self.assertEqual(len(table.update_cell_style(-1, 7)), 1)
+        self.assertEqual(len(table.update_cell_style(1, -1)), 7)
+        self.assertEqual(len(table.update_cell_style(-1, -1)), 18)
+        self.assertEqual(len(table.update_cell_style(1, [1, -1])), 7)
+        self.assertEqual(len(table.update_cell_style(1, [1, 1])), 1)
+        self.assertEqual(len(table.update_cell_style([1, -1], [1, -1])), 18)
+        self.assertRaises(AssertionError, lambda: self.assertEqual(len(table.update_cell_style([1, 7], [1, -1])), 18))
+        self.assertEqual(len(table.update_cell_style([1, 2], 1)), 2)

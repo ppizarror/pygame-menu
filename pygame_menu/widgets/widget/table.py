@@ -37,7 +37,8 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import ORIENTATION_VERTICAL, ALIGN_LEFT, ALIGN_CENTER, ORIENTATION_HORIZONTAL, \
     POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH, ALIGN_RIGHT, POSITION_WEST, POSITION_EAST
-from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, assert_position
+from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, assert_position, \
+    assert_vector
 from pygame_menu.widgets.core.widget import Widget, WidgetBorderPositionType, WIDGET_FULL_BORDER, \
     WIDGET_BORDER_POSITION_NONE
 from pygame_menu.widgets.widget.frame import Frame
@@ -46,7 +47,7 @@ from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 
 from pygame_menu._types import List, Union, ColorInputType, Optional, Tuple, VectorInstance, PaddingType, \
-    Dict, NumberType
+    Dict, NumberType, Vector2IntType
 
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
 ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
@@ -68,6 +69,13 @@ class Table(Frame):
     :param table_id: ID of the table
     """
     _rows: List['Frame']
+    default_cell_align: str
+    default_cell_border_color: ColorInputType
+    default_cell_border_position: WidgetBorderPositionType
+    default_cell_border_width: int
+    default_cell_padding: PaddingType
+    default_cell_vertical_position: str
+    default_row_background_color: Optional[ColorInputType]
 
     def __init__(
             self,
@@ -92,6 +100,15 @@ class Table(Frame):
         self._height = 0
         self._real_rect = pygame.Rect(0, 0, 0, 0)
         self._width = 0
+
+        # Default cell properties
+        self.default_cell_align = ALIGN_LEFT
+        self.default_cell_border_color = (0, 0, 0)
+        self.default_cell_border_position = WIDGET_FULL_BORDER
+        self.default_cell_border_width = 1
+        self.default_cell_padding = 0
+        self.default_cell_vertical_position = POSITION_NORTH
+        self.default_row_background_color = None
 
         # Finals
         self.relax()
@@ -197,22 +214,36 @@ class Table(Frame):
     def add_row(
             self,
             cells: Union[ColumnInputType, 'Widget'],
-            cell_align: str = ALIGN_LEFT,
-            cell_border_color: ColorInputType = (0, 0, 0),
-            cell_border_position: WidgetBorderPositionType = WIDGET_FULL_BORDER,
-            cell_border_width: int = 1,
-            cell_padding: PaddingType = 0,
-            cell_vertical_position: str = POSITION_NORTH,
+            cell_align: Optional[str] = None,
+            cell_border_color: Optional[ColorInputType] = None,
+            cell_border_position: Optional[WidgetBorderPositionType] = None,
+            cell_border_width: Optional[int] = None,
+            cell_font: Optional[FontType] = None,
+            cell_font_color: Optional[ColorInputType] = None,
+            cell_font_size: Optional[int] = None,
+            cell_padding: PaddingType = None,
+            cell_vertical_position: Optional[str] = None,
             row_background_color: Optional[ColorInputType] = None
     ) -> 'Frame':
         """
         Add row to table.
+
+        .. note::
+
+            By default, if ``None`` each cell style uses the table defaults "cell" styles.
+
+        .. note::
+
+            By default, the cell font is the same as the table font style.
 
         :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images. Also a Frame row can be added
         :param cell_align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param cell_border_color: Border color of each cell
         :param cell_border_position: Border position of each cell. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
         :param cell_border_width: Border width in px of each cell
+        :param cell_font: Font name or path
+        :param cell_font_color: Font color
+        :param cell_font_size: Font size
         :param cell_padding: Padding of each cell according to CSS rules. General shape: (top, right, bottom, left)
         :param cell_vertical_position: Vertical position of each cell. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
         :param row_background_color: Row background color
@@ -220,12 +251,33 @@ class Table(Frame):
         """
         assert self.configured, 'table must be configured before adding rows'
 
+        # Use defaults
+        if cell_align is None:
+            cell_align = self.default_cell_align
+        if cell_border_color is None:
+            cell_border_color = self.default_cell_border_color
+        if cell_border_position is None:
+            cell_border_position = self.default_cell_border_position
+        if cell_border_width is None:
+            cell_border_width = self.default_cell_border_width
+        if cell_font is None:
+            cell_font = self._font_name
+        if cell_font_color is None:
+            cell_font_color = self._font_color
+        if cell_font_size is None:
+            cell_font_size = self._font_size
+        if cell_padding is None:
+            cell_padding = self.default_cell_padding
+        if cell_vertical_position is None:
+            cell_vertical_position = self.default_cell_vertical_position
+        if row_background_color is None:
+            row_background_color = self.default_row_background_color
+
         # If cells is a previous table row
         if isinstance(cells, Frame) and cells.has_attribute('is_row'):
             row_cells = list(cells.get_widgets(unpack_subframes=False))
             cells.clear()
             cells = row_cells
-            print(cells)
         if isinstance(cells, Widget):
             cells = [cells]
 
@@ -278,9 +330,9 @@ class Table(Frame):
                 cell.set_font(
                     antialias=self._font_antialias,
                     background_color=None,
-                    color=self._font_color,
-                    font=self._font_name,
-                    font_size=self._font_size,
+                    color=cell_font_color,
+                    font=cell_font,
+                    font_size=cell_font_size,
                     readonly_color=self._font_readonly_color,
                     readonly_selected_color=self._font_readonly_selected_color,
                     selected_color=self._font_selected_color
@@ -548,10 +600,24 @@ class Table(Frame):
             'column index ({0}) cannot exceed the number of columns ({1}) of row {2}'.format(column, len(w), row)
         return w[column - 1]
 
+    def is_rectangular(self) -> bool:
+        """
+        Returns ``True`` if the table is rectangular, that is, each row have the same number of columns.
+
+        :return: Bool
+        """
+        if len(self._rows) == 0:
+            return True
+        c = self._rows[0].get_total_packed()
+        for f in self._rows:
+            if f.get_total_packed() != c:
+                return False
+        return True
+
     def update_cell_style(
             self,
-            column: int,
-            row: int,
+            column: Union[int, Vector2IntType],
+            row: Union[int, Vector2IntType],
             align: Optional[str] = None,
             background_color: Optional[ColorInputType] = None,
             border_color: Optional[ColorInputType] = None,
@@ -562,12 +628,12 @@ class Table(Frame):
             font_size: Optional[int] = None,
             padding: Optional[PaddingType] = None,
             vertical_position: Optional[str] = None
-    ) -> 'Widget':
+    ) -> Union['Widget', List['Widget']]:
         """
         Update cell style. If a parameter is ``None`` the default cell property will be used.
 
-        :param column: Cell column position (counting from 1)
-        :param row: Cell row position (counting from 1)
+        :param column: Cell column position (counting from 1). If -1 update all column from the given row. Also a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
+        :param row: Cell row position (counting from 1). If ``-1`` update all rows from the given column. Also a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
         :param align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param background_color: Background color
         :param border_color: Border color of each cell
@@ -580,6 +646,67 @@ class Table(Frame):
         :param vertical_position: Vertical position of each cell. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
         :return: Cell widget
         """
+        if row == -1 or isinstance(row, VectorInstance):
+            max_rows = len(self._rows)
+            if row == -1:
+                row = []
+                for i in range(max_rows):
+                    row.append(i + 1)
+            else:
+                assert_vector(row, 2, int)
+                row_k = list(row)
+                if row_k[1] == -1:
+                    row_k[1] = len(self._rows)
+                assert 1 <= row_k[0] <= row_k[1] <= max_rows, \
+                    '(from, to) of rows vector must be increasing and between 1-{0}'.format(max_rows)
+                row = [row_k[0]]
+                for i in range(row_k[1] - row_k[0]):
+                    row.append(row_k[0] + (i + 1))
+            if isinstance(column, VectorInstance) and column != [1, -1]:
+                assert self.is_rectangular(), \
+                    'only rectangular tables (same number of columns for each row) ' \
+                    'accept a variable column different than -1 or [1, -1], but received "{0}"'.format(column)
+            updated_wid = []
+            for i in row:
+                w = self.update_cell_style(column, i, align=align, background_color=background_color,
+                                           border_color=border_color, border_position=border_position,
+                                           border_width=border_width, font=font, font_color=font_color,
+                                           font_size=font_size, padding=padding, vertical_position=vertical_position)
+                if not isinstance(w, list):
+                    w = [w]
+                for k in w:
+                    updated_wid.append(k)
+            return updated_wid
+        if column == -1 or isinstance(column, VectorInstance):
+            assert isinstance(row, int) and 1 <= row <= len(self._rows), \
+                'row index ({0}) cannot exceed the number of rows ({1})'.format(row, len(self._rows))
+            max_columns = self._rows[row - 1].get_total_packed()
+            if column == -1:
+                column = []
+                for i in range(max_columns):
+                    column.append(i + 1)
+            else:
+                assert_vector(column, 2, int)
+                column_k = list(column)
+                if column_k[1] == -1:
+                    column_k[1] = max_columns
+                assert 1 <= column_k[0] <= column_k[1] <= max_columns, \
+                    '(from, to) of column vector must be increasing and between 1-{0} for row {1}' \
+                    ''.format(max_columns, row)
+                column = [column_k[0]]
+                for i in range(column_k[1] - column_k[0]):
+                    column.append(column_k[0] + (i + 1))
+            updated_wid = []
+            for i in column:
+                w = self.update_cell_style(i, row, align=align, background_color=background_color,
+                                           border_color=border_color, border_position=border_position,
+                                           border_width=border_width, font=font, font_color=font_color,
+                                           font_size=font_size, padding=padding, vertical_position=vertical_position)
+                if not isinstance(w, list):
+                    w = [w]
+                for k in w:
+                    updated_wid.append(k)
+            return updated_wid
         cell = self.get_cell(column, row)
         r = self._rows[row - 1]
 
@@ -628,13 +755,20 @@ class Table(Frame):
         assert_font(font)
         if font_size is None:
             font_size = cell._font_size
-        assert isinstance(font_size, int) and font_size > 0
 
-        cell.update_font({
-            'color': font_color,
-            'name': font,
-            'size': font_size
-        })
+        try:
+            cell.update_font({
+                'color': font_color,
+                'name': font
+            })
+        except AssertionError:
+            pass
+
+        try:
+            if isinstance(font_size, int) and font_size > 0:
+                cell.update_font({'size': font_size})
+        except AssertionError:
+            pass
 
         # Update cell
         cell.set_attribute('align', align)
