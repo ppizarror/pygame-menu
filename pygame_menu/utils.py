@@ -414,6 +414,8 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
     :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
     :return: Padding value, (top, right, bottom, left), in px
     """
+    if padding is False or None:
+        padding = 0
     assert isinstance(padding, PaddingInstance)
 
     if isinstance(padding, NumberInstance):
