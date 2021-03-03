@@ -94,6 +94,24 @@ def make_long_menu() -> 'pygame_menu.Menu':
         width=600
     )
 
+    menu_contributors = pygame_menu.Menu(
+        height=400,
+        onclose=pygame_menu.events.EXIT,
+        theme=pygame_menu.themes.THEME_SOLARIZED,
+        title='Contributors',
+        width=600
+    )
+
+    # Add table to contributors
+    table_contrib = menu_contributors.add.table()
+    table_contrib.default_cell_padding = 5
+    table_contrib.default_row_background_color = 'white'
+    table_contrib.add_row(['N°', 'Github User'], cell_font=pygame_menu.font.FONT_OPEN_SANS_BOLD)
+    for i in range(len(pygame_menu.__contributors__)):
+        table_contrib.add_row([i + 1, pygame_menu.__contributors__[i]])
+    table_contrib.update_cell_style(-1, -1, font_size=15)  # Update all column/row
+    table_contrib.update_cell_style(1, [2, -1], font=pygame_menu.font.FONT_OPEN_SANS_ITALIC)
+
     menu_text = pygame_menu.Menu(
         height=400,
         onclose=pygame_menu.events.EXIT,
@@ -104,6 +122,7 @@ def make_long_menu() -> 'pygame_menu.Menu':
 
     menu.add.button('Rows and Columns', menu_sub)
     menu.add.button('Text scrolled', menu_text)
+    menu.add.button('Pygame-menu contributors', menu_contributors)
     menu.add.vertical_margin(20)  # Adds margin
 
     label1 = 'Button n°{}'
