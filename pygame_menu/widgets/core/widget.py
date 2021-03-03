@@ -1044,7 +1044,7 @@ class Widget(Base):
         :param width: Border width in px
         :param color: Border color
         :param inflate: Inflate on x-axis and y-axis (x, y) in px
-        :param position: Border position. Valid only: North, South, East, West. See :py:mod:`pygame_menu.locals`
+        :param position: Border position. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
         :return: Self reference
         """
         assert isinstance(width, int) and width >= 0

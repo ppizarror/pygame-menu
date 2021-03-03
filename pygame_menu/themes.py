@@ -183,7 +183,7 @@ class Theme(object):
     :type widget_border_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param widget_border_inflate: Widget inflate size on x-axis and y-axis (x, y) in px. These values cannot be negative
     :type widget_border_inflate: tuple, list
-    :param widget_border_position: Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: North, South, East, and West. See :py:mod:`pygame_menu.locals`
+    :param widget_border_position: Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
     :type widget_border_position: str, tuple, list
     :param widget_border_width: Widget border width in px. If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
     :type widget_border_width: int
