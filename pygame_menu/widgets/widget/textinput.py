@@ -127,6 +127,7 @@ class TextInput(Widget):
     :param kwargs: Optional keyword arguments
     """
     _absolute_origin: Tuple2IntType
+    _alt_x_enabled: bool
     _apply_widget_update_callback: bool  # Used in ColorInput
     _block_copy_paste: bool
     _clock: 'pygame.time.Clock'
@@ -339,6 +340,7 @@ class TextInput(Widget):
         self._apply_widget_update_callback = True
 
         # Other
+        self._alt_x_enabled = True
         self._copy_paste_enabled = copy_paste_enable
         self._current_underline_string = ''
         self._input_type = input_type
@@ -1599,6 +1601,42 @@ class TextInput(Widget):
                     else:
                         return False
 
+                # User press alt+x get the unicode char from string
+                if pygame.key.get_mods() in (pygame.KMOD_ALT, pygame.KMOD_LALT) and \
+                        event.key == pygame.K_x and self._alt_x_enabled:
+                    # Get the last hex value
+                    last_space = self._input_string.rfind(' ')
+                    if last_space == -1:  # space not found, try 0x
+                        last_space = self._input_string.rfind('0x')
+                    if last_space == -1:  # 0x not found, try 0X
+                        last_space = self._input_string.rfind('0x')
+                    if last_space == -1:  # Finally, find the subsequence of valid hex chars
+                        last_space = 0
+                        for j in range(len(self._input_string)):
+                            if self._input_string[j].lower() not in ('0', '1', '2', '3', '4', '5', '6', '7',
+                                                                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'):
+                                last_space = j + 1
+                        if last_space >= len(self._input_string):
+                            last_space = -1
+                    if last_space >= 0:
+                        try:
+                            unicode_hex = self._input_string[last_space:]
+                            if unicode_hex.lower() == '0x':
+                                continue
+                            unicode_int = int(unicode_hex, 16)
+
+                            # Remove the code
+                            for _ in range(len(unicode_hex)):
+                                self._backspace()
+
+                            if not self._push_key_input(chr(unicode_int)):
+                                break
+                            self.active = True
+                            updated = True
+                            continue
+                        except (ValueError, OverflowError):
+                            pass
+
                 # Backspace button, delete text from right
                 if event.key == pygame.K_BACKSPACE:
 
@@ -1752,7 +1790,7 @@ class TextInput(Widget):
                     return False
 
                 # Any other key, add as input
-                elif event.key not in self._ignore_keys:
+                elif event.key not in self._ignore_keys and hasattr(event, 'unicode'):
                     if event.unicode == ' ' and event.key != 32:
                         warnings.warn(
                             '{0} received "{1}" unicode but key is different than 32 ({2}), '

@@ -229,6 +229,41 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
+    def release_key_mod() -> None:
+        """
+        Release pygame key mods.
+
+        :return: None
+        """
+        # noinspection PyArgumentList
+        pygame.key.set_mods(pygame.KMOD_NONE)
+
+    @staticmethod
+    def keydown_mod_alt(
+            key: int,
+            inlist: bool = True,
+            testmode: bool = True
+    ) -> EventListType:
+        """
+        Create a mod alt keydown event (Alt+Key).
+
+        :param key: Key to press
+        :param inlist: Return event in a list
+        :param testmode: Event is in test mode
+        :return: Event
+        """
+        # noinspection PyArgumentList
+        pygame.key.set_mods(pygame.KMOD_ALT)
+        event_obj = pygame.event.Event(pygame.KEYDOWN,
+                                       {
+                                           'key': key,
+                                           'test': testmode
+                                       })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
+
+    @staticmethod
     def keydown(key: Union[int, VectorIntType], testmode: bool = True) -> EventListType:
         """
         Keydown list.

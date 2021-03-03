@@ -854,10 +854,10 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(textinput.get_value(), '')
         textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_z))  # undo
         self.assertEqual(textinput.get_value(), 'test')
-        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))  # select all
 
         # Test selection, if user selects all and types anything the selected
         # text must be destroyed
+        textinput.update(PygameEventUtils.keydown_mod_ctrl(pygame.K_a))  # select all
         textinput._unselect_text()
         self.assertEqual(textinput._get_selected_text(), '')
         textinput._select_all()
@@ -880,6 +880,61 @@ class WidgetsTest(unittest.TestCase):
         textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='k'))
         self.assertEqual(textinput.get_value(), 'tk')
         textinput.readonly = False
+
+        # Test alt+x
+        textinput.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
+        textinput.update(PygameEventUtils.key(pygame.K_2, keydown=True, char='2'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='5'))
+        self.assertEqual(textinput.get_value(), 'tk 215')
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+        self.assertEqual(textinput.get_value(), 'tkȕ')
+        textinput.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
+        textinput.update(PygameEventUtils.key(pygame.K_SPACE, keydown=True))
+        textinput.update(PygameEventUtils.key(pygame.K_b, keydown=True, char='B'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+        self.assertEqual(textinput.get_value(), 'tkȕ ±')
+
+        # Remove all
+        textinput.clear()
+        textinput.update(PygameEventUtils.key(pygame.K_b, keydown=True, char='B'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+        self.assertEqual(textinput.get_value(), '±')
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert same to unicode, do nothing
+        self.assertEqual(textinput.get_value(), '±')
+
+        # Test consecutive
+        textinput.update(PygameEventUtils.key(pygame.K_2, keydown=True, char='2'))
+        textinput.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
+        textinput.update(PygameEventUtils.key(pygame.K_3, keydown=True, char='3'))
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))  # convert 215 to unicode
+        self.assertEqual(textinput.get_value(), '±–')
+
+        # Test 0x
+        textinput.clear()
+        PygameEventUtils.release_key_mod()
+        textinput.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
+        self.assertEqual(textinput.get_value(), '0')
+        textinput.update(PygameEventUtils.key(pygame.K_x, keydown=True, char='x'))
+        self.assertEqual(textinput.get_value(), '0x')
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))
+        self.assertEqual(textinput.get_value(), '0x')
+        textinput.update(PygameEventUtils.key(pygame.K_b, keydown=True, char='B'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
+        self.assertEqual(textinput.get_value(), '0xB1')
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))
+        self.assertEqual(textinput.get_value(), '±')
+        PygameEventUtils.release_key_mod()
+
+        textinput.update(PygameEventUtils.key(pygame.K_0, keydown=True, char='0'))
+        textinput.update(PygameEventUtils.key(pygame.K_x, keydown=True, char='x'))
+        textinput.update(PygameEventUtils.key(pygame.K_b, keydown=True, char='B'))
+        textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
+        textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))
+        self.assertEqual(textinput.get_value(), '±±')
 
         # Update mouse
         for i in range(50):

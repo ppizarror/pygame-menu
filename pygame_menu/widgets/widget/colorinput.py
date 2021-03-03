@@ -223,6 +223,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         # Disable parent callbacks
         self._apply_widget_update_callback = False
 
+        # Disable alt+x
+        self._alt_x_enabled = False
+
     def _apply_font(self) -> None:
         super(ColorInput, self)._apply_font()
 
