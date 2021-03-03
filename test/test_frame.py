@@ -2124,6 +2124,7 @@ class FrameWidgetTest(unittest.TestCase):
         frame3 = menu.add.frame_v(200, 200, max_width=100, max_height=100, background_color='cyan')
         self.assertIn(frame3, menu._update_frames)
         row6 = table.add_row([frame3, table3], cell_border_width=0)
+        row6_widgs = row6.get_widgets(unpack_subframes=False)
         self.assertIn(frame3, menu._update_frames)
         self.assertEqual(row6.get_widgets(unpack_subframes=False)[1], table3)
 
@@ -2133,3 +2134,22 @@ class FrameWidgetTest(unittest.TestCase):
 
         # Check value
         self.assertRaises(ValueError, lambda: table.get_value())
+
+        # Remove table from scrollable frame
+        self.assertEqual(row6.get_total_packed(), 2)
+        row7 = table.add_row(row6)
+        self.assertNotEqual(row6, row7)
+        self.assertEqual(row6_widgs, row7.get_widgets(unpack_subframes=False))
+        self.assertEqual(row6.get_total_packed(), 0)
+        self.assertIn(frame3, menu._update_frames)
+
+        # Unpack table from frame
+        frame2.unpack(table)
+        self.assertIn(frame3, menu._update_frames)
+        self.assertTrue(table.is_floating())
+        table.set_float(False)
+        menu._test_print_widgets()
+
+        img = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_METAL)
+        img.scale(0.2, 0.2)
+        table.add_row(img)

@@ -196,7 +196,7 @@ class Table(Frame):
 
     def add_row(
             self,
-            cells: ColumnInputType,
+            cells: Union[ColumnInputType, 'Widget'],
             cell_align: str = ALIGN_LEFT,
             cell_border_color: ColorInputType = (0, 0, 0),
             cell_border_position: WidgetBorderPositionType = WIDGET_FULL_BORDER,
@@ -208,7 +208,7 @@ class Table(Frame):
         """
         Add row to table.
 
-        :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images
+        :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images. Also a Frame row can be added
         :param cell_align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param cell_border_color: Border color of each cell
         :param cell_border_position: Border position of each cell. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
@@ -219,6 +219,16 @@ class Table(Frame):
         :return:
         """
         assert self.configured, 'table must be configured before adding rows'
+
+        # If cells is a previous table row
+        if isinstance(cells, Frame) and cells.has_attribute('is_row'):
+            row_cells = list(cells.get_widgets(unpack_subframes=False))
+            cells.clear()
+            cells = row_cells
+            print(cells)
+        if isinstance(cells, Widget):
+            cells = [cells]
+
         assert isinstance(cells, VectorInstance)
 
         # Check cell styles
@@ -255,6 +265,7 @@ class Table(Frame):
         row.set_background_color(row_background_color)
         row.set_menu(self._menu)
         row.set_scrollarea(self._scrollarea)
+        row.set_attribute('is_row')
         # row.set_frame(self) This cannot be executed as row is packed within
 
         # Create widgets
@@ -295,6 +306,7 @@ class Table(Frame):
             cell.set_attribute('row_frame', row)
             cell.set_attribute('table', self)
             cell.set_attribute('vertical_position', cell_vertical_position)
+            cell.set_float(False)
             cell._update__repr___(self)
             cell.configured = True
 
