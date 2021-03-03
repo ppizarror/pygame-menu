@@ -446,6 +446,7 @@ class DropSelect(Widget):
         self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL,
                                  frame_id=self._id + '+frame-' + uuid4(short=True))
         self._drop_frame._accepts_title = False
+        self._drop_frame._menu_can_be_none_pack = True
         self._drop_frame.hide()
         self._drop_frame.set_background_color(
             color=self._selection_box_bgcolor
@@ -972,9 +973,10 @@ class DropSelect(Widget):
         :return: None
         """
         if self._drop_frame is None:
-            msg = 'selection drop has not been maked yet. Call {0}.make_selection_drop()' \
-                  'for avoiding this exception'.format(self.get_class_id())
-            raise _SelectionDropNotMakedException(msg)
+            raise _SelectionDropNotMakedException(
+                'selection drop has not been maked yet. Call {0}.make_selection_drop()'
+                'for avoiding this exception'.format(self.get_class_id())
+            )
 
     def _toggle_drop(self) -> None:
         """

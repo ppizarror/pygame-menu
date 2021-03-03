@@ -2027,4 +2027,35 @@ class FrameWidgetTest(unittest.TestCase):
         table.remove_row(row3)
         self.assertEqual(table.get_size(), (258, 190))
 
-        menu.mainloop(surface)
+        # Add new row with an image
+        table.update_cell_style(2, 2, padding=0)
+        b_image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+        b_image.scale(0.1, 0.1)
+        row3 = table.add_row(['image', b_image, 'ez'])
+        self.assertIsInstance(row3.get_widgets()[1], pygame_menu.widgets.Image)
+
+        # Remove table from menu
+        menu.remove_widget(table)
+
+        # Add sub-table
+        menu.add.generic_widget(table)
+        table2 = menu.add.table(font_size=10)
+        table2row1 = table2.add_row([1, 2])
+        table2.add_row([3, 4])
+
+        self.assertIn(btn, menu.get_widgets())
+        row4 = table.add_row(['sub-table', table2, btn], cell_align=pygame_menu.locals.ALIGN_CENTER,
+                             cell_vertical_position=pygame_menu.locals.POSITION_CENTER)
+        table.update_cell_style(2, 4, background_color='white')
+        self.assertNotIn(btn, menu.get_widgets())
+        self.assertEqual(btn.get_frame(), row4)
+        self.assertEqual(table2.get_frame(), row4)
+        self.assertEqual(table2.get_frame_depth(), 2)
+        self.assertEqual(table2row1.get_widgets()[0].get_frame(), table2row1)
+        self.assertEqual(table2row1.get_widgets()[0].get_frame_depth(), 4)
+
+        # Try to add an existing row as a new row
+        self.assertRaises(AssertionError, lambda: table.add_row([row1]))
+        self.assertRaises(AssertionError, lambda: table.add_row([table2row1.get_widgets()[0]]))
+
+        # menu.mainloop(surface)

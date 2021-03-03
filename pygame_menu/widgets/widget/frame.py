@@ -123,6 +123,7 @@ class Frame(Widget):
     _has_frames: bool  # True if frame has packed other frames
     _has_title: bool
     _height: int
+    _menu_can_be_none_pack: bool
     _orientation: str
     _pack_margin_warning: bool
     _pos: Dict[str, Tuple[int, int]]  # Widget positioning
@@ -159,6 +160,7 @@ class Frame(Widget):
         self._frame_size = (width, height)  # Size of the frame, set in make_scrollarea
         self._has_frames = False
         self._height = int(height)
+        self._menu_can_be_none_pack = False
         self._orientation = orientation
         self._pack_margin_warning = True  # Set to False for hiding the pack margin warning
         self._pos = {}
@@ -265,6 +267,7 @@ class Frame(Widget):
                                   frame_id=self._id + '+title-' + uuid4(short=True))
         self._frame_title._accepts_scrollarea = False
         self._frame_title._accepts_title = False
+        self._frame_title._menu_can_be_none_pack = True
         self._frame_title._menu = self._menu
         self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
         self._frame_title.set_attribute('pbottom', pad_outer[2] - pad_inner[2])
@@ -736,8 +739,7 @@ class Frame(Widget):
 
         # If has title
         if self._has_title:
-            msg = 'previous {0} title has been removed'.format(self.get_class_id())
-            warnings.warn(msg)
+            warnings.warn('previous {0} title has been removed'.format(self.get_class_id()))
             self.remove_title()
 
         return self
@@ -957,16 +959,18 @@ class Frame(Widget):
                 self._pos[w.get_id()] = (self._width + x_right, self._get_vt(w, v_pos) + w.get_margin()[1])
             dw = x_left - x_right
             if dw > self._width and not self._relax:
-                msg = '{3} width ({0}) exceeds {2} width ({1})' \
-                      ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
-                raise _FrameSizeException(msg)
+                raise _FrameSizeException(
+                    '{3} width ({0}) exceeds {2} width ({1})'
+                    ''.format(dw, self._width, self.get_class_id(), w.get_class_id())
+                )
 
         # Now center widgets
         available = self._width - (x_left - x_right)
         if w_center > available and not self._relax:
-            msg = 'cannot place center widgets as required width ({0}) ' \
-                  'is greater than available ({1}) in {2}'.format(w_center, available, self.get_class_id())
-            raise _FrameSizeException(msg)
+            raise _FrameSizeException(
+                'cannot place center widgets as required width ({0}) '
+                'is greater than available ({1}) in {2}'.format(w_center, available, self.get_class_id())
+            )
         x_center = int(self._width / 2 - w_center / 2)
         for w in self._widgets.values():
             align, v_pos = self._widgets_props[w.get_id()]
@@ -1002,16 +1006,18 @@ class Frame(Widget):
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + y_bottom)
             dh = y_top - y_bottom
             if dh > self._height and not self._relax:
-                msg = '{3} height ({0}) exceeds {2} height ({1})' \
-                      ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
-                raise _FrameSizeException(msg)
+                raise _FrameSizeException(
+                    '{3} height ({0}) exceeds {2} height ({1})'
+                    ''.format(dh, self._height, self.get_class_id(), w.get_class_id())
+                )
 
         # Now center widgets
         available = self._height - (y_top - y_bottom)
         if w_center > available and not self._relax:
-            msg = 'cannot place center widgets as required height ({0}) ' \
-                  'is greater than available ({1}) in {2}'.format(w_center, available, self.get_class_id())
-            raise _FrameSizeException(msg)
+            raise _FrameSizeException(
+                'cannot place center widgets as required height ({0}) '
+                'is greater than available ({1}) in {2}'.format(w_center, available, self.get_class_id())
+            )
         y_center = int(self._height / 2 - w_center / 2)
         for w in self._widgets.values():
             align, v_pos = self._widgets_props[w.get_id()]
@@ -1326,8 +1332,7 @@ class Frame(Widget):
         assert len(self._widgets) > 0, 'frame is empty'
         wid = widget.get_id()
         if wid not in self._widgets.keys():
-            msg = '{0} does not exist in {1}'.format(widget.get_class_id(), self.get_class_id())
-            raise ValueError(msg)
+            raise ValueError('{0} does not exist in {1}'.format(widget.get_class_id(), self.get_class_id()))
         assert widget._frame == self, 'widget frame differs from current'
         widget.set_float()
         if self._menu is not None:
@@ -1475,15 +1480,15 @@ class Frame(Widget):
         :param margin: (left, top) margin of added widget in px. It overrides the previous widget margin
         :return: Added widget references
         """
-        assert self._menu is not None, \
-            'frame menu must be set before packing widgets'
+        assert self._menu is not None or self._menu_can_be_none_pack, \
+            '{0} menu must be set before packing widgets'.format(self.get_class_id())
         if isinstance(widget, VectorInstance):
             for w in widget:
                 self.pack(widget=w, alignment=alignment, vertical_position=vertical_position)
             return widget
         assert isinstance(widget, Widget)
         if isinstance(widget, Frame):
-            assert widget.get_menu() is not None, \
+            assert widget.get_menu() is not None or self._menu_can_be_none_pack, \
                 '{0} menu cannot be None'.format(widget.get_class_id())
         assert widget.get_id() not in self._widgets.keys(), \
             '{0} already exists in {1}'.format(widget.get_class_id(), self.get_class_id())
@@ -1499,10 +1504,11 @@ class Frame(Widget):
             '{0} must be configured before packing'.format(widget.get_class_id())
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
-            msg = '{0} margin should be (0, 0) if packed, but received {1}; {2}.pack() does not consider ' \
-                  'previous widget margin. Set frame._pack_margin_warning=False to hide this warning' \
-                  ''.format(widget.get_class_id(), widget.get_margin(), self.get_class_id())
-            warnings.warn(msg)
+            warnings.warn(
+                '{0} margin should be (0, 0) if packed, but received {1}; {2}.pack() does not consider '
+                'previous widget margin. Set frame._pack_margin_warning=False to hide this warning'
+                ''.format(widget.get_class_id(), widget.get_margin(), self.get_class_id())
+            )
 
         if isinstance(widget, Frame):
             widget.update_indices()
@@ -1519,7 +1525,12 @@ class Frame(Widget):
         self._widgets_props[widget.get_id()] = (alignment, vertical_position)
 
         # Sort widgets to keep selection order
-        menu_widgets = self._menu._widgets
+        menu_widgets: List['Widget']
+        if self._menu is not None:
+            menu_widgets = self._menu._widgets
+        else:
+            menu_widgets = []
+
         if widget.get_menu() is not None and widget in menu_widgets:
             self._menu._validate_frame_widgetmove = False
             widgets_list = list(self._widgets.values())
@@ -1576,12 +1587,14 @@ class Frame(Widget):
             self._has_frames = True
 
         # Update menu selected widget
-        self._menu.move_widget_index(None, update_selected_index=True)
+        if self._menu is not None:
+            self._menu.move_widget_index(None, update_selected_index=True)
 
         # Render is mandatory as it modifies row/column layout
         try:
             self.update_position()
-            self._menu._render()
+            if self._menu is not None:
+                self._menu._render()
         except _FrameSizeException:
             self.unpack(widget)
             raise
