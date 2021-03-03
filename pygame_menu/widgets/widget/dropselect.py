@@ -373,7 +373,7 @@ class DropSelect(Widget):
                 touchscreen=self._touchscreen_enabled,
                 keyboard=False  # Only drop select controls the keyboard behaviour
             )
-            btn.set_cursor(
+            btn.set_cursor(  # This feature does not work properly
                 cursor=self._selection_option_cursor
             )
             if self._placeholder_add_to_selection_box:
@@ -1151,6 +1151,11 @@ class DropSelect(Widget):
                     if self.active and not self.get_focus_rect().collidepoint(*event_pos):
                         self._toggle_drop()
                         updated = True
+
+            # Check mousemove
+            # elif event.type == pygame.MOUSEMOTION:
+            #     for btn in self._option_buttons:
+            #         btn._check_mouseover(event)
 
         return updated
 
