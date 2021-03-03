@@ -106,9 +106,12 @@ def make_long_menu() -> 'pygame_menu.Menu':
     table_contrib = menu_contributors.add.table()
     table_contrib.default_cell_padding = 5
     table_contrib.default_row_background_color = 'white'
-    table_contrib.add_row(['N°', 'Github User'], cell_font=pygame_menu.font.FONT_OPEN_SANS_BOLD)
+    bold_font = pygame_menu.font.FONT_OPEN_SANS_BOLD
+    table_contrib.add_row(['N°', 'Github User'], cell_font=bold_font)
     for i in range(len(pygame_menu.__contributors__)):
-        table_contrib.add_row([i + 1, pygame_menu.__contributors__[i]])
+        table_contrib.add_row([i + 1, pygame_menu.__contributors__[i]],
+                              cell_font=bold_font if i == 0 else None)
+
     table_contrib.update_cell_style(-1, -1, font_size=15)  # Update all column/row
     table_contrib.update_cell_style(1, [2, -1], font=pygame_menu.font.FONT_OPEN_SANS_ITALIC)
 
