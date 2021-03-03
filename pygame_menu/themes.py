@@ -49,8 +49,7 @@ import warnings
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW, POSITION_NORTH, \
-    POSITION_SOUTH, POSITION_EAST, POSITION_WEST
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW
 from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, assert_position, assert_color, \
     is_callable, format_color, assert_position_vector
