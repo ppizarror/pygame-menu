@@ -80,16 +80,16 @@ MenuColumnMinWidthType = Union[int, float, VectorType]
 MenuRowsType = Optional[Union[int, VectorIntType]]
 
 # Other
-PaddingType = Union[NumberType, List[NumberType],
-                    Tuple[NumberType, NumberType],
-                    Tuple[NumberType, NumberType, NumberType, NumberType],
-                    Tuple[NumberType, NumberType, NumberType, NumberType]]
+PaddingType = Optional[Union[NumberType, List[NumberType],
+                             Tuple[NumberType, NumberType],
+                             Tuple[NumberType, NumberType, NumberType, NumberType],
+                             Tuple[NumberType, NumberType, NumberType, NumberType]]]
 StringVector = Union[str, Tuple[str, ...], List[str]]
 
 # Instances
 ColorInputInstance = (int, str, tuple, list, __Color)
 NumberInstance = (int, float)
-PaddingInstance = (int, float, tuple, list)
+PaddingInstance = (int, float, tuple, list, type(None))
 VectorInstance = (tuple, list)
 
 # Cursor
