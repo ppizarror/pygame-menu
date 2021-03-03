@@ -262,17 +262,17 @@ the way the widgets are added to the frame (packed).
     frame_title.pack(menu.add.label('Settings', padding=0), margin=(2, 2))
     frame_title.pack(
         menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
-        alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(2, 2))
+        align=pygame_menu.locals.ALIGN_RIGHT, margin=(2, 2))
     frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
-                       alignment=pygame_menu.locals.ALIGN_CENTER)
+                       align=pygame_menu.locals.ALIGN_CENTER)
     frame_numbers = menu.add.frame_h(250, 41, padding=0)
     frame_content.pack(frame_numbers)
     for i in range(9):
         frame_numbers.pack(menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
+                           align=pygame_menu.locals.ALIGN_CENTER)
     frame_content.pack(menu.add.vertical_margin(15))
     frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150), padding=0),
-                       alignment=pygame_menu.locals.ALIGN_CENTER)
+                       align=pygame_menu.locals.ALIGN_CENTER)
 
 **Example:**
 
