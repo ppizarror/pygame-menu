@@ -3396,7 +3396,10 @@ class Menu(Base):
 
         # Asserts
         assert len(self._widgets) >= 2, 'menu must contain at least 2 widgets to perform this task'
-        widget_index = self._widgets.index(widget)
+        try:
+            widget_index = self._widgets.index(widget)
+        except ValueError:
+            raise ValueError('{0} widget is not on widgets list'.format(widget.get_class_id()))
         assert widget in self._widgets, \
             '{0} does not exist on current menu widgets list'.format(widget.get_class_id())
         assert isinstance(index, (Widget, int, type(None)))
@@ -3594,14 +3597,15 @@ class Menu(Base):
                     current_depth += 1
                     prev_indx = indx
                     for jw in w.get_widgets(unpack_subframes=False):
-                        if jw.get_menu() is None:
+                        if jw.get_menu() is None or jw not in self._widgets:
                             if prev_indx not in non_menu_frame_widgets.keys():
                                 non_menu_frame_widgets[prev_indx] = []
                             non_menu_frame_widgets[prev_indx].append(jw)
                         else:
                             prev_indx = self._widgets.index(jw)
-            except ValueError:
+            except ValueError as e:
                 print('[ERROR] while requesting widget {0}'.format(jw.get_class_id()))
+                warnings.warn(str(e))
             indx += 1
         process_non_menu_frame(indx)
         close_frames(0)

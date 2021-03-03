@@ -340,7 +340,7 @@ class Frame(Widget):
             self._frame_title.get_decorator().add_surface(-w / 2, -h / 2 + 1, new_surface)
 
         # Pack title
-        self._frame_title.pack(title_label, alignment=title_alignment)
+        self._frame_title.pack(title_label, align=title_alignment)
 
         self._has_title = True
         self._render()
@@ -416,7 +416,7 @@ class Frame(Widget):
         align = self._frame_title.get_attribute('buttons_alignment')
         button.set_attribute('align', align)
         button.set_attribute('margin', margin)
-        self._frame_title.pack(button, alignment=align, margin=margin)
+        self._frame_title.pack(button, align=align, margin=margin)
         self._frame_title.update_position()
 
         return self
@@ -995,14 +995,14 @@ class Frame(Widget):
             if not w.is_visible(check_frame=False) or w.is_floating():
                 continue
             if v_pos == POSITION_CENTER:
-                w_center += w.get_width() + w.get_margin()[1]
+                w_center += w.get_height() + w.get_margin()[1]
                 continue
             elif v_pos == POSITION_NORTH:
                 y_top += w.get_margin()[1]
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], y_top)
                 y_top += w.get_height()
             elif v_pos == POSITION_SOUTH:
-                y_bottom -= (w.get_margin()[1] + w.get_height())
+                y_bottom -= (w.get_height() + w.get_margin()[1])
                 self._pos[w.get_id()] = (self._get_ht(w, align) + w.get_margin()[0], self._height + y_bottom)
             dh = y_top - y_bottom
             if dh > self._height and not self._relax:
@@ -1233,7 +1233,7 @@ class Frame(Widget):
             for btn in prev_title_buttons:
                 align = btn.get_attribute('align', kwargs['title_buttons_alignment'])
                 margin = btn.get_attribute('margin', (0, 0))
-                new_title_frame.pack(btn, alignment=align, margin=margin)
+                new_title_frame.pack(btn, align=align, margin=margin)
 
         # Force render
         self._render()
@@ -1346,7 +1346,7 @@ class Frame(Widget):
             pass
 
         # Move widget to the last position of widget list
-        if widget.get_menu() == self._menu and self._menu is not None:
+        if widget.get_menu() == self._menu and self._menu is not None and widget in self._menu._widgets:
             self._menu._validate_frame_widgetmove = False
             try:
                 self._menu.move_widget_index(widget, render=False)
@@ -1355,7 +1355,7 @@ class Frame(Widget):
             if isinstance(widget, Frame):
                 widgets = widget.get_widgets(unpack_subframes_include_frame=True)
                 for w in widgets:
-                    if w.get_menu() is None:
+                    if w.get_menu() is None or w not in self._menu._widgets:
                         continue
                     self._menu.move_widget_index(w, render=False)
             self._menu._validate_frame_widgetmove = True
@@ -1406,7 +1406,7 @@ class Frame(Widget):
     def pack(
             self,
             widget: Union['Widget', List['Widget'], Tuple['Widget', ...]],
-            alignment: str = ALIGN_LEFT,
+            align: str = ALIGN_LEFT,
             vertical_position: str = POSITION_NORTH,
             margin: Vector2NumberType = (0, 0)
     ) -> Union['Widget', List['Widget'], Tuple['Widget', ...], Any]:
@@ -1475,8 +1475,8 @@ class Frame(Widget):
             it does not add any size to the respective positioning.
 
         :param widget: Widget to be packed
-        :param alignment: Widget alignment
-        :param vertical_position: Vertical position of the widget within frame. Only valid: North, Center, and South. See :py:mod:`pygame_menu.locals`
+        :param align: Widget alignment. See :py:mod:`pygame_menu.locals`
+        :param vertical_position: Vertical position of the widget within frame. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
         :param margin: (left, top) margin of added widget in px. It overrides the previous widget margin
         :return: Added widget references
         """
@@ -1484,7 +1484,7 @@ class Frame(Widget):
             '{0} menu must be set before packing widgets'.format(self.get_class_id())
         if isinstance(widget, VectorInstance):
             for w in widget:
-                self.pack(widget=w, alignment=alignment, vertical_position=vertical_position)
+                self.pack(widget=w, align=align, vertical_position=vertical_position)
             return widget
         assert isinstance(widget, Widget)
         if isinstance(widget, Frame):
@@ -1496,7 +1496,7 @@ class Frame(Widget):
             'widget menu to be added to frame must be in same menu as frame, or it can have any Menu instance'
         assert widget.get_frame() is None, \
             '{0} is already packed in {1}'.format(widget.get_class_id(), widget.get_frame().get_class_id())
-        assert_alignment(alignment)
+        assert_alignment(align)
         assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), \
             'vertical position must be NORTH, CENTER, or SOUTH'
         assert_vector(margin, 2)
@@ -1522,7 +1522,7 @@ class Frame(Widget):
         if self.is_scrollable or self._has_title or isinstance(widget, Frame):
             self.sort_menu_update_frames()
         self._widgets[widget.get_id()] = widget
-        self._widgets_props[widget.get_id()] = (alignment, vertical_position)
+        self._widgets_props[widget.get_id()] = (align, vertical_position)
 
         # Sort widgets to keep selection order
         menu_widgets: List['Widget']
@@ -1559,14 +1559,19 @@ class Frame(Widget):
             if isinstance(widget, Frame):
                 reverse = menu_widgets.index(widget) == len(menu_widgets) - 1
                 widgs = widget.get_widgets(unpack_subframes_include_frame=True, reverse=reverse)
+
+                first_moved_widget = None
+                last_moved_widget = None
                 for w in widgs:
-                    if w.get_menu() is None:
+                    if w.get_menu() is None or w not in menu_widgets:
                         continue
                     self._menu.move_widget_index(w, self, render=False)
-                if len(widgs) >= 1:
-                    swap_target = widgs[-1]
-                    if not reverse:
-                        swap_target = widgs[0]
+                    if first_moved_widget is None:
+                        first_moved_widget = w
+                    last_moved_widget = w
+
+                swap_target = last_moved_widget if reverse else first_moved_widget
+                if swap_target is not None:
                     menu_widgets.remove(widget)
                     menu_widgets.insert(menu_widgets.index(swap_target), widget)
 
