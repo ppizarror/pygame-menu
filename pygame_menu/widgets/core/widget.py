@@ -150,12 +150,13 @@ def _check_widget_mouseleave(
             WIDGET_MOUSEOVER[0] = None
             WIDGET_MOUSEOVER[1] = []
             if prev_cursor != WIDGET_TOP_CURSOR[0]:
-                msg = 'expected {0} to be the top cursor (WIDGET_TOP_CURSOR), but {1} is the current ' \
-                      'previous cursor from WIDGET_MOUSEOVER recursive list. The top cursor {0} will ' \
-                      'be established as the pygame default mouse cursor' \
-                      ''.format(WIDGET_TOP_CURSOR[0], prev_cursor)
                 if WIDGET_TOP_CURSOR_WARNING:
-                    warnings.warn(msg)
+                    warnings.warn(
+                        'expected {0} to be the top cursor (WIDGET_TOP_CURSOR), but {1} is the current '
+                        'previous cursor from WIDGET_MOUSEOVER recursive list. The top cursor {0} will '
+                        'be established as the pygame default mouse cursor'
+                        ''.format(WIDGET_TOP_CURSOR[0], prev_cursor)
+                    )
                 set_pygame_cursor(WIDGET_TOP_CURSOR[0])
             WIDGET_TOP_CURSOR[0] = None
         else:
@@ -1063,8 +1064,8 @@ class Widget(Base):
             position = WIDGET_BORDER_POSITION_FULL
         else:
             for pos in position:
-                msg = 'only north, south, east, and west positions are valid, but received "{0}"'.format(pos)
-                assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), msg
+                assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
+                    'only north, south, east, and west positions are valid, but received "{0}"'.format(pos)
         if width == 0:
             position = WIDGET_BORDER_POSITION_NONE
 
@@ -1593,8 +1594,7 @@ class Widget(Base):
             # Font background color must be opaque, otherwise the results are quite bad
             if len(background_color) == 4 and background_color[3] != 255:
                 background_color = None
-                msg = 'font background color must be opaque, alpha channel must be 255'
-                warnings.warn(msg)
+                warnings.warn('font background color must be opaque, alpha channel must be 255')
 
         font_size = int(font_size)
 
@@ -1903,13 +1903,10 @@ class Widget(Base):
             assert width >= 0, 'width must be equal or greater than zero'
             self._max_width = [width, scale_height, smooth]
             if self._scale[0]:
-                msg = 'widget already has a scaling factor applied. Scaling has been' \
-                      'disabled'
-                warnings.warn(msg)
+                warnings.warn('widget already has a scaling factor applied. Scaling has been disabled')
                 return self
             if self._max_height[0] is not None:
-                msg = 'widget already has a max_height. Widget max height has been disabled'
-                warnings.warn(msg)
+                warnings.warn('widget already has a max_height. Widget max height has been disabled')
                 return self
 
         self._force_render()
@@ -1956,13 +1953,10 @@ class Widget(Base):
             assert height > 0, 'height must be greater than zero'
             self._max_height = [height, scale_width, smooth]
             if self._scale[0]:
-                msg = 'widget already has a scaling factor applied. Scaling has been' \
-                      'disabled'
-                warnings.warn(msg)
+                warnings.warn('widget already has a scaling factor applied. Scaling has been disabled')
                 return self
             if self._max_width[0] is not None:
-                msg = 'widget already has a max_width. Widget max width has been disabled'
-                warnings.warn(msg)
+                warnings.warn('widget already has a max_width. Widget max width has been disabled')
                 return self
 
         self._force_render()
@@ -2020,14 +2014,16 @@ class Widget(Base):
 
         self._disable_scale()
         if self._max_width[0] is not None:
-            msg = 'widget max width is not None. Set widget.set_max_width(None) ' \
-                  'for disabling such feature. This scaling will be ignored'
-            warnings.warn(msg)
+            warnings.warn(
+                'widget max width is not None. Set widget.set_max_width(None) '
+                'for disabling such feature. This scaling will be ignored'
+            )
             return self
         if self._max_height[0] is not None:
-            msg = 'widget max height is not None. Set widget.set_max_height(None) ' \
-                  'for disabling such feature. This scaling will be ignored'
-            warnings.warn(msg)
+            warnings.warn(
+                'widget max height is not None. Set widget.set_max_height(None) '
+                'for disabling such feature. This scaling will be ignored'
+            )
             return self
         self._scale = [True, width, height, smooth]
         if width == 1 and height == 1:  # Disables scaling
@@ -2073,8 +2069,7 @@ class Widget(Base):
         """
         self._disable_scale()
         if width == 1 and height == 1:
-            msg = 'did you mean widget.scale(1,1) instead of widget.resize(1,1)?'
-            warnings.warn(msg)
+            warnings.warn('did you mean widget.scale(1,1) instead of widget.resize(1,1)?')
         self.scale(float(width) / self.get_width(), float(height) / self.get_height(), smooth)
         return self
 

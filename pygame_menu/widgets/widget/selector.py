@@ -76,9 +76,9 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
     for e in items:
         assert len(e) >= 1, \
             'length of each item on item list must be equal or greater than 1 (i.e. cannot be empty)'
-        msg = 'first element of each item on list must be a string ' \
-              '(the title of each item), but received "{0}"'.format(e[0])
-        assert isinstance(e[0], (str, bytes)), msg
+        assert isinstance(e[0], (str, bytes)), \
+            'first element of each item on list must be a string ' \
+            '(the title of each item), but received "{0}"'.format(e[0])
 
 
 # noinspection PyMissingOrEmptyDocstring

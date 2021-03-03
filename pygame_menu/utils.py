@@ -205,9 +205,9 @@ def assert_vector(num_vector: VectorType, length: int, instance: type = NumberIn
     assert isinstance(num_vector, VectorInstance), \
         'vector "{0}" must be a list or tuple of {1} items if type {2}'.format(num_vector, length, instance)
     if length != 0:
-        msg = 'vector "{0}" must contain {1} numbers only, ' \
-              'but {2} were given'.format(num_vector, length, len(num_vector))
-        assert len(num_vector) == length, msg
+        assert len(num_vector) == length, \
+            'vector "{0}" must contain {1} numbers only, ' \
+            'but {2} were given'.format(num_vector, length, len(num_vector))
     for i in range(len(num_vector)):
         num = num_vector[i]
         if instance == int and isinstance(num, float) and int(num) == num:
@@ -446,8 +446,7 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
             # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
-        msg = 'could not establish widget cursor, invalid value {0}'.format(cursor)
-        warnings.warn(msg)
+        warnings.warn('could not establish widget cursor, invalid value {0}'.format(cursor))
 
 
 def uuid4(short: bool = False) -> str:

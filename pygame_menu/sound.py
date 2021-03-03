@@ -198,11 +198,9 @@ class Sound(Base):
                                allowedchanges=allowedchanges)
 
             except Exception as e:
-                msg = 'sound error: ' + str(e)
-                warnings.warn(msg)
+                warnings.warn('sound error: ' + str(e))
             except pygame_error as e:
-                msg = 'sound engine could not be initialized, pygame error: ' + str(e)
-                warnings.warn(msg)
+                warnings.warn('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Store mixer configs
         self._mixer_configs = {
@@ -325,8 +323,10 @@ class Sound(Base):
             # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
-            msg = 'the sound file "{0}" could not be loaded, it has been disabled'.format(sound_file)
-            warnings.warn(msg)
+            warnings.warn(
+                'the sound file "{0}" could not be loaded, it has been disabled'
+                ''.format(sound_file)
+            )
             self._sound[sound_type] = {}
             return False
 

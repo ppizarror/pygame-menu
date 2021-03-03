@@ -400,14 +400,15 @@ class Theme(object):
 
         # Compatibility check
         if kwargs.get('menubar_close_button', None) is not None:
-            msg = 'menubar_close_button has been moved to title_close_button. This alert will be removed in v4.1'
-            warnings.warn(msg)
+            warnings.warn(
+                'menubar_close_button has been moved to title_close_button. '
+                'This alert will be removed in v4.1'
+            )
             self.title_close_button = self._get(kwargs, 'menubar_close_button', bool)
 
         # Upon this, no more kwargs should exist, raise exception if there's more
         for invalid_keyword in kwargs.keys():
-            msg = 'parameter Theme.{} does not exist'.format(invalid_keyword)
-            raise ValueError(msg)
+            raise ValueError('parameter Theme.{} does not exist'.format(invalid_keyword))
 
         # Test purpose only, if True disables any validation
         self._disable_validation = False
@@ -744,8 +745,8 @@ class Theme(object):
             # Check other types
             if len(other_types) > 0:
                 others = tuple(other_types)
-                msg = 'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
-                assert isinstance(value, others), msg
+                assert isinstance(value, others), \
+                    'Theme.{} type shall be in {} types (got {})'.format(key, others, type(value))
 
         return value
 

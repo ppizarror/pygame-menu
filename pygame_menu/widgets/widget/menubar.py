@@ -203,12 +203,15 @@ class MenuBar(Widget):
         c_dif_2 = abs(c_back[1] - self._font_color[1])
         c_dif_3 = abs(c_back[2] - self._font_color[2])
         if c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
-            msg = 'title font color {0} is {3} to the {1} background color {2}, consider ' \
-                  'editing your Theme'.format(self._font_color,
-                                              'menu' if background_menu else 'title',
-                                              c_back,
-                                              'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar')
-            warnings.warn(msg)
+            warnings.warn(
+                'title font color {0} is {3} to the {1} background color {2}, consider '
+                'editing your Theme'.format(
+                    self._font_color,
+                    'menu' if background_menu else 'title',
+                    c_back,
+                    'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar'
+                )
+            )
 
     def get_title_offset(self) -> Tuple2IntType:
         """
