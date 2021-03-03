@@ -111,10 +111,9 @@ class Table(Frame):
     def unpack(self, row: 'Frame') -> None:
         assert row != self, 'table cannot unpack itself'
         assert len(self._widgets) > 0, 'table is empty'
-        assert row in self._rows, 'row does not exist on table'
+        assert row in self._rows and row.get_id() in self._widgets.keys(), \
+            'row {0} does not exist on {1}'.format(row.get_class_id(), self.get_class_id())
         wid = row.get_id()
-        if wid not in self._widgets.keys():
-            raise ValueError('{0} does not exist in {1}'.format(row.get_class_id(), self.get_class_id()))
         assert row._frame == self, 'widget frame differs from current'
         row._frame = None
         row._translate_virtual = (0, 0)
@@ -129,6 +128,19 @@ class Table(Frame):
             # noinspection PyProtectedMember
             self._menu._render()
         self._update_row_sizing()
+
+        # Remove scrollable from rows
+        if self._menu is not None:
+            total_removed = 0
+            # noinspection PyProtectedMember
+            menu_update_frames = self._menu._update_frames
+            for w in row.get_widgets(unpack_subframes=False):
+                if isinstance(w, Frame):
+                    if w in menu_update_frames:
+                        menu_update_frames.remove(w)
+                        total_removed += 1
+            if total_removed > 0:
+                self.sort_menu_update_frames()
 
     @staticmethod
     def _check_cell_style(
@@ -146,10 +158,10 @@ class Table(Frame):
         :param align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param background_color: Background color
         :param border_color: Border color of each cell
-        :param border_position: Border position of each cell. Valid only: North, South, East, West. See :py:mod:`pygame_menu.locals`
+        :param border_position: Border position of each cell. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
         :param border_width: Border width in px of each cell
         :param padding: Cell padding according to CSS rules. General shape: (top, right, bottom, left)
-        :param vertical_position: Vertical position of each cell. Only valid: North, Center, and South. See :py:mod:`pygame_menu.locals`
+        :param vertical_position: Vertical position of each cell. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
         :return: None
         """
         # Alignment
@@ -199,10 +211,10 @@ class Table(Frame):
         :param cells: Cells to add. This can be a tuple or list of widgets, string, numbers, boolean values or images
         :param cell_align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param cell_border_color: Border color of each cell
-        :param cell_border_position: Border position of each cell. Valid only: North, South, East, West. See :py:mod:`pygame_menu.locals`
+        :param cell_border_position: Border position of each cell. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
         :param cell_border_width: Border width in px of each cell
         :param cell_padding: Padding of each cell according to CSS rules. General shape: (top, right, bottom, left)
-        :param cell_vertical_position: Vertical position of each cell. Only valid: North, Center, and South. See :py:mod:`pygame_menu.locals`
+        :param cell_vertical_position: Vertical position of each cell. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
         :param row_background_color: Row background color
         :return:
         """
@@ -300,6 +312,14 @@ class Table(Frame):
             assert cell.get_frame() is None, \
                 '{0} is already packed in {1}, it cannot be added to {2}' \
                 ''.format(cell.get_class_id(), cell.get_frame().get_class_id(), self.get_class_id())
+
+            # If cell is frame and scrollable
+            if isinstance(cell, Frame) and self._menu is not None:
+                # noinspection PyProtectedMember
+                menu_update_frames = self._menu._update_frames
+                if cell not in menu_update_frames:
+                    menu_update_frames.append(cell)
+                    self.sort_menu_update_frames()
 
             # Add to cells
             row_cells.append(cell)
@@ -471,12 +491,10 @@ class Table(Frame):
                                    column_widths[col], row_heights[row] + subtract_border)
                 total_width += column_widths[col]
                 col += 1
-                if border_width == 0:
-                    continue
 
                 # Draw the border
-                if border_position == WIDGET_BORDER_POSITION_NONE:
-                    return
+                if border_position == WIDGET_BORDER_POSITION_NONE or border_width == 0:
+                    continue
                 for pos in border_position:
                     if pos == POSITION_NORTH:
                         start, end = rect.topleft, rect.topright
@@ -487,7 +505,7 @@ class Table(Frame):
                     elif pos == POSITION_WEST:
                         start, end = rect.topleft, rect.bottomleft
                     else:
-                        raise RuntimeError('invalid border position')
+                        raise RuntimeError('invalid border position "{0}"'.format(pos))
                     pygame.draw.line(
                         surface,
                         border_color,
@@ -541,13 +559,13 @@ class Table(Frame):
         :param align: Horizontal align of each cell. See :py:mod:`pygame_menu.locals`
         :param background_color: Background color
         :param border_color: Border color of each cell
-        :param border_position: Border position of each cell. Valid only: North, South, East, West. See :py:mod:`pygame_menu.locals`
+        :param border_position: Border position of each cell. Valid only: north, south, east, and west. See :py:mod:`pygame_menu.locals`
         :param border_width: Border width in px of each cell
         :param font: Font name or path
         :param font_color: Font color
         :param font_size: Font size
         :param padding: Cell padding according to CSS rules. General shape: (top, right, bottom, left)
-        :param vertical_position: Vertical position of each cell. Only valid: North, Center, and South. See :py:mod:`pygame_menu.locals`
+        :param vertical_position: Vertical position of each cell. Only valid: north, center, and south. See :py:mod:`pygame_menu.locals`
         :return: Cell widget
         """
         cell = self.get_cell(column, row)
