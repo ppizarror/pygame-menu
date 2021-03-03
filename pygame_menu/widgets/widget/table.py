@@ -114,8 +114,7 @@ class Table(Frame):
         assert row in self._rows, 'row does not exist on table'
         wid = row.get_id()
         if wid not in self._widgets.keys():
-            msg = '{0} does not exist in {1}'.format(row.get_class_id(), self.get_class_id())
-            raise ValueError(msg)
+            raise ValueError('{0} does not exist in {1}'.format(row.get_class_id(), self.get_class_id()))
         assert row._frame == self, 'widget frame differs from current'
         row._frame = None
         row._translate_virtual = (0, 0)
@@ -180,8 +179,8 @@ class Table(Frame):
 
         # Border positioning
         for pos in border_position:
-            msg = 'only north, south, east, and west border positions are valid, but received "{0}"'.format(pos)
-            assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), msg
+            assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
+                'only north, south, east, and west border positions are valid, but received "{0}"'.format(pos)
 
     def add_row(
             self,
@@ -235,13 +234,14 @@ class Table(Frame):
 
         # Create frame row
         row = Frame(1, 1, ORIENTATION_HORIZONTAL, frame_id=self._id + '+cell-row-' + uuid4(short=True))
-        row.relax()
-        row.set_menu(self._menu)
         row._accepts_scrollarea = False
         row._accepts_title = False
-        row.set_background_color(row_background_color)
+        row._menu_can_be_none_pack = True
         row._update__repr___(self)
         row.configured = True
+        row.relax()
+        row.set_background_color(row_background_color)
+        row.set_menu(self._menu)
         row.set_scrollarea(self._scrollarea)
         # row.set_frame(self) This cannot be executed as row is packed within
 
@@ -285,6 +285,21 @@ class Table(Frame):
             cell.set_attribute('vertical_position', cell_vertical_position)
             cell._update__repr___(self)
             cell.configured = True
+
+            # If cell within a menu, remove from it
+            if cell.get_menu() is not None:
+                try:
+                    cell.get_menu().remove_widget(cell)
+                except ValueError:
+                    pass
+
+            # Check the cell frame is None
+            assert cell.get_frame() != self, \
+                '{0} cannot be added as it already exists in table' \
+                ''.format(cell.get_class_id())
+            assert cell.get_frame() is None, \
+                '{0} is already packed in {1}, it cannot be added to {2}' \
+                ''.format(cell.get_class_id(), cell.get_frame().get_class_id(), self.get_class_id())
 
             # Add to cells
             row_cells.append(cell)
@@ -421,6 +436,10 @@ class Table(Frame):
         self.resize(total_width + self._padding[1] + self._padding[3],
                     total_height + self._padding[0] + self._padding[2])
 
+    def on_remove_from_menu(self) -> 'Frame':
+        self.update_indices()
+        return self
+
     def _draw_cell_borders(self, surface: 'pygame.Surface') -> None:
         """
         Draw cell border.
@@ -487,14 +506,16 @@ class Table(Frame):
         :param row: Cell row position (counting from 1)
         :return: Cell widget object
         """
-        assert isinstance(row, int) and row >= 1, 'row index must be an integer equal or greater than 1'
-        assert isinstance(column, int) and column >= 1, 'column index must be an integer equal or greater than 1'
-        msg = 'row index ({0}) cannot exceed the number of rows ({1})'.format(row, len(self._rows))
-        assert row <= len(self._rows), msg
+        assert isinstance(row, int) and row >= 1, \
+            'row index must be an integer equal or greater than 1'
+        assert isinstance(column, int) and column >= 1, \
+            'column index must be an integer equal or greater than 1'
+        assert row <= len(self._rows), \
+            'row index ({0}) cannot exceed the number of rows ({1})'.format(row, len(self._rows))
         f = self._rows[row - 1]
         w = f.get_widgets(unpack_subframes=False)
-        msg = 'column index ({0}) cannot exceed the number of columns ({1}) of row {2}'.format(column, len(w), row)
-        assert column <= len(w), msg
+        assert column <= len(w), \
+            'column index ({0}) cannot exceed the number of columns ({1}) of row {2}'.format(column, len(w), row)
         return w[column - 1]
 
     def update_cell_style(
