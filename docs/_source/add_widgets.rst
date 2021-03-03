@@ -396,6 +396,71 @@ The widget size is the same as the surface, considering also the margin and the 
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.surface
 
 
+Add a table
+-----------
+
+A table is a frame which packs widgets in a structured way. Tables
+can contain a text, numbers, or even more widgets (Frames, Tables, Images, etc).
+All widgets are read-only, them do not accept any event, only scrollable frames
+work.
+
+**Example:**
+
+.. image:: ../_static/widget_table.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    table = menu.add.table(table_id='my_table', font_size=20)
+    table.default_cell_padding = 5
+    table.default_row_background_color = 'white'
+    table.add_row(['First item', 'Second item', 'Third item'],
+                  cell_font=pygame_menu.font.FONT_OPEN_SANS_BOLD)
+    table.add_row(['A', 'B', 1])
+    table.add_row(['α', 'β', 'γ'], cell_align=pygame_menu.locals.ALIGN_CENTER)
+
+The following example show an advanced example, featuring tables within a table,
+and a widget (Image):
+
+.. image:: ../_static/widget_table_advanced.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    table = menu.add.table(font_size=20)
+    table.default_cell_padding = 5
+    table.default_cell_align = pygame_menu.locals.ALIGN_CENTER
+    table.default_row_background_color = 'white'
+    table.add_row(['A', 'B', 'C'],
+                  cell_font=pygame_menu.font.FONT_OPEN_SANS_BOLD)
+
+    # Sub-table
+    table_2 = menu.add.table(font_size=20)
+    table_2.default_cell_padding = 20
+    table_2.add_row([1, 2])
+    table_2.add_row([3, 4])
+
+    # Sub image
+    image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+    image.scale(0.25, 0.25)
+
+    # Add the sub-table and the image
+    table.add_row([table_2, '', image],
+                  cell_vertical_position=pygame_menu.locals.POSITION_CENTER)
+    table.update_cell_style(1, 2, padding=0)  # Disable padding for cell column 1, row 2 (table_2)
+    table.update_cell_style(2, 2, border_position=pygame_menu.locals.POSITION_SOUTH)
+    table.update_cell_style(3, 2, border_position=(pygame_menu.locals.POSITION_SOUTH,
+                                                   pygame_menu.locals.POSITION_EAST))
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.table
+
+
 Add a text entry
 ----------------
 

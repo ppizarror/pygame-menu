@@ -552,7 +552,7 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.ColorInput':
         """
-        Add a color widget with RGB or Hex format to the Menu.
+        Add a color widget with RGB or HEX format to the Menu.
         Includes a preview box that renders the given color.
 
         The callbacks (if defined) receive the current value and all unknown keyword arguments,
@@ -971,7 +971,7 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Button':
         """
-        Adds a Button url. Clicking the widget will open the link. If title is defined, the link will
+        Adds a Button url to the Menu. Clicking the widget will open the link. If title is defined, the link will
         not be written. For example: ``href='google.com', title=''`` will write the link, but
         ``href='google.com', title='Google'`` will write 'Google' and opens 'google.com' if clicked.
 
@@ -1756,7 +1756,8 @@ class WidgetManager(Base):
         :param state_text: Text of each state
         :param state_values: Value of each state of the switch
         :param width: Width of the switch box in px
-        :return: :py:class:`pygame_menu.widgets.ToggleSwitch`
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.ToggleSwitch`
         """
         if isinstance(default, (int, bool)):
             assert 0 <= default <= 1, 'default value can be 0 or 1'
@@ -1953,14 +1954,14 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a frame.
+        Adds a frame to the Menu.
 
         :param width: Frame width in px
         :param height: Frame height in px
         :param orientation: Frame orientation, horizontal or vertical. See :py:mod:`pygame_menu.locals`
         :param frame_id: ID of the frame
         :param kwargs: Optional keyword arguments
-        :return: Frame object
+        :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         # Remove invalid keys from kwargs
@@ -2020,9 +2021,9 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a horizontal Frame. Frame is a widget container that packs many widgets within.
-        All contained widgets have a floating position, and use only 1 position in
-        column/row layout.
+        Adds a horizontal frame to the Menu. Frame is a widget container that packs many
+        widgets within. All contained widgets have a floating position, and use only 1
+        position in column/row layout.
 
         .. code-block:: python
 
@@ -2097,7 +2098,7 @@ class WidgetManager(Base):
         :param height: Frame height in px
         :param frame_id: ID of the horizontal frame
         :param kwargs: Optional keyword arguments
-        :return: Frame object
+        :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         return self._frame(width, height, ORIENTATION_HORIZONTAL, frame_id, **kwargs)
@@ -2110,9 +2111,9 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a vertical Frame. Frame is a widget container that packs many widgets within.
-        All contained widgets have a floating position, and use only 1 position in
-        column/row layout.
+        Adds a vertical frame to the Menu. Frame is a widget container that packs many
+        widgets within. All contained widgets have a floating position, and use only 1
+        position in column/row layout.
 
         .. code-block:: python
 
@@ -2188,7 +2189,7 @@ class WidgetManager(Base):
         :param height: Frame height in px
         :param frame_id: ID of the vertical frame
         :param kwargs: Optional keyword arguments
-        :return: Frame object
+        :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         return self._frame(width, height, ORIENTATION_VERTICAL, frame_id, **kwargs)
@@ -2199,7 +2200,8 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Table':
         """
-        Adds a table. A table is a Frame which packs widgets on it in a structured way.
+        Adds a Table to the Menu. A table is a frame which can pack widgets
+        in a structured way.
 
         kwargs (Optional)
             - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
@@ -2246,7 +2248,7 @@ class WidgetManager(Base):
 
         :param table_id: ID of the table
         :param kwargs: Optional keyword arguments
-        :return: Frame object
+        :return: Widget object
         :rtype: :py:class:`pygame_menu.widgets.Table`
         """
         attributes = self._filter_widget_attributes(kwargs)
@@ -2267,7 +2269,7 @@ class WidgetManager(Base):
             margin_id: str = ''
     ) -> 'pygame_menu.widgets.HMargin':
         """
-        Adds a horizontal margin to the Menu. Only useful in Frames.
+        Adds a horizontal margin to the Menu. Only useful in frames.
 
         .. note::
 
@@ -2325,7 +2327,7 @@ class WidgetManager(Base):
             widget_id: str = ''
     ) -> 'pygame_menu.widgets.NoneWidget':
         """
-        Add none widget to the Menu.
+        Add a none widget to the Menu.
 
         .. note::
 
@@ -2377,7 +2379,8 @@ class WidgetManager(Base):
 
         :param widget: Widget to be added
         :param configure_defaults: Apply defaults widget configuration (for example, theme)
-        :return: The added widget
+        :return: The added widget object
+        :rtype: :py:class:`pygame_menu.widgets.Widget`
         """
         assert isinstance(widget, Widget)
         if widget.get_menu() is not None:

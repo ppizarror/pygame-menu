@@ -1980,9 +1980,9 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(c1.get_attribute('border_color'), (0, 0, 0, 255))
         self.assertEqual(c1.get_attribute('border_position'), pygame_menu.widgets.core.widget.WIDGET_FULL_BORDER)
         self.assertEqual(c1.get_attribute('border_width'), 1)
-        self.assertEqual(c1.get_attribute('column'), 0)
+        self.assertEqual(c1.get_attribute('column'), 1)
         self.assertEqual(c1.get_attribute('padding'), (0, 0, 0, 0))
-        self.assertEqual(c1.get_attribute('row'), 0)
+        self.assertEqual(c1.get_attribute('row'), 1)
         self.assertEqual(c1.get_attribute('table'), table)
         self.assertEqual(c1.get_attribute('vertical_position'), pygame_menu.locals.POSITION_NORTH)
 
@@ -2131,6 +2131,7 @@ class FrameWidgetTest(unittest.TestCase):
         row6_widgs = row6.get_widgets(unpack_subframes=False)
         self.assertIn(frame3, menu._update_frames)
         self.assertEqual(row6.get_widgets(unpack_subframes=False)[1], table3)
+        self.assertEqual(table.get_cell(*table.get_cell_column_row(table3)), table3)
 
         # Remove row6, this should remove table3 from update frames as well
         table.remove_row(row6)
@@ -2157,6 +2158,9 @@ class FrameWidgetTest(unittest.TestCase):
         img = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_METAL)
         img.scale(0.2, 0.2)
         table.add_row(img)
+
+        # Test single position
+        table.update_cell_style(1, 1, border_position=pygame_menu.locals.POSITION_SOUTH)
 
         # Test update using -1 column/row
         self.assertEqual(len(table.update_cell_style(-1, 1)), 3)

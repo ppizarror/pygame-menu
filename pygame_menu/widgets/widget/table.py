@@ -3,7 +3,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 TABLE
-The table widget is a Frame which packs widgets on it in a structured way.
+The table widget is a Frame which packs widgets in a structured way.
 
 License:
 -------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
 # noinspection PyMissingOrEmptyDocstring
 class Table(Frame):
     """
-    Table is a Frame which can pack labels/widgets in a structured way.
+    Table is a frame which can pack widgets in a structured way.
 
     .. note::
 
@@ -352,9 +352,9 @@ class Table(Frame):
             cell.set_attribute('border_color', cell_border_color)
             cell.set_attribute('border_position', cell_border_position)
             cell.set_attribute('border_width', cell_border_width)
-            cell.set_attribute('column', j)
+            cell.set_attribute('column', j + 1)
             cell.set_attribute('padding', cell_padding)
-            cell.set_attribute('row', len(self._rows))
+            cell.set_attribute('row', len(self._rows) + 1)
             cell.set_attribute('row_frame', row)
             cell.set_attribute('table', self)
             cell.set_attribute('vertical_position', cell_vertical_position)
@@ -523,6 +523,18 @@ class Table(Frame):
     def on_remove_from_menu(self) -> 'Frame':
         self.update_indices()
         return self
+
+    @staticmethod
+    def get_cell_column_row(cell: 'Widget') -> Tuple[int, int]:
+        """
+        Return the column/row within table layout for the given widget.
+
+        :param cell: Widget (cell) to get the column/row position
+        :return: Column/Row
+        """
+        assert cell.has_attribute('column') and cell.has_attribute('row'), \
+            '{0} does not have the table attributes'.format(cell.get_class_id())
+        return cell.get_attribute('column'), cell.get_attribute('row')
 
     def _draw_cell_borders(self, surface: 'pygame.Surface') -> None:
         """
@@ -769,6 +781,9 @@ class Table(Frame):
                 cell.update_font({'size': font_size})
         except AssertionError:
             pass
+
+        if isinstance(border_position, str):
+            border_position = [border_position]
 
         # Update cell
         cell.set_attribute('align', align)
