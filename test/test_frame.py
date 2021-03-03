@@ -82,8 +82,8 @@ class FrameWidgetTest(unittest.TestCase):
         frame.pack(frame11, pygame_menu.locals.ALIGN_RIGHT, vertical_position=pygame_menu.locals.POSITION_SOUTH)
 
         frame2.pack(menu.add.button('1'))
-        frame2.pack(menu.add.button('2'), alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame2.pack(menu.add.button('3'), alignment=pygame_menu.locals.ALIGN_RIGHT)
+        frame2.pack(menu.add.button('2'), align=pygame_menu.locals.ALIGN_CENTER)
+        frame2.pack(menu.add.button('3'), align=pygame_menu.locals.ALIGN_RIGHT)
 
         for w in frame.get_widgets():
             w.get_selection_effect().zero_margin()
@@ -162,20 +162,20 @@ class FrameWidgetTest(unittest.TestCase):
         frame_title.pack(menu.add.label('Settings'), margin=(2, 2))
         close_btn = frame_title.pack(
             menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(160, 160, 160)),
-            alignment=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
+            align=pygame_menu.locals.ALIGN_RIGHT, margin=(-2, 2))
         frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
+                           align=pygame_menu.locals.ALIGN_CENTER)
         frame_numbers = menu.add.frame_h(250, 42, background_color=(255, 255, 255), font_color=(2000, 0, 0),
                                          frame_id='frame_numbers')
         frame_numbers._pack_margin_warning = False
         frame_content.pack(frame_numbers)
         for i in range(9):
             frame_numbers.pack(menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), font_size=30),
-                               alignment=pygame_menu.locals.ALIGN_CENTER)
+                               align=pygame_menu.locals.ALIGN_CENTER)
         self.assertRaises(AssertionError, lambda: frame_numbers.pack(close_btn))
         frame_content.pack(menu.add.vertical_margin(15))
         frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150)),
-                           alignment=pygame_menu.locals.ALIGN_CENTER)
+                           align=pygame_menu.locals.ALIGN_CENTER)
         menu.render()
 
         self.assertEqual(menu.get_width(widget=True), 250)
@@ -205,8 +205,8 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(100, 400)))
         self.assertRaises(size_exception, lambda: frame_numbers.pack(menu.add.frame_v(400, 10)))
         self.assertEqual(len(frame_numbers.get_widgets(unpack_subframes_include_frame=True)), 0)
-        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_CENTER)
-        frame_numbers.pack(menu.add.frame_v(10, 10), alignment=pygame_menu.locals.ALIGN_RIGHT)
+        frame_numbers.pack(menu.add.frame_v(10, 10), align=pygame_menu.locals.ALIGN_CENTER)
+        frame_numbers.pack(menu.add.frame_v(10, 10), align=pygame_menu.locals.ALIGN_RIGHT)
         frame_numbers.pack(menu.add.frame_v(10, 10))
 
         frame_v = menu.add.frame_v(400, 100, font_color=(2000, 0, 0))  # Clearly a invalid font color
@@ -1290,7 +1290,7 @@ class FrameWidgetTest(unittest.TestCase):
         btn13 = menu.add.button('btn13')
         f1.pack((btn2, btn3, btn4, btn5))
         f3.pack((btn9, btn10))
-        f2.pack((btn7, btn8, f3), alignment=pygame_menu.locals.ALIGN_CENTER)
+        f2.pack((btn7, btn8, f3), align=pygame_menu.locals.ALIGN_CENTER)
         f4.pack((btn11, btn12, btn13))
 
         menu._test_print_widgets()
@@ -2017,6 +2017,15 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(c2.get_attribute('border_width'), 1)
         table.update_cell_style(2, 1, border_width=0)
         self.assertEqual(c2.get_attribute('border_width'), 0)
+        table.draw(surface)
+
+        # Test hide
+        self.assertTrue(c2.is_visible())
+        table.hide()
+        table.draw(surface)
+        self.assertFalse(c2.is_visible())
+        table.show()
+        self.assertTrue(c2.is_visible())
 
         # Add and remove row
         self.assertEqual(table.get_size(), (258, 190))
@@ -2044,6 +2053,7 @@ class FrameWidgetTest(unittest.TestCase):
         table2.add_row([3, 4])
 
         self.assertIn(btn, menu.get_widgets())
+
         row4 = table.add_row(['sub-table', table2, btn], cell_align=pygame_menu.locals.ALIGN_CENTER,
                              cell_vertical_position=pygame_menu.locals.POSITION_CENTER)
         table.update_cell_style(2, 4, background_color='white')
@@ -2058,4 +2068,68 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: table.add_row([row1]))
         self.assertRaises(AssertionError, lambda: table.add_row([table2row1.get_widgets()[0]]))
 
-        # menu.mainloop(surface)
+        # Update padding
+        self.assertEqual(table.get_size(), (265, 201))
+        table.set_padding(0)
+        self.assertEqual(table.get_size(), (249, 193))
+
+        # Add surface
+        new_surface = pygame.Surface((40, 40))
+        new_surface.fill((255, 192, 203))
+        inner_surface = pygame.Surface((20, 20))
+        inner_surface.fill((75, 0, 130))
+        new_surface.blit(inner_surface, (10, 10))
+        row5 = table.add_row([new_surface, 'epic', new_surface],
+                             cell_border_position=pygame_menu.locals.POSITION_SOUTH)
+
+        self.assertIsInstance(row5.get_widgets()[0], pygame_menu.widgets.SurfaceWidget)
+        self.assertIsInstance(row5.get_widgets()[1], pygame_menu.widgets.Label)
+        self.assertIsInstance(row5.get_widgets()[2], pygame_menu.widgets.SurfaceWidget)
+        self.assertEqual(table.get_size(), (249, 234))
+
+        # Create table with fixed surface for testing sizing
+        table3 = menu.add.table(background_color='purple')
+        table3._draw_cell_borders(surface)
+        self.assertRaises(AssertionError, lambda: table3.remove_row(row1))  # Empty table
+        table3.add_row([new_surface])
+        self.assertRaises(AssertionError, lambda: table3.remove_row(row1))  # Empty table
+        self.assertEqual(table3.get_margin(), (0, 0))
+        self.assertEqual(table3.get_size(), (56, 48))
+        table3.set_padding(False)
+        self.assertEqual(table3.get_size(), (40, 40))
+
+        # Test others
+        surf_same_table = pygame.Surface((10, 200))
+        surf_same_table.fill((0, 0, 0))
+        surf_widget = menu.add.surface(surf_same_table)
+
+        # Create frame
+        menu._test_print_widgets()
+        frame = menu.add.frame_v(300, 300, background_color='yellow', padding=0)
+        frame.pack(surf_widget)
+        menu.remove_widget(surf_widget)
+
+        self.assertEqual(table._translate_virtual, (0, 0))
+        frame.pack(table, align=pygame_menu.locals.ALIGN_CENTER,
+                   vertical_position=pygame_menu.locals.POSITION_CENTER)
+        self.assertEqual(table._translate_virtual, (25, 33))
+
+        # Add to scrollable frame
+        frame2 = menu.add.frame_v(300, 400, max_height=300, background_color='brown')
+        menu.remove_widget(frame)
+        frame2.pack(table)
+
+        # Add scrollable frame to table
+        menu._test_print_widgets()
+        frame3 = menu.add.frame_v(200, 200, max_width=100, max_height=100, background_color='cyan')
+        self.assertIn(frame3, menu._update_frames)
+        row6 = table.add_row([frame3, table3], cell_border_width=0)
+        self.assertIn(frame3, menu._update_frames)
+        self.assertEqual(row6.get_widgets(unpack_subframes=False)[1], table3)
+
+        # Remove row6, this should remove table3 from update frames as well
+        table.remove_row(row6)
+        self.assertNotIn(frame3, menu._update_frames)
+
+        # Check value
+        self.assertRaises(ValueError, lambda: table.get_value())
