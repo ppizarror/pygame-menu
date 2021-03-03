@@ -84,6 +84,7 @@ PaddingType = Union[NumberType, List[NumberType],
                     Tuple[NumberType, NumberType],
                     Tuple[NumberType, NumberType, NumberType, NumberType],
                     Tuple[NumberType, NumberType, NumberType, NumberType]]
+StringVector = Union[str, Tuple[str, ...], List[str]]
 
 # Instances
 ColorInputInstance = (int, str, tuple, list, __Color)

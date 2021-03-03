@@ -53,7 +53,8 @@ from pygame_menu.utils import make_surface, assert_color, assert_position, asser
 from pygame_menu.widgets import ScrollBar, MenuBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
-    Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType, VectorInstance
+    Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType, VectorInstance, \
+    StringVector
 
 
 def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
@@ -157,7 +158,7 @@ class ScrollArea(Base):
             scrollbar_slider_color: ColorInputType = (200, 200, 200),
             scrollbar_slider_pad: NumberType = 0,
             scrollbar_thick: int = 20,
-            scrollbars: Union[str, Tuple[str, ...], List[str]] = DEFAULT_SCROLLBARS,
+            scrollbars: StringVector = DEFAULT_SCROLLBARS,
             shadow: bool = False,
             shadow_color: ColorInputType = (0, 0, 0),
             shadow_offset: int = 2,
