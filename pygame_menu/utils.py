@@ -425,13 +425,13 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
             assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
             assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
         if len(padding) == 1:
-            return padding[0], padding[0], padding[0], padding[0]
+            return int(padding[0]), int(padding[0]), int(padding[0]), int(padding[0])
         elif len(padding) == 2:
-            return padding[0], padding[1], padding[0], padding[1]
+            return int(padding[0]), int(padding[1]), int(padding[0]), int(padding[1])
         elif len(padding) == 3:
-            return padding[0], padding[1], padding[2], padding[1]
+            return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[1])
         else:
-            return padding[0], padding[1], padding[2], padding[3]
+            return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[3])
 
 
 def set_pygame_cursor(cursor: CursorInputType) -> None:
