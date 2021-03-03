@@ -307,8 +307,9 @@ class WidgetManager(Base):
         :return: None
         """
         for invalid_keyword in kwargs.keys():
-            msg = 'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
-            raise ValueError(msg)
+            raise ValueError(
+                'widget addition optional parameter kwargs.{} is not valid'.format(invalid_keyword)
+            )
 
     def _append_widget(self, widget: 'Widget') -> None:
         """
@@ -484,11 +485,12 @@ class WidgetManager(Base):
         if isinstance(action, type(self._menu)):
             # Check for recursive
             if action == self._menu or action.in_submenu(self._menu, recursive=True):
-                msg = 'Menu "{0}" is already on submenu structure, recursive menus lead ' \
-                      'to unexpected behaviours. For returning to previous menu use ' \
-                      'pygame_menu.events.BACK event defining an optional back_count ' \
-                      'number of menus to return from, default is 1'.format(action.get_title())
-                raise ValueError(msg)
+                raise ValueError(
+                    'Menu "{0}" is already on submenu structure, recursive menus lead '
+                    'to unexpected behaviours. For returning to previous menu use '
+                    'pygame_menu.events.BACK event defining an optional back_count '
+                    'number of menus to return from, default is 1'.format(action.get_title())
+                )
 
             self._menu._submenus.append(action)
             widget = pygame_menu.widgets.Button(title, button_id, self._menu._open, action)
@@ -1761,8 +1763,9 @@ class WidgetManager(Base):
         if isinstance(default, (int, bool)):
             assert 0 <= default <= 1, 'default value can be 0 or 1'
         else:
-            msg = 'invalid value type, default can be 0, False, 1, or True, but received "{0}"'.format(default)
-            raise ValueError(msg)
+            raise ValueError(
+                'invalid value type, default can be 0, False, 1, or True, but received "{0}"'.format(default)
+            )
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -2209,6 +2212,14 @@ class WidgetManager(Base):
             - ``border_position``           *(str, tuple, list)* - Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: North, South, East, and West. See :py:mod:`pygame_menu.locals`
             - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
             - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the frame if the mouse is placed over
+            - ``font_background_color``     *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
+            - ``font_name``                 *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
+            - ``font_shadow_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``        *(int)* - Font shadow offset in px
+            - ``font_shadow_position``      *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``               *(bool)* - Font shadow is enabled or disabled
+            - ``font_size``                 *(int)* - Font size of the widget
             - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
             - ``max_height``                *(int)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
             - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
@@ -2240,21 +2251,12 @@ class WidgetManager(Base):
         :return: Frame object
         :rtype: :py:class:`pygame_menu.widgets.Table`
         """
-        # Remove invalid keys from kwargs
-        for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'cursor', 'margin', 'padding', 'max_height', 'max_width',
-                           'scrollbar_color', 'scrollbar_cursor', 'scrollbar_shadow_color', 'scrollbar_shadow_offset',
-                           'scrollbar_shadow_position', 'scrollbar_shadow', 'scrollbar_slider_color',
-                           'scrollbar_slider_pad', 'scrollbar_thick', 'scrollbars', 'scrollarea_color',
-                           'border_position']:
-                kwargs.pop(key, None)
-
         attributes = self._filter_widget_attributes(kwargs)
 
         widget = pygame_menu.widgets.Table(
             table_id=table_id
         )
+
         self._configure_widget(widget=widget, **attributes)
         self._append_widget(widget)
         self._check_kwargs(kwargs)
@@ -2385,8 +2387,10 @@ class WidgetManager(Base):
 
         # Raise warning if adding button with Menu
         if isinstance(widget, pygame_menu.widgets.Button) and widget.to_menu:
-            msg = 'prefer adding nested submenus using add_button method instead, unintended behaviours may occur'
-            warnings.warn(msg)
+            warnings.warn(
+                'prefer adding nested submenus using add_button method instead, '
+                'unintended behaviours may occur'
+            )
 
         # Configure widget
         if configure_defaults:
