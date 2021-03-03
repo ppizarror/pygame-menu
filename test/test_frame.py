@@ -1939,3 +1939,92 @@ class FrameWidgetTest(unittest.TestCase):
         self.assertEqual(frame4.get_size(), (600, 641 if PYGAME_V2 else 642))  # Plus title height
         self.assertNotEqual(frame4title, frame4._frame_title)
         self.assertEqual(new_frame4title_widgets, (label, btn1, btn2))
+
+    def test_table(self) -> None:
+        """
+        Test table frame.
+        """
+        if not PYGAME_V2:
+            return
+        menu = MenuUtils.generic_menu()
+        btn = menu.add.button('1')
+        table = menu.add.table('table', background_color='red')
+        self.assertEqual(table.get_inner_size(), (0, 0))
+        self.assertEqual(table.get_size(apply_padding=False), (0, 0))
+        self.assertRaises(RuntimeError, lambda: table.pack(btn))
+
+        # Test add rows
+        row1 = table.add_row([1, 2, 3], row_background_color='blue', cell_align=pygame_menu.locals.ALIGN_CENTER)
+        self.assertEqual(row1.get_size(), (51, 41))
+        self.assertEqual(table.get_size(apply_padding=False), (51, 41))
+        row2 = table.add_row([10, 20, 30], row_background_color='green', cell_padding=10)
+        self.assertEqual(row1.get_size(), (162, 41))
+        self.assertEqual(row2.get_size(), (162, 61))
+        self.assertEqual(table.get_size(apply_padding=False), (162, 102))
+        table.draw(surface)
+
+        # Test get cell
+        self.assertEqual(table.get_cell(2, 1), row1.get_widgets(unpack_subframes=False)[1])
+        self.assertEqual(table.get_cell(1, 2), row2.get_widgets(unpack_subframes=False)[0])
+        self.assertRaises(AssertionError, lambda: table.get_cell(0, 0))
+        self.assertRaises(AssertionError, lambda: table.get_cell(0, 1))
+        self.assertRaises(AssertionError, lambda: table.get_cell(1, 0))
+        c1 = table.get_cell(1, 1)
+        self.assertEqual(c1, row1.get_widgets(unpack_subframes=False)[0])
+
+        # Test cell properties
+        self.assertEqual(c1.get_attribute('align'), pygame_menu.locals.ALIGN_CENTER)
+        self.assertEqual(c1.get_attribute('border_color'), (0, 0, 0, 255))
+        self.assertEqual(c1.get_attribute('border_position'), pygame_menu.widgets.core.widget.WIDGET_FULL_BORDER)
+        self.assertEqual(c1.get_attribute('border_width'), 1)
+        self.assertEqual(c1.get_attribute('column'), 0)
+        self.assertEqual(c1.get_attribute('padding'), (0, 0, 0, 0))
+        self.assertEqual(c1.get_attribute('row'), 0)
+        self.assertEqual(c1.get_attribute('table'), table)
+        self.assertEqual(c1.get_attribute('vertical_position'), pygame_menu.locals.POSITION_NORTH)
+
+        # Update cell
+        c5 = table.update_cell_style(2, 2)
+        self.assertIsNone(c5._background_color)
+        self.assertEqual(c5.get_attribute('background_color'), (0, 255, 0, 255))
+
+        table.update_cell_style(2, 2, background_color='white')
+        self.assertEqual(c5._background_color, (255, 255, 255, 255))
+
+        table.update_cell_style(3, 1, background_color='cyan')
+        self.assertEqual(c5.get_padding(), (10, 10, 10, 10))
+        table.update_cell_style(2, 2, padding=0)
+        self.assertEqual(c5.get_padding(), (0, 0, 20, 0))  # vertical position north
+        table.update_cell_style(2, 2, vertical_position=pygame_menu.locals.POSITION_CENTER)
+        self.assertEqual(c5.get_padding(), (10, 0, 10, 0))  # vertical position north
+        table.update_cell_style(2, 2, vertical_position=pygame_menu.locals.POSITION_SOUTH)
+        self.assertEqual(c5.get_padding(), (20, 0, 0, 0))  # vertical position north
+        table.update_cell_style(1, 1, font_color='white')
+        table.draw(surface)
+        self.assertEqual(table.get_size(), (158, 110))
+        table.update_cell_style(2, 2, padding=50)
+        self.assertEqual(table.get_size(), (258, 190))
+
+        # Test align
+        c2 = table.get_cell(2, 1)
+        self.assertEqual(c2.get_size(), (134, 41))
+        self.assertEqual(c2.get_padding(), (0, 58, 0, 59))
+        table.update_cell_style(2, 1, align=pygame_menu.locals.ALIGN_LEFT)
+        self.assertEqual(c2.get_size(), (134, 41))
+        self.assertEqual(c2.get_padding(), (0, 117, 0, 0))
+        table.update_cell_style(2, 1, align=pygame_menu.locals.ALIGN_RIGHT)
+        self.assertEqual(c2.get_padding(), (0, 0, 0, 117))
+        self.assertEqual(c2.get_attribute('border_width'), 1)
+        table.update_cell_style(2, 1, border_width=0)
+        self.assertEqual(c2.get_attribute('border_width'), 0)
+
+        # Add and remove row
+        self.assertEqual(table.get_size(), (258, 190))
+        row3 = table.add_row([12])
+        self.assertEqual(row1.get_total_packed(), 3)
+        self.assertEqual(row3.get_total_packed(), 1)
+        self.assertEqual(table.get_size(), (258, 231))
+        table.remove_row(row3)
+        self.assertEqual(table.get_size(), (258, 190))
+
+        menu.mainloop(surface)

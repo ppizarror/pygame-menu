@@ -1761,7 +1761,8 @@ class WidgetManager(Base):
         if isinstance(default, (int, bool)):
             assert 0 <= default <= 1, 'default value can be 0 or 1'
         else:
-            raise ValueError('invalid value type, default can be 0, False, 1, or True')
+            msg = 'invalid value type, default can be 0, False, 1, or True, but received "{0}"'.format(default)
+            raise ValueError(msg)
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
@@ -2190,6 +2191,75 @@ class WidgetManager(Base):
         :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         return self._frame(width, height, ORIENTATION_VERTICAL, frame_id, **kwargs)
+
+    def table(
+            self,
+            table_id: str = '',
+            **kwargs
+    ) -> 'pygame_menu.widgets.Table':
+        """
+        Adds a table. A table is a Frame which packs widgets on it in a structured way.
+
+        kwargs (Optional)
+            - ``align``                     *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``        *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``              *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``            *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
+            - ``border_position``           *(str, tuple, list)* - Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: North, South, East, and West. See :py:mod:`pygame_menu.locals`
+            - ``border_width``              *(int)* - Border width in px. If ``0`` disables the border
+            - ``cursor``                    *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the frame if the mouse is placed over
+            - ``margin``                    *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``max_height``                *(int)* - Max height in px. If lower than the frame height a scrollbar will appear on vertical axis. ``None`` by default (same height)
+            - ``max_width``                 *(int)* - Max width in px. If lower than the frame width a scrollbar will appear on horizontal axis. ``None`` by default (same width)
+            - ``padding``                   *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``scrollarea_color``          *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, *None)* - Scroll area color. If ``None`` area is transparent
+            - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``          *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the scrollbars if the mouse is placed over
+            - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow in px
+            - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
+            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders in px
+            - ``scrollbar_thick``           *(int)* - Scrollbar thickness in px
+            - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param table_id: ID of the table
+        :param kwargs: Optional keyword arguments
+        :return: Frame object
+        :rtype: :py:class:`pygame_menu.widgets.Table`
+        """
+        # Remove invalid keys from kwargs
+        for key in list(kwargs.keys()):
+            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
+                           'border_width', 'cursor', 'margin', 'padding', 'max_height', 'max_width',
+                           'scrollbar_color', 'scrollbar_cursor', 'scrollbar_shadow_color', 'scrollbar_shadow_offset',
+                           'scrollbar_shadow_position', 'scrollbar_shadow', 'scrollbar_slider_color',
+                           'scrollbar_slider_pad', 'scrollbar_thick', 'scrollbars', 'scrollarea_color',
+                           'border_position']:
+                kwargs.pop(key, None)
+
+        attributes = self._filter_widget_attributes(kwargs)
+
+        widget = pygame_menu.widgets.Table(
+            table_id=table_id
+        )
+        self._configure_widget(widget=widget, **attributes)
+        self._append_widget(widget)
+        self._check_kwargs(kwargs)
+
+        return widget
 
     def _horizontal_margin(
             self,

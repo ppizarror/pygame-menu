@@ -2012,7 +2012,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(btn._border_width, 1)
         self.assertEqual(btn._border_color, (0, 0, 0, 255))
         self.assertEqual(btn._border_inflate, (1, 1))
-        self.assertEqual(btn._border_position, pygame_menu.widgets.core.widget.BORDER_POSITION_FULL)
+        self.assertEqual(btn._border_position, pygame_menu.widgets.core.widget.WIDGET_BORDER_POSITION_FULL)
 
         # Test positioning
         btn._draw_border(surface)

@@ -112,6 +112,7 @@ class Frame(Widget):
     :param orientation: Frame orientation (horizontal or vertical). See :py:mod:`pygame_menu.locals`
     :param frame_id: ID of the frame
     """
+    _accepts_scrollarea: bool
     _accepts_title: bool
     _control_widget: Optional['Widget']
     _control_widget_last_pos: Optional[Vector2NumberType]
@@ -149,6 +150,7 @@ class Frame(Widget):
         assert_orientation(orientation)
 
         # Internals
+        self._accepts_scrollarea = True
         self._accepts_title = True
         self._control_widget = None
         self._control_widget_last_pos = None  # This checks if menu has updated widget position
@@ -261,6 +263,7 @@ class Frame(Widget):
                                   title_label.get_height(),
                                   ORIENTATION_HORIZONTAL,
                                   frame_id=self._id + '+title-' + uuid4(short=True))
+        self._frame_title._accepts_scrollarea = False
         self._frame_title._accepts_title = False
         self._frame_title._menu = self._menu
         self._frame_title.set_attribute('buttons_alignment', title_buttons_alignment)
@@ -275,6 +278,8 @@ class Frame(Widget):
             touchscreen=self._touchscreen_enabled,
             keyboard=self._keyboard_enabled
         )
+        if self._frame is not None:
+            self._frame_title.set_frame(self._frame)
         self._frame_title._update__repr___(self)
 
         # Store constructor
@@ -353,6 +358,8 @@ class Frame(Widget):
 
         :return: Self reference
         """
+        if not self._accepts_title:
+            raise _FrameDoNotAcceptTitle('{0} does not accept a title'.format(self.get_class_id()))
         if self._has_title:
             self._frame_title = None
             self._has_title = False
@@ -376,6 +383,8 @@ class Frame(Widget):
         :param margin: Pack margin on x-axis and y-axis (x, y) in px
         :return: Self reference
         """
+        if not self._accepts_title:
+            raise _FrameDoNotAcceptTitle('{0} does not accept a title'.format(self.get_class_id()))
         assert self._has_title, \
             '{0} does not have any title, call set_title(...) beforehand'.format(self.get_class_id())
         assert isinstance(button, Button)
@@ -438,6 +447,8 @@ class Frame(Widget):
         :param symbol_margin: Symbol margin in px
         :return: Added button
         """
+        if not self._accepts_title:
+            raise _FrameDoNotAcceptTitle('{0} does not accept a title'.format(self.get_class_id()))
         assert self._has_title, \
             '{0} does not have any title, call set_title(...) beforehand'.format(self.get_class_id())
         assert isinstance(symbol_height, NumberInstance) and 0 <= symbol_height <= 1
@@ -635,6 +646,8 @@ class Frame(Widget):
         :param scrollbars: Positions of the scrollbars. See :py:mod:`pygame_menu.locals`
         :return: Self reference
         """
+        if not self._accepts_scrollarea:
+            raise _FrameDoNotAcceptScrollarea('{0} does not accept a scrollarea'.format(self.get_class_id()))
         assert len(self._widgets.keys()) == 0, 'frame widgets must be empty if creating the scrollarea'
         assert self.configured, 'frame must be configured before adding the scrollarea'
         if max_width is None:
@@ -736,6 +749,14 @@ class Frame(Widget):
         :return: First, Last widget selectable indices
         """
         return self.first_index, self.last_index
+
+    def get_total_packed(self) -> int:
+        """
+        Return the total number of packed widgets.
+
+        :return: Number of packed widgets
+        """
+        return len(self._widgets.values())
 
     def select(self, *args, **kwargs) -> 'Frame':
         return self
@@ -1176,7 +1197,8 @@ class Frame(Widget):
                 'called) max_width and max_height must be None'
 
         # If had title, remove and create a new one
-        self.remove_title()
+        if self._has_title:
+            self.remove_title()
         if prev_has_title:
             for btn in prev_title_buttons:
                 prev_title_frame.unpack(btn)
@@ -1237,6 +1259,12 @@ class Frame(Widget):
             return self._frame_scrollarea
         return self._scrollarea
 
+    def set_frame(self, frame: 'pygame_menu.widgets.Frame') -> 'Frame':
+        super(Frame, self).set_frame(frame)
+        if self._frame_title is not None:
+            self._frame_title.set_frame(frame)
+        return self
+
     def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
@@ -1244,6 +1272,8 @@ class Frame(Widget):
         else:
             for w in self.get_widgets(unpack_subframes=False):
                 w.set_scrollarea(scrollarea)
+        if self._frame_title is not None:
+            self._frame_title.set_scrollarea(scrollarea)
 
     def scrollh(self, value: NumberType) -> 'Frame':
         """
@@ -1441,7 +1471,7 @@ class Frame(Widget):
 
         :param widget: Widget to be packed
         :param alignment: Widget alignment
-        :param vertical_position: Vertical position of the widget within frame. See :py:mod:`pygame_menu.locals`
+        :param vertical_position: Vertical position of the widget within frame. Only valid: North, Center, and South. See :py:mod:`pygame_menu.locals`
         :param margin: (left, top) margin of added widget in px. It overrides the previous widget margin
         :return: Added widget references
         """
@@ -1465,7 +1495,8 @@ class Frame(Widget):
         assert vertical_position in (POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH), \
             'vertical position must be NORTH, CENTER, or SOUTH'
         assert_vector(margin, 2)
-        assert widget.configured, 'widget must be configured before packing'
+        assert widget.configured, \
+            '{0} must be configured before packing'.format(widget.get_class_id())
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
             msg = '{0} margin should be (0, 0) if packed, but received {1}; {2}.pack() does not consider ' \
@@ -1718,6 +1749,13 @@ class Frame(Widget):
 class _FrameSizeException(Exception):
     """
     If widget size is greater than frame raises exception.
+    """
+    pass
+
+
+class _FrameDoNotAcceptScrollarea(Exception):
+    """
+    Raised if the frame does not accept a scrollarea.
     """
     pass
 
