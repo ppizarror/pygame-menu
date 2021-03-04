@@ -319,16 +319,17 @@ class DropSelect(Widget):
         Make selection drop box.
 
         kwargs (Optional)
-            - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
-            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
-            - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
-            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow in px
-            - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
-            - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
-            - ``scrollbar_slider_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
-            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders in px
-            - ``scrollbar_thick``           *(int)* - Scrollbar thickness in px
-            - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_color``               *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``              *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``        *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``       *(int)* - Offset of the scrollbar shadow in px
+            - ``scrollbar_shadow_position``     *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``              *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``        *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
+            - ``scrollbar_slider_hover_color``  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the slider if hovered or clicked
+            - ``scrollbar_slider_pad``          *(int, float)* - Space between slider and scrollbars borders in px
+            - ``scrollbar_thick``               *(int)* - Scrollbar thickness in px
+            - ``scrollbars``                    *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
 
         :param kwargs: Optional keyword arguments
         :return: Self reference
@@ -458,6 +459,7 @@ class DropSelect(Widget):
         self._drop_frame.set_scrollarea(self._scrollarea)
         self._drop_frame.relax()
         self._drop_frame.configured = True
+        self._drop_frame.set_tab_size(self._tab_size)
         self._drop_frame._update__repr___(self)
 
         if total_height > 0:
@@ -477,6 +479,8 @@ class DropSelect(Widget):
                                                      self._theme.scrollbar_shadow_position),
                 scrollbar_shadow=kwargs.get('scrollbar_shadow', self._theme.scrollbar_shadow),
                 scrollbar_slider_color=kwargs.get('scrollbar_slider_color', self._theme.scrollbar_slider_color),
+                scrollbar_slider_hover_color=kwargs.get('scrollbar_slider_hover_color',
+                                                        self._theme.scrollbar_slider_hover_color),
                 scrollbar_slider_pad=kwargs.get('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
                 scrollbar_thick=scrollbar_thickness,
                 scrollbars=scrollbars
@@ -651,6 +655,8 @@ class DropSelect(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'DropSelect':
+        if self.is_selected() and self._selection_effect_draw_post:
+            self._selection_effect.draw(surface, self)
         if self.active and self.is_visible():
             self._check_drop_maked()
 
