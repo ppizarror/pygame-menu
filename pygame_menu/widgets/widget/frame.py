@@ -627,6 +627,7 @@ class Frame(Widget):
             scrollbar_shadow_offset: int,
             scrollbar_shadow_position: str,
             scrollbar_slider_color: ColorInputType,
+            scrollbar_slider_hover_color: ColorInputType,
             scrollbar_slider_pad: NumberType,
             scrollbar_thick: NumberType,
             scrollbars: Union[str, Tuple[str, ...]]
@@ -644,6 +645,7 @@ class Frame(Widget):
         :param scrollbar_shadow_offset: Offset of the scrollbar shadow in px
         :param scrollbar_shadow_position: Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
         :param scrollbar_slider_color: Color of the sliders
+        :param scrollbar_slider_hover_color: Color of the slider if hovered or clicked
         :param scrollbar_slider_pad: Space between slider and scrollbars borders in px
         :param scrollbar_thick: Scrollbar thickness in px
         :param scrollbars: Positions of the scrollbars. See :py:mod:`pygame_menu.locals`
@@ -696,6 +698,7 @@ class Frame(Widget):
             scrollbar_color=scrollbar_color,
             scrollbar_cursor=scrollbar_cursor,
             scrollbar_slider_color=scrollbar_slider_color,
+            scrollbar_slider_hover_color=scrollbar_slider_hover_color,
             scrollbar_slider_pad=scrollbar_slider_pad,
             scrollbar_thick=scrollbar_thick,
             scrollbars=scrollbars,
@@ -717,6 +720,7 @@ class Frame(Widget):
                 'scrollbar_shadow_offset': scrollbar_shadow_offset,
                 'scrollbar_shadow_position': scrollbar_shadow_position,
                 'scrollbar_slider_color': scrollbar_slider_color,
+                'scrollbar_slider_hover_color': scrollbar_slider_hover_color,
                 'scrollbar_slider_pad': scrollbar_slider_pad,
                 'scrollbar_thick': scrollbar_thick,
                 'scrollbars': scrollbars
@@ -1193,6 +1197,7 @@ class Frame(Widget):
                 scrollbar_shadow_offset=kwargs['scrollbar_shadow_offset'],
                 scrollbar_shadow_position=kwargs['scrollbar_shadow_position'],
                 scrollbar_slider_color=kwargs['scrollbar_slider_color'],
+                scrollbar_slider_hover_color=kwargs['scrollbar_slider_hover_color'],
                 scrollbar_slider_pad=kwargs['scrollbar_slider_pad'],
                 scrollbar_thick=kwargs['scrollbar_thick'],
                 scrollbars=kwargs['scrollbars']
