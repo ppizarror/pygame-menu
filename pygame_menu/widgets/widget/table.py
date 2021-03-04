@@ -338,6 +338,7 @@ class Table(Frame):
                     selected_color=self._font_selected_color
                 )
                 cell.set_padding(0)
+                cell.set_tab_size(self._tab_size)
             elif isinstance(c, BaseImage):
                 cell = Image(c, image_id=self._id + '+cell-image-' + uuid4(short=True))
             elif isinstance(c, pygame.Surface):
