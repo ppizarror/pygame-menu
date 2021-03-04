@@ -37,7 +37,8 @@ import pygame_menu
 
 from pygame_menu.utils import assert_color
 
-from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, Tuple4IntType, NumberInstance
+from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, Tuple4IntType, \
+    NumberInstance, Optional
 
 
 class Selection(object):
@@ -147,18 +148,21 @@ class Selection(object):
         t, _, b, _ = self.get_margin()
         return t + b
 
-    def inflate(self, rect: 'pygame.Rect') -> 'pygame.Rect':
+    def inflate(self, rect: 'pygame.Rect', inflate: Optional[Tuple2IntType] = None) -> 'pygame.Rect':
         """
         Grow or shrink the rectangle size according to margins.
 
         :param rect: Rect object
+        :param inflate: Extra border inflate
         :return: Inflated rect
         """
+        if inflate is None:
+            inflate = (0, 0)
         assert isinstance(rect, pygame.Rect)
-        return pygame.Rect(int(rect.x - self.margin_left),
-                           int(rect.y - self.margin_top),
-                           int(rect.width + self.margin_left + self.margin_right),
-                           int(rect.height + self.margin_top + self.margin_bottom))
+        return pygame.Rect(int(rect.x - self.margin_left - inflate[0] / 2),
+                           int(rect.y - self.margin_top - inflate[1] / 2),
+                           int(rect.width + self.margin_left + self.margin_right + inflate[0]),
+                           int(rect.height + self.margin_top + self.margin_bottom + inflate[1]))
 
     def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         """
