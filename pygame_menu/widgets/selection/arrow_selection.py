@@ -71,11 +71,13 @@ class ArrowSelection(Selection):
             margin_top=margin_top,
             margin_bottom=margin_bottom
         )
+
         assert_vector(arrow_size, 2, int)
         assert isinstance(arrow_vertical_offset, NumberInstance)
         assert isinstance(blink_ms, int)
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
         assert blink_ms >= 0, 'blinking milliseconds must be greater than or equal to zero'
+
         self._arrow_vertical_offset = int(arrow_vertical_offset)
         self._arrow_size = (arrow_size[0], arrow_size[1])
         self._blink_ms = blink_ms

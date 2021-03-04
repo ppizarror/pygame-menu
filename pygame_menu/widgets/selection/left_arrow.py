@@ -74,10 +74,10 @@ class LeftArrowSelection(ArrowSelection):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         # A
-        #   \B      widget
+        #   \B        widget
         # C /
-        #    <------>
-        #     margin
+        #     <------>
+        #      margin
         rect = widget.get_rect()
         a = (rect.topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
              int(rect.midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset))
