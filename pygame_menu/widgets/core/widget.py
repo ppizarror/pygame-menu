@@ -232,6 +232,7 @@ class Widget(Base):
     _border_inflate: Tuple2IntType
     _border_position: WidgetBorderPositionType
     _border_width: int
+    _check_mouseleave_call_render: bool
     _col_row_index: Tuple3IntType
     _cursor: CursorType
     _decorator: 'Decorator'
@@ -319,6 +320,7 @@ class Widget(Base):
         self._background_color = None
         self._background_inflate = (0, 0)
         self._background_surface = None
+        self._check_mouseleave_call_render = False
         self._col_row_index = (-1, -1, -1)
         self._cursor = None
         self._decorator = Decorator(self)
@@ -664,6 +666,9 @@ class Widget(Base):
                 self.mouseleave(event, check_all_widget_mouseleave)
                 updated = True
 
+        if updated and self._check_mouseleave_call_render:
+            self._render()
+
         return updated
 
     def set_cursor(self, cursor: CursorInputType) -> 'Widget':
@@ -986,6 +991,14 @@ class Widget(Base):
         # Draw the background surface
         surface.blit(self._background_surface[1], rect)
 
+    def get_border(self) -> Tuple[ColorType, int, WidgetBorderPositionType, Tuple2IntType]:
+        """
+        Return the widget border properties.
+
+        :return: Color, width, position, and inflate
+        """
+        return self._border_color, self._border_width, self._border_position, self._border_inflate
+
     def _draw_border(self, surface: 'pygame.Surface') -> None:
         """
         Draw Widget border in the surface.
@@ -1218,9 +1231,6 @@ class Widget(Base):
         self._draw_border(surface)
         self._decorator.draw_post(surface)
 
-        if self.is_selected() and self._selection_effect_draw_post:
-            self._selection_effect.draw(surface, self)
-
         # Apply callbacks
         self.apply_draw_callbacks()
 
@@ -1237,6 +1247,8 @@ class Widget(Base):
         :param surface: Surface to draw. ``None`` if frame is requesting the draw, as some widgets are drawn outside the frame surface
         :return: Self reference
         """
+        if self.is_selected() and self._selection_effect_draw_post:
+            self._selection_effect.draw(surface, self)
         return self
 
     def _draw(self, surface: 'pygame.Surface') -> None:
