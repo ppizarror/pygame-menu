@@ -247,10 +247,24 @@ class DropSelectMultiple(DropSelect):
         return self._option_font.render(text, self._font_antialias, color)
 
     def _click_option(self, index: int, btn: 'Button') -> None:
-        super(DropSelectMultiple, self)._click_option(index, btn)
+        """
+        Function triggered after option has been selected or clicked.
+
+        :param index: Option index within list
+        :return: None
+        """
         btn.set_attribute('ignore_scroll_to_widget')
+        
+        self.set_value(index)
         self._process_index()
-        btn.remove_attribute('ignore_scroll_to_widget')
+
+        #prev_index = self._index
+        if self._index != -1:
+            self.change(*self._items[self._index][1:]+"hello")
+        if self._close_on_apply:
+            self.active = False
+            if self._drop_frame is not None:
+                self._drop_frame.hide()
 
     def _apply_font(self) -> None:
         prev_selection_box_width = self._selection_box_width
