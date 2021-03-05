@@ -1086,6 +1086,12 @@ class Menu(Base):
         widget.on_remove_from_menu()
         widget.set_menu(None)  # Removes Menu reference from widget
 
+        # Remove widget from update lists
+        if isinstance(widget, Frame) and widget in self._update_frames:
+            self._update_frames.remove(widget)
+        if widget in self._update_widgets:
+            self._update_widgets.remove(widget)
+
         check_widget_mouseleave()
         return self
 
