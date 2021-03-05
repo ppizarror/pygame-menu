@@ -108,7 +108,13 @@ class Base(object):
         if not isinstance(incr, NumberInstance):
             incr = float(incr)
         if not isinstance(default, NumberInstance):
-            default = float(default)
+            if isinstance(incr, float):
+                default = float(default)
+            else:
+                try:
+                    default = int(default)
+                except ValueError:
+                    default = float(default)
         if not self.has_attribute(key):
             self.set_attribute(key, default + incr)
             return default + incr
