@@ -164,6 +164,7 @@ class TextInput(Widget):
     _keyrepeat_mouse_ms: NumberType
     _keyrepeat_touch_interval_ms: NumberType
     _last_char: str
+    _last_container_width: int
     _last_key: int
     _last_selection_render: List[int]
     _maxchar: int
@@ -350,6 +351,7 @@ class TextInput(Widget):
         self._input_underline_vmargin = input_underline_vmargin
         self._keychar_size = {'': 0}
         self._last_char = ''
+        self._last_container_width = 0
         self._maxchar = maxchar
         self._maxwidth = maxwidth  # This value will be changed depending on how many chars are printed
         self._maxwidth_base = maxwidth
@@ -437,7 +439,7 @@ class TextInput(Widget):
 
         # Draw cursor
         if self._selected and self._cursor_surface and \
-                (self._cursor_visible or (self._mouse_is_pressed or self._key_is_pressed)) and \
+                (self._cursor_visible or self._key_is_pressed) and \
                 not self.readonly:
             x = self._rect.x + self._cursor_surface_pos[0]
             if self._flip[0]:  # Flip on x axis (bug)
@@ -447,9 +449,16 @@ class TextInput(Widget):
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
 
-        if not self._render_hash_changed(string, self._selected, self._cursor_render,
+        max_cont_width = self._get_max_container_width()
+        if max_cont_width != 0:
+            self._last_container_width = max_cont_width
+
+        if not self._render_hash_changed(string, self._selected, self._cursor_render, self._cursor_position,
                                          self._selection_enabled, self.active, self._visible, self.readonly,
-                                         self._get_max_container_width()):
+                                         self._last_container_width, self._selection_box[0], self._selection_box[1],
+                                         self._last_selection_render[0], self._last_selection_render[1],
+                                         self._renderbox[0], self._renderbox[1], self._renderbox[2],
+                                         self._cursor_visible):
             return True
 
         # Apply underline if exists
@@ -932,7 +941,9 @@ class TextInput(Widget):
         # Find the accumulated char size that gives the position of cursor
         cursor_pos = 0
         for i in range(len(string)):
-            if self._font.size(self._title + string[0:i])[0] < mouse_x:
+            curr_char = string[i] if i < len(string) - 1 else 0
+            curr_char_size = 0 if curr_char == 0 else self._font.size(curr_char)[0]
+            if self._font.size(self._title + string[0:i])[0] + curr_char_size / 2 < mouse_x:
                 cursor_pos += 1
             else:
                 break
@@ -1116,6 +1127,7 @@ class TextInput(Widget):
         # self._key_is_pressed = False
         self._mouse_is_pressed = False
         self._keyrepeat_mouse_ms = 0
+        self._cursor_ms_counter = 0
         self._cursor_visible = False
         self._unselect_text()
         # self._history_index = len(self._history) - 1
@@ -1824,6 +1836,7 @@ class TextInput(Widget):
                     self._selection_active = False
                     self._check_mouse_collide_input(event.pos)
                     self._cursor_ms_counter = 0
+                    self._cursor_visible = True
 
             # User press the mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and \
@@ -1832,6 +1845,7 @@ class TextInput(Widget):
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
+                    self._cursor_visible = True
                     self._selection_active = True
                     self._selection_mouse_first_position = -1
                     self.active = True
@@ -1844,6 +1858,7 @@ class TextInput(Widget):
                     self._selection_active = False
                     self._check_touch_collide_input(finger_pos)
                     self._cursor_ms_counter = 0
+                    self._cursor_visible = True
 
             # User press finger on widget
             elif event.type == FINGERDOWN and self._touchscreen_enabled:
@@ -1851,6 +1866,7 @@ class TextInput(Widget):
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
+                    self._cursor_visible = True
                     self._selection_active = True
                     self.active = True
 
