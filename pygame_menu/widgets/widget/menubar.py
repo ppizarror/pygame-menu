@@ -286,11 +286,12 @@ class MenuBar(Widget):
         self._render()
         if not self._modify_scrollarea or not self.is_visible():
             return 0, (0, 0)
-        if not self.fixed:
+        if not self.fixed or self.is_floating():
             if self._style == MENUBAR_STYLE_ADAPTIVE:
                 if position == POSITION_EAST:
                     t = self._polygon_pos[4][1] - self._polygon_pos[2][1]
                     return t, (0, -t)
+            return 0, (0, 0)
         if position == POSITION_NORTH:
             return self._scrollbar_deltas[0]
         elif position == POSITION_EAST:
@@ -339,7 +340,7 @@ class MenuBar(Widget):
                 self._rect.y + self._rect.height
             f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
-            cross_size = self._rect.height * 0.6 * self._backbox_visible()
+            cross_size = int(self._rect.height * 0.6)
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
@@ -355,7 +356,7 @@ class MenuBar(Widget):
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
-            cross_size = self._rect.height * self._backbox_visible()
+            cross_size = int(self._rect.height * self._backbox_visible())
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-self._rect.height, (0, self._rect.height)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
@@ -372,7 +373,7 @@ class MenuBar(Widget):
                 self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
-            cross_size = self._rect.height * 0.6 * self._backbox_visible()
+            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
@@ -389,7 +390,7 @@ class MenuBar(Widget):
                 self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
-            cross_size = self._rect.height * 0.6 * self._backbox_visible()
+            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
@@ -402,7 +403,7 @@ class MenuBar(Widget):
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             self._polygon_pos = a, b
-            cross_size = self._rect.height * 0.6 * self._backbox_visible()
+            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=True)
@@ -419,7 +420,7 @@ class MenuBar(Widget):
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
-            cross_size = 0.6 * self._rect.height * self._backbox_visible()
+            cross_size = int(0.6 * self._rect.height * self._backbox_visible())
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-self._rect.height, (0, self._rect.height)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=True)
@@ -436,7 +437,7 @@ class MenuBar(Widget):
             c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
-            cross_size = 0.6 * self._rect.height * self._backbox_visible()
+            cross_size = int(0.6 * self._rect.height * self._backbox_visible())
             self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
                                       (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=True)
