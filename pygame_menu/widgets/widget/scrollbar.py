@@ -34,7 +34,8 @@ __all__ = ['ScrollBar']
 import pygame
 
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL, POSITION_NORTHWEST
-from pygame_menu.utils import make_surface, assert_orientation, assert_color
+from pygame_menu.utils import make_surface, assert_orientation, mouse_motion_current_mouse_position, \
+    assert_color
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, List, VectorIntType, ColorType, Tuple2IntType, \
@@ -321,8 +322,8 @@ class ScrollBar(Widget):
         width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
 
         if not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y, self.readonly,
-                                         self._slider_rect.width, self._slider_rect.height, self._visible,
-                                         self.scrolling, self._mouseover, self._clicked):
+                                         self._slider_rect.width, self._slider_rect.height, self.scrolling,
+                                         self._mouseover, self._clicked):
             return True
 
         self._surface = make_surface(width, height)
@@ -394,6 +395,17 @@ class ScrollBar(Widget):
         :return: Thickness in px
         """
         return self._page_ctrl_thick
+
+    def show(self) -> 'ScrollBar':
+        self._visible = True
+        return self
+
+    def hide(self) -> 'ScrollBar':
+        if self._mouseover:
+            self._mouseover = False
+            self.mouseleave(mouse_motion_current_mouse_position())
+        self._visible = False
+        return self
 
     def set_maximum(self, value: NumberType) -> None:
         """

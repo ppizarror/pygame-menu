@@ -254,6 +254,7 @@ class ScrollArea(Base):
             sbar.set_cursor(cursor=scrollbar_cursor)
             sbar.set_scrollarea(self)
             sbar.configured = True
+            sbar.hide()
 
             self._scrollbars.append(sbar)
 
@@ -375,6 +376,7 @@ class ScrollArea(Base):
         :return: None
         """
         self._view_rect = self.get_view_rect()
+
         for sbar in self._scrollbars:
             pos = self._scrollbar_positions[self._scrollbars.index(sbar)]
 
@@ -390,26 +392,28 @@ class ScrollArea(Base):
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.top - self._scrollbar_thick + dy)
             elif pos == POSITION_SOUTH:  # South
                 sbar.set_position(self._view_rect.left + dx, self._view_rect.bottom + dy)
-            elif pos == POSITION_CENTER:
-                raise ValueError('center position cannot be applied to scrollbar')
             else:
-                raise ValueError('unknown position')
+                raise ValueError('unknown position, only west, east, north, and south are allowed')
 
-            if pos in (POSITION_NORTH, POSITION_SOUTH) \
-                    and self.get_hidden_width() != sbar.get_maximum() \
-                    and self.get_hidden_width() != 0:
-                sbar.set_length(self._view_rect.width + d_size)
-                sbar.set_maximum(self.get_hidden_width())
-                sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
-                                   (self._view_rect.width + self.get_hidden_width()))
+            if pos in (POSITION_NORTH, POSITION_SOUTH):
+                if self.get_hidden_width() != 0:
+                    sbar.set_length(self._view_rect.width + d_size)
+                    sbar.set_maximum(self.get_hidden_width())
+                    sbar.set_page_step(self._view_rect.width * self.get_hidden_width() /
+                                       (self._view_rect.width + self.get_hidden_width()))
+                    sbar.show()
+                else:
+                    sbar.hide()
 
-            elif pos in (POSITION_EAST, POSITION_WEST) \
-                    and self.get_hidden_height() != sbar.get_maximum() \
-                    and self.get_hidden_height() != 0:
-                sbar.set_length(self._view_rect.height + d_size)
-                sbar.set_maximum(self.get_hidden_height())
-                sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
-                                   (self._view_rect.height + self.get_hidden_height()))
+            elif pos in (POSITION_EAST, POSITION_WEST):
+                if self.get_hidden_height() != 0:
+                    sbar.set_length(self._view_rect.height + d_size)
+                    sbar.set_maximum(self.get_hidden_height())
+                    sbar.set_page_step(self._view_rect.height * self.get_hidden_height() /
+                                       (self._view_rect.height + self.get_hidden_height()))
+                    sbar.show()
+                else:
+                    sbar.hide()
 
     def draw(self, surface: 'pygame.Surface') -> 'ScrollArea':
         """
@@ -498,26 +502,29 @@ class ScrollArea(Base):
             rect = self.to_real_position(rect)
         return rect
 
-    def get_scrollbar_thickness(self, orientation: str, real: bool = False) -> int:
+    def get_scrollbar_thickness(self, orientation: str, visible: bool = True) -> int:
         """
         Return the scroll thickness of the area. If it's hidden return zero.
 
         :param orientation: Orientation of the scroll. See :py:mod:`pygame_menu.locals`
-        :param real: If ``True`` returns the real thickness depending if it is shown or not
+        :param visible: If ``True`` returns the real thickness depending if it is visible or not
         :return: Thickness in px
         """
         assert_orientation(orientation)
-        assert isinstance(real, bool)
-        if real:
+        assert isinstance(visible, bool)
+
+        if visible:
             total = 0
             for sbar in self._scrollbars:
                 if sbar.get_orientation() == orientation and sbar.is_visible():
                     total += sbar.get_thickness()
             return total
+
         if orientation == ORIENTATION_HORIZONTAL:
             return int(self._rect.height - self._view_rect.height)
         elif orientation == ORIENTATION_VERTICAL:
             return int(self._rect.width - self._view_rect.width)
+
         return 0
 
     def get_world_rect(self, absolute: bool = False) -> 'pygame.Rect':
