@@ -118,6 +118,7 @@ class ScrollArea(Base):
     :param scrollbar_color: Scrollbars color
     :param scrollbar_cursor: Scrollbar cursor
     :param scrollbar_slider_color: Color of the sliders
+    :param scrollbar_slider_hover_color: Color of the slider if hovered or clicked
     :param scrollbar_slider_pad: Space between slider and scrollbars borders in px
     :param scrollbar_thick: Scrollbar thickness in px
     :param scrollbars: Positions of the scrollbars. See :py:mod:`pygame_menu.locals`
@@ -156,6 +157,7 @@ class ScrollArea(Base):
             scrollbar_color: ColorInputType = (235, 235, 235),
             scrollbar_cursor: CursorInputType = None,
             scrollbar_slider_color: ColorInputType = (200, 200, 200),
+            scrollbar_slider_hover_color: ColorInputType = (180, 180, 180),
             scrollbar_slider_pad: NumberType = 0,
             scrollbar_thick: int = 20,
             scrollbars: StringVector = DEFAULT_SCROLLBARS,
@@ -227,6 +229,7 @@ class ScrollArea(Base):
                     page_ctrl_color=scrollbar_color,
                     page_ctrl_thick=scrollbar_thick,
                     slider_color=scrollbar_slider_color,
+                    slider_hover_color=scrollbar_slider_hover_color,
                     slider_pad=scrollbar_slider_pad,
                     values_range=(0, max(1, self.get_hidden_height()))
                 )
@@ -237,6 +240,7 @@ class ScrollArea(Base):
                     page_ctrl_color=scrollbar_color,
                     page_ctrl_thick=scrollbar_thick,
                     slider_color=scrollbar_slider_color,
+                    slider_hover_color=scrollbar_slider_hover_color,
                     slider_pad=scrollbar_slider_pad,
                     values_range=(0, max(1, self.get_hidden_width()))
                 )
@@ -335,7 +339,7 @@ class ScrollArea(Base):
         """
         Forces menu surface update after next rendering call.
 
-        .. note ::
+        .. note::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -422,6 +426,11 @@ class ScrollArea(Base):
             self._make_background_surface()
             surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
+        # Draw world surface
+        # noinspection PyTypeChecker
+        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
+
+        # Then draw scrollbars
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
@@ -432,9 +441,9 @@ class ScrollArea(Base):
                 if self.get_hidden_height():
                     sbar.draw(surface)
 
-        # noinspection PyTypeChecker
-        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
+        # Draw post decorator
         self._decorator.draw_post(surface)
+
         return self
 
     def get_hidden_width(self) -> int:
@@ -742,27 +751,28 @@ class ScrollArea(Base):
     def scroll_to_rect(
             self,
             rect: 'pygame.Rect',
-            margin: NumberType = 10,
+            margin: Tuple2NumberType = (0, 0),
             scroll_parent: bool = True
     ) -> bool:
         """
         Ensure that the given rect is in the viewable area.
 
         :param rect: Rect in the world surface reference
-        :param margin: Extra margin around the rect in px
+        :param margin: Extra margin around the rect on x-axis and y-axis in px
         :param scroll_parent: If ``True`` parent scroll also scrolls to rect
         :return: Scrollarea scrolled to rect. If ``False`` the rect was already inside the visible area
         """
-        assert isinstance(margin, NumberInstance) and margin >= 0
-
         # Check if visible
         if self.to_real_position(rect, visible=True).height == 0 and \
                 self._parent_scrollarea is not None and scroll_parent:
             self._parent_scrollarea.scroll_to_rect(self._parent_scrollarea.get_rect(), margin, scroll_parent)
             self._parent_scrollarea.scroll_to_rect(self.get_rect(), margin, scroll_parent)
 
-        assert isinstance(margin, NumberInstance)
         real_rect = self.to_real_position(rect)
+
+        # Add margin to rect
+        real_rect.x += margin[0]
+        real_rect.y += margin[1]
 
         # Check rect is in viewable area
         sx = self.get_scrollbar_thickness(ORIENTATION_VERTICAL)
@@ -778,14 +788,14 @@ class ScrollArea(Base):
             if not sbar.is_visible():
                 continue
             if sbar.get_orientation() == ORIENTATION_HORIZONTAL and self.get_hidden_width():
-                shortest_move = min(real_rect.left - margin - view_rect.left,
-                                    real_rect.right + margin - view_rect.right, key=abs)
+                shortest_move = min(real_rect.left - view_rect.left,
+                                    real_rect.right - view_rect.right, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
             if sbar.get_orientation() == ORIENTATION_VERTICAL and self.get_hidden_height():
-                shortest_move = min(real_rect.bottom + margin - view_rect.bottom,
-                                    real_rect.top - margin - view_rect.top, key=abs)
+                shortest_move = min(real_rect.bottom - view_rect.bottom,
+                                    real_rect.top - view_rect.top, key=abs)
                 value = min(sbar.get_maximum(), sbar.get_value() + shortest_move)
                 value = max(sbar.get_minimum(), value)
                 sbar.set_value(value)
@@ -815,6 +825,31 @@ class ScrollArea(Base):
         :return: X, Y position in px
         """
         return self._rect.x, self._rect.y
+
+    def get_widget_position_relative_to_view_rect(
+            self,
+            widget: 'pygame_menu.widgets.Widget'
+    ) -> Tuple2NumberType:
+        """
+        Get widget position relative to view rect on x-axis and y-axis. On each axis,
+        the relative position goes from ``-inf`` to ``+inf``. If between (0, 1) the
+        widget is inside the view rect.
+
+        .. note::
+
+            Only top-left widget position is checked.
+
+        :param widget: Widget to check the position
+        :return: Relative position to view rect on x-axis and y-axis
+        """
+        assert widget.get_scrollarea() == self, \
+            '{0} scrollarea {1} is different than current {2}' \
+                .format(widget, widget.get_scrollarea().get_class_id(), self.get_class_id())
+        wx, wy = widget.get_position()
+        view_rect = self.get_view_rect()
+        vx, vy = view_rect.width, view_rect.height
+        offx, offy = self.get_offsets()
+        return (wx - offx) / vx, (wy - offy) / vy
 
     def translate(self, x: NumberType, y: NumberType) -> 'ScrollArea':
         """
@@ -942,7 +977,7 @@ class ScrollArea(Base):
         parent_position = self.get_parent_position()
 
         if isinstance(virtual, pygame.Rect):
-            rect = pygame.Rect(virtual)
+            rect = pygame.Rect(virtual)  # virtual.copy() should also work
             rect.x = virtual.x + self._rect.x - offsets[0] + parent_position[0]
             rect.y = virtual.y + self._rect.y - offsets[1] + parent_position[1]
             if visible:
@@ -1053,7 +1088,9 @@ class ScrollArea(Base):
         """
         Return the ScrollArea decorator API.
 
-        .. note:: Menu drawing order:
+        .. note::
+
+            Menu drawing order:
 
             1. Menu background color/image
             2. Menu ``prev`` decorator
