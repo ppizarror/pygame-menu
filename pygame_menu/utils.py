@@ -50,6 +50,7 @@ __all__ = [
     'parse_padding',
     'set_pygame_cursor',
     'uuid4',
+    'warn',
     'widget_terminal_title',
 
     # Constants
@@ -459,6 +460,16 @@ def uuid4(short: bool = False) -> str:
     :return: UUID of 18 chars
     """
     return str(uuid.uuid4())[:18 if not short else 8]
+
+
+def warn(message: str) -> None:
+    """
+    Warnings.warn method.
+
+    :param message: Message to warn about
+    :return: None
+    """
+    warnings.warn(message)
 
 
 def widget_terminal_title(
