@@ -449,5 +449,6 @@ class ToggleSwitch(Widget):
                             self._sound.play_key_add()
                             self._state = target_index
                             self.change()
+                            updated = True
 
         return updated
