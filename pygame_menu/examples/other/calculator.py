@@ -83,7 +83,7 @@ class CalculatorApp(object):
 
         # Add the layout
         self.menu.add.vertical_margin(40)
-        menu_deco.add_rectangle(10, 40, 300, 55, (60, 63, 65), use_center_positioning=False)
+        menu_deco.add_rectangle(10, 88, 300, 55, (60, 63, 65), use_center_positioning=False)
         self.screen = self.menu.add.label('0', background_color=None, margin=(10, 0),
                                           selectable=True, selection_effect=None)
         self.menu.add.vertical_margin(20)

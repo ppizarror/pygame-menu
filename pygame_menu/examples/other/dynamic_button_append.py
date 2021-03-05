@@ -51,7 +51,7 @@ def add_dynamic_button() -> None:
 
     :return: None
     """
-    print('Adding a button dynamically')
+    print('Adding a button dynamically, total: {0}'.format(len(menu.get_widgets()) - 2))
     btn = menu.add.button(randrange(0, 10))
 
     def _update_button() -> None:

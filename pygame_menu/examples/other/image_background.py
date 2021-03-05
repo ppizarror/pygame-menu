@@ -104,6 +104,9 @@ def main(test: bool = False) -> None:
     )
 
     widget_colors_theme = pygame_menu.themes.THEME_ORANGE.copy()
+    widget_colors_theme.widget_margin = (0, 10)
+    widget_colors_theme.widget_padding = 0
+    widget_colors_theme.widget_selection_effect.margin_xy(10, 5)
     widget_colors_theme.widget_font_size = 20
     widget_colors_theme.set_background_color_opacity(0.5)  # 50% opacity
 
