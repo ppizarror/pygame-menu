@@ -33,14 +33,14 @@ __all__ = ['ScrollAreaTest']
 
 import copy
 import unittest
-from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME
+from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2
 
 import pygame_menu
 
-from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NORTHWEST, POSITION_SOUTH, \
-    POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_WEST, POSITION_NORTH, SCROLLAREA_POSITION_FULL, \
-    SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, INPUT_TEXT, ORIENTATION_VERTICAL, \
-    ORIENTATION_HORIZONTAL
+from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NORTHWEST, \
+    POSITION_SOUTH, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
+    SCROLLAREA_POSITION_FULL, SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
+    INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 from pygame_menu.scrollarea import get_scrollbars_from_position
 
 
@@ -159,6 +159,7 @@ class ScrollAreaTest(unittest.TestCase):
         btn = menu.add.button('hidden')
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
+        menu.render()
 
         # Get the size of the scrollarea
         sa = menu.get_scrollarea()
@@ -204,3 +205,43 @@ class ScrollAreaTest(unittest.TestCase):
         rect_virtual = sa.to_real_position(btn.get_rect())
         event_click_widget = PygameEventUtils.middle_rect_click(rect_virtual, inlist=False)
         self.assertTrue(sa.collide(btn, event_click_widget))
+
+    # noinspection PyTypeChecker
+    def test_widget_relative_to_view_rect(self) -> None:
+        """
+        Test widget relative position to view rect.
+        """
+        if not PYGAME_V2:
+            return
+        menu = MenuUtils.generic_menu()
+        buttons = []
+        for i in range(20):
+            btn_title = 'b{0}'.format(i)
+            buttons.append(menu.add.button(btn_title, button_id=btn_title))
+        sa = menu.get_scrollarea()
+
+        def test_relative(widget: 'pygame_menu.widgets.Widget', x: float, y: float) -> None:
+            """
+            Test relative position from widget to scroll view rect.
+
+            :param widget: Widget
+            :param x: X relative position
+            :param y: Y relative position
+            :return: None
+            """
+            rx, ry = widget.get_scrollarea().get_widget_position_relative_to_view_rect(widget)
+            self.assertAlmostEqual(x, rx)
+            self.assertAlmostEqual(y, ry)
+
+        test_relative(buttons[0], 0.4689655172413793, 0.15)
+        test_relative(buttons[-1], 0.45517241379310347, 2.4775)
+
+        # Scroll to middle
+        sa.scroll_to(ORIENTATION_VERTICAL, 0.5)
+        test_relative(buttons[0], 0.4689655172413793, -0.645)
+        test_relative(buttons[-1], 0.45517241379310347, 1.6825)
+
+        # Scroll to bottom
+        sa.scroll_to(ORIENTATION_VERTICAL, 1)
+        test_relative(buttons[0], 0.4689655172413793, -1.44)
+        test_relative(buttons[-1], 0.45517241379310347, 0.8875)

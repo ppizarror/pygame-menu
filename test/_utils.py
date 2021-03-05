@@ -34,6 +34,7 @@ __all__ = [
     # Globals
     'PYGAME_V2',
     'TEST_THEME',
+    'THEME_NON_FIXED_TITLE',
     'WIDGET_MOUSEOVER',
     'WIDGET_TOP_CURSOR',
     'WINDOW_SIZE',
@@ -74,9 +75,13 @@ pygame.init()
 surface = pygame.display.set_mode(WINDOW_SIZE)
 
 TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
+TEST_THEME.title_fixed = False
 TEST_THEME.widget_margin = (0, 10)
 TEST_THEME.widget_padding = 0
 TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+
+THEME_NON_FIXED_TITLE = pygame_menu.themes.THEME_DEFAULT.copy()
+THEME_NON_FIXED_TITLE.title_fixed = False
 
 WIDGET_MOUSEOVER = pygame_menu.widgets.core.widget.WIDGET_MOUSEOVER
 WIDGET_TOP_CURSOR = pygame_menu.widgets.core.widget.WIDGET_TOP_CURSOR
