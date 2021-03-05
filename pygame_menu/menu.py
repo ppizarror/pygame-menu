@@ -71,7 +71,8 @@ JOY_EVENT_DOWN = 8
 
 # Select types
 SELECT_KEY = 'key'
-SELECT_MOUSE = 'mouse'
+SELECT_MOUSE_BUTTON_DOWN = 'mouse_button_down'
+SELECT_MOUSE_MOTION = 'mouse_motion'
 SELECT_MOVE = 'move'
 SELECT_OPEN = 'open'
 SELECT_RECURSIVE = 'recursive'
@@ -540,6 +541,7 @@ class Menu(Base):
         # Create menubar (title)
         self._menubar = MenuBar(
             back_box=theme.title_close_button,
+            back_box_background_color=theme.title_close_button_background_color,
             background_color=self._theme.title_background_color,
             mode=self._theme.title_bar_style,
             modify_scrollarea=self._theme.title_bar_modify_scrollarea,
@@ -576,21 +578,29 @@ class Menu(Base):
         self._menubar.set_position(*self.get_position())
         if self._theme.title_floating:
             self._menubar.set_float()
+        if not self._theme.title:
+            self._menubar.hide()
         self._menubar.configured = True
+        self._menubar.fixed = self._theme.title_fixed
 
         # Scrolling area
         menubar_height = self._menubar.get_height()
         if self._height - menubar_height <= 0:
-            raise ValueError('menubar is higher than menu height. Try increasing the later value')
+            raise ValueError('menubar is higher than menu height ({0} > {1})'
+                             .format(menubar_height, self._height))
+
+        extend_y = 0 if self._theme.title_fixed else menubar_height
+
         self._scrollarea = ScrollArea(
             area_color=self._theme.background_color,
-            area_height=self._height - menubar_height,
+            area_height=self._height - extend_y,
             area_width=self._width,
-            extend_y=menubar_height,
+            extend_y=extend_y,
             menubar=self._menubar,
             scrollbar_color=self._theme.scrollbar_color,
             scrollbar_cursor=self._theme.scrollbar_cursor,
             scrollbar_slider_color=self._theme.scrollbar_slider_color,
+            scrollbar_slider_hover_color=self._theme.scrollbar_slider_hover_color,
             scrollbar_slider_pad=self._theme.scrollbar_slider_pad,
             scrollbar_thick=self._theme.scrollbar_thick,
             scrollbars=get_scrollbars_from_position(self._theme.scrollarea_position),
@@ -633,7 +643,7 @@ class Menu(Base):
         """
         Forces current Menu surface update after next rendering call.
 
-        .. note ::
+        .. note::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -1262,7 +1272,7 @@ class Menu(Base):
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         # only None column_max_widths and columns less than the maximum are scaled
         sum_width_columns = sum(self._column_widths)
-        max_width = self.get_width()
+        max_width = self.get_width(inner=True)
         if 0 <= sum_width_columns < max_width and len(self._widgets) > 0:
 
             # First, scale columns to its maximum
@@ -1370,6 +1380,9 @@ class Menu(Base):
                 rects_cache[wid.get_id()] = wid.get_rect(render=True)
             return rects_cache[wid.get_id()]
 
+        # Get menubar height, if fixed then move all widgets within area
+        menubar_height = self._menubar.get_height() if self._menubar.fixed else 0
+
         # Update appended widgets
         for index in range(len(self._widgets)):
             widget = self._widgets[index]
@@ -1405,9 +1418,10 @@ class Menu(Base):
                 dx = column_width / 2 - width - selection_margin
             else:
                 dx = 0
+            dx_border = int(math.ceil(widget.get_border()[1] / 2))
             x_coord = self._column_pos_x[col] + dx + margin[0] + padding[3]
             x_coord = max(selection_margin, x_coord)
-            x_coord += max(0, self._widget_offset[0])
+            x_coord += max(0, self._widget_offset[0]) + dx_border
 
             # Check if widget width exceeds column max width
             max_column_width = self._column_max_width[col]
@@ -1440,7 +1454,7 @@ class Menu(Base):
                 if widget.is_selectable:  # Add top margin
                     y_sum += y_sel_h - self._widget_offset[1]
 
-            y_coord = max(0, self._widget_offset[1]) + y_sum + padding[0]
+            y_coord = max(0, self._widget_offset[1]) + y_sum + padding[0] + menubar_height
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
@@ -1481,7 +1495,7 @@ class Menu(Base):
         self._update_selection_if_hidden()
         self._update_widget_position()
 
-        menubar_height = self._menubar.get_height()
+        menubar_height = self._menubar.get_height() if not self._menubar.fixed else 0
         max_x, max_y = self._widget_max_position
 
         # Get scrollbars size
@@ -1490,18 +1504,18 @@ class Menu(Base):
 
         # Remove the thick of the scrollbar to avoid displaying a horizontal one
         # If overflow on both axis
-        if max_x > self._width and max_y > self._height - menubar_height:
+        if max_x > self._width - sy and max_y > self._height - sx - menubar_height:
             width, height = max_x, max_y
             if not self._mouse_visible:
                 self._mouse_visible = True
 
         # If horizontal overflow
-        elif max_x > self._width:
+        elif max_x > self._width - sy:
             width, height = max_x, self._height - menubar_height - sx
             self._mouse_visible = self._mouse_visible_default
 
         # If vertical overflow
-        elif max_y > self._height - menubar_height:
+        elif max_y > self._height - sx - menubar_height:
             width, height = self._width - sy, max_y
             if not self._mouse_visible:
                 self._mouse_visible = True
@@ -2372,7 +2386,8 @@ class Menu(Base):
                                 continue
                             if widget.is_selectable and widget.is_visible() and \
                                     widget.get_scrollarea().collide(widget, event):
-                                sel = self._current._select(index, 1, SELECT_MOUSE, True)
+                                sel = self._current._select(index, 1, SELECT_MOUSE_BUTTON_DOWN, True)
+                                break
 
                         if sel:
                             updated = True
@@ -2436,9 +2451,11 @@ class Menu(Base):
                         if widget.is_visible() and widget.get_scrollarea().collide(widget, event):
                             if self._current._mouse_motion_selection and widget.is_selectable and \
                                     not isinstance(widget, Frame):
-                                sel = self._current._select(index, 1, SELECT_MOUSE, True)
+                                sel = self._current._select(index, 1, SELECT_MOUSE_MOTION, True)
                         # noinspection PyProtectedMember
                         widget._check_mouseover(event)
+                        if sel:
+                            break
                     if sel:
                         updated = True
                         break
@@ -2967,7 +2984,6 @@ class Menu(Base):
     def scroll_to_widget(
             self,
             widget: Optional['Widget'],
-            margin: NumberType = 10,
             scroll_parent: bool = True
     ) -> 'Menu':
         """
@@ -2980,7 +2996,6 @@ class Menu(Base):
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget: Widget to request scroll. If ``None`` scrolls to the selected widget
-        :param margin: Extra margin around the rect in px
         :param scroll_parent: If ``True`` parent scroll also scrolls to rect
         :return: Self reference
         """
@@ -2993,32 +3008,32 @@ class Menu(Base):
         assert isinstance(widget, Widget), \
             'widget to scroll from must be a Widget class, not None'
 
+        widget_scroll = widget.get_scrollarea()
+        if widget_scroll is None:
+            warnings.warn(
+                '{0} scrollarea is None, thus, scroll to widget cannot be performed'
+                ''.format(widget.get_class_id())
+            )
+            return self
+
         # Scroll to rect
         rect = widget.get_rect()
         widget_frame = widget.get_frame()
 
+        # Compute margin depending of widget position
+        _, ry = widget_scroll.get_widget_position_relative_to_view_rect(widget)
+        widget_scroll.get_position()
+        mx = 0
+        my = 0
+        if ry < 0.15 and self._menubar.fixed:
+            my = -self._menubar.get_height()
+
         # Call scroll parent container
         if widget_frame is not None and widget_frame.is_scrollable:
-            widget_frame.scroll_to_widget(margin, scroll_parent)
+            widget_frame.scroll_to_widget((mx, my), scroll_parent)
 
-        # Get scroll thickness
-        widget_scroll = widget.get_scrollarea()
-        sx = widget_scroll.get_scrollbar_thickness(ORIENTATION_HORIZONTAL)
-        sy = widget_scroll.get_scrollbar_thickness(ORIENTATION_VERTICAL)
-        col, _, _ = widget.get_col_row_index()
-        rx_min = rect.x
-        if col != -1 and widget.get_frame() is None:
-            rect.x = self._column_pos_x[col] - self._column_widths[col] / 2
-            if col > 0:
-                rect.x += sx / 2
-            rect.x = min(rect.x, rx_min)
-            rect.width = int(max(rect.width, self._column_widths[col])) - sy
-
-        # noinspection PyProtectedMember
-        # rect.y += widget._border_width
-
-        widget_scroll.scroll_to_rect(rect, margin, scroll_parent)  # The first set the scrolls
-        widget_scroll.scroll_to_rect(rect, margin, scroll_parent)  # The later updates to active object
+        widget_scroll.scroll_to_rect(rect, (mx, my), scroll_parent)  # The first set the scrolls
+        widget_scroll.scroll_to_rect(rect, (mx, my), scroll_parent)  # The later updates to active object
 
         return self
 
