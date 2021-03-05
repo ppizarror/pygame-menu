@@ -130,6 +130,8 @@ class Theme(object):
     :type scrollbar_shadow_position: str
     :param scrollbar_slider_color: Color of the sliders
     :type scrollbar_slider_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param scrollbar_slider_hover_color: Color of the slider if hovered or clicked
+    :type scrollbar_slider_hover_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param scrollbar_slider_pad: Space between slider and scrollbars borders
     :type scrollbar_slider_pad: int, float
     :param scrollbar_thick: Scrollbar thickness in px
@@ -138,6 +140,8 @@ class Theme(object):
     :type selection_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param surface_clear_color: Surface clear color before applying background function
     :type surface_clear_color: tuple, list, str, int, :py:class:`pygame.Color`
+    :param title: Title is enabled/disabled. If disabled the object is ``hidden``
+    :type title: bool
     :param title_background_color: Title background color
     :type title_background_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param title_bar_modify_scrollarea: If ``True`` title bar modifies the scrollbars of the scrollarea depending on the style
@@ -146,8 +150,12 @@ class Theme(object):
     :type title_bar_style: int
     :param title_close_button: Draw a back-box button on header to close the Menu. If user moves through nested submenus this buttons turns to a back-arrow
     :type title_close_button: bool
+    :param title_close_button_background_color: Title back-box background color
+    :type title_close_button_background_color: tuple, list, str, int, :py:class:`pygame.Color`
     :param title_close_button_cursor: Cursor applied over title close button
     :type title_close_button_cursor: int, :py:class:`pygame.cursors.Cursor`, None
+    :param title_fixed: If ``True`` title is drawn over the scrollarea, forcing widget surface area to be drawn behind the title
+    :type title_fixed: bool
     :param title_floating: If ``True`` title don't contributes height to the Menu. Thus, scroll uses full menu width/height
     :type title_floating: bool
     :param title_font: Title font
@@ -253,15 +261,19 @@ class Theme(object):
     scrollbar_shadow_offset: int
     scrollbar_shadow_position: str
     scrollbar_slider_color: ColorType
+    scrollbar_slider_hover_color: ColorType
     scrollbar_slider_pad: NumberType
     scrollbar_thick: int
     selection_color: ColorType
     surface_clear_color: ColorType
+    title: bool
     title_background_color: ColorType
     title_bar_modify_scrollarea: bool
     title_bar_style: int
     title_close_button: bool
+    title_close_button_background_color: ColorType
     title_close_button_cursor: CursorType
+    title_fixed: bool
     title_floating: bool
     title_font: FontType
     title_font_antialias: bool
@@ -323,11 +335,15 @@ class Theme(object):
         self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', NumberInstance, 1000)
 
         # Menubar/Title
+        self.title = self._get(kwargs, 'title', bool, True)
         self.title_background_color = self._get(kwargs, 'title_background_color', 'color', (70, 70, 70))
         self.title_bar_modify_scrollarea = self._get(kwargs, 'title_bar_modify_scrollarea', bool, True)
         self.title_bar_style = self._get(kwargs, 'title_bar_style', int, MENUBAR_STYLE_ADAPTIVE)
         self.title_close_button = self._get(kwargs, 'title_close_button', bool, True)
+        self.title_close_button_background_color = self._get(kwargs, 'title_close_button_background_color',
+                                                             'color', (255, 255, 255))
         self.title_close_button_cursor = self._get(kwargs, 'title_close_button_cursor', 'cursor')
+        self.title_fixed = self._get(kwargs, 'title_fixed', bool, True)
         self.title_floating = self._get(kwargs, 'title_floating', bool, False)
         self.title_font = self._get(kwargs, 'title_font', 'font', FONT_OPEN_SANS)
         self.title_font_antialias = self._get(kwargs, 'title_font_antialias', bool, True)
@@ -354,6 +370,7 @@ class Theme(object):
         self.scrollbar_shadow_position = self._get(kwargs, 'scrollbar_shadow_position', 'position',
                                                    POSITION_NORTHWEST)
         self.scrollbar_slider_color = self._get(kwargs, 'scrollbar_slider_color', 'color', (200, 200, 200))
+        self.scrollbar_slider_hover_color = self._get(kwargs, 'scrollbar_slider_hover_color', 'color', (170, 170, 170))
         self.scrollbar_slider_pad = self._get(kwargs, 'scrollbar_slider_pad', NumberInstance, 0)
         self.scrollbar_thick = self._get(kwargs, 'scrollbar_thick', int, 20)
 
@@ -459,6 +476,8 @@ class Theme(object):
         assert isinstance(self.scrollbar_shadow_offset, int)
         assert isinstance(self.scrollbar_slider_pad, NumberInstance)
         assert isinstance(self.scrollbar_thick, int)
+        assert isinstance(self.title, bool)
+        assert isinstance(self.title_fixed, bool)
         assert isinstance(self.title_floating, bool)
         assert isinstance(self.title_font_shadow_offset, int)
         assert isinstance(self.title_font_size, int)
@@ -483,9 +502,11 @@ class Theme(object):
         self.scrollbar_color = self._format_color_opacity(self.scrollbar_color)
         self.scrollbar_shadow_color = self._format_color_opacity(self.scrollbar_shadow_color)
         self.scrollbar_slider_color = self._format_color_opacity(self.scrollbar_slider_color)
+        self.scrollbar_slider_hover_color = self._format_color_opacity(self.scrollbar_slider_hover_color)
         self.selection_color = self._format_color_opacity(self.selection_color)
         self.surface_clear_color = self._format_color_opacity(self.surface_clear_color)
         self.title_background_color = self._format_color_opacity(self.title_background_color)
+        self.title_close_button_background_color = self._format_color_opacity(self.title_close_button_background_color)
         self.title_font_color = self._format_color_opacity(self.title_font_color)
         self.title_font_shadow_color = self._format_color_opacity(self.title_font_shadow_color)
         self.widget_background_color = self._format_color_opacity(self.widget_background_color, none=True)
@@ -758,6 +779,7 @@ THEME_DARK = Theme(
     cursor_selection_color=(80, 80, 80, 120),
     scrollbar_color=(39, 41, 42),
     scrollbar_slider_color=(65, 66, 67),
+    scrollbar_slider_hover_color=(90, 89, 88),
     selection_color=(255, 255, 255),
     title_background_color=(47, 48, 51),
     title_font_color=(215, 215, 215),
@@ -768,6 +790,7 @@ THEME_BLUE = Theme(
     background_color=(228, 230, 246),
     scrollbar_shadow=True,
     scrollbar_slider_color=(150, 200, 230),
+    scrollbar_slider_hover_color=(123, 173, 202),
     scrollbar_slider_pad=2,
     selection_color=(100, 62, 132),
     title_background_color=(62, 149, 195),
@@ -779,6 +802,7 @@ THEME_BLUE = Theme(
 THEME_GREEN = Theme(
     background_color=(186, 214, 177),
     scrollbar_slider_color=(125, 121, 114),
+    scrollbar_slider_hover_color=(100, 96, 90),
     scrollbar_slider_pad=2,
     selection_color=(125, 121, 114),
     title_background_color=(125, 121, 114),

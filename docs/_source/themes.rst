@@ -17,9 +17,10 @@ menu window itself and all its widgets.
                            theme=pygame_menu.themes.THEME_BLUE,
                            title='Welcome')
 
-.. note:: The theme parameters can be overwritten locally
-          when adding a widget to the menu. See the overwritable
-          ones in the :ref:`add... methods <Adding widgets>`
+.. note::
+
+    The theme parameters can be overwritten locally when adding a widget to the
+    menu. See the overwritable ones in the :ref:`add... methods <Adding widgets>`
 
 
 Default themes
