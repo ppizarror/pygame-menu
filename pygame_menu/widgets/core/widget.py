@@ -2316,7 +2316,7 @@ class Widget(Base):
 
     def _focus(self) -> None:
         """
-        Function that is executed when the Widget receives a focus (is selected).
+        Function that is executed when the Widget receives the user focus (is selected).
 
         :return: None
         """
