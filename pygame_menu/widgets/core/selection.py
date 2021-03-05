@@ -76,6 +76,22 @@ class Selection(object):
         self.margin_right = margin_right
         self.margin_top = margin_top
 
+    def margin_xy(self, x: NumberType, y: NumberType) -> 'Selection':
+        """
+        Set margins at left-right / top-bottom.
+
+        :param x: Left-Right margin in px
+        :param y: Top-Bottom margin in px
+        :return: Self reference
+        """
+        assert isinstance(x, NumberInstance) and x >= 0
+        assert isinstance(y, NumberInstance) and y >= 0
+        self.margin_left = x
+        self.margin_right = x
+        self.margin_top = y
+        self.margin_bottom = y
+        return self
+
     def zero_margin(self) -> 'Selection':
         """
         Makes selection margin zero.
