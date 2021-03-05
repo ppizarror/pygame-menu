@@ -243,5 +243,5 @@ class ScrollAreaTest(unittest.TestCase):
 
         # Scroll to bottom
         sa.scroll_to(ORIENTATION_VERTICAL, 1)
-        test_relative(buttons[0], 0.4689655172413793, -1.44)
-        test_relative(buttons[-1], 0.45517241379310347, 0.8875)
+        test_relative(buttons[0], 0.4689655172413793, -1.4375)
+        test_relative(buttons[-1], 0.45517241379310347, 0.89)

@@ -405,6 +405,57 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
 
+        # Test displacements
+        theme = pygame_menu.themes.THEME_DEFAULT.copy()
+        theme.title_bar_style = MENUBAR_STYLE_TITLE_ONLY
+        menu = MenuUtils.generic_menu(theme=theme, title='my title')
+        mb = menu.get_menubar()
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
+
+        # Test with close button
+        menu = MenuUtils.generic_menu(theme=theme, title='my title', onclose=pygame_menu.events.CLOSE)
+        mb = menu.get_menubar()
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
+
+        # Hide the title, and check
+        mb.hide()
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+
+        mb.show()
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
+
+        # Floating
+        mb.set_float(True)
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+
+        mb.set_float(False)
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (-55, (0, 55)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
+
+        # Fixed
+        mb.fixed = False
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
+        self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
+
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
         """
@@ -1714,10 +1765,10 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(
                 menu._draw_focus_widget(surface, drop2),
-                {1: ((0, 0), (600, 0), (600, 337), (0, 337)),
-                 2: ((0, 338), (239, 338), (239, 495), (0, 495)),
-                 3: ((447, 338), (600, 338), (600, 495), (447, 495)),
-                 4: ((0, 496), (600, 496), (600, 600), (0, 600))}
+                {1: ((0, 0), (600, 0), (600, 338), (0, 338)),
+                 2: ((0, 339), (239, 339), (239, 496), (0, 496)),
+                 3: ((447, 339), (600, 339), (600, 496), (447, 496)),
+                 4: ((0, 497), (600, 497), (600, 600), (0, 600))}
             )
 
         menu.draw(surface)
@@ -1815,7 +1866,7 @@ class WidgetsTest(unittest.TestCase):
         # Set drop in middle
         if PYGAME_V2:
             self.assertEqual(drop._drop_frame.get_position(), (251, 45))
-            self.assertEqual(drop.get_focus_rect(), pygame.Rect(121, 159, 337, 41))
+            self.assertEqual(drop.get_focus_rect(), pygame.Rect(121, 160, 337, 41))
 
         drop._open_middle = True
         menu.render()
@@ -1826,8 +1877,8 @@ class WidgetsTest(unittest.TestCase):
         # drop.show()
 
         if PYGAME_V2:
-            self.assertEqual(drop._drop_frame.get_position(), (196, 106))
-            self.assertEqual(drop.get_focus_rect(), pygame.Rect(121, 159, 337, 41))
+            self.assertEqual(drop._drop_frame.get_position(), (196, 105))
+            self.assertEqual(drop.get_focus_rect(), pygame.Rect(121, 160, 337, 41))
 
         scr = drop._drop_frame.get_scrollarea()
         sfr = drop._drop_frame.get_frame()
@@ -1838,8 +1889,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop._drop_frame.get_scrollarea(), scr)
         self.assertEqual(drop._drop_frame.get_frame(), sfr)
         if PYGAME_V2:
-            self.assertEqual(drop._drop_frame.get_position(), (196, 454))
-            self.assertEqual(drop.get_focus_rect(), pygame.Rect(96, 311, 337, 41))
+            self.assertEqual(drop._drop_frame.get_position(), (196, 453))
+            self.assertEqual(drop.get_focus_rect(), pygame.Rect(96, 312, 337, 41))
         self.assertFalse(drop.active)
         drop._toggle_drop()
         menu.render()
