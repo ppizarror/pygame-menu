@@ -70,6 +70,7 @@ class ScrollBar(Widget):
     :param page_ctrl_color: Page control color
     :param onchange: Callback when pressing and moving the scroll
     """
+    _clicked: bool
     _last_mouse_pos: Tuple2IntType
     _orientation: Literal[0, 1]
     _page_ctrl_color: ColorType
@@ -83,6 +84,7 @@ class ScrollBar(Widget):
     _shadow_tuple: Tuple2IntType
     _single_step: NumberType
     _slider_color: ColorType
+    _slider_hover_color: ColorType
     _slider_pad: int
     _slider_position: int
     _slider_rect: Optional['pygame.Rect']
@@ -97,6 +99,7 @@ class ScrollBar(Widget):
             orientation: str = ORIENTATION_HORIZONTAL,
             slider_pad: NumberType = 0,
             slider_color: ColorInputType = (200, 200, 200),
+            slider_hover_color: ColorInputType = (180, 180, 180),
             page_ctrl_thick: int = 20,
             page_ctrl_color: ColorInputType = (235, 235, 235),
             onchange: CallbackType = None,
@@ -110,8 +113,9 @@ class ScrollBar(Widget):
         assert isinstance(page_ctrl_thick, int)
         assert page_ctrl_thick - 2 * slider_pad >= 2, 'slider shall be visible'
 
-        slider_color = assert_color(slider_color)
         page_ctrl_color = assert_color(page_ctrl_color)
+        slider_color = assert_color(slider_color)
+        slider_hover_color = assert_color(slider_hover_color)
 
         super(ScrollBar, self).__init__(
             widget_id=scrollbar_id,
@@ -120,19 +124,24 @@ class ScrollBar(Widget):
             kwargs=kwargs
         )
 
+        self._check_mouseleave_call_render = True
+        self._clicked = False
         self._last_mouse_pos = (-1, -1)
+        self._mouseover_check_rect = lambda: self.get_slider_rect()
         self._orientation = 0  # 0: horizontal, 1: vertical
         self._values_range = list(values_range)
-        self._mouseover_check_rect = lambda: self.get_slider_rect()
 
+        # Page control
+        self._page_ctrl_color = page_ctrl_color
         self._page_ctrl_length = length
         self._page_ctrl_thick = page_ctrl_thick
-        self._page_ctrl_color = page_ctrl_color
 
-        self._slider_rect = None
-        self._slider_pad = slider_pad
+        # Slider
         self._slider_color = slider_color
+        self._slider_hover_color = slider_hover_color
+        self._slider_pad = slider_pad
         self._slider_position = 0
+        self._slider_rect = None
 
         # Shadow
         self._shadow = False
@@ -141,8 +150,9 @@ class ScrollBar(Widget):
         self._shadow_position = POSITION_NORTHWEST
         self._shadow_tuple = (0, 0)  # (x px offset, y px offset)
 
-        self._single_step = 20
+        # Page step
         self._page_step = 0
+        self._single_step = 20
 
         if values_range[1] - values_range[0] > length:
             self.set_page_step(length)
@@ -311,7 +321,8 @@ class ScrollBar(Widget):
         width, height = self._rect.width + self._rect_size_delta[0], self._rect.height + self._rect_size_delta[1]
 
         if not self._render_hash_changed(width, height, self._slider_rect.x, self._slider_rect.y, self.readonly,
-                                         self._slider_rect.width, self._slider_rect.height, self._visible):
+                                         self._slider_rect.width, self._slider_rect.height, self._visible,
+                                         self.scrolling, self._mouseover, self._clicked):
             return True
 
         self._surface = make_surface(width, height)
@@ -319,6 +330,8 @@ class ScrollBar(Widget):
 
         # Render slider
         slider_color = self._slider_color if not self.readonly else self._font_readonly_color
+        mouse_hover = (self.scrolling and self._clicked) or self._mouseover
+        slider_color = self._slider_hover_color if mouse_hover else slider_color
         if self._shadow:
             lit_rect = pygame.Rect(self._slider_rect)
             slider_rect = lit_rect.inflate(-self._shadow_offset * 2, -self._shadow_offset * 2)
@@ -554,6 +567,8 @@ class ScrollBar(Widget):
                     if self.get_slider_rect().collidepoint(*event.pos):
                         # Initialize scrolling
                         self.scrolling = True
+                        self._clicked = True
+                        self._render()
 
                     elif rect.collidepoint(*event.pos):
                         # Moves towards the click by one "page" (= slider length without pad)
@@ -566,7 +581,9 @@ class ScrollBar(Widget):
 
             # User releases mouse button if scrolling
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and self.scrolling:
+                self._clicked = False
                 self.scrolling = False
                 updated = True
+                self._render()
 
         return updated
