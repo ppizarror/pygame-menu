@@ -142,6 +142,7 @@ class Menu(Base):
     _joy_event_repeat: int
     _joystick: bool
     _keyboard: bool
+    _last_scroll_thickness: List[Union[Tuple2IntType, int]]
     _last_selected_type: str
     _mainloop: bool
     _max_row_column_elements: int
@@ -389,6 +390,7 @@ class Menu(Base):
         self._enabled = enabled  # Menu is enabled or not. If disabled menu can't update or draw
         self._height = int(height)
         self._index = -1  # Selected index, if -1 the widget does not have been selected yet
+        self._last_scroll_thickness = [(0, 0), 0]  # scroll and the number of recursive states
         self._last_selected_type = ''  # Last type selection, used for test purposes
         self._mainloop = False  # Menu is in mainloop state
         self._onclose = None  # Function or event called on Menu close
@@ -1167,7 +1169,8 @@ class Menu(Base):
             self._widget_columns[i] = []
 
         # Set the column widths (minimum values)
-        self._column_widths = [self._column_min_width[i] for i in range(self._columns)]
+        self._column_widths = []  # Safe for certain widgets that request the width on rendering
+        column_widths = [self._column_min_width[i] for i in range(self._columns)]
 
         # Set column/row of each widget and compute maximum width of each column if None
         self._used_columns = 0
@@ -1245,9 +1248,9 @@ class Menu(Base):
             else:
                 continue
 
-            self._column_widths[col] = max(
-                self._column_widths[col],
-                widget.get_width(apply_selection=True)
+            column_widths[col] = max(
+                column_widths[col],
+                widget.get_width(apply_selection=True)  # This forces rendering
             )
 
         if len(invalid_selection_widgets) > 0:
@@ -1262,16 +1265,16 @@ class Menu(Base):
         # Apply max width column limit
         for col in range(self._used_columns):
             if self._column_max_width[col] is not None:
-                self._column_widths[col] = min(self._column_widths[col], self._column_max_width[col])
+                column_widths[col] = min(column_widths[col], self._column_max_width[col])
 
         # If some columns were not used, set these widths to zero
         for col in range(self._used_columns, self._columns):
-            self._column_widths.pop()
+            column_widths.pop()
             del self._widget_columns[col]
 
         # If the total weight is less than the window width (so there's no horizontal scroll), scale the columns
         # only None column_max_widths and columns less than the maximum are scaled
-        sum_width_columns = sum(self._column_widths)
+        sum_width_columns = sum(column_widths)
         max_width = self.get_width(inner=True)
         if 0 <= sum_width_columns < max_width and len(self._widgets) > 0:
 
@@ -1280,8 +1283,8 @@ class Menu(Base):
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
                     sum_contrib.append(0)
-                elif self._column_widths[col] < self._column_max_width[col]:
-                    sum_contrib.append(self._column_max_width[col] - self._column_widths[col])
+                elif column_widths[col] < self._column_max_width[col]:
+                    sum_contrib.append(self._column_max_width[col] - column_widths[col])
                 else:
                     sum_contrib.append(0)
 
@@ -1293,14 +1296,14 @@ class Menu(Base):
             # Increase to its maximums
             for col in range(self._used_columns):
                 if sum_contrib[col] > 0:
-                    self._column_widths[col] += sum_contrib[col]
+                    column_widths[col] += sum_contrib[col]
 
             # Scale column widths if None
-            sum_width_columns = sum(self._column_widths)
+            sum_width_columns = sum(column_widths)
             sum_contrib = []
             for col in range(self._used_columns):
                 if self._column_max_width[col] is None:
-                    sum_contrib.append(self._column_widths[col])
+                    sum_contrib.append(column_widths[col])
                 else:
                     sum_contrib.append(0)
 
@@ -1308,10 +1311,10 @@ class Menu(Base):
             if delta > 0:
                 for col in range(self._used_columns):
                     if sum_contrib[col] > 0:
-                        self._column_widths[col] += delta * sum_contrib[col] / sum(sum_contrib)
+                        column_widths[col] += delta * sum_contrib[col] / sum(sum_contrib)
 
             # Re-compute sum
-            sum_width_columns = sum(self._column_widths)
+            sum_width_columns = sum(column_widths)
 
             # If column width still 0, set all the column the same width (only used)
             # This only can happen if column_min_width was not set
@@ -1324,26 +1327,26 @@ class Menu(Base):
                 # First fill all maximum width columns
                 for col in range(self._used_columns):
                     if self._column_max_width[col] is not None:
-                        self._column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
-                        mod_width -= self._column_widths[col]
+                        column_widths[col] = min(self._column_max_width[col], max_width / self._used_columns)
+                        mod_width -= column_widths[col]
                         non_max -= 1
 
                 # Now, update the rest (non maximum set)
                 if non_max > 0:
                     for col in range(self._used_columns):
                         if self._column_max_width[col] is None:
-                            self._column_widths[col] = mod_width / non_max
+                            column_widths[col] = mod_width / non_max
 
         # Cast to int
         for col in range(self._used_columns):
-            self._column_widths[col] = int(math.ceil(self._column_widths[col]))
+            column_widths[col] = int(math.ceil(column_widths[col]))
 
         # Final column width
-        total_col_width = sum(self._column_widths)
+        total_col_width = sum(column_widths)
         if self._used_columns > 1:
             # Calculate column width scale (weights)
             column_weights = tuple(
-                float(self._column_widths[i]) / max(total_col_width, 1) for i in range(self._used_columns))
+                float(column_widths[i]) / max(total_col_width, 1) for i in range(self._used_columns))
 
             # Calculate the position of each column
             self._column_pos_x = []
@@ -1354,7 +1357,10 @@ class Menu(Base):
                 cumulative += w
         else:
             self._column_pos_x = [total_col_width * 0.5]
-            self._column_widths = [total_col_width]
+            column_widths = [total_col_width]
+
+        # Now updates the column width's
+        self._column_widths = column_widths
 
         # Update title position
         self._menubar.set_position(*self.get_position())
@@ -1499,8 +1505,7 @@ class Menu(Base):
         max_x, max_y = self._widget_max_position
 
         # Get scrollbars size
-        sx = self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL, real=True)
-        sy = self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL, real=True)
+        sx, sy = self._get_scrollbar_thickness()
 
         # Remove the thick of the scrollbar to avoid displaying a horizontal one
         # If overflow on both axis
@@ -1549,6 +1554,16 @@ class Menu(Base):
         # Set position
         self._scrollarea.set_world(self._widgets_surface)
         self._scrollarea.set_position(*self.get_position())
+
+        # Check if the scrollbars changed
+        sx, sy = self._get_scrollbar_thickness()
+        if (sx, sy) != self._last_scroll_thickness[0] and self._last_scroll_thickness[1] == 0:
+            self._last_scroll_thickness[0] = (sx, sy)
+            self._last_scroll_thickness[1] += 1
+            self._widgets_surface_need_update = True
+            self._render()
+        else:
+            self._last_scroll_thickness[1] = 0
 
         # Update times
         dt = time.time() - t0
@@ -1731,6 +1746,15 @@ class Menu(Base):
             self._widgets_surface = None  # Rebuild on the next draw
         return self
 
+    def _get_scrollbar_thickness(self) -> Tuple2IntType:
+        """
+        Return the scrollbar thickness from x-axis and y-axis (horizontal and vertical).
+
+        :return: Scrollbar thickness in px
+        """
+        return self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL), \
+               self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL)
+
     def get_width(self, inner: bool = False, widget: bool = False) -> int:
         """
         Get menu width.
@@ -1749,8 +1773,7 @@ class Menu(Base):
             return int(self._widget_max_position[0] - self._widget_min_position[0])
         if not inner:
             return int(self._width)
-        vertical_scroll = self._scrollarea.get_scrollbar_thickness(ORIENTATION_VERTICAL)
-        return int(self._width - vertical_scroll)
+        return int(self._width - self._get_scrollbar_thickness()[1])
 
     def get_height(self, inner: bool = False, widget: bool = False) -> int:
         """
@@ -1770,8 +1793,7 @@ class Menu(Base):
             return int(self._widget_max_position[1] - self._widget_min_position[1])
         if not inner:
             return int(self._height)
-        horizontal_scroll = self._scrollarea.get_scrollbar_thickness(ORIENTATION_HORIZONTAL)
-        return int(self._height - self._menubar.get_height() - horizontal_scroll)
+        return int(self._height - self._menubar.get_height() - self._get_scrollbar_thickness()[0])
 
     def get_size(self, inner: bool = False, widget: bool = False) -> Vector2IntType:
         """
@@ -2843,7 +2865,7 @@ class Menu(Base):
             menu._onbeforeopen(current, menu)
 
         # Select the first widget
-        self._current._select(0, 1, SELECT_OPEN, False)
+        self._current._select(0, 1, SELECT_OPEN, False, update_mouse_position=False)
 
         # Re-render menu
         check_widget_mouseleave(force=True)
@@ -2887,15 +2909,27 @@ class Menu(Base):
 
         self._current._widgets_surface = None
         check_widget_mouseleave(force=True)
-        self._current._select(self._top._current._index, 1, SELECT_RESET, False)
+        self._current._select(self._top._current._index, 1, SELECT_RESET, False,
+                              update_mouse_position=False)
         self._current._stats.reset += 1
         return self._current
 
-    def _select(self, new_index: int, dwidget: int, select_type: str, apply_sound: bool, **kwargs) -> bool:
+    def _select(
+            self,
+            new_index: int,
+            dwidget: int,
+            select_type: str,
+            apply_sound: bool,
+            **kwargs
+    ) -> bool:
         """
         Select the widget at the given index and unselect others. Selection forces
         rendering of the widget. Also play widget selection sound. This is applied
         to the base Menu pointer.
+
+        kwargs (Optional)
+            - ``last_index``                *(int)* - Last index in recursive call on Frames
+            - ``update_mouse_position``     *(bool)* - Update mouse position
 
         :param new_index: Widget index
         :param dwidget: Direction to search if ``new_index`` widget is non selectable
@@ -2951,11 +2985,13 @@ class Menu(Base):
 
                 # A selectable widget has been found within frame
                 if min_index != -1 and not same_frame and min_index != self._index:
-                    return self._select(min_index, dwidget, SELECT_RECURSIVE, apply_sound, last_index=new_index)
+                    kwargs['last_index'] = new_index
+                    return self._select(min_index, dwidget, SELECT_RECURSIVE, apply_sound, **kwargs)
 
             # There's at least 1 selectable option
             if self._index >= 0:
-                return self._select(new_index + dwidget, dwidget, SELECT_RECURSIVE, apply_sound, last_index=new_index)
+                kwargs['last_index'] = new_index
+                return self._select(new_index + dwidget, dwidget, SELECT_RECURSIVE, apply_sound, **kwargs)
 
             # No selectable options, quit
             else:
@@ -2976,7 +3012,8 @@ class Menu(Base):
                 self._mouse_motion_selection and \
                 not self._disable_widget_update_mousepos_mouseselection and \
                 not new_widget.is_floating() and \
-                self._mouseover:
+                self._mouseover and \
+                kwargs.get('update_mouse_position', True):
             pygame.mouse.set_pos(new_widget.get_rect(to_real_position=True).center)
 
         return True
@@ -3019,14 +3056,15 @@ class Menu(Base):
         # Scroll to rect
         rect = widget.get_rect()
         widget_frame = widget.get_frame()
+        widget_border = widget.get_border()[1]
 
         # Compute margin depending of widget position
         _, ry = widget_scroll.get_widget_position_relative_to_view_rect(widget)
-        widget_scroll.get_position()
         mx = 0
         my = 0
+
         if ry < 0.15 and self._menubar.fixed:
-            my = -self._menubar.get_height()
+            my = -self._menubar.get_height() - widget_border
 
         # Call scroll parent container
         if widget_frame is not None and widget_frame.is_scrollable:
