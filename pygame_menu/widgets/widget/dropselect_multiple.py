@@ -409,7 +409,7 @@ class DropSelectMultiple(DropSelect):
             if b_ind_x == self._index:
                 btn.set_background_color(self._selection_option_active_bgcolor)
                 btn.update_font({'color': self._selection_option_active_font_color})
-                btn.scroll_to_widget(margin=btn.get_height() if self._open_middle else 5, scroll_parent=False)
+                btn.scroll_to_widget(scroll_parent=False)
             elif b_ind_x in self._selected_indices:
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})

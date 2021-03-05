@@ -70,7 +70,7 @@ from pygame_menu.widgets.core.selection import Selection
 from pygame_menu._types import Optional, ColorType, Tuple2IntType, NumberType, PaddingType, Union, \
     List, Tuple, Any, CallbackType, Dict, Callable, Tuple4IntType, Tuple2BoolType, Tuple3IntType, \
     NumberInstance, ColorInputType, EventType, EventVectorType, EventListType, CursorInputType, CursorType, \
-    VectorInstance
+    VectorInstance, Tuple2NumberType
 
 # This list stores the current widget which requested the mouseover status, and the previous
 # widget list which requested the mouseover. Each time the widget changes the over status, if leaves
@@ -773,7 +773,7 @@ class Widget(Base):
         This method automatically updates widget decoration cache as Menu render
         forces it to re-render.
 
-        .. note ::
+        .. note::
 
             This method is expensive, as menu surface update forces re-rendering of
             all widgets (because them can change in size, position, etc...).
@@ -1333,11 +1333,11 @@ class Widget(Base):
         """
         return self._scrollarea
 
-    def scroll_to_widget(self, margin: NumberType = 10, scroll_parent: bool = True) -> 'Widget':
+    def scroll_to_widget(self, margin: Tuple2NumberType = (0, 0), scroll_parent: bool = True) -> 'Widget':
         """
         Scroll to widget.
 
-        :param margin: Extra margin around the rect in px
+        :param margin: Extra margin around the rect in px on x-axis and y-axis
         :param scroll_parent: If ``True`` parent scroll also scrolls to widget
         :return: Self reference
         """

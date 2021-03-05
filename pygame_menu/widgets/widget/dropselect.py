@@ -935,7 +935,7 @@ class DropSelect(Widget):
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})
                 if not self._drop_frame.has_attribute('ignorescroll'):
-                    btn.scroll_to_widget(margin=btn.get_height() if self._open_middle else 5, scroll_parent=False)
+                    btn.scroll_to_widget(scroll_parent=False)
             else:
                 btn.set_background_color(self._selection_box_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color']})
