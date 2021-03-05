@@ -332,7 +332,7 @@ class Theme(object):
         # Cursor/Text gathering
         self.cursor_color = self._get(kwargs, 'cursor_color', 'color', (0, 0, 0))
         self.cursor_selection_color = self._get(kwargs, 'cursor_selection_color', 'color', (30, 30, 30, 120))
-        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', NumberInstance, 1000)
+        self.cursor_switch_ms = self._get(kwargs, 'cursor_switch_ms', NumberInstance, 750)
 
         # Menubar/Title
         self.title = self._get(kwargs, 'title', bool, True)
