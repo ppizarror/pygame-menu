@@ -175,6 +175,7 @@ class Menu(Base):
     _touchscreen_motion_selection: bool
     _translate: Tuple2IntType
     _update_frames: List['Frame']  # Stores the reference of scrollable frames to check inputs
+    _update_widgets: List['Widget']  # Stores widgets which should always update
     _used_columns: int
     _validate_frame_widgetmove: bool
     _widget_columns: Dict[int, List['Widget']]
@@ -432,9 +433,11 @@ class Menu(Base):
 
         # Menu widgets, it should not be accessed outside the object as strange issues can occur
         self.add = WidgetManager(self)
-        self._update_frames = []  # Stores the frames which receive update events
         self._widget_offset = [theme.widget_offset[0], theme.widget_offset[1]]
-        self._widgets = []
+        self._widgets = []  # This list may change during execution (replaced by a new one)
+
+        self._update_frames = []  # Stores the frames which receive update events
+        self._update_widgets = []  # Stores the widgets which receive update even if not selected or events is empty
 
         if abs(self._widget_offset[0]) < 1:
             self._widget_offset[0] *= self._width
@@ -2075,6 +2078,39 @@ class Menu(Base):
         """
         return self._top._enabled
 
+    def _sort_update_frames(self) -> None:
+        """
+        Sort the update frames (frames which receive updates).
+
+        :return: None
+        """
+        if len(self._update_frames) <= 1:
+            return
+
+        # Sort frames by depth
+        widgets: List[Tuple[int, 'Frame']] = []
+        for w in self._update_frames:
+            assert isinstance(w, Frame)
+            widgets.append((-w.get_frame_depth(), w))
+        widgets.sort(key=lambda x: x[0])
+
+        # Sort frames with same depth by index
+        frame_depths: Dict[int, List[Tuple[int, 'Frame']]] = {}
+        for w in widgets:
+            w_depth = w[0]
+            if w_depth not in frame_depths.keys():
+                frame_depths[w_depth] = []
+            if w[1] in self._widgets:
+                frame_depths[w_depth].append((self._widgets.index(w[1]), w[1]))
+            else:
+                frame_depths[w_depth].append((0, w[1]))
+
+        self._update_frames = []
+        for d in frame_depths.keys():
+            frame_depths[d].sort(key=lambda x: x[0])
+            for w in frame_depths[d]:
+                self._update_frames.append(w[1])
+
     def _move_selected_left_right(self, pos: int, apply_sound: bool = False) -> bool:
         """
         Move selected to left/right position (column support).
@@ -2240,15 +2276,6 @@ class Menu(Base):
         if self._current._disable_update:
             return False
 
-        # Check if window closed
-        for event in events:
-            if event.type == _events.PYGAME_QUIT or (
-                    event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
-                    event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
-                    event.type == _events.PYGAME_WINDOWCLOSE:
-                self._current._exit()
-                return True
-
         # If any widget status changes, set the status as True
         updated = False
 
@@ -2295,8 +2322,16 @@ class Menu(Base):
 
             for event in events:
 
+                # User closes window
+                if event.type == _events.PYGAME_QUIT or (
+                        event.type == pygame.KEYDOWN and event.key == pygame.K_F4 and (
+                        event.mod == pygame.KMOD_LALT or event.mod == pygame.KMOD_RALT)) or \
+                        event.type == _events.PYGAME_WINDOWCLOSE:
+                    self._current._exit()
+                    return True
+
                 # User press key
-                if event.type == pygame.KEYDOWN and self._current._keyboard:
+                elif event.type == pygame.KEYDOWN and self._current._keyboard:
 
                     # Check key event is valid
                     if not check_key_pressed_valid(event):
@@ -3098,10 +3133,6 @@ class Menu(Base):
             This is applied only to the base Menu (not the currently displayed,
             stored in ``_current`` pointer); for such behaviour apply
             to :py:meth:`pygame_menu.menu.Menu.get_current` object.
-
-        .. warning::
-
-            Use with caution.
 
         :return: Widgets tuple
         """

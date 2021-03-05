@@ -140,17 +140,13 @@ class Table(Frame):
         except KeyError:
             pass
         self._rows.remove(row)
-        # Render menu
-        if self._menu is not None:
-            # noinspection PyProtectedMember
-            self._menu._render()
+        self._menu_render()
         self._update_row_sizing()
 
         # Remove scrollable from rows
         if self._menu is not None:
             total_removed = 0
-            # noinspection PyProtectedMember
-            menu_update_frames = self._menu._update_frames
+            menu_update_frames = self._get_menu_update_frames()
             for w in row.get_widgets(unpack_subframes=False):
                 if isinstance(w, Frame):
                     if w in menu_update_frames:
@@ -380,8 +376,7 @@ class Table(Frame):
 
             # If cell is frame and scrollable
             if isinstance(cell, Frame) and self._menu is not None:
-                # noinspection PyProtectedMember
-                menu_update_frames = self._menu._update_frames
+                menu_update_frames = self._get_menu_update_frames()
                 if cell not in menu_update_frames:
                     menu_update_frames.append(cell)
                     self.sort_menu_update_frames()

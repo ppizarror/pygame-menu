@@ -1749,23 +1749,76 @@ class Widget(Base):
         :return: Self reference
         """
         self._menu = menu
+
         if menu is None:
             self._col_row_index = (-1, -1, -1)
-            self.active = False
             self._selected = False
+            self.active = False
+
         return self
 
     def get_menu(self) -> Optional['pygame_menu.Menu']:
         """
         Return the Menu reference, ``None`` if it has not been set.
 
+        :return: Menu reference
+        """
+        return self._menu
+
+    def _get_menu_widgets(self) -> List['Widget']:
+        """
+        Return the menu API widgets list.
+
         .. warning::
 
             Use with caution.
 
-        :return: Menu reference
+        :return: Widget list if the menu reference is not ``None``, else, return an empty list
         """
-        return self._menu
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            return self._menu._widgets
+        return []
+
+    def _get_menu_update_frames(self) -> List['pygame_menu.widgets.Frame']:
+        """
+        Return the menu update frames list.
+
+        .. warning::
+
+            Use with caution.
+
+        :return: Frame update list if the menu reference is not ``None``, else, return an empty list
+        """
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            return self._menu._update_frames
+        return []
+
+    def _get_menu_update_widgets(self) -> List['Widget']:
+        """
+        Return the menu update widgets.
+
+        .. warning::
+
+            Use with caution.
+
+        :return: Widget update list if the menu reference is not ``None``, else, return an empty list
+        """
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            return self._menu._update_widgets
+        return []
+
+    def _menu_render(self) -> None:
+        """
+        Call menu _render if reference is not ``None``.
+
+        :return: None
+        """
+        if self._menu is not None:
+            # noinspection PyProtectedMember
+            self._menu._render()
 
     def _apply_font(self) -> None:
         """
