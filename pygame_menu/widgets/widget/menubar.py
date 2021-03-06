@@ -522,10 +522,11 @@ class MenuBar(Widget):
             if self._backbox_visible():
                 self._check_mouseover(event)
 
-            # User clicks the backbox rect
-            if event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
-                if self._backbox_rect and self._backbox_rect.collidepoint(*event.pos):
+            # User clicks/touches the backbox rect; don't consider the mouse wheel (button 4 & 5)
+            if event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+                    event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                event_pos = get_finger_pos(self._menu, event)
+                if self._backbox_rect and self._backbox_rect.collidepoint(*event_pos):
                     self._sound.play_click_mouse()
                     self.apply()
                     updated = True
@@ -534,14 +535,6 @@ class MenuBar(Widget):
             elif event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled:
                 if event.button == JOY_BUTTON_BACK:
                     self._sound.play_key_del()
-                    self.apply()
-                    updated = True
-
-            # User touches the backbox button
-            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                finger_pos = get_finger_pos(self._menu, event)
-                if self._backbox_rect and self._backbox_rect.collidepoint(*finger_pos):
-                    self._sound.play_click_mouse()
                     self.apply()
                     updated = True
 

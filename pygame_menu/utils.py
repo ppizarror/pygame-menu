@@ -62,7 +62,7 @@ __all__ = [
 ]
 
 import functools
-import inspect
+# import inspect
 import sys
 import traceback
 import types
@@ -478,7 +478,7 @@ def warn(message: str, print_stack: bool = True) -> None:
 
     # noinspection PyUnresolvedReferences,PyProtectedMember
     frame = sys._getframe().f_back
-    frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
+    # frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
 
     # Check if message in dict
     msg_hash = hash(message)
@@ -492,8 +492,8 @@ def warn(message: str, print_stack: bool = True) -> None:
         traceback.print_stack(frame, limit=5)
         WARNINGS_LAST_MESSAGES[msg_hash] = True
 
-    warnings.showwarning(message, UserWarning, frame_info[0], frame_info[1])
-    # warnings.warn(message, stacklevel=2)
+    # warnings.showwarning(message, UserWarning, frame_info[0], frame_info[1])
+    warnings.warn(message, stacklevel=2)
 
 
 def widget_terminal_title(

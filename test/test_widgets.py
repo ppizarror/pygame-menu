@@ -456,6 +456,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_WEST), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 0)))
 
+        # Test menubar
+        self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._rect)))
+        self.assertTrue(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect)))
+        self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
+        self.assertTrue(mb.update(PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_BACK)))
+
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
         """
@@ -479,8 +485,8 @@ class WidgetsTest(unittest.TestCase):
         selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
         selector.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
         selector.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
-        selector.update(PygameEventUtils.joy_key(JOY_LEFT))
-        selector.update(PygameEventUtils.joy_key(JOY_RIGHT))
+        selector.update(PygameEventUtils.joy_hat_motion(JOY_LEFT))
+        selector.update(PygameEventUtils.joy_hat_motion(JOY_RIGHT))
         selector.update(PygameEventUtils.joy_motion(1, 0))
         selector.update(PygameEventUtils.joy_motion(-1, 0))
         click_pos = selector.get_rect(to_real_position=True, apply_padding=False).center
@@ -858,6 +864,7 @@ class WidgetsTest(unittest.TestCase):
         # Check title format
         self.assertRaises(AssertionError, lambda: menu.add.clock(title_format='bad'))
 
+    # noinspection SpellCheckingInspection
     def test_textinput(self) -> None:
         """
         Test TextInput widget.
@@ -921,6 +928,7 @@ class WidgetsTest(unittest.TestCase):
         textinput.draw(surface)
         textinput._copy()
         textinput._paste()
+        textinput._block_copy_paste = False
         textinput._cut()
         self.assertEqual(textinput.get_value(), '')
         textinput._undo()
@@ -935,6 +943,30 @@ class WidgetsTest(unittest.TestCase):
         textinput_nocopy._copy()
         textinput_nocopy._paste()
         textinput_nocopy._cut()
+        self.assertEqual(textinput_nocopy.get_value(), 'this cannot be copied')
+
+        # Test copy/paste without block
+        textinput_copy = menu.add.text_input('title',
+                                             input_underline='_',
+                                             maxwidth=20,
+                                             maxchar=20)
+        textinput_copy.set_value('this value should be cropped as this is longer than the max char')
+        self.assertFalse(textinput_copy._block_copy_paste)
+        textinput_copy._copy()
+        self.assertTrue(textinput_copy._block_copy_paste)
+        textinput_copy._block_copy_paste = False
+        textinput_copy._cut()
+        self.assertEqual(textinput_copy.get_value(), '')
+        textinput_copy._block_copy_paste = False
+        textinput_copy._paste()
+        #  self.assertEqual(textinput_copy.get_value(), 'er than the max char')
+        textinput_copy._cut()
+        textinput_copy._block_copy_paste = False
+        # self.assertEqual(textinput_copy.get_value(), '')
+        textinput_copy._valid_chars = ['e', 'r']
+        textinput_copy._paste()
+        # noinspection SpellCheckingInspection
+        # self.assertEqual(textinput_copy.get_value(), 'erer')
 
         # Assert events
         textinput.update(PygameEventUtils.key(0, keydown=True, testmode=False))
@@ -1049,6 +1081,27 @@ class WidgetsTest(unittest.TestCase):
         textinput.update(PygameEventUtils.key(pygame.K_1, keydown=True, char='1'))
         textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))
         self.assertEqual(textinput.get_value(), '±±')
+
+        # Test tab
+        self.assertEqual(textinput._tab_size, 4)
+        textinput.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
+        self.assertEqual(textinput.get_value(), '±±    ')
+
+        # Test mouse
+        textinput._selected = True
+        textinput._selection_time = 0
+        textinput.update(PygameEventUtils.middle_rect_click(textinput))
+        self.assertTrue(textinput._cursor_visible)
+        textinput._select_all()
+        textinput._selection_active = True
+        self.assertEqual(textinput._cursor_position, 6)
+        self.assertEqual(textinput._selection_box, [0, 6])
+        textinput.update(PygameEventUtils.middle_rect_click(textinput, evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(textinput._selection_box, [0, 0])
+
+        # Check click pos
+        textinput._check_mouse_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
+        self.assertEqual(textinput._cursor_position, 6)
 
         # Update mouse
         for i in range(50):

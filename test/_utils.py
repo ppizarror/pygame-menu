@@ -152,7 +152,7 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
-    def center_joy(testmode: bool = True) -> List[EventType]:
+    def joy_center(testmode: bool = True) -> List[EventType]:
         """
         Centers the joy.
 
@@ -167,26 +167,7 @@ class PygameEventUtils(object):
                                    })]
 
     @staticmethod
-    def test_widget_key_press(
-            widget: 'pygame_menu.widgets.Widget',
-            testmode: bool = True
-    ) -> None:
-        """
-        Test keypress widget.
-
-        :param widget: Widget object
-        :param testmode: Event is in test mode
-        :return: None
-        """
-        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True, testmode=testmode))
-        widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True, testmode=testmode))
-        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True, testmode=testmode))
-        widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True, testmode=testmode))
-        widget.update(PygameEventUtils.key(pygame.K_END, keydown=True, testmode=testmode))
-        widget.update(PygameEventUtils.key(pygame.K_HOME, keydown=True, testmode=testmode))
-
-    @staticmethod
-    def joy_key(
+    def joy_hat_motion(
             key: Tuple[int, int],
             inlist: bool = True,
             testmode: bool = True
@@ -207,6 +188,50 @@ class PygameEventUtils(object):
         if inlist:
             event_obj = [event_obj]
         return event_obj
+
+    @staticmethod
+    def joy_button(
+            button: int,
+            evtype: int = pygame.JOYBUTTONDOWN,
+            inlist: bool = True,
+            testmode: bool = True
+    ) -> EventListType:
+        """
+        Create a pygame joy controller key event.
+
+        :param button: Button to press
+        :param evtype: Event type
+        :param inlist: Return event in a list
+        :param testmode: Event is in test mode
+        :return: Event
+        """
+        event_obj = pygame.event.Event(evtype,
+                                       {
+                                           'button': button,
+                                           'test': testmode
+                                       })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
+
+    @staticmethod
+    def test_widget_key_press(
+            widget: 'pygame_menu.widgets.Widget',
+            testmode: bool = True
+    ) -> None:
+        """
+        Test keypress widget.
+
+        :param widget: Widget object
+        :param testmode: Event is in test mode
+        :return: None
+        """
+        widget.update(PygameEventUtils.key(pygame.K_BACKSPACE, keydown=True, testmode=testmode))
+        widget.update(PygameEventUtils.key(pygame.K_DELETE, keydown=True, testmode=testmode))
+        widget.update(PygameEventUtils.key(pygame.K_LEFT, keydown=True, testmode=testmode))
+        widget.update(PygameEventUtils.key(pygame.K_RIGHT, keydown=True, testmode=testmode))
+        widget.update(PygameEventUtils.key(pygame.K_END, keydown=True, testmode=testmode))
+        widget.update(PygameEventUtils.key(pygame.K_HOME, keydown=True, testmode=testmode))
 
     @staticmethod
     def keydown_mod_ctrl(

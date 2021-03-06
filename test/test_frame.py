@@ -1376,7 +1376,7 @@ class FrameWidgetTest(unittest.TestCase):
             menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
             self.assertEqual(menu.get_selected_widget(), bt)
         for bt in (btn6, btn11, btn12, btn13, btn1):
-            menu.update(PygameEventUtils.joy_key(JOY_RIGHT))
+            menu.update(PygameEventUtils.joy_hat_motion(JOY_RIGHT))
             self.assertEqual(menu.get_selected_widget(), bt)
         for bt in (btn0, btn13, btn12, btn11, btn10, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0):
             menu.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
@@ -1384,7 +1384,7 @@ class FrameWidgetTest(unittest.TestCase):
         menu.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
         self.assertEqual(menu.get_selected_widget(), btn1)
         for bt in (btn13, btn12, btn11, btn6, btn1):
-            menu.update(PygameEventUtils.joy_key(JOY_LEFT))
+            menu.update(PygameEventUtils.joy_hat_motion(JOY_LEFT))
             self.assertEqual(menu.get_selected_widget(), bt)
 
         # Check mouse events

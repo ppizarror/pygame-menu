@@ -1229,6 +1229,9 @@ class TextInput(Widget):
 
         :return: ``True`` if cut
         """
+        if not self._copy_paste_enabled:  # Ignore cut
+            return False
+
         self._copy()  # This is a safe operation, all checks have been passed
 
         # If text is selected
@@ -1310,7 +1313,6 @@ class TextInput(Widget):
 
         # If string is valid
         if self._check_input_type(new_string):
-
             # Update char size
             for char in new_string:
                 if char not in self._keychar_size:
@@ -1324,6 +1326,7 @@ class TextInput(Widget):
             self.change()
             self._update_maxlimit_renderbox()
             self._block_copy_paste = True
+
         else:
             self._sound.play_event_error()
             return False
@@ -1827,46 +1830,29 @@ class TextInput(Widget):
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            # User releases the mouse button
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
-                if rect.collidepoint(*event.pos) and \
+            # User releases the mouse button or finger; don't consider the mouse wheel (button 4 & 5)
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+                    event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                event_pos = get_finger_pos(self._menu, event)
+                if rect.collidepoint(*event_pos) and \
                         self.get_selected_time() > 1.5 * self._keyrepeat_mouse_interval_ms:
                     self._selection_active = False
-                    self._check_mouse_collide_input(event.pos)
+                    self._check_mouse_collide_input(event_pos)
                     self._cursor_ms_counter = 0
                     self._cursor_visible = True
 
-            # User press the mouse button
-            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and \
-                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
-                if self.get_selected_time() > self._keyrepeat_mouse_interval_ms:
+            # User press the mouse button or finger; don't consider the mouse wheel (button 4 & 5)
+            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or \
+                    event.type == FINGERDOWN and self._touchscreen_enabled:
+                if self.get_selected_time() > self._keyrepeat_mouse_interval_ms or \
+                        hasattr(event, 'test'):
                     if self._selection_active:
                         self._unselect_text()
                     self._cursor_ms_counter = 0
                     self._cursor_visible = True
                     self._selection_active = True
-                    self._selection_mouse_first_position = -1
-                    self.active = True
-
-            # User releases the finger
-            elif event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
-                finger_pos = get_finger_pos(self._menu, event)
-                if rect.collidepoint(*finger_pos) and \
-                        self.get_selected_time() > 1.5 * self._keyrepeat_touch_interval_ms:
-                    self._selection_active = False
-                    self._check_touch_collide_input(finger_pos)
-                    self._cursor_ms_counter = 0
-                    self._cursor_visible = True
-
-            # User press finger on widget
-            elif event.type == FINGERDOWN and self._touchscreen_enabled:
-                if self.get_selected_time() > self._keyrepeat_touch_interval_ms:
-                    if self._selection_active:
-                        self._unselect_text()
-                    self._cursor_ms_counter = 0
-                    self._cursor_visible = True
-                    self._selection_active = True
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        self._selection_mouse_first_position = -1
                     self.active = True
 
         # Update mouse
