@@ -102,6 +102,27 @@ displayed, the others are the arguments passed to the callbacks
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.selector
 
 
+Add a clock
+-----------
+
+A clock is a simple label object which updates the title text with a generator
+that retrieves the clock/date string from ``time.strftime``.
+
+**Example:**
+
+.. image:: ../_static/widget_clock.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+
+    clock = menu.add.clock(font_size=25, font_name=pygame_menu.font.FONT_DIGITAL)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.clock
+
+
 Add a color entry
 -----------------
 

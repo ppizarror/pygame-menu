@@ -2301,6 +2301,10 @@ class Menu(Base):
             for scrollable_frame in self._current._update_frames:
                 scrollable_frames_update = scrollable_frames_update or scrollable_frame.update(events)
 
+        # Update widgets on update list
+        for widget in self._current._update_widgets:
+            widget.update(events)
+
         # Scrollable frames have changed
         if scrollable_frames_update:
             updated = True

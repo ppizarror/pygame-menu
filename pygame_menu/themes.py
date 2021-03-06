@@ -827,9 +827,9 @@ THEME_SOLARIZED = Theme(
     widget_font_color=(102, 122, 130)
 )
 
-THEME_WINDOWS = Theme(
-    background_color=(240, 240, 240),
-    widget_background_color=(240, 240, 240),
-    widget_border_color=(168, 168, 168),
-    widget_border_width=0
-)
+# THEME_WINDOWS = Theme(
+#     background_color=(240, 240, 240),
+#     widget_background_color=(240, 240, 240),
+#     widget_border_color=(168, 168, 168),
+#     widget_border_width=0
+# )

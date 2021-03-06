@@ -35,6 +35,7 @@ from io import BytesIO
 from pathlib import Path
 import re
 import textwrap
+import time
 import webbrowser
 
 import pygame
@@ -820,6 +821,103 @@ class WidgetManager(Base):
         self._append_widget(widget)
 
         return widget
+
+    def clock(
+            self,
+            clock_format: str = '%Y/%m/%d %H:%M:%S',
+            clock_id: str = '',
+            onselect: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]] = None,
+            selectable: bool = False,
+            title_format: str = '{0}',
+            **kwargs
+    ) -> 'pygame_menu.widgets.Label':
+        """
+        Add a clock label to the Menu. This creates a Label with a text generator that
+        request a string from ``time.strftime`` module using ``clock_format``.
+
+        Commonly used format codes:
+            - **%Y**    Year with century as a decimal number.
+            - **%m**    Month as a decimal number [01, 12].
+            - **%d**    Day of the month as a decimal number [01, 31].
+            - **%H**    Hour (24-hour clock) as a decimal number [00, 23].
+            - **%M**    Minute as a decimal number [00, 59].
+            - **%S**    Second as a decimal number [00, 61].
+            - **%z**    Time zone offset from UTC.
+            - **%a**    Locale's abbreviated weekday name.
+            - **%A**    Locale's full weekday name.
+            - **%b**    Locale's abbreviated month name.
+            - **%B**    Locale's full month name.
+            - **%c**    Locale's appropriate date and time representation.
+            - **%I**    Hour (12-hour clock) as a decimal number [01, 12].
+            - **%p**    Locale's equivalent of either AM or PM.
+
+        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
+        is a boolean representing the selected status:
+
+        .. code-block:: python
+
+            onselect(selected, widget, menu)
+
+        kwargs (Optional)
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
+            - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
+            - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
+            - ``border_inflate``                *(tuple, list)* - Widget border inflate on x-axis and y-axis (x, y) in px
+            - ``border_position``               *(str, tuple, list)* - Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
+            - ``border_width``                  *(int)* - Border width in px. If ``0`` disables the border
+            - ``cursor``                        *(int,* :py:class:`pygame.cursors.Cursor` *, None)* - Cursor of the widget if the mouse is placed over
+            - ``font_background_color``         *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Widget font background color
+            - ``font_color``                    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget font color
+            - ``font_name``                     *(str,* :py:class:`pathlib.Path`, :py:class:`pygame.font.Font` *)* - Widget font path
+            - ``font_shadow_color``             *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Font shadow color
+            - ``font_shadow_offset``            *(int)* - Font shadow offset in px
+            - ``font_shadow_position``          *(str)* - Font shadow position, see locals for position
+            - ``font_shadow``                   *(bool)* - Font shadow is enabled or disabled
+            - ``font_size``                     *(int)* - Font size of the widget
+            - ``margin``                        *(tuple, list)* - Widget (left, bottom) margin in px
+            - ``padding``                       *(int, float, tuple, list)* - Widget padding according to CSS rules. General shape: (top, right, bottom, left)
+            - ``selection_color``               *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the selected widget; only affects the font color
+            - ``selection_effect``              *(* :py:class:`pygame_menu.widgets.core.Selection` *)* - Widget selection effect. Applied only if ``selectable`` is ``True``
+            - ``tab_size``                      *(int)* - Width of a tab character
+            - ``underline_color``               *(tuple, list, str, int,* :py:class:`pygame.Color` *, None)* - Color of the underline. If ``None`` use the same color of the text
+            - ``underline_offset``              *(int)* - Vertical offset in px. ``2`` by default
+            - ``underline_width``               *(int)* - Underline width in px. ``2`` by default
+            - ``underline``                     *(bool)* - Enables text underline, using a properly placed decoration. ``False`` by default
+
+        .. note::
+
+            All theme-related optional kwargs use the default Menu theme if not defined.
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply
+            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param clock_format: Format of clock used by ``time.strftime``
+        :param clock_id: ID of the clock
+        :param onselect: Callback executed when selecting the widget; only executed if ``selectable`` is ``True``
+        :param selectable: Label accepts user selection; useful to move along the Menu using label selection
+        :param title_format: Title format which accepts ``{0}`` as the string from ``time.strftime``, for example, ``'My Clock {0}'`` can be a title format
+        :param kwargs: Optional keyword arguments
+        :return: Widget object
+        :rtype: :py:class:`pygame_menu.widgets.Label`
+        """
+        label = self.label(
+            title='',
+            label_id=clock_id,
+            onselect=onselect,
+            selectable=selectable,
+            **kwargs
+        )
+
+        assert isinstance(title_format, str) and '{0}' in title_format
+        assert not isinstance(label, list)
+        label.set_title_generator(lambda: title_format.format(time.strftime(clock_format)))
+        label.update([])
+
+        return label
 
     def label(
             self,

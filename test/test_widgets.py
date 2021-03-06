@@ -847,6 +847,17 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label.get_title(), 'b')
         self.assertIsNone(label._title_generator)
 
+    def test_clock(self) -> None:
+        """
+        Test clock.
+        """
+        menu = MenuUtils.generic_menu()
+        clock = menu.add.clock()
+        self.assertNotEqual(clock.get_title(), '')
+
+        # Check title format
+        self.assertRaises(AssertionError, lambda: menu.add.clock(title_format='bad'))
+
     def test_textinput(self) -> None:
         """
         Test TextInput widget.

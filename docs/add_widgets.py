@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'TABLE_ADVANCED'
+EXAMPLE = 'CLOCK'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -112,6 +112,11 @@ if EXAMPLE == 'BUTTON':
     menu.add.button('Exit', pygame_menu.events.EXIT,  # Link to exit action
                     align=pygame_menu.locals.ALIGN_RIGHT)
     btn.select(update_menu=True)
+
+elif EXAMPLE == 'CLOCK':
+    menu = make_menu(pygame_menu.themes.THEME_DARK, 'Clock')
+
+    clock = menu.add.clock(font_size=25, font_name=pygame_menu.font.FONT_DIGITAL)
 
 elif EXAMPLE == 'COLORINPUT':
     menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
