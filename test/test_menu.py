@@ -772,9 +772,9 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(self.menu.get_index(), 0)
 
         # Check joy
-        self.menu.update(PygameEventUtils.joy_key(JOY_UP))
+        self.menu.update(PygameEventUtils.joy_hat_motion(JOY_UP))
         self.assertEqual(self.menu.get_index(), 4)
-        self.menu.update(PygameEventUtils.joy_key(JOY_DOWN))
+        self.menu.update(PygameEventUtils.joy_hat_motion(JOY_DOWN))
         self.assertEqual(self.menu.get_index(), 0)
         self.menu.update(PygameEventUtils.joy_motion(1, 1))
         self.assertEqual(self.menu.get_index(), 1)
@@ -1462,13 +1462,13 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(menu.get_selected_widget(), wid_g[0])
 
         # Joy key
-        menu_top.update(PygameEventUtils.joy_key(JOY_LEFT))
+        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_LEFT))
         self.assertEqual(menu.get_selected_widget(), wid_g[6])
-        menu_top.update(PygameEventUtils.joy_key(JOY_DOWN))
+        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_DOWN))
         self.assertEqual(menu.get_selected_widget(), wid_g[7])
-        menu_top.update(PygameEventUtils.joy_key(JOY_RIGHT))
+        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_RIGHT))
         self.assertEqual(menu.get_selected_widget(), wid_g[1])
-        menu_top.update(PygameEventUtils.joy_key(JOY_UP))
+        menu_top.update(PygameEventUtils.joy_hat_motion(JOY_UP))
         self.assertEqual(menu.get_selected_widget(), wid_g[0])
 
         # Joy hat
@@ -1487,7 +1487,7 @@ class MenuTest(unittest.TestCase):
 
         # Menu should keep a recursive state of joy
         self.assertNotEqual(menu.get_current()._joy_event, 0)
-        menu_top.update(PygameEventUtils.center_joy())  # center !!
+        menu_top.update(PygameEventUtils.joy_center())  # center !!
         self.assertEqual(menu.get_current()._joy_event, 0)
 
         # Click widget
@@ -1533,7 +1533,7 @@ class MenuTest(unittest.TestCase):
         menu._joy_event = 0
         # noinspection PyArgumentList
         menu.update([pygame.event.Event(menu._joy_event_repeat)])
-        menu_top.update(PygameEventUtils.center_joy())  # center !!
+        menu_top.update(PygameEventUtils.joy_center())  # center !!
         self.assertEqual(menu.get_current()._joy_event, 0)
 
         # Active widget, and click outside to disable it (only if motion selection enabled)

@@ -492,8 +492,8 @@ def warn(message: str, print_stack: bool = True) -> None:
         traceback.print_stack(frame, limit=5)
         WARNINGS_LAST_MESSAGES[msg_hash] = True
 
-    warnings.showwarning(message, UserWarning, frame_info[0], frame_info[1])
-    # warnings.warn(message, stacklevel=2)
+    # warnings.showwarning(message, UserWarning, frame_info[0], frame_info[1])
+    warnings.warn(message, stacklevel=2)
 
 
 def widget_terminal_title(
