@@ -7,13 +7,17 @@ Core developers:
 
 - `Pablo Pizarro R. <https://ppizarror.com>`_
 
-Other contributors:
+Main contributors:
 
 - `anxuae <https://github.com/anxuae>`_
+- `eforgacs <https://github.com/eforgacs>`_
+
+Other contributors:
+
+- `apuly <https://github.com/apuly>`_
 - `arpruss <https://github.com/arpruss>`_
 - `asierrayk <https://github.com/asierrayk>`_
 - `DA820 <https://github.com/DA820>`_
-- `eforgacs <https://github.com/eforgacs>`_
 - `i96751414 <https://github.com/i96751414>`_
 - `ironsmile <https://github.com/ironsmile>`_
 - `jwllee <https://github.com/jwllee>`_
