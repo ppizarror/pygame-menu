@@ -232,12 +232,6 @@ class DropSelectMultiple(DropSelect):
         return self._selected_indices.copy()
 
     def _render_option_string(self, text: str) -> 'pygame.Surface':
-        """
-        Render option string surface.
-
-        :param text: Text to render
-        :return: Option string surface
-        """
         color = self._selection_option_font_style['color']
         if self.readonly or \
                 len(self._selected_indices) == 0 or \
@@ -247,24 +241,16 @@ class DropSelectMultiple(DropSelect):
         return self._option_font.render(text, self._font_antialias, color)
 
     def _click_option(self, index: int, btn: 'Button') -> None:
-        """
-        Function triggered after option has been selected or clicked.
-
-        :param index: Option index within list
-        :return: None
-        """
         btn.set_attribute('ignore_scroll_to_widget')
-        
         self.set_value(index)
         self._process_index()
-
-        #prev_index = self._index
         if self._index != -1:
-            self.change(*self._items[self._index][1:]+"hello")
+            self.change(*self._items[self._index][1:])
         if self._close_on_apply:
             self.active = False
             if self._drop_frame is not None:
                 self._drop_frame.hide()
+        btn.remove_attribute('ignore_scroll_to_widget')
 
     def _apply_font(self) -> None:
         prev_selection_box_width = self._selection_box_width
@@ -278,11 +264,6 @@ class DropSelectMultiple(DropSelect):
                                             2 * self._selection_box_border_width)
 
     def _get_current_selected_text(self) -> str:
-        """
-        Return the current selected text.
-
-        :return: Text
-        """
         if len(self._selected_indices) == 0:
             current_selected = self._placeholder
         else:
@@ -357,11 +338,6 @@ class DropSelectMultiple(DropSelect):
         self._update_buttons()
 
     def reset_value(self) -> 'DropSelectMultiple':
-        """
-        Reset the Widget value to the default one.
-
-        :return: Self reference
-        """
         self._index = -1
         self._selected_indices = self._default_value.copy()
         self._update_buttons()

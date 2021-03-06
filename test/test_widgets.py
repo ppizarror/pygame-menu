@@ -1365,6 +1365,31 @@ class WidgetsTest(unittest.TestCase):
         self.assertTrue(drop2.active)
         self.assertTrue(drop2._drop_frame.is_visible())
 
+        # Test change
+        test = [-1]
+
+        def onchange(value) -> None:
+            """
+            Test onchange.
+            """
+            test[0] = value[1]
+
+        drop2.set_onchange(onchange)
+
+        # Pick any option
+        menu.render()
+        self.assertEqual(test, [-1])
+        drop2._option_buttons[0].apply()
+        self.assertEqual(test[0], [0])
+        drop2._option_buttons[0].apply()
+        self.assertEqual(test[0], [])
+        drop2._option_buttons[0].apply()
+        drop2._option_buttons[1].apply()
+        self.assertEqual(test[0], [0])  # As max selected is only 1
+        drop2._max_selected = 2
+        drop2._option_buttons[1].apply()
+        self.assertEqual(test[0], [0, 1])
+
     def test_dropselect(self) -> None:
         """
         Test dropselect widget.
