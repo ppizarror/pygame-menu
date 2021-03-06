@@ -741,12 +741,12 @@ class WidgetsTest(unittest.TestCase):
         widget.set_value('#ffffff')
         self.assertEqual(widget.get_width(), width)
 
-    # noinspection SpellCheckingInspection
     def test_label(self) -> None:
         """
         Test label widget.
         """
         menu = MenuUtils.generic_menu()
+        # noinspection SpellCheckingInspection
         label = menu.add.label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                                'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
                                'quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
@@ -766,6 +766,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(w.get_font_info()['size'], 3)
         w.draw(surface)
         self.assertFalse(w.update([]))
+        # noinspection SpellCheckingInspection
         label_text = ['Lorem ipsum dolor sit amet,', 'consectetur adipiscing elit, sed',
                       'do eiusmod tempor incididunt ut', 'labore et dolore magna aliqua. Ut',
                       'enim ad minim veniam, quis', 'nostrud exercitation ullamco',
@@ -801,6 +802,50 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label._decorator._total_decor(), 0)
         label.add_underline((0, 0, 0), 1, 1, force_render=True)
         self.assertEqual(label._decorator._total_decor(), 1)
+
+        # Test generator
+        gen_index = [-1]
+
+        def generator() -> str:
+            """
+            Label generator.
+            """
+            s = ('a', 'b', 'c')
+            gen_index[0] = (gen_index[0] + 1) % len(s)
+            return s[gen_index[0]]
+
+        self.assertNotIn(label, menu._update_widgets)
+        label.set_title_generator(generator)
+        self.assertIn(label, menu._update_widgets)
+        self.assertEqual(label.get_title(), 'nice')
+        label._render()
+        self.assertEqual(label.get_title(), 'nice')
+        label.render()
+        self.assertEqual(label.get_title(), 'nice')
+
+        label.update([])
+        self.assertEqual(label.get_title(), 'a')
+        label.update([])
+        self.assertEqual(label.get_title(), 'b')
+        label.update([])
+        self.assertEqual(label.get_title(), 'c')
+        label.update([])
+        self.assertEqual(label.get_title(), 'a')
+
+        # Update title with generator, it should raise a warning
+        label.set_title('this should be overridden')
+
+        label.set_title('this should be overridden 2')
+
+        label.update([])
+        self.assertEqual(label.get_title(), 'b')
+
+        # Remove generator, it also should remove the widget from update
+        label.set_title_generator(None)
+        self.assertNotIn(label, menu._update_widgets)
+        label.update([])
+        self.assertEqual(label.get_title(), 'b')
+        self.assertIsNone(label._title_generator)
 
     def test_textinput(self) -> None:
         """

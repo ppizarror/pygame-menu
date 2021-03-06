@@ -32,13 +32,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['TextInput']
 
 import math
-import warnings
 
 import pygame
 
 from pygame_menu.controls import KEY_MOVE_UP, KEY_MOVE_DOWN, KEY_APPLY
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, get_finger_pos
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, NumberType, \
@@ -1804,7 +1803,7 @@ class TextInput(Widget):
                 # Any other key, add as input
                 elif event.key not in self._ignore_keys and hasattr(event, 'unicode'):
                     if event.unicode == ' ' and event.key != 32:
-                        warnings.warn(
+                        warn(
                             '{0} received "{1}" unicode but key is different than 32 ({2}), '
                             'check if event has defined the proper unicode char'
                             ''.format(self.get_class_id(), event.unicode, event.key)

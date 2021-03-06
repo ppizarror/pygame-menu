@@ -46,8 +46,6 @@ __all__ = [
 
 ]
 
-import warnings
-
 import pygame
 import pygame_menu
 
@@ -58,7 +56,7 @@ from pygame_menu.locals import CURSOR_HAND, ORIENTATION_VERTICAL, ORIENTATION_HO
     FINGERMOTION
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.utils import assert_alignment, make_surface, assert_vector, assert_orientation, \
-    assert_color, fill_gradient, parse_padding, uuid4
+    assert_color, fill_gradient, parse_padding, uuid4, warn
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.label import Label
@@ -712,7 +710,7 @@ class Frame(Widget):
 
         # If has title
         if self._has_title:
-            warnings.warn('previous {0} title has been removed'.format(self.get_class_id()))
+            warn('previous {0} title has been removed'.format(self.get_class_id()))
             self.remove_title()
 
         return self
@@ -1476,7 +1474,7 @@ class Frame(Widget):
             '{0} must be configured before packing'.format(widget.get_class_id())
 
         if widget.get_margin() != (0, 0) and self._pack_margin_warning:
-            warnings.warn(
+            warn(
                 '{0} margin should be (0, 0) if packed, but received {1}; {2}.pack() does not consider '
                 'previous widget margin. Set frame._pack_margin_warning=False to hide this warning'
                 ''.format(widget.get_class_id(), widget.get_margin(), self.get_class_id())

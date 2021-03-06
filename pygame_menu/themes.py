@@ -45,14 +45,13 @@ __all__ = [
 ]
 
 import copy
-import warnings
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW
 from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, assert_position, assert_color, \
-    is_callable, format_color, assert_position_vector
+    is_callable, format_color, assert_position_vector, warn
 from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
     MENUBAR_STYLE_UNDERLINE_TITLE
@@ -416,7 +415,7 @@ class Theme(object):
 
         # Compatibility check
         if kwargs.get('menubar_close_button', None) is not None:
-            warnings.warn(
+            warn(
                 'menubar_close_button has been moved to title_close_button. '
                 'This alert will be removed in v4.1'
             )

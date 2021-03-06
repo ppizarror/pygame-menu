@@ -31,11 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['Label']
 
-import warnings
-
 import pygame
 
-from pygame_menu.utils import assert_color, is_callable
+from pygame_menu.utils import assert_color, is_callable, warn
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Any, CallbackType, List, Union, Tuple, Optional, ColorType, \
@@ -140,7 +138,7 @@ class Label(Widget):
     def set_title(self, title: str) -> 'Label':
         super(Label, self).set_title(title)
         if self._title_generator is not None:
-            warnings.warn(
+            warn(
                 '{0} title generator is not None, thus, the new title "{1}" will be '
                 'overridden after next update'.format(self.get_class_id(), title)
             )

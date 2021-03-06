@@ -34,7 +34,6 @@ __all__ = ['Decorator']
 
 from math import pi
 import math
-import warnings
 
 import pygame
 import pygame_menu
@@ -45,7 +44,7 @@ import pygame.gfxdraw as gfxdraw
 from pygame_menu._base import Base
 from pygame_menu.font import FontType
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
-    uuid4
+    uuid4, warn
 
 from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
@@ -173,7 +172,7 @@ class Decorator(Base):
 
         # Check sizes
         if self._total_decor() >= 300 and not self.cache:
-            warnings.warn('cache is recommended if the total number of decorations exceeds 300')
+            warn('cache is recommended if the total number of decorations exceeds 300')
 
         # Set automatically as enabled
         self._decor_enabled[decor_id] = True

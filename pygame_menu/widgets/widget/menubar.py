@@ -49,14 +49,12 @@ __all__ = [
 
 ]
 
-import warnings
-
 import pygame
 import pygame.gfxdraw as gfxdraw
 
 from pygame_menu.controls import JOY_BUTTON_BACK
 from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_NORTH, POSITION_SOUTH
-from pygame_menu.utils import assert_color, get_finger_pos
+from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, \
@@ -214,7 +212,7 @@ class MenuBar(Widget):
         c_dif_2 = abs(c_back[1] - self._font_color[1])
         c_dif_3 = abs(c_back[2] - self._font_color[2])
         if c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
-            warnings.warn(
+            warn(
                 'title font color {0} is {3} to the {1} background color {2}, consider '
                 'editing your Theme'.format(
                     self._font_color,

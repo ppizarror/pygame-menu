@@ -35,7 +35,6 @@ from io import BytesIO
 from pathlib import Path
 import re
 import textwrap
-import warnings
 import webbrowser
 
 import pygame
@@ -48,7 +47,7 @@ from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, OR
 from pygame_menu.font import assert_font
 from pygame_menu.scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, uuid4, parse_padding, \
-    assert_position_vector
+    assert_position_vector, warn
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
@@ -527,7 +526,7 @@ class WidgetManager(Base):
             try:
                 self._check_kwargs(kwargs)
             except ValueError:
-                warnings.warn('button cannot accept kwargs. If you want to use kwargs options set accept_kwargs=True')
+                warn('button cannot accept kwargs. If you want to use kwargs options set accept_kwargs=True')
                 raise
 
         self._configure_widget(widget=widget, **attributes)
@@ -2392,7 +2391,7 @@ class WidgetManager(Base):
 
         # Raise warning if adding button with Menu
         if isinstance(widget, pygame_menu.widgets.Button) and widget.to_menu:
-            warnings.warn(
+            warn(
                 'prefer adding nested submenus using add_button method instead, '
                 'unintended behaviours may occur'
             )

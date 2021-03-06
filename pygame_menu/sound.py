@@ -62,13 +62,14 @@ __all__ = [
 from pathlib import Path
 import os.path as path
 import time
-import warnings
 
 from pygame import error as pygame_error
 from pygame import mixer
 from pygame import vernum as pygame_version
 
 from pygame_menu._base import Base
+from pygame_menu.utils import warn
+
 from pygame_menu._types import NumberType, Dict, Any, Optional, Union, NumberInstance
 
 try:  # pygame<2.0.0 compatibility
@@ -198,9 +199,9 @@ class Sound(Base):
                                allowedchanges=allowedchanges)
 
             except Exception as e:
-                warnings.warn('sound error: ' + str(e))
+                warn('sound error: ' + str(e))
             except pygame_error as e:
-                warnings.warn('sound engine could not be initialized, pygame error: ' + str(e))
+                warn('sound engine could not be initialized, pygame error: ' + str(e))
 
         # Store mixer configs
         self._mixer_configs = {
@@ -323,7 +324,7 @@ class Sound(Base):
             # noinspection PyTypeChecker
             sound_data = mixer.Sound(file=sound_file)
         except pygame_error:
-            warnings.warn(
+            warn(
                 'the sound file "{0}" could not be loaded, it has been disabled'
                 ''.format(sound_file)
             )

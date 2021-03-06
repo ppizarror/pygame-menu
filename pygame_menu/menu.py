@@ -36,7 +36,6 @@ import math
 import os
 import sys
 import time
-import warnings
 
 import pygame
 import pygame.gfxdraw as gfxdraw
@@ -53,7 +52,7 @@ from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 from pygame_menu.themes import Theme, THEME_DEFAULT
 from pygame_menu.utils import widget_terminal_title, TerminalColors, is_callable, assert_vector, make_surface, \
-    check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos
+    check_key_pressed_valid, mouse_motion_current_mouse_position, get_finger_pos, warn
 from pygame_menu.widgets import Frame, Widget, MenuBar
 from pygame_menu.widgets.core.widget import check_widget_mouseleave, WIDGET_MOUSEOVER
 
@@ -225,13 +224,13 @@ class Menu(Base):
             _title = title
             title = height
             height = _title
-            warnings.warn('Menu constructor changed from Menu(height, width, title, ...) to '
-                          'Menu(title, width, height, ...). This alert will be removed in v4.1')
+            warn('Menu constructor changed from Menu(height, width, title, ...) to '
+                 'Menu(title, width, height, ...). This alert will be removed in v4.1')
 
         # Check events compatibility
         if onclose == _events.DISABLE_CLOSE:
-            warnings.warn('DISABLE_CLOSE event is deprecated and it will be removed in v4.1. '
-                          'Use events.NONE instead (or None)')
+            warn('DISABLE_CLOSE event is deprecated and it will be removed in v4.1. '
+                 'Use events.NONE instead (or None)')
             onclose = None
 
         assert isinstance(width, NumberInstance)
@@ -295,7 +294,7 @@ class Menu(Base):
             assert column_min_width >= 0, 'column_min_width must be equal or greater than zero'
             if columns != 1:
                 if column_min_width > 0:  # Ignore the default value
-                    warnings.warn(
+                    warn(
                         'column_min_width can be a single number if there is only 1 column, but '
                         'there is {0} columns. Thus, column_min_width should be a vector of {0} items. '
                         'By default a vector has been created using the same value for each column'.format(columns)
@@ -316,7 +315,7 @@ class Menu(Base):
         # Set column max width
         if column_max_width is not None:
             # if isinstance(column_max_width, (tuple, list)) and len(column_max_width) == 1:
-            #     warnings.warn(
+            #     warn(
             #       'as there is only 1 column, prefer using column_max_width as a number '
             #       'NumberInstance instead a list/tuple'
             #     )
@@ -324,7 +323,7 @@ class Menu(Base):
             if isinstance(column_max_width, NumberInstance):
                 assert column_max_width >= 0, 'column_max_width must be equal or greater than zero'
                 if columns != 1:
-                    warnings.warn(
+                    warn(
                         'column_max_width can be a single number if there is only 1 column, but '
                         'there is {0} columns. Thus, column_max_width must be a vector of {0} items. '
                         'By default a vector has been created using the same value for each column'.format(columns)
@@ -459,7 +458,7 @@ class Menu(Base):
 
         # If centering is enabled, but widget offset in the vertical is different than zero a warning is raised
         if self._auto_centering and self._widget_offset[1] != 0:
-            warnings.warn(
+            warn(
                 'menu (title "{0}") is vertically centered (center_content=True), but widget '
                 'offset (from theme) is different than zero ({1}px). Auto-centering has been disabled'
                 ''.format(title, self._widget_offset[1])
@@ -478,7 +477,7 @@ class Menu(Base):
 
         # If centering is enabled, but ScrollArea margin in the vertical is different than zero a warning is raised
         if self._auto_centering and self._scrollarea_margin[1] != 0:
-            warnings.warn(
+            warn(
                 'menu (title "{0}") is vertically centered (center_content=True), but ScrollArea '
                 'outer margin (from theme) is different than zero ({1}px). Auto-centering has been disabled'
                 ''.format(title, round(self._scrollarea_margin[1], 3))
@@ -949,7 +948,7 @@ class Menu(Base):
         :param new_method: New method name
         :return: None
         """
-        warnings.warn(
+        warn(
             'Menu method {0} is deprecated. Use menu.add.{1} instead, (see docs). '
             'This method will be removed in v4.1'.format(method, new_method)
         )
@@ -1212,7 +1211,7 @@ class Menu(Base):
                 try:
                     widget.update_position()
                 except:
-                    warnings.warn('{0} failed to update'.format(widget.get_class_id()))
+                    warn('{0} failed to update'.format(widget.get_class_id()))
                     raise
                 has_frame = True
 
@@ -3088,7 +3087,7 @@ class Menu(Base):
 
         widget_scroll = widget.get_scrollarea()
         if widget_scroll is None:
-            warnings.warn(
+            warn(
                 '{0} scrollarea is None, thus, scroll to widget cannot be performed'
                 ''.format(widget.get_class_id())
             )
@@ -3695,7 +3694,7 @@ class Menu(Base):
                             prev_indx = self._widgets.index(jw)
             except ValueError as e:
                 print('[ERROR] while requesting widget {0}'.format(jw.get_class_id()))
-                warnings.warn(str(e))
+                warn(str(e))
             indx += 1
         process_non_menu_frame(indx)
         close_frames(0)
@@ -3763,7 +3762,7 @@ class _MenuRuntimeErrorConfig(object):
         """
         if throw_runtime:
             raise RuntimeError(msg)
-        warnings.warn(msg)
+        warn(msg)
 
 
 class _MenuSizingException(Exception):

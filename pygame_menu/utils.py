@@ -62,6 +62,9 @@ __all__ = [
 ]
 
 import functools
+import inspect
+import sys
+import traceback
 import types
 import uuid
 import warnings
@@ -75,9 +78,10 @@ from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_C
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType
+    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType, Dict
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
+WARNINGS_LAST_MESSAGES: Dict[int, bool] = {}
 
 
 def assert_alignment(align: str) -> None:
@@ -325,7 +329,7 @@ def format_color(
                 c = pygame.Color(color)
         except ValueError:
             if warn_if_invalid:
-                warnings.warn('invalid color value "{0}"'.format(color))
+                warn('invalid color value "{0}"'.format(color))
             else:
                 raise
             return color
@@ -449,7 +453,7 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
             # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
-        warnings.warn('could not establish widget cursor, invalid value {0}'.format(cursor))
+        warn('could not establish widget cursor, invalid value {0}'.format(cursor))
 
 
 def uuid4(short: bool = False) -> str:
@@ -462,14 +466,34 @@ def uuid4(short: bool = False) -> str:
     return str(uuid.uuid4())[:18 if not short else 8]
 
 
-def warn(message: str) -> None:
+def warn(message: str, print_stack: bool = True) -> None:
     """
-    Warnings.warn method.
+    Warnings warn method.
 
     :param message: Message to warn about
+    :param print_stack: Print stack trace of the call
     :return: None
     """
-    warnings.warn(message)
+    assert isinstance(message, str)
+
+    # noinspection PyUnresolvedReferences,PyProtectedMember
+    frame = sys._getframe().f_back
+    frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
+
+    # Check if message in dict
+    msg_hash = hash(message)
+    msg_in_hash = False
+    try:
+        msg_in_hash = WARNINGS_LAST_MESSAGES[msg_hash]
+    except KeyError:
+        pass
+
+    if not msg_in_hash and print_stack:
+        traceback.print_stack(frame, limit=5)
+        WARNINGS_LAST_MESSAGES[msg_hash] = True
+
+    warnings.showwarning(message, UserWarning, frame_info[0], frame_info[1])
+    # warnings.warn(message, stacklevel=2)
 
 
 def widget_terminal_title(
