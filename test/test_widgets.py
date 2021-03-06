@@ -927,6 +927,7 @@ class WidgetsTest(unittest.TestCase):
         textinput.draw(surface)
         textinput._copy()
         textinput._paste()
+        textinput._block_copy_paste = False
         textinput._cut()
         self.assertEqual(textinput.get_value(), '')
         textinput._undo()
@@ -941,6 +942,29 @@ class WidgetsTest(unittest.TestCase):
         textinput_nocopy._copy()
         textinput_nocopy._paste()
         textinput_nocopy._cut()
+        self.assertEqual(textinput_nocopy.get_value(), 'this cannot be copied')
+
+        # Test copy/paste without block
+        textinput_copy = menu.add.text_input('title',
+                                             input_underline='_',
+                                             maxwidth=20,
+                                             maxchar=20)
+        textinput_copy.set_value('this value should be cropped as this is longer than the max char')
+        self.assertFalse(textinput_copy._block_copy_paste)
+        textinput_copy._copy()
+        self.assertTrue(textinput_copy._block_copy_paste)
+        textinput_copy._block_copy_paste = False
+        textinput_copy._cut()
+        self.assertEqual(textinput_copy.get_value(), '')
+        textinput_copy._block_copy_paste = False
+        textinput_copy._paste()
+        self.assertEqual(textinput_copy.get_value(), 'er than the max char')
+        textinput_copy._cut()
+        textinput_copy._block_copy_paste = False
+        self.assertEqual(textinput_copy.get_value(), '')
+        textinput_copy._valid_chars = ['e', 'r']
+        textinput_copy._paste()
+        self.assertEqual(textinput_copy.get_value(), 'erer')
 
         # Assert events
         textinput.update(PygameEventUtils.key(0, keydown=True, testmode=False))

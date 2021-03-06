@@ -62,7 +62,7 @@ __all__ = [
 ]
 
 import functools
-import inspect
+# import inspect
 import sys
 import traceback
 import types
@@ -478,7 +478,7 @@ def warn(message: str, print_stack: bool = True) -> None:
 
     # noinspection PyUnresolvedReferences,PyProtectedMember
     frame = sys._getframe().f_back
-    frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
+    # frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
 
     # Check if message in dict
     msg_hash = hash(message)

@@ -1229,6 +1229,9 @@ class TextInput(Widget):
 
         :return: ``True`` if cut
         """
+        if not self._copy_paste_enabled:  # Ignore cut
+            return False
+
         self._copy()  # This is a safe operation, all checks have been passed
 
         # If text is selected
@@ -1310,7 +1313,6 @@ class TextInput(Widget):
 
         # If string is valid
         if self._check_input_type(new_string):
-
             # Update char size
             for char in new_string:
                 if char not in self._keychar_size:
@@ -1324,6 +1326,7 @@ class TextInput(Widget):
             self.change()
             self._update_maxlimit_renderbox()
             self._block_copy_paste = True
+
         else:
             self._sound.play_event_error()
             return False
