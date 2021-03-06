@@ -1050,6 +1050,27 @@ class WidgetsTest(unittest.TestCase):
         textinput.update(PygameEventUtils.keydown_mod_alt(pygame.K_x))
         self.assertEqual(textinput.get_value(), '±±')
 
+        # Test tab
+        self.assertEqual(textinput._tab_size, 4)
+        textinput.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))
+        self.assertEqual(textinput.get_value(), '±±    ')
+
+        # Test mouse
+        textinput._selected = True
+        textinput._selection_time = 0
+        textinput.update(PygameEventUtils.middle_rect_click(textinput))
+        self.assertTrue(textinput._cursor_visible)
+        textinput._select_all()
+        textinput._selection_active = True
+        self.assertEqual(textinput._cursor_position, 6)
+        self.assertEqual(textinput._selection_box, [0, 6])
+        textinput.update(PygameEventUtils.middle_rect_click(textinput, evtype=pygame.MOUSEBUTTONDOWN))
+        self.assertEqual(textinput._selection_box, [0, 0])
+
+        # Check click pos
+        textinput._check_mouse_collide_input(PygameEventUtils.middle_rect_click(textinput)[0].pos)
+        self.assertEqual(textinput._cursor_position, 6)
+
         # Update mouse
         for i in range(50):
             textinput.update(PygameEventUtils.key(pygame.K_t, keydown=True, char='t'))
