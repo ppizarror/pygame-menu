@@ -113,6 +113,11 @@ Metadata: Information about the project
 """
 __author__ = 'Pablo Pizarro R.'
 __contributors__ = [
+
+    # Author
+    'ppizarror',
+
+    # Contributors
     'anxuae',
     'arpruss',
     'asierrayk',
@@ -125,11 +130,11 @@ __contributors__ = [
     'notrurs',
     'NullP01nt',
     'PandaRoux8',
-    'ppizarror',
     'Rifqi31',
     'thisIsMikeKane',
     'werdeil',
     'zPaw'
+
 ]
 __copyright__ = 'Copyright 2017-2021 Pablo Pizarro R. @ppizarror'
 __description__ = 'A menu for pygame, simple, lightweight and easy to use'

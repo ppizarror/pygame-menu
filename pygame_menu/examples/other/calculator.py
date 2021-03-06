@@ -83,7 +83,7 @@ class CalculatorApp(object):
 
         # Add the layout
         self.menu.add.vertical_margin(40)
-        menu_deco.add_rectangle(10, 40, 300, 55, (60, 63, 65), use_center_positioning=False)
+        menu_deco.add_rectangle(10, 88, 300, 55, (60, 63, 65), use_center_positioning=False)
         self.screen = self.menu.add.label('0', background_color=None, margin=(10, 0),
                                           selectable=True, selection_effect=None)
         self.menu.add.vertical_margin(20)
@@ -94,51 +94,51 @@ class CalculatorApp(object):
         f1 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b1 = f1.pack(self.menu.add.button('1', lambda: self._press(1), cursor=cursor))
         b2 = f1.pack(self.menu.add.button('2', lambda: self._press(2), cursor=cursor),
-                     alignment=pygame_menu.locals.ALIGN_CENTER)
+                     align=pygame_menu.locals.ALIGN_CENTER)
         b3 = f1.pack(self.menu.add.button('3', lambda: self._press(3), cursor=cursor),
-                     alignment=pygame_menu.locals.ALIGN_RIGHT)
+                     align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f2 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b4 = f2.pack(self.menu.add.button('4', lambda: self._press(4), cursor=cursor))
         b5 = f2.pack(self.menu.add.button('5', lambda: self._press(5), cursor=cursor),
-                     alignment=pygame_menu.locals.ALIGN_CENTER)
+                     align=pygame_menu.locals.ALIGN_CENTER)
         b6 = f2.pack(self.menu.add.button('6', lambda: self._press(6), cursor=cursor),
-                     alignment=pygame_menu.locals.ALIGN_RIGHT)
+                     align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f3 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b7 = f3.pack(self.menu.add.button('7', lambda: self._press(7), cursor=cursor))
         b8 = f3.pack(self.menu.add.button('8', lambda: self._press(8), cursor=cursor),
-                     alignment=pygame_menu.locals.ALIGN_CENTER)
+                     align=pygame_menu.locals.ALIGN_CENTER)
         b9 = f3.pack(self.menu.add.button('9', lambda: self._press(9), cursor=cursor),
-                     alignment=pygame_menu.locals.ALIGN_RIGHT)
+                     align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f4 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b0 = f4.pack(self.menu.add.button('0', lambda: self._press(0), cursor=cursor))
         b_plus = f4.pack(self.menu.add.button('+', lambda: self._press('+'), cursor=cursor),
-                         alignment=pygame_menu.locals.ALIGN_CENTER)
+                         align=pygame_menu.locals.ALIGN_CENTER)
         b_minus = f4.pack(self.menu.add.button('-', lambda: self._press('-'), cursor=cursor),
-                          alignment=pygame_menu.locals.ALIGN_RIGHT)
+                          align=pygame_menu.locals.ALIGN_RIGHT)
         self.menu.add.vertical_margin(10)
 
         f5 = self.menu.add.frame_h(299, 54, margin=(10, 0))
         b_times = f5.pack(self.menu.add.button('x', lambda: self._press('x'), cursor=cursor))
         b_div = f5.pack(self.menu.add.button('/', lambda: self._press('/'), cursor=cursor),
-                        alignment=pygame_menu.locals.ALIGN_CENTER)
+                        align=pygame_menu.locals.ALIGN_CENTER)
         beq = f5.pack(self.menu.add.button('=', lambda: self._press('='), cursor=cursor),
-                      alignment=pygame_menu.locals.ALIGN_RIGHT)
+                      align=pygame_menu.locals.ALIGN_RIGHT)
 
         # Add decorator for each object
         for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus, b_minus, b_times, b_div):
             w_deco = widget.get_decorator()
             if widget != beq:
-                w_deco.add_rectangle(-37.5, -27.5, 75, 55, (15, 15, 15))
-                on_layer = w_deco.add_rectangle(-37.5, -27.5, 75, 55, (84, 84, 84))
+                w_deco.add_rectangle(-37, -27, 74, 54, (15, 15, 15))
+                on_layer = w_deco.add_rectangle(-37, -27, 74, 54, (84, 84, 84))
             else:
-                w_deco.add_rectangle(-37.5, -27.5, 75, 55, (38, 96, 103))
-                on_layer = w_deco.add_rectangle(-37.5, -27.5, 75, 55, (40, 171, 187))
+                w_deco.add_rectangle(-37, -27, 74, 54, (38, 96, 103))
+                on_layer = w_deco.add_rectangle(-37, -27, 74, 54, (40, 171, 187))
             w_deco.disable(on_layer)
             widget.set_attribute('on_layer', on_layer)
 

@@ -34,7 +34,6 @@ __all__ = ['Decorator']
 
 from math import pi
 import math
-import warnings
 
 import pygame
 import pygame_menu
@@ -45,7 +44,7 @@ import pygame.gfxdraw as gfxdraw
 from pygame_menu._base import Base
 from pygame_menu.font import FontType
 from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
-    uuid4
+    uuid4, warn
 
 from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
@@ -173,7 +172,7 @@ class Decorator(Base):
 
         # Check sizes
         if self._total_decor() >= 300 and not self.cache:
-            warnings.warn('cache is recommended if the total number of decorations exceeds 300')
+            warn('cache is recommended if the total number of decorations exceeds 300')
 
         # Set automatically as enabled
         self._decor_enabled[decor_id] = True
@@ -294,9 +293,9 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
-        :param radius: Circle radius (px)
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
+        :param radius: Circle radius in px
         :param color: Color of the polygon
         :param filled: If ``True`` fills the polygon with the given color
         :param width: Line border width. Only valid if ``filled=False``
@@ -338,9 +337,9 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
-        :param radius: Circle radius (px)
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
+        :param radius: Circle radius in px
         :param init_angle: Initial angle in degrees, from ``0`` to ``360``
         :param final_angle: Final angle in degrees, from ``0`` to ``360``
         :param color: Color of the polygon
@@ -378,9 +377,9 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
-        :param radius: Circle radius (px)
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
+        :param radius: Circle radius in px
         :param init_angle: Initial angle in degrees, from ``0`` to ``360``
         :param final_angle: Final angle in degrees, from ``0`` to ``360``
         :param color: Color of the polygon
@@ -413,8 +412,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param surface: Surface
         :param prev: If ``True`` draw previous the object, else draws post
         :param centered: If ``True`` the surface is centered
@@ -447,8 +446,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param image: ``BaseImage`` object
         :param prev: If ``True`` draw previous the object, else draws post
         :param centered: If ``True`` the image is centered
@@ -476,8 +475,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param rect: Rect to draw
         :param color: Color of the rect
         :param width: Border width of the rect. If ``0`` draw a filled rectangle
@@ -509,8 +508,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param width: Rectangle width
         :param height: Rectangle height
         :param color: Color of the rectangle
@@ -543,8 +542,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param text: Text to draw
         :param font: Font path or pygame object
         :param size: Size of the font to render
@@ -586,8 +585,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param rx: Horizontal radius of the ellipse
         :param ry: Vertical radius of the ellipse
         :param color: Color of the polygon
@@ -618,8 +617,8 @@ class Decorator(Base):
         kwargs (Optional)
             - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
 
-        :param x: X position (px), being ``0`` the center of the object
-        :param y: Y position (px), being ``0`` the center of the object
+        :param x: X position in px, being ``0`` the center of the object
+        :param y: Y position in px, being ``0`` the center of the object
         :param color: Color of the pixel
         :param prev: If ``True`` draw previous the object, else draws post
         :param kwargs: Optional keyword arguments
@@ -686,8 +685,8 @@ class Decorator(Base):
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
-        :param tx: X offset of the texture (px)
-        :param ty: Y offset of the texture (px)
+        :param tx: X offset of the texture in px
+        :param ty: Y offset of the texture in px
         :param prev: If ``True`` draw previous the object, else draws post
         :param kwargs: Optional keyword arguments
         :return: ID of the decoration

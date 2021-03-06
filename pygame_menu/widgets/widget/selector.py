@@ -76,9 +76,9 @@ def check_selector_items(items: Union[Tuple, List]) -> None:
     for e in items:
         assert len(e) >= 1, \
             'length of each item on item list must be equal or greater than 1 (i.e. cannot be empty)'
-        msg = 'first element of each item on list must be a string ' \
-              '(the title of each item), but received "{0}"'.format(e[0])
-        assert isinstance(e[0], (str, bytes)), msg
+        assert isinstance(e[0], (str, bytes)), \
+            'first element of each item on list must be a string ' \
+            '(the title of each item), but received "{0}"'.format(e[0])
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -113,12 +113,12 @@ class Selector(Widget):
     :param onselect: Function when selecting the widget
     :param style: Selector style (visual)
     :param style_fancy_arrow_color: Arrow color of fancy style
-    :param style_fancy_arrow_margin: Margin of arrows on x-axis and y-axis in px; format: (left, right, vertical)
+    :param style_fancy_arrow_margin: Margin of arrows on x-axis and y-axis (x, y) in px; format: (left, right, vertical)
     :param style_fancy_bgcolor: Background color of fancy style
     :param style_fancy_bordercolor: Border color of fancy style
     :param style_fancy_borderwidth: Border width of fancy style
-    :param style_fancy_box_inflate: Box inflate of fancy style (x, y) in px
-    :param style_fancy_box_margin: Box margin (x, y) in fancy style from title in px
+    :param style_fancy_box_inflate: Box inflate of fancy style on x-axis and y-axis (x, y) in px
+    :param style_fancy_box_margin: Box margin on x-axis and y-axis (x, y) in fancy style from title in px
     :param kwargs: Optional keyword arguments
     """
     _index: int
@@ -413,6 +413,8 @@ class Selector(Widget):
                 self._default_value = 0
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         updated = False
@@ -474,8 +476,5 @@ class Selector(Widget):
                         else:
                             self._right()
                         updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

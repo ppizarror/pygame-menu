@@ -49,18 +49,16 @@ __all__ = [
 
 ]
 
-import warnings
-
 import pygame
 import pygame.gfxdraw as gfxdraw
 
 from pygame_menu.controls import JOY_BUTTON_BACK
-from pygame_menu.locals import FINGERUP, POSITION_EAST
-from pygame_menu.utils import assert_color, get_finger_pos
+from pygame_menu.locals import FINGERUP, POSITION_EAST, POSITION_WEST, POSITION_NORTH, POSITION_SOUTH
+from pygame_menu.utils import assert_color, get_finger_pos, warn
 from pygame_menu.widgets.core import Widget
 
 from pygame_menu._types import Tuple, CallbackType, Tuple2IntType, Literal, NumberType, Any, \
-    Optional, NumberInstance, ColorInputType, EventVectorType
+    Optional, NumberInstance, ColorInputType, EventVectorType, VectorInstance, List, ColorType
 
 # Menubar styles
 MENUBAR_STYLE_ADAPTIVE = 1000
@@ -95,15 +93,17 @@ class MenuBar(Widget):
     :param background_color: Background color
     :param menubar_id: ID of the MenuBar
     :param back_box: Draw a back-box button on header
+    :param back_box_background_color: Back-box button color
     :param mode: Mode of drawing the bar
     :param modify_scrollarea: If ``True`` it modifies the scrollbars of the scrollarea depending on the bar mode
-    :param offsetx: Offset x-position of title (px)
-    :param offsety: Offset y-position of title (px)
+    :param offsetx: Offset x-position of title in px
+    :param offsety: Offset y-position of title in px
     :param onreturn: Callback when pressing the back-box button
     :param args: Optional arguments for callbacks
     :param kwargs: Optional keyword arguments for callbacks
     """
     _backbox: bool
+    _backbox_background_color: ColorType
     _backbox_border_width: int
     _backbox_pos: Any
     _backbox_rect: Optional['pygame.Rect']
@@ -112,8 +112,10 @@ class MenuBar(Widget):
     _offsetx: NumberType
     _offsety: NumberType
     _polygon_pos: Any
+    _scrollbar_deltas: List[Tuple[int, Tuple2IntType]]
     _style: int
     _width: int
+    fixed: bool
 
     def __init__(
             self,
@@ -122,6 +124,7 @@ class MenuBar(Widget):
             background_color: ColorInputType,
             menubar_id: str = '',
             back_box: bool = False,
+            back_box_background_color: ColorInputType = (0, 0, 0),
             mode: MenuBarStyleModeType = MENUBAR_STYLE_ADAPTIVE,
             modify_scrollarea: bool = True,
             offsetx: NumberType = 0,
@@ -134,6 +137,7 @@ class MenuBar(Widget):
         assert isinstance(back_box, bool)
 
         background_color = assert_color(background_color)
+        back_box_background_color = assert_color(back_box_background_color)
 
         # MenuBar has no ID
         super(MenuBar, self).__init__(
@@ -145,6 +149,7 @@ class MenuBar(Widget):
         )
 
         self._backbox = back_box
+        self._backbox_background_color = back_box_background_color
         self._backbox_border_width = 1  # px
         self._backbox_pos = None
         self._backbox_rect = None
@@ -155,12 +160,16 @@ class MenuBar(Widget):
         self._offsetx = 0
         self._offsety = 0
         self._polygon_pos = None
+        self._scrollbar_deltas = [(0, (0, 0)), (0, (0, 0)), (0, (0, 0)), (0, (0, 0))]  # north, east, south, west
         self._style = mode
         self._title = ''
         self._width = int(width)
 
         self.set_title(title, offsetx, offsety)
+
+        # Public's
         self.is_selectable = False
+        self.fixed = True
 
     def _apply_font(self) -> None:
         pass
@@ -196,23 +205,26 @@ class MenuBar(Widget):
             c_back = self._menu.get_theme().background_color
         else:
             c_back = self._background_color
-        if not isinstance(c_back, (tuple, list)):  # If is color
+        if not isinstance(c_back, VectorInstance):  # If is color
             return
         tol = 5
         c_dif_1 = abs(c_back[0] - self._font_color[0])
         c_dif_2 = abs(c_back[1] - self._font_color[1])
         c_dif_3 = abs(c_back[2] - self._font_color[2])
         if c_dif_1 < tol and c_dif_2 < tol and c_dif_3 < tol:
-            msg = 'title font color {0} is {3} to the {1} background color {2}, consider ' \
-                  'editing your Theme'.format(self._font_color,
-                                              'menu' if background_menu else 'title',
-                                              c_back,
-                                              'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar')
-            warnings.warn(msg)
+            warn(
+                'title font color {0} is {3} to the {1} background color {2}, consider '
+                'editing your Theme'.format(
+                    self._font_color,
+                    'menu' if background_menu else 'title',
+                    c_back,
+                    'equal' if c_dif_1 == c_dif_2 == c_dif_3 == 0 else 'similar'
+                )
+            )
 
     def get_title_offset(self) -> Tuple2IntType:
         """
-        Return the title offset on x-axis and y-axis (x, y).
+        Return the title offset on x-axis and y-axis (x, y) in px.
 
         :return: Title offset
         """
@@ -255,8 +267,8 @@ class MenuBar(Widget):
         # Draw backbox if enabled
         if self._backbox_visible():
             # noinspection PyArgumentList
-            pygame.draw.rect(surface, self._font_selected_color, self._backbox_rect, self._backbox_border_width)
-            pygame.draw.polygon(surface, self._font_selected_color, self._backbox_pos)
+            pygame.draw.rect(surface, self._backbox_background_color, self._backbox_rect, self._backbox_border_width)
+            pygame.draw.polygon(surface, self._backbox_background_color, self._backbox_pos)
 
         surface.blit(self._surface,
                      (self._rect.topleft[0] + self._offsetx,
@@ -267,15 +279,25 @@ class MenuBar(Widget):
         Return scrollbar change (width, position) depending on the style of the menubar.
 
         :param position: Position of the scrollbar
-        :return: Change in length and position (px)
+        :return: Change in length and position in px
         """
         self._render()
-        if not self._modify_scrollarea:
+        if not self._modify_scrollarea or not self.is_visible():
             return 0, (0, 0)
-        if self._style == MENUBAR_STYLE_ADAPTIVE:
-            if position == POSITION_EAST:
-                t = self._polygon_pos[4][1] - self._polygon_pos[2][1]
-                return t, (0, -t)
+        if not self.fixed or self.is_floating():
+            if self._style == MENUBAR_STYLE_ADAPTIVE:
+                if position == POSITION_EAST:
+                    t = self._polygon_pos[4][1] - self._polygon_pos[2][1]
+                    return t, (0, -t)
+            return 0, (0, 0)
+        if position == POSITION_NORTH:
+            return self._scrollbar_deltas[0]
+        elif position == POSITION_EAST:
+            return self._scrollbar_deltas[1]
+        elif position == POSITION_SOUTH:
+            return self._scrollbar_deltas[2]
+        elif position == POSITION_WEST:
+            return self._scrollbar_deltas[3]
         return 0, (0, 0)
 
     def _render(self) -> Optional[bool]:
@@ -300,6 +322,7 @@ class MenuBar(Widget):
         self._apply_transforms()  # Rotation does not affect rect size
 
         dy = 0
+
         if self._style == MENUBAR_STYLE_ADAPTIVE:
             """
             A-------------------B                  D-E: 25 dx
@@ -307,7 +330,6 @@ class MenuBar(Widget):
             |      D------------C
             F----E/
             """
-
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height * 0.6
@@ -316,7 +338,9 @@ class MenuBar(Widget):
                 self._rect.y + self._rect.height
             f = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d, e, f
-            cross_size = self._rect.height * 0.6
+            cross_size = int(self._rect.height * 0.6)
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_SIMPLE:
@@ -325,13 +349,14 @@ class MenuBar(Widget):
             |****             x | *1,0 height
             D-------------------C
             """
-
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
-            cross_size = self._rect.height
+            cross_size = int(self._rect.height * self._backbox_visible())
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-self._rect.height, (0, self._rect.height)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_TITLE_ONLY:
@@ -340,14 +365,15 @@ class MenuBar(Widget):
             | *** |           x        *0,6 height
             D-----C
             """
-
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
                 self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
-            cross_size = self._rect.height * 0.6
+            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_TITLE_ONLY_DIAGONAL:
@@ -356,14 +382,15 @@ class MenuBar(Widget):
             | **** /          x        *0,6 height
             D-----C
             """
-
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._rect.width + 25 + self._offsetx, self._rect.y
             c = self._rect.x + self._rect.width + 5 + self._offsetx, \
                 self._rect.y + self._rect.height
             d = self._rect.x, self._rect.y + self._rect.height
             self._polygon_pos = a, b, c, d
-            cross_size = self._rect.height * 0.6
+            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=False)
 
         elif self._style == MENUBAR_STYLE_NONE:
@@ -371,11 +398,12 @@ class MenuBar(Widget):
             A------------------B
              ****             x        *0,6 height
             """
-
             a = self._rect.x, self._rect.y
             b = self._rect.x + self._width - 1, self._rect.y
             self._polygon_pos = a, b
-            cross_size = self._rect.height * 0.6
+            cross_size = int(self._rect.height * 0.6 * self._backbox_visible())
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=True)
 
         elif self._style == MENUBAR_STYLE_UNDERLINE:
@@ -384,14 +412,15 @@ class MenuBar(Widget):
             A-------------------B      *0,09 height
             D-------------------C
             """
-
-            dy = 4
+            # dy = 0
             a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
             b = self._rect.x + self._width - 1, self._rect.y + 0.91 * self._rect.height + dy
             c = self._rect.x + self._width - 1, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
-            cross_size = 0.6 * self._rect.height
+            cross_size = int(0.6 * self._rect.height * self._backbox_visible())
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-self._rect.height, (0, self._rect.height)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=True)
 
         elif self._style == MENUBAR_STYLE_UNDERLINE_TITLE:
@@ -400,14 +429,15 @@ class MenuBar(Widget):
             A----B                     *0,09 height
             D----C
             """
-
-            dy = 3
+            # dy = 3
             a = self._rect.x, self._rect.y + 0.91 * self._rect.height + dy
             b = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + 0.91 * self._rect.height + dy
             c = self._rect.x + self._rect.width + 5 + self._offsetx, self._rect.y + self._rect.height + dy
             d = self._rect.x, self._rect.y + self._rect.height + dy
             self._polygon_pos = a, b, c, d
-            cross_size = 0.6 * self._rect.height
+            cross_size = int(0.6 * self._rect.height * self._backbox_visible())
+            self._scrollbar_deltas = [(0, (0, self._rect.height)), (-cross_size, (0, cross_size)),
+                                      (0, (0, 0)), (-self._rect.height, (0, self._rect.height))]
             self._check_title_color(background_menu=True)
 
         else:
@@ -461,8 +491,8 @@ class MenuBar(Widget):
         Set the menubar title.
 
         :param title: Menu title
-        :param offsetx: Offset x-position of title (px)
-        :param offsety: Offset y-position of title (px)
+        :param offsetx: Offset x-position of title in px
+        :param offsety: Offset y-position of title in px
         :return: Self reference
         """
         assert isinstance(offsetx, NumberInstance)
@@ -475,11 +505,13 @@ class MenuBar(Widget):
         return self
 
     def get_height(self, apply_padding: bool = True, apply_selection: bool = False) -> int:
-        if self._floating:
+        if self._floating or not self.is_visible():
             return 0
         return super(MenuBar, self).get_height(apply_padding, apply_selection)
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         updated = False
@@ -512,8 +544,5 @@ class MenuBar(Widget):
                     self._sound.play_click_mouse()
                     self.apply()
                     updated = True
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

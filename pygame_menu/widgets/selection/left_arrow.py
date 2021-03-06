@@ -45,7 +45,7 @@ class LeftArrowSelection(ArrowSelection):
     Widget selection left arrow class.
     Creates an arrow to the left of the selected Menu item.
 
-    :param arrow_size: Size of arrow on x-axis and y-axis (width, height)
+    :param arrow_size: Size of arrow on x-axis and y-axis (width, height) in px
     :param arrow_right_margin: Distance from the arrow to the widget
     :param arrow_vertical_offset: Vertical offset of the arrow
     :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
@@ -74,10 +74,10 @@ class LeftArrowSelection(ArrowSelection):
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         # A
-        #   \B      widget
+        #   \B        widget
         # C /
-        #    <------>
-        #     margin
+        #     <------>
+        #      margin
         rect = widget.get_rect()
         a = (rect.topleft[0] - self._arrow_size[0] - self._arrow_right_margin,
              int(rect.midleft[1] - self._arrow_size[1] / 2 + self._arrow_vertical_offset))

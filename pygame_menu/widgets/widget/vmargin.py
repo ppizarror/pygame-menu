@@ -47,7 +47,7 @@ class VMargin(NoneWidget):
 
         This widget does not implement any transformation.
 
-    :param margin: Vertical margin (px)
+    :param margin: Vertical margin in px
     :param widget_id: ID of the widget
     """
 

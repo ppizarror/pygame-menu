@@ -96,10 +96,10 @@ class DropSelect(Widget):
     :param selection_box_border_color: Selection box border color
     :param selection_box_border_width: Selection box border width
     :param selection_box_height: Selection box height, counted as how many options are packed before showing scroll
-    :param selection_box_inflate: Selection box inflate on x-axis and y-axis (px)
-    :param selection_box_margin: Selection box (x, y) margin from title (px)
+    :param selection_box_inflate: Selection box inflate on x-axis and y-axis (x, y) in px
+    :param selection_box_margin: Selection box on x-axis and y-axis (x, y) margin from title in px
     :param selection_box_text_margin: Selection box text margin (left) in px
-    :param selection_box_width: Selection box width (px). If ``0`` compute automatically to fit placeholder
+    :param selection_box_width: Selection box width in px. If ``0`` compute automatically to fit placeholder
     :param selection_infinite: If ``True`` selection can rotate through bottom/top
     :param selection_option_border_color: Option border color
     :param selection_option_border_width: Option border width
@@ -319,16 +319,17 @@ class DropSelect(Widget):
         Make selection drop box.
 
         kwargs (Optional)
-            - ``scrollbar_color``           *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
-            - ``scrollbar_cursor``          *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
-            - ``scrollbar_shadow_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
-            - ``scrollbar_shadow_offset``   *(int)* - Offset of the scrollbar shadow (px)
-            - ``scrollbar_shadow_position`` *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
-            - ``scrollbar_shadow``          *(bool)* - Indicate if a shadow is drawn on each scrollbar
-            - ``scrollbar_slider_color``    *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
-            - ``scrollbar_slider_pad``      *(int, float)* - Space between slider and scrollbars borders (px)
-            - ``scrollbar_thick``           *(int)* - Scrollbar thickness (px)
-            - ``scrollbars``                *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_color``               *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
+            - ``scrollbar_cursor``              *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``        *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``       *(int)* - Offset of the scrollbar shadow in px
+            - ``scrollbar_shadow_position``     *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``              *(bool)* - Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``        *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
+            - ``scrollbar_slider_hover_color``  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the slider if hovered or clicked
+            - ``scrollbar_slider_pad``          *(int, float)* - Space between slider and scrollbars borders in px
+            - ``scrollbar_thick``               *(int)* - Scrollbar thickness in px
+            - ``scrollbars``                    *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
 
         :param kwargs: Optional keyword arguments
         :return: Self reference
@@ -373,7 +374,7 @@ class DropSelect(Widget):
                 touchscreen=self._touchscreen_enabled,
                 keyboard=False  # Only drop select controls the keyboard behaviour
             )
-            btn.set_cursor(
+            btn.set_cursor(  # This feature does not work properly
                 cursor=self._selection_option_cursor
             )
             if self._placeholder_add_to_selection_box:
@@ -446,6 +447,7 @@ class DropSelect(Widget):
         self._drop_frame = Frame(max_width, max(total_height, 1), ORIENTATION_VERTICAL,
                                  frame_id=self._id + '+frame-' + uuid4(short=True))
         self._drop_frame._accepts_title = False
+        self._drop_frame._menu_can_be_none_pack = True
         self._drop_frame.hide()
         self._drop_frame.set_background_color(
             color=self._selection_box_bgcolor
@@ -457,6 +459,7 @@ class DropSelect(Widget):
         self._drop_frame.set_scrollarea(self._scrollarea)
         self._drop_frame.relax()
         self._drop_frame.configured = True
+        self._drop_frame.set_tab_size(self._tab_size)
         self._drop_frame._update__repr___(self)
 
         if total_height > 0:
@@ -476,6 +479,8 @@ class DropSelect(Widget):
                                                      self._theme.scrollbar_shadow_position),
                 scrollbar_shadow=kwargs.get('scrollbar_shadow', self._theme.scrollbar_shadow),
                 scrollbar_slider_color=kwargs.get('scrollbar_slider_color', self._theme.scrollbar_slider_color),
+                scrollbar_slider_hover_color=kwargs.get('scrollbar_slider_hover_color',
+                                                        self._theme.scrollbar_slider_hover_color),
                 scrollbar_slider_pad=kwargs.get('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
                 scrollbar_thick=scrollbar_thickness,
                 scrollbars=scrollbars
@@ -650,6 +655,8 @@ class DropSelect(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def draw_after_if_selected(self, surface: Optional['pygame.Surface']) -> 'DropSelect':
+        if self.is_selected() and self._selection_effect_draw_post:
+            self._selection_effect.draw(surface, self)
         if self.active and self.is_visible():
             self._check_drop_maked()
 
@@ -928,7 +935,7 @@ class DropSelect(Widget):
                 btn.set_background_color(self._selection_option_selected_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color_selected']})
                 if not self._drop_frame.has_attribute('ignorescroll'):
-                    btn.scroll_to_widget(margin=btn.get_height() if self._open_middle else 5, scroll_parent=False)
+                    btn.scroll_to_widget(scroll_parent=False)
             else:
                 btn.set_background_color(self._selection_box_bgcolor)
                 btn.update_font({'color': self._selection_option_font_style['color']})
@@ -972,9 +979,10 @@ class DropSelect(Widget):
         :return: None
         """
         if self._drop_frame is None:
-            msg = 'selection drop has not been maked yet. Call {0}.make_selection_drop()' \
-                  'for avoiding this exception'.format(self.get_class_id())
-            raise _SelectionDropNotMakedException(msg)
+            raise _SelectionDropNotMakedException(
+                'selection drop has not been maked yet. Call {0}.make_selection_drop()'
+                'for avoiding this exception'.format(self.get_class_id())
+            )
 
     def _toggle_drop(self) -> None:
         """
@@ -1039,6 +1047,8 @@ class DropSelect(Widget):
         return rect
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
 
@@ -1148,8 +1158,10 @@ class DropSelect(Widget):
                         self._toggle_drop()
                         updated = True
 
-        if updated:
-            self.apply_update_callbacks()
+            # Check mousemove
+            # elif event.type == pygame.MOUSEMOTION:
+            #     for btn in self._option_buttons:
+            #         btn._check_mouseover(event)
 
         return updated
 

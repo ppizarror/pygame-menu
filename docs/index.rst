@@ -136,6 +136,7 @@ class. The currently existing classes are:
     - :py:class:`~pygame_menu.widgets.ScrollBar`
     - :py:class:`~pygame_menu.widgets.Selector`
     - :py:class:`~pygame_menu.widgets.SurfaceWidget`
+    - :py:class:`~pygame_menu.widgets.Table`
     - :py:class:`~pygame_menu.widgets.TextInput`
     - :py:class:`~pygame_menu.widgets.ToggleSwitch`
     - :py:class:`~pygame_menu.widgets.VMargin`
@@ -165,6 +166,7 @@ class to display large custom surfaces.
     _source/widgets_scrollbar
     _source/widgets_selector
     _source/widgets_surface
+    _source/widgets_table
     _source/widgets_textinput
     _source/widgets_toggleswitch
     _source/widgets_vmargin

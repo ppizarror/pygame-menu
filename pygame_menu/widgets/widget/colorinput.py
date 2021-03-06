@@ -105,12 +105,12 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
     :param hex_format: Hex format string mode
     :param input_separator: Divisor between RGB channels
     :param input_underline: Character drawn under each number input
-    :param input_underline_vmargin: Vertical margin of underline (px)
+    :param input_underline_vmargin: Vertical margin of underline in px
     :param cursor_color: Color of cursor
     :param onchange: Function when changing the values of the color text
     :param onreturn: Function when pressing return on the color text input
     :param onselect: Function when selecting the widget
-    :param prev_margin: Horizontal margin between the previsualization and the input text (px)
+    :param prev_margin: Horizontal margin between the previsualization and the input text in px
     :param prev_width_factor: Width of the previsualization box in terms of the height of the widget
     :param repeat_keys_initial_ms: Time in ms before keys are repeated when held
     :param repeat_keys_interval_ms: Interval between key press repetition when held
@@ -222,6 +222,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Disable parent callbacks
         self._apply_widget_update_callback = False
+
+        # Disable alt+x
+        self._alt_x_enabled = False
 
     def _apply_font(self) -> None:
         super(ColorInput, self)._apply_font()
@@ -391,6 +394,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             self._input_string = self._input_string.upper()
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
+
         if self.readonly or not self.is_visible():
             return False
         input_str = self._input_string
@@ -550,8 +555,5 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
             if total_separator == 0 and \
                     (len(self._input_string) < 2 or len(self._input_string) == 2 and int(colors[0]) <= 25):
                 self._auto_separator_pos = []
-
-        if updated:
-            self.apply_update_callbacks()
 
         return updated

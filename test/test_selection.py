@@ -97,6 +97,13 @@ class SelectionTest(unittest.TestCase):
         self.assertEqual(-inflate_rect.x + rect.x, sel.get_width() / 2)
         self.assertEqual(-inflate_rect.y + rect.y, sel.get_height() / 2)
 
+        # Test margin xy
+        sel.margin_xy(10, 20)
+        self.assertEqual(sel.margin_left, 10)
+        self.assertEqual(sel.margin_right, 10)
+        self.assertEqual(sel.margin_top, 20)
+        self.assertEqual(sel.margin_bottom, 20)
+
     def test_none(self) -> None:
         """
         Test highlight selection.

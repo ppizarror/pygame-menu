@@ -55,6 +55,14 @@ class BaseTest(unittest.TestCase):
         self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 5.14)
         self.assertAlmostEqual(obj.get_counter_attribute('count_epic', 1, '3.14'), 6.14)
 
+        # Test check instance
+        self.assertEqual(obj.get_counter_attribute('count1', 1, '1'), 2)
+        self.assertEqual(obj.get_counter_attribute('count1', 1, '1'), 3)
+
+        # Test check instance
+        self.assertEqual(obj.get_counter_attribute('count2', 1.0, '1'), 2.0)
+        self.assertEqual(obj.get_counter_attribute('count2', 1.0, '1'), 3.0)
+
     def test_classid(self) -> None:
         """
         Test class id.

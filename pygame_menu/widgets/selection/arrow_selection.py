@@ -51,7 +51,7 @@ class ArrowSelection(Selection):
     :param margin_right: Right margin
     :param margin_top: Top margin
     :param margin_bottom: Bottom margin
-    :param arrow_size: Size of arrow on x-axis and y-axis (width, height)
+    :param arrow_size: Size of arrow on x-axis and y-axis (width, height) in px
     :param arrow_vertical_offset: Vertical offset of the arrow
     :param blink_ms: Milliseconds between each blink, if ``0`` blinking is disabled
     """
@@ -71,11 +71,13 @@ class ArrowSelection(Selection):
             margin_top=margin_top,
             margin_bottom=margin_bottom
         )
+
         assert_vector(arrow_size, 2, int)
         assert isinstance(arrow_vertical_offset, NumberInstance)
         assert isinstance(blink_ms, int)
         assert arrow_size[0] > 0 and arrow_size[1] > 0, 'arrow size must be greater than zero'
         assert blink_ms >= 0, 'blinking milliseconds must be greater than or equal to zero'
+
         self._arrow_vertical_offset = int(arrow_vertical_offset)
         self._arrow_size = (arrow_size[0], arrow_size[1])
         self._blink_ms = blink_ms

@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['MenuTest']
 
 from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over
+    WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, THEME_NON_FIXED_TITLE
 from typing import Any, Tuple
 import copy
 import math
@@ -292,7 +292,7 @@ class MenuTest(unittest.TestCase):
         """
         Test menu translation.
         """
-        menu = MenuUtils.generic_menu(width=400)
+        menu = MenuUtils.generic_menu(width=400, theme=THEME_NON_FIXED_TITLE)
         btn = menu.add.button('button')
         self.assertEqual(menu.get_menubar().get_height(), 55)
         self.assertEqual(menu.get_position(), (100, 100))
@@ -1918,7 +1918,7 @@ class MenuTest(unittest.TestCase):
         Test floating widgets.
         """
         # First, add a widget and test the positioning
-        menu = MenuUtils.generic_menu()
+        menu = MenuUtils.generic_menu(theme=THEME_NON_FIXED_TITLE)
         btn = menu.add.button('floating')
         self.assertEqual(btn.get_alignment(), pygame_menu.locals.ALIGN_CENTER)
         expc_pos = (247, 153)

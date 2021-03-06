@@ -37,7 +37,8 @@ import pygame_menu
 
 from pygame_menu.utils import assert_color
 
-from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, Tuple4IntType, NumberInstance
+from pygame_menu._types import NumberType, ColorType, ColorInputType, Tuple2IntType, Tuple4IntType, \
+    NumberInstance, Optional
 
 
 class Selection(object):
@@ -74,6 +75,22 @@ class Selection(object):
         self.margin_left = margin_left
         self.margin_right = margin_right
         self.margin_top = margin_top
+
+    def margin_xy(self, x: NumberType, y: NumberType) -> 'Selection':
+        """
+        Set margins at left-right / top-bottom.
+
+        :param x: Left-Right margin in px
+        :param y: Top-Bottom margin in px
+        :return: Self reference
+        """
+        assert isinstance(x, NumberInstance) and x >= 0
+        assert isinstance(y, NumberInstance) and y >= 0
+        self.margin_left = x
+        self.margin_right = x
+        self.margin_top = y
+        self.margin_bottom = y
+        return self
 
     def zero_margin(self) -> 'Selection':
         """
@@ -125,13 +142,13 @@ class Selection(object):
         """
         Return the x/y margins of the selection.
 
-        :return: Tuple of (x, y) margins
+        :return: Margin tuple on x-axis and y-axis (x, y) in px
         """
         return int(self.margin_left + self.margin_right), int(self.margin_top + self.margin_bottom)
 
     def get_width(self) -> int:
         """
-        Return the selection width (px) as sum of left and right margins.
+        Return the selection width as sum of left and right margins.
 
         :return: Width in px
         """
@@ -140,25 +157,28 @@ class Selection(object):
 
     def get_height(self) -> int:
         """
-        Return the selection height (px) as sum of top and bottom margins.
+        Return the selection height as sum of top and bottom margins.
 
         :return: Height in px
         """
         t, _, b, _ = self.get_margin()
         return t + b
 
-    def inflate(self, rect: 'pygame.Rect') -> 'pygame.Rect':
+    def inflate(self, rect: 'pygame.Rect', inflate: Optional[Tuple2IntType] = None) -> 'pygame.Rect':
         """
         Grow or shrink the rectangle size according to margins.
 
         :param rect: Rect object
+        :param inflate: Extra border inflate
         :return: Inflated rect
         """
+        if inflate is None:
+            inflate = (0, 0)
         assert isinstance(rect, pygame.Rect)
-        return pygame.Rect(int(rect.x - self.margin_left),
-                           int(rect.y - self.margin_top),
-                           int(rect.width + self.margin_left + self.margin_right),
-                           int(rect.height + self.margin_top + self.margin_bottom))
+        return pygame.Rect(int(rect.x - self.margin_left - inflate[0] / 2),
+                           int(rect.y - self.margin_top - inflate[1] / 2),
+                           int(rect.width + self.margin_left + self.margin_right + inflate[0]),
+                           int(rect.height + self.margin_top + self.margin_bottom + inflate[1]))
 
     def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
         """

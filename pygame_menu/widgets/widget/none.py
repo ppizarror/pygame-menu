@@ -96,13 +96,13 @@ class NoneWidget(Widget):
     def _draw(self, *args, **kwargs) -> None:
         pass
 
-    def _render(self) -> Optional[bool]:
+    def _render(self, *args, **kwargs) -> Optional[bool]:
         pass
 
     def set_margin(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def _apply_transforms(self) -> None:
+    def _apply_transforms(self, *args, **kwargs) -> None:
         pass
 
     def set_font(self, *args, **kwargs) -> 'NoneWidget':
@@ -162,7 +162,7 @@ class NoneWidget(Widget):
     def remove_update_callback(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
-    def apply_update_callbacks(self) -> 'NoneWidget':
+    def apply_update_callbacks(self, *args, **kwargs) -> 'NoneWidget':
         return self
 
     def set_border(self, *args, **kwargs) -> 'NoneWidget':

@@ -38,6 +38,7 @@ __all__ = [
     'assert_list_vector',
     'assert_orientation',
     'assert_position',
+    'assert_position_vector',
     'assert_vector',
     'check_key_pressed_valid',
     'fill_gradient',
@@ -49,6 +50,7 @@ __all__ = [
     'parse_padding',
     'set_pygame_cursor',
     'uuid4',
+    'warn',
     'widget_terminal_title',
 
     # Constants
@@ -60,6 +62,9 @@ __all__ = [
 ]
 
 import functools
+import inspect
+import sys
+import traceback
 import types
 import uuid
 import warnings
@@ -73,9 +78,10 @@ from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_C
 
 from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
     Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType
+    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType, Dict
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
+WARNINGS_LAST_MESSAGES: Dict[int, bool] = {}
 
 
 def assert_alignment(align: str) -> None:
@@ -140,7 +146,7 @@ def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2
     :param length: Length of the required vector. If ``0`` don't check the length
     :return: None
     """
-    assert isinstance(list_vector, (tuple, list)), \
+    assert isinstance(list_vector, VectorInstance), \
         'list_vector "{0}" must be a tuple or list'.format(list_vector)
     for v in list_vector:
         assert_vector(v, length)
@@ -173,6 +179,25 @@ def assert_position(position: str) -> None:
         'invalid position value "{0}"'.format(position)
 
 
+def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> None:
+    """
+    Assert that a position vector is valid.
+
+    :param position: Object position
+    :return: None
+    """
+    if isinstance(position, str):
+        assert_position(position)
+    else:
+        assert isinstance(position, VectorInstance)
+        unique = []
+        for pos in position:
+            assert_position(pos)
+            if pos not in unique:
+                unique.append(pos)
+        assert len(unique) == len(position), 'there cannot be repeated positions'
+
+
 def assert_vector(num_vector: VectorType, length: int, instance: type = NumberInstance) -> None:
     """
     Assert that a fixed length vector is numeric.
@@ -185,9 +210,9 @@ def assert_vector(num_vector: VectorType, length: int, instance: type = NumberIn
     assert isinstance(num_vector, VectorInstance), \
         'vector "{0}" must be a list or tuple of {1} items if type {2}'.format(num_vector, length, instance)
     if length != 0:
-        msg = 'vector "{0}" must contain {1} numbers only, ' \
-              'but {2} were given'.format(num_vector, length, len(num_vector))
-        assert len(num_vector) == length, msg
+        assert len(num_vector) == length, \
+            'vector "{0}" must contain {1} numbers only, ' \
+            'but {2} were given'.format(num_vector, length, len(num_vector))
     for i in range(len(num_vector)):
         num = num_vector[i]
         if instance == int and isinstance(num, float) and int(num) == num:
@@ -294,7 +319,7 @@ def format_color(
         return color
     if not isinstance(color, pygame.Color):
         try:
-            if isinstance(color, (tuple, list)) and 3 <= len(color) <= 4:
+            if isinstance(color, VectorInstance) and 3 <= len(color) <= 4:
                 if PYGAME_V2:
                     for j in color:
                         if not isinstance(j, int):
@@ -304,7 +329,7 @@ def format_color(
                 c = pygame.Color(color)
         except ValueError:
             if warn_if_invalid:
-                warnings.warn('invalid color value "{0}"'.format(color))
+                warn('invalid color value "{0}"'.format(color))
             else:
                 raise
             return color
@@ -315,11 +340,11 @@ def format_color(
 
 def get_finger_pos(menu: 'pygame_menu.Menu', event: EventType) -> Tuple2IntType:
     """
-    Return the position from finger (or mouse) event on x-axis and y-axis.
+    Return the position from finger (or mouse) event on x-axis and y-axis (x, y).
 
     :param menu: Menu object for relative positioning in finger events
     :param event: Pygame event object
-    :return: (x, y) position
+    :return: Position on x-axis and y-axis (x, y) in px
     """
     if event.type in (FINGERDOWN, FINGERMOTION, FINGERUP):
         assert menu is not None, \
@@ -394,6 +419,8 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
     :param padding: Can be a single number, or a tuple of 2, 3 or 4 elements following CSS style
     :return: Padding value, (top, right, bottom, left), in px
     """
+    if padding is False or None:
+        padding = 0
     assert isinstance(padding, PaddingInstance)
 
     if isinstance(padding, NumberInstance):
@@ -405,13 +432,13 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
             assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
             assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
         if len(padding) == 1:
-            return padding[0], padding[0], padding[0], padding[0]
+            return int(padding[0]), int(padding[0]), int(padding[0]), int(padding[0])
         elif len(padding) == 2:
-            return padding[0], padding[1], padding[0], padding[1]
+            return int(padding[0]), int(padding[1]), int(padding[0]), int(padding[1])
         elif len(padding) == 3:
-            return padding[0], padding[1], padding[2], padding[1]
+            return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[1])
         else:
-            return padding[0], padding[1], padding[2], padding[3]
+            return int(padding[0]), int(padding[1]), int(padding[2]), int(padding[3])
 
 
 def set_pygame_cursor(cursor: CursorInputType) -> None:
@@ -426,8 +453,7 @@ def set_pygame_cursor(cursor: CursorInputType) -> None:
             # noinspection PyArgumentList
             pygame.mouse.set_cursor(cursor)
     except (pygame.error, TypeError):
-        msg = 'could not establish widget cursor, invalid value {0}'.format(cursor)
-        warnings.warn(msg)
+        warn('could not establish widget cursor, invalid value {0}'.format(cursor))
 
 
 def uuid4(short: bool = False) -> str:
@@ -438,6 +464,36 @@ def uuid4(short: bool = False) -> str:
     :return: UUID of 18 chars
     """
     return str(uuid.uuid4())[:18 if not short else 8]
+
+
+def warn(message: str, print_stack: bool = True) -> None:
+    """
+    Warnings warn method.
+
+    :param message: Message to warn about
+    :param print_stack: Print stack trace of the call
+    :return: None
+    """
+    assert isinstance(message, str)
+
+    # noinspection PyUnresolvedReferences,PyProtectedMember
+    frame = sys._getframe().f_back
+    frame_info = inspect.getframeinfo(frame)  # Traceback(filename, lineno, function, code_context, index)
+
+    # Check if message in dict
+    msg_hash = hash(message)
+    msg_in_hash = False
+    try:
+        msg_in_hash = WARNINGS_LAST_MESSAGES[msg_hash]
+    except KeyError:
+        pass
+
+    if not msg_in_hash and print_stack:
+        traceback.print_stack(frame, limit=5)
+        WARNINGS_LAST_MESSAGES[msg_hash] = True
+
+    warnings.showwarning(message, UserWarning, frame_info[0], frame_info[1])
+    # warnings.warn(message, stacklevel=2)
 
 
 def widget_terminal_title(

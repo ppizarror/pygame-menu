@@ -116,6 +116,7 @@ class SurfaceWidget(Widget):
         return
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
         for event in events:
             if self._check_mouseover(event):
                 break

@@ -57,7 +57,7 @@ class Image(Widget):
     :param image_id: Image ID
     :param angle: Angle of the image in degrees (clockwise)
     :param onselect: Function when selecting the widget
-    :param scale: Scale of the image on x-axis and y-axis (px)
+    :param scale: Scale of the image on x-axis and y-axis (x, y) in px
     :param scale_smooth: Scale is smoothed
     """
     _image: 'BaseImage'
@@ -154,6 +154,7 @@ class Image(Widget):
         self.force_menu_surface_update()
 
     def update(self, events: EventVectorType) -> bool:
+        self.apply_update_callbacks(events)
         for event in events:
             if self._check_mouseover(event):
                 break

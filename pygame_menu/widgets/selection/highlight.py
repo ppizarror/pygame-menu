@@ -49,7 +49,7 @@ class HighlightSelection(Selection):
 
     :param border_width: Border width of the highlight box
     :param margin_x: X margin of selected highlight box
-    :param margin_y: X margin of selected highlight box
+    :param margin_y: Y margin of selected highlight box
     """
     _border_width: int
 
@@ -74,10 +74,13 @@ class HighlightSelection(Selection):
 
     # noinspection PyMissingOrEmptyDocstring
     def draw(self, surface: 'pygame.Surface', widget: 'pygame_menu.widgets.Widget') -> 'Selection':
+        if self._border_width == 0:
+            return self
         # noinspection PyArgumentList
         pygame.draw.rect(
             surface,
             self.color,
+            # self.inflate(widget.get_rect(), inflate=(-2 * self._border_width, -2 * self._border_width)),
             self.inflate(widget.get_rect()),
             self._border_width
         )

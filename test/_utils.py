@@ -34,6 +34,7 @@ __all__ = [
     # Globals
     'PYGAME_V2',
     'TEST_THEME',
+    'THEME_NON_FIXED_TITLE',
     'WIDGET_MOUSEOVER',
     'WIDGET_TOP_CURSOR',
     'WINDOW_SIZE',
@@ -61,7 +62,8 @@ from pygame_menu.widgets.core.widget import check_widget_mouseleave
 
 # noinspection PyProtectedMember
 from pygame_menu._types import NumberType, Union, List, Tuple, Optional, Tuple2IntType, EventType, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType, VectorIntType
+    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType, VectorIntType, \
+    VectorInstance
 
 EventListType = Union[EventType, List[EventType]]
 
@@ -73,9 +75,13 @@ pygame.init()
 surface = pygame.display.set_mode(WINDOW_SIZE)
 
 TEST_THEME = pygame_menu.themes.THEME_DEFAULT.copy()
+TEST_THEME.title_fixed = False
 TEST_THEME.widget_margin = (0, 10)
 TEST_THEME.widget_padding = 0
 TEST_THEME.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+
+THEME_NON_FIXED_TITLE = pygame_menu.themes.THEME_DEFAULT.copy()
+THEME_NON_FIXED_TITLE.title_fixed = False
 
 WIDGET_MOUSEOVER = pygame_menu.widgets.core.widget.WIDGET_MOUSEOVER
 WIDGET_TOP_CURSOR = pygame_menu.widgets.core.widget.WIDGET_TOP_CURSOR
@@ -228,6 +234,41 @@ class PygameEventUtils(object):
         return event_obj
 
     @staticmethod
+    def release_key_mod() -> None:
+        """
+        Release pygame key mods.
+
+        :return: None
+        """
+        # noinspection PyArgumentList
+        pygame.key.set_mods(pygame.KMOD_NONE)
+
+    @staticmethod
+    def keydown_mod_alt(
+            key: int,
+            inlist: bool = True,
+            testmode: bool = True
+    ) -> EventListType:
+        """
+        Create a mod alt keydown event (Alt+Key).
+
+        :param key: Key to press
+        :param inlist: Return event in a list
+        :param testmode: Event is in test mode
+        :return: Event
+        """
+        # noinspection PyArgumentList
+        pygame.key.set_mods(pygame.KMOD_ALT)
+        event_obj = pygame.event.Event(pygame.KEYDOWN,
+                                       {
+                                           'key': key,
+                                           'test': testmode
+                                       })
+        if inlist:
+            event_obj = [event_obj]
+        return event_obj
+
+    @staticmethod
     def keydown(key: Union[int, VectorIntType], testmode: bool = True) -> EventListType:
         """
         Keydown list.
@@ -326,8 +367,8 @@ class PygameEventUtils(object):
         """
         Generate a mouse click event.
 
-        :param x: X coordinate (px)
-        :param y: Y coordinate (px)
+        :param x: X coordinate in px
+        :param y: Y coordinate in px
         :param inlist: Return event in a list
         :param evtype: event type, it can be MOUSEBUTTONUP or MOUSEBUTTONDOWN
         :param rel: Rel position (relative movement)
@@ -412,7 +453,7 @@ class PygameEventUtils(object):
             x, y = rect.get_rect(to_real_position=True, render=True).topleft
         elif isinstance(rect, pygame.Rect):
             x, y = rect.topleft
-        elif isinstance(rect, (tuple, list)):
+        elif isinstance(rect, VectorInstance):
             x, y = rect[0], rect[1]
         else:
             raise ValueError('unknown rect type')
@@ -489,7 +530,7 @@ class PygameEventUtils(object):
             menu = rect.get_menu()
         elif isinstance(rect, pygame.Rect):
             x, y = rect.center
-        elif isinstance(rect, (tuple, list)):
+        elif isinstance(rect, VectorInstance):
             x, y = rect[0], rect[1]
         else:
             raise ValueError('unknown rect type')
@@ -597,7 +638,7 @@ class MenuUtils(object):
         :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400, 500)`` (first column 400px, second 500). By default it's ``0``. Negative values are not accepted
         :param columns: Number of columns
         :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn
-        :param height: Menu height (px)
+        :param height: Menu height in px
         :param mouse_motion_selection: Select widgets using mouse motion. If ``True`` menu draws a ``focus`` on the selected widget
         :param onclose: Event or function applied when closing the Menu
         :param onreset: Function executed when resetting the Menu
@@ -606,7 +647,7 @@ class MenuUtils(object):
         :param rows: Number of rows
         :param theme: Menu theme
         :param title: Menu title
-        :param width: Menu width (px)
+        :param width: Menu width in px
         :param args: Additional args
         :param kwargs: Optional keyword arguments
         :return: Menu
