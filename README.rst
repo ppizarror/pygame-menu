@@ -54,15 +54,17 @@ pygame-menu
 Source repo on `GitHub <https://github.com/ppizarror/pygame-menu>`_, 
 and run it on `Repl.it <https://repl.it/github/ppizarror/pygame-menu>`_
 
+
 Introduction
 ------------
 
-Pygame-menu is a python-pygame library for creating menus. It supports
-selectors, buttons, labels, images, color inputs, and text inputs,
-with many options to customize.
+Pygame-menu is a python-pygame library for creating menus. It supports several widgets, such as
+buttons, color inputs, clock objects, drop selectors, frames, images, labels, selectors, tables,
+text inputs, color switches, and many more, with many options to customize.
 
 Comprehensive documentation for the latest version is available at
 https://pygame-menu.readthedocs.io
+
 
 Install Instructions
 --------------------
