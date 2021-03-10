@@ -323,11 +323,6 @@ class Menu(Base):
             if isinstance(column_max_width, NumberInstance):
                 assert column_max_width >= 0, 'column_max_width must be equal or greater than zero'
                 if columns != 1:
-                    warn(
-                        'column_max_width can be a single number if there is only 1 column, but '
-                        'there is {0} columns. Thus, column_max_width must be a vector of {0} items. '
-                        'By default a vector has been created using the same value for each column'.format(columns)
-                    )
                     column_max_width = [column_max_width for _ in range(columns)]
                 else:
                     column_max_width = [column_max_width]
