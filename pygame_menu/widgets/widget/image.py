@@ -40,8 +40,8 @@ from pygame_menu.baseimage import BaseImage
 from pygame_menu.utils import assert_vector
 from pygame_menu.widgets import Widget
 
-from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType, Optional, \
-    NumberInstance, EventVectorType
+from pygame_menu._types import Union, NumberType, CallbackType, Tuple2NumberType,\
+    Optional, NumberInstance, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring

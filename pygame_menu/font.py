@@ -80,9 +80,10 @@ FONT_OPEN_SANS_ITALIC = __fonts_path__.format('opensans_italic.ttf')
 FONT_OPEN_SANS_LIGHT = __fonts_path__.format('opensans_light.ttf')
 FONT_PT_SERIF = __fonts_path__.format('ptserif_regular.ttf')
 
-FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRANCHISE, FONT_HELVETICA,
-                 FONT_MUNRO, FONT_NEVIS, FONT_OPEN_SANS, FONT_OPEN_SANS_BOLD, FONT_OPEN_SANS_ITALIC,
-                 FONT_OPEN_SANS_LIGHT, FONT_PT_SERIF)
+FONT_EXAMPLES = (FONT_8BIT, FONT_BEBAS, FONT_COMIC_NEUE, FONT_DIGITAL, FONT_FRANCHISE,
+                 FONT_HELVETICA, FONT_MUNRO, FONT_NEVIS, FONT_OPEN_SANS,
+                 FONT_OPEN_SANS_BOLD, FONT_OPEN_SANS_ITALIC, FONT_OPEN_SANS_LIGHT,
+                 FONT_PT_SERIF)
 
 # Stores font cache
 _cache = {}
@@ -142,13 +143,13 @@ def get_font(name: FontType, size: int) -> '__font.Font':
                 most_similar_index = 0
                 for i in range(len(system_fonts)):
                     # noinspection PyArgumentEqualDefault
-                    sim = SequenceMatcher(None, system_fonts[i], font_name).ratio()  # Similarity
+                    sim = SequenceMatcher(None, system_fonts[i], font_name).ratio()
                     if sim > most_similar:
                         most_similar = sim
                         most_similar_index = i
                 sys_font_sim = system_fonts[most_similar_index]
-                sys_suggestion = 'system font "{0}" unknown, use "{1}" instead'.format(font_name,
-                                                                                       sys_font_sim)
+                sys_suggestion = 'system font "{0}" unknown, use "{1}" instead' \
+                                 ''.format(font_name, sys_font_sim)
                 sys_message = 'check system fonts with pygame.font.get_fonts() function'
 
                 # Get examples
@@ -167,9 +168,8 @@ def get_font(name: FontType, size: int) -> '__font.Font':
                 sys_message_2 = 'some examples: {0}'.format(fonts_random)
 
                 # Raise the exception
-                raise ValueError('{0}\n{1}\n{2}'.format(sys_suggestion,
-                                                        sys_message,
-                                                        sys_message_2))
+                raise ValueError('{0}\n{1}\n{2}'
+                                 ''.format(sys_suggestion, sys_message, sys_message_2))
 
         # Try to load the font
         font = None

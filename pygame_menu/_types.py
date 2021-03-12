@@ -51,7 +51,9 @@ NumberType = Union[int, float]
 # Colors
 ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
 ColorInputType = Union[ColorType, str, int, __Color]
-ColorInputGradientType = Tuple[ColorInputType, ColorInputType, bool, bool]  # from, to, vertical, forward
+
+# Color input gradient; from, to, vertical, forward
+ColorInputGradientType = Tuple[ColorInputType, ColorInputType, bool, bool]
 
 # Vectors
 Vector2BoolType = Union[Tuple[bool, bool], List[bool]]

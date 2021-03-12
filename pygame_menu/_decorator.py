@@ -43,8 +43,8 @@ import pygame.gfxdraw as gfxdraw
 
 from pygame_menu._base import Base
 from pygame_menu.font import FontType
-from pygame_menu.utils import assert_list_vector, assert_color, make_surface, is_callable, assert_vector, \
-    uuid4, warn
+from pygame_menu.utils import assert_list_vector, assert_color, make_surface, \
+    is_callable, assert_vector, uuid4, warn
 
 from pygame_menu._types import List, Tuple2NumberType, ColorInputType, Tuple, \
     Any, Dict, Union, NumberType, Tuple2IntType, Optional, Callable, NumberInstance
@@ -109,10 +109,11 @@ class Decorator(Base):
         self._prev_enabled = True
         self._post_enabled = True
 
-        # If True, enables surface cache. This is intended to be used if there's many
-        # decorations in the object (for example, 400). This is an expensive method anyway
-        # because surface is called many times. See the following rendering times to guess
-        # how much does a decoration takes time to render 1000 times (object: button)
+        # If True, enables surface cache. This is intended to be used if there's
+        # many decorations in the object (for example, 400). This is an expensive
+        # method anyway because surface is called many times. See the following
+        # rendering times to guess how much does a decoration takes time to
+        # render 1000 times (object: button)
         # 100 decoration, no cache:     0.214
         # 100 decoration, with cache:   0.646
         # 300 decoration, no cache:     0.581
@@ -124,7 +125,8 @@ class Decorator(Base):
         self.cache = False
 
         # Previous (surf.width, surf.height, rect.x, rect.y, rect.centerx, rect.centery
-        self._cache_last_status = {DECOR_TYPE_PREV: (0, 0, 0, 0, 0, 0), DECOR_TYPE_POST: (0, 0, 0, 0, 0, 0)}
+        self._cache_last_status = {DECOR_TYPE_PREV: (0, 0, 0, 0, 0, 0),
+                                   DECOR_TYPE_POST: (0, 0, 0, 0, 0, 0)}
         self._cache_needs_update = {DECOR_TYPE_PREV: False, DECOR_TYPE_POST: False}
         self._cache_surface = {DECOR_TYPE_PREV: None, DECOR_TYPE_POST: None}
 
@@ -247,7 +249,9 @@ class Decorator(Base):
         else:
             if width != 0 and gfx:
                 gfx = False  # gfx don't support width
-        return self._add_decor(DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx, kwargs))
+        return self._add_decor(
+            DECORATION_POLYGON, prev, (tuple(coords), color, filled, width, gfx, kwargs)
+        )
 
     def add_bezier(
             self,
@@ -274,7 +278,9 @@ class Decorator(Base):
         color = assert_color(color)
         assert len(coords) >= 3
         assert isinstance(steps, int) and steps >= 1
-        return self._add_decor(DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs))
+        return self._add_decor(
+            DECORATION_BEZIER, prev, (tuple(coords), color, steps, kwargs)
+        )
 
     def add_circle(
             self,
@@ -316,8 +322,10 @@ class Decorator(Base):
         else:
             if width != 0 and gfx:
                 gfx = False  # gfx don't support width
-        return self._add_decor(DECORATION_CIRCLE, prev,
-                               (tuple(coords), int(radius), color, filled, width, gfx, kwargs))
+        return self._add_decor(
+            DECORATION_CIRCLE, prev,
+            (tuple(coords), int(radius), color, filled, width, gfx, kwargs)
+        )
 
     def add_arc(
             self,
@@ -358,8 +366,11 @@ class Decorator(Base):
         assert isinstance(final_angle, NumberInstance)
         assert isinstance(width, int) and width >= 0
         assert init_angle != final_angle
-        return self._add_decor(DECORATION_ARC, prev,
-                               (tuple(coords), int(radius), init_angle, final_angle, color, width, gfx, kwargs))
+        return self._add_decor(
+            DECORATION_ARC, prev,
+            (tuple(coords), int(radius), init_angle, final_angle, color, width,
+             gfx, kwargs)
+        )
 
     def add_pie(
             self,
@@ -395,8 +406,10 @@ class Decorator(Base):
         assert isinstance(init_angle, NumberInstance)
         assert isinstance(final_angle, NumberInstance)
         assert init_angle != final_angle
-        return self._add_decor(DECORATION_PIE, prev,
-                               (tuple(coords), int(radius), init_angle, final_angle, color, kwargs))
+        return self._add_decor(
+            DECORATION_PIE, prev,
+            (tuple(coords), int(radius), init_angle, final_angle, color, kwargs)
+        )
 
     def add_surface(
             self,
@@ -424,7 +437,10 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert isinstance(surface, pygame.Surface)
-        return self._add_decor(DECORATION_SURFACE, prev, (tuple(coords), surface, centered, kwargs))
+        return self._add_decor(
+            DECORATION_SURFACE, prev,
+            (tuple(coords), surface, centered, kwargs)
+        )
 
     def add_baseimage(
             self,
@@ -458,7 +474,9 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         assert isinstance(image, pygame_menu.BaseImage)
-        return self._add_decor(DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered, kwargs))
+        return self._add_decor(
+            DECORATION_BASEIMAGE, prev, (tuple(coords), image, centered, kwargs)
+        )
 
     def add_rect(
             self,
@@ -490,7 +508,9 @@ class Decorator(Base):
         assert_list_vector(coords, 2)
         color = assert_color(color)
         assert isinstance(rect, pygame.Rect)
-        return self._add_decor(DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs))
+        return self._add_decor(
+            DECORATION_RECT, prev, (tuple(coords), rect, color, width, kwargs)
+        )
 
     def add_rectangle(
             self,
@@ -567,7 +587,9 @@ class Decorator(Base):
             alpha=True
         )
         surface.blit(surface_font, (0, 0))
-        return self._add_decor(DECORATION_TEXT, prev, (tuple(coords), surface, centered, kwargs))
+        return self._add_decor(
+            DECORATION_TEXT, prev, (tuple(coords), surface, centered, kwargs)
+        )
 
     def add_ellipse(
             self,
@@ -602,7 +624,9 @@ class Decorator(Base):
         assert isinstance(rx, NumberInstance) and rx > 0
         assert isinstance(ry, NumberInstance) and ry > 0
         assert isinstance(filled, bool)
-        return self._add_decor(DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs))
+        return self._add_decor(
+            DECORATION_ELLIPSE, prev, (tuple(coords), rx, ry, color, filled, kwargs)
+        )
 
     def add_pixel(
             self,
@@ -628,7 +652,9 @@ class Decorator(Base):
         coords = [(x, y)]
         assert_list_vector(coords, 2)
         color = assert_color(color)
-        return self._add_decor(DECORATION_PIXEL, prev, (tuple(coords), color, kwargs))
+        return self._add_decor(
+            DECORATION_PIXEL, prev, (tuple(coords), color, kwargs)
+        )
 
     def add_callable(
             self,
@@ -637,8 +663,8 @@ class Decorator(Base):
             pass_args: bool = True
     ) -> str:
         """
-        Adds a callable method. The function receives the surface and the object; for example,
-        if adding to a widget:
+        Adds a callable method. The function receives the surface and the object;
+        for example, if adding to a widget:
 
         .. code-block:: python
 
@@ -648,8 +674,8 @@ class Decorator(Base):
 
             If your callable function changes over time set ``decorator.cache=False``
             or force cache manually by calling Decorator method
-            :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`. Also, the object
-            should force the menu surface cache to update.
+            :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`. Also,
+            the object should force the menu surface cache to update.
 
         :param fun: Function
         :param prev: If ``True`` draw previous the object, else draws post
@@ -677,8 +703,8 @@ class Decorator(Base):
 
         .. note::
 
-            If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over time
-            set ``decorator.cache=False`` or force cache manually by calling
+            If your :py:class:`pygame_menu.baseimage.BaseImage` object changes over
+            time set ``decorator.cache=False`` or force cache manually by calling
             :py:class:`pygame_menu._decorator.Decorator.force_cache_update`.
 
         kwargs (Optional)
@@ -696,7 +722,9 @@ class Decorator(Base):
         assert len(coords) >= 3
         assert isinstance(texture, (pygame.Surface, pygame_menu.BaseImage))
         assert isinstance(tx, int) and isinstance(ty, int)
-        return self._add_decor(DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty, kwargs))
+        return self._add_decor(
+            DECORATION_TEXTURE_POLYGON, prev, (tuple(coords), texture, tx, ty, kwargs)
+        )
 
     def add_line(
             self,
@@ -727,7 +755,9 @@ class Decorator(Base):
         assert isinstance(width, int) and width >= 1
         length = math.sqrt(math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
         assert length > 0, 'line cannot be zero-length'
-        return self._add_decor(DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs))
+        return self._add_decor(
+            DECORATION_LINE, prev, ((tuple(pos1), tuple(pos2)), color, width, kwargs)
+        )
 
     def add_fill(
             self,
@@ -818,8 +848,8 @@ class Decorator(Base):
 
     def enable(self, decorid: str) -> 'Decorator':
         """
-        Enable a certain decoration from ID. Raises ``IndexError`` if decoration was
-        not found.
+        Enable a certain decoration from ID. Raises ``IndexError`` if decoration
+        was not found.
 
         :param decorid: Decoration ID
         :return: Self reference
@@ -832,8 +862,8 @@ class Decorator(Base):
 
     def remove(self, decorid: str) -> 'Decorator':
         """
-        Remove a decoration from a given ID. Raises ``IndexError`` if decoration was
-        not found.
+        Remove a decoration from a given ID. Raises ``IndexError`` if decoration
+        was not found.
 
         :param decorid: Decoration ID
         :return: Self reference
@@ -890,7 +920,8 @@ class Decorator(Base):
         rect = self._obj.get_rect()
 
         # If needs update, or the surface size changed, or the rect position changed
-        prev_surf_changed = self._cache_last_status[prev][0] != w or self._cache_last_status[prev][1] != h
+        prev_surf_changed = self._cache_last_status[prev][0] != w or \
+                            self._cache_last_status[prev][1] != h
         prev_rect_changed = self._cache_last_status[prev][2] != rect.x or \
                             self._cache_last_status[prev][3] != rect.y or \
                             self._cache_last_status[prev][4] != rect.width or \
@@ -1061,8 +1092,8 @@ class Decorator(Base):
             use_center_positioning=True
     ) -> Union[Tuple[Tuple2IntType, ...], Tuple2IntType]:
         """
-        Updates position list based on rect center. If position of the rect changes, update
-        the coords.
+        Updates position list based on rect center. If position of the rect changes,
+        update the coords.
 
         :param rect: Object precomputed rect
         :param decoid: Decoration id

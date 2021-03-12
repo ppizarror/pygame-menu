@@ -39,8 +39,8 @@ from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import is_callable, assert_color
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, Optional, ColorType, \
-    ColorInputType, EventVectorType
+from pygame_menu._types import Any, CallbackType, Callable, Union, List, Tuple, \
+    Optional, ColorType, ColorInputType, EventVectorType
 
 
 # noinspection PyMissingOrEmptyDocstring
@@ -85,7 +85,10 @@ class Button(Widget):
     def _apply_font(self) -> None:
         pass
 
-    def set_selection_callback(self, callback: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]) -> None:
+    def set_selection_callback(
+            self,
+            callback: Optional[Callable[[bool, 'Widget', 'pygame_menu.Menu'], Any]]
+    ) -> None:
         """
         Update the button selection callback, once button is selected, the callback
         function is executed as follows:
@@ -109,8 +112,9 @@ class Button(Widget):
 
         .. note::
 
-            If button points to a submenu, and the callback is changed to a function,
-            the submenu will be removed from the parent Menu. Thus preserving the structure.
+            If button points to a submenu, and the callback is changed to a
+            function, the submenu will be removed from the parent Menu. Thus
+            preserving the structure.
 
         :param callback: Function
         :param args: Arguments used by the function once triggered
@@ -141,7 +145,7 @@ class Button(Widget):
             force_render: bool = False
     ) -> 'Button':
         """
-        Adds a underline to text. This is added if widget is rendered
+        Adds a underline to text. This is added if widget is rendered.
 
         :param color: Underline color
         :param offset: Underline offset
@@ -172,8 +176,8 @@ class Button(Widget):
         surface.blit(self._surface, self._rect.topleft)
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._selected, self._title, self._visible, self.readonly,
-                                         self._last_underline[1]):
+        if not self._render_hash_changed(self._selected, self._title, self._visible,
+                                         self.readonly, self._last_underline[1]):
             return True
 
         # Render surface
@@ -211,7 +215,8 @@ class Button(Widget):
             self._check_mouseover(event, rect)
 
             # User applies with key
-            if event.type == pygame.KEYDOWN and self._keyboard_enabled and event.key == KEY_APPLY or \
+            if event.type == pygame.KEYDOWN and self._keyboard_enabled and \
+                    event.key == KEY_APPLY or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
                     event.button == JOY_BUTTON_SELECT:
                 if self.to_menu:
@@ -221,9 +226,9 @@ class Button(Widget):
                 self.apply()
                 updated = True
 
-            # User clicks the button
+            # User clicks the button; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
-                    event.button in (1, 2, 3):  # Don't consider the mouse wheel (button 4 & 5)
+                    event.button in (1, 2, 3):
                 self._sound.play_click_mouse()
                 if rect.collidepoint(*event.pos):
                     self.apply()

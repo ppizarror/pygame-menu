@@ -38,15 +38,16 @@ from pygame_menu.utils import assert_color, assert_vector
 from pygame_menu.widgets.widget.button import Button
 from pygame_menu.widgets.widget.dropselect import DropSelect
 
-from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, ColorType, \
-    ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, Tuple2NumberType, CursorInputType
+from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, \
+    ColorType, ColorInputType, Tuple2IntType, Tuple3IntType, PaddingType, \
+    Tuple2NumberType, CursorInputType
 
 
 # noinspection PyMissingOrEmptyDocstring
 class DropSelectMultiple(DropSelect):
     """
-    Drop select multiple is a drop select which can select many options at the same time.
-    This drops a vertical frame if requested.
+    Drop select multiple is a drop select which can select many options at the
+    same time. This drops a vertical frame if requested.
 
     The items of the DropSelectMultiple are:
 
@@ -202,7 +203,8 @@ class DropSelectMultiple(DropSelect):
                selection_option_selected_box_border > 0
         assert_vector(selection_option_selected_box_margin, 3, int)
         assert isinstance(selection_option_selected_box_height, (int, float))
-        assert 0 < selection_option_selected_box_height <= 1, 'height factor must be between 0 and 1'
+        assert 0 < selection_option_selected_box_height <= 1, \
+            'height factor must be between 0 and 1'
         assert isinstance(max_selected, int) and max_selected >= 0
 
         # Configure parent
@@ -259,8 +261,10 @@ class DropSelectMultiple(DropSelect):
             f1 = self._render_option_string(self._placeholder)
             f2 = self._render_option_string(self._placeholder_selected.format(999))
             h = self._render_string(self._title, self.get_font_color_status()).get_height()
-            self._selection_box_width = int(max(f1.get_width(), f2.get_width()) + self._selection_box_arrow_margin[0] +
-                                            self._selection_box_arrow_margin[1] + h - h / 4 +
+            self._selection_box_width = int(max(f1.get_width(), f2.get_width()) +
+                                            self._selection_box_arrow_margin[0] +
+                                            self._selection_box_arrow_margin[1] +
+                                            h - h / 4 +
                                             2 * self._selection_box_border_width)
 
     def _get_current_selected_text(self) -> str:
@@ -291,7 +295,8 @@ class DropSelectMultiple(DropSelect):
             default = [default]
         for i in default:
             assert isinstance(i, int) and 0 <= i < len(self._items), \
-                'each default index must be an integer between 0 and the number of elements ({0})' \
+                'each default index must be an integer between 0 and the number ' \
+                'of elements ({0})' \
                 ''.format(len(self._items) - 1)
         self._default_value = default.copy()
         self._selected_indices = default.copy()
@@ -304,13 +309,13 @@ class DropSelectMultiple(DropSelect):
 
     def update_items(self, items: Union[List[Tuple[Any, ...]], List[str]]) -> None:
         """
-        Update drop select multiple items. This method updates the current index, but removes
-        the selected indices.
+        Update drop select multiple items. This method updates the current index,
+        but removes the selected indices.
 
         .. note::
 
-            If the length of the list is different than the previous one,
-            the new index of the select will be the first item of the list.
+            If the length of the list is different than the previous one, the new
+            index of the select will be the first item of the list.
 
         :param items: New drop select items; format ``[('Item1', a, b, c...), ('Item2', d, e, f...)]``
         :return: None

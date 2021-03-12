@@ -71,7 +71,8 @@ class Base(object):
         if self._class_id__repr__:
             return self.get_class_id()
         if self._id__repr__:
-            return sup_repr.replace(' object at ', '["{0}"] object at '.format(self.get_id()))
+            return sup_repr.replace(' object at ',
+                                    '["{0}"] object at '.format(self.get_id()))
         return sup_repr
 
     def _update__repr___(self, obj: 'Base') -> None:
@@ -147,7 +148,8 @@ class Base(object):
 
     def remove_attribute(self, key: str) -> 'Base':
         """
-        Removes the given attribute from the object. Throws ``IndexError`` if given key does not exist.
+        Removes the given attribute from the object. Throws ``IndexError`` if
+        the given key does not exist.
 
         :param key: Key of the attribute
         :return: Self reference

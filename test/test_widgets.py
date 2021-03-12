@@ -31,8 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['WidgetsTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, \
-    PYGAME_V2, WINDOW_SIZE, THEME_NON_FIXED_TITLE
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
+    TEST_THEME, PYGAME_V2, WINDOW_SIZE, THEME_NON_FIXED_TITLE
 import copy
 import unittest
 
@@ -41,12 +41,13 @@ import pygame_menu
 
 from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, \
     KEY_MOVE_DOWN, KEY_MOVE_UP
-from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, POSITION_SOUTHEAST, \
-    POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST
+from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, \
+    POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
     MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, \
     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL
-from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, NoneSelection
+from pygame_menu.widgets import ScrollBar, Label, Button, MenuBar, NoneWidget, \
+    NoneSelection
 
 
 class WidgetsTest(unittest.TestCase):
@@ -73,7 +74,8 @@ class WidgetsTest(unittest.TestCase):
 
         menu = MenuUtils.generic_menu()
         self.assertRaises(ValueError, lambda: menu.add.button('btn', function_kwargs, test=True))
-        btn = menu.add.button('btn', function_kwargs, test=True, accept_kwargs=True, padding=10)
+        btn = menu.add.button('btn', function_kwargs, test=True, accept_kwargs=True,
+                              padding=10)
         self.assertEqual(len(btn._kwargs), 1)
         self.assertRaises(KeyError, lambda: btn.add_self_to_kwargs('test'))
         self.assertEqual(len(btn._kwargs), 1)
@@ -87,8 +89,10 @@ class WidgetsTest(unittest.TestCase):
         Test widget copy.
         """
         widget = pygame_menu.widgets.Widget()
-        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.copy(widget))
-        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException, lambda: copy.deepcopy(widget))
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException,
+                          lambda: copy.copy(widget))
+        self.assertRaises(pygame_menu.widgets.core.widget._WidgetCopyException,
+                          lambda: copy.deepcopy(widget))
 
     def test_onselect(self) -> None:
         """
@@ -124,7 +128,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(test[0], color)
 
         # Image
-        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES, onselect=on_select, font_color=(2, 9))
+        image = menu.add.image(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES,
+                               onselect=on_select, font_color=(2, 9))
         image.select(update_menu=True)
         self.assertEqual(test[0], color)
         image.is_selectable = True
@@ -357,8 +362,10 @@ class WidgetsTest(unittest.TestCase):
         Test widget padding.
         """
         menu = MenuUtils.generic_menu()
-        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding=-1))
-        self.assertRaises(Exception, lambda: menu.add.button(0, pygame_menu.events.NONE, padding='a'))
+        self.assertRaises(Exception,
+                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding=-1))
+        self.assertRaises(Exception,
+                          lambda: menu.add.button(0, pygame_menu.events.NONE, padding='a'))
         self.assertRaises(Exception,
                           lambda: menu.add.button(0, pygame_menu.events.NONE, padding=(0, 0, 0, 0, 0)))
         self.assertRaises(Exception,
@@ -384,9 +391,9 @@ class WidgetsTest(unittest.TestCase):
         Test menubar widget.
         """
         menu = MenuUtils.generic_menu()
-        for mode in [MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
-                     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE, MENUBAR_STYLE_TITLE_ONLY,
-                     MENUBAR_STYLE_TITLE_ONLY_DIAGONAL]:
+        for mode in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
+                     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE,
+                     MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL):
             mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True, mode=mode)
             menu.add.generic_widget(mb)
         mb = MenuBar('Menu', 500, (0, 0, 0), back_box=True)
@@ -416,7 +423,8 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_NORTH), (0, (0, 55)))
 
         # Test with close button
-        menu = MenuUtils.generic_menu(theme=theme, title='my title', onclose=pygame_menu.events.CLOSE)
+        menu = MenuUtils.generic_menu(theme=theme, title='my title',
+                                      onclose=pygame_menu.events.CLOSE)
         mb = menu.get_menubar()
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_SOUTH), (0, (0, 0)))
         self.assertEqual(mb.get_scrollbar_style_change(POSITION_EAST), (-33, (0, 33)))
@@ -527,12 +535,14 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
         # Test fancy selector
-        menu.add.selector('Fancy ',
-                          [('1 - Easy', 'EASY'),
-                           ('2 - Medium', 'MEDIUM'),
-                           ('3 - Hard', 'HARD')],
-                          default=1,
-                          style=pygame_menu.widgets.widget.selector.SELECTOR_STYLE_FANCY)
+        menu.add.selector(
+            'Fancy ',
+            [('1 - Easy', 'EASY'),
+             ('2 - Medium', 'MEDIUM'),
+             ('3 - Hard', 'HARD')],
+            default=1,
+            style=pygame_menu.widgets.widget.selector.SELECTOR_STYLE_FANCY
+        )
 
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_colorinput(self) -> None:
@@ -1762,16 +1772,16 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(menu._draw_focus_widget(surface, drop),
                              {1: ((0, 0), (600, 0), (600, 307), (0, 307)),
-                              2: ((0, 308), (260, 308), (260, 483), (0, 483)),
-                              3: ((468, 308), (600, 308), (600, 483), (468, 483)),
-                              4: ((0, 484), (600, 484), (600, 600), (0, 600))}
+                              2: ((0, 308), (260, 308), (260, 482), (0, 482)),
+                              3: ((468, 308), (600, 308), (600, 482), (468, 482)),
+                              4: ((0, 483), (600, 483), (600, 600), (0, 600))}
                              )
         else:
             self.assertEqual(menu._draw_focus_widget(surface, drop),
                              {1: ((0, 0), (600, 0), (600, 306), (0, 306)),
-                              2: ((0, 307), (259, 307), (259, 486), (0, 486)),
-                              3: ((468, 307), (600, 307), (600, 486), (468, 486)),
-                              4: ((0, 487), (600, 487), (600, 600), (0, 600))}
+                              2: ((0, 307), (259, 307), (259, 485), (0, 485)),
+                              3: ((468, 307), (600, 307), (600, 485), (468, 485)),
+                              4: ((0, 486), (600, 486), (600, 600), (0, 600))}
                              )
 
         # Test change items
@@ -1899,9 +1909,9 @@ class WidgetsTest(unittest.TestCase):
         if PYGAME_V2:
             self.assertEqual(
                 menu._draw_focus_widget(surface, drop2),
-                {1: ((0, 0), (600, 0), (600, 338), (0, 338)),
-                 2: ((0, 339), (239, 339), (239, 496), (0, 496)),
-                 3: ((447, 339), (600, 339), (600, 496), (447, 496)),
+                {1: ((0, 0), (600, 0), (600, 339), (0, 339)),
+                 2: ((0, 340), (239, 340), (239, 496), (0, 496)),
+                 3: ((447, 340), (600, 340), (600, 496), (447, 496)),
                  4: ((0, 497), (600, 497), (600, 600), (0, 600))}
             )
 
@@ -2034,9 +2044,9 @@ class WidgetsTest(unittest.TestCase):
             self.assertEqual(
                 menu._draw_focus_widget(surface, drop),
                 {1: ((0, 0), (600, 0), (600, 259), (0, 259)),
-                 2: ((0, 260), (195, 260), (195, 394), (0, 394)),
-                 3: ((403, 260), (600, 260), (600, 394), (403, 394)),
-                 4: ((0, 395), (600, 395), (600, 600), (0, 600))}
+                 2: ((0, 260), (195, 260), (195, 393), (0, 393)),
+                 3: ((403, 260), (600, 260), (600, 393), (403, 393)),
+                 4: ((0, 394), (600, 394), (600, 600), (0, 600))}
             )
         drop._toggle_drop()
 
@@ -2048,7 +2058,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(drop2.last_surface, menu._widgets_surface)
         if PYGAME_V2:
             self.assertEqual(drop2._drop_frame.get_position(), (196, 519))
-            self.assertEqual(drop2.get_focus_rect(), pygame.Rect(196, 277, 207, 99))
+            self.assertEqual(drop2.get_focus_rect(), pygame.Rect(196, 277, 207, 100))
 
         # Disable focus
         menu._mouse_motion_selection = False

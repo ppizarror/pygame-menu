@@ -44,17 +44,19 @@ import pygame_menu
 import pygame_menu.events as _events
 
 from pygame_menu._base import Base
-from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
+from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, \
+    ORIENTATION_HORIZONTAL
 from pygame_menu.font import assert_font
 from pygame_menu._scrollarea import get_scrollbars_from_position
-from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, uuid4, parse_padding, \
-    assert_position_vector, warn
+from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, \
+    uuid4, parse_padding, assert_position_vector, warn
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
 from pygame_menu.widgets.widget.colorinput import ColorInputColorType, ColorInputHexFormatType
 from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYLE_CLASSIC
 
-from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, PaddingInstance, \
-    NumberType, Vector2NumberType, List, Tuple, NumberInstance, Tuple3IntType
+from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
+    PaddingInstance, NumberType, Vector2NumberType, List, Tuple, NumberInstance, \
+    Tuple3IntType
 
 
 # noinspection PyProtectedMember
@@ -82,6 +84,7 @@ class WidgetManager(Base):
     def _filter_widget_attributes(self, kwargs: Dict) -> Dict[str, Any]:
         """
         Return the valid widgets attributes from a dictionary.
+
         The valid (key, value) are removed from the initial dictionary.
 
         :param kwargs: Optional keyword arguments (input attributes)
@@ -96,7 +99,8 @@ class WidgetManager(Base):
 
         # background_color
         background_is_color = False
-        background_color = kwargs.pop('background_color', self._theme.widget_background_color)
+        background_color = kwargs.pop('background_color',
+                                      self._theme.widget_background_color)
         if background_color is not None:
             if isinstance(background_color, pygame_menu.BaseImage):
                 pass
@@ -106,7 +110,8 @@ class WidgetManager(Base):
         attributes['background_color'] = background_color
 
         # background_inflate
-        background_inflate = kwargs.pop('background_inflate', self._theme.widget_background_inflate)
+        background_inflate = kwargs.pop('background_inflate',
+                                        self._theme.widget_background_inflate)
         if background_inflate == 0:
             background_inflate = (0, 0)
         assert_vector(background_inflate, 2, int)
@@ -115,13 +120,15 @@ class WidgetManager(Base):
         attributes['background_inflate'] = background_inflate
 
         # border_color
-        border_color = kwargs.pop('border_color', self._theme.widget_border_color)
+        border_color = kwargs.pop('border_color',
+                                  self._theme.widget_border_color)
         if border_color is not None:
             border_color = assert_color(border_color)
         attributes['border_color'] = border_color
 
         # border_inflate
-        border_inflate = kwargs.pop('border_inflate', self._theme.widget_border_inflate)
+        border_inflate = kwargs.pop('border_inflate',
+                                    self._theme.widget_border_inflate)
         if border_inflate == 0:
             border_inflate = (0, 0)
         assert_vector(border_inflate, 2, int)
@@ -130,7 +137,8 @@ class WidgetManager(Base):
         attributes['border_inflate'] = border_inflate
 
         # border_position
-        border_position = kwargs.pop('border_position', self._theme.widget_border_position)
+        border_position = kwargs.pop('border_position',
+                                     self._theme.widget_border_position)
         assert_position_vector(border_position)
         attributes['border_position'] = border_position
 
@@ -148,7 +156,8 @@ class WidgetManager(Base):
         attributes['font_antialias'] = self._theme.widget_font_antialias
 
         # font_background_color
-        font_background_color = kwargs.pop('font_background_color', self._theme.widget_font_background_color)
+        font_background_color = kwargs.pop('font_background_color',
+                                           self._theme.widget_font_background_color)
         if font_background_color is None and \
                 self._theme.widget_font_background_color_from_menu and \
                 not background_is_color:
@@ -171,16 +180,19 @@ class WidgetManager(Base):
         attributes['font_shadow'] = font_shadow
 
         # font_shadow_color
-        font_shadow_color = kwargs.pop('font_shadow_color', self._theme.widget_font_shadow_color)
+        font_shadow_color = kwargs.pop('font_shadow_color',
+                                       self._theme.widget_font_shadow_color)
         attributes['font_shadow_color'] = assert_color(font_shadow_color)
 
         # font_shadow_offset
-        font_shadow_offset = kwargs.pop('font_shadow_offset', self._theme.widget_font_shadow_offset)
+        font_shadow_offset = kwargs.pop('font_shadow_offset',
+                                        self._theme.widget_font_shadow_offset)
         assert isinstance(font_shadow_offset, int)
         attributes['font_shadow_offset'] = font_shadow_offset
 
         # font_shadow_position
-        font_shadow_position = kwargs.pop('font_shadow_position', self._theme.widget_font_shadow_position)
+        font_shadow_position = kwargs.pop('font_shadow_position',
+                                          self._theme.widget_font_shadow_position)
         assert isinstance(font_shadow_position, str)
         attributes['font_shadow_position'] = font_shadow_position
 
@@ -207,7 +219,8 @@ class WidgetManager(Base):
         attributes['readonly_color'] = assert_color(readonly_color)
 
         # readonly_selected_color
-        readonly_selected_color = kwargs.pop('readonly_selected_color', self._theme.readonly_selected_color)
+        readonly_selected_color = kwargs.pop('readonly_selected_color',
+                                             self._theme.readonly_selected_color)
         attributes['readonly_selected_color'] = assert_color(readonly_selected_color)
 
         # selection_color
@@ -215,7 +228,8 @@ class WidgetManager(Base):
         attributes['selection_color'] = assert_color(selection_color)
 
         # selection_effect
-        selection_effect = kwargs.pop('selection_effect', self._theme.widget_selection_effect)
+        selection_effect = kwargs.pop('selection_effect',
+                                      self._theme.widget_selection_effect)
         if selection_effect is None:
             selection_effect = pygame_menu.widgets.NoneSelection()
         else:
@@ -224,7 +238,8 @@ class WidgetManager(Base):
         attributes['selection_effect'] = selection_effect
 
         # tab_size
-        attributes['tab_size'] = kwargs.pop('tab_size', self._theme.widget_tab_size)
+        attributes['tab_size'] = kwargs.pop('tab_size',
+                                            self._theme.widget_tab_size)
 
         return attributes
 
@@ -339,11 +354,13 @@ class WidgetManager(Base):
             widget.select()
             self._menu._index = len(self._menu._widgets) - 1
 
-        # Force menu rendering, this checks if the menu overflows or has sizing errors
-        self._menu._widgets_surface = None  # If added on execution time forces the update of the surface
+        # Force menu rendering, this checks if the menu overflows or has sizing}
+        # errors; if added on execution time forces the update of the surface
+        self._menu._widgets_surface = None
         try:
             self._menu._render()
-        except (pygame_menu.menu._MenuSizingException, pygame_menu.menu._MenuWidgetOverflow):
+        except (pygame_menu.menu._MenuSizingException,
+                pygame_menu.menu._MenuWidgetOverflow):
             self._menu.remove_widget(widget)
             raise
 
@@ -356,7 +373,8 @@ class WidgetManager(Base):
 
     def configure_defaults_widget(self, widget: 'Widget') -> None:
         """
-        Apply default menu settings to widget. This method does not add widget to Menu.
+        Apply default menu settings to widget. This method does not add widget to
+        the Menu.
 
         :param widget: Widget to be configured
         :return: None
@@ -380,14 +398,15 @@ class WidgetManager(Base):
 
             action(*args)
 
-        If ``accept_kwargs=True`` then the ``**kwargs`` are also unpacked on action call:
+        If ``accept_kwargs=True`` then the ``**kwargs`` are also unpacked on action
+        call:
 
         .. code-block:: python
 
             action(*args, **kwargs)
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -437,8 +456,8 @@ class WidgetManager(Base):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -486,10 +505,11 @@ class WidgetManager(Base):
             # Check for recursive
             if action == self._menu or action.in_submenu(self._menu, recursive=True):
                 raise ValueError(
-                    'Menu "{0}" is already on submenu structure, recursive menus lead '
-                    'to unexpected behaviours. For returning to previous menu use '
-                    'pygame_menu.events.BACK event defining an optional back_count '
-                    'number of menus to return from, default is 1'.format(action.get_title())
+                    'Menu "{0}" is already on submenu structure, recursive menus'
+                    'lead to unexpected behaviours. For returning to previous menu'
+                    'use pygame_menu.events.BACK event defining an optional '
+                    'back_count number of menus to return from, default is 1'
+                    ''.format(action.get_title())
                 )
 
             self._menu._submenus.append(action)
@@ -520,14 +540,16 @@ class WidgetManager(Base):
                 widget = pygame_menu.widgets.Button(title, button_id, action, *args, **kwargs)
 
         else:
-            raise ValueError('action must be a Menu, a MenuAction (event), a function (callable), or None')
+            raise ValueError('action must be a Menu, a MenuAction (event), a '
+                             'function (callable), or None')
 
         # Configure and add the button
         if not accept_kwargs:
             try:
                 self._check_kwargs(kwargs)
             except ValueError:
-                warn('button cannot accept kwargs. If you want to use kwargs options set accept_kwargs=True')
+                warn('button cannot accept kwargs. If you want to use kwargs '
+                     'options set accept_kwargs=True')
                 raise
 
         self._configure_widget(widget=widget, **attributes)
@@ -555,16 +577,16 @@ class WidgetManager(Base):
         Add a color widget with RGB or HEX format to the Menu.
         Includes a preview box that renders the given color.
 
-        The callbacks (if defined) receive the current value and all unknown keyword arguments,
-        where ``current_color=widget.get_value()``:
+        The callbacks (if defined) receive the current value and all unknown
+        keyword arguments, where ``current_color=widget.get_value()``:
 
         .. code-block:: python
 
             onchange(current_color, **kwargs)
             onreturn(current_color, **kwargs)
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -601,13 +623,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -677,8 +700,8 @@ class WidgetManager(Base):
         """
         Add a simple image to the Menu.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -700,13 +723,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param image_path: Path of the image (file) or a BaseImage object. If BaseImage object is provided the angle and scale are ignored
         :param angle: Angle of the image in degrees (clockwise)
@@ -723,9 +747,10 @@ class WidgetManager(Base):
 
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'cursor', 'margin', 'padding', 'selection_color', 'selection_effect',
-                           'border_position']:
+            if key not in ('align', 'background_color', 'background_inflate',
+                           'border_color', 'border_inflate', 'border_width',
+                           'cursor', 'margin', 'padding', 'selection_color',
+                           'selection_effect', 'border_position'):
                 kwargs.pop(key, None)
 
         # Filter widget attributes to avoid passing them to the callbacks
@@ -758,8 +783,8 @@ class WidgetManager(Base):
         """
         Add a surface widget to the Menu.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -781,13 +806,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param surface: Pygame surface object
         :param surface_id: Surface ID
@@ -801,9 +827,10 @@ class WidgetManager(Base):
 
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'cursor', 'margin', 'padding', 'selection_color', 'selection_effect',
-                           'border_position']:
+            if key not in ('align', 'background_color', 'background_inflate',
+                           'border_color', 'border_inflate', 'border_width',
+                           'cursor', 'margin', 'padding', 'selection_color',
+                           'selection_effect', 'border_position'):
                 kwargs.pop(key, None)
 
         # Filter widget attributes to avoid passing them to the callbacks
@@ -832,8 +859,8 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Label':
         """
-        Add a clock label to the Menu. This creates a Label with a text generator that
-        request a string from ``time.strftime`` module using ``clock_format``.
+        Add a clock label to the Menu. This creates a Label with a text generator
+        that request a string from ``time.strftime`` module using ``clock_format``.
 
         Commonly used format codes:
             - **%Y**    Year with century as a decimal number.
@@ -851,8 +878,8 @@ class WidgetManager(Base):
             - **%I**    Hour (12-hour clock) as a decimal number [01, 12].
             - **%p**    Locale's equivalent of either AM or PM.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -887,13 +914,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param clock_format: Format of clock used by ``time.strftime``
         :param clock_id: ID of the clock
@@ -931,8 +959,8 @@ class WidgetManager(Base):
         """
         Add a simple text to the Menu.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -972,8 +1000,8 @@ class WidgetManager(Base):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param title: Text to be displayed
         :param label_id: ID of the label
@@ -1068,12 +1096,14 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Button':
         """
-        Adds a Button url to the Menu. Clicking the widget will open the link. If title is defined, the link will
-        not be written. For example: ``href='google.com', title=''`` will write the link, but
-        ``href='google.com', title='Google'`` will write 'Google' and opens 'google.com' if clicked.
+        Adds a Button url to the Menu. Clicking the widget will open the link.
+        If ``title`` is defined, the link will not be written. For example:
+        ``href='google.com', title=''`` will write the link, but
+        ``href='google.com', title='Google'`` will write 'Google' and opens
+        'google.com' if clicked.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -1108,13 +1138,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param href: Link to open
         :param title: Alternative title of the link
@@ -1168,9 +1199,9 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Selector':
         """
-        Add a selector to the Menu: several items and two functions that are executed
-        when changing the selector (left/right) and pressing return button on the selected
-        item.
+        Add a selector to the Menu: several items and two functions that are
+        executed when changing the selector (left/right) and pressing return
+        button on the selected item.
 
         The items of the selector are like:
 
@@ -1189,8 +1220,8 @@ class WidgetManager(Base):
 
         For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -1230,13 +1261,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -1259,13 +1291,20 @@ class WidgetManager(Base):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get fancy style attributes
-        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color', self._theme.widget_box_arrow_color)
-        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin', self._theme.widget_box_arrow_margin)
-        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor', self._theme.widget_box_background_color)
-        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor', self._theme.widget_box_border_color)
-        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth', self._theme.widget_box_border_width)
-        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate', self._theme.widget_box_inflate)
-        style_fancy_box_margin = kwargs.pop('style_fancy_box_margin', self._theme.widget_box_margin)
+        style_fancy_arrow_color = kwargs.pop('style_fancy_arrow_color',
+                                             self._theme.widget_box_arrow_color)
+        style_fancy_arrow_margin = kwargs.pop('style_fancy_arrow_margin',
+                                              self._theme.widget_box_arrow_margin)
+        style_fancy_bgcolor = kwargs.pop('style_fancy_bgcolor',
+                                         self._theme.widget_box_background_color)
+        style_fancy_bordercolor = kwargs.pop('style_fancy_bordercolor',
+                                             self._theme.widget_box_border_color)
+        style_fancy_borderwidth = kwargs.pop('style_fancy_borderwidth',
+                                             self._theme.widget_box_border_width)
+        style_fancy_box_inflate = kwargs.pop('style_fancy_box_inflate',
+                                             self._theme.widget_box_inflate)
+        style_fancy_box_margin = kwargs.pop('style_fancy_box_margin',
+                                            self._theme.widget_box_margin)
 
         widget = pygame_menu.widgets.Selector(
             default=default,
@@ -1308,7 +1347,9 @@ class WidgetManager(Base):
         """
         Add a dropselect to the Menu: Drop select is a selector within a Frame.
         This drops a vertical frame if requested.
-        Drop select can contain selectable items (options), only 1 can be selected.
+
+        Drop select can contain selectable items (options), but only one can be
+        selected.
 
         The items of the DropSelect are:
 
@@ -1327,8 +1368,8 @@ class WidgetManager(Base):
 
         For example, if ``selected_index=0`` then ``selected_item=('Item1', a, b, c...)``.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -1393,13 +1434,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -1424,40 +1466,65 @@ class WidgetManager(Base):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get selection box properties
-        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', self._theme.widget_box_arrow_color)
-        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', self._theme.widget_box_arrow_margin)
-        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', self._theme.widget_box_background_color)
-        selection_box_border_color = kwargs.pop('selection_box_border_color', self._theme.widget_box_border_color)
-        selection_box_border_width = kwargs.pop('selection_box_border_width', self._theme.widget_box_border_width)
+        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color',
+                                               self._theme.widget_box_arrow_color)
+        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin',
+                                                self._theme.widget_box_arrow_margin)
+        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor',
+                                           self._theme.widget_box_background_color)
+        selection_box_border_color = kwargs.pop('selection_box_border_color',
+                                                self._theme.widget_box_border_color)
+        selection_box_border_width = kwargs.pop('selection_box_border_width',
+                                                self._theme.widget_box_border_width)
         selection_box_height = kwargs.pop('selection_box_height', 3)
-        selection_box_inflate = kwargs.pop('selection_box_inflate', self._theme.widget_border_inflate)
-        selection_box_margin = kwargs.pop('selection_box_margin', self._theme.widget_box_margin)
-        selection_box_text_margin = kwargs.pop('selection_box_text_margin', self._theme.widget_box_arrow_margin[0])
+        selection_box_inflate = kwargs.pop('selection_box_inflate',
+                                           self._theme.widget_border_inflate)
+        selection_box_margin = kwargs.pop('selection_box_margin',
+                                          self._theme.widget_box_margin)
+        selection_box_text_margin = kwargs.pop('selection_box_text_margin',
+                                               self._theme.widget_box_arrow_margin[0])
         selection_box_width = kwargs.pop('selection_box_width', 0)
         selection_infinite = kwargs.pop('selection_infinite', False)
-        selection_option_border_color = kwargs.pop('selection_option_border_color', self._theme.scrollbar_color)
-        selection_option_border_width = kwargs.pop('selection_option_border_width', self._theme.widget_box_border_width)
+        selection_option_border_color = kwargs.pop('selection_option_border_color',
+                                                   self._theme.scrollbar_color)
+        selection_option_border_width = kwargs.pop('selection_option_border_width',
+                                                   self._theme.widget_box_border_width)
         # selection_option_cursor = kwargs.pop('selection_option_cursor', None)
         selection_option_font = kwargs.pop('selection_option_font', None)
-        selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
-        selection_option_font_size = kwargs.pop('selection_option_font_size', None)
-        selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
-        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (188, 227, 244))
-        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
+        selection_option_font_color = kwargs.pop('selection_option_font_color',
+                                                 (0, 0, 0))
+        selection_option_font_size = kwargs.pop('selection_option_font_size',
+                                                None)
+        selection_option_padding = kwargs.pop('selection_option_padding',
+                                              (2, 5))
+        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor',
+                                                       (188, 227, 244))
+        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color',
+                                                          (0, 0, 0))
 
         # Get selection box scrollbar properties
-        scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
-        scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
-        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color)
-        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset)
-        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position)
-        scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
-        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color)
+        scrollbar_color = kwargs.pop('scrollbar_color',
+                                     self._theme.scrollbar_color)
+        scrollbar_cursor = kwargs.pop('scrollbar_cursor',
+                                      self._theme.scrollbar_cursor)
+        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color',
+                                            self._theme.scrollbar_shadow_color)
+        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset',
+                                             self._theme.scrollbar_shadow_offset)
+        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position',
+                                               self._theme.scrollbar_shadow_position)
+        scrollbar_shadow = kwargs.pop('scrollbar_shadow',
+                                      self._theme.scrollbar_shadow)
+        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color',
+                                            self._theme.scrollbar_slider_color)
         scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color',
                                                   self._theme.scrollbar_slider_hover_color)
-        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad)
-        scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
-        scrollbars = get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
+        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad',
+                                          self._theme.scrollbar_slider_pad)
+        scrollbar_thick = kwargs.pop('scrollbar_thick',
+                                     self._theme.scrollbar_thick)
+        scrollbars = get_scrollbars_from_position(
+            kwargs.pop('scrollbars', self._theme.scrollarea_position))
 
         widget = pygame_menu.widgets.DropSelect(
             default=default,
@@ -1533,8 +1600,8 @@ class WidgetManager(Base):
     ) -> 'pygame_menu.widgets.DropSelectMultiple':
         """
         Add a dropselect multiple to the Menu: Drop select multiple is a drop
-        select which can select many options at the same time.
-        This drops a vertical frame if requested.
+        select which can select many options at the same time. This drops a
+        vertical frame if requested.
 
         The items of the DropSelectMultiple are:
 
@@ -1542,8 +1609,9 @@ class WidgetManager(Base):
 
             items = [('Item1', a, b, c...), ('Item2', d, e, f...), ('Item3', g, h, i...)]
 
-        The callbacks receive the current selected items (tuple) and the indices (tuple), where
-        ``selected_item=widget.get_value()`` and ``selected_index=widget.get_index()``:
+        The callbacks receive the current selected items (tuple) and the indices
+        (tuple), where ``selected_item=widget.get_value()`` and
+        ``selected_index=widget.get_index()``:
 
         .. code-block:: python
 
@@ -1552,8 +1620,8 @@ class WidgetManager(Base):
 
         For example, if ``selected_index=[0, 2]`` then ``selected_item=[('Item1', a, b, c...), ('Item3', g, h, i...)]``.
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -1625,13 +1693,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -1658,51 +1727,80 @@ class WidgetManager(Base):
         attributes = self._filter_widget_attributes(kwargs)
 
         # Get selection box properties
-        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color', self._theme.widget_box_arrow_color)
-        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin', self._theme.widget_box_arrow_margin)
-        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor', self._theme.widget_box_background_color)
-        selection_box_border_color = kwargs.pop('selection_box_border_color', self._theme.widget_box_border_color)
-        selection_box_border_width = kwargs.pop('selection_box_border_width', self._theme.widget_box_border_width)
+        selection_box_arrow_color = kwargs.pop('selection_box_arrow_color',
+                                               self._theme.widget_box_arrow_color)
+        selection_box_arrow_margin = kwargs.pop('selection_box_arrow_margin',
+                                                self._theme.widget_box_arrow_margin)
+        selection_box_bgcolor = kwargs.pop('selection_box_bgcolor',
+                                           self._theme.widget_box_background_color)
+        selection_box_border_color = kwargs.pop('selection_box_border_color',
+                                                self._theme.widget_box_border_color)
+        selection_box_border_width = kwargs.pop('selection_box_border_width',
+                                                self._theme.widget_box_border_width)
         selection_box_height = kwargs.pop('selection_box_height', 3)
-        selection_box_inflate = kwargs.pop('selection_box_inflate', self._theme.widget_border_inflate)
-        selection_box_margin = kwargs.pop('selection_box_margin', self._theme.widget_box_margin)
-        selection_box_text_margin = kwargs.pop('selection_box_text_margin', self._theme.widget_box_arrow_margin[0])
+        selection_box_inflate = kwargs.pop('selection_box_inflate',
+                                           self._theme.widget_border_inflate)
+        selection_box_margin = kwargs.pop('selection_box_margin',
+                                          self._theme.widget_box_margin)
+        selection_box_text_margin = kwargs.pop('selection_box_text_margin',
+                                               self._theme.widget_box_arrow_margin[0])
         selection_box_width = kwargs.pop('selection_box_width', 0)
         selection_infinite = kwargs.pop('selection_infinite', False)
-        selection_option_active_bgcolor = kwargs.pop('selection_option_active_bgcolor', (188, 227, 244))
-        selection_option_active_font_color = kwargs.pop('selection_option_active_font_color', (0, 0, 0))
-        selection_option_border_color = kwargs.pop('selection_option_border_color', self._theme.scrollbar_color)
-        selection_option_border_width = kwargs.pop('selection_option_border_width', self._theme.widget_box_border_width)
+        selection_option_active_bgcolor = kwargs.pop('selection_option_active_bgcolor',
+                                                     (188, 227, 244))
+        selection_option_active_font_color = kwargs.pop('selection_option_active_font_color',
+                                                        (0, 0, 0))
+        selection_option_border_color = kwargs.pop('selection_option_border_color',
+                                                   self._theme.scrollbar_color)
+        selection_option_border_width = kwargs.pop('selection_option_border_width',
+                                                   self._theme.widget_box_border_width)
         # selection_option_cursor = kwargs.pop('selection_option_cursor', None)
         selection_option_font = kwargs.pop('selection_option_font', None)
-        selection_option_font_color = kwargs.pop('selection_option_font_color', (0, 0, 0))
-        selection_option_font_size = kwargs.pop('selection_option_font_size', None)
-        selection_option_padding = kwargs.pop('selection_option_padding', (2, 5))
-        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor', (142, 247, 141))
-        selection_option_selected_box = kwargs.pop('selection_option_selected_box', True)
+        selection_option_font_color = kwargs.pop('selection_option_font_color',
+                                                 (0, 0, 0))
+        selection_option_font_size = kwargs.pop('selection_option_font_size',
+                                                None)
+        selection_option_padding = kwargs.pop('selection_option_padding',
+                                              (2, 5))
+        selection_option_selected_bgcolor = kwargs.pop('selection_option_selected_bgcolor',
+                                                       (142, 247, 141))
+        selection_option_selected_box = kwargs.pop('selection_option_selected_box',
+                                                   True)
         selection_option_selected_box_border = kwargs.pop('selection_option_selected_box_border',
                                                           self._theme.widget_box_border_width)
         selection_option_selected_box_color = kwargs.pop('selection_option_selected_box_color',
                                                          self._theme.widget_box_arrow_color)
-        selection_option_selected_box_height = kwargs.pop('selection_option_selected_box_height', 0.5)
+        selection_option_selected_box_height = kwargs.pop('selection_option_selected_box_height',
+                                                          0.5)
         selection_option_selected_box_margin = kwargs.pop('selection_option_selected_box_margin',
                                                           (0, self._theme.widget_box_arrow_margin[1],
                                                            self._theme.widget_box_arrow_margin[2]))
-        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color', (0, 0, 0))
+        selection_option_selected_font_color = kwargs.pop('selection_option_selected_font_color',
+                                                          (0, 0, 0))
 
         # Get selection box scrollbar properties
-        scrollbar_color = kwargs.pop('scrollbar_color', self._theme.scrollbar_color)
-        scrollbar_cursor = kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor)
-        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color)
-        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset)
-        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position)
-        scrollbar_shadow = kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow)
-        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color)
+        scrollbar_color = kwargs.pop('scrollbar_color',
+                                     self._theme.scrollbar_color)
+        scrollbar_cursor = kwargs.pop('scrollbar_cursor',
+                                      self._theme.scrollbar_cursor)
+        scrollbar_shadow_color = kwargs.pop('scrollbar_shadow_color',
+                                            self._theme.scrollbar_shadow_color)
+        scrollbar_shadow_offset = kwargs.pop('scrollbar_shadow_offset',
+                                             self._theme.scrollbar_shadow_offset)
+        scrollbar_shadow_position = kwargs.pop('scrollbar_shadow_position',
+                                               self._theme.scrollbar_shadow_position)
+        scrollbar_shadow = kwargs.pop('scrollbar_shadow',
+                                      self._theme.scrollbar_shadow)
+        scrollbar_slider_color = kwargs.pop('scrollbar_slider_color',
+                                            self._theme.scrollbar_slider_color)
         scrollbar_slider_hover_color = kwargs.pop('scrollbar_slider_hover_color',
                                                   self._theme.scrollbar_slider_hover_color)
-        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad)
-        scrollbar_thick = kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick)
-        scrollbars = get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
+        scrollbar_slider_pad = kwargs.pop('scrollbar_slider_pad',
+                                          self._theme.scrollbar_slider_pad)
+        scrollbar_thick = kwargs.pop('scrollbar_thick',
+                                     self._theme.scrollbar_thick)
+        scrollbars = get_scrollbars_from_position(
+            kwargs.pop('scrollbars', self._theme.scrollarea_position))
 
         widget = pygame_menu.widgets.DropSelectMultiple(
             default=default,
@@ -1790,8 +1888,8 @@ class WidgetManager(Base):
 
             onchange(current_state_value, **kwargs)
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -1834,19 +1932,20 @@ class WidgetManager(Base):
 
         .. note::
 
-            This method only handles two states. If you need more states (for example 3, or 4),
-            prefer using :py:class:`pygame_menu.widgets.ToggleSwitch` and add it as a generic
-            widget.
+            This method only handles two states. If you need more states (for example
+            3, or 4), prefer using :py:class:`pygame_menu.widgets.ToggleSwitch`
+            and add it as a generic widget.
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -1868,21 +1967,28 @@ class WidgetManager(Base):
             assert 0 <= default <= 1, 'default value can be 0 or 1'
         else:
             raise ValueError(
-                'invalid value type, default can be 0, False, 1, or True, but received "{0}"'.format(default)
+                'invalid value type, default can be 0, False, 1, or True, but'
+                'received "{0}"'.format(default)
             )
 
         # Filter widget attributes to avoid passing them to the callbacks
         attributes = self._filter_widget_attributes(kwargs)
 
         infinite = kwargs.pop('infinite', False)
-        slider_color = kwargs.pop('slider_color', self._theme.widget_box_background_color)
-        slider_thickness = kwargs.pop('slider_thickness', self._theme.scrollbar_thick)
-        state_color = kwargs.pop('state_color', ((178, 178, 178), (117, 185, 54)))
-        state_text_font_color = kwargs.pop('state_text_font_color', (self._theme.widget_box_background_color,
-                                                                     self._theme.widget_box_background_color))
+        slider_color = kwargs.pop('slider_color',
+                                  self._theme.widget_box_background_color)
+        slider_thickness = kwargs.pop('slider_thickness',
+                                      self._theme.scrollbar_thick)
+        state_color = kwargs.pop('state_color',
+                                 ((178, 178, 178), (117, 185, 54)))
+        state_text_font_color = kwargs.pop('state_text_font_color',
+                                           (self._theme.widget_box_background_color,
+                                            self._theme.widget_box_background_color))
         state_text_font_size = kwargs.pop('state_text_font_size', None)
-        switch_border_color = kwargs.pop('switch_border_color', self._theme.widget_box_border_color)
-        switch_border_width = kwargs.pop('switch_border_width', self._theme.widget_box_border_width)
+        switch_border_color = kwargs.pop('switch_border_color',
+                                         self._theme.widget_box_border_color)
+        switch_border_width = kwargs.pop('switch_border_width',
+                                         self._theme.widget_box_border_width)
         switch_height = kwargs.pop('switch_height', 1)
         switch_margin = kwargs.pop('switch_margin', self._theme.widget_box_margin)
 
@@ -1933,20 +2039,19 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.TextInput':
         """
-        Add a text input to the Menu: free text area and two functions
-        that execute when changing the text and pressing return button
-        on the element.
+        Add a text input to the Menu: free text area and two functions that
+        execute when changing the text and pressing return button on the element.
 
-        The callbacks receive the current value and all unknown keyword
-        arguments, where ``current_text=widget.get_value``:
+        The callbacks receive the current value and all unknown keyword arguments,
+        where ``current_text=widget.get_value``:
 
         .. code-block:: python
 
             onchange(current_text, **kwargs)
             onreturn(current_text, **kwargs)
 
-        If ``onselect`` is defined, the callback is executed as follows, where ``selected``
-        is a boolean representing the selected status:
+        If ``onselect`` is defined, the callback is executed as follows, where
+        ``selected`` is a boolean representing the selected status:
 
         .. code-block:: python
 
@@ -1980,13 +2085,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
@@ -2071,12 +2177,16 @@ class WidgetManager(Base):
         """
         # Remove invalid keys from kwargs
         for key in list(kwargs.keys()):
-            if key not in ['align', 'background_color', 'background_inflate', 'border_color', 'border_inflate',
-                           'border_width', 'cursor', 'margin', 'padding', 'max_height', 'max_width',
-                           'scrollbar_color', 'scrollbar_cursor', 'scrollbar_shadow_color', 'scrollbar_shadow_offset',
-                           'scrollbar_shadow_position', 'scrollbar_shadow', 'scrollbar_slider_color',
-                           'scrollbar_slider_pad', 'scrollbar_thick', 'scrollbars', 'scrollarea_color',
-                           'border_position', 'scrollbar_slider_hover_color', 'tab_size']:
+            if key not in ('align', 'background_color', 'background_inflate',
+                           'border_color', 'border_inflate', 'border_width',
+                           'cursor', 'margin', 'padding', 'max_height', 'max_width',
+                           'scrollbar_color', 'scrollbar_cursor',
+                           'scrollbar_shadow_color', 'scrollbar_shadow_offset',
+                           'scrollbar_shadow_position', 'scrollbar_shadow',
+                           'scrollbar_slider_color', 'scrollbar_slider_pad',
+                           'scrollbar_thick', 'scrollbars', 'scrollarea_color',
+                           'border_position', 'scrollbar_slider_hover_color',
+                           'tab_size'):
                 kwargs.pop(key, None)
 
         attributes = self._filter_widget_attributes(kwargs)
@@ -2085,9 +2195,11 @@ class WidgetManager(Base):
         pad_v = pad[0] + pad[2]
 
         assert width > pad_h, \
-            'frame width ({0}) cannot be lower than horizontal padding size ({1})'.format(width, pad_h)
+            'frame width ({0}) cannot be lower than horizontal padding size ({1})' \
+            ''.format(width, pad_h)
         assert height > pad_v, \
-            'frame height ({0}) cannot be lower than vertical padding size ({1})'.format(height, pad_v)
+            'frame height ({0}) cannot be lower than vertical padding size ({1})' \
+            ''.format(height, pad_v)
 
         widget = pygame_menu.widgets.Frame(
             width=width - pad_h,
@@ -2101,18 +2213,28 @@ class WidgetManager(Base):
             max_height=kwargs.pop('max_height', height) - pad_v,
             max_width=kwargs.pop('max_width', width) - pad_h,
             scrollarea_color=kwargs.pop('scrollarea_color', None),
-            scrollbar_color=kwargs.pop('scrollbar_color', self._theme.scrollbar_color),
-            scrollbar_cursor=kwargs.pop('scrollbar_cursor', self._theme.scrollbar_cursor),
-            scrollbar_shadow=kwargs.pop('scrollbar_shadow', self._theme.scrollbar_shadow),
-            scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color', self._theme.scrollbar_shadow_color),
-            scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset', self._theme.scrollbar_shadow_offset),
-            scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position', self._theme.scrollbar_shadow_position),
-            scrollbar_slider_color=kwargs.pop('scrollbar_slider_color', self._theme.scrollbar_slider_color),
+            scrollbar_color=kwargs.pop('scrollbar_color',
+                                       self._theme.scrollbar_color),
+            scrollbar_cursor=kwargs.pop('scrollbar_cursor',
+                                        self._theme.scrollbar_cursor),
+            scrollbar_shadow=kwargs.pop('scrollbar_shadow',
+                                        self._theme.scrollbar_shadow),
+            scrollbar_shadow_color=kwargs.pop('scrollbar_shadow_color',
+                                              self._theme.scrollbar_shadow_color),
+            scrollbar_shadow_offset=kwargs.pop('scrollbar_shadow_offset',
+                                               self._theme.scrollbar_shadow_offset),
+            scrollbar_shadow_position=kwargs.pop('scrollbar_shadow_position',
+                                                 self._theme.scrollbar_shadow_position),
+            scrollbar_slider_color=kwargs.pop('scrollbar_slider_color',
+                                              self._theme.scrollbar_slider_color),
             scrollbar_slider_hover_color=kwargs.pop('scrollbar_slider_hover_color',
                                                     self._theme.scrollbar_slider_hover_color),
-            scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad', self._theme.scrollbar_slider_pad),
-            scrollbar_thick=kwargs.pop('scrollbar_thick', self._theme.scrollbar_thick),
-            scrollbars=get_scrollbars_from_position(kwargs.pop('scrollbars', self._theme.scrollarea_position))
+            scrollbar_slider_pad=kwargs.pop('scrollbar_slider_pad',
+                                            self._theme.scrollbar_slider_pad),
+            scrollbar_thick=kwargs.pop('scrollbar_thick',
+                                       self._theme.scrollbar_thick),
+            scrollbars=get_scrollbars_from_position(
+                kwargs.pop('scrollbars', self._theme.scrollarea_position))
         )
 
         self._append_widget(widget)
@@ -2128,9 +2250,9 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a horizontal frame to the Menu. Frame is a widget container that packs many
-        widgets within. All contained widgets have a floating position, and use only 1
-        position in column/row layout.
+        Adds a horizontal frame to the Menu. Frame is a widget container that
+        packs many widgets within. All contained widgets have a floating position,
+        and use only 1 position in column/row layout.
 
         .. code-block:: python
 
@@ -2174,12 +2296,13 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
-            If horizontal frame contains a scrollarea (setting ``max_height`` or ``max_width``
-            less than size) padding will be set at zero.
+            If horizontal frame contains a scrollarea (setting ``max_height`` or
+            ``max_width`` less than size) padding will be set at zero.
 
         .. note::
 
@@ -2188,20 +2311,20 @@ class WidgetManager(Base):
 
         .. note::
 
-            Widget floating is also considered within frames. If a widget is floating,
-            it does not add any size to the respective positioning.
+            Widget floating is also considered within frames. If a widget is
+            floating, it does not add any size to the respective positioning.
 
         .. note::
 
             The Frame size created with this method does consider the padding. Thus,
-            if Frame is created with ``width=100``, ``height=200`` and ``padding=25`` the
-            final internal size is ``width=50`` and ``height=150``.
+            if Frame is created with ``width=100``, ``height=200`` and ``padding=25``
+            the final internal size is ``width=50`` and ``height=150``.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param width: Frame width in px
         :param height: Frame height in px
@@ -2220,9 +2343,9 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Frame':
         """
-        Adds a vertical frame to the Menu. Frame is a widget container that packs many
-        widgets within. All contained widgets have a floating position, and use only 1
-        position in column/row layout.
+        Adds a vertical frame to the Menu. Frame is a widget container that packs
+        many widgets within. All contained widgets have a floating position, and
+        use only 1 position in column/row layout.
 
         .. code-block:: python
 
@@ -2267,12 +2390,13 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
-            If vertical frame contains a scrollarea (setting ``max_height`` or ``max_width``
-            less than size) padding will be set at zero.
+            If vertical frame contains a scrollarea (setting ``max_height`` or
+            ``max_width`` less than size) padding will be set at zero.
 
         .. note::
 
@@ -2281,20 +2405,20 @@ class WidgetManager(Base):
 
         .. note::
 
-            Widget floating is also considered within frames. If a widget is floating,
-            it does not add any size to the respective positioning.
+            Widget floating is also considered within frames. If a widget is
+            floating, it does not add any size to the respective positioning.
 
         .. note::
 
             The Frame size created with this method does consider the padding. Thus,
-            if Frame is created with ``width=100``, ``height=200`` and ``padding=25`` the
-            final internal size is ``width=50`` and ``height=150``.
+            if Frame is created with ``width=100``, ``height=200`` and ``padding=25``
+            the final internal size is ``width=50`` and ``height=150``.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param width: Frame width in px
         :param height: Frame height in px
@@ -2311,8 +2435,8 @@ class WidgetManager(Base):
             **kwargs
     ) -> 'pygame_menu.widgets.Table':
         """
-        Adds a Table to the Menu. A table is a frame which can pack widgets
-        in a structured way.
+        Adds a Table to the Menu. A table is a frame which can pack widgets in a
+        structured way.
 
         kwargs (Optional)
             - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
@@ -2339,13 +2463,14 @@ class WidgetManager(Base):
 
         .. note::
 
-            All theme-related optional kwargs use the default Menu theme if not defined.
+            All theme-related optional kwargs use the default Menu theme if not
+            defined.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param table_id: ID of the table
         :param kwargs: Optional keyword arguments
@@ -2375,8 +2500,8 @@ class WidgetManager(Base):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param margin: Horizontal margin in px
         :param margin_id: ID of the margin
@@ -2405,8 +2530,8 @@ class WidgetManager(Base):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param margin: Vertical margin in px
         :param margin_id: ID of the margin
@@ -2432,16 +2557,15 @@ class WidgetManager(Base):
 
         .. note::
 
-            This widget is useful to fill column/rows layout without
-            compromising any visuals. Also it can be used to store information
-            or even to add a ``draw_callback`` function to it for being called
-            on each Menu draw.
+            This widget is useful to fill column/rows layout without compromising
+            any visuals. Also it can be used to store information or even to add
+            a ``draw_callback`` function to it for being called on each Menu draw.
 
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         :param widget_id: Widget ID
         :return: Widget object
@@ -2470,13 +2594,13 @@ class WidgetManager(Base):
         .. note::
 
             This is applied only to the base Menu (not the currently displayed,
-            stored in ``_current`` pointer); for such behaviour apply
-            to :py:meth:`pygame_menu.menu.Menu.get_current` object.
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
 
         .. warning::
 
-            Unintended behaviours may happen while using this method, use only with caution.
-            Specially while creating nested submenus with buttons.
+            Unintended behaviours may happen while using this method, use only with
+            caution; specially while creating nested submenus with buttons.
 
         :param widget: Widget to be added
         :param configure_defaults: Apply defaults widget configuration (for example, theme)

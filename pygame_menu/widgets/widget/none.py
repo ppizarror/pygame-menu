@@ -42,8 +42,8 @@ from pygame_menu._types import Optional, NumberType
 # noinspection PyMissingOrEmptyDocstring
 class NoneWidget(Widget):
     """
-    None widget. Useful if used for filling column/row layout. None widget
-    don't accept padding, margin, cannot be selected or updated.
+    None widget. Useful if used for filling column/row layout. None widget don't
+    accept padding, margin, cannot be selected or updated.
 
     .. note::
 

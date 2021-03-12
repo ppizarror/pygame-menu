@@ -37,11 +37,13 @@ import pygame
 
 from pygame_menu.controls import KEY_MOVE_UP, KEY_MOVE_DOWN, KEY_APPLY
 from pygame_menu.locals import FINGERDOWN, FINGERUP, INPUT_INT, INPUT_FLOAT, INPUT_TEXT
-from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, get_finger_pos, warn
+from pygame_menu.utils import check_key_pressed_valid, make_surface, assert_color, \
+    get_finger_pos, warn
 from pygame_menu.widgets.core import Widget
 
-from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, NumberType, \
-    Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, EventVectorType
+from pygame_menu._types import Optional, Any, CallbackType, Tuple, List, ColorType, \
+    NumberType, Tuple2IntType, Dict, Tuple2NumberType, NumberInstance, ColorInputType, \
+    EventVectorType
 
 try:
     # noinspection PyProtectedMember
@@ -79,8 +81,8 @@ class TextInput(Widget):
     """
     Text input widget.
 
-    The callbacks receive the current value and all unknown keyword
-    arguments, where ``current_text=widget.get_value``:
+    The callbacks receive the current value and all unknown keyword arguments,
+    where ``current_text=widget.get_value``:
 
     .. code-block:: python
 
@@ -93,9 +95,9 @@ class TextInput(Widget):
 
     .. note::
 
-        TextInput text input is sensitive to the widget font, some fonts do not support
-        some characters or languages (for example Chinese). Be careful about which font
-        use.
+        TextInput text input is sensitive to the widget font, some fonts do not
+        support some characters or languages (for example Chinese). Be careful
+        about which font use.
 
     :param title: Text input title
     :param textinput_id: ID of the text input
@@ -179,7 +181,7 @@ class TextInput(Widget):
     _selection_box: List[int]
     _selection_color: ColorType
     _selection_enabled: bool
-    _selection_mouse_first_position: int  # Touch emulates a mouse, so this is used by both touch and mouse
+    _selection_mouse_first_position: int
     _selection_position: List[int]
     _selection_surface: Optional['pygame.Surface']
     _title_size: NumberType
@@ -240,14 +242,18 @@ class TextInput(Widget):
         assert maxchar >= 0, 'maxchar must be equal or greater than zero'
         assert maxwidth >= 0, 'maxwidth must be equal or greater than zero'
         assert len(password_char) == 1, 'password char must be a character'
-        assert input_underline_len >= 0, 'input underline length must be equal or greater than zero'
-        assert cursor_switch_ms > 0, 'cursor switch in milliseconds must be greater than zero'
+        assert input_underline_len >= 0, \
+            'input underline length must be equal or greater than zero'
+        assert cursor_switch_ms > 0, \
+            'cursor switch in milliseconds must be greater than zero'
 
         cursor_color = assert_color(cursor_color)
         cursor_selection_color = assert_color(cursor_selection_color)
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
-            assert len(cursor_selection_color) == 4, 'cursor selection color alpha must be defined'
-            assert cursor_selection_color[3] != 255, 'cursor selection color alpha cannot be opaque'
+            assert len(cursor_selection_color) == 4, \
+                'cursor selection color alpha must be defined'
+            assert cursor_selection_color[3] != 255, \
+                'cursor selection color alpha cannot be opaque'
 
         super(TextInput, self).__init__(
             args=args,
@@ -322,6 +328,7 @@ class TextInput(Widget):
         self._selection_box = [0, 0]  # [from, to], int
         self._selection_color = cursor_selection_color
         self._selection_enabled = cursor_selection_enable
+        # Touch emulates a mouse, so this is used by both touch and mouse
         self._selection_mouse_first_position = -1
         self._selection_position = [0, 0]  # x,y (float)
         self._selection_surface = None
@@ -331,9 +338,12 @@ class TextInput(Widget):
             for ch in range(len(valid_chars)):
                 _char = str(valid_chars[ch])
                 valid_chars[ch] = _char
-                assert isinstance(_char, str), 'element "{0}" of valid_chars must be a string'.format(_char)
-                assert len(_char) == 1, 'element "{0}" of valid_chars must be character'.format(_char)
-            assert len(valid_chars) > 0, 'valid_chars list must contain at least 1 element'
+                assert isinstance(_char, str), \
+                    'element "{0}" of valid_chars must be a string'.format(_char)
+                assert len(_char) == 1, \
+                    'element "{0}" of valid_chars must be character'.format(_char)
+            assert len(valid_chars) > 0, \
+                'valid_chars list must contain at least 1 element'
         self._valid_chars = valid_chars
 
         # Callbacks
@@ -371,7 +381,8 @@ class TextInput(Widget):
         max_char = 'O'
         if self._password:
             max_char = self._password_char
-        self._maxwidthsize = self._font_render_string(max_char * self._maxwidth_base).get_size()[0]
+        max_char_size = self._font_render_string(max_char * self._maxwidth_base).get_size()
+        self._maxwidthsize = max_char_size[0]
 
         # Update password char size
         if self._password:
@@ -430,10 +441,12 @@ class TextInput(Widget):
         if pygame.vernum[0] >= 2:  # pygame 1.9.3 don't have vernum.major
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
             if self._selection_surface is not None:  # Draw selection
-                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+                surface.blit(self._selection_surface, (self._selection_position[0],
+                                                       self._selection_position[1]))
         else:
             if self._selection_surface is not None:  # Draw selection
-                surface.blit(self._selection_surface, (self._selection_position[0], self._selection_position[1]))
+                surface.blit(self._selection_surface, (self._selection_position[0],
+                                                       self._selection_position[1]))
             surface.blit(self._surface, (self._rect.x, self._rect.y))  # Draw string
 
         # Draw cursor
@@ -443,7 +456,8 @@ class TextInput(Widget):
             x = self._rect.x + self._cursor_surface_pos[0]
             if self._flip[0]:  # Flip on x axis (bug)
                 x = self._surface.get_width() - x
-            surface.blit(self._cursor_surface, (x, self._rect.y + self._cursor_surface_pos[1]))
+            surface.blit(self._cursor_surface,
+                         (x, self._rect.y + self._cursor_surface_pos[1]))
 
     def _render(self) -> Optional[bool]:
         string = self._title + self._get_input_string()  # Render string
@@ -452,11 +466,13 @@ class TextInput(Widget):
         if max_cont_width != 0:
             self._last_container_width = max_cont_width
 
-        if not self._render_hash_changed(string, self._selected, self._cursor_render, self._cursor_position,
-                                         self._selection_enabled, self.active, self._visible, self.readonly,
-                                         self._last_container_width, self._selection_box[0], self._selection_box[1],
-                                         self._last_selection_render[0], self._last_selection_render[1],
-                                         self._renderbox[0], self._renderbox[1], self._renderbox[2],
+        if not self._render_hash_changed(string, self._selected, self._cursor_render,
+                                         self._cursor_position, self._selection_enabled,
+                                         self.active, self._visible, self.readonly,
+                                         self._last_container_width, self._selection_box[0],
+                                         self._selection_box[1], self._last_selection_render[0],
+                                         self._last_selection_render[1], self._renderbox[0],
+                                         self._renderbox[1], self._renderbox[2],
                                          self._cursor_visible):
             return True
 
@@ -490,8 +506,8 @@ class TextInput(Widget):
             return
 
         if self._selection_active and \
-                (self._last_selection_render[0] != self._selection_box[0] or self._last_selection_render[1] !=
-                 self._selection_box[1]) or force:
+                (self._last_selection_render[0] != self._selection_box[0] or
+                 self._last_selection_render[1] != self._selection_box[1]) or force:
 
             # If there's no limit
             pos = [0, 0]
@@ -543,8 +559,8 @@ class TextInput(Widget):
 
     def _get_max_container_width(self) -> int:
         """
-        Return the maximum textarea container width. It can be the column width, menu width
-        or frame width if horizontal
+        Return the maximum textarea container width. It can be the column width,
+        menu width or frame width if horizontal
 
         :return: Container width
         """
@@ -609,7 +625,8 @@ class TextInput(Widget):
             delta_ch = posx2 - self._title_size - self._selection_effect.get_width()
             char = math.ceil(delta_ch / self._input_underline_size)
             for i in range(10):  # Find the best guess for
-                fw = self._font_render_string(self._input_underline * int(char), color).get_width()
+                fw = self._font_render_string(
+                    self._input_underline * int(char), color).get_width()
                 char += 1
                 if fw >= delta_ch:
                     break
@@ -629,11 +646,15 @@ class TextInput(Widget):
 
         # Render char
         self._current_underline_string = underline_string
-        underline = self._font_render_string(underline_string, color, use_background_color=False)
+        underline = self._font_render_string(underline_string, color,
+                                             use_background_color=False)
 
         # Create a new surface
         new_width = max(self._title_size + underline.get_size()[0], current_rect.width)
-        new_surface = make_surface(new_width, current_rect.height + 3 + self._input_underline_vmargin, alpha=True)
+        new_surface = make_surface(
+            new_width, current_rect.height + 3 + self._input_underline_vmargin,
+            alpha=True
+        )
 
         # Compute underline vmargin by its height
         uvm = 5  # underline vertical margin
@@ -644,7 +665,8 @@ class TextInput(Widget):
 
         # Blit current surface
         new_surface.blit(surface, (0, 0))
-        new_surface.blit(underline, (self._title_size, uvm + self._input_underline_vmargin))  # Position (x, y)
+        new_surface.blit(underline, (self._title_size,
+                                     uvm + self._input_underline_vmargin))
 
         # Return new surface
         return new_surface
@@ -663,7 +685,8 @@ class TextInput(Widget):
         if self._cursor_surface is None:
             if self._rect.height == 0:  # If Menu has not been initialized this error can occur
                 return
-            self._cursor_surface = make_surface(self._font_size / 20 + 1, self._rect.height - 2)
+            self._cursor_surface = make_surface(self._font_size / 20 + 1,
+                                                self._rect.height - 2)
             self._cursor_surface.fill(self._cursor_color)
 
         # Get string
@@ -761,8 +784,15 @@ class TextInput(Widget):
         else:
             return string
 
-    def _update_renderbox(self, left: int = 0, right: int = 0, addition: bool = False, end: bool = False,
-                          start: bool = False, update_maxwidth: bool = True) -> None:
+    def _update_renderbox(
+            self,
+            left: int = 0,
+            right: int = 0,
+            addition: bool = False,
+            end: bool = False,
+            start: bool = False,
+            update_maxwidth: bool = True
+    ) -> None:
         """
         Update renderbox position.
 
@@ -816,9 +846,11 @@ class TextInput(Widget):
             self._renderbox[2] += right
         else:
             if addition:  # If text is added
-                if right < 0 and self._renderbox[2] == self._maxwidth:  # If press del at the end of string
+                # If press del at the end of string
+                if right < 0 and self._renderbox[2] == self._maxwidth:
                     return
-                if left < 0 and self._renderbox[2] == 0:  # If backspace at beginning of string
+                # If backspace at beginning of string
+                if left < 0 and self._renderbox[2] == 0:
                     return
 
                 # If user deletes something and it is in the end
@@ -829,13 +861,15 @@ class TextInput(Widget):
 
                 # If the user writes, move renderbox
                 if right > 0:
-                    if self._renderbox[2] == self._maxwidth:  # If cursor is at the end push box
+                    # If cursor is at the end push box
+                    if self._renderbox[2] == self._maxwidth:
                         self._renderbox[0] += right
                         self._renderbox[1] += right
                     self._renderbox[2] += right
 
                 if left < 0:
-                    if self._renderbox[0] == 0:  # If cursor is at the beginning
+                    # If cursor is at the beginning
+                    if self._renderbox[0] == 0:
                         self._renderbox[2] += left
                     self._renderbox[0] += left
                     self._renderbox[1] += left
@@ -1057,7 +1091,8 @@ class TextInput(Widget):
                 self._update_renderbox(right=1, addition=True)
             self._update_input_string(default_text)
         else:
-            raise ValueError('value "{0}" type is not correct according to input_type'.format(text))
+            raise ValueError('value "{0}" type is not correct according to input_type'
+                             ''.format(text))
         self._update_renderbox()  # Updates cursor
         self._render()  # Renders the selection box
 
@@ -1119,7 +1154,8 @@ class TextInput(Widget):
         :return: None
         """
         # Add one to cursor_pos, but do not exceed len(input_string)
-        self._cursor_position = min(self._cursor_position + 1, len(self._input_string))
+        self._cursor_position = min(self._cursor_position + 1,
+                                    len(self._input_string))
         self._update_renderbox(right=1)
 
     def _blur(self) -> None:
@@ -1190,7 +1226,8 @@ class TextInput(Widget):
             self._history.insert(self._history_index, new_string)
             self._history_cursor.insert(self._history_index, self._cursor_position)
             self._history_renderbox.insert(self._history_index,
-                                           [self._renderbox[0], self._renderbox[1], self._renderbox[2]])
+                                           [self._renderbox[0], self._renderbox[1],
+                                            self._renderbox[2]])
 
             if len(self._history) > self._max_history:
                 self._history.pop(0)
@@ -1316,7 +1353,8 @@ class TextInput(Widget):
             # Update char size
             for char in new_string:
                 if char not in self._keychar_size:
-                    self._get_char_size(char)  # This updates the self._keychar_size variable
+                    # This updates the self._keychar_size variable
+                    self._get_char_size(char)
 
             self._sound.play_key_add()
             self._input_string = new_string  # For a purpose of computing render_box
@@ -1508,7 +1546,8 @@ class TextInput(Widget):
         # Check mouse pressed
         # noinspection PyArgumentList
         mouse_left, mouse_middle, mouse_right = pygame.mouse.get_pressed()
-        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and self._mouse_enabled
+        self._mouse_is_pressed = (mouse_left or mouse_right or mouse_middle) and \
+                                 self._mouse_enabled
 
         if self.readonly or not self.is_visible():
             return False
@@ -1544,12 +1583,14 @@ class TextInput(Widget):
                 self._last_key = event.key
 
                 # If None exist, create counter for that key:
-                if event.key not in self._keyrepeat_counters and event.key not in self._ignore_keys and \
+                if event.key not in self._keyrepeat_counters and \
+                        event.key not in self._ignore_keys and \
                         'unicode' in event.dict:
                     self._keyrepeat_counters[event.key] = [0, event.unicode]
 
                 # User press ctrl+something
-                if pygame.key.get_mods() in (pygame.KMOD_CTRL, pygame.KMOD_RCTRL, pygame.KMOD_LCTRL):
+                if pygame.key.get_mods() in (pygame.KMOD_CTRL, pygame.KMOD_RCTRL,
+                                             pygame.KMOD_LCTRL):
 
                     # If test, disable CTRL
                     if 'test' in event.dict and event.dict['test']:
@@ -1627,8 +1668,9 @@ class TextInput(Widget):
                     if last_space == -1:  # Finally, find the subsequence of valid hex chars
                         last_space = 0
                         for j in range(len(self._input_string)):
-                            if self._input_string[j].lower() not in ('0', '1', '2', '3', '4', '5', '6', '7',
-                                                                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'):
+                            if self._input_string[j].lower() not in \
+                                    ('0', '1', '2', '3', '4', '5', '6', '7',
+                                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'):
                                 last_space = j + 1
                         if last_space >= len(self._input_string):
                             last_space = -1
@@ -1704,9 +1746,11 @@ class TextInput(Widget):
                             if self._selection_box[0] == self._selection_box[1]:
                                 self._selection_box[1] = self._selection_box[0] + 1
                             else:
-                                self._selection_box[1] = min(len(self._input_string), self._selection_box[1] + 1)
+                                self._selection_box[1] = min(len(self._input_string),
+                                                             self._selection_box[1] + 1)
                         else:
-                            self._selection_box[0] = min(self._selection_box[1], self._selection_box[0] + 1)
+                            self._selection_box[0] = min(self._selection_box[1],
+                                                         self._selection_box[0] + 1)
                     else:
                         if self._unselect_text():
                             return False
@@ -1733,7 +1777,8 @@ class TextInput(Widget):
                             if self._selection_box[1] - self._selection_box[0] == 1:
                                 self._selection_box[1] = self._selection_box[0]
                             else:
-                                self._selection_box[1] = max(self._selection_box[0], self._selection_box[1] - 1)
+                                self._selection_box[1] = max(self._selection_box[0],
+                                                             self._selection_box[1] - 1)
                     else:
                         if self._unselect_text():
                             return False
@@ -1811,14 +1856,17 @@ class TextInput(Widget):
                             'check if event has defined the proper unicode char'
                             ''.format(self.get_class_id(), event.unicode, event.key)
                         )
-                    if not self._push_key_input(event.unicode):  # Error in char, not valid or string limit exceeds
+
+                    # Error in char, not valid or string limit exceeds
+                    if not self._push_key_input(event.unicode):
                         break
                     self.active = True
                     updated = True
 
             # User releases a key
             elif event.type == pygame.KEYUP and self._keyboard_enabled:
-                # Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
+                # Because KEYUP doesn't include event.unicode, this dict is stored
+                # in such a weird way
                 if event.key in self._keyrepeat_counters:
                     del self._keyrepeat_counters[event.key]
 
@@ -1830,8 +1878,10 @@ class TextInput(Widget):
                 self._block_copy_paste = False
                 self._key_is_pressed = False
 
-            # User releases the mouse button or finger; don't consider the mouse wheel (button 4 & 5)
-            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and event.button in (1, 2, 3) or \
+            # User releases the mouse button or finger; don't consider the mouse
+            # wheel (button 4 & 5)
+            elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
+                    event.button in (1, 2, 3) or \
                     event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
                 event_pos = get_finger_pos(self._menu, event)
                 if rect.collidepoint(*event_pos) and \
@@ -1841,8 +1891,10 @@ class TextInput(Widget):
                     self._cursor_ms_counter = 0
                     self._cursor_visible = True
 
-            # User press the mouse button or finger; don't consider the mouse wheel (button 4 & 5)
-            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and event.button in (1, 2, 3) or \
+            # User press the mouse button or finger; don't consider the mouse
+            # wheel (button 4 & 5)
+            elif event.type == pygame.MOUSEBUTTONDOWN and self._mouse_enabled and \
+                    event.button in (1, 2, 3) or \
                     event.type == FINGERDOWN and self._touchscreen_enabled:
                 if self.get_selected_time() > self._keyrepeat_mouse_interval_ms or \
                         hasattr(event, 'test'):
@@ -1880,7 +1932,9 @@ class TextInput(Widget):
                                            key=event_key,
                                            unicode=event_unicode)
                     )
-                except pygame.error:  # If the keys are too fast pygame can raise a Sound Exception
+
+                # If the keys are too fast pygame can raise a Sound Exception
+                except pygame.error:
                     pass
 
         return updated
