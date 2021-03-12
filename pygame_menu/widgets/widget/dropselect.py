@@ -315,11 +315,11 @@ class DropSelect(Widget):
         if self._selection_box_width == 0:
             f = self._render_option_string(self._placeholder)
             h = self._render_string(self._title, self.get_font_color_status()).get_height()
-            self._selection_box_width = int(f.get_width() +
-                                            self._selection_box_arrow_margin[0] +
-                                            self._selection_box_arrow_margin[1] +
-                                            h - h / 4 +
-                                            2 * self._selection_box_border_width)
+            self._selection_box_width = int(f.get_width()
+                                            + self._selection_box_arrow_margin[0]
+                                            + self._selection_box_arrow_margin[1]
+                                            + h - h / 4
+                                            + 2 * self._selection_box_border_width)
 
     def make_selection_drop(self, **kwargs) -> 'DropSelect':
         """
@@ -514,18 +514,19 @@ class DropSelect(Widget):
             self._drop_frame.set_frame(self._frame)
 
         # Set sizing properties
-        border_width = self._selection_box_border_width if total_height != max_height else 0
         if total_height > 0:
             add_scrollbar = scrollbar_thickness if max_width != frame_width else 0
+            border_w = self._selection_box_border_width if total_height != max_height else 0
             self._drop_frame.set_attribute('height',
-                                           max_height + add_scrollbar - border_width)
+                                           max_height + add_scrollbar - border_w)
             self._drop_frame.set_attribute('width', frame_width)
         else:
             self._drop_frame.set_attribute('height', 0)
             self._drop_frame.set_attribute('width', 0)
             if self._placeholder_add_to_selection_box:
                 placeholder_button.hide()
-        self._drop_frame.set_attribute('extra_margin', border_width)
+        margin_width = self._selection_box_border_width if total_height == max_height else 0
+        self._drop_frame.set_attribute('extra_margin', margin_width)
         self._drop_frame.set_attribute('placeholder_button', placeholder_button)
 
         # Pack options
@@ -633,12 +634,12 @@ class DropSelect(Widget):
             if not self._open_middle:
                 if self._open_bottom:
                     self._drop_frame.set_position(x + self._title_size[0],
-                                                  y + self._title_size[1] +
-                                                  self.get_attribute('delta_title_height', 0))
+                                                  y + self._title_size[1]
+                                                  + self.get_attribute('delta_title_height', 0))
                 else:
                     self._drop_frame.set_position(x + self._title_size[0],
-                                                  y - self._drop_frame.get_attribute('height') +
-                                                  self._drop_frame.get_attribute('extra_margin'))
+                                                  y - self._drop_frame.get_attribute('height')
+                                                  + self._drop_frame.get_attribute('extra_margin'))
             else:
                 self._drop_frame.set_position(*self._compute_position_middle())
             for w in self._option_buttons:
@@ -737,11 +738,11 @@ class DropSelect(Widget):
         menu_height = 0 if self._menu is None else self._menu.get_height(widget=True)
         current_selected = self._get_current_selected_text()
 
-        if not self._render_hash_changed(current_selected, self._selected, self._visible,
-                                         self._index, self.readonly, self.active,
-                                         self._open_bottom, scroll_v, menu_height,
-                                         self._open_middle, len(self._items),
-                                         self._rect.x, self._rect.y):
+        if not self._render_hash_changed(
+                current_selected, self._selected, self._visible, self._index,
+                self.readonly, self.active, self._open_bottom, scroll_v,
+                menu_height, self._open_middle, len(self._items), self._rect.x,
+                self._rect.y):
             return True
 
         title = self._render_string(self._title, self.get_font_color_status())
@@ -821,9 +822,9 @@ class DropSelect(Widget):
             else:
                 arrow_right_pos = arrow_down
 
-        self._surface = make_surface(title.get_width() + self._selection_box_margin[0] +
-                                     self._selection_box_width + self._selection_box_inflate[0] / 2 +
-                                     self._selection_box_border_width,
+        self._surface = make_surface(title.get_width() + self._selection_box_margin[0]
+                                     + self._selection_box_width + self._selection_box_inflate[0] / 2
+                                     + self._selection_box_border_width,
                                      max(title.get_height() + self._selection_box_inflate[1],
                                          current_rect_bg.height))
         self._surface.blit(title, (0, self._selection_box_inflate[1] / 2 + delta_title_height))
@@ -832,9 +833,12 @@ class DropSelect(Widget):
                          self._selection_box_border_width)
 
         # Crop current max width
-        cropped_current_w = self._selection_box_width - self._selection_box_arrow_margin[0] - \
-                            self._selection_box_arrow_margin[1] - h / 2 - h / 16 - \
-                            self._selection_box_text_margin
+        cropped_current_w = self._selection_box_width \
+                            - self._selection_box_arrow_margin[0] \
+                            - self._selection_box_arrow_margin[1] \
+                            - h / 2 \
+                            - h / 16 \
+                            - self._selection_box_text_margin
         assert cropped_current_w > 0, \
             'there is no left space for text width, try increasing selection_box_width size'
         new_current = make_surface(cropped_current_w, current.get_height())
