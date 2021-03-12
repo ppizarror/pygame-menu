@@ -72,13 +72,15 @@ import warnings
 import pygame
 import pygame_menu
 
-from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, POSITION_NORTH, \
-    POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, \
-    POSITION_SOUTHWEST, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
+from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, POSITION_CENTER, \
+    POSITION_NORTH, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_NORTHWEST, \
+    POSITION_WEST, POSITION_EAST, POSITION_NORTHEAST, POSITION_SOUTHWEST, \
+    ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
 
-from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, NumberType, Any, \
-    Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, PaddingType, Tuple4IntType, \
-    ColorInputInstance, VectorType, EventType, CursorInputInstance, CursorInputType, Tuple2IntType, Dict
+from pygame_menu._types import ColorType, ColorInputType, Union, List, Vector2NumberType, \
+    NumberType, Any, Optional, Tuple, NumberInstance, VectorInstance, PaddingInstance, \
+    PaddingType, Tuple4IntType, ColorInputInstance, VectorType, EventType, \
+    CursorInputInstance, CursorInputType, Tuple2IntType, Dict
 
 PYGAME_V2 = pygame.version.vernum[0] >= 2
 WARNINGS_LAST_MESSAGES: Dict[int, bool] = {}
@@ -114,12 +116,15 @@ def assert_color(
         'color must be a tuple or list of 3 or 4 numbers'
     for i in range(3):
         assert isinstance(color[i], int), \
-            '"{0}" in element color {1} must be an integer, not type "{2}"'.format(color[i], color, type(color))
+            '"{0}" in element color {1} must be an integer, not type "{2}"' \
+            ''.format(color[i], color, type(color))
         assert 0 <= color[i] <= 255, \
-            '"{0}" in element color {1} must be an integer between 0 and 255'.format(color[i], color)
+            '"{0}" in element color {1} must be an integer between 0 and 255' \
+            ''.format(color[i], color)
     if len(color) == 4:
         assert isinstance(color[3], int), \
-            'alpha channel must be an integer between 0 and 255, not type "{0}"'.format(type(color))
+            'alpha channel must be an integer between 0 and 255, not type "{0}"' \
+            ''.format(type(color))
         assert 0 <= color[3] <= 255, \
             'opacity of color {0} must be an integer between 0 and 255; where ' \
             '0 is fully-transparent and 255 is fully-opaque'.format(color)
@@ -134,7 +139,8 @@ def assert_cursor(cursor: CursorInputType) -> None:
     :return: None
     """
     assert isinstance(cursor, CursorInputInstance), \
-        'cursor instance invalid, it can be None, an integer, or pygame.cursors.Cursor'
+        'cursor instance invalid, it can be None, an integer, ' \
+        'or pygame.cursors.Cursor'
 
 
 def assert_list_vector(list_vector: Union[List[Vector2NumberType], Tuple[Vector2NumberType, ...]],
@@ -161,7 +167,7 @@ def assert_orientation(orientation: str) -> None:
     """
     assert isinstance(orientation, str), \
         'orientation "{0}" must be a string'.format(orientation)
-    assert orientation in [ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL], \
+    assert orientation in (ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL), \
         'invalid orientation value "{0}"'.format(orientation)
 
 
@@ -174,8 +180,9 @@ def assert_position(position: str) -> None:
     """
     assert isinstance(position, str), \
         'position "{0}" must be a string'.format(position)
-    assert position in [POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH, POSITION_SOUTHEAST, POSITION_EAST,
-                        POSITION_NORTH, POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER], \
+    assert position in (POSITION_WEST, POSITION_SOUTHWEST, POSITION_SOUTH,
+                        POSITION_SOUTHEAST, POSITION_EAST, POSITION_NORTH,
+                        POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER), \
         'invalid position value "{0}"'.format(position)
 
 
@@ -198,7 +205,11 @@ def assert_position_vector(position: Union[str, List[str], Tuple[str, ...]]) -> 
         assert len(unique) == len(position), 'there cannot be repeated positions'
 
 
-def assert_vector(num_vector: VectorType, length: int, instance: type = NumberInstance) -> None:
+def assert_vector(
+        num_vector: VectorType,
+        length: int,
+        instance: type = NumberInstance
+) -> None:
     """
     Assert that a fixed length vector is numeric.
 
@@ -208,7 +219,8 @@ def assert_vector(num_vector: VectorType, length: int, instance: type = NumberIn
     :return: None
     """
     assert isinstance(num_vector, VectorInstance), \
-        'vector "{0}" must be a list or tuple of {1} items if type {2}'.format(num_vector, length, instance)
+        'vector "{0}" must be a list or tuple of {1} items if type {2}' \
+        ''.format(num_vector, length, instance)
     if length != 0:
         assert len(num_vector) == length, \
             'vector "{0}" must contain {1} numbers only, ' \
@@ -218,7 +230,8 @@ def assert_vector(num_vector: VectorType, length: int, instance: type = NumberIn
         if instance == int and isinstance(num, float) and int(num) == num:
             num = int(num)
         assert isinstance(num, instance), \
-            'item {0} of vector must be {1}, not type "{2}"'.format(num, instance, type(num))
+            'item {0} of vector must be {1}, not type "{2}"' \
+            ''.format(num, instance, type(num))
 
 
 def check_key_pressed_valid(event: EventType) -> bool:
@@ -367,8 +380,12 @@ def is_callable(func: Any) -> bool:
                              types.MethodType, functools.partial))
 
 
-def make_surface(width: NumberType, height: NumberType,
-                 alpha: bool = False, fill_color: Optional[ColorInputType] = None) -> 'pygame.Surface':
+def make_surface(
+        width: NumberType,
+        height: NumberType,
+        alpha: bool = False,
+        fill_color: Optional[ColorInputType] = None
+) -> 'pygame.Surface':
     """
     Creates a pygame surface object.
 
@@ -429,8 +446,10 @@ def parse_padding(padding: PaddingType) -> Tuple4IntType:
     else:
         assert 1 <= len(padding) <= 4, 'padding must be a tuple of 2, 3 or 4 elements'
         for i in range(len(padding)):
-            assert isinstance(padding[i], NumberInstance), 'all padding elements must be integers or floats'
-            assert padding[i] >= 0, 'all padding elements must be equal or greater than zero'
+            assert isinstance(padding[i], NumberInstance), \
+                'all padding elements must be integers or floats'
+            assert padding[i] >= 0, \
+                'all padding elements must be equal or greater than zero'
         if len(padding) == 1:
             return int(padding[0]), int(padding[0]), int(padding[0]), int(padding[0])
         elif len(padding) == 2:
@@ -526,8 +545,8 @@ def widget_terminal_title(
         w_title += TerminalColors.ENDC
     else:
         if widget.get_title() != '':
-            w_title = '{0} - {1} - '.format(w_class_id,
-                                            TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC)
+            title_f = TerminalColors.UNDERLINE + widget.get_title() + TerminalColors.ENDC
+            w_title = '{0} - {1} - '.format(w_class_id, title_f)
         else:
             w_title = w_class_id + ' - '
 

@@ -250,8 +250,8 @@ def main(test: bool = False) -> None:
         clock.tick(FPS)
         timer[0] += dt
 
-        # Title is evaluated at current level as the title of the base pointer object (main_menu)
-        # can change if user opens submenus
+        # Title is evaluated at current level as the title of the base pointer
+        # object (main_menu) can change if user opens submenus
         current_menu = main_menu.get_current()
         if current_menu.get_title() != 'Main Menu' or not main_menu.is_enabled():
             # Draw timer
@@ -271,7 +271,8 @@ def main(test: bool = False) -> None:
             if event.type == pygame.QUIT:
                 exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE and current_menu.get_title() == 'Main Menu':
+                if event.key == pygame.K_ESCAPE and \
+                        current_menu.get_title() == 'Main Menu':
                     main_menu.toggle()
 
         if main_menu.is_enabled():

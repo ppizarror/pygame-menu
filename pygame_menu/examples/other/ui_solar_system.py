@@ -55,8 +55,15 @@ class Planet(object):
     radius: float
     url: str
 
-    def __init__(self, image: 'pygame_menu.BaseImage', info: str, url: str, radius: float, period: float,
-                 fontsize: Union[int, float]) -> None:
+    def __init__(
+            self,
+            image: 'pygame_menu.BaseImage',
+            info: str,
+            url: str,
+            radius: float,
+            period: float,
+            fontsize: Union[int, float]
+    ) -> None:
         """
         Create a planet.
 
@@ -92,8 +99,8 @@ class SolarSystemApp(object):
         """
         Constructor.
         """
-        self.surface = create_example_window('Example - Dynamic Widget Update', (640, 480),
-                                             flags=pygame.NOFRAME)
+        self.surface = create_example_window('Example - Dynamic Widget Update',
+                                             (640, 480), flags=pygame.NOFRAME)
 
         # Create app theme and menu
         theme = pygame_menu.Theme()
@@ -112,124 +119,152 @@ class SolarSystemApp(object):
         self.planets = {
             'sun': Planet(
                 base_img.copy().crop(1, 1, 237, 238),
-                "The Sun is the Solar System's star and by far its most massive component. Its large mass "
-                "(332,900 Earth masses), which comprises 99.86% of all the mass in the Solar System, produces "
-                "temperatures and densities in its core high enough to sustain nuclear fusion of hydrogen into "
-                "helium, making it a main-sequence star. This releases an enormous amount of energy, "
-                "mostly radiated into space as electromagnetic radiation peaking in visible light.",
-                "https://en.wikipedia.org/wiki/Sun",
+                'The Sun is the Solar System\'s star and by far its most massive '
+                'component. Its large mass (332,900 Earth masses), which comprises '
+                '99.86% of all the mass in the Solar System, produces temperatures '
+                'and densities in its core high enough to sustain nuclear fusion '
+                'of hydrogen into helium, making it a main-sequence star. This '
+                'releases an enormous amount of energy, mostly radiated into space '
+                'as electromagnetic radiation peaking in visible light.',
+                'https://en.wikipedia.org/wiki/Sun',
                 radius=0,
                 period=0,
                 fontsize=theme.widget_font_size * 1.25
             ),
             'mercury': Planet(
                 base_img.copy().crop(239, 16, 50, 50),
-                "Mercury (0.4 AU from the Sun) is the closest planet to the Sun and on average, all seven other "
-                "planets. The smallest planet in the Solar System (0.055 Mo), Mercury has no natural satellites. "
-                "Besides impact craters, its only known geological features are lobed ridges or rupes that were "
-                "probably produced by a period of contraction early in its history. Mercury's very tenuous atmosphere "
-                "consists of atoms blasted off its surface by the solar wind. Its relatively large iron core and thin "
-                "mantle have not yet been adequately explained. Hypotheses include that its outer layers were stripped "
-                "off by a giant impact, or that it was prevented from fully accreting by the young Sun's energy.",
-                "https://en.wikipedia.org/wiki/Mercury_(planet)",
+                'Mercury (0.4 AU from the Sun) is the closest planet to the Sun '
+                'and on average, all seven other planets. The smallest planet in '
+                'the Solar System (0.055 Mo), Mercury has no natural satellites. '
+                'Besides impact craters, its only known geological features are '
+                'lobed ridges or rupes that were probably produced by a period of '
+                'contraction early in its history. Mercury\'s very tenuous '
+                'atmosphere consists of atoms blasted off its surface by the solar '
+                'wind. Its relatively large iron core and thin mantle have not yet '
+                'been adequately explained. Hypotheses include that its outer '
+                'layers were stripped off by a giant impact, or that it was '
+                'prevented from fully accreting by the young Sun\'s energy.',
+                'https://en.wikipedia.org/wiki/Mercury_(planet)',
                 radius=0.4,
                 period=0.24,
                 fontsize=theme.widget_font_size * 0.5
             ),
             'venus': Planet(
                 base_img.copy().crop(238, 156, 82, 82),
-                "Venus (0.7 AU from the Sun) is close in size to Earth (0.815 Mo) and, like Earth, has a thick "
-                "silicate mantle around an iron core, a substantial atmosphere, and evidence of internal geological "
-                "activity. It is much drier than Earth, and its atmosphere is ninety times as dense. Venus has no "
-                "natural satellites. It is the hottest planet, with surface temperatures over 400 °C (752 °F), most "
-                "likely due to the amount of greenhouse gases in the atmosphere. No definitive evidence of current "
-                "geological activity has been detected on Venus, but it has no magnetic field that would prevent "
-                "depletion of its substantial atmosphere, which suggests that its atmosphere is being replenished "
-                "by volcanic eruptions.",
-                "https://en.wikipedia.org/wiki/Venus",
+                'Venus (0.7 AU from the Sun) is close in size to Earth (0.815 Mo) '
+                'and, like Earth, has a thick silicate mantle around an iron core, '
+                'a substantial atmosphere, and evidence of internal geological '
+                'activity. It is much drier than Earth, and its atmosphere is '
+                'ninety times as dense. Venus has no natural satellites. It is '
+                'the hottest planet, with surface temperatures over 400 °C (752 '
+                '°F), most likely due to the amount of greenhouse gases in the '
+                'atmosphere. No definitive evidence of current geological '
+                'activity has been detected on Venus, but it has no magnetic '
+                'field that would prevent depletion of its substantial atmosphere, '
+                'which suggests that its atmosphere is being replenished by '
+                'volcanic eruptions.',
+                'https://en.wikipedia.org/wiki/Venus',
                 radius=0.7,
                 period=0.615,
                 fontsize=theme.widget_font_size * 0.6
             ),
             'earth': Planet(
                 base_img.copy().crop(441, 148, 89, 89),
-                "Earth (1 AU from the Sun) is the largest and densest of the inner planets, the only one known to "
-                "have current geological activity, and the only place where life is known to exist. Its liquid "
-                "hydrosphere is unique among the terrestrial planets, and it is the only planet where plate tectonics "
-                "has been observed. Earth's atmosphere is radically different from those of the other planets, having "
-                "been altered by the presence of life to contain 21% free oxygen. It has one natural satellite, the "
-                "Moon, the only large satellite of a terrestrial planet in the Solar System.",
-                "https://en.wikipedia.org/wiki/Earth",
+                'Earth (1 AU from the Sun) is the largest and densest of the inner '
+                'planets, the only one known to have current geological activity, '
+                'and the only place where life is known to exist. Its liquid '
+                'hydrosphere is unique among the terrestrial planets, and it is '
+                'the only planet where plate tectonics has been observed. Earth\'s '
+                'atmosphere is radically different from those of the other planets, '
+                'having been altered by the presence of life to contain 21% free '
+                'oxygen. It has one natural satellite, the Moon, the only large '
+                'satellite of a terrestrial planet in the Solar System.',
+                'https://en.wikipedia.org/wiki/Earth',
                 radius=1,
                 period=1,
                 fontsize=theme.widget_font_size * 0.85
             ),
             'moon': Planet(
                 base_img.copy().crop(247, 86, 64, 64),
-                "The Moon is Earth's only proper natural satellite. It is one quarter the diameter of Earth "
-                "(comparable to the width of Australia) making it the largest natural satellite in the Solar System "
-                "relative to the size of its planet. It is the fifth largest satellite in the Solar System and is "
-                "larger than any dwarf planet. The Moon orbits Earth at an average lunar distance of 384,400 km "
-                "(238,900 mi), or 1.28 light-seconds. Its gravitational influence produces Earth's tides and slightly "
-                "lengthens Earth's day.",
-                "https://en.wikipedia.org/wiki/Moon",
+                'The Moon is Earth\'s only proper natural satellite. It is one '
+                'quarter the diameter of Earth (comparable to the width of '
+                'Australia) making it the largest natural satellite in the Solar '
+                'System relative to the size of its planet. It is the fifth '
+                'largest satellite in the Solar System and is larger than any '
+                'dwarf planet. The Moon orbits Earth at an average lunar distance '
+                'of 384,400 km (238,900 mi), or 1.28 light-seconds. Its '
+                'gravitational influence produces Earth\'s tides and slightly '
+                'lengthens Earth\'s day.',
+                'https://en.wikipedia.org/wiki/Moon',
                 radius=0.35,
                 period=0.2,
                 fontsize=theme.widget_font_size * 0.5
             ),
             'mars': Planet(
                 base_img.copy().crop(535, 170, 69, 69),
-                "Mars (1.5 AU from the Sun) is smaller than Earth and Venus (0.107 Mo). It has an atmosphere of mostly "
-                "carbon dioxide with a surface pressure of 6.1 millibars (roughly 0.6% of that of Earth). Its surface, "
-                "peppered with vast volcanoes, such as Olympus Mons, and rift valleys, such as Valles Marineris, "
-                "shows geological activity that may have persisted until as recently as 2 million years ago. Its red "
-                "colour comes from iron oxide (rust) in its soil. Mars has two tiny natural satellites (Deimos and "
-                "Phobos) thought to be either captured asteroids, or ejected debris from a massive impact early in "
-                "Mars's history.",
-                "https://en.wikipedia.org/wiki/Mars",
+                'Mars (1.5 AU from the Sun) is smaller than Earth and Venus (0.107 '
+                'Mo). It has an atmosphere of mostly carbon dioxide with a '
+                'surface pressure of 6.1 millibars (roughly 0.6% of that of Earth'
+                '). Its surface, peppered with vast volcanoes, such as Olympus '
+                'Mons, and rift valleys, such as Valles Marineris, shows '
+                'geological activity that may have persisted until as recently '
+                'as 2 million years ago. Its red colour comes from iron oxide '
+                '(rust) in its soil. Mars has two tiny natural satellites (Deimos '
+                'and Phobos) thought to be either captured asteroids, or ejected '
+                'debris from a massive impact early in Mars\'s history.',
+                'https://en.wikipedia.org/wiki/Mars',
                 radius=1.25,
                 period=1.880,
                 fontsize=theme.widget_font_size * 0.95
             ),
             'jupiter': Planet(
                 base_img.copy().crop(322, 89, 118, 118),
-                "Jupiter (5.2 AU), at 318 Mo, is 2.5 times the mass of all the other planets put together. It is "
-                "composed largely of hydrogen and helium. Jupiter's strong internal heat creates semi-permanent "
-                "features in its atmosphere, such as cloud bands and the Great Red Spot. Jupiter has 79 known "
-                "satellites. The four largest, Ganymede, Callisto, Io, and Europa, show similarities to the "
-                "terrestrial planets, such as volcanism and internal heating. Ganymede, the largest satellite in the "
-                "Solar System, is larger than Mercury.",
-                "https://en.wikipedia.org/wiki/Jupiter",
+                'Jupiter (5.2 AU), at 318 Mo, is 2.5 times the mass of all the '
+                'other planets put together. It is composed largely of hydrogen '
+                'and helium. Jupiter\'s strong internal heat creates semi-permanent '
+                'features in its atmosphere, such as cloud bands and the Great '
+                'Red Spot. Jupiter has 79 known satellites. The four largest, '
+                'Ganymede, Callisto, Io, and Europa, show similarities to the '
+                'terrestrial planets, such as volcanism and internal heating. '
+                'Ganymede, the largest satellite in the Solar System, is larger '
+                'than Mercury.',
+                'https://en.wikipedia.org/wiki/Jupiter',
                 radius=1.75,
                 period=11.862,
                 fontsize=theme.widget_font_size * 1.1
             ),
             'uranus': Planet(
                 base_img.copy().crop(525, 83, 83, 83),
-                "Uranus (19.2 AU), at 14 Mo, is the lightest of the outer planets. Uniquely among the planets, "
-                "it orbits the Sun on its side; its axial tilt is over ninety degrees to the ecliptic. It has a much "
-                "colder core than the other giant planets and radiates very little heat into space. Uranus has 27 "
-                "known satellites, the largest ones being Titania, Oberon, Umbriel, Ariel, and Miranda.",
-                "https://en.wikipedia.org/wiki/Uranus",
+                'Uranus (19.2 AU), at 14 Mo, is the lightest of the outer '
+                'planets. Uniquely among the planets, it orbits the Sun on its '
+                'side; its axial tilt is over ninety degrees to the ecliptic. It '
+                'has a much colder core than the other giant planets and radiates '
+                'very little heat into space. Uranus has 27 known satellites, the '
+                'largest ones being Titania, Oberon, Umbriel, Ariel, and Miranda.',
+                'https://en.wikipedia.org/wiki/Uranus',
                 radius=2,
                 period=84.0205,
                 fontsize=theme.widget_font_size
             ),
             'neptune': Planet(
                 base_img.copy().crop(448, 1, 92, 92),
-                "Neptune (30.1 AU), though slightly smaller than Uranus, is more massive (17 Mo) and hence more "
-                "dense. It radiates more internal heat, but not as much as Jupiter or Saturn. Neptune has 14 known "
-                "satellites. The largest, Triton, is geologically active, with geysers of liquid nitrogen. Triton is "
-                "the only large satellite with a retrograde orbit. Neptune is accompanied in its orbit by several "
-                "minor planets, termed Neptune trojans, that are in 1:1 resonance with it.",
-                "https://en.wikipedia.org/wiki/Neptune",
+                'Neptune (30.1 AU), though slightly smaller than Uranus, is more '
+                'massive (17 Mo) and hence more dense. It radiates more internal '
+                'heat, but not as much as Jupiter or Saturn. Neptune has 14 known '
+                'satellites. The largest, Triton, is geologically active, with '
+                'geysers of liquid nitrogen. Triton is the only large satellite '
+                'with a retrograde orbit. Neptune is accompanied in its orbit by '
+                'several minor planets, termed Neptune trojans, that are in 1:1 '
+                'resonance with it.',
+                'https://en.wikipedia.org/wiki/Neptune',
                 radius=2.25,
                 period=164.8,
                 fontsize=theme.widget_font_size
             ),
         }
 
-        self.menu = pygame_menu.Menu('Solar System', 640, 480, onclose=pygame_menu.events.EXIT,
+        self.menu = pygame_menu.Menu('Solar System', 640, 480,
+                                     onclose=pygame_menu.events.EXIT,
                                      theme=theme, mouse_motion_selection=True)
 
         # Configure planets and add them to the Menu
@@ -247,9 +282,11 @@ class SolarSystemApp(object):
 
             # Add go back button with a background image
             submenu.add.vertical_margin(150)
-            go_back = submenu.add.button('Back to Menu', pygame_menu.events.BACK, cursor=pygame_menu.locals.CURSOR_HAND)
+            go_back = submenu.add.button('Back to Menu', pygame_menu.events.BACK,
+                                         cursor=pygame_menu.locals.CURSOR_HAND)
             go_back_img = planet.image.copy().resize(150, 150)
-            go_back_color = go_back_img.get_at((100, 100), ignore_alpha=True)  # Get color from figure's center pixel
+            # Get color from figure's center pixel
+            go_back_color = go_back_img.get_at((100, 100), ignore_alpha=True)
             go_back.get_decorator().add_baseimage(0, 0, go_back_img, centered=True)
             go_back_selection = pygame_menu.widgets.HighlightSelection(border_width=2)
             go_back.set_selection_effect(go_back_selection.set_color(go_back_color))
@@ -257,25 +294,31 @@ class SolarSystemApp(object):
             # Description
             submenu.add.vertical_margin(75)
             submenu.add.label('Description', align=pygame_menu.locals.ALIGN_LEFT,
-                              font_name=pygame_menu.font.FONT_OPEN_SANS_BOLD, margin=(5, 10))
-            label = submenu.add.label(planet.info, max_char=70, align=pygame_menu.locals.ALIGN_LEFT,
-                                      margin=(20, 1), font_size=20, font_name=pygame_menu.font.FONT_PT_SERIF,
+                              font_name=pygame_menu.font.FONT_OPEN_SANS_BOLD,
+                              margin=(5, 10))
+            label = submenu.add.label(planet.info, max_char=70,
+                                      align=pygame_menu.locals.ALIGN_LEFT,
+                                      margin=(29, 1), font_size=20,
+                                      font_name=pygame_menu.font.FONT_PT_SERIF,
                                       font_color=(255, 255, 255), padding=0)
             for line in label:
-                line.set_max_width(580)
-            submenu.add.url(planet.url, align=pygame_menu.locals.ALIGN_LEFT, margin=(20, 1), font_size=20,
+                line.set_max_width(565)
+            submenu.add.url(planet.url, align=pygame_menu.locals.ALIGN_LEFT,
+                            margin=(20, 1), font_size=20,
                             font_name=pygame_menu.font.FONT_PT_SERIF)
             submenu.add.vertical_margin(40)  # Bottom margin
 
             # Create advanced button
             planet.image.scale(0.35, 0.35)
-            button = self.menu.add.button(planet.name, submenu, font_size=planet.fontsize)
+            button = self.menu.add.button(planet.name, submenu,
+                                          font_size=planet.fontsize)
             button.set_cursor(pygame_menu.locals.CURSOR_HAND)
             button.set_float()
             button.get_decorator().add_baseimage(0, 2, planet.image, centered=True)
             button.set_attribute('planet', planet)
             button.add_draw_callback(self.rotate_planet)
-            button_selection = pygame_menu.widgets.LeftArrowSelection(arrow_size=(20, 30), blink_ms=1000)
+            button_selection = pygame_menu.widgets.LeftArrowSelection(arrow_size=(20, 30),
+                                                                      blink_ms=1000)
             button.set_selection_effect(button_selection.set_color(go_back_color))
 
             # Set random times
@@ -372,7 +415,8 @@ class SolarSystemApp(object):
         # Draw shooting stars
         for s in self.shooting_stars:
             x, y, dx, dy, theta, speed, flicker = s
-            c = int(150 * max(0.1, max(math.sin(0.1 * t + 1.5 * math.pi + flicker), math.cos(0.1 * t + flicker))))
+            c = int(150 * max(0.1, max(math.sin(0.1 * t + 1.5 * math.pi + flicker),
+                                       math.cos(0.1 * t + flicker))))
             x = int(x)
             y = int(y)
             gfxdraw.line(surface, x, y, x + dx, y + dy, (c, c, c))

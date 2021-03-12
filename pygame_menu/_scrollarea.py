@@ -44,22 +44,26 @@ import pygame_menu
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
-from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_WEST, POSITION_NORTHEAST, \
-    POSITION_NORTHWEST, POSITION_CENTER, POSITION_EAST, POSITION_NORTH, ORIENTATION_HORIZONTAL, \
-    ORIENTATION_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, POSITION_SOUTH, SCROLLAREA_POSITION_FULL, \
+from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_WEST, \
+    POSITION_NORTHEAST, POSITION_NORTHWEST, POSITION_CENTER, POSITION_EAST, \
+    POSITION_NORTH, ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, \
+    SCROLLAREA_POSITION_BOTH_HORIZONTAL, POSITION_SOUTH, SCROLLAREA_POSITION_FULL, \
     SCROLLAREA_POSITION_BOTH_VERTICAL
-from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, \
-    get_finger_pos
-from pygame_menu.widgets import ScrollBar, MenuBar
+from pygame_menu.utils import make_surface, assert_color, assert_position, \
+    assert_orientation, get_finger_pos
+from pygame_menu.widgets import ScrollBar
 
-from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
-    Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType, VectorInstance, \
-    StringVector
+from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, \
+    CursorInputType, Optional, Tuple2IntType, NumberInstance, ColorInputType, \
+    EventVectorType, EventType, VectorInstance, StringVector
 
 
-def get_scrollbars_from_position(position: str) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
+def get_scrollbars_from_position(
+        position: str
+) -> Union[str, Tuple[str, str], Tuple[str, str, str, str]]:
     """
     Return the scrollbars from the given position.
+
     Raises ``ValueError`` if invalid position.
 
     :param position: Position
@@ -151,7 +155,7 @@ class ScrollArea(Base):
             area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
             extend_x: int = 0,
             extend_y: int = 0,
-            menubar: Optional['MenuBar'] = None,
+            menubar: Optional['pygame_menu.widgets.MenuBar'] = None,
             parent_scrollarea: Optional['ScrollArea'] = None,
             scrollarea_id: str = '',
             scrollbar_color: ColorInputType = (235, 235, 235),
@@ -280,7 +284,8 @@ class ScrollArea(Base):
                                         height=self._rect.height + self._extend_y)
         if self._area_color is not None:
             if isinstance(self._area_color, pygame_menu.BaseImage):
-                self._area_color.draw(surface=self._bg_surface, area=self._bg_surface.get_rect())
+                self._area_color.draw(surface=self._bg_surface,
+                                      area=self._bg_surface.get_rect())
             else:
                 self._bg_surface.fill(assert_color(self._area_color))
 
@@ -342,8 +347,8 @@ class ScrollArea(Base):
 
         .. note::
 
-            This method is expensive, as menu surface update forces re-rendering of
-            all widgets (because them can change in size, position, etc...).
+            This method is expensive, as menu surface update forces re-rendering
+            of all widgets (because them can change in size, position, etc...).
 
         :return: Self reference
         """
@@ -359,7 +364,8 @@ class ScrollArea(Base):
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
+            of all Menu widgets as
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference
@@ -385,15 +391,20 @@ class ScrollArea(Base):
                 d_size, (dx, dy) = self._menubar.get_scrollbar_style_change(pos)
 
             if pos == POSITION_WEST:
-                sbar.set_position(self._view_rect.left - self._scrollbar_thick + dx, self._view_rect.top + dy)
+                sbar.set_position(x=self._view_rect.left - self._scrollbar_thick + dx,
+                                  y=self._view_rect.top + dy)
             elif pos == POSITION_EAST:
-                sbar.set_position(self._view_rect.right + dx, self._view_rect.top + dy)
+                sbar.set_position(x=self._view_rect.right + dx,
+                                  y=self._view_rect.top + dy)
             elif pos == POSITION_NORTH:
-                sbar.set_position(self._view_rect.left + dx, self._view_rect.top - self._scrollbar_thick + dy)
+                sbar.set_position(x=self._view_rect.left + dx,
+                                  y=self._view_rect.top - self._scrollbar_thick + dy)
             elif pos == POSITION_SOUTH:  # South
-                sbar.set_position(self._view_rect.left + dx, self._view_rect.bottom + dy)
+                sbar.set_position(x=self._view_rect.left + dx,
+                                  y=self._view_rect.bottom + dy)
             else:
-                raise ValueError('unknown position, only west, east, north, and south are allowed')
+                raise ValueError('unknown position, only west, east, north, and'
+                                 'south are allowed')
 
             if pos in (POSITION_NORTH, POSITION_SOUTH):
                 if self.get_hidden_width() != 0:
@@ -428,11 +439,13 @@ class ScrollArea(Base):
         # Background surface already has previous decorators
         if self._area_color is not None:
             self._make_background_surface()
-            surface.blit(self._bg_surface, (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
+            surface.blit(self._bg_surface,
+                         (self._rect.x - self._extend_x, self._rect.y - self._extend_y))
 
         # Draw world surface
         # noinspection PyTypeChecker
-        surface.blit(self._world, self._view_rect.topleft, (self.get_offsets(), self._view_rect.size))
+        surface.blit(self._world, self._view_rect.topleft,
+                     (self.get_offsets(), self._view_rect.size))
 
         # Then draw scrollbars
         for sbar in self._scrollbars:
@@ -544,8 +557,8 @@ class ScrollArea(Base):
         Subtract width of scrollbars from area with the given size and return
         the viewable area.
 
-        The viewable area depends on the world size, because scroll bars may
-        or may not be displayed.
+        The viewable area depends on the world size, because scroll bars may or
+        may not be displayed.
 
         :return: View rect object
         """
@@ -698,8 +711,8 @@ class ScrollArea(Base):
 
     def get_parent_scroll_value_percentage(self, orientation: str) -> Tuple[float]:
         """
-        Get percentage scroll values of scroll and parents; if ``0`` the scroll is at top/left,
-        ``1`` bottom/right.
+        Get percentage scroll values of scroll and parents; if ``0`` the scroll
+        is at top/left, ``1`` bottom/right.
 
         :param orientation: Orientation. See :py:mod:`pygame_menu.locals`
         :return: Value from ``0`` to ``1`` as a tuple; first item is the current scrollarea
@@ -716,7 +729,8 @@ class ScrollArea(Base):
 
     def get_scroll_value_percentage(self, orientation: str) -> float:
         """
-        Get the scroll value in percentage; if ``0`` the scroll is at top/left, ``1`` bottom/right.
+        Get the scroll value in percentage; if ``0`` the scroll is at top/left,
+        ``1`` bottom/right.
 
         .. note::
 
@@ -812,16 +826,16 @@ class ScrollArea(Base):
 
         return True
 
-    def set_position(self, posx: int, posy: int) -> 'ScrollArea':
+    def set_position(self, x: int, y: int) -> 'ScrollArea':
         """
         Set the position.
 
-        :param posx: X position
-        :param posy: Y position
+        :param x: X position
+        :param y: Y position
         :return: Self reference
         """
-        self._rect.x = posx + self._extend_x + self._translate[0]
-        self._rect.y = posy + self._extend_y + self._translate[1]
+        self._rect.x = x + self._extend_x + self._translate[0]
+        self._rect.y = y + self._extend_y + self._translate[1]
         self._apply_size_changes()
         return self
 
@@ -912,13 +926,15 @@ class ScrollArea(Base):
 
     def to_absolute_position(self, virtual: 'pygame.Rect') -> 'pygame.Rect':
         """
-        Return the absolute position of a rect within the ScrollArea. Absolute position
-        is concerning the parent ScrollArea. If ``None``, the rect is not changed at all.
+        Return the absolute position of a rect within the ScrollArea. Absolute
+        position is concerning the parent ScrollArea. If ``None``, the rect is
+        not changed at all.
 
         .. note::
 
-            Absolute position must be used if desired to get the widget position outside a scrolled
-            area status, for example the view rect, or the scrollbars.
+            Absolute position must be used if desired to get the widget position
+            outside a scrolled area status, for example the view rect, or the
+            scrollbars.
 
         :param virtual: Rect in the world surface reference
         :return: Rect in absolute position
@@ -967,13 +983,13 @@ class ScrollArea(Base):
     def to_real_position(self, virtual: Union['pygame.Rect', Tuple2NumberType], visible: bool = False
                          ) -> Union['pygame.Rect', Tuple2IntType]:
         """
-        Return the real position/Rect according to the ScrollArea origin
-        of a position/Rect in the world surface reference.
+        Return the real position/Rect according to the ScrollArea origin of a
+        position/Rect in the world surface reference.
 
         .. note::
 
-            Real position must be used if desired to get the widget position within a scrolled
-            area status.
+            Real position must be used if desired to get the widget position within
+            a scrolled area status.
 
         :param virtual: Position/Rect in the world surface reference
         :param visible: If a ``virtual`` is Rect object, return only the visible width/height
@@ -1000,13 +1016,13 @@ class ScrollArea(Base):
             real: Union['pygame.Rect', Tuple2NumberType]
     ) -> Union['pygame.Rect', Tuple2IntType]:
         """
-        Return the position/Rect in the world surface reference
-        of a real position/Rect according to the ScrollArea origin.
+        Return the position/Rect in the world surface reference of a real
+        position/Rect according to the ScrollArea origin.
 
         .. note::
 
-            Virtual position must be used if desired to get the widget position within a scrolled
-            area status.
+            Virtual position must be used if desired to get the widget position
+            within a scrolled area status.
 
         :param real: Position/Rect according ScrollArea origin
         :return: Rect in world or position in world
@@ -1047,9 +1063,11 @@ class ScrollArea(Base):
         for sbar in self._scrollbars:
             if not sbar.is_visible():
                 continue
-            if self.get_hidden_width() and sbar.get_orientation() == ORIENTATION_HORIZONTAL and not updated[0]:
+            if self.get_hidden_width() and not updated[0] and \
+                    sbar.get_orientation() == ORIENTATION_HORIZONTAL:
                 updated[0] = sbar.update(events)
-            elif self.get_hidden_height() and sbar.get_orientation() == ORIENTATION_VERTICAL and not updated[1]:
+            elif self.get_hidden_height() and not updated[1] and \
+                    sbar.get_orientation() == ORIENTATION_VERTICAL:
                 updated[1] = sbar.update(events)
         return updated[0] or updated[1]
 
@@ -1079,7 +1097,8 @@ class ScrollArea(Base):
             event: EventType
     ) -> bool:
         """
-        If user event collides a widget within the ScrollArea respect to the relative position.
+        If user event collides a widget within the ScrollArea respect to the
+        relative position.
 
         :param widget: Widget or rect
         :param event: Pygame event
@@ -1101,9 +1120,9 @@ class ScrollArea(Base):
 
             1. Menu background color/image
             2. Menu ``prev`` decorator
-            3. **Menu ScrollArea ``prev`` decorator**
-            4. **Menu ScrollArea widgets**
-            5. **Menu ScrollArea ``post`` decorator**
+            3. Menu **ScrollArea** ``prev`` decorator
+            4. Menu **ScrollArea** widgets
+            5. Menu **ScrollArea** ``post`` decorator
             6. Menu title
             7. Menu ``post`` decorator
 

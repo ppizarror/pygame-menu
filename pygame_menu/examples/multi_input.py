@@ -215,8 +215,10 @@ def main(test: bool = False) -> None:
     )
 
     # Create switch
-    settings_menu.add.toggle_switch('First Switch', False, toggleswitch_id='first_switch')
-    settings_menu.add.toggle_switch('Other Switch', True, toggleswitch_id='second_switch',
+    settings_menu.add.toggle_switch('First Switch', False,
+                                    toggleswitch_id='first_switch')
+    settings_menu.add.toggle_switch('Other Switch', True,
+                                    toggleswitch_id='second_switch',
                                     state_text=('Apagado', 'Encencido'))
 
     def data_fun() -> None:

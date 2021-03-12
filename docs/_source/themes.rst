@@ -5,10 +5,9 @@
 Creating themes
 ===============
 
-:py:mod:`pygame-menu` offers many parameters to control the visual
-aspect of the menu. For an easier usage, all of them are gathered in
-a specific object called a ``theme``. It is used to customize the
-menu window itself and all its widgets.
+:py:mod:`pygame-menu` offers many parameters to control the visual aspect of the
+menu. For an easier usage, all of them are gathered in a specific object called
+a ``theme``. It is used to customize the menu window itself and all its widgets.
 
 .. code-block:: python
     :emphasize-lines: 2
@@ -43,8 +42,8 @@ Theme name                                      Example
 Create a theme
 --------------
 
-If none of the proposed theme fit to the needs, the :py:class:`Theme`
-give the opportunity to create custom themes.
+If none of the proposed theme fit to the needs, the :py:class:`Theme` give the
+opportunity to create custom themes.
 
 .. code-block:: python
 
@@ -56,8 +55,7 @@ give the opportunity to create custom themes.
 
     menu = Menu(..., theme=mytheme)
 
-Of course it is also possible to start from a predefined theme by
-copying it first.
+Of course it is also possible to start from a predefined theme by copying it first.
 
 .. code-block:: python
 
@@ -67,17 +65,31 @@ copying it first.
     menu = Menu(..., theme=mytheme)
 
 
+Alignment
+---------
+
+The alignment (str) can take one of the three following values:
+
+==============================================  ========================
+Alignment                                       Description
+==============================================  ========================
+:py:data:`pygame_menu.locals.ALIGN_LEFT`        Left alignment
+:py:data:`pygame_menu.locals.ALIGN_CENTER`      Center alignment
+:py:data:`pygame_menu.locals.ALIGN_RIGHT`       Right alignment
+==============================================  ========================
+
+
 Background Color/Images
 -----------------------
 
 Theme background can be both a color or an image. All colors can be defined
-using a tuple or a list of 3 or 4 numbers between 0 and 255. The format of
-the numbers are:
+using a tuple or a list of 3 or 4 numbers between 0 and 255. The format of the
+numbers are:
 
 .. code-block:: python
 
-    color_opaque = (R,G,B)
-    color_transparent = (R,G,B,A)
+    color_opaque = (R, G, B)
+    color_transparent = (R, G, B, A)
 
 *A* alpha channels goes from *0* to *255*. *0* is transparent, *255* is opaque.
 For using images as a background color, class :py:class:`pygame_menu.baseimage.BaseImage`
@@ -105,50 +117,9 @@ Image drawing modes                                     Description
 :py:data:`pygame_menu.baseimage.IMAGE_MODE_SIMPLE`      Write the image on top-left location
 =====================================================   =========================================
 
-Currently, :py:class:`Theme` class only supports images for :py:attr:`background_color` and
-:py:attr:`widget_background_color`. Also, only `IMAGE_MODE_FILL` drawing mode is valid for
-:py:attr:`widget_background_color`.
-
-
-Menubar style
--------------
-
-The visual style of the menubar is managed using the theme parameter
-``title_bar_style`` which can take the following values:
-
-=================================================================   =======================================================
-Menubar style                                                       Example
-=================================================================   =======================================================
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTIVE`               .. image:: ../_static/menubar_adaptive.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_SIMPLE`                 .. image:: ../_static/menubar_simple.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY`             .. image:: ../_static/menubar_title_only.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`    .. image:: ../_static/menubar_title_only_diagonal.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_NONE`                   .. image:: ../_static/menubar_none.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`              .. image:: ../_static/menubar_underline.png
-:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`        .. image:: ../_static/menubar_underline_title.png
-=================================================================   =======================================================
-
-
-Widget selection effect
------------------------
-
-A **selection effect** is a drawing class used to define the way to highlight the focused widget.
-An instance of the selection effect class is defined in the :py:attr:`Theme.widget_selection_effect`
-Theme property. See example on how to add a selection effect in :ref:`Create a selection effect`
-chapter.
-
-The available selection effects are:
-
-======================================================  ============================
-Class                                                   Selection effect
-======================================================  ============================
-:py:class:`pygame_menu.widgets.HighlightSelection`      Rectangular highlight
-:py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
-:py:class:`pygame_menu.widgets.NoneSelection`           No selection
-:py:class:`pygame_menu.widgets.RightArrowSelection`     Right arrow on the widget
-======================================================  ============================
-
-The selection color is defined in :py:attr:`Theme.widget_selection_color`.
+Currently, :py:class:`Theme` class only supports images for :py:attr:`background_color`
+and :py:attr:`widget_background_color`. Also, only `IMAGE_MODE_FILL` drawing mode
+is valid for :py:attr:`widget_background_color`.
 
 
 Fonts
@@ -181,12 +152,32 @@ Available fonts                                     Preview
 :py:class:`pygame_menu.font.FONT_PT_SERIF`          .. image:: ../_static/font_pt_serif.png
 ==================================================  ===============================================
 
-System fonts can also be used. The available system fonts can be listed using the following command in a python shell:
+System fonts can also be used. The available system fonts can be listed using the
+following command in a python shell:
 
 .. code-block:: python
 
     import pygame
     print(pygame.font.get_fonts())
+
+
+Menubar style
+-------------
+
+The visual style of the menubar is managed using the theme parameter
+``title_bar_style`` which can take the following values:
+
+=================================================================   =======================================================
+Menubar style                                                       Example
+=================================================================   =======================================================
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_ADAPTIVE`               .. image:: ../_static/menubar_adaptive.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_SIMPLE`                 .. image:: ../_static/menubar_simple.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY`             .. image:: ../_static/menubar_title_only.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_TITLE_ONLY_DIAGONAL`    .. image:: ../_static/menubar_title_only_diagonal.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_NONE`                   .. image:: ../_static/menubar_none.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE`              .. image:: ../_static/menubar_underline.png
+:py:data:`pygame_menu.widgets.MENUBAR_STYLE_UNDERLINE_TITLE`        .. image:: ../_static/menubar_underline_title.png
+=================================================================   =======================================================
 
 
 Positioning
@@ -207,7 +198,8 @@ Position                                           Description
 :py:data:`pygame_menu.locals.POSITION_WEST`        West position
 =================================================  ========================
 
-Special positions used by Menu :py:class:`pygame_menu.scrollarea.ScrollArea` (all above are available):
+Special positions used by Menu :py:class:`pygame_menu._scrollarea.ScrollArea`
+(all above are available):
 
 =====================================================================  ===========================
 Position                                                               Description
@@ -216,6 +208,28 @@ Position                                                               Descripti
 :py:data:`pygame_menu.locals.SCROLLAREA_POSITION_BOTH_VERTICAL`        Scroll on both Y axis
 :py:data:`pygame_menu.locals.SCROLLAREA_POSITION_FULL`                 Scroll on both X and Y axis
 =====================================================================  ===========================
+
+
+Widget selection effect
+-----------------------
+
+A **selection effect** is a drawing class used to define the way to highlight the
+focused widget. An instance of the selection effect class is defined in the
+:py:attr:`Theme.widget_selection_effect` Theme property. See example on how to
+add a selection effect in :ref:`Create a selection effect` chapter.
+
+The available selection effects are:
+
+======================================================  ============================
+Class                                                   Selection effect
+======================================================  ============================
+:py:class:`pygame_menu.widgets.HighlightSelection`      Rectangular highlight
+:py:class:`pygame_menu.widgets.LeftArrowSelection`      Left arrow on the widget
+:py:class:`pygame_menu.widgets.NoneSelection`           No selection
+:py:class:`pygame_menu.widgets.RightArrowSelection`     Right arrow on the widget
+======================================================  ============================
+
+The selection color is defined in :py:attr:`Theme.widget_selection_color`.
 
 
 Theme API

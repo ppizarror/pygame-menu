@@ -1,9 +1,9 @@
 
-.. module:: pygame_menu.scrollarea
+.. module:: pygame_menu._scrollarea
 
 ==========
 ScrollArea
 ==========
 
-.. autoclass:: pygame_menu.scrollarea.ScrollArea
+.. autoclass:: pygame_menu._scrollarea.ScrollArea
     :members:

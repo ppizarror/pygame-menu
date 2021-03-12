@@ -34,7 +34,7 @@ __all__ = ['main']
 import pygame
 from pygame_menu import locals
 from pygame_menu.examples import create_example_window
-from pygame_menu.scrollarea import ScrollArea
+from pygame_menu._scrollarea import ScrollArea
 from pygame_menu.utils import make_surface
 
 import itertools

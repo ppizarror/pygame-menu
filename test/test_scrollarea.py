@@ -41,7 +41,7 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NOR
     POSITION_SOUTH, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
     SCROLLAREA_POSITION_FULL, SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
     INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
-from pygame_menu.scrollarea import get_scrollbars_from_position
+from pygame_menu._scrollarea import get_scrollbars_from_position
 
 
 class ScrollAreaTest(unittest.TestCase):
@@ -90,8 +90,8 @@ class ScrollAreaTest(unittest.TestCase):
         Test copy.
         """
         sa = MenuUtils.generic_menu().get_scrollarea()
-        self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
-        self.assertRaises(pygame_menu.scrollarea._ScrollAreaCopyException, lambda: copy.deepcopy(sa))
+        self.assertRaises(pygame_menu._scrollarea._ScrollAreaCopyException, lambda: copy.copy(sa))
+        self.assertRaises(pygame_menu._scrollarea._ScrollAreaCopyException, lambda: copy.deepcopy(sa))
 
     def test_decorator(self) -> None:
         """

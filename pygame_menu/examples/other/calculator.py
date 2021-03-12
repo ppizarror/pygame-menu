@@ -70,7 +70,8 @@ class CalculatorApp(object):
         theme.widget_font_color = (255, 255, 255)
         theme.widget_font_size = 40
         theme.widget_padding = 0
-        theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection(1, 0, 0).set_color((120, 120, 120))
+        theme.widget_selection_effect = \
+            pygame_menu.widgets.HighlightSelection(1, 0, 0).set_color((120, 120, 120))
 
         self.menu = pygame_menu.Menu('', 320, 480,
                                      center_content=False,
@@ -131,7 +132,8 @@ class CalculatorApp(object):
                       align=pygame_menu.locals.ALIGN_RIGHT)
 
         # Add decorator for each object
-        for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus, b_minus, b_times, b_div):
+        for widget in (b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, beq, b_plus,
+                       b_minus, b_times, b_div):
             w_deco = widget.get_decorator()
             if widget != beq:
                 w_deco.add_rectangle(-37, -27, 74, 54, (15, 15, 15))
@@ -194,7 +196,8 @@ class CalculatorApp(object):
                     self._press('+')
                 elif event.key == pygame.K_MINUS:
                     self._press('-')
-                elif event.key == pygame.K_SLASH or (hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT):
+                elif event.key == pygame.K_SLASH or \
+                        (hasattr(pygame, 'K_PERCENT') and event.key == pygame.K_PERCENT):
                     self._press('/')
                 elif event.key == pygame.K_ASTERISK or event.key == pygame.K_x:
                     self._press('x')

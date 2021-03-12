@@ -62,13 +62,14 @@ import os.path as path
 import pygame
 
 from pygame_menu._base import Base
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, POSITION_WEST, \
-    POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, POSITION_SOUTH, POSITION_NORTH
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, \
+    POSITION_WEST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, \
+    POSITION_SOUTH, POSITION_NORTH
 from pygame_menu.utils import assert_vector, assert_position, assert_color
 
-from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, Tuple, List, \
-    NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, ColorInputType, Tuple3IntType, \
-    NumberInstance, VectorInstance
+from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, \
+    Tuple, List, NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, \
+    ColorInputType, Tuple3IntType, NumberInstance, VectorInstance
 
 # Example image paths
 __images_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'images', '{0}')
@@ -79,8 +80,9 @@ IMAGE_EXAMPLE_METAL = __images_path__.format('metal.png')
 IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format('pygame_menu.png')
 IMAGE_EXAMPLE_WALLPAPER = __images_path__.format('wallpaper.jpg')
 
-IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES, IMAGE_EXAMPLE_METAL,
-                  IMAGE_EXAMPLE_PYGAME_MENU, IMAGE_EXAMPLE_WALLPAPER)
+IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES,
+                  IMAGE_EXAMPLE_METAL, IMAGE_EXAMPLE_PYGAME_MENU,
+                  IMAGE_EXAMPLE_WALLPAPER)
 
 # Drawing modes
 IMAGE_MODE_CENTER = 100
@@ -90,9 +92,12 @@ IMAGE_MODE_REPEAT_XY = 103
 IMAGE_MODE_REPEAT_Y = 104
 IMAGE_MODE_SIMPLE = 105  # Just draw the image without any effect
 
+_VALID_IMAGE_MODES = (IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
+                      IMAGE_MODE_REPEAT_XY, IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE)
+
 # Other constants
-_VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif', '.lbm',
-                        '.pbm', '.pgm', '.ppm', '.xpm', 'BytesIO', 'base64']
+_VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif',
+                        '.lbm', '.pbm', '.pgm', '.ppm', '.xpm', 'BytesIO', 'base64']
 
 # Custom types
 ColorChannelType = Literal['r', 'g', 'b']
@@ -252,7 +257,13 @@ class BaseImage(Base):
         self._surface.set_alpha(value, flags)
         return self
 
-    def crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'BaseImage':
+    def crop(
+            self,
+            x: NumberType,
+            y: NumberType,
+            width: NumberType,
+            height: NumberType
+    ) -> 'BaseImage':
         """
         Crops the image from coordinate on x-axis and y-axis (x, y).
 
@@ -274,7 +285,13 @@ class BaseImage(Base):
         """
         return self._surface.subsurface(rect)
 
-    def get_crop(self, x: NumberType, y: NumberType, width: NumberType, height: NumberType) -> 'pygame.Surface':
+    def get_crop(
+            self,
+            x: NumberType,
+            y: NumberType,
+            width: NumberType,
+            height: NumberType
+    ) -> 'pygame.Surface':
         """
         Get a crop of the image from coordinate on x-axis and y-axis (x, y).
 
@@ -348,9 +365,7 @@ class BaseImage(Base):
         :return: Self reference
         """
         assert isinstance(drawing_mode, int)
-        assert drawing_mode in [IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
-                                IMAGE_MODE_REPEAT_Y, IMAGE_MODE_REPEAT_XY, IMAGE_MODE_SIMPLE], \
-            'unknown image drawing mode'
+        assert drawing_mode in _VALID_IMAGE_MODES, 'unknown image drawing mode'
         self._drawing_mode = drawing_mode
         return self
 
@@ -462,7 +477,7 @@ class BaseImage(Base):
         """
         Return the surface object of the image.
 
-        :param new: Return a new surface, if ``False`` return the same object
+        :param new: Return a new surface; if ``False`` return the same object
         :return: Image surface
         """
         if new:
@@ -518,12 +533,14 @@ class BaseImage(Base):
     def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple4IntType]
                              ) -> 'BaseImage':
         """
-        Apply a function to each pixel of the image. The function will receive the red, green, blue and alpha
-        colors and must return the same values. The color pixel will be overridden by the function output.
+        Apply a function to each pixel of the image. The function will receive the
+        red, green, blue and alpha colors and must return the same values. The
+        color pixel will be overridden by the function output.
 
         .. note::
 
-            See :py:meth:`pygame_menu.baseimage.BaseImage.to_bw` method as an example.
+            See :py:meth:`pygame_menu.baseimage.BaseImage.to_bw` method as an
+            example.
 
         :param image_function: Color function, takes colors as ``image_function=myfunc(r,g,b,a)``. Returns the same tuple (r, g, b, a)
         :return: Self reference
@@ -567,10 +584,12 @@ class BaseImage(Base):
                                             List[ColorChannelType]]
                       ) -> 'BaseImage':
         """
-        Pick certain channels of the image, channels are ``"r"`` (red), ``"g"`` (green) and ``"b"`` (blue),
-        ``channels param`` is a list/tuple of channels (non empty).
+        Pick certain channels of the image, channels are ``"r"`` (red), ``"g"``
+        (green) and ``"b"`` (blue), ``channels param`` is a list/tuple of channels
+        (non empty).
 
-        For example, ``pick_channels(['r', 'g'])``: All channels not included on the list will be discarded.
+        For example, ``pick_channels(['r', 'g'])``: All channels not included on
+        the list will be discarded.
 
         :param channels: Channels, list or tuple containing ``"r"``, ``"g"`` or ``"b"`` (all combinations are possible)
         :return: Self reference
@@ -621,7 +640,8 @@ class BaseImage(Base):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
-        assert width > 0 and height > 0, 'width and height must be greater than zero'
+        assert width > 0 and height > 0, \
+            'width and height must be greater than zero'
         w, h = self.get_size()
         if width == 1 and height == 1:
             return self
@@ -633,13 +653,13 @@ class BaseImage(Base):
 
     def scale2x(self) -> 'BaseImage':
         """
-        This will return a new image that is double the size of the original.
-        It uses the AdvanceMAME Scale2X algorithm which does a "jaggy-less"
-        scale of bitmap graphics.
+        This will return a new image that is double the size of the original. It
+        uses the AdvanceMAME Scale2X algorithm which does a "jaggy-less" scale of
+        bitmap graphics.
 
-        This really only has an effect on simple images with solid colors.
-        On photographic and antialiased images it will look like a regular
-        unfiltered scale.
+        This really only has an effect on simple images with solid colors. On
+        photographic and antialiased images it will look like a regular unfiltered
+        scale.
 
         :return: Self reference
         """
@@ -668,8 +688,9 @@ class BaseImage(Base):
         """
         Return the :py:class:`pygame.Rect` object of the BaseImage.
 
-        This method returns a new rectangle covering the entire surface. The rectangle
-        will always start at *(0, 0)* with a same width and height size as the image.
+        This method returns a new rectangle covering the entire surface. The
+        rectangle will always start at *(0, 0)* with a same width and height size
+        as the image.
 
         :return: Pygame rect object
         """
@@ -678,25 +699,27 @@ class BaseImage(Base):
     def rotate(self, angle: NumberType, auto_checkpoint: bool = True) -> 'BaseImage':
         """
         Unfiltered counterclockwise rotation. The angle argument represents degrees
-        and can be any floating point value. Negative angle amounts will rotate clockwise.
+        and can be any floating point value. Negative angle amounts will rotate
+        clockwise.
 
         .. note::
 
-            Unless rotating by 90 degree increments, the image will be padded larger to hold
-            the new size. If the image has pixel alphas, the padded area will be transparent.
-            Otherwise pygame will pick a color that matches the image colorkey or the topleft
-            pixel value.
+            Unless rotating by 90 degree increments, the image will be padded
+            larger to hold the new size. If the image has pixel alphas, the padded
+            area will be transparent. Otherwise pygame will pick a color that matches
+            the image colorkey or the topleft pixel value.
 
         .. warning::
 
-            Image should be rotated once. If this method is called once the Class rotates
-            the previously checkpointed state. If you wish to rotate the current image use
-            ``checkpoint`` to update the surface. This may increase the image size, because
-            the bounding rectangle of a rotated image is always greater than the bounding
-            rectangle of the original image (except some rotations by multiples of 90 degrees).
-            The image gets distort because of the multiply copies. Each rotation generates
-            a small error (inaccuracy). The sum of the errors is growing and the images
-            decays.
+            Image should be rotated once. If this method is called once the Class
+            rotates the previously checkpointed state. If you wish to rotate the
+            current image use ``checkpoint`` to update the surface. This may
+            increase the image size, because the bounding rectangle of a rotated
+            image is always greater than the bounding rectangle of the original
+            image (except some rotations by multiples of 90 degrees). The image
+            gets distort because of the multiply copies. Each rotation generates
+            a small error (inaccuracy). The sum of the errors is growing and the
+            images decays.
 
         :param angle: Rotation angle (degrees ``0-360``)
         :param auto_checkpoint: Checkpoint after first rotation to avoid rotating the same image. If multiple rotations are applied to the same surface it will increase its size very fast because of inaccuracies

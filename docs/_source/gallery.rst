@@ -3,8 +3,8 @@
 Gallery / Examples
 ==================
 
-Several examples are provided with the :py:mod:`pygame_menu` library.
-To run the examples, simply execute these commands in a terminal:
+Several examples are provided with the :py:mod:`pygame_menu` library. To run the
+examples, simply execute these commands in a terminal:
 
 .. code-block:: bash
 

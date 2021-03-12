@@ -121,11 +121,14 @@ elif EXAMPLE == 'CLOCK':
 elif EXAMPLE == 'COLORINPUT':
     menu = make_menu(pygame_menu.themes.THEME_DARK, 'Color Entry')
 
-    menu.add.color_input('RGB color 1: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
+    menu.add.color_input('RGB color 1: ',
+                         color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
                          default=(255, 0, 255), font_size=18)
-    menu.add.color_input('RGB color 2: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
+    menu.add.color_input('RGB color 2: ',
+                         color_type=pygame_menu.widgets.COLORINPUT_TYPE_RGB,
                          input_separator='-', font_size=18)
-    menu.add.color_input('HEX color 3: ', color_type=pygame_menu.widgets.COLORINPUT_TYPE_HEX,
+    menu.add.color_input('HEX color 3: ',
+                         color_type=pygame_menu.widgets.COLORINPUT_TYPE_HEX,
                          default='#ffaa11', font_size=18)
 
 elif EXAMPLE == 'DROPSELECT':
@@ -141,7 +144,7 @@ elif EXAMPLE == 'DROPSELECT':
     selector_sum = menu.add.dropselect(
         title='What is the value of π?',
         items=[('3 (Engineer)', 0),
-               ('3.141592653589793238462643383279502884197169399375105820974944592', 1),
+               ('3.1415926535897932384626433832795028841971693993751058209', 1),
                ('4', 2),
                ('I don\'t know what is π', 3)],
         font_size=16,
@@ -204,24 +207,31 @@ elif EXAMPLE == 'FRAME':
 
     frame_title.pack(menu.add.label('Settings', padding=0), margin=(2, 2))
     frame_title.pack(
-        menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5), background_color=(100, 100, 100)),
+        menu.add.button('Close', pygame_menu.events.EXIT, padding=(0, 5),
+                        background_color=(100, 100, 100)),
         align=pygame_menu.locals.ALIGN_RIGHT, margin=(2, 2))
-    frame_content.pack(menu.add.label('Pick a number', font_color=(150, 150, 150)),
-                       align=pygame_menu.locals.ALIGN_CENTER)
+    frame_content.pack(
+        menu.add.label('Pick a number', font_color=(150, 150, 150)),
+        align=pygame_menu.locals.ALIGN_CENTER)
     frame_numbers = menu.add.frame_h(250, 41, padding=0)
     frame_content.pack(frame_numbers)
     for i in range(9):
-        frame_numbers.pack(menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i), padding=(0, 5), font_size=30),
-                           align=pygame_menu.locals.ALIGN_CENTER)
+        frame_numbers.pack(
+            menu.add.button(i, font_color=(5 * i, 11 * i, 13 * i),
+                            padding=(0, 5), font_size=30),
+            align=pygame_menu.locals.ALIGN_CENTER)
     frame_content.pack(menu.add.vertical_margin(15))
-    frame_content.pack(menu.add.toggle_switch('Nice toggle', False, width=100, font_color=(150, 150, 150), padding=0),
-                       align=pygame_menu.locals.ALIGN_CENTER)
+    frame_content.pack(
+        menu.add.toggle_switch('Nice toggle', False, width=100,
+                               font_color=(150, 150, 150), padding=0),
+        align=pygame_menu.locals.ALIGN_CENTER)
 
 elif EXAMPLE == 'FRAME_TITLE':
     menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Frame + Title', widget_font_size=18)
     menu.get_theme().widget_selection_effect.zero_margin()
 
-    frame = menu.add.frame_v(400, 800, background_color=(50, 50, 50), padding=0, max_width=300, max_height=100)
+    frame = menu.add.frame_v(400, 800, background_color=(50, 50, 50), padding=0,
+                             max_width=300, max_height=100)
     frame.set_title('My Frame App', title_font_color='white', padding_inner=(2, 5))
 
     frame.pack(menu.add.dropselect(
@@ -235,6 +245,7 @@ elif EXAMPLE == 'FRAME_TITLE':
     for i in range(20):
         frame.pack(menu.add.button(i, font_color='white', button_id='b{}'.format(i)))
 
+    # Don't copy
     menu.select_widget('b0')
 
 elif EXAMPLE == 'IMAGE':
@@ -247,10 +258,10 @@ elif EXAMPLE == 'IMAGE':
 elif EXAMPLE == 'LABEL':
     menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
 
-    HELP = "Press ESC to enable/disable Menu " \
-           "Press ENTER to access a Sub-Menu or use an option " \
-           "Press UP/DOWN to move through Menu " \
-           "Press LEFT/RIGHT to move through Selectors."
+    HELP = 'Press ESC to enable/disable Menu ' \
+           'Press ENTER to access a Sub-Menu or use an option ' \
+           'Press UP/DOWN to move through Menu ' \
+           'Press LEFT/RIGHT to move through Selectors.'
     menu.add.label(HELP, max_char=-1, font_size=20)
 
 elif EXAMPLE == 'SELECTOR':
@@ -263,10 +274,10 @@ elif EXAMPLE == 'SELECTOR':
     selector = menu.add.selector(
         title='Current color:\t',
         items=items,
-        onreturn=change_background_color,  # user press "Return" button
+        onreturn=change_background_color,  # User press "Return" button
         onchange=change_background_color  # User changes value with left/right keys
     )
-    selector.add_self_to_kwargs()  # callbacks will receive widget as parameter
+    selector.add_self_to_kwargs()  # Callbacks will receive widget as parameter
     selector2 = menu.add.selector(
         title='New color:',
         items=items,

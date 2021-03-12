@@ -42,8 +42,8 @@ from pygame_menu._types import Tuple2IntType, NumberType, NumberInstance
 
 class RightArrowSelection(ArrowSelection):
     """
-    Widget selection right arrow class.
-    Creates an arrow to the right of the selected Menu item.
+    Widget selection right arrow class. Creates an arrow to the right of the
+    selected Menu item.
 
     :param arrow_size: Size of arrow on x-axis and y-axis (width, height) in px
     :param arrow_left_margin: Distance from the arrow to the widget

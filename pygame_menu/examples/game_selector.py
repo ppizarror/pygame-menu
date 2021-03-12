@@ -64,7 +64,8 @@ def change_difficulty(value: Tuple[Any, int], difficulty: str) -> None:
     :param difficulty: Optional parameter passed as argument to add_selector
     """
     selected, index = value
-    print('Selected difficulty: "{0}" ({1}) at index {2}'.format(selected, difficulty, index))
+    print('Selected difficulty: "{0}" ({1}) at index {2}'
+          ''.format(selected, difficulty, index))
     DIFFICULTY[0] = difficulty
 
 
@@ -127,7 +128,7 @@ def play_function(difficulty: List, font: 'pygame.font.Font', test: bool = False
                 if e.key == pygame.K_ESCAPE:
                     main_menu.enable()
 
-                    # Quit this function, then skip to loop of main-menu on line 266
+                    # Quit this function, then skip to loop of main-menu on line 250
                     return
 
         # Pass events to main_menu

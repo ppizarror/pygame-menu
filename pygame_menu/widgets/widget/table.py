@@ -35,19 +35,20 @@ import pygame
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, assert_font
-from pygame_menu.locals import ORIENTATION_VERTICAL, ALIGN_LEFT, ALIGN_CENTER, ORIENTATION_HORIZONTAL, \
-    POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH, ALIGN_RIGHT, POSITION_WEST, POSITION_EAST
-from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, assert_position, \
-    assert_vector
-from pygame_menu.widgets.core.widget import Widget, WidgetBorderPositionType, WIDGET_FULL_BORDER, \
-    WIDGET_BORDER_POSITION_NONE
+from pygame_menu.locals import ORIENTATION_VERTICAL, ALIGN_LEFT, ALIGN_CENTER, \
+    ORIENTATION_HORIZONTAL, POSITION_NORTH, POSITION_CENTER, POSITION_SOUTH, \
+    ALIGN_RIGHT, POSITION_WEST, POSITION_EAST
+from pygame_menu.utils import assert_alignment, assert_color, uuid4, parse_padding, \
+    assert_position, assert_vector
+from pygame_menu.widgets.core.widget import Widget, WidgetBorderPositionType, \
+    WIDGET_FULL_BORDER, WIDGET_BORDER_POSITION_NONE
 from pygame_menu.widgets.widget.frame import Frame
 from pygame_menu.widgets.widget.image import Image
 from pygame_menu.widgets.widget.label import Label
 from pygame_menu.widgets.widget.surface import SurfaceWidget
 
-from pygame_menu._types import List, Union, ColorInputType, Optional, Tuple, VectorInstance, PaddingType, \
-    Dict, NumberType, Vector2IntType
+from pygame_menu._types import List, Union, ColorInputType, Optional, Tuple, \
+    VectorInstance, PaddingType, Dict, NumberType, Vector2IntType
 
 CellType = Union['Widget', str, int, float, bool, 'BaseImage', 'pygame.Surface']
 ColumnInputType = Union[Tuple[CellType, ...], List[CellType]]
@@ -205,7 +206,8 @@ class Table(Frame):
         # Border positioning
         for pos in border_position:
             assert pos in (POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST), \
-                'only north, south, east, and west border positions are valid, but received "{0}"'.format(pos)
+                'only north, south, east, and west border positions are valid, ' \
+                'but received "{0}"'.format(pos)
 
     def add_row(
             self,
@@ -226,7 +228,8 @@ class Table(Frame):
 
         .. note::
 
-            By default, if ``None`` each cell style uses the table defaults "cell" styles.
+            By default, if ``None`` each cell style uses the table defaults "cell"
+            styles.
 
         .. note::
 
@@ -303,7 +306,8 @@ class Table(Frame):
             row_background_color = assert_color(row_background_color)
 
         # Create frame row
-        row = Frame(1, 1, ORIENTATION_HORIZONTAL, frame_id=self._id + '+cell-row-' + uuid4(short=True))
+        row = Frame(1, 1, ORIENTATION_HORIZONTAL,
+                    frame_id=self._id + '+cell-row-' + uuid4(short=True))
         row._accepts_scrollarea = False
         row._accepts_title = False
         row._menu_can_be_none_pack = True
@@ -336,9 +340,13 @@ class Table(Frame):
                 cell.set_padding(0)
                 cell.set_tab_size(self._tab_size)
             elif isinstance(c, BaseImage):
-                cell = Image(c, image_id=self._id + '+cell-image-' + uuid4(short=True))
+                cell = Image(
+                    c, image_id=self._id + '+cell-image-' + uuid4(short=True)
+                )
             elif isinstance(c, pygame.Surface):
-                cell = SurfaceWidget(c, surface_id=self._id + '+cell-surface-' + uuid4(short=True))
+                cell = SurfaceWidget(
+                    c, surface_id=self._id + '+cell-surface-' + uuid4(short=True)
+                )
             else:
                 assert isinstance(c, Widget)
                 cell = c
@@ -372,7 +380,8 @@ class Table(Frame):
                 ''.format(cell.get_class_id())
             assert cell.get_frame() is None, \
                 '{0} is already packed in {1}, it cannot be added to {2}' \
-                ''.format(cell.get_class_id(), cell.get_frame().get_class_id(), self.get_class_id())
+                ''.format(cell.get_class_id(), cell.get_frame().get_class_id(),
+                          self.get_class_id())
 
             # If cell is frame and scrollable
             if isinstance(cell, Frame) and self._menu is not None:
@@ -559,13 +568,16 @@ class Table(Frame):
 
                 # Create drawing rect
                 subtract_border = (-border_width) if r == len(self._rows) else 0
-                rect = pygame.Rect(total_width + x, total_height + y,
-                                   column_widths[col], row_heights[row] + subtract_border)
+                rect = pygame.Rect(total_width + x,
+                                   total_height + y,
+                                   column_widths[col],
+                                   row_heights[row] + subtract_border)
                 total_width += column_widths[col]
                 col += 1
 
                 # Draw the border
-                if border_position == WIDGET_BORDER_POSITION_NONE or border_width == 0:
+                if border_position == WIDGET_BORDER_POSITION_NONE or \
+                        border_width == 0:
                     continue
                 for pos in border_position:
                     if pos == POSITION_NORTH:
@@ -601,16 +613,19 @@ class Table(Frame):
         assert isinstance(column, int) and column >= 1, \
             'column index must be an integer equal or greater than 1'
         assert row <= len(self._rows), \
-            'row index ({0}) cannot exceed the number of rows ({1})'.format(row, len(self._rows))
+            'row index ({0}) cannot exceed the number of rows ({1})' \
+            ''.format(row, len(self._rows))
         f = self._rows[row - 1]
         w = f.get_widgets(unpack_subframes=False)
         assert column <= len(w), \
-            'column index ({0}) cannot exceed the number of columns ({1}) of row {2}'.format(column, len(w), row)
+            'column index ({0}) cannot exceed the number of columns ({1}) of row {2}' \
+            ''.format(column, len(w), row)
         return w[column - 1]
 
     def is_rectangular(self) -> bool:
         """
-        Returns ``True`` if the table is rectangular, that is, each row have the same number of columns.
+        Returns ``True`` if the table is rectangular, that is, each row have the
+        same number of columns.
 
         :return: Bool
         """
@@ -638,7 +653,8 @@ class Table(Frame):
             vertical_position: Optional[str] = None
     ) -> Union['Widget', List['Widget']]:
         """
-        Update cell style. If a parameter is ``None`` the default cell property will be used.
+        Update cell style. If a parameter is ``None`` the default cell property
+        will be used.
 
         :param column: Cell column position (counting from 1). If -1 update all column from the given row. Also a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
         :param row: Cell row position (counting from 1). If ``-1`` update all rows from the given column. Also a 2-item list/tuple is accepted (from, to), ``to=-1`` is also accepted (last)
@@ -666,20 +682,32 @@ class Table(Frame):
                 if row_k[1] == -1:
                     row_k[1] = len(self._rows)
                 assert 1 <= row_k[0] <= row_k[1] <= max_rows, \
-                    '(from, to) of rows vector must be increasing and between 1-{0}'.format(max_rows)
+                    '(from, to) of rows vector must be increasing and between 1-{0}' \
+                    ''.format(max_rows)
                 row = [row_k[0]]
                 for i in range(row_k[1] - row_k[0]):
                     row.append(row_k[0] + (i + 1))
             if isinstance(column, VectorInstance) and column != [1, -1]:
                 assert self.is_rectangular(), \
                     'only rectangular tables (same number of columns for each row) ' \
-                    'accept a variable column different than -1 or [1, -1], but received "{0}"'.format(column)
+                    'accept a variable column different than -1 or [1, -1], but ' \
+                    'received "{0}"'.format(column)
             updated_wid = []
             for i in row:
-                w = self.update_cell_style(column, i, align=align, background_color=background_color,
-                                           border_color=border_color, border_position=border_position,
-                                           border_width=border_width, font=font, font_color=font_color,
-                                           font_size=font_size, padding=padding, vertical_position=vertical_position)
+                w = self.update_cell_style(
+                    column=column,
+                    row=i,
+                    align=align,
+                    background_color=background_color,
+                    border_color=border_color,
+                    border_position=border_position,
+                    border_width=border_width,
+                    font=font,
+                    font_color=font_color,
+                    font_size=font_size,
+                    padding=padding,
+                    vertical_position=vertical_position
+                )
                 if not isinstance(w, list):
                     w = [w]
                 for k in w:
@@ -687,7 +715,8 @@ class Table(Frame):
             return updated_wid
         if column == -1 or isinstance(column, VectorInstance):
             assert isinstance(row, int) and 1 <= row <= len(self._rows), \
-                'row index ({0}) cannot exceed the number of rows ({1})'.format(row, len(self._rows))
+                'row index ({0}) cannot exceed the number of rows ({1})' \
+                ''.format(row, len(self._rows))
             max_columns = self._rows[row - 1].get_total_packed()
             if column == -1:
                 column = []
@@ -706,10 +735,20 @@ class Table(Frame):
                     column.append(column_k[0] + (i + 1))
             updated_wid = []
             for i in column:
-                w = self.update_cell_style(i, row, align=align, background_color=background_color,
-                                           border_color=border_color, border_position=border_position,
-                                           border_width=border_width, font=font, font_color=font_color,
-                                           font_size=font_size, padding=padding, vertical_position=vertical_position)
+                w = self.update_cell_style(
+                    column=i,
+                    row=row,
+                    align=align,
+                    background_color=background_color,
+                    border_color=border_color,
+                    border_position=border_position,
+                    border_width=border_width,
+                    font=font,
+                    font_color=font_color,
+                    font_size=font_size,
+                    padding=padding,
+                    vertical_position=vertical_position
+                )
                 if not isinstance(w, list):
                     w = [w]
                 for k in w:
@@ -795,17 +834,18 @@ class Table(Frame):
         self.force_menu_surface_update()
         return cell
 
-    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
+    # noinspection PyProtectedMember
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
         super(Table, self).set_scrollarea(scrollarea)
         for f in self._rows:
             f.set_scrollarea(scrollarea)
 
-    def set_position(self, posx: NumberType, posy: NumberType) -> 'Table':
-        super(Table, self).set_position(posx, posy)
-        posx = self._rect.x
-        posy = self._rect.y
+    def set_position(self, x: NumberType, y: NumberType) -> 'Table':
+        super(Table, self).set_position(x, y)
+        x = self._rect.x
+        y = self._rect.y
         for f in self._rows:
-            f.set_position(posx, posy)
+            f.set_position(x, y)
             for w in f.get_widgets(unpack_subframes=False):
                 w.set_position_relative_to_frame()
             f.update_position()
