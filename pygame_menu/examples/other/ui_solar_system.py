@@ -298,11 +298,11 @@ class SolarSystemApp(object):
                               margin=(5, 10))
             label = submenu.add.label(planet.info, max_char=70,
                                       align=pygame_menu.locals.ALIGN_LEFT,
-                                      margin=(20, 1), font_size=20,
+                                      margin=(29, 1), font_size=20,
                                       font_name=pygame_menu.font.FONT_PT_SERIF,
                                       font_color=(255, 255, 255), padding=0)
             for line in label:
-                line.set_max_width(580)
+                line.set_max_width(565)
             submenu.add.url(planet.url, align=pygame_menu.locals.ALIGN_LEFT,
                             margin=(20, 1), font_size=20,
                             font_name=pygame_menu.font.FONT_PT_SERIF)
