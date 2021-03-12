@@ -8,8 +8,6 @@ Adding sounds
 A sound engine can be created using the :py:class:`Sound` class. The sound engine
 can be customized by setting a sound file to several sounds defined by a type.
 
-For example, buttons or keys...
-
 **Example:**
 
 .. code-block:: python

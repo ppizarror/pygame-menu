@@ -18,8 +18,8 @@ aspects of the menu.
 The less trivial ones are explained here.
 
 
-Widgets alignment
-^^^^^^^^^^^^^^^^^
+Widget position
+^^^^^^^^^^^^^^^
 
 By default, the widgets are centered horizontally by theme, included in a virtual
 rectangle positioned at 0 pixel below the title bar and 0 pixel from the left border

@@ -326,17 +326,17 @@ class DropSelect(Widget):
         Make selection drop box.
 
         kwargs (Optional)
-            - ``scrollbar_color``               *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Scrollbar color
-            - ``scrollbar_cursor``              *(int, :py:class:`pygame.cursors.Cursor`, None)* - Cursor of the scrollbars if mouse is placed over. By default is ``None``
-            - ``scrollbar_shadow_color``        *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the shadow of each scrollbar
-            - ``scrollbar_shadow_offset``       *(int)* - Offset of the scrollbar shadow in px
-            - ``scrollbar_shadow_position``     *(str)* - Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
-            - ``scrollbar_shadow``              *(bool)* - Indicate if a shadow is drawn on each scrollbar
-            - ``scrollbar_slider_color``        *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the sliders
-            - ``scrollbar_slider_hover_color``  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Color of the slider if hovered or clicked
-            - ``scrollbar_slider_pad``          *(int, float)* - Space between slider and scrollbars borders in px
-            - ``scrollbar_thick``               *(int)* - Scrollbar thickness in px
-            - ``scrollbars``                    *(str)* - Scrollbar position. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Scrollbar color
+            - ``scrollbar_cursor``              (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the scrollbars if mouse is placed over. By default is ``None``
+            - ``scrollbar_shadow_color``        (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the shadow of each scrollbar
+            - ``scrollbar_shadow_offset``       (int) – Offset of the scrollbar shadow in px
+            - ``scrollbar_shadow_position``     (str) – Position of the scrollbar shadow. See :py:mod:`pygame_menu.locals`
+            - ``scrollbar_shadow``              (bool) – Indicate if a shadow is drawn on each scrollbar
+            - ``scrollbar_slider_color``        (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the sliders
+            - ``scrollbar_slider_hover_color``  (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the slider if hovered or clicked
+            - ``scrollbar_slider_pad``          (int, float) – Space between slider and scrollbars borders in px
+            - ``scrollbar_thick``               (int) – Scrollbar thickness in px
+            - ``scrollbars``                    (str) – Scrollbar position. See :py:mod:`pygame_menu.locals`
 
         :param kwargs: Optional keyword arguments
         :return: Self reference

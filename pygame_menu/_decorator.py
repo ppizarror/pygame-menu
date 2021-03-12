@@ -227,7 +227,7 @@ class Decorator(Base):
         Adds a polygon.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
@@ -265,7 +265,7 @@ class Decorator(Base):
         Adds a bezier curve.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param color: Color of the polygon
@@ -298,7 +298,7 @@ class Decorator(Base):
         Adds a circle.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -344,7 +344,7 @@ class Decorator(Base):
         Adds an arc.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -387,7 +387,7 @@ class Decorator(Base):
         Adds a unfilled pie.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -424,7 +424,7 @@ class Decorator(Base):
         Adds a surface.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -461,7 +461,7 @@ class Decorator(Base):
             :py:meth:`pygame_menu._decorator.Decorator.force_cache_update`.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -492,7 +492,7 @@ class Decorator(Base):
         Adds a BaseImage object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -527,7 +527,7 @@ class Decorator(Base):
         Adds a BaseImage object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -561,7 +561,7 @@ class Decorator(Base):
         Adds a text.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -606,7 +606,7 @@ class Decorator(Base):
         Adds an ellipse.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -640,7 +640,7 @@ class Decorator(Base):
         Adds a pixel.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: X position in px, being ``0`` the center of the object
         :param y: Y position in px, being ``0`` the center of the object
@@ -708,7 +708,7 @@ class Decorator(Base):
             :py:class:`pygame_menu._decorator.Decorator.force_cache_update`.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param coords: Coordinate list, being ``(0, 0)`` the center of the object
         :param texture: Texture (Surface) or Baseimage object
@@ -739,7 +739,7 @@ class Decorator(Base):
         Adds a line.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param pos1: Position 1 (x1, y1)
         :param pos2: Position 2 (x2, y2)
@@ -768,7 +768,7 @@ class Decorator(Base):
         Fills the decorator rect object.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param color: Fill color
         :param prev: If ``True`` draw previous the object, else draws post
@@ -790,7 +790,7 @@ class Decorator(Base):
         Adds a horizontal line.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x1: Horizontal position 1 in px
         :param x2: Horizontal position 2 in px
@@ -818,7 +818,7 @@ class Decorator(Base):
         Adds a vertical line.
 
         kwargs (Optional)
-            - ``use_center_positioning``            Uses object center position as *(0, 0)*. ``True`` by default
+            - ``use_center_positioning``    (bool) – Uses object center position as *(0, 0)*. ``True`` by default
 
         :param x: Horizontal position in px
         :param y1: Vertical position 1 in px

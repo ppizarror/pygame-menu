@@ -88,8 +88,8 @@ numbers are:
 
 .. code-block:: python
 
-    color_opaque = (R,G,B)
-    color_transparent = (R,G,B,A)
+    color_opaque = (R, G, B)
+    color_transparent = (R, G, B, A)
 
 *A* alpha channels goes from *0* to *255*. *0* is transparent, *255* is opaque.
 For using images as a background color, class :py:class:`pygame_menu.baseimage.BaseImage`

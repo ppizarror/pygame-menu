@@ -559,7 +559,7 @@ class Widget(Base):
             This method does not evaluate if the mouse is placed over the Widget.
             Only executes the callback and updates the cursor if enabled.
 
-        :param event: MOUSEMOVE pygame event
+        :param event: ``MOUSEMOVE`` pygame event
         :param check_all_widget_mouseleave: Check widget leave statutes
         :return: Self reference
         """
@@ -621,7 +621,7 @@ class Widget(Base):
             This method does not evaluate if the mouse is placed over the Widget.
             Only executes the callback and updates the cursor if enabled.
 
-        :param event: MOUSEMOVE pygame event
+        :param event: ``MOUSEMOVE`` pygame event
         :param check_all_widget_mouseleave: Check widget leave statutes
         :return: Self reference
         """
@@ -646,7 +646,7 @@ class Widget(Base):
         """
         Check the mouse is over the widget. If so, execute the methods.
 
-        :param event: Mouse event (MOUSEMOTION or ACTIVEEVENT)
+        :param event: Mouse event (``MOUSEMOTION`` or ``ACTIVEEVENT``)
         :param rect: Rect object. If ``None`` uses the widget rect in real position
         :param check_all_widget_mouseleave: Check widget leave statutes
         :return: ``True`` if the mouseover status changed
@@ -813,7 +813,8 @@ class Widget(Base):
         .. note::
 
             This method only updates the surface cache, without forcing re-rendering
-            of all Menu widgets as :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
+            of all Menu widgets as
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
             does.
 
         :return: Self reference
@@ -1132,7 +1133,8 @@ class Widget(Base):
 
         .. note::
 
-            For drawing, use :py:meth:`pygame_menu.widgets.core.widget.Widget.draw_selection_effect`
+            For drawing, use
+            :py:meth:`pygame_menu.widgets.core.widget.Widget.draw_selection_effect`.
 
         .. warning::
 
@@ -1329,7 +1331,7 @@ class Widget(Base):
 
     def set_padding(self, padding: PaddingType) -> 'Widget':
         """
-        Set the Widget padding according to CSS rules.
+        Set the Widget padding according to CSS rules:
 
         - If an integer or float is provided: top, right, bottom and left values will be the same
         - If 2-item tuple is provided: top and bottom takes the first value, left and right the second
@@ -1731,14 +1733,14 @@ class Widget(Base):
         Updates the Widget font. This method receives a style dict (non empty).
 
         Optional style keys
-            - ``antialias``                 *(bool)* - Font antialias
-            - ``background_color``          *(tuple)* - Background color
-            - ``color``                     *(tuple)* - Font color
-            - ``name``                      *(str)* - Name of the font
-            - ``readonly_color``            *(tuple)* - Readonly color
-            - ``readonly_selected_color``   *(tuple)* - Readonly selected color
-            - ``selected_color``            *(tuple)* - Selected color
-            - ``size``                      *(int)* - Size of the font
+            - ``antialias``                 (bool) – Font antialias
+            - ``background_color``          (tuple) – Background color
+            - ``color``                     (tuple) – Font color
+            - ``name``                      (str) – Name of the font
+            - ``readonly_color``            (tuple) – Readonly color
+            - ``readonly_selected_color``   (tuple) – Readonly selected color
+            - ``selected_color``            (tuple) – Selected color
+            - ``size``                      (int) – Size of the font
 
         .. note::
 
@@ -1989,7 +1991,7 @@ class Widget(Base):
         .. warning::
 
             Final Widget size may not be exactly the same as the desired (width,
-            height) tuple due to rounding errors, expect +-2 px average.
+            height) tuple due to rounding errors, expect ±2 px average.
 
         :param width: Width in px, ``None`` if max width is disabled
         :param scale_height: If ``True`` the height is also scaled if the width exceeds the limit
@@ -2045,7 +2047,7 @@ class Widget(Base):
         .. warning::
 
             Final Widget size may not be exactly the same as the desired (width,
-            height) tuple due to rounding errors, expect +-2 px average.
+            height) tuple due to rounding errors, expect ±2 px average.
 
         :param height: Height in px, ``None`` if max height is disabled
         :param scale_width: If ``True`` the width is also scaled if the height exceeds the limit
@@ -2184,7 +2186,7 @@ class Widget(Base):
         .. warning::
 
             Final Widget size may not be exactly the same as the desired (width,
-            height) tuple due to rounding errors, expect +-2 px average.
+            height) tuple due to rounding errors, expect ±2 px average.
 
         :param width: New width of the widget in px
         :param height: New height of the widget in px
@@ -2584,7 +2586,7 @@ class Widget(Base):
 
         After creating a new callback, this functions returns the ID of the call.
         It can be removed anytime using
-        :py:meth:`pygame_menu.widgets.core.widget.Widget.remove_draw_callback`
+        :py:meth:`pygame_menu.widgets.core.widget.Widget.remove_draw_callback`.
 
         .. note::
 

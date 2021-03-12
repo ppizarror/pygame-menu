@@ -477,7 +477,7 @@ class BaseImage(Base):
         """
         Return the surface object of the image.
 
-        :param new: Return a new surface, if ``False`` return the same object
+        :param new: Return a new surface; if ``False`` return the same object
         :return: Image surface
         """
         if new:

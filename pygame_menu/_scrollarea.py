@@ -826,16 +826,16 @@ class ScrollArea(Base):
 
         return True
 
-    def set_position(self, posx: int, posy: int) -> 'ScrollArea':
+    def set_position(self, x: int, y: int) -> 'ScrollArea':
         """
         Set the position.
 
-        :param posx: X position
-        :param posy: Y position
+        :param x: X position
+        :param y: Y position
         :return: Self reference
         """
-        self._rect.x = posx + self._extend_x + self._translate[0]
-        self._rect.y = posy + self._extend_y + self._translate[1]
+        self._rect.x = x + self._extend_x + self._translate[0]
+        self._rect.y = y + self._extend_y + self._translate[1]
         self._apply_size_changes()
         return self
 

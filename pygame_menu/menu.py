@@ -108,7 +108,7 @@ class Menu(Base):
     :param column_max_width: List/Tuple representing the maximum width of each column in px, ``None`` equals no limit. For example ``column_max_width=500`` (each column width can be 500px max), or ``column_max_width=(400,500)`` (first column 400px, second 500). If ``0`` uses the Menu width. This method does not resize the widgets, only determines the dynamic width of the column layout
     :param column_min_width: List/Tuple representing the minimum width of each column in px. For example ``column_min_width=500`` (each column width is 500px min), or ``column_max_width=(400,500)`` (first column 400px, second 500). Negative values are not accepted
     :param columns: Number of columns
-    :param enabled: Menu is enabled. If ``False`` Menu cannot be drawn or updated
+    :param enabled: Menu is enabled. If ``False`` the Menu cannot be drawn or updated
     :param joystick_enabled: Enable/disable joystick events on the Menu
     :param keyboard_enabled: Enable/disable keyboard events on the Menu
     :param menu_id: ID of the Menu
@@ -672,7 +672,7 @@ class Menu(Base):
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().update(...)``
+            for example, ``menu.get_current().update(...)``.
 
         :return: Self reference
         """
@@ -691,7 +691,7 @@ class Menu(Base):
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().update(...)``
+            for example, ``menu.get_current().update(...)``.
 
         :return: Self reference
         """
@@ -895,7 +895,7 @@ class Menu(Base):
 
     def get_current(self) -> 'Menu':
         """
-        Get **current** active Menu. If the user has not opened any submenu the
+        Get the **current** active Menu. If the user has not opened any submenu the
         pointer object must be the same as the base. If not, this will return the
         opened Menu pointer.
 
@@ -1671,7 +1671,7 @@ class Menu(Base):
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().reset(...)``
+            for example, ``menu.get_current().reset(...)``.
 
         :return: ``True`` if the Menu has executed the ``onclose`` callback
         """
@@ -2297,7 +2297,7 @@ class Menu(Base):
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().update(...)``
+            for example, ``menu.get_current().update(...)``.
 
         :param events: Pygame events as a list
         :return: ``True`` if mainloop must be stopped
@@ -2693,14 +2693,14 @@ class Menu(Base):
                 bgfun() <or> bgfun(Menu)
 
         kwargs (Optional)
-            - ``clear_surface``     *(bool)* - If ``True`` surface is cleared using ``theme.surface_clear_color``
-            - ``disable_loop``      *(bool)* - If ``True`` the mainloop only runs once. Use for running draw and update in a single call
-            - ``fps_limit``         *(int)* - Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
+            - ``clear_surface``     (bool) – If ``True`` surface is cleared using ``theme.surface_clear_color``
+            - ``disable_loop``      (bool) – If ``True`` the mainloop only runs once. Use for running draw and update in a single call
+            - ``fps_limit``         (int) – Maximum FPS of the loop. Default equals to ``theme.fps``. If ``0`` there's no limit
 
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().mainloop(...)``
+            for example, ``menu.get_current().mainloop(...)``.
 
         :param surface: Pygame surface to draw the Menu
         :param bgfun: Background function called on each loop iteration before drawing the Menu
@@ -2939,7 +2939,7 @@ class Menu(Base):
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().reset(...)``
+            for example, ``menu.get_current().reset(...)``.
 
         :param menu: Menu object
         :return: None
@@ -2970,7 +2970,7 @@ class Menu(Base):
         .. warning::
 
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
-            for example, ``menu.get_current().reset(...)``
+            for example, ``menu.get_current().reset(...)``.
 
         :param total: How many menus to go back
         :return: Self reference **(current)**
@@ -3019,8 +3019,8 @@ class Menu(Base):
         to the base Menu pointer.
 
         kwargs (Optional)
-            - ``last_index``                *(int)* - Last index in recursive call on Frames
-            - ``update_mouse_position``     *(bool)* - Update mouse position
+            - ``last_index``                (int) – Last index in recursive call on Frames
+            - ``update_mouse_position``     (bool) – Update mouse position
 
         :param new_index: Widget index
         :param dwidget: Direction to search if ``new_index`` widget is non selectable

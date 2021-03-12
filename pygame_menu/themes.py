@@ -195,17 +195,17 @@ class Theme(object):
     :type widget_border_position: str, tuple, list
     :param widget_border_width: Widget border width in px. If ``0`` the border is disabled. Border width don't contributes to the widget width/height, it's visual-only
     :type widget_border_width: int
-    :param widget_box_arrow_color: Widget box arrow color, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_arrow_color: Widget box arrow color, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_arrow_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param widget_box_arrow_margin: Widget box arrow margin (left, right, vertical) in px, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_arrow_margin: Widget box arrow margin (left, right, vertical) in px, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_arrow_margin: tuple
-    :param widget_box_background_color: Widget box background color, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_background_color: Widget box background color, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_background_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param widget_box_border_color: Widget box border color, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_border_color: Widget box border color, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_border_color: tuple, list, str, int, :py:class:`pygame.Color`
-    :param widget_box_border_width: Widget box border width in px, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_border_width: Widget box border width in px, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_border_width: int
-    :param widget_box_inflate: Widget box inflate on x-axis and y-axis (x, y) in px, used by some widgets (DropSelect, Fancy Selector, etc)
+    :param widget_box_inflate: Widget box inflate on x-axis and y-axis (x, y) in px, used by some widgets such as DropSelect, Fancy Selector, etc.
     :type widget_box_inflate: tuple, list
     :param widget_box_margin: Box margin on x-axis and y-axis (x, y) in px
     :type widget_box_margin: tuple, list
@@ -673,23 +673,23 @@ class Theme(object):
         Return a value from a dictionary.
 
         Custom types (str)
-            -   alignment           pygame-menu alignment (locals)
-            -   callable            Is callable type, same as ``"function"``
-            -   color               Check color
-            -   color_image         Color or :py:class:`pygame_menu.baseimage.BaseImage`
-            -   color_image_none    Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
-            -   color_none          Color or None
-            -   cursor              Cursor object (pygame)
-            -   font                Font type
-            -   image               Value must be ``BaseImage``
-            -   none                None only
-            -   position            pygame-menu position (locals)
-            -   position_vector     pygame-menu position (str or vector)
-            -   tuple2              Only valid numeric tuples ``(x, y)`` or ``[x, y]``
-            -   tuple2int           Only valid integer tuples ``(x, y)`` or ``[x, y]``
-            -   tuple3              Only valid numeric tuples ``(x, y, z)`` or ``[x, y, z]``
-            -   tuple3int           Only valid integer tuples ``(x, y, z)`` or ``[x, y, z]``
-            -   type                Type-class (bool, str, etc...)
+            -   alignment           – pygame-menu alignment (locals)
+            -   callable            – Is callable type, same as ``"function"``
+            -   color               – Check color
+            -   color_image         – Color or :py:class:`pygame_menu.baseimage.BaseImage`
+            -   color_image_none    – Color, :py:class:`pygame_menu.baseimage.BaseImage`, or None
+            -   color_none          – Color or None
+            -   cursor              – Cursor object (pygame)
+            -   font                – Font type
+            -   image               – Value must be ``BaseImage``
+            -   none                – None only
+            -   position            – pygame-menu position (locals)
+            -   position_vector     – pygame-menu position (str or vector)
+            -   tuple2              – Only valid numeric tuples ``(x, y)`` or ``[x, y]``
+            -   tuple2int           – Only valid integer tuples ``(x, y)`` or ``[x, y]``
+            -   tuple3              – Only valid numeric tuples ``(x, y, z)`` or ``[x, y, z]``
+            -   tuple3int           – Only valid integer tuples ``(x, y, z)`` or ``[x, y, z]``
+            -   type                – Type-class (bool, str, etc...)
 
         :param params: Parameters dictionary
         :param key: Key to look for
