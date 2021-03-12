@@ -72,6 +72,7 @@ DECOR_TYPE_PREV = 'prev'
 DECOR_TYPE_POST = 'post'
 
 
+# noinspection PyProtectedMember
 class Decorator(Base):
     """
     Decorator class.
@@ -87,14 +88,14 @@ class Decorator(Base):
     _decor: Dict[str, List[Tuple[int, str, Any]]]  # type, id, data
     _decor_enabled: Dict[str, bool]
     _decor_prev_id: List[str]
-    _obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu']
+    _obj: Union['pygame_menu.widgets.Widget', 'pygame_menu._scrollarea.ScrollArea', 'pygame_menu.Menu']
     _post_enabled: bool
     _prev_enabled: bool
     cache: bool
 
     def __init__(
             self,
-            obj: Union['pygame_menu.widgets.Widget', 'pygame_menu.scrollarea.ScrollArea', 'pygame_menu.Menu'],
+            obj: Union['pygame_menu.widgets.Widget', 'pygame_menu._scrollarea.ScrollArea', 'pygame_menu.Menu'],
             decorator_id: str = ''
     ) -> None:
         super(Decorator, self).__init__(object_id=decorator_id)

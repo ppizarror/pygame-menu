@@ -53,7 +53,7 @@ from pygame_menu._types import Tuple, Union, List, Any, Optional, CallbackType, 
     NumberType, EventVectorType, Tuple2NumberType, CursorInputType, CursorType
 
 
-# noinspection PyMissingOrEmptyDocstring
+# noinspection PyMissingOrEmptyDocstring,PyProtectedMember
 class DropSelect(Widget):
     """
     Drop select is a selector within a Frame. This drops a vertical frame if requested.
@@ -334,7 +334,7 @@ class DropSelect(Widget):
         :param kwargs: Optional keyword arguments
         :return: Self reference
         """
-        from pygame_menu.scrollarea import get_scrollbars_from_position
+        from pygame_menu._scrollarea import get_scrollbars_from_position
 
         if not self.configured:
             raise RuntimeError('{0} must be configured before creating selection drop'.format(self.get_class_id()))
@@ -574,7 +574,7 @@ class DropSelect(Widget):
             return self._drop_frame.get_scroll_value_percentage(orientation)
         return -1
 
-    def set_scrollarea(self, scrollarea: 'pygame_menu.scrollarea.ScrollArea') -> None:
+    def set_scrollarea(self, scrollarea: 'pygame_menu._scrollarea.ScrollArea') -> None:
         super(DropSelect, self).set_scrollarea(scrollarea)
         if self._drop_frame is not None:
             self._drop_frame.set_scrollarea(scrollarea)
@@ -665,7 +665,6 @@ class DropSelect(Widget):
                 self.last_surface = surface
 
             else:
-                # noinspection PyProtectedMember
                 new_surface = self._menu._widgets_surface
 
                 # Ignore draw if widget is within a frame, if so, the next call made by frame.draw()
@@ -767,7 +766,6 @@ class DropSelect(Widget):
         if self._drop_frame is not None and self._open_middle and self._menu is not None:
             self._drop_frame.set_scrollarea(self._menu.get_scrollarea())
             self._drop_frame._frame = None
-            # noinspection PyProtectedMember
             if not self._menu._mouse_motion_selection:
                 self.force_menu_draw_focus = True
         else:

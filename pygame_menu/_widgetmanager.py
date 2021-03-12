@@ -46,7 +46,7 @@ import pygame_menu.events as _events
 from pygame_menu._base import Base
 from pygame_menu.locals import CURSOR_HAND, INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 from pygame_menu.font import assert_font
-from pygame_menu.scrollarea import get_scrollbars_from_position
+from pygame_menu._scrollarea import get_scrollbars_from_position
 from pygame_menu.utils import assert_vector, assert_color, assert_cursor, is_callable, uuid4, parse_padding, \
     assert_position_vector, warn
 from pygame_menu.widgets.core.widget import Widget, check_widget_mouseleave
@@ -395,7 +395,7 @@ class WidgetManager(Base):
 
         kwargs (Optional)
             - ``accept_kwargs``                 *(bool)* – Button action accepts ``**kwargs`` if it's a callable object (function-type), ``False`` by default
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``back_count``                    *(int)* - Number of menus to go back if action is :py:data:`pygame_menu.events.BACK` event, default is ``1``
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
@@ -571,7 +571,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -685,7 +685,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -766,7 +766,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -859,7 +859,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -939,7 +939,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -1080,7 +1080,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -1197,7 +1197,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -1335,7 +1335,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -1560,7 +1560,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -1798,7 +1798,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -1953,7 +1953,7 @@ class WidgetManager(Base):
             onselect(selected, widget, menu)
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -2146,7 +2146,7 @@ class WidgetManager(Base):
             ----------------
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -2239,7 +2239,7 @@ class WidgetManager(Base):
             --------
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color
@@ -2315,7 +2315,7 @@ class WidgetManager(Base):
         in a structured way.
 
         kwargs (Optional)
-            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_
+            - ``align``                         *(str)* - Widget `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_
             - ``background_color``              *(tuple, list, str, int,* :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage` *)* - Color of the background. ``None`` for no-color
             - ``background_inflate``            *(tuple, list)* - Inflate background on x-axis and y-axis (x, y) in px
             - ``border_color``                  *(tuple, list, str, int,* :py:class:`pygame.Color` *)* - Widget border color. ``None`` for no-color

@@ -50,7 +50,7 @@ from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_SOUTHWEST, POSITION_
     SCROLLAREA_POSITION_BOTH_VERTICAL
 from pygame_menu.utils import make_surface, assert_color, assert_position, assert_orientation, \
     get_finger_pos
-from pygame_menu.widgets import ScrollBar, MenuBar
+from pygame_menu.widgets import ScrollBar
 
 from pygame_menu._types import Union, NumberType, Tuple, List, Dict, Tuple2NumberType, CursorInputType, \
     Optional, Tuple2IntType, NumberInstance, ColorInputType, EventVectorType, EventType, VectorInstance, \
@@ -151,7 +151,7 @@ class ScrollArea(Base):
             area_color: Optional[Union[ColorInputType, 'pygame_menu.BaseImage']] = None,
             extend_x: int = 0,
             extend_y: int = 0,
-            menubar: Optional['MenuBar'] = None,
+            menubar: Optional['pygame_menu.widgets.MenuBar'] = None,
             parent_scrollarea: Optional['ScrollArea'] = None,
             scrollarea_id: str = '',
             scrollbar_color: ColorInputType = (235, 235, 235),
@@ -1101,9 +1101,9 @@ class ScrollArea(Base):
 
             1. Menu background color/image
             2. Menu ``prev`` decorator
-            3. **Menu ScrollArea ``prev`` decorator**
-            4. **Menu ScrollArea widgets**
-            5. **Menu ScrollArea ``post`` decorator**
+            3. Menu **ScrollArea** ``prev`` decorator
+            4. Menu **ScrollArea** widgets
+            5. Menu **ScrollArea** ``post`` decorator
             6. Menu title
             7. Menu ``post`` decorator
 

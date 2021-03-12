@@ -48,7 +48,7 @@ from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_MOVE_UP, KEY_MOVE_DOWN
     JOY_LEFT, JOY_RIGHT, JOY_DEADZONE, JOY_UP, JOY_DOWN, JOY_AXIS_X, JOY_DELAY, JOY_AXIS_Y, JOY_REPEAT
 from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, ORIENTATION_HORIZONTAL, \
     ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
-from pygame_menu.scrollarea import ScrollArea, get_scrollbars_from_position
+from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
 from pygame_menu.sound import Sound
 from pygame_menu.themes import Theme, THEME_DEFAULT
 from pygame_menu.utils import widget_terminal_title, TerminalColors, is_callable, assert_vector, make_surface, \
@@ -247,7 +247,8 @@ class Menu(Base):
         assert isinstance(mouse_visible, bool)
         assert isinstance(overflow, (VectorInstance, bool))
         assert isinstance(rows, (int, type(None), VectorInstance))
-        assert isinstance(theme, Theme), 'theme bust be a pygame_menu.themes.Theme object instance'
+        assert isinstance(theme, Theme), \
+            'theme bust be a pygame_menu.themes.Theme object instance'
         assert isinstance(touchscreen, bool)
         assert isinstance(touchscreen_motion_selection, bool)
 
@@ -255,7 +256,8 @@ class Menu(Base):
         theme.validate()
 
         # Assert pygame was initialized
-        assert not hasattr(pygame, 'get_init') or pygame.get_init(), 'pygame is not initialized'
+        assert not hasattr(pygame, 'get_init') or pygame.get_init(), \
+            'pygame is not initialized'
 
         # Assert python version is greater than 3.6
         assert sys.version_info >= (3, 6, 0), \
@@ -265,20 +267,24 @@ class Menu(Base):
         assert columns >= 1, \
             'the number of columns must be equal or greater than 1 (current={0})'.format(columns)
         if columns > 1:
-            assert rows is not None, 'rows cannot be None if the number of columns is greater than 1'
+            assert rows is not None, \
+                'rows cannot be None if the number of columns is greater than 1'
             if isinstance(rows, int):
                 assert rows >= 1, \
                     'if number of columns is greater than 1 (current={0}) then the number ' \
                     'of rows must be equal or greater than 1 (current={1})'.format(columns, rows)
                 rows = [rows for _ in range(columns)]
-            assert isinstance(rows, VectorInstance), 'if rows is not an integer it must be a tuple/list'
+            assert isinstance(rows, VectorInstance), \
+                'if rows is not an integer it must be a tuple/list'
             assert len(rows) == columns, \
                 'the length of the rows vector must be the ' \
                 'same as the number of columns (current={0}, expected={1})'.format(len(rows), columns)
 
             for i in rows:
-                assert isinstance(i, int), 'each item of rows tuple/list must be an integer'
-                assert i >= 1, 'each item of the rows tuple/list must be equal or greater than one'
+                assert isinstance(i, int), \
+                    'each item of rows tuple/list must be an integer'
+                assert i >= 1, \
+                    'each item of the rows tuple/list must be equal or greater than one'
 
         else:
             if rows is None:
@@ -1591,9 +1597,9 @@ class Menu(Base):
     def _close(self) -> bool:
         """
         Execute close callbacks and disable the Menu, only if ``onclose``
-        is not None (or NONE event).
+        is not None (or :py:mod:`pygame_menu.events.NONE`).
 
-        :return: ``True`` if Menu has executed the ``onclose`` callback
+        :return: ``True`` if the Menu has executed the ``onclose`` callback
         """
         onclose = self._onclose
 
@@ -1637,7 +1643,7 @@ class Menu(Base):
             This method should not be used along :py:meth:`pygame_menu.menu.Menu.get_current`,
             for example, ``menu.get_current().reset(...)``
 
-        :return: None
+        :return: ``True`` if the Menu has executed the ``onclose`` callback
         """
         if not self.is_enabled():
             self._current._runtime_errors.throw(self._current._runtime_errors.close, 'menu already closed')
@@ -3360,7 +3366,7 @@ class Menu(Base):
         .. note::
 
             ``prev`` menu decorator may not draw because :py:class:`pygame_menu.widgets.MenuBar`
-            and :py:class:`pygame_menu.scrollarea.ScrollArea` objects
+            and :py:class:`pygame_menu._scrollarea.ScrollArea` objects
             draw over it. If it's desired to draw a decorator behind widgets, use the ScrollArea
             decorator, for example: :py:data:`menu.get_scrollarea().get_decorator()`. The
             menu drawing order is:

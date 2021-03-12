@@ -84,7 +84,7 @@ if __pygame_version__ is not None:
     """
     ScrollArea: Scrollarea class
     """
-    import pygame_menu.scrollarea
+    import pygame_menu._scrollarea
 
     """
     Sound: Sound class

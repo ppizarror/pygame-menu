@@ -76,7 +76,7 @@ FrameTitleBackgroundColorType = Optional[Union[ColorInputType, ColorInputGradien
 FrameTitleButtonType = Literal[FRAME_TITLE_BUTTON_CLOSE, FRAME_TITLE_BUTTON_MAXIMIZE, FRAME_TITLE_BUTTON_MINIMIZE]
 
 
-# noinspection PyMissingOrEmptyDocstring
+# noinspection PyMissingOrEmptyDocstring,PyProtectedMember
 class Frame(Widget):
     """
     Frame is a widget container, it can pack many widgets.
@@ -115,7 +115,7 @@ class Frame(Widget):
     _control_widget: Optional['Widget']
     _control_widget_last_pos: Optional[Vector2NumberType]
     _draggable: bool
-    _frame_scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']
+    _frame_scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']
     _frame_size: Tuple2IntType
     _frame_title: Optional['Frame']
     _has_frames: bool  # True if frame has packed other frames
@@ -534,7 +534,6 @@ class Frame(Widget):
         :return: None
         """
         if self._menu is not None:
-            # noinspection PyProtectedMember
             self._menu._sort_update_frames()
 
     def on_remove_from_menu(self) -> 'Frame':
@@ -657,7 +656,7 @@ class Frame(Widget):
             return self
 
         # Create area object
-        self._frame_scrollarea = pygame_menu.scrollarea.ScrollArea(
+        self._frame_scrollarea = pygame_menu._scrollarea.ScrollArea(
             area_color=scrollarea_color,
             area_height=max_height + sx,
             area_width=max_width + sy,
@@ -1226,7 +1225,7 @@ class Frame(Widget):
             self._menu.scroll_to_widget(None)
         return self
 
-    def get_scrollarea(self, inner: bool = False) -> Optional['pygame_menu.scrollarea.ScrollArea']:
+    def get_scrollarea(self, inner: bool = False) -> Optional['pygame_menu._scrollarea.ScrollArea']:
         """
         Return the scrollarea object.
 
@@ -1243,7 +1242,7 @@ class Frame(Widget):
             self._frame_title.set_frame(frame)
         return self
 
-    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
         self._scrollarea = scrollarea
         if self._frame_scrollarea is not None:
             self._frame_scrollarea.set_parent_scrollarea(scrollarea)

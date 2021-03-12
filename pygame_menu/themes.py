@@ -48,19 +48,21 @@ import copy
 
 from pygame_menu.baseimage import BaseImage
 from pygame_menu.font import FontType, FONT_OPEN_SANS, assert_font
-from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, CURSOR_ARROW
-from pygame_menu.scrollarea import get_scrollbars_from_position
-from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, assert_position, assert_color, \
-    is_callable, format_color, assert_position_vector, warn
-from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, \
-    MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, \
-    MENUBAR_STYLE_UNDERLINE_TITLE
+from pygame_menu.locals import POSITION_NORTHWEST, POSITION_SOUTHEAST, ALIGN_CENTER, \
+    CURSOR_ARROW
+from pygame_menu._scrollarea import get_scrollbars_from_position
+from pygame_menu.utils import assert_alignment, assert_cursor, assert_vector, \
+    assert_position, assert_color, is_callable, format_color, assert_position_vector, \
+    warn
+from pygame_menu.widgets import HighlightSelection, NoneSelection, MENUBAR_STYLE_ADAPTIVE, \
+    MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY, MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, \
+    MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE
 from pygame_menu.widgets.core import Selection
 from pygame_menu.widgets.core.widget import WidgetBorderPositionType, WIDGET_FULL_BORDER
 
-from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, Any, Tuple2IntType, \
-    VectorInstance, Tuple2NumberType, NumberType, PaddingType, Optional, Type, NumberInstance, \
-    PaddingInstance, Tuple3IntType, CursorType
+from pygame_menu._types import ColorType, ColorInputType, Tuple, List, Union, Dict, \
+    Any, Tuple2IntType, VectorInstance, Tuple2NumberType, NumberType, PaddingType, \
+    Optional, Type, NumberInstance, PaddingInstance, Tuple3IntType, CursorType
 
 
 def _check_menubar_style(style: int) -> bool:
@@ -71,8 +73,8 @@ def _check_menubar_style(style: int) -> bool:
     :return: ``True`` if correct
     """
     return style in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_SIMPLE, MENUBAR_STYLE_TITLE_ONLY,
-                     MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE, MENUBAR_STYLE_UNDERLINE,
-                     MENUBAR_STYLE_UNDERLINE_TITLE)
+                     MENUBAR_STYLE_TITLE_ONLY_DIAGONAL, MENUBAR_STYLE_NONE,
+                     MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE)
 
 
 class Theme(object):
@@ -177,7 +179,7 @@ class Theme(object):
     :type title_offset: tuple, list
     :param title_updates_pygame_display: If ``True`` the menu title updates See :py:mod:`pygame.display.caption` automatically on draw
     :type title_updates_pygame_display: bool
-    :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/create_menu.html#widgets-alignment>`_. See :py:mod:`pygame_menu.locals`
+    :param widget_alignment: Widget default `alignment <https://pygame-menu.readthedocs.io/en/latest/_source/themes.html#alignment>`_. See :py:mod:`pygame_menu.locals`
     :type widget_alignment: str
     :param widget_background_color: Background color of a widget, it can be a color, ``None`` (transparent), or a BaseImage object. Background fills the entire widget + the padding
     :type widget_background_color: tuple, list, str, int, :py:class:`pygame.Color`, :py:class:`pygame_menu.baseimage.BaseImage`, None
@@ -529,10 +531,13 @@ class Theme(object):
         self.widget_margin = self._vec_to_tuple(self.widget_margin, 2, NumberInstance)
         if isinstance(self.widget_padding, VectorInstance):
             self.widget_padding = self._vec_to_tuple(self.widget_padding)
-            assert 2 <= len(self.widget_padding) <= 4, 'widget padding tuple length must be 2, 3 or 4'
+            assert 2 <= len(self.widget_padding) <= 4, \
+                'widget padding tuple length must be 2, 3 or 4'
             for p in self.widget_padding:
-                assert isinstance(p, NumberInstance), 'each padding element must be numeric (integer or float)'
-                assert p >= 0, 'all padding elements must be equal or greater than zero'
+                assert isinstance(p, NumberInstance), \
+                    'each padding element must be numeric (integer or float)'
+                assert p >= 0, \
+                    'all padding elements must be equal or greater than zero'
         else:
             assert self.widget_padding >= 0, 'padding cannot be a negative number'
         self.widget_offset = self._vec_to_tuple(self.widget_offset, 2, NumberInstance)

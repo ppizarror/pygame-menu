@@ -90,9 +90,9 @@ SOUND_TYPE_KEY_DELETION = '__pygame_menu_sound_key_deletion__'
 SOUND_TYPE_OPEN_MENU = '__pygame_menu_sound_open_menu__'
 SOUND_TYPE_WIDGET_SELECTION = '__pygame_menu_sound_widget_selection__'
 
-SOUND_TYPES = (SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_CLOSE_MENU, SOUND_TYPE_ERROR, SOUND_TYPE_EVENT,
-               SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION, SOUND_TYPE_KEY_DELETION,
-               SOUND_TYPE_OPEN_MENU, SOUND_TYPE_WIDGET_SELECTION)
+SOUND_TYPES = (SOUND_TYPE_CLICK_MOUSE, SOUND_TYPE_CLOSE_MENU, SOUND_TYPE_ERROR,
+               SOUND_TYPE_EVENT, SOUND_TYPE_EVENT_ERROR, SOUND_TYPE_KEY_ADDITION,
+               SOUND_TYPE_KEY_DELETION, SOUND_TYPE_OPEN_MENU, SOUND_TYPE_WIDGET_SELECTION)
 
 # Sound example paths
 __sounds_path__ = path.join(path.dirname(path.abspath(__file__)), 'resources', 'sounds', '{0}')
@@ -281,8 +281,15 @@ class Sound(Base):
             self._channel = channel  # Store the available channel
         return self._channel
 
-    def set_sound(self, sound_type: str, sound_file: Optional[Union[str, 'Path']], volume: float = 0.5,
-                  loops: int = 0, maxtime: NumberType = 0, fade_ms: NumberType = 0) -> bool:
+    def set_sound(
+            self,
+            sound_type: str,
+            sound_file: Optional[Union[str, 'Path']],
+            volume: float = 0.5,
+            loops: int = 0,
+            maxtime: NumberType = 0,
+            fade_ms: NumberType = 0
+    ) -> bool:
         """
         Link a sound file to a sound type.
 

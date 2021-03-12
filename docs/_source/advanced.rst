@@ -18,8 +18,8 @@ Create a widget
 ===============
 
 All widget classes shall inherit from :py:class:`pygame_menu.widgets.core.widget.Widget`,
-and they must be located in the :py:mod:`pygame_menu.widgets.widget` package. The most
-basic widget should contain this code:
+and they must be located in the :py:mod:`pygame_menu.widgets.widget` package. The
+most basic widget should contain this code:
 
 .. code-block:: python
 
@@ -132,16 +132,16 @@ can be used.
 .. note::
 
     The widget ``_render`` method should always call
-    :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update` method, this
-    ensures that Menu updates the surface and the positioning.
+    :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_update`
+    method, this ensures that Menu updates the surface and the positioning.
 
 .. note::
 
     From ``v4`` menu introduced a cache state for the draw surface. This cache
     is updated if any widget update its status (``update()`` returned True) or
     the surface was rendered. Anyway, execution-time elements that changes over
-    time (outside ``_render``) should force cache rendering (for example the blinking
-    cursor of text). If your widget has any property like this, the method
+    time (outside ``_render``) should force cache rendering (for example the
+    blinking cursor of text). If your widget has any property like this, the method
     :py:meth:`pygame_menu.widgets.core.widget.Widget.force_menu_surface_cache_update`
     must be called within your Widget.
 
@@ -164,8 +164,8 @@ The widgets in Menu are drawn with the following idea:
     #. Draw scrollbar
 
 For defining a new selection effect, a new :py:class:`pygame_menu.widgets.core.Selection`
-subclass must be added to the :py:mod:`pygame_menu.widgets.selection` package. A basic class must
-contain the following code:
+subclass must be added to the :py:mod:`pygame_menu.widgets.selection` package. A
+basic class must contain the following code:
 
 .. code-block:: python
 
@@ -197,14 +197,15 @@ contain the following code:
 
 .. warning::
 
-    After creating the selection effect, it must be added to ``__init__.py`` file of the
-    :py:mod:`pygame_menu.widgets` package.
+    After creating the selection effect, it must be added to ``__init__.py`` file
+    of the :py:mod:`pygame_menu.widgets` package.
 
     .. code-block:: python
 
         from pygame_menu.widgets.selection.myselection import MySelection
 
-Finally, this new selection effect can be set by following one of these two instructions:
+Finally, this new selection effect can be set by following one of these two
+instructions:
 
 1. Pass it when adding a new widget to the menu
 
@@ -244,8 +245,9 @@ class API to add decorations to your object.
 
 .. note::
 
-    Decorations don't change the width/height of the object. These are visual/only. If
-    applied on a widget, use padding to *enlarge* the widget rect if you need such feature.
+    Decorations don't change the width/height of the object. These are visual/only.
+    If applied on a widget, use padding to *enlarge* the widget rect if you need
+    such feature.
 
 .. note::
 

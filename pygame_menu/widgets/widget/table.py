@@ -795,7 +795,8 @@ class Table(Frame):
         self.force_menu_surface_update()
         return cell
 
-    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
+    # noinspection PyProtectedMember
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
         super(Table, self).set_scrollarea(scrollarea)
         for f in self._rows:
             f.set_scrollarea(scrollarea)

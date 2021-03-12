@@ -205,6 +205,7 @@ CallbackSelectType = Optional[Union[Callable[[bool, 'Widget', 'pygame_menu.Menu'
 WidgetBorderPositionType = Union[str, List[str], Tuple[str, ...]]
 
 
+# noinspection PyProtectedMember
 class Widget(Base):
     """
     Widget abstract class.
@@ -277,7 +278,7 @@ class Widget(Base):
     _rect: 'pygame.Rect'
     _rect_size_delta: Tuple2IntType
     _scale: List[Union[bool, NumberType]]
-    _scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']  # Parent scrollarea
+    _scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']  # Parent scrollarea
     _selected: bool
     _selection_effect: 'Selection'
     _selection_effect_draw_post: bool
@@ -1314,17 +1315,17 @@ class Widget(Base):
         self._force_render()
         return self
 
-    def set_scrollarea(self, scrollarea: Optional['pygame_menu.scrollarea.ScrollArea']) -> None:
+    def set_scrollarea(self, scrollarea: Optional['pygame_menu._scrollarea.ScrollArea']) -> None:
         """
         Set scrollarea reference. Mostly used for events.
 
         :param scrollarea: Scrollarea object
         :return: None
         """
-        assert isinstance(scrollarea, (type(None), pygame_menu.scrollarea.ScrollArea))
+        assert isinstance(scrollarea, (type(None), pygame_menu._scrollarea.ScrollArea))
         self._scrollarea = scrollarea
 
-    def get_scrollarea(self) -> 'pygame_menu.scrollarea.ScrollArea':
+    def get_scrollarea(self) -> 'pygame_menu._scrollarea.ScrollArea':
         """
         Return the scrollarea object.
 
@@ -1775,7 +1776,6 @@ class Widget(Base):
         :return: Widget list if the menu reference is not ``None``, else, return an empty list
         """
         if self._menu is not None:
-            # noinspection PyProtectedMember
             return self._menu._widgets
         return []
 
@@ -1790,7 +1790,6 @@ class Widget(Base):
         :return: Frame update list if the menu reference is not ``None``, else, return an empty list
         """
         if self._menu is not None:
-            # noinspection PyProtectedMember
             return self._menu._update_frames
         return []
 
@@ -1805,7 +1804,6 @@ class Widget(Base):
         :return: Widget update list if the menu reference is not ``None``, else, return an empty list
         """
         if self._menu is not None:
-            # noinspection PyProtectedMember
             return self._menu._update_widgets
         return []
 
@@ -1816,7 +1814,6 @@ class Widget(Base):
         :return: None
         """
         if self._menu is not None:
-            # noinspection PyProtectedMember
             self._menu._render()
 
     def _apply_font(self) -> None:
@@ -2667,7 +2664,6 @@ class Widget(Base):
         self._visible = True
         self._render()
         if self._menu is not None:
-            # noinspection PyProtectedMember
             self._menu._update_selection_if_hidden()
         return self
 
@@ -2684,7 +2680,6 @@ class Widget(Base):
         self.active = False
         self._render()
         if self._menu is not None:
-            # noinspection PyProtectedMember
             self._menu._update_selection_if_hidden()
         return self
 
@@ -2725,6 +2720,7 @@ class Widget(Base):
         Get container frame of Widget. If Widget is not within a Frame, the method returns ``None``.
 
         :return: Frame object
+        :rtype: :py:class:`pygame_menu.widgets.Frame`
         """
         return self._frame
 
