@@ -146,8 +146,9 @@ class Label(Widget):
         return self
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._title, self._font_color,
-                                         self._visible, self._last_underline[1]):
+        if not self._render_hash_changed(
+                self._title, self._font_color, self._visible,
+                self._last_underline[1]):
             return True
 
         # Render surface

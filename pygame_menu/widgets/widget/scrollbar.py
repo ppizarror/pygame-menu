@@ -329,11 +329,10 @@ class ScrollBar(Widget):
         width, height = self._rect.width + self._rect_size_delta[0], \
                         self._rect.height + self._rect_size_delta[1]
 
-        if not self._render_hash_changed(width, height, self._slider_rect.x,
-                                         self._slider_rect.y, self.readonly,
-                                         self._slider_rect.width,
-                                         self._slider_rect.height, self.scrolling,
-                                         self._mouseover, self._clicked):
+        if not self._render_hash_changed(
+                width, height, self._slider_rect.x, self._slider_rect.y,
+                self.readonly, self._slider_rect.width, self._slider_rect.height,
+                self.scrolling, self._mouseover, self._clicked):
             return True
 
         self._surface = make_surface(width, height)
@@ -369,11 +368,13 @@ class ScrollBar(Widget):
             return False
 
         axis = self._orientation
-        space_before = rect.topleft[axis] - \
-                       self._slider_rect.move(*rect.topleft).topleft[axis] + self._slider_pad
+        space_before = rect.topleft[axis] \
+                       - self._slider_rect.move(*rect.topleft).topleft[axis] \
+                       + self._slider_pad
         move = max(round(pixels), space_before)
-        space_after = rect.bottomright[axis] - \
-                      self._slider_rect.move(*rect.topleft).bottomright[axis] - self._slider_pad
+        space_after = rect.bottomright[axis] \
+                      - self._slider_rect.move(*rect.topleft).bottomright[axis] \
+                      - self._slider_pad
         move = min(move, space_after)
 
         if not move:

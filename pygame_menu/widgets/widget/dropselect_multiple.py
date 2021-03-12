@@ -261,11 +261,11 @@ class DropSelectMultiple(DropSelect):
             f1 = self._render_option_string(self._placeholder)
             f2 = self._render_option_string(self._placeholder_selected.format(999))
             h = self._render_string(self._title, self.get_font_color_status()).get_height()
-            self._selection_box_width = int(max(f1.get_width(), f2.get_width()) +
-                                            self._selection_box_arrow_margin[0] +
-                                            self._selection_box_arrow_margin[1] +
-                                            h - h / 4 +
-                                            2 * self._selection_box_border_width)
+            self._selection_box_width = int(max(f1.get_width(), f2.get_width())
+                                            + self._selection_box_arrow_margin[0]
+                                            + self._selection_box_arrow_margin[1]
+                                            + h - h / 4
+                                            + 2 * self._selection_box_border_width)
 
     def _get_current_selected_text(self) -> str:
         if len(self._selected_indices) == 0:

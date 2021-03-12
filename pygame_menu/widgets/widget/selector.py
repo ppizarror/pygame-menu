@@ -238,9 +238,9 @@ class Selector(Widget):
     def _apply_font(self) -> None:
         self._title_size = self._font.size(self._title)[0]
         if self._style == SELECTOR_STYLE_FANCY:
-            self._title_size += self._style_fancy_box_margin[0] - \
-                                self._style_fancy_box_inflate[0] / 2 + \
-                                self._style_fancy_borderwidth
+            self._title_size += self._style_fancy_box_margin[0] \
+                                - self._style_fancy_box_inflate[0] / 2 \
+                                + self._style_fancy_borderwidth
         self._title_size = int(self._title_size)
 
     def _draw(self, surface: 'pygame.Surface') -> None:
@@ -248,8 +248,9 @@ class Selector(Widget):
 
     def _render(self) -> Optional[bool]:
         current_selected = self.get_value()[0][0]
-        if not self._render_hash_changed(current_selected, self._selected,
-                                         self._visible, self._index, self.readonly):
+        if not self._render_hash_changed(
+                current_selected, self._selected, self._visible, self._index,
+                self.readonly):
             return True
 
         color = self.get_font_color_status()
@@ -267,8 +268,8 @@ class Selector(Widget):
 
             # Create arrows
             arrow_left = pygame.Rect(
-                title.get_width() + self._style_fancy_arrow_margin[0] +
-                self._style_fancy_box_margin[0],
+                title.get_width() + self._style_fancy_arrow_margin[0]
+                + self._style_fancy_box_margin[0],
                 self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2,
                 title.get_height(),
                 title.get_height()
@@ -285,11 +286,11 @@ class Selector(Widget):
             )
 
             arrow_right = pygame.Rect(
-                title.get_width() + 2 * self._style_fancy_arrow_margin[0] +
-                self._style_fancy_box_margin[0] +
-                self._style_fancy_arrow_margin[1] + current.get_width(),
-                self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2 +
-                self._style_fancy_box_margin[1],
+                title.get_width() + 2 * self._style_fancy_arrow_margin[0]
+                + self._style_fancy_box_margin[0]
+                + self._style_fancy_arrow_margin[1] + current.get_width(),
+                self._style_fancy_arrow_margin[2] + self._style_fancy_box_inflate[1] / 2
+                + self._style_fancy_box_margin[1],
                 title.get_height(),
                 title.get_height()
             )
@@ -305,27 +306,35 @@ class Selector(Widget):
             )
 
             self._surface = make_surface(
-                width=title.get_width() + 2 * self._style_fancy_arrow_margin[0] +
-                      2 * self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin[0] +
-                      current.get_width() + 2 * arrow_left.width + self._style_fancy_borderwidth +
-                      self._style_fancy_box_inflate[0] / 2,
-                height=title.get_height() + self._style_fancy_box_inflate[1])
+                title.get_width()
+                + 2 * self._style_fancy_arrow_margin[0]
+                + 2 * self._style_fancy_arrow_margin[1]
+                + self._style_fancy_box_margin[0]
+                + current.get_width()
+                + 2 * arrow_left.width
+                + self._style_fancy_borderwidth
+                + self._style_fancy_box_inflate[0] / 2,
+                title.get_height() + self._style_fancy_box_inflate[1])
             self._surface.blit(title, (0, self._style_fancy_box_inflate[1] / 2))
             current_rect_bg = current.get_rect()
             current_rect_bg.x += title.get_width() + self._style_fancy_box_margin[0]
-            current_rect_bg.y += self._style_fancy_box_inflate[1] / 2 + \
-                                 self._style_fancy_box_margin[1]
-            current_rect_bg.width += 2 * (self._style_fancy_arrow_margin[0] +
-                                          self._style_fancy_arrow_margin[1] +
-                                          arrow_left.width)
+            current_rect_bg.y += self._style_fancy_box_inflate[1] / 2 \
+                                 + self._style_fancy_box_margin[1]
+            current_rect_bg.width += 2 * (self._style_fancy_arrow_margin[0]
+                                          + self._style_fancy_arrow_margin[1]
+                                          + arrow_left.width)
             current_rect_bg = current_rect_bg.inflate(self._style_fancy_box_inflate)
             pygame.draw.rect(self._surface, self._style_fancy_bgcolor, current_rect_bg)
             pygame.draw.rect(self._surface, self._style_fancy_bordercolor, current_rect_bg,
                              self._style_fancy_borderwidth)
             self._surface.blit(
-                current, (title.get_width() + arrow_left.width + self._style_fancy_arrow_margin[0] +
-                          self._style_fancy_arrow_margin[1] + self._style_fancy_box_margin[0],
-                          self._style_fancy_box_inflate[1] / 2 + self._style_fancy_box_margin[1]))
+                current, (title.get_width()
+                          + arrow_left.width
+                          + self._style_fancy_arrow_margin[0]
+                          + self._style_fancy_arrow_margin[1]
+                          + self._style_fancy_box_margin[0],
+                          self._style_fancy_box_inflate[1] / 2
+                          + self._style_fancy_box_margin[1]))
             pygame.draw.polygon(self._surface, self._style_fancy_arrow_color, arrow_left_pos)
             pygame.draw.polygon(self._surface, self._style_fancy_arrow_color, arrow_right_pos)
 

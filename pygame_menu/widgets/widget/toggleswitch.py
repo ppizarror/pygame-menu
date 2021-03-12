@@ -319,10 +319,10 @@ class ToggleSwitch(Widget):
         if self._state_text[self._state] != '':
             text = self._switch_font_rendered[self._state]
             surface.blit(text, (
-                switch_x +
-                (self._switch_width - text.get_width()) * self._state_text_position[0],
-                switch_y +
-                (self._switch_height - text.get_height()) * self._state_text_position[1]
+                switch_x
+                + (self._switch_width - text.get_width()) * self._state_text_position[0],
+                switch_y
+                + (self._switch_height - text.get_height()) * self._state_text_position[1]
             ))
 
         # Draw slider
@@ -331,8 +331,9 @@ class ToggleSwitch(Widget):
         surface.blit(self._slider, (slider_x, slider_y))
 
     def _render(self) -> Optional[bool]:
-        if not self._render_hash_changed(self._selected, self._title, self._visible,
-                                         self.readonly, self._state):
+        if not self._render_hash_changed(
+                self._selected, self._title, self._visible, self.readonly,
+                self._state):
             return True
 
         # Create basic title
@@ -441,13 +442,15 @@ class ToggleSwitch(Widget):
             # Click on switch; don't consider the mouse wheel (button 4 & 5)
             elif event.type == pygame.MOUSEBUTTONUP and self._mouse_enabled and \
                     event.button in (1, 2, 3) or \
-                    event.type == FINGERUP and self._touchscreen_enabled and self._menu is not None:
+                    event.type == FINGERUP and self._touchscreen_enabled and \
+                    self._menu is not None:
                 event_pos = get_finger_pos(self._menu, event)
 
                 # If collides
                 rect = self.get_rect(to_real_position=True, apply_padding=False)
                 if rect.collidepoint(*event_pos):
-                    # Check if mouse collides left or right as percentage, use only X coordinate
+                    # Check if mouse collides left or right as percentage, use
+                    # only X coordinate
                     mouse_x, _ = event.pos
                     topleft, _ = rect.topleft
                     topright, _ = rect.topright

@@ -356,8 +356,9 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
 
         # Draw previsualization box
         if self._previsualization_surface is not None:
-            posx = self._rect.x + self._rect.width - \
-                   self._prev_width_factor * self._rect.height + self._rect.height / 10
+            posx = self._rect.x + self._rect.width \
+                   - self._prev_width_factor * self._rect.height \
+                   + self._rect.height / 10
             posy = self._rect.y
             surface.blit(self._previsualization_surface, (int(posx), int(posy)))
 
@@ -368,8 +369,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
         self._rect.width, self._rect.height = self._surface.get_size()
         if not self._dynamic_width or \
                 (self._dynamic_width and self._previsualization_surface is not None):
-            self._rect.width += self._prev_width_factor * self._rect.height + \
-                                self._prev_margin
+            self._rect.width += self._prev_width_factor * self._rect.height \
+                                + self._prev_margin
 
         # Render the previsualization box
         r, g, b = self.get_value()
@@ -390,8 +391,8 @@ class ColorInput(TextInput):  # lgtm [py/missing-call-to-init]
                 self._last_g = g
                 self._last_b = b
                 if self._dynamic_width:
-                    self._rect.width += self._prev_width_factor * self._rect.height + \
-                                        self._prev_margin
+                    self._rect.width += self._prev_width_factor * self._rect.height \
+                                        + self._prev_margin
 
         return render_text
 

@@ -466,14 +466,13 @@ class TextInput(Widget):
         if max_cont_width != 0:
             self._last_container_width = max_cont_width
 
-        if not self._render_hash_changed(string, self._selected, self._cursor_render,
-                                         self._cursor_position, self._selection_enabled,
-                                         self.active, self._visible, self.readonly,
-                                         self._last_container_width, self._selection_box[0],
-                                         self._selection_box[1], self._last_selection_render[0],
-                                         self._last_selection_render[1], self._renderbox[0],
-                                         self._renderbox[1], self._renderbox[2],
-                                         self._cursor_visible):
+        if not self._render_hash_changed(
+                string, self._selected, self._cursor_render, self._cursor_position,
+                self._selection_enabled, self.active, self._visible, self.readonly,
+                self._last_container_width, self._selection_box[0],
+                self._selection_box[1], self._last_selection_render[0],
+                self._last_selection_render[1], self._renderbox[0], self._renderbox[1],
+                self._renderbox[2], self._cursor_visible):
             return True
 
         # Apply underline if exists
@@ -694,8 +693,8 @@ class TextInput(Widget):
 
         # Calculate x position
         if self._maxwidth == 0:  # If no limit is provided
-            cursor_x_pos = self._cursor_offset + \
-                           self._font.size(self._title + string[:self._cursor_position])[0]
+            cursor_x_pos = self._cursor_offset \
+                           + self._font.size(self._title + string[:self._cursor_position])[0]
         else:  # Calculate position depending on renderbox
             string = string[self._renderbox[0]:(self._renderbox[0] + self._renderbox[2])]
             cursor_x_pos = self._cursor_offset + self._font.size(self._title + string)[0]
@@ -1344,9 +1343,9 @@ class TextInput(Widget):
                 self._sound.play_event_error()
                 return False
 
-        new_string = self._input_string[0:self._cursor_position] + \
-                     text[0:text_end] + \
-                     self._input_string[self._cursor_position:len(self._input_string)]
+        new_string = self._input_string[0:self._cursor_position] \
+                     + text[0:text_end] \
+                     + self._input_string[self._cursor_position:len(self._input_string)]
 
         # If string is valid
         if self._check_input_type(new_string):

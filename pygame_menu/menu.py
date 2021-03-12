@@ -3728,8 +3728,8 @@ class Menu(Base):
                 if nmi == w_indx:
                     v = non_menu_frame_widgets[nmi]
                     for v_wid in v:
-                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth() + c.ENDC +
-                              widget_terminal_title(v_wid))
+                        print(c.BRIGHT_WHITE + '·   ' + '│   ' * v_wid.get_frame_depth()
+                              + c.ENDC + widget_terminal_title(v_wid))
                     del non_menu_frame_widgets[nmi]
 
         for w in self._widgets:
