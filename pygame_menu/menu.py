@@ -78,7 +78,7 @@ SELECT_MOUSE_MOTION = 'mouse_motion'
 SELECT_MOVE = 'move'
 SELECT_OPEN = 'open'
 SELECT_RECURSIVE = 'recursive'
-SELECT_REMOVE = 'removehidden'
+SELECT_REMOVE = 'remove'
 SELECT_RESET = 'reset'
 SELECT_TOUCH = 'touch'
 SELECT_WIDGET = 'widget'
@@ -99,7 +99,7 @@ class Menu(Base):
 
     .. note::
 
-        Menu cannot be copied or deepcopied.
+        Menu cannot be copied or deep-copied.
 
     :param title: Title of the Menu
     :param width: Width of the Menu in px
@@ -653,7 +653,7 @@ class Menu(Base):
 
     def __deepcopy__(self, memodict: Dict) -> 'Menu':
         """
-        Deepcopy method.
+        Deep-copy method.
 
         :param memodict: Memo dict
         :return: Raises copy exception

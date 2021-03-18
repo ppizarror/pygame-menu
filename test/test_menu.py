@@ -132,6 +132,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=inf_size, height=300))
         self.assertRaises(AssertionError, lambda: MenuUtils.generic_menu(width=300, height=inf_size))
 
+    # noinspection SpellCheckingInspection
     def test_position(self) -> None:
         """
         Test position.
@@ -313,6 +314,7 @@ class MenuTest(unittest.TestCase):
         self.assertEqual(btn.get_position(to_absolute_position=True), (153, 153 if PYGAME_V2 else 152))
         self.assertEqual(menu.get_translate(), (0, 100))
 
+    # noinspection SpellCheckingInspection
     def test_close(self) -> None:
         """
         Test menu close.
@@ -589,7 +591,7 @@ class MenuTest(unittest.TestCase):
         w1.hide()
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
-        # Unhide w1, w2 should be keep selected
+        # Un-hide w1, w2 should be keep selected
         w1.show()
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
@@ -632,7 +634,7 @@ class MenuTest(unittest.TestCase):
         w_last.hide()
         self.assertIsNone(self.menu.get_selected_widget())
 
-        # Unhide w2, then it should be selected
+        # Un-hide w2, then it should be selected
         w2.show()
         self.assertEqual(self.menu.get_selected_widget(), w2)
 
@@ -1173,6 +1175,7 @@ class MenuTest(unittest.TestCase):
             btn = menu.get_selected_widget()
             self.assertTrue(btn.get_selected_time() >= 0)
 
+    # noinspection SpellCheckingInspection
     def test_reset_value(self) -> None:
         """
         Test menu reset value.
@@ -1285,6 +1288,7 @@ class MenuTest(unittest.TestCase):
         btn.hide()
         self.assertEqual(menu.get_height(widget=True), 0)
 
+    # noinspection SpellCheckingInspection
     def test_beforeopen(self) -> None:
         """
         Test beforeopen event.
@@ -1684,6 +1688,7 @@ class MenuTest(unittest.TestCase):
         self.assertRaises(AssertionError, lambda: menu.move_widget_index(btn1, -1.5))
         test_order((btn1, btn3, btn2), btn2)
 
+    # noinspection SpellCheckingInspection
     def test_mouseover_widget(self) -> None:
         """
         Test mouseover + motion.

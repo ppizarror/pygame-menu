@@ -211,7 +211,7 @@ class BaseImage(Base):
 
     def __deepcopy__(self, memodict: Dict) -> 'BaseImage':
         """
-        Deepcopy method.
+        Deep-copy method.
 
         :param memodict: Memo dict
         :return: New instance of the object
@@ -467,9 +467,9 @@ class BaseImage(Base):
 
     def get_bitsize(self) -> int:
         """
-        Return the image bitsize.
+        Return the image bit size.
 
-        :return: Image bitsize
+        :return: Image bit size
         """
         return self._surface.get_bitsize()
 
@@ -658,7 +658,7 @@ class BaseImage(Base):
         bitmap graphics.
 
         This really only has an effect on simple images with solid colors. On
-        photographic and antialiased images it will look like a regular unfiltered
+        photographic and anti-aliased images it will look like a regular unfiltered
         scale.
 
         :return: Self reference
@@ -707,12 +707,12 @@ class BaseImage(Base):
             Unless rotating by 90 degree increments, the image will be padded
             larger to hold the new size. If the image has pixel alphas, the padded
             area will be transparent. Otherwise pygame will pick a color that matches
-            the image colorkey or the topleft pixel value.
+            the image color-key or the topleft pixel value.
 
         .. warning::
 
             Image should be rotated once. If this method is called once the Class
-            rotates the previously checkpointed state. If you wish to rotate the
+            rotates the previously check-pointed state. If you wish to rotate the
             current image use ``checkpoint`` to update the surface. This may
             increase the image size, because the bounding rectangle of a rotated
             image is always greater than the bounding rectangle of the original

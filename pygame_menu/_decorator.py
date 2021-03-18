@@ -140,7 +140,7 @@ class Decorator(Base):
 
     def __deepcopy__(self, memodict: Dict) -> 'Decorator':
         """
-        Deepcopy method.
+        Deep-copy method.
 
         :param memodict: Memo dict
         :return: Raises copy exception
@@ -1009,13 +1009,13 @@ class Decorator(Base):
                 if isinstance(surf, pygame_menu.BaseImage):
                     surf = surf.get_surface(new=False)
                 pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-                surfrect = surf.get_rect()
-                surfrect.x += pos[0]
-                surfrect.y += pos[1]
+                surf_rect = surf.get_rect()
+                surf_rect.x += pos[0]
+                surf_rect.y += pos[1]
                 if centered:
-                    surfrect.x -= surfrect.width / 2
-                    surfrect.y -= surfrect.height / 2
-                surface.blit(surf, surfrect)
+                    surf_rect.x -= surf_rect.width / 2
+                    surf_rect.y -= surf_rect.height / 2
+                surface.blit(surf, surf_rect)
 
             elif dtype == DECORATION_ELLIPSE:
                 pos, rx, ry, color, filled, kwargs = data
@@ -1063,13 +1063,13 @@ class Decorator(Base):
                 surface.fill(data, rect)
 
             elif dtype == DECORATION_RECT:
-                drect: 'pygame.Rect'
-                pos, drect, color, width, kwargs = data
+                d_rect: 'pygame.Rect'
+                pos, d_rect, color, width, kwargs = data
                 pos = self._update_pos_list(rect, decoid, pos, **kwargs)[0]
-                drect = drect.copy()
-                drect.x += pos[0]
-                drect.y += pos[1]
-                pygame.draw.rect(surface, color, drect, width)
+                d_rect = d_rect.copy()
+                d_rect.x += pos[0]
+                d_rect.y += pos[1]
+                pygame.draw.rect(surface, color, d_rect, width)
 
             elif dtype == DECORATION_PIXEL:
                 pos, color, kwargs = data

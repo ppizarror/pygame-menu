@@ -1132,11 +1132,11 @@ class Frame(Widget):
 
         :return: Removed widgets
         """
-        unpackd = []
+        unpacked = []
         for w in self.get_widgets(unpack_subframes=False):
             self.unpack(w)
-            unpackd.append(w)
-        return tuple(unpackd)
+            unpacked.append(w)
+        return tuple(unpacked)
 
     def resize(
             self,

@@ -259,7 +259,7 @@ class Sound(Base):
 
     def __deepcopy__(self, memodict: Dict) -> 'Sound':
         """
-        Deepcopy method.
+        Deep-copy method.
 
         :param memodict: Memo dict
         :return: Return new sound

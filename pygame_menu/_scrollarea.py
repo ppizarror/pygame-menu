@@ -109,7 +109,7 @@ class ScrollArea(Base):
 
     .. note::
 
-        ScrollArea cannot be copied or deepcopied.
+        ScrollArea cannot be copied or deep-copied.
 
     :param area_width: Width of scrollable area in px
     :param area_height: Height of scrollable area in px
@@ -334,7 +334,7 @@ class ScrollArea(Base):
 
     def __deepcopy__(self, memodict: Dict) -> 'ScrollArea':
         """
-        Deepcopy method.
+        Deep-copy method.
 
         :param memodict: Memo dict
         :return: Raises copy exception
