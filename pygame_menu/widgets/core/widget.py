@@ -220,7 +220,7 @@ class Widget(Base):
 
     .. note::
 
-        Widget cannot be copied or deepcopied.
+        Widget cannot be copied or deep-copied.
 
     :param title: Widget title
     :param widget_id: Widget identifier
@@ -726,7 +726,7 @@ class Widget(Base):
         """
         Return ``True`` if the Widget is visible.
 
-        :param check_frame: If ``True`` check frame and subframes if they're opened as well
+        :param check_frame: If ``True`` check frame and sub-frames if they're opened as well
         :return: Visible status
         """
         if not check_frame:
@@ -761,7 +761,7 @@ class Widget(Base):
 
     def __deepcopy__(self, memodict: Dict) -> 'pygame_menu.Menu':
         """
-        Deepcopy method.
+        Deep-copy method.
 
         :param memodict: Memo dict
         :return: Raises copy exception
@@ -2863,9 +2863,9 @@ class Widget(Base):
         :return: Data
         """
         # Assemble class name
-        clsname = self.__class__.__name__
-        if self.get_title() is not '':
-            clsname += '-' + self.get_title()
+        cls_name = self.__class__.__name__
+        if self.get_title() != '':
+            cls_name += '-' + self.get_title()
 
         # Assemble geometric data
         rect = self.get_rect(render=True)
@@ -2891,7 +2891,7 @@ class Widget(Base):
         )
 
         # Starting data
-        data = [clsname, geom, bool_status]
+        data = [cls_name, geom, bool_status]
 
         # Append inner widgets if frame and not menu
         if isinstance(self, pygame_menu.widgets.Frame):
@@ -2900,7 +2900,7 @@ class Widget(Base):
                 if ww.get_menu() != self.get_menu():
                     data.append(ww._get_status())
 
-        # Append inner widgets if dropselect
+        # Append inner widgets if drop select
         if isinstance(self, pygame_menu.widgets.DropSelect) and self._drop_frame is not None:
             data.append(self._drop_frame._get_status())
             for btn in self._option_buttons:
