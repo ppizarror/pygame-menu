@@ -1786,8 +1786,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Test change items
         drop.update_items([])
-        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMakedException,
-                          lambda: drop._check_drop_maked())
+        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMadeException,
+                          lambda: drop._check_drop_made())
         drop.make_selection_drop()  # This selection drop is empty
         self.assertEqual(drop._drop_frame.get_attribute('height'), 0)
         self.assertEqual(drop._drop_frame.get_attribute('width'), 0)
