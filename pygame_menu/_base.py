@@ -33,14 +33,14 @@ __all__ = ['Base']
 
 from pygame_menu.utils import uuid4
 
-from pygame_menu._types import Dict, Any, NumberInstance, NumberType
+from pygame_menu._types import Dict, Any, NumberInstance, NumberType, Optional
 
 
 class Base(object):
     """
     Base object.
     """
-    _attributes: Dict[str, Any]
+    _attributes: Optional[Dict[str, Any]]
     _class_id__repr__: bool
     _id: str
     _id__repr__: bool
@@ -54,7 +54,7 @@ class Base(object):
         assert isinstance(object_id, str)
         if len(object_id) == 0:
             object_id = uuid4()
-        self._attributes = {}
+        self._attributes = None
         self._class_id__repr__ = False  # If True, repr/str of the object is class id
         self._id = object_id
         self._id__repr__ = False  # If True, repr/str of the object adds object id
@@ -94,6 +94,8 @@ class Base(object):
         :return: Self reference
         """
         assert isinstance(key, str)
+        if self._attributes is None:
+            self._attributes = {}
         self._attributes[key] = value
         return self
 
@@ -144,6 +146,8 @@ class Base(object):
         :return: ``True`` if exists
         """
         assert isinstance(key, str)
+        if self._attributes is None:
+            return False
         return key in self._attributes.keys()
 
     def remove_attribute(self, key: str) -> 'Base':

@@ -337,8 +337,9 @@ class BaseImage(Base):
         image._surface = self._surface.copy()
         image._original_surface = self._surface.copy()
         image.smooth_scaling = self.smooth_scaling
-        for k in self._attributes.keys():
-            image.set_attribute(k, self._attributes[k])
+        if self._attributes is not None:
+            for k in self._attributes.keys():
+                image.set_attribute(k, self._attributes[k])
         return image
 
     def get_path(self) -> Union[str, 'BytesIO']:
