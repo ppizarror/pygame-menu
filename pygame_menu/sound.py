@@ -163,8 +163,16 @@ class Sound(Base):
         assert channels > 0, 'channels must be greater than zero'
         assert frequency > 0, 'frequency must be greater than zero'
 
+        # Check if mixer is init
+        mixer_missing = 'MissingModule' in str(type(mixer))
+        if mixer_missing:
+            warn('pygame mixer module could not be found, NotImplementedError'
+                 'has been raised. Sound support is disabled')
+
         # Initialize sounds if not initialized
-        if (mixer.get_init() is None and not SOUND_INITIALIZED[0]) or force_init:
+        if not mixer_missing and \
+                ((mixer.get_init() is None and not SOUND_INITIALIZED[0]) or
+                 force_init):
 
             # Set sound as initialized globally
             SOUND_INITIALIZED[0] = True
