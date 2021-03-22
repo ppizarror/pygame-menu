@@ -32,8 +32,11 @@ Them can also be imported as follows:
 
     main()
 
-Example sources can also be found in the `Github repo <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples>`_.
-
+Example sources can also be found in the
+`Github repo <https://github.com/ppizarror/pygame-menu/tree/master/pygame_menu/examples>`_.
+Also, check out widget-specific examples in the
+`Adding Widgets <https://pygame-menu.readthedocs.io/en/latest/_source/add_widgets.html>`_
+documentation page.
 
 Simple example
 --------------
