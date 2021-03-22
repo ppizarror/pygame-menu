@@ -249,6 +249,7 @@ class Widget(Base):
     _events: EventListType
     _flip: Tuple2BoolType
     _floating: bool
+    _floating_origin_position: bool
     _font: Optional['pygame.font.Font']
     _font_antialias: bool
     _font_background_color: Optional[ColorType]
@@ -354,6 +355,7 @@ class Widget(Base):
         # If True, the widget don't contribute width/height to the Menu widget
         # positioning computation. Use .set_float() to modify this status
         self._floating = False
+        self._floating_origin_position = False
 
         # Which function is used to get the rect which checks if the widget is
         # active or not
@@ -1888,7 +1890,11 @@ class Widget(Base):
 
     def set_position(self, x: NumberType, y: NumberType) -> 'Widget':
         """
-        Set the Widget position.
+        Set the Widget position relative to the Menu/Frame.
+
+        This method is executed by the Menu when updating the widget positioning.
+        For moving the widget use ``translate`` method instead, as this position
+        will be rewritten on next menu rendering phase.
 
         .. note::
 
@@ -2717,7 +2723,12 @@ class Widget(Base):
         self._events = []
         return copy_events
 
-    def set_float(self, float_status: bool = True, menu_render: bool = False) -> 'Widget':
+    def set_float(
+            self,
+            float_status: bool = True,
+            menu_render: bool = False,
+            position_origin: bool = False
+    ) -> 'Widget':
         """
         Set the floating status. If ``True`` the Widget don't contributes the
         width/height to the Menu widget positioning computation (for example,
@@ -2742,16 +2753,21 @@ class Widget(Base):
                 | wid2,wid3  |             |
                 ----------------------------
 
-        If Widget within a frame, it does not contribute to the width/height of
-        the layout. Also, it is been set to the *(0, 0)* position, thus, the only
-        way to move the Widget to a desired position is by translating it.
+        If the Widget is within a Frame, it does not contribute to the
+        width/height of the layout. Also, it is been set to the *(0, 0)* position,
+        thus, the only way to move the Widget to a desired position is by
+        translating it.
 
         :param float_status: Float status
-        :param menu_render: If ``True`` forces the Menu to render instantly
+        :param menu_render: If ``True`` forces the Menu to render instantly; else, rendering is controlled by menu
+        :param position_origin: If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating (updated by the Menu render phase)
         :return: None
         """
         assert isinstance(float_status, bool)
+        assert isinstance(menu_render, bool)
+        assert isinstance(position_origin, bool)
         self._floating = float_status
+        self._floating_origin_position = position_origin
         self.force_menu_surface_update()
         if menu_render and self._menu is not None:
             self._menu.render()

@@ -1457,10 +1457,10 @@ class Menu(Base):
                 dx = column_width / 2 - width - selection_margin
             else:
                 dx = 0
-            dx_border = int(math.ceil(widget.get_border()[1] / 2))
+            d_border = int(math.ceil(widget.get_border()[1] / 2))
             x_coord = self._column_pos_x[col] + dx + margin[0] + padding[3]
             x_coord = max(selection_margin, x_coord)
-            x_coord += max(0, self._widget_offset[0]) + dx_border
+            x_coord += max(0, self._widget_offset[0]) + d_border
 
             # Check if widget width exceeds column max width
             max_column_width = self._column_max_width[col]
@@ -1496,6 +1496,14 @@ class Menu(Base):
                     y_sum += y_sel_h - self._widget_offset[1]
 
             y_coord = max(0, self._widget_offset[1]) + y_sum + padding[0] + menubar_height
+
+            # If the widget is floating and has origin-position
+            # noinspection PyProtectedMember
+            if widget.is_floating() and widget._floating_origin_position:
+                widget.set_position(
+                    x=max(0, self._widget_offset[0]) + padding[3],
+                    y=menubar_height + padding[0] + d_border)
+                continue
 
             # Update the position of the widget
             widget.set_position(x_coord, y_coord)
