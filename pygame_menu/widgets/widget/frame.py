@@ -534,6 +534,7 @@ class Frame(Widget):
 
         # Draw style
         style_surface = make_surface(h, h, alpha=True)
+        # noinspection PyArgumentList
         pygame.draw.polygon(style_surface, symbol_color, style_pos, border)
         btn.get_decorator().add_surface(0, 0, surface=style_surface, centered=True)
 
@@ -898,7 +899,8 @@ class Frame(Widget):
         :return: Px
         """
         w = widget.get_width()
-        if w > self._width and not self._relax:
+        # Some systems introduce 1px margin
+        if w > (self._width + 1) and not self._relax:
             raise _FrameSizeException(
                 '{0} width ({1}) is greater than {3} width ({2}), try using '
                 'widget.set_max_width(...) for avoiding this issue, or set '
@@ -921,7 +923,7 @@ class Frame(Widget):
         :return: Px
         """
         h = widget.get_height()
-        if h > self._height and not self._relax:
+        if h > (self._height + 1) and not self._relax:
             raise _FrameSizeException(
                 '{0} height ({1}) is greater than {3} height ({2}), try using '
                 'widget.set_max_height(...) for avoiding this issue, or set '
