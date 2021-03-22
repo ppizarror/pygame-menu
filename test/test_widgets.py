@@ -2594,7 +2594,7 @@ class WidgetsTest(unittest.TestCase):
         img.scale(0.3, 0.3)
         image_widget = menu.add.image(image_path=img.copy())
         image_widget.set_border(1, 'black')
-        image_widget.set_float(position_origin=True)
+        image_widget.set_float(origin_position=True)
         menu.render()
 
         # Test position

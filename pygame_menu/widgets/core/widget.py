@@ -2727,7 +2727,7 @@ class Widget(Base):
             self,
             float_status: bool = True,
             menu_render: bool = False,
-            position_origin: bool = False
+            origin_position: bool = False
     ) -> 'Widget':
         """
         Set the floating status. If ``True`` the Widget don't contributes the
@@ -2760,14 +2760,14 @@ class Widget(Base):
 
         :param float_status: Float status
         :param menu_render: If ``True`` forces the Menu to render instantly; else, rendering is controlled by menu
-        :param position_origin: If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating (updated by the Menu render phase)
+        :param origin_position: If ``True`` the widget position is set to the top-left position of the Menu if the widget is floating (updated by the Menu render phase)
         :return: None
         """
         assert isinstance(float_status, bool)
         assert isinstance(menu_render, bool)
-        assert isinstance(position_origin, bool)
+        assert isinstance(origin_position, bool)
         self._floating = float_status
-        self._floating_origin_position = position_origin
+        self._floating_origin_position = origin_position
         self.force_menu_surface_update()
         if menu_render and self._menu is not None:
             self._menu.render()
