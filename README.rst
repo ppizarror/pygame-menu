@@ -69,7 +69,9 @@ https://pygame-menu.readthedocs.io
 Install Instructions
 --------------------
 
-Pygame-menu can be installed via pip. Simply run::
+Pygame-menu can be installed via pip. Simply run:
+
+.. code-block:: bash
 
     $> pip install pygame-menu
 
