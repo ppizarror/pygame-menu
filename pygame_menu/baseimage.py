@@ -192,6 +192,7 @@ class BaseImage(Base):
 
         # Load the image and store as a surface
         if load_from_file:
+            # pygame.image.get_extended()
             self._surface = pygame.image.load(image_path)
             self._original_surface = self._surface.copy()
 

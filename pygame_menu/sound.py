@@ -345,6 +345,13 @@ class Sound(Base):
             )
             self._sound[sound_type] = {}
             return False
+        except NotImplementedError:
+            warn(
+                'mixer module is not available on the current System, thus, the '
+                'sound file "{0}" could not be loaded'.format(sound_file)
+            )
+            self._sound[sound_type] = {}
+            return False
 
         # Configure the sound
         sound_data.set_volume(float(volume))
