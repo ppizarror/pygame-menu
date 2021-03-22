@@ -282,7 +282,7 @@ class TextInput(Widget):
             pygame.K_TAB
         )
 
-        # Vars to make keydowns repeat after user pressed a key for some time:
+        # Vars to make keydown repeat after user pressed a key for some time:
         self._block_copy_paste = False  # Blocks event
         self._key_is_pressed = False
         self._keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -577,7 +577,7 @@ class TextInput(Widget):
         if frame is not None:
             if frame.horizontal:
                 raise RuntimeError(
-                    'horizontal frame cannot contain variable width sizing textinputs '
+                    'horizontal frame cannot contain variable width sizing textinput '
                     '(requested by input underline). Set input_underline_len variable '
                     'to avoid this Exception'
                 )
@@ -633,10 +633,10 @@ class TextInput(Widget):
         # If char limit
         if self._maxchar != 0 or self._maxwidth_base != 0:
             max_chars = max(self._maxchar, self._maxwidth_base)
-            basechar = 'O'
+            base_char = 'O'
             if self._password:
-                basechar = self._password_char
-            max_size = self._font_render_string(basechar * max_chars)
+                base_char = self._password_char
+            max_size = self._font_render_string(base_char * max_chars)
             max_size = max_size.get_size()[0]
             maxchar_char = math.ceil((max_size + self._ellipsis_size) / self._input_underline_size)
             char = min(char, maxchar_char)

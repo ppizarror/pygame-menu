@@ -84,6 +84,7 @@ class Planet(object):
         self.url = url
 
 
+# noinspection SpellCheckingInspection
 class SolarSystemApp(object):
     """
     Draws a fancy solar system.

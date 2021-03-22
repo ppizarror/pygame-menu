@@ -681,7 +681,7 @@ class DropSelect(Widget):
         if self.is_selected() and self._selection_effect_draw_post:
             self._selection_effect.draw(surface, self)
         if self.active and self.is_visible():
-            self._check_drop_maked()
+            self._check_drop_made()
 
             if not self._open_middle:
                 self._drop_frame.draw(surface)
@@ -1005,15 +1005,15 @@ class DropSelect(Widget):
         self._drop_frame = None
         self.active = False
 
-    def _check_drop_maked(self) -> None:
+    def _check_drop_made(self) -> None:
         """
-        Checks if drop selection has been maked.
+        Checks if drop selection has been made.
 
         :return: None
         """
         if self._drop_frame is None:
-            raise _SelectionDropNotMakedException(
-                'selection drop has not been maked yet. Call {0}.make_selection_drop()'
+            raise _SelectionDropNotMadeException(
+                'selection drop has not been made yet. Call {0}.make_selection_drop()'
                 'for avoiding this exception'.format(self.get_class_id())
             )
 
@@ -1023,7 +1023,7 @@ class DropSelect(Widget):
 
         :return: None
         """
-        self._check_drop_maked()
+        self._check_drop_made()
         if not self._selected:
             return
         if len(self._items) == 0:
@@ -1048,7 +1048,7 @@ class DropSelect(Widget):
         """
         assert self._menu is not None, \
             'menu cannot be none if the position is in middle (open_middle)'
-        self._check_drop_maked()
+        self._check_drop_made()
         if add_offset:
             offx, offy = self._menu.get_scrollarea().get_offsets()
         else:
@@ -1067,7 +1067,7 @@ class DropSelect(Widget):
         return x, y
 
     def get_focus_rect(self) -> 'pygame.Rect':
-        self._check_drop_maked()
+        self._check_drop_made()
         rect = self.get_rect(apply_padding=False, to_real_position=True)
         if self.active:
             rect.width = self._selection_box_width
@@ -1093,7 +1093,7 @@ class DropSelect(Widget):
             return False
 
         # Check scroll
-        self._check_drop_maked()
+        self._check_drop_made()
         updated = self._drop_frame.update(events)
         if updated:
             return True
@@ -1217,8 +1217,8 @@ class DropSelect(Widget):
         return updated
 
 
-class _SelectionDropNotMakedException(Exception):
+class _SelectionDropNotMadeException(Exception):
     """
-    Exception thrown if drop selection has not been maked.
+    Exception thrown if drop selection has not been made.
     """
     pass

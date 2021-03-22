@@ -1,1 +1,1 @@
-py -3.7-64 -m twine upload dist/*
+py -3.8 -m twine upload dist/*

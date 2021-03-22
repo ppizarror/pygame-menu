@@ -601,7 +601,7 @@ class WidgetManager(Base):
             - ``border_position``               (str, tuple, list) – Widget border positioning. It can be a single position, or a tuple/list of positions. Only are accepted: north, south, east, and west. See :py:mod:`pygame_menu.locals`
             - ``border_width``                  (int) – Border width in px. If ``0`` disables the border
             - ``cursor``                        (int, :py:class:`pygame.cursors.Cursor`, None) – Cursor of the widget if the mouse is placed over
-            - ``dynamic_width``                 (bool) – If ``True`` the widget width changes if the previsualization color box is active or not
+            - ``dynamic_width``                 (bool) – If ``True`` the widget width changes if the pre-visualization color box is active or not
             - ``font_background_color``         (tuple, list, str, int, :py:class:`pygame.Color`, None) – Widget font background color
             - ``font_color``                    (tuple, list, str, int, :py:class:`pygame.Color`) – Widget font color
             - ``font_name``                     (str, :py:class:`pathlib.Path`, :py:class:`pygame.font.Font`) – Widget font path
@@ -613,8 +613,8 @@ class WidgetManager(Base):
             - ``input_underline_vmargin``       (int) – Vertical margin of underline in px
             - ``margin``                        (tuple, list) – Widget (left, bottom) margin in px
             - ``padding``                       (int, float, tuple, list) – Widget padding according to CSS rules. General shape: (top, right, bottom, left)
-            - ``previsualization_margin``       (int) – Previsualization left margin from text input in px. Default is ``0``
-            - ``previsualization_width``        (int, float) – Previsualization width as a factor of the height. Default is ``3``
+            - ``previsualization_margin``       (int) – Pre-visualization left margin from text input in px. Default is ``0``
+            - ``previsualization_width``        (int, float) – Pre-visualization width as a factor of the height. Default is ``3``
             - ``readonly_color``                (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode
             - ``readonly_selected_color``       (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the widget if readonly mode and is selected
             - ``selection_color``               (tuple, list, str, int, :py:class:`pygame.Color`) – Color of the selected widget; only affects the font color

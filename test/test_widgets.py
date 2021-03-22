@@ -1786,8 +1786,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Test change items
         drop.update_items([])
-        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMakedException,
-                          lambda: drop._check_drop_maked())
+        self.assertRaises(pygame_menu.widgets.widget.dropselect._SelectionDropNotMadeException,
+                          lambda: drop._check_drop_made())
         drop.make_selection_drop()  # This selection drop is empty
         self.assertEqual(drop._drop_frame.get_attribute('height'), 0)
         self.assertEqual(drop._drop_frame.get_attribute('width'), 0)
@@ -2584,3 +2584,30 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(surf_widget.get_size(apply_padding=False), (160, 160))
         menu.draw(surface)
         surf_widget.update(PygameEventUtils.middle_rect_mouse_motion(surf_widget))
+
+    def test_widget_floating_zero(self) -> None:
+        """
+        Test widgets with zero position if float.
+        """
+        menu = MenuUtils.generic_menu(title='Example menu')
+        img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
+        img.scale(0.3, 0.3)
+        image_widget = menu.add.image(image_path=img.copy())
+        image_widget.set_border(1, 'black')
+        image_widget.set_float(origin_position=True)
+        menu.render()
+
+        # Test position
+        self.assertEqual(image_widget.get_position(), (8, 60))
+
+        # Image translate
+        image_widget.translate(100, 100)
+        self.assertEqual(image_widget.get_position(), (8, 60))
+
+        # Render, then update the position
+        menu.render()
+        self.assertEqual(image_widget.get_position(), (108, 160))
+
+        image_widget.translate(-50, 0)
+        menu.render()
+        self.assertEqual(image_widget.get_position(), (-42, 60))
