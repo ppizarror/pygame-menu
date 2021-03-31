@@ -32,6 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['create_example_window']
 
 import pygame
+import sys
+
 from typing import Tuple
 
 _PYGAME_ICON = [None]
@@ -71,6 +73,9 @@ def create_example_window(
         os.environ['SDL_VIDEO_CENTERED'] = '1'
 
     # Create pygame screen and objects
+    if sys.platform == 'darwin':
+        kwargs = {}
+
     try:
         surface = pygame.display.set_mode(window_size, **kwargs)
     except TypeError:
