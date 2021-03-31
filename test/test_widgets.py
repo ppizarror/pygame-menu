@@ -2687,5 +2687,5 @@ class WidgetsTest(unittest.TestCase):
             ('Menu 3', menu.add.menu_link(menu3))
         ], onreturn=open_link, style=pygame_menu.widgets.SELECTOR_STYLE_FANCY)
 
-        menu.mainloop(surface)
+        # menu.mainloop(surface)
         sel.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
