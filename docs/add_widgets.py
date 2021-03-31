@@ -47,7 +47,7 @@ icon = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).ge
 pygame.display.set_icon(icon)
 
 # Set example, only this should change
-EXAMPLE = 'CLOCK'
+EXAMPLE = 'MENU_LINK'
 
 # Create example
 menu: 'pygame_menu.Menu'
@@ -254,6 +254,31 @@ elif EXAMPLE == 'IMAGE':
     image_path = pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
     menu.add.image(image_path, angle=10, scale=(0.15, 0.15))
     menu.add.image(image_path, angle=-10, scale=(0.15, 0.15))
+
+elif EXAMPLE == 'MENU_LINK':
+    menu = make_menu(pygame_menu.themes.THEME_DEFAULT, 'Menu Links')
+    menu1 = make_menu(pygame_menu.themes.THEME_ORANGE, 'Menu 1')
+    menu2 = make_menu(pygame_menu.themes.THEME_GREEN, 'Menu 2')
+    menu3 = make_menu(pygame_menu.themes.THEME_SOLARIZED, 'Menu 3')
+
+
+    def open_link(*args) -> None:
+        link: 'pygame_menu.widgets.MenuLink' = args[-1]
+        link.open()
+
+
+    # Create the links
+    link1 = menu.add.menu_link(menu1)
+    link2 = menu.add.menu_link(menu2)
+    link3 = menu.add.menu_link(menu3)
+
+    # Add a selection object, which opens the links
+    sel = menu.add.selector('Change menu ', [
+        ('Menu 1', link1),
+        ('Menu 2', link2),
+        ('Menu 3', link3)
+    ], onreturn=open_link)
+
 
 elif EXAMPLE == 'LABEL':
     menu = make_menu(pygame_menu.themes.THEME_BLUE, 'Label')
