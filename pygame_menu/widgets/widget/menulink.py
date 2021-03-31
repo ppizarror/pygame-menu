@@ -2,8 +2,9 @@
 pygame-menu
 https://github.com/ppizarror/pygame-menu
 
-WIDGET
-This module contains the widgets of pygame-menu.
+MENULINK
+Similar to a Button that opens a Menu, MenuLink is a widget that contains a Menu
+reference. This Menu can be opened with .open() method.
 
 License:
 -------------------------------------------------------------------------------
@@ -29,21 +30,49 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 """
 
-from pygame_menu.widgets.widget.button import Button
-from pygame_menu.widgets.widget.colorinput import ColorInput
-from pygame_menu.widgets.widget.dropselect import DropSelect
-from pygame_menu.widgets.widget.dropselect_multiple import DropSelectMultiple
-from pygame_menu.widgets.widget.frame import Frame
-from pygame_menu.widgets.widget.hmargin import HMargin
-from pygame_menu.widgets.widget.image import Image
-from pygame_menu.widgets.widget.label import Label
-from pygame_menu.widgets.widget.menubar import MenuBar
-from pygame_menu.widgets.widget.menulink import MenuLink
+__all__ = ['MenuLink']
+
+import pygame_menu
+
 from pygame_menu.widgets.widget.none import NoneWidget
-from pygame_menu.widgets.widget.scrollbar import ScrollBar
-from pygame_menu.widgets.widget.selector import Selector
-from pygame_menu.widgets.widget.surface import SurfaceWidget
-from pygame_menu.widgets.widget.table import Table
-from pygame_menu.widgets.widget.textinput import TextInput
-from pygame_menu.widgets.widget.toggleswitch import ToggleSwitch
-from pygame_menu.widgets.widget.vmargin import VMargin
+from pygame_menu.utils import is_callable
+
+from pygame_menu._types import Callable
+
+
+# noinspection PyMissingOrEmptyDocstring
+class MenuLink(NoneWidget):
+    """
+    Menu link widget.
+
+    :param link_id: Link ID
+    :param menu_opener_handler: Callback for opening the menu object
+    :param menu: Menu object
+    """
+    menu: 'pygame_menu.Menu'
+
+    def __init__(
+            self,
+            menu: 'pygame_menu.Menu',
+            menu_opener_handler: Callable,
+            link_id: str = ''
+    ) -> None:
+        assert isinstance(menu, pygame_menu.Menu)
+        assert is_callable(menu_opener_handler), \
+            'menu opener handler must be callable (a function)'
+        super(MenuLink, self).__init__(
+            widget_id=link_id
+        )
+        self.menu = menu
+        self._onreturn = menu_opener_handler
+        self._visible = False
+        self.is_selectable = False
+
+    def hide(self) -> 'MenuLink':
+        pass
+
+    def show(self) -> 'MenuLink':
+        pass
+
+    def open(self) -> None:
+        return self._onreturn(self.menu)
