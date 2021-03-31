@@ -33,13 +33,15 @@ __all__ = ['ScrollAreaTest']
 
 import copy
 import unittest
-from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2
+from test._utils import MenuUtils, PygameEventUtils, surface, TEST_THEME, PYGAME_V2, \
+    SYS_PLATFORM_OSX
 
 import pygame_menu
 
 from pygame_menu.locals import POSITION_SOUTHEAST, POSITION_CENTER, POSITION_NORTHWEST, \
-    POSITION_SOUTH, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_WEST, POSITION_NORTH, \
-    SCROLLAREA_POSITION_FULL, SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
+    POSITION_SOUTH, POSITION_NORTHEAST, POSITION_SOUTHWEST, POSITION_EAST, \
+    POSITION_WEST, POSITION_NORTH, SCROLLAREA_POSITION_FULL, \
+    SCROLLAREA_POSITION_BOTH_VERTICAL, SCROLLAREA_POSITION_BOTH_HORIZONTAL, \
     INPUT_TEXT, ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 # noinspection PyProtectedMember
 from pygame_menu._scrollarea import get_scrollbars_from_position
@@ -152,6 +154,8 @@ class ScrollAreaTest(unittest.TestCase):
         """
         Test size.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(title='menu', theme=TEST_THEME.copy())
         menu.render()
         self.assertEqual(menu.get_height(widget=True), 0)

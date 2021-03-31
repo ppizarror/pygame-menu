@@ -31,7 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['ExamplesTest']
 
-from test._utils import test_reset_surface, MenuUtils, PygameEventUtils
+from test._utils import test_reset_surface, MenuUtils, PygameEventUtils, \
+    SYS_PLATFORM_OSX
 import unittest
 
 import pygame
@@ -195,6 +196,8 @@ class ExamplesTest(unittest.TestCase):
         """
         Test solar system.
         """
+        if SYS_PLATFORM_OSX:
+            return
         app = ui_solarsystem.main(test=True)
         self.assertFalse(app.menu._disable_draw)
         app.process_events(PygameEventUtils.keydown([pygame.K_p]), app.menu)

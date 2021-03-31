@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['WidgetsTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
-    TEST_THEME, PYGAME_V2, WINDOW_SIZE, THEME_NON_FIXED_TITLE
+    TEST_THEME, PYGAME_V2, WINDOW_SIZE, THEME_NON_FIXED_TITLE, SYS_PLATFORM_OSX
 import copy
 import unittest
 
@@ -264,6 +264,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget max width/height.
         """
+        if SYS_PLATFORM_OSX:
+            return
         label = Label('my label is really long yeah, it should be scaled in the width')
         label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
                        (0, 0, 0), (0, 0, 0), (0, 0, 0))
@@ -390,6 +392,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test menubar widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
         for mode in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE,
@@ -549,6 +553,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test ColorInput widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
 
         def _assert_invalid_color(widg) -> None:
             """
@@ -879,6 +885,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test TextInput widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
 
         # Assert bad settings
@@ -1369,6 +1377,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test update callback.
         """
+        if SYS_PLATFORM_OSX:
+            return
 
         def update(event, widget, _) -> None:
             """
@@ -1468,6 +1478,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test dropselect multiple widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
         theme.widget_font_size = 25
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=theme)
@@ -1629,6 +1641,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test dropselect widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=THEME_NON_FIXED_TITLE)
         items = [('This is a really long selection item', 1), ('epic', 2)]
         for i in range(10):
@@ -2589,6 +2603,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widgets with zero position if float.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(title='Example menu')
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
         img.scale(0.3, 0.3)
