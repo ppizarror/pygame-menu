@@ -65,7 +65,7 @@ from pygame_menu._base import Base
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, \
     POSITION_WEST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, \
     POSITION_SOUTH, POSITION_NORTH
-from pygame_menu.utils import assert_vector, assert_position, assert_color
+from pygame_menu.utils import assert_vector, assert_position, assert_color, warn
 
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, \
     Tuple, List, NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, \
@@ -192,8 +192,27 @@ class BaseImage(Base):
 
         # Load the image and store as a surface
         if load_from_file:
-            # pygame.image.get_extended()
-            self._surface = pygame.image.load(image_path)
+            # Try to load the image
+            try:
+                self._surface = pygame.image.load(image_path)
+
+            except pygame.error as exc:
+                # Check if file is not a windows file
+                if str(exc) == 'File is not a Windows BMP file':
+                    # Check if Pillow exists
+                    try:
+                        # noinspection PyPackageRequirements
+                        from PIL import Image
+                        img_pil = Image.open(image_path)
+                        self._surface = pygame.image.fromstring(
+                            img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
+                    except (ModuleNotFoundError, ImportError):
+                        warn('Image file could not be loaded, as pygame.error is'
+                             ' raised. To avoid this issue install the Pillow '
+                             'library')
+                        raise
+                else:
+                    raise
             self._original_surface = self._surface.copy()
 
         # Other internals
