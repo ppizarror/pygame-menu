@@ -2627,3 +2627,65 @@ class WidgetsTest(unittest.TestCase):
         image_widget.translate(-50, 0)
         menu.render()
         self.assertEqual(image_widget.get_position(), (-42, 60))
+
+    # noinspection PyTypeChecker
+    def test_menu_links(self) -> None:
+        """
+        Test menu link.
+        """
+        menu = MenuUtils.generic_menu()
+        menu1 = MenuUtils.generic_menu(title='Menu1', theme=pygame_menu.themes.THEME_BLUE)
+        menu1.add.button('Back', pygame_menu.events.BACK)
+        menu2 = MenuUtils.generic_menu(title='Menu2', theme=pygame_menu.themes.THEME_ORANGE)
+        menu2.add.button('Back', pygame_menu.events.BACK)
+        menu3 = MenuUtils.generic_menu(title='Menu3', theme=pygame_menu.themes.THEME_GREEN)
+        menu3.add.button('Back', pygame_menu.events.BACK)
+        btn1 = menu.add.button('menu1', menu1)
+        btn2 = menu.add.button('menu2', menu2)
+        btn3 = menu.add.button('menu3', menu3)
+
+        # Hide the buttons
+        btn1.hide()
+        btn2.hide()
+        btn3.hide()
+
+        # Now open menu with the button, this should open Menu1 by default
+        self.assertEqual(menu.get_current(), menu)
+        btn1.apply()
+        self.assertEqual(menu.get_current(), menu1)
+        menu.full_reset()
+        self.assertEqual(menu.get_current(), menu)
+
+        # Add menu link
+        link_test = menu.add.menu_link(menu2)
+        link_test.open()
+        self.assertEqual(menu.get_current(), menu2)
+        menu.full_reset()
+        self.assertEqual(menu.get_current(), menu)
+
+        self.assertFalse(link_test.is_visible())
+        link_test.hide()
+        self.assertFalse(link_test.is_visible())
+        link_test.show()
+        self.assertFalse(link_test.is_visible())
+
+        self.assertRaises(ValueError, lambda: menu.add.menu_link(menu))
+
+        # Invalid objects
+        self.assertRaises(ValueError, lambda: menu.add.menu_link(True))
+
+        # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
+        def open_link(*args) -> None:
+            link: 'pygame_menu.widgets.MenuLink' = args[-1]
+            self.assertIsInstance(link, pygame_menu.widgets.MenuLink)
+            link.open()
+
+        # Add a selection object, which opens the links
+        sel = menu.add.selector('Change menu ', [
+            ('Menu 1', menu.add.menu_link(menu1)),
+            ('Menu 2', menu.add.menu_link(menu2)),
+            ('Menu 3', menu.add.menu_link(menu3))
+        ], onreturn=open_link, style=pygame_menu.widgets.SELECTOR_STYLE_FANCY)
+
+        menu.mainloop(surface)
+        sel.update(PygameEventUtils.key(KEY_APPLY, keydown=True))

@@ -2579,6 +2579,54 @@ class WidgetManager(Base):
 
         return widget
 
+    def menu_link(
+            self,
+            menu: 'pygame_menu.Menu',
+            link_id: str = ''
+    ) -> 'pygame_menu.widgets.MenuLink':
+        """
+        Adds a link to another Menu. The behaviour is similar to a button, but
+        this widget is invisible, and cannot be selectable.
+
+        Added menus can be opened using .open() method. Opened menus change the
+        state of the parent Menu (the current pointer).
+
+        .. note::
+
+            This is applied only to the base Menu (not the currently displayed,
+            stored in ``_current`` pointer); for such behaviour apply to
+            :py:meth:`pygame_menu.menu.Menu.get_current` object.
+
+        :param menu: Menu to be added as a link (the new submenu)
+        :param link_id: ID of the menu link widget
+        :return: Menu link widget
+        :rtype: :py:class:`pygame_menu.widgets.MenuLink`
+        """
+        if isinstance(menu, type(self._menu)):
+            # Check for recursive
+            if menu == self._menu or menu.in_submenu(self._menu, recursive=True):
+                raise ValueError(
+                    'Menu "{0}" is already on submenu structure, recursive menus'
+                    'lead to unexpected behaviours. For returning to previous menu'
+                    'use pygame_menu.events.BACK event defining an optional '
+                    'back_count number of menus to return from, default is 1'
+                    ''.format(menu.get_title())
+                )
+
+            self._menu._submenus.append(menu)
+        else:
+            raise ValueError('menu object is not a pygame_menu.Menu class')
+
+        widget = pygame_menu.widgets.MenuLink(
+            menu=menu,
+            menu_opener_handler=self._menu._open,
+            link_id=link_id
+        )
+        self.configure_defaults_widget(widget)
+        self._append_widget(widget)
+
+        return widget
+
     def generic_widget(
             self,
             widget: 'Widget',

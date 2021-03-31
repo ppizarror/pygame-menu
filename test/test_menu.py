@@ -31,8 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['MenuTest']
 
-from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils,\
-    TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over,\
+from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, \
+    TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
     THEME_NON_FIXED_TITLE, SYS_PLATFORM_OSX
 from typing import Any, Tuple
 import copy
