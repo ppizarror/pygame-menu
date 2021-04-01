@@ -2025,6 +2025,7 @@ class WidgetManager(Base):
             default: Union[str, int, float] = '',
             copy_paste_enable: bool = True,
             cursor_selection_enable: bool = True,
+            cursor_size: Tuple[int, ...] = None,
             input_type: str = INPUT_TEXT,
             input_underline: str = '',
             input_underline_len: int = 0,
