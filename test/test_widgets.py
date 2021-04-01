@@ -474,6 +474,35 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(mb.update(PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_BACK)))
 
+        # Test none methods
+        mb.rotate(10)
+        self.assertEqual(mb._angle, 0)
+
+        mb.resize(10, 10)
+        self.assertFalse(mb._scale[0])
+        self.assertEqual(mb._scale[1], 1)
+        self.assertEqual(mb._scale[2], 1)
+
+        mb.scale(100, 100)
+        self.assertFalse(mb._scale[0])
+        self.assertEqual(mb._scale[1], 1)
+        self.assertEqual(mb._scale[2], 1)
+
+        mb.flip(True, True)
+        self.assertFalse(mb._flip[0])
+        self.assertFalse(mb._flip[1])
+
+        mb.set_max_width(100)
+        self.assertIsNone(mb._max_width[0])
+
+        mb.set_max_height(100)
+        self.assertIsNone(mb._max_height[0])
+
+        # Ignore others
+        mb.set_padding()
+        mb.set_border()
+        mb.set_selection_effect()
+
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
         """
@@ -705,6 +734,10 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 18, 255, 170)
         widget.set_value('   59C1e5')
         _assert_color(widget, 89, 193, 229)
+
+        widget.render()
+        widget.draw(surface)
+
         widget.clear()
         self.assertEqual(widget._input_string, '#')  # This cannot be empty
         self.assertEqual(widget._cursor_position, 1)
@@ -768,6 +801,7 @@ class WidgetsTest(unittest.TestCase):
         Test label widget.
         """
         menu = MenuUtils.generic_menu()
+
         # noinspection SpellCheckingInspection
         label = menu.add.label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                                'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
@@ -868,6 +902,12 @@ class WidgetsTest(unittest.TestCase):
         label.update([])
         self.assertEqual(label.get_title(), 'b')
         self.assertIsNone(label._title_generator)
+
+        # Label set to empty
+        label_e = menu.add.label('new')
+        self.assertRaises(ValueError, lambda: label_e.set_value(''))
+        label_e.set_title('')
+        label_e.draw(surface)
 
     def test_clock(self) -> None:
         """
@@ -1338,7 +1378,10 @@ class WidgetsTest(unittest.TestCase):
         btn = menu.add.button('epic', pygame_menu.events.NONE)
         self.assertEqual(btn._decorator._total_decor(), 0)
         btn.add_underline((0, 0, 0), 1, 1, force_render=True)
+        self.assertNotEqual(btn._last_underline[0], '')
         self.assertEqual(btn._decorator._total_decor(), 1)
+        btn.remove_underline()
+        self.assertEqual(btn._last_underline[0], '')
 
         # Test return fun
         def fun() -> str:
@@ -1967,6 +2010,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Test onchange
         test = [-1, False]
+
+        drop2.set_default_value(0)
 
         def test_change(item, v) -> None:
             """
