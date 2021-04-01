@@ -40,6 +40,7 @@ __all__ = [
     'IMAGE_EXAMPLE_GRAY_LINES',
     'IMAGE_EXAMPLE_METAL',
     'IMAGE_EXAMPLE_PYGAME_MENU',
+    'IMAGE_EXAMPLE_PYTHON',
     'IMAGE_EXAMPLE_WALLPAPER',
     'IMAGE_EXAMPLES',
 
@@ -65,7 +66,8 @@ from pygame_menu._base import Base
 from pygame_menu.locals import POSITION_NORTHWEST, POSITION_NORTHEAST, POSITION_CENTER, \
     POSITION_WEST, POSITION_SOUTHWEST, POSITION_EAST, POSITION_SOUTHEAST, \
     POSITION_SOUTH, POSITION_NORTH
-from pygame_menu.utils import assert_vector, assert_position, assert_color
+from pygame_menu.utils import assert_vector, assert_position, assert_color, \
+    load_pygame_image_file
 
 from pygame_menu._types import Tuple2IntType, Union, Vector2NumberType, Callable, \
     Tuple, List, NumberType, Optional, Dict, Tuple4IntType, Literal, Tuple2NumberType, \
@@ -78,10 +80,11 @@ IMAGE_EXAMPLE_CARBON_FIBER = __images_path__.format('carbon_fiber.png')
 IMAGE_EXAMPLE_GRAY_LINES = __images_path__.format('gray_lines.png')
 IMAGE_EXAMPLE_METAL = __images_path__.format('metal.png')
 IMAGE_EXAMPLE_PYGAME_MENU = __images_path__.format('pygame_menu.png')
+IMAGE_EXAMPLE_PYTHON = __images_path__.format('python.svg')
 IMAGE_EXAMPLE_WALLPAPER = __images_path__.format('wallpaper.jpg')
 
 IMAGE_EXAMPLES = (IMAGE_EXAMPLE_CARBON_FIBER, IMAGE_EXAMPLE_GRAY_LINES,
-                  IMAGE_EXAMPLE_METAL, IMAGE_EXAMPLE_PYGAME_MENU,
+                  IMAGE_EXAMPLE_METAL, IMAGE_EXAMPLE_PYGAME_MENU, IMAGE_EXAMPLE_PYTHON,
                   IMAGE_EXAMPLE_WALLPAPER)
 
 # Drawing modes
@@ -97,7 +100,8 @@ _VALID_IMAGE_MODES = (IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X,
 
 # Other constants
 _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif',
-                        '.lbm', '.pbm', '.pgm', '.ppm', '.xpm', 'BytesIO', 'base64']
+                        '.lbm', '.pbm', '.pgm', '.ppm', '.xpm', '.svg', 'BytesIO',
+                        'base64']
 
 # Custom types
 ColorChannelType = Literal['r', 'g', 'b']
@@ -192,8 +196,7 @@ class BaseImage(Base):
 
         # Load the image and store as a surface
         if load_from_file:
-            # pygame.image.get_extended()
-            self._surface = pygame.image.load(image_path)
+            self._surface = load_pygame_image_file(image_path)
             self._original_surface = self._surface.copy()
 
         # Other internals

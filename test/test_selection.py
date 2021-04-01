@@ -36,7 +36,8 @@ import copy
 import unittest
 
 from pygame_menu.widgets import Button
-from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, HighlightSelection, NoneSelection
+from pygame_menu.widgets.selection import LeftArrowSelection, RightArrowSelection, \
+    HighlightSelection, NoneSelection
 
 
 class SelectionTest(unittest.TestCase):

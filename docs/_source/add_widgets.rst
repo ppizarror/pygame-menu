@@ -382,6 +382,44 @@ order to fit the menu size.
 .. automethod:: pygame_menu._widgetmanager.WidgetManager.label
 
 
+Add a menu link
+---------------
+
+Menu links are widgets that opens a new Menu within the parent Menu without using
+a button. Links can be opened using the ``open`` method.
+
+**Example:**
+
+.. image:: ../_static/widget_menulink.png
+    :scale: 75%
+    :align: center
+
+.. code-block:: python
+
+    menu = pygame_menu.Menu(...)
+    menu1 = pygame_menu.Menu(...)
+    menu2 = pygame_menu.Menu(...)
+    menu3 = pygame_menu.Menu(...)
+
+    def open_link(*args) -> None:
+        link: 'pygame_menu.widgets.MenuLink' = args[-1]
+        link.open()
+
+    # Create the links
+    link1 = menu.add.menu_link(menu1)
+    link2 = menu.add.menu_link(menu2)
+    link3 = menu.add.menu_link(menu3)
+
+    # Add a selection object, which opens the links
+    sel = menu.add.selector('Change menu ', [
+        ('Menu 1', link1),
+        ('Menu 2', link2),
+        ('Menu 3', link3)
+    ], onreturn=open_link)
+
+.. automethod:: pygame_menu._widgetmanager.WidgetManager.menu_link
+
+
 Add a none widget
 -----------------
 

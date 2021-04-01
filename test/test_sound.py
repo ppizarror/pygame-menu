@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['SoundTest']
 
-from test._utils import MenuUtils
+from test._utils import MenuUtils, SYS_PLATFORM_OSX
 import copy
 import unittest
 
@@ -50,6 +50,8 @@ class SoundTest(unittest.TestCase):
         """
         Test sound copy.
         """
+        if SYS_PLATFORM_OSX:
+            return
         sound_src = pygame_menu.sound.Sound()
         sound_src.load_example_sounds()
 
@@ -65,6 +67,8 @@ class SoundTest(unittest.TestCase):
         """
         Test none channel.
         """
+        if SYS_PLATFORM_OSX:
+            return
         new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.load_example_sounds()
         new_sound.play_widget_selection()
@@ -79,6 +83,8 @@ class SoundTest(unittest.TestCase):
         """
         Test channel.
         """
+        if SYS_PLATFORM_OSX:
+            return
         new_sound = pygame_menu.sound.Sound(uniquechannel=False)
         new_sound.get_channel()
         self.sound.get_channel_info()

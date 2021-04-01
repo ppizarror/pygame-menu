@@ -31,8 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['MenuTest']
 
-from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, TEST_THEME, PYGAME_V2, \
-    WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, THEME_NON_FIXED_TITLE
+from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, \
+    TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
+    THEME_NON_FIXED_TITLE, SYS_PLATFORM_OSX
 from typing import Any, Tuple
 import copy
 import math
@@ -43,8 +44,8 @@ import pygame
 import pygame_menu
 
 from pygame_menu import events
-from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_DOWN, JOY_UP, \
-    JOY_LEFT, JOY_RIGHT
+from pygame_menu.controls import KEY_MOVE_DOWN, KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, \
+    JOY_DOWN, JOY_UP, JOY_LEFT, JOY_RIGHT
 from pygame_menu.locals import FINGERDOWN, FINGERMOTION
 from pygame_menu.utils import set_pygame_cursor
 from pygame_menu.widgets import Label, Button
@@ -137,6 +138,8 @@ class MenuTest(unittest.TestCase):
         """
         Test position.
         """
+        if SYS_PLATFORM_OSX:
+            return
         # Test centering
         theme_src = TEST_THEME.copy()
 
@@ -293,6 +296,8 @@ class MenuTest(unittest.TestCase):
         """
         Test menu translation.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(width=400, theme=THEME_NON_FIXED_TITLE)
         btn = menu.add.button('button')
         self.assertEqual(menu.get_menubar().get_height(), 55)
@@ -679,6 +684,8 @@ class MenuTest(unittest.TestCase):
         """
         Test centering menu.
         """
+        if SYS_PLATFORM_OSX:
+            return
         # Vertical offset disables centering
         theme = pygame_menu.themes.THEME_BLUE.copy()
         theme.widget_offset = (0, 100)
@@ -1314,6 +1321,8 @@ class MenuTest(unittest.TestCase):
         """
         Test menu focus effect.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(title='menu', mouse_motion_selection=True)
         btn = menu.add.button('nice')
 
@@ -1625,6 +1634,8 @@ class MenuTest(unittest.TestCase):
         """
         Test widget index moving.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
         btn1 = menu.add.button('1')
         btn2 = menu.add.button('2')

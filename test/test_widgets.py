@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['WidgetsTest']
 
 from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
-    TEST_THEME, PYGAME_V2, WINDOW_SIZE, THEME_NON_FIXED_TITLE
+    TEST_THEME, PYGAME_V2, WINDOW_SIZE, THEME_NON_FIXED_TITLE, SYS_PLATFORM_OSX
 import copy
 import unittest
 
@@ -264,6 +264,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widget max width/height.
         """
+        if SYS_PLATFORM_OSX:
+            return
         label = Label('my label is really long yeah, it should be scaled in the width')
         label.set_font(pygame_menu.font.FONT_OPEN_SANS, 25, (255, 255, 255), (0, 0, 0),
                        (0, 0, 0), (0, 0, 0), (0, 0, 0))
@@ -390,6 +392,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test menubar widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
         for mode in (MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, MENUBAR_STYLE_SIMPLE,
                      MENUBAR_STYLE_UNDERLINE, MENUBAR_STYLE_UNDERLINE_TITLE,
@@ -470,6 +474,35 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
         self.assertTrue(mb.update(PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_BACK)))
 
+        # Test none methods
+        mb.rotate(10)
+        self.assertEqual(mb._angle, 0)
+
+        mb.resize(10, 10)
+        self.assertFalse(mb._scale[0])
+        self.assertEqual(mb._scale[1], 1)
+        self.assertEqual(mb._scale[2], 1)
+
+        mb.scale(100, 100)
+        self.assertFalse(mb._scale[0])
+        self.assertEqual(mb._scale[1], 1)
+        self.assertEqual(mb._scale[2], 1)
+
+        mb.flip(True, True)
+        self.assertFalse(mb._flip[0])
+        self.assertFalse(mb._flip[1])
+
+        mb.set_max_width(100)
+        self.assertIsNone(mb._max_width[0])
+
+        mb.set_max_height(100)
+        self.assertIsNone(mb._max_height[0])
+
+        # Ignore others
+        mb.set_padding()
+        mb.set_border()
+        mb.set_selection_effect()
+
     # noinspection PyArgumentEqualDefault,PyTypeChecker
     def test_selector(self) -> None:
         """
@@ -549,6 +582,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test ColorInput widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
 
         def _assert_invalid_color(widg) -> None:
             """
@@ -699,6 +734,10 @@ class WidgetsTest(unittest.TestCase):
         _assert_color(widget, 18, 255, 170)
         widget.set_value('   59C1e5')
         _assert_color(widget, 89, 193, 229)
+
+        widget.render()
+        widget.draw(surface)
+
         widget.clear()
         self.assertEqual(widget._input_string, '#')  # This cannot be empty
         self.assertEqual(widget._cursor_position, 1)
@@ -762,6 +801,7 @@ class WidgetsTest(unittest.TestCase):
         Test label widget.
         """
         menu = MenuUtils.generic_menu()
+
         # noinspection SpellCheckingInspection
         label = menu.add.label('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
                                'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, '
@@ -863,6 +903,12 @@ class WidgetsTest(unittest.TestCase):
         self.assertEqual(label.get_title(), 'b')
         self.assertIsNone(label._title_generator)
 
+        # Label set to empty
+        label_e = menu.add.label('new')
+        self.assertRaises(ValueError, lambda: label_e.set_value(''))
+        label_e.set_title('')
+        label_e.draw(surface)
+
     def test_clock(self) -> None:
         """
         Test clock.
@@ -879,6 +925,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test TextInput widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
 
         # Assert bad settings
@@ -1330,7 +1378,10 @@ class WidgetsTest(unittest.TestCase):
         btn = menu.add.button('epic', pygame_menu.events.NONE)
         self.assertEqual(btn._decorator._total_decor(), 0)
         btn.add_underline((0, 0, 0), 1, 1, force_render=True)
+        self.assertNotEqual(btn._last_underline[0], '')
         self.assertEqual(btn._decorator._total_decor(), 1)
+        btn.remove_underline()
+        self.assertEqual(btn._last_underline[0], '')
 
         # Test return fun
         def fun() -> str:
@@ -1369,6 +1420,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test update callback.
         """
+        if SYS_PLATFORM_OSX:
+            return
 
         def update(event, widget, _) -> None:
             """
@@ -1468,6 +1521,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test dropselect multiple widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         theme = pygame_menu.themes.THEME_DEFAULT.copy()
         theme.widget_font_size = 25
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=theme)
@@ -1629,6 +1684,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test dropselect widget.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(mouse_motion_selection=True, theme=THEME_NON_FIXED_TITLE)
         items = [('This is a really long selection item', 1), ('epic', 2)]
         for i in range(10):
@@ -1953,6 +2010,8 @@ class WidgetsTest(unittest.TestCase):
 
         # Test onchange
         test = [-1, False]
+
+        drop2.set_default_value(0)
 
         def test_change(item, v) -> None:
             """
@@ -2589,6 +2648,8 @@ class WidgetsTest(unittest.TestCase):
         """
         Test widgets with zero position if float.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(title='Example menu')
         img = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU)
         img.scale(0.3, 0.3)
@@ -2611,3 +2672,65 @@ class WidgetsTest(unittest.TestCase):
         image_widget.translate(-50, 0)
         menu.render()
         self.assertEqual(image_widget.get_position(), (-42, 60))
+
+    # noinspection PyTypeChecker
+    def test_menu_links(self) -> None:
+        """
+        Test menu link.
+        """
+        menu = MenuUtils.generic_menu()
+        menu1 = MenuUtils.generic_menu(title='Menu1', theme=pygame_menu.themes.THEME_BLUE)
+        menu1.add.button('Back', pygame_menu.events.BACK)
+        menu2 = MenuUtils.generic_menu(title='Menu2', theme=pygame_menu.themes.THEME_ORANGE)
+        menu2.add.button('Back', pygame_menu.events.BACK)
+        menu3 = MenuUtils.generic_menu(title='Menu3', theme=pygame_menu.themes.THEME_GREEN)
+        menu3.add.button('Back', pygame_menu.events.BACK)
+        btn1 = menu.add.button('menu1', menu1)
+        btn2 = menu.add.button('menu2', menu2)
+        btn3 = menu.add.button('menu3', menu3)
+
+        # Hide the buttons
+        btn1.hide()
+        btn2.hide()
+        btn3.hide()
+
+        # Now open menu with the button, this should open Menu1 by default
+        self.assertEqual(menu.get_current(), menu)
+        btn1.apply()
+        self.assertEqual(menu.get_current(), menu1)
+        menu.full_reset()
+        self.assertEqual(menu.get_current(), menu)
+
+        # Add menu link
+        link_test = menu.add.menu_link(menu2)
+        link_test.open()
+        self.assertEqual(menu.get_current(), menu2)
+        menu.full_reset()
+        self.assertEqual(menu.get_current(), menu)
+
+        self.assertFalse(link_test.is_visible())
+        link_test.hide()
+        self.assertFalse(link_test.is_visible())
+        link_test.show()
+        self.assertFalse(link_test.is_visible())
+
+        self.assertRaises(ValueError, lambda: menu.add.menu_link(menu))
+
+        # Invalid objects
+        self.assertRaises(ValueError, lambda: menu.add.menu_link(True))
+
+        # noinspection PyMissingTypeHints,PyMissingOrEmptyDocstring
+        def open_link(*args) -> None:
+            link: 'pygame_menu.widgets.MenuLink' = args[-1]
+            self.assertIsInstance(link, pygame_menu.widgets.MenuLink)
+            link.open()
+
+        # Add a selection object, which opens the links
+        sel = menu.add.selector('Change menu ', [
+            ('Menu 1', menu.add.menu_link(menu1)),
+            ('Menu 2', menu.add.menu_link(menu2)),
+            ('Menu 3', menu.add.menu_link(menu3))
+        ], onreturn=open_link, style=pygame_menu.widgets.SELECTOR_STYLE_FANCY)
+
+        # menu.mainloop(surface)
+        sel.update(PygameEventUtils.key(KEY_APPLY, keydown=True))

@@ -32,14 +32,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 __all__ = ['FrameWidgetTest']
 
-from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, TEST_THEME, PYGAME_V2, \
-    WIDGET_MOUSEOVER, reset_widgets_over, THEME_NON_FIXED_TITLE
+from test._utils import MenuUtils, surface, PygameEventUtils, test_reset_surface, \
+    TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, reset_widgets_over, THEME_NON_FIXED_TITLE, \
+    SYS_PLATFORM_OSX
 import unittest
 
 import pygame
 import pygame_menu
 
-from pygame_menu.controls import KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_RIGHT, JOY_LEFT, KEY_MOVE_DOWN
+from pygame_menu.controls import KEY_MOVE_UP, KEY_LEFT, KEY_RIGHT, JOY_RIGHT, \
+    JOY_LEFT, KEY_MOVE_DOWN
 from pygame_menu.locals import ORIENTATION_VERTICAL, ORIENTATION_HORIZONTAL
 from pygame_menu.utils import set_pygame_cursor
 from pygame_menu.widgets import Button
@@ -57,6 +59,8 @@ class FrameWidgetTest(unittest.TestCase):
         """
         Test frame widget containers.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(theme=TEST_THEME.copy())
 
         menu.add.button('rr')
@@ -553,6 +557,8 @@ class FrameWidgetTest(unittest.TestCase):
         """
         Test scrollarea frame.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu(theme=THEME_NON_FIXED_TITLE)
         self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_width=400))
         self.assertRaises(AssertionError, lambda: menu.add.frame_v(300, 400, max_height=500))
@@ -1231,6 +1237,9 @@ class FrameWidgetTest(unittest.TestCase):
         """
         Test frame menu support.
         """
+        if SYS_PLATFORM_OSX:
+            return
+
         # Test frame movement
         theme = TEST_THEME.copy()
         theme.widget_margin = (0, 0)
@@ -1710,6 +1719,9 @@ class FrameWidgetTest(unittest.TestCase):
         """
         Test frame title.
         """
+        if SYS_PLATFORM_OSX:
+            return
+
         menu = MenuUtils.generic_menu(theme=THEME_NON_FIXED_TITLE)
 
         pad = 5
@@ -1864,10 +1876,20 @@ class FrameWidgetTest(unittest.TestCase):
         menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100)))
         self.assertEqual(frame2.get_translate(), (10, 115))
 
+        # Test more title gradients
+        frame2.set_title('title',
+                         background_color=((10, 36, 106), (166, 202, 240), True, True))
+        frame2.set_title('title',
+                         background_color=((10, 36, 106), (166, 202, 240), True, False))
+        frame2.set_title('title',
+                         background_color=((10, 36, 106), (166, 202, 240), False, False))
+
     def test_resize(self) -> None:
         """
         Test resize.
         """
+        if SYS_PLATFORM_OSX:
+            return
         menu = MenuUtils.generic_menu()
 
         # No title, no scrollable

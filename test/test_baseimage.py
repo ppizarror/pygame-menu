@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __all__ = ['BaseImageTest']
 
 from pathlib import Path
-from test._utils import surface, PYGAME_V2
+from test._utils import surface, PYGAME_V2, SYS_PLATFORM_OSX
 import base64
 import copy
 import io
@@ -43,6 +43,7 @@ import pygame_menu
 
 from pygame_menu.baseimage import IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, \
     IMAGE_MODE_REPEAT_XY, IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE
+from pygame_menu.utils import load_pygame_image_file
 
 
 class BaseImageTest(unittest.TestCase):
@@ -61,6 +62,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test image load from base64.
         """
+        if SYS_PLATFORM_OSX:
+            return
         photo = 'R0lGODlhRgBGAPZUAAAAAAAAMwAAzAArAAArMwArzAAr/wBVmQBVzABV/zMAADMAMzMrADMrMzMrmTMrzDMr/zNVADNVMzNVZjNVmTN' \
                 'VzDNV/zOAADOAMzOAZjOA/zOqM2YAM2YrAGYrM2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmW' \
                 'aqzJkrAJkrM5lVAJlVM5lVZplVmZmAAJmAM5mAZpmAmZmAzJmqZpmqmZmqzJmq/5nVmZnVzMxVAMxVM8xVZsyAAMyAM8yAZsyqZsyqm' \
@@ -255,6 +258,8 @@ class BaseImageTest(unittest.TestCase):
         """
         Test the file operations.
         """
+        if SYS_PLATFORM_OSX:
+            return
         image_original = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_GRAY_LINES)
         self.assertTrue(image.equals(image_original))
@@ -272,6 +277,21 @@ class BaseImageTest(unittest.TestCase):
         self.assertFalse(image.equals(image_original))
         image.restore()
         self.assertFalse(image.equals(image_original))
+
+    def test_invalid_image(self) -> None:
+        """
+        Test invalid image opening.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON)
+        self.assertEqual(image.get_size(), (110, 109))
+
+        image._drawing_position = 'invalid'
+        self.assertRaises(ValueError, lambda: image._get_position_delta())
+
+        # Test invalid image
+        self.assertRaises(Exception,
+                          lambda: load_pygame_image_file(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON,
+                                                         test=True))
 
     def test_copy(self) -> None:
         """
@@ -336,7 +356,8 @@ class BaseImageTest(unittest.TestCase):
         # noinspection PyTypeChecker
         image.pick_channels(('r', 'g', 'b'))
 
-        self.assertEqual(image.get_at((10, 10)), (56, 56, 56, 255))
+        if not SYS_PLATFORM_OSX:
+            self.assertEqual(image.get_at((10, 10)), (56, 56, 56, 255))
         image.set_at((10, 10), (0, 0, 0))
         # self.assertEqual(image.get_at((10, 10)), (0, 0, 0, 255))
 

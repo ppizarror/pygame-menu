@@ -33,6 +33,7 @@ __all__ = [
 
     # Globals
     'PYGAME_V2',
+    'SYS_PLATFORM_OSX',
     'TEST_THEME',
     'THEME_NON_FIXED_TITLE',
     'WIDGET_MOUSEOVER',
@@ -51,6 +52,7 @@ __all__ = [
 ]
 
 import random
+import sys
 
 import pygame
 import pygame_menu
@@ -61,9 +63,9 @@ from pygame_menu.utils import assert_vector, PYGAME_V2
 from pygame_menu.widgets.core.widget import check_widget_mouseleave
 
 # noinspection PyProtectedMember
-from pygame_menu._types import NumberType, Union, List, Tuple, Optional, Tuple2IntType, EventType, \
-    MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, Tuple2NumberType, VectorIntType, \
-    VectorInstance
+from pygame_menu._types import NumberType, Union, List, Tuple, Optional, EventType, \
+    Tuple2IntType, MenuColumnMaxWidthType, MenuColumnMinWidthType, Any, MenuRowsType, \
+    Tuple2NumberType, VectorIntType, VectorInstance
 
 EventListType = Union[EventType, List[EventType]]
 
@@ -85,6 +87,8 @@ THEME_NON_FIXED_TITLE.title_fixed = False
 
 WIDGET_MOUSEOVER = pygame_menu.widgets.core.widget.WIDGET_MOUSEOVER
 WIDGET_TOP_CURSOR = pygame_menu.widgets.core.widget.WIDGET_TOP_CURSOR
+
+SYS_PLATFORM_OSX = sys.platform == 'darwin'
 
 
 def reset_widgets_over() -> None:
