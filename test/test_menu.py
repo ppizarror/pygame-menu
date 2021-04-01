@@ -34,7 +34,7 @@ __all__ = ['MenuTest']
 from test._utils import surface, test_reset_surface, MenuUtils, PygameEventUtils, \
     TEST_THEME, PYGAME_V2, WIDGET_MOUSEOVER, WIDGET_TOP_CURSOR, reset_widgets_over, \
     THEME_NON_FIXED_TITLE, SYS_PLATFORM_OSX
-from typing import Any, Tuple
+from typing import Any, Tuple, List
 import copy
 import math
 import timeit
@@ -1984,3 +1984,108 @@ class MenuTest(unittest.TestCase):
         menu.force_surface_cache_update()
         menu.force_surface_update()
         self.assertTrue(menu._widgets_surface_need_update)
+
+    def test_baseimage_selector(self) -> None:
+        """
+        Test baseimage selector + menulink interaction.
+        """
+        x = 400
+        y = 400
+
+        class Sample:
+            """
+            Sample example which contains a selector that changes an image.
+            """
+            icons: List['pygame_menu.BaseImage']
+            icon: 'pygame_menu.widgets.Image'
+            selector: 'pygame_menu.widgets.Selector'
+
+            def __init__(self) -> None:
+                """
+                Constructor.
+                """
+                theme = pygame_menu.themes.Theme(
+                    title_font_size=8,
+                    title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_SIMPLE,
+                    background_color=(116, 161, 122),
+                    title_background_color=(4, 47, 58),
+                    title_font_color=(38, 158, 151),
+                    widget_selection_effect=pygame_menu.widgets.NoneSelection()
+                )
+
+                self.main_menu = pygame_menu.menu.Menu(
+                    title='MAIN MENU',
+                    height=x,
+                    width=y,
+                    theme=theme
+                )
+
+                submenu1 = pygame_menu.menu.Menu(
+                    title='SUB MENU 1',
+                    height=x,
+                    width=y,
+                    theme=theme
+                )
+
+                submenu1.add.label('SUB MENU 1')
+
+                submenu2 = pygame_menu.menu.Menu(
+                    title='SUB MENU 2',
+                    height=x,
+                    width=y,
+                    theme=theme
+                )
+
+                submenu2.add.label('SUB MENU 2')
+
+                # Here I resized the icons beforehand
+                self.icons = [
+                    pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU).resize(80, 80),
+                    pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON).resize(80, 80)
+                ]
+
+                self.icon = self.main_menu.add.image(image_path=self.icons[0].copy())
+
+                def update_icon(*args) -> None:
+                    """
+                    Update icon handler.
+                    """
+                    icon_idx = args[0][-1]
+                    set_icon = self.icons[icon_idx].copy()
+                    set_icon.scale(2, 2)
+                    self.icon.set_image(set_icon)
+
+                def open_menu(*args) -> None:
+                    """
+                    Open menu handler.
+                    """
+                    sub = args[-1][0][1]
+                    sub.open()
+
+                self.selector = self.main_menu.add.selector(
+                    '',
+                    [
+                        ('Menu 1', self.main_menu.add.menu_link(submenu1)),
+                        ('Menu 2', self.main_menu.add.menu_link(submenu2)),
+                    ],
+                    onchange=update_icon,
+                    onreturn=open_menu,
+                )
+                self.selector.change()
+                # main_menu.mainloop(surface, disable_loop=False)
+
+        s = Sample()
+        s.main_menu.draw(surface)
+
+        self.assertEqual(s.icon.get_size(), (176, 168))
+        self.assertEqual(s.main_menu.get_title(), 'MAIN MENU')
+
+        # Change selector
+        s.selector.apply()
+        self.assertEqual(s.icon.get_size(), (176, 168))
+        self.assertEqual(s.main_menu.get_current().get_title(), 'SUB MENU 1')
+
+        s.selector._left()
+        s.selector.apply()
+        self.assertEqual(s.icon.get_size(), (176, 168))
+        self.assertEqual(s.main_menu.get_current().get_title(), 'SUB MENU 2')
