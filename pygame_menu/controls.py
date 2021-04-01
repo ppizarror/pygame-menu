@@ -36,7 +36,6 @@ __all__ = [
     'JOY_AXIS_Y',
     'JOY_BUTTON_BACK',
     'JOY_BUTTON_SELECT',
-    'JOY_CENTERED',
     'JOY_DEADZONE',
     'JOY_DELAY',
     'JOY_DOWN',
@@ -56,6 +55,7 @@ __all__ = [
 
 ]
 
+# Imports
 import pygame.locals as __locals
 
 # Joy pad
@@ -63,7 +63,6 @@ JOY_AXIS_X = 0
 JOY_AXIS_Y = 1
 JOY_BUTTON_BACK = 1
 JOY_BUTTON_SELECT = 0
-JOY_CENTERED = (0, 0)
 JOY_DEADZONE = 0.5
 JOY_DELAY = 300  # ms
 JOY_DOWN = (0, -1)
