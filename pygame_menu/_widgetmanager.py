@@ -2588,8 +2588,8 @@ class WidgetManager(Base):
         Adds a link to another Menu. The behaviour is similar to a button, but
         this widget is invisible, and cannot be selectable.
 
-        Added menus can be opened using .open() method. Opened menus change the
-        state of the parent Menu (the current pointer).
+        Added menus can be opened using the ``.open()`` method. Opened menus change
+        the state of the parent Menu (the current pointer).
 
         .. note::
 
