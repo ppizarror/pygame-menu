@@ -33,9 +33,8 @@ __all__ = ['ToggleSwitch']
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
-from pygame_menu.controls import JOY_BUTTON_SELECT, JOY_LEFT, JOY_RIGHT, JOY_AXIS_X, \
-    JOY_DEADZONE, KEY_APPLY, KEY_LEFT, KEY_RIGHT
 from pygame_menu.font import FontType, assert_font
 from pygame_menu.locals import FINGERUP
 from pygame_menu.utils import check_key_pressed_valid, assert_color, assert_vector, \
@@ -416,23 +415,23 @@ class ToggleSwitch(Widget):
             joy_axismotion = self._joystick_enabled and event.type == pygame.JOYAXISMOTION
 
             # Left button
-            if keydown and event.key == KEY_LEFT or \
-                    joy_hatmotion and event.value == JOY_LEFT or \
-                    joy_axismotion and event.axis == JOY_AXIS_X and event.value < JOY_DEADZONE:
+            if keydown and event.key == ctrl.KEY_LEFT or \
+                    joy_hatmotion and event.value == ctrl.JOY_LEFT or \
+                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value < ctrl.JOY_DEADZONE:
                 self._left()
                 updated = True
 
             # Right button
-            elif keydown and event.key == KEY_RIGHT or \
-                    joy_hatmotion and event.value == JOY_RIGHT or \
-                    joy_axismotion and event.axis == JOY_AXIS_X and event.value > -JOY_DEADZONE:
+            elif keydown and event.key == ctrl.KEY_RIGHT or \
+                    joy_hatmotion and event.value == ctrl.JOY_RIGHT or \
+                    joy_axismotion and event.axis == ctrl.JOY_AXIS_X and event.value > -ctrl.JOY_DEADZONE:
                 self._right()
                 updated = True
 
             # Press enter
-            elif keydown and event.key == KEY_APPLY and self._total_states == 2 or \
+            elif keydown and event.key == ctrl.KEY_APPLY and self._total_states == 2 or \
                     event.type == pygame.JOYBUTTONDOWN and self._joystick_enabled and \
-                    event.button == JOY_BUTTON_SELECT and self._total_states == 2:
+                    event.button == ctrl.JOY_BUTTON_SELECT and self._total_states == 2:
                 self._sound.play_key_add()
                 self._state = int(not self._state)
                 self.change()

@@ -39,14 +39,12 @@ import time
 
 import pygame
 import pygame.gfxdraw as gfxdraw
+import pygame_menu.controls as ctrl
 import pygame_menu.events as _events
 
 from pygame_menu._base import Base
 from pygame_menu._decorator import Decorator
 from pygame_menu._widgetmanager import WidgetManager
-from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_MOVE_UP, KEY_MOVE_DOWN, \
-    KEY_BACK, KEY_CLOSE_MENU, JOY_LEFT, JOY_RIGHT, JOY_DEADZONE, JOY_UP, JOY_DOWN, \
-    JOY_AXIS_X, JOY_DELAY, JOY_AXIS_Y, JOY_REPEAT
 from pygame_menu.locals import ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, \
     ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL, FINGERDOWN, FINGERUP, FINGERMOTION
 from pygame_menu._scrollarea import ScrollArea, get_scrollbars_from_position
@@ -2390,53 +2388,53 @@ class Menu(Base):
                     if not check_key_pressed_valid(event):
                         continue
 
-                    if event.key == KEY_MOVE_DOWN:
+                    if event.key == ctrl.KEY_MOVE_DOWN:
                         if self._current._down():
                             updated = True
                             break
 
-                    elif event.key == KEY_MOVE_UP:
+                    elif event.key == ctrl.KEY_MOVE_UP:
                         if self._current._up():
                             updated = True
                             break
 
-                    elif event.key == KEY_LEFT:
+                    elif event.key == ctrl.KEY_LEFT:
                         if self._current._left():
                             updated = True
                             break
 
-                    elif event.key == KEY_RIGHT:
+                    elif event.key == ctrl.KEY_RIGHT:
                         if self._current._right():
                             updated = True
                             break
 
-                    elif event.key == KEY_BACK and self._top._prev is not None:
+                    elif event.key == ctrl.KEY_BACK and self._top._prev is not None:
                         self._current._sound.play_close_menu()
                         self.reset(1)  # public, do not use _current
 
-                    elif event.key == KEY_CLOSE_MENU:
+                    elif event.key == ctrl.KEY_CLOSE_MENU:
                         self._current._sound.play_close_menu()
                         if self._current._close():
                             updated = True
 
                 # User moves hat joystick
                 elif event.type == pygame.JOYHATMOTION and self._current._joystick:
-                    if event.value == JOY_UP:
+                    if event.value == ctrl.JOY_UP:
                         if self._current._down(apply_sound=True):
                             updated = True
                             break
 
-                    elif event.value == JOY_DOWN:
+                    elif event.value == ctrl.JOY_DOWN:
                         if self._current._up(apply_sound=True):
                             updated = True
                             break
 
-                    elif event.value == JOY_LEFT:
+                    elif event.value == ctrl.JOY_LEFT:
                         if self._current._left(apply_sound=True):
                             updated = True
                             break
 
-                    elif event.value == JOY_RIGHT:
+                    elif event.value == ctrl.JOY_RIGHT:
                         if self._current._right(apply_sound=True):
                             updated = True
                             break
@@ -2446,26 +2444,26 @@ class Menu(Base):
                     prev = self._current._joy_event
                     self._current._joy_event = 0
 
-                    if event.axis == JOY_AXIS_Y and event.value < -JOY_DEADZONE:
+                    if event.axis == ctrl.JOY_AXIS_Y and event.value < -ctrl.JOY_DEADZONE:
                         self._current._joy_event |= JOY_EVENT_UP
 
-                    elif event.axis == JOY_AXIS_Y and event.value > JOY_DEADZONE:
+                    elif event.axis == ctrl.JOY_AXIS_Y and event.value > ctrl.JOY_DEADZONE:
                         self._current._joy_event |= JOY_EVENT_DOWN
 
-                    elif event.axis == JOY_AXIS_X and event.value < -JOY_DEADZONE and \
+                    elif event.axis == ctrl.JOY_AXIS_X and event.value < -ctrl.JOY_DEADZONE and \
                             self._current._used_columns > 1:
                         self._current._joy_event |= JOY_EVENT_LEFT
 
-                    elif event.axis == JOY_AXIS_X and event.value > JOY_DEADZONE and \
+                    elif event.axis == ctrl.JOY_AXIS_X and event.value > ctrl.JOY_DEADZONE and \
                             self._current._used_columns > 1:
                         self._current._joy_event |= JOY_EVENT_RIGHT
 
                     if self._current._joy_event:
                         sel = self._current._handle_joy_event(True)
                         if self._current._joy_event == prev:
-                            pygame.time.set_timer(self._current._joy_event_repeat, JOY_REPEAT)
+                            pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_REPEAT)
                         else:
-                            pygame.time.set_timer(self._current._joy_event_repeat, JOY_DELAY)
+                            pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_DELAY)
                         if sel:
                             updated = True
                             break
@@ -2476,7 +2474,7 @@ class Menu(Base):
                 elif event.type == self._current._joy_event_repeat:
                     if self._current._joy_event:
                         sel = self._current._handle_joy_event(True)
-                        pygame.time.set_timer(self._current._joy_event_repeat, JOY_REPEAT)
+                        pygame.time.set_timer(self._current._joy_event_repeat, ctrl.JOY_REPEAT)
                         if sel:
                             updated = True
                             break

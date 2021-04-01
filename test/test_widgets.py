@@ -38,9 +38,8 @@ import unittest
 
 import pygame
 import pygame_menu
+import pygame_menu.controls as ctrl
 
-from pygame_menu.controls import KEY_LEFT, KEY_RIGHT, KEY_APPLY, JOY_RIGHT, JOY_LEFT, \
-    KEY_MOVE_DOWN, KEY_MOVE_UP
 from pygame_menu.locals import ORIENTATION_VERTICAL, FINGERDOWN, ALIGN_LEFT, \
     POSITION_SOUTHEAST, POSITION_NORTH, POSITION_SOUTH, POSITION_EAST, POSITION_WEST
 from pygame_menu.widgets import MENUBAR_STYLE_ADAPTIVE, MENUBAR_STYLE_NONE, \
@@ -472,7 +471,7 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._rect)))
         self.assertTrue(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect)))
         self.assertFalse(mb.update(PygameEventUtils.middle_rect_click(mb._backbox_rect, evtype=pygame.MOUSEBUTTONDOWN)))
-        self.assertTrue(mb.update(PygameEventUtils.joy_button(pygame_menu.controls.JOY_BUTTON_BACK)))
+        self.assertTrue(mb.update(PygameEventUtils.joy_button(ctrl.JOY_BUTTON_BACK)))
 
         # Test none methods
         mb.rotate(10)
@@ -523,11 +522,11 @@ class WidgetsTest(unittest.TestCase):
 
         # Test events
         selector.update(PygameEventUtils.key(0, keydown=True, testmode=False))
-        selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
-        selector.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
-        selector.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
-        selector.update(PygameEventUtils.joy_hat_motion(JOY_LEFT))
-        selector.update(PygameEventUtils.joy_hat_motion(JOY_RIGHT))
+        selector.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
+        selector.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
+        selector.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+        selector.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_LEFT))
+        selector.update(PygameEventUtils.joy_hat_motion(ctrl.JOY_RIGHT))
         selector.update(PygameEventUtils.joy_motion(1, 0))
         selector.update(PygameEventUtils.joy_motion(-1, 0))
         click_pos = selector.get_rect(to_real_position=True, apply_padding=False).center
@@ -561,10 +560,10 @@ class WidgetsTest(unittest.TestCase):
         selector.set_value(1)
         self.assertEqual(selector.get_value()[1], 1)
         self.assertEqual(selector.get_value()[0][0], '5 - Medium')
-        selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        selector.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
         selector.readonly = True
-        selector.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        selector.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertEqual(selector.get_value()[0][0], '4 - Easy')
 
         # Test fancy selector
@@ -1029,7 +1028,7 @@ class WidgetsTest(unittest.TestCase):
         # Assert events
         textinput.update(PygameEventUtils.key(0, keydown=True, testmode=False))
         PygameEventUtils.test_widget_key_press(textinput)
-        textinput.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        textinput.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         textinput.update(PygameEventUtils.key(pygame.K_LSHIFT, keydown=True))
         textinput.clear()
 
@@ -1543,26 +1542,26 @@ class WidgetsTest(unittest.TestCase):
 
         # Check events
         self.assertFalse(drop.active)
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertTrue(drop.active)
         self.assertEqual(drop._index, -1)
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Index is -1
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Index is -1
         self.assertFalse(drop.active)
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertTrue(drop.active)
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(drop._index, 0)
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(drop._index, 1)
 
         # Apply on current
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
         self.assertEqual(drop.get_index(), [1])
         self.assertEqual(drop._get_current_selected_text(), '1 selected')
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertEqual(drop.get_value(), ([('epic', 2), ('item2', 2)], [1, 3]))
         self.assertEqual(drop._get_current_selected_text(), '2 selected')
 
@@ -1571,9 +1570,9 @@ class WidgetsTest(unittest.TestCase):
         drop.update(PygameEventUtils.middle_rect_click(drop._option_buttons[3]))
         self.assertEqual(drop.get_value(), ([('epic', 2)], [1]))
         self.assertEqual(drop._get_current_selected_text(), '1 selected')
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(drop._index, 4)
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3)], [1, 4]))
         self.assertEqual(drop._get_current_selected_text(), '2 selected')
 
@@ -1586,17 +1585,17 @@ class WidgetsTest(unittest.TestCase):
         # Set max limit
         drop._max_selected = 3
         self.assertEqual(drop.get_total_selected(), 2)
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertEqual(drop.get_total_selected(), 3)
         self.assertTrue(drop.active)
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertEqual(drop.get_total_selected(), 3)  # Limit reached
         self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3), ('item4', 4)], [1, 4, 5]))
-        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Unselect previous
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Unselect previous
         self.assertEqual(drop.get_total_selected(), 2)  # Limit reached
         self.assertEqual(drop.get_value(), ([('epic', 2), ('item3', 3)], [1, 4]))
 
@@ -1756,17 +1755,17 @@ class WidgetsTest(unittest.TestCase):
         # Test events
         self.assertFalse(drop.active)
         self.assertFalse(drop._drop_frame.is_visible())
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertTrue(drop.active)
         self.assertTrue(drop._drop_frame.is_visible())
         self.assertEqual(drop.get_index(), -1)
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
         self.assertEqual(drop.get_index(), 0)
         self.assertTrue(drop.active)
-        drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(drop.active)
         self.assertFalse(drop._drop_frame.is_visible())
-        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))
         self.assertEqual(drop.get_index(), 0)
         self.assertFalse(drop.active)
         drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))  # Enable
@@ -1775,16 +1774,16 @@ class WidgetsTest(unittest.TestCase):
         self.assertFalse(drop.active)
         drop.update(PygameEventUtils.key(pygame.K_TAB, keydown=True))  # Enable
         self.assertTrue(drop.active)
-        drop.update(PygameEventUtils.key(KEY_MOVE_DOWN, keydown=True))  # Not infinite
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_DOWN, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 0)
         scroll_values = [-1, 0, 0, 0.114, 0.228, 0.33, 0.447, 0.561, 0.664, 0.778, 0.895, 0.997]
         for i in range(1, 12):
-            drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))
+            drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))
             self.assertEqual(drop.get_index(), i)
             if PYGAME_V2:
                 self.assertEqual(drop.get_scroll_value_percentage(ORIENTATION_VERTICAL),
                                  scroll_values[i])
-        drop.update(PygameEventUtils.key(KEY_MOVE_UP, keydown=True))  # Not infinite
+        drop.update(PygameEventUtils.key(ctrl.KEY_MOVE_UP, keydown=True))  # Not infinite
         self.assertEqual(drop.get_index(), 11)  # Not infinite
         if PYGAME_V2:
             self.assertEqual(drop.get_scroll_value_percentage(ORIENTATION_VERTICAL), 0.997)
@@ -1825,7 +1824,7 @@ class WidgetsTest(unittest.TestCase):
 
         # Test focus
         if not drop.active:
-            drop.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+            drop.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         if PYGAME_V2:
             self.assertEqual(menu._draw_focus_widget(surface, drop),
                              {1: ((0, 0), (600, 0), (600, 307), (0, 307)),
@@ -2039,16 +2038,16 @@ class WidgetsTest(unittest.TestCase):
         drop2._up()
         self.assertEqual(test[0], 'optionA')
         self.assertFalse(test[1])
-        drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Now it's closed
+        drop2.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Now it's closed
         self.assertTrue(test[1])
         self.assertFalse(drop2.active)
-        drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # This only opens but not apply
+        drop2.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # This only opens but not apply
         self.assertTrue(test[1])
         self.assertTrue(drop2.active)
         menu.draw(surface)
         self.assertEqual(drop2.get_frame(), f)
         self.assertEqual(drop2.last_surface, f.get_surface())  # Frame surface as drop is not in middle
-        drop2.update(PygameEventUtils.key(KEY_APPLY, keydown=True))  # Now applies
+        drop2.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))  # Now applies
         self.assertFalse(test[1])
         self.assertFalse(drop2.active)
 
@@ -2497,25 +2496,25 @@ class WidgetsTest(unittest.TestCase):
         switch.apply()
         self.assertFalse(value[0])
 
-        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))  # not infinite
+        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))  # not infinite
         self.assertFalse(value[0])  # as this is false, dont change
-        switch.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
         switch = menu.add.toggle_switch('toggle', False, onchange=onchange, infinite=True)
-        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(KEY_LEFT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_LEFT, keydown=True))
         self.assertFalse(value[0])
 
         # As there's only 2 states, return should change too
-        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
 
         # Check left/right clicks
@@ -2529,17 +2528,17 @@ class WidgetsTest(unittest.TestCase):
 
         # Test readonly
         switch.readonly = True
-        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
-        switch.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
         self.assertFalse(value[0])
 
         switch.readonly = False
-        switch.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
         self.assertTrue(value[0])
-        switch.update(PygameEventUtils.key(KEY_RIGHT, keydown=True))
+        switch.update(PygameEventUtils.key(ctrl.KEY_RIGHT, keydown=True))
         self.assertFalse(value[0])
 
         switch.draw(surface)
@@ -2733,4 +2732,4 @@ class WidgetsTest(unittest.TestCase):
         ], onreturn=open_link, style=pygame_menu.widgets.SELECTOR_STYLE_FANCY)
 
         # menu.mainloop(surface)
-        sel.update(PygameEventUtils.key(KEY_APPLY, keydown=True))
+        sel.update(PygameEventUtils.key(ctrl.KEY_APPLY, keydown=True))
