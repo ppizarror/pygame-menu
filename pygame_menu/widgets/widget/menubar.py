@@ -188,6 +188,9 @@ class MenuBar(Widget):
     def resize(self, *args, **kwargs) -> 'MenuBar':
         return self
 
+    def rotate(self, *args, **kwargs) -> 'MenuBar':
+        return self
+
     def set_max_height(self, *args, **kwargs) -> 'MenuBar':
         return self
 
@@ -198,6 +201,9 @@ class MenuBar(Widget):
         return self
 
     def set_border(self, *args, **kwargs) -> 'MenuBar':
+        return self
+
+    def flip(self, *args, **kwargs) -> 'MenuBar':
         return self
 
     def _check_title_color(self, background_menu: bool) -> None:
