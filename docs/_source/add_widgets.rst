@@ -390,7 +390,7 @@ a button. Links can be opened using the ``open`` method.
 
 **Example:**
 
-.. image:: ../_static/widget_label.png
+.. image:: ../_static/widget_menulink.png
     :scale: 75%
     :align: center
 
