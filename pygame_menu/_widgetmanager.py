@@ -2134,6 +2134,7 @@ class WidgetManager(Base):
             cursor_color=self._theme.cursor_color,
             cursor_selection_color=self._theme.cursor_selection_color,
             cursor_selection_enable=cursor_selection_enable,
+            cursor_size=cursor_size,
             cursor_switch_ms=self._theme.cursor_switch_ms,
             input_type=input_type,
             input_underline=input_underline,
