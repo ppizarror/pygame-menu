@@ -56,7 +56,7 @@ from pygame_menu.widgets.widget.selector import SelectorStyleType, SELECTOR_STYL
 
 from pygame_menu._types import Any, Union, Callable, Dict, Optional, CallbackType, \
     PaddingInstance, NumberType, Vector2NumberType, List, Tuple, NumberInstance, \
-    Tuple3IntType
+    Tuple3IntType, Tuple2IntType
 
 
 # noinspection PyProtectedMember
@@ -2025,7 +2025,7 @@ class WidgetManager(Base):
             default: Union[str, int, float] = '',
             copy_paste_enable: bool = True,
             cursor_selection_enable: bool = True,
-            cursor_size: Tuple[int, ...] = None,
+            cursor_size: Optional[Tuple2IntType] = None,
             input_type: str = INPUT_TEXT,
             input_underline: str = '',
             input_underline_len: int = 0,
@@ -2104,6 +2104,7 @@ class WidgetManager(Base):
         :param default: Default value to display
         :param copy_paste_enable: Enable text copy, paste and cut
         :param cursor_selection_enable: Enable text selection on input
+        :param cursor_size: Size of the cursor (width, height) in px. If ``None`` uses the default sizing
         :param input_type: Data type of the input. See :py:mod:`pygame_menu.locals`
         :param input_underline: Underline character
         :param input_underline_len: Total of characters to be drawn under the input. If ``0`` this number is computed automatically to fit the font
