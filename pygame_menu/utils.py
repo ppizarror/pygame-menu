@@ -45,6 +45,7 @@ __all__ = [
     'format_color',
     'get_finger_pos',
     'is_callable',
+    'load_pygame_image_file',
     'make_surface',
     'mouse_motion_current_mouse_position',
     'parse_padding',
@@ -378,6 +379,52 @@ def is_callable(func: Any) -> bool:
     # noinspection PyTypeChecker
     return isinstance(func, (types.FunctionType, types.BuiltinFunctionType,
                              types.MethodType, functools.partial))
+
+
+def load_pygame_image_file(image_path: str, **kwargs) -> 'pygame.Surface':
+    """
+    Loads an image and returns a surface.
+
+    :param image_path: Image file
+    :param kwargs: Optional keyword arguments
+    :return: Surface
+    """
+    # Try to load the image
+    try:
+        if 'test' in kwargs.keys():
+            raise pygame.error('File is not a Windows BMP file')
+
+        surface = pygame.image.load(image_path)
+
+    except pygame.error as exc:
+        # Check if file is not a windows file
+        if str(exc) == 'File is not a Windows BMP file':
+            pil_invalid_exception = Exception
+
+            # Check if Pillow exists
+            try:
+                # noinspection PyPackageRequirements
+                from PIL import Image, UnidentifiedImageError
+
+                pil_invalid_exception = UnidentifiedImageError
+                img_pil = Image.open(image_path)
+                surface = pygame.image.fromstring(
+                    img_pil.tobytes(), img_pil.size, img_pil.mode).convert()
+
+            except (ModuleNotFoundError, ImportError):
+                warn('Image file could not be loaded, as pygame.error is'
+                     ' raised. To avoid this issue install the Pillow '
+                     'library')
+                raise
+
+            except pil_invalid_exception:
+                warn('The image could not be loaded using Pillow')
+                raise
+
+        else:
+            raise
+
+    return surface
 
 
 def make_surface(

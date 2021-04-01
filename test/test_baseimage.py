@@ -43,6 +43,7 @@ import pygame_menu
 
 from pygame_menu.baseimage import IMAGE_MODE_CENTER, IMAGE_MODE_FILL, IMAGE_MODE_REPEAT_X, \
     IMAGE_MODE_REPEAT_XY, IMAGE_MODE_REPEAT_Y, IMAGE_MODE_SIMPLE
+from pygame_menu.utils import load_pygame_image_file
 
 
 class BaseImageTest(unittest.TestCase):
@@ -276,6 +277,21 @@ class BaseImageTest(unittest.TestCase):
         self.assertFalse(image.equals(image_original))
         image.restore()
         self.assertFalse(image.equals(image_original))
+
+    def test_invalid_image(self) -> None:
+        """
+        Test invalid image opening.
+        """
+        image = pygame_menu.BaseImage(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON)
+        self.assertEqual(image.get_size(), (110, 109))
+
+        image._drawing_position = 'invalid'
+        self.assertRaises(ValueError, lambda: image._get_position_delta())
+
+        # Test invalid image
+        self.assertRaises(Exception,
+                          lambda: load_pygame_image_file(pygame_menu.baseimage.IMAGE_EXAMPLE_PYTHON,
+                                                         test=True))
 
     def test_copy(self) -> None:
         """
