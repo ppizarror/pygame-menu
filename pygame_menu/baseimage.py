@@ -105,6 +105,10 @@ _VALID_IMAGE_FORMATS = ['.jpg', '.png', '.gif', '.bmp', '.pcx', '.tga', '.tif',
 
 # Custom types
 ColorChannelType = Literal['r', 'g', 'b']
+ChannelType = Union[ColorChannelType,
+                    Tuple[ColorChannelType, ColorChannelType],
+                    Tuple[ColorChannelType, ColorChannelType, ColorChannelType],
+                    List[ColorChannelType]]
 
 
 class BaseImage(Base):
@@ -432,7 +436,11 @@ class BaseImage(Base):
         """
         return self.get_width(), self.get_height()
 
-    def get_at(self, pos: Tuple2NumberType, ignore_alpha: bool = False) -> Union[Tuple3IntType, Tuple4IntType]:
+    def get_at(
+            self,
+            pos: Tuple2NumberType,
+            ignore_alpha: bool = False
+    ) -> Union[Tuple3IntType, Tuple4IntType]:
         """
         Get the color from a certain position in image on x-axis and y-axis (x, y).
 
@@ -535,8 +543,10 @@ class BaseImage(Base):
         self._original_surface = self._surface.copy()
         return self
 
-    def apply_image_function(self, image_function: Callable[[int, int, int, int], Tuple4IntType]
-                             ) -> 'BaseImage':
+    def apply_image_function(
+            self,
+            image_function: Callable[[int, int, int, int], Tuple4IntType]
+    ) -> 'BaseImage':
         """
         Apply a function to each pixel of the image. The function will receive the
         red, green, blue and alpha colors and must return the same values. The
@@ -583,11 +593,7 @@ class BaseImage(Base):
 
         return self.apply_image_function(image_function=bw)
 
-    def pick_channels(self, channels: Union[ColorChannelType,
-                                            Tuple[ColorChannelType, ColorChannelType],
-                                            Tuple[ColorChannelType, ColorChannelType, ColorChannelType],
-                                            List[ColorChannelType]]
-                      ) -> 'BaseImage':
+    def pick_channels(self, channels: ChannelType) -> 'BaseImage':
         """
         Pick certain channels of the image, channels are ``"r"`` (red), ``"g"``
         (green) and ``"b"`` (blue), ``channels param`` is a list/tuple of channels
@@ -633,12 +639,23 @@ class BaseImage(Base):
         self._surface = pygame.transform.flip(self._surface, x, y)
         return self
 
-    def scale(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'BaseImage':
+    def scale(
+            self,
+            width: NumberType,
+            height: NumberType,
+            smooth: bool = True
+    ) -> 'BaseImage':
         """
         Scale the image to a desired width and height factor.
 
-        :param width: Scale factor of the width
-        :param height: Scale factor of the height
+        .. note::
+
+            The scale transformation is permanent, and is applied over the same
+            object. Thus, if ``image.scale(2, 2).scale(2, 2)`` the final scale of
+            the initial image is equal to ``image.scale(4, 4)``.
+
+        :param width: Width scale factor
+        :param height: Height scale factor
         :param smooth: Smooth scaling
         :return: Self reference
         """
@@ -671,9 +688,22 @@ class BaseImage(Base):
         self._surface = pygame.transform.scale2x(self._surface)
         return self
 
-    def resize(self, width: NumberType, height: NumberType, smooth: bool = True) -> 'BaseImage':
+    def scale4x(self) -> 'BaseImage':
         """
-        Set the image size to another size.
+        Applies a x4 scale factor using scale2x algorithm.
+
+        :return: Self reference
+        """
+        return self.scale2x().scale2x()
+
+    def resize(
+            self,
+            width: NumberType,
+            height: NumberType,
+            smooth: bool = True
+    ) -> 'BaseImage':
+        """
+        Resize the image to a desired (width, height) size in pixels.
 
         :param width: New width of the image in px
         :param height: New height of the image in px
@@ -683,7 +713,8 @@ class BaseImage(Base):
         assert isinstance(width, NumberInstance)
         assert isinstance(height, NumberInstance)
         assert isinstance(smooth, bool)
-        assert width > 0 and height > 0, 'width and height must be greater than zero'
+        assert width > 0 and height > 0, \
+            'width and height must be greater than zero'
         w, h = self.get_size()
         if w == width and h == height:
             return self
@@ -778,8 +809,12 @@ class BaseImage(Base):
         else:
             raise ValueError('unknown drawing position')
 
-    def draw(self, surface: 'pygame.Surface', area: Optional['pygame.Rect'] = None,
-             position: Tuple2IntType = (0, 0)) -> 'BaseImage':
+    def draw(
+            self,
+            surface: 'pygame.Surface',
+            area: Optional['pygame.Rect'] = None,
+            position: Tuple2IntType = (0, 0)
+    ) -> 'BaseImage':
         """
         Draw the image in a given surface.
 
