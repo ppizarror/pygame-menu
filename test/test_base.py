@@ -2,8 +2,8 @@
 pygame-obj
 https://github.com/ppizarror/pygame-obj
 
-TEST FONT
-Test font management.
+TEST BASE
+Test base class.
 
 License:
 -------------------------------------------------------------------------------
