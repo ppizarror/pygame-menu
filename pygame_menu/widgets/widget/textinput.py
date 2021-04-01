@@ -315,6 +315,7 @@ class TextInput(Widget):
         self._cursor_render = True  # If True cursor must be rendered
         self._cursor_surface = None
         self._cursor_surface_pos = [0, 0]  # Position (x,y) of surface
+        self._cursor_size = cursor_size
         self._cursor_switch_ms = cursor_switch_ms
         self._cursor_visible = False  # Switches every self._cursor_switch_ms ms
 
