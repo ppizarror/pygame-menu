@@ -1876,6 +1876,14 @@ class FrameWidgetTest(unittest.TestCase):
         menu.update(PygameEventUtils.middle_rect_mouse_motion(frame2._frame_title, rel=(0, 100)))
         self.assertEqual(frame2.get_translate(), (10, 115))
 
+        # Test more title gradients
+        frame2.set_title('title',
+                         background_color=((10, 36, 106), (166, 202, 240), True, True))
+        frame2.set_title('title',
+                         background_color=((10, 36, 106), (166, 202, 240), True, False))
+        frame2.set_title('title',
+                         background_color=((10, 36, 106), (166, 202, 240), False, False))
+
     def test_resize(self) -> None:
         """
         Test resize.
