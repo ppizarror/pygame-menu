@@ -3,7 +3,7 @@ pygame-menu
 https://github.com/ppizarror/pygame-menu
 
 PYGAME-MENU
-A menu for pygame, simple, lightweight and easy to use.
+A menu for pygame. Simple, and easy to use.
 
 License:
 -------------------------------------------------------------------------------
@@ -128,6 +128,7 @@ __contributors__ = [
     'ironsmile',
     'jwllee',
     'maditnerd',
+    'mrkprdo',
     'notrurs',
     'NullP01nt',
     'PandaRoux8',
@@ -138,7 +139,7 @@ __contributors__ = [
 
 ]
 __copyright__ = 'Copyright 2017-2021 Pablo Pizarro R. @ppizarror'
-__description__ = 'A menu for pygame, simple, lightweight and easy to use'
+__description__ = 'A menu for pygame. Simple, and easy to use'
 __email__ = 'pablo@ppizarror.com'
 __keywords__ = 'pygame menu menus gui widget input button pygame-menu image sound ui'
 __license__ = 'MIT'
@@ -154,7 +155,8 @@ Print pygame-menu version.
 """
 import os
 
-if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and 'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
+if 'PYGAME_MENU_HIDE_VERSION' not in os.environ and \
+        'PYGAME_HIDE_SUPPORT_PROMPT' not in os.environ:
     print('{} {}'.format(__module_name__, __version__))
 
 # Cleanup namespace

@@ -22,6 +22,7 @@ Other contributors:
 - `ironsmile <https://github.com/ironsmile>`_
 - `jwllee <https://github.com/jwllee>`_
 - `maditnerd <https://github.com/maditnerd>`_
+- `mrkprdo <https://github.com/mrkprdo>`_
 - `notrurs <https://github.com/notrurs>`_
 - `NullP01nt <https://github.com/NullP01nt>`_
 - `PandaRoux8 <https://github.com/PandaRoux8>`_
